@@ -1,0 +1,8 @@
+# Gen 自动生成文件
+bin/
+gen/
+libs/
+obj/
+src/
+jni/
+
