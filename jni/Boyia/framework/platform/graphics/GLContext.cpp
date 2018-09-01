@@ -3,7 +3,6 @@
 #include "SalLog.h"
 #include <EGL/egl.h>
 
-//const char* kGLUtilsClassName = "com/mini/app/core/GLUtils";
 namespace util
 {
 struct GLWindow
@@ -18,39 +17,6 @@ struct GLWindow
 };
 
 GLWindow* GLContext::s_sharedWin = NULL;
-//GLContext* GLContext::s_instance = NULL;
-//void GLContext::initGLContext(EGLType type)
-//{
-//	KLOG("GLContext::initGLContext()");
-////	yanbo::JNIUtil::callStaticVoidMethod(
-////			kGLUtilsClassName,
-////		    "initGL",
-////		    "()V");
-//
-//	instance()->initGL(type);
-//}
-//
-//void GLContext::destroyGLContext()
-//{
-////	yanbo::JNIUtil::callStaticVoidMethod(
-////			kGLUtilsClassName,
-////		    "destroyGL",
-////		    "()V");
-//	instance()->destroyGL();
-//	delete s_instance;
-//	s_instance = NULL;
-//}
-
-//void GLContext::postToScreen()
-//{
-//	KLOG("GLContext::postToScreen()");
-////	yanbo::JNIUtil::callStaticVoidMethod(
-////			kGLUtilsClassName,
-////	        "postToScreen",
-////	        "()V");
-//	instance()->postBuffer();
-//}
-
 GLContext::GLContext()
     : m_window(NULL)
 {
