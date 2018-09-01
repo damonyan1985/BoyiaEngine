@@ -1,26 +1,26 @@
-#include "MiniOperand.h"
+#include "BoyiaOperand.h"
 
 namespace mjs {
-MiniOperand::MiniOperand(LInt32 immediate, int rmode) {
+BoyiaOperand::BoyiaOperand(LInt32 immediate, int rmode) {
 	rm_ = no_reg;
 	imm32_ = immediate;
 	rmode_ = rmode;
 }
 
-MiniOperand::MiniOperand(int value) {
+BoyiaOperand::BoyiaOperand(int value) {
 	rm_ = no_reg;
 	imm32_ = value;
 	rmode_ = 0;
 }
 
-MiniOperand::MiniOperand(MiniRegister rm) {
+BoyiaOperand::BoyiaOperand(BoyiaRegister rm) {
 	rm_ = rm;
 	rs_ = no_reg;
 	shift_op_ = LSL;
 	shift_imm_ = 0;
 }
 
-MiniOperand::MiniOperand(MiniRegister rm, ShiftOp shift_op, int shift_imm) {
+BoyiaOperand::BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, int shift_imm) {
 	//ASSERT(is_uint5(shift_imm));
 	//ASSERT(shift_op != ROR || shift_imm != 0);  // use RRX if you mean it
 	rm_ = rm;
@@ -35,7 +35,7 @@ MiniOperand::MiniOperand(MiniRegister rm, ShiftOp shift_op, int shift_imm) {
 	}
 }
 
-MiniOperand::MiniOperand(MiniRegister rm, ShiftOp shift_op, MiniRegister rs) {
+BoyiaOperand::BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, BoyiaRegister rs) {
 	//ASSERT(shift_op != RRX);
 	rm_ = rm;
 	rs_ = no_reg;
@@ -43,19 +43,19 @@ MiniOperand::MiniOperand(MiniRegister rm, ShiftOp shift_op, MiniRegister rs) {
 	rs_ = rs;
 }
 
-bool MiniOperand::is_reg() const {
+bool BoyiaOperand::is_reg() const {
 	return rm_.is_valid() && rs_.is(no_reg) && shift_op_ == LSL
 			&& shift_imm_ == 0;
 }
 
-MemOperand::MemOperand(MiniRegister rn, LInt32 offset, AddrMode am) {
+MemOperand::MemOperand(BoyiaRegister rn, LInt32 offset, AddrMode am) {
 	rn_ = rn;
 	rm_ = no_reg;
 	offset_ = offset;
 	am_ = am;
 }
 
-MemOperand::MemOperand(MiniRegister rn, MiniRegister rm, AddrMode am) {
+MemOperand::MemOperand(BoyiaRegister rn, BoyiaRegister rm, AddrMode am) {
 	rn_ = rn;
 	rm_ = rm;
 	shift_op_ = LSL;
@@ -63,7 +63,7 @@ MemOperand::MemOperand(MiniRegister rn, MiniRegister rm, AddrMode am) {
 	am_ = am;
 }
 
-MemOperand::MemOperand(MiniRegister rn, MiniRegister rm, ShiftOp shift_op,
+MemOperand::MemOperand(BoyiaRegister rn, BoyiaRegister rm, ShiftOp shift_op,
 		int shift_imm, AddrMode am) {
 	//ASSERT(is_uint5(shift_imm));
 	rn_ = rn;

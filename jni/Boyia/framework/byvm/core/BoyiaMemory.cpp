@@ -1,11 +1,10 @@
 /*
-* Date: 2013-11-09
-* Modify: 2014-10-17
+* Date: 2018-9-1
 * Author: yanbo
-* Description: Mini Memory
+* Description: Boyia Memory
 * Copyright (c) reserved
 */
-#include "MiniMemory.h"
+#include "BoyiaMemory.h"
 #include <android/log.h>
 
 
@@ -32,15 +31,15 @@ static LVoid fastFree(LVoid* data)
 #define NEW_DATA_ARRAY(type, n) (type*)fastMalloc(n*sizeof(type))
 #define DELETE_DATA(p)  fastFree(p)
 
-LBool containAddress(LVoid* addr, MiniMemoryPool* pool)
+LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool)
 {
 	LInt iAddr = (LInt) addr;
     return iAddr >= (LInt) pool->m_address && iAddr < ((LInt)pool->m_address + pool->m_size);
 }
 
-MiniMemoryPool* initMemoryPool(LInt size)
+BoyiaMemoryPool* initMemoryPool(LInt size)
 {
-	MiniMemoryPool* pool = NEW_DATA(MiniMemoryPool);
+	BoyiaMemoryPool* pool = NEW_DATA(BoyiaMemoryPool);
     pool->m_address = NEW_DATA_ARRAY(LByte, size);
     pool->m_size = size;
     pool->m_next = NULL;
@@ -49,18 +48,18 @@ MiniMemoryPool* initMemoryPool(LInt size)
     return pool;
 }
 
-LVoid freeMemoryPool(MiniMemoryPool* pool)
+LVoid freeMemoryPool(BoyiaMemoryPool* pool)
 {
 	while (pool)
 	{
-		MiniMemoryPool* poolNext = pool->m_next;
+		BoyiaMemoryPool* poolNext = pool->m_next;
 		DELETE_DATA(pool->m_address);
 		DELETE_DATA(pool);
 		pool = poolNext;
 	}
 }
 
-LVoid* newData(LInt size, MiniMemoryPool* pool)
+LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 {
 	MemoryBlockHeader* pHeader = NULL;
 
@@ -149,7 +148,7 @@ LVoid* newData(LInt size, MiniMemoryPool* pool)
 	return pHeader ? pHeader->m_address : NULL;
 }
 
-LVoid deleteData(LVoid* data, MiniMemoryPool* pool)
+LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool)
 {
     MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LInt)data - constHeaderLen);
 	// If error pointer, then return.
@@ -181,7 +180,7 @@ LVoid deleteData(LVoid* data, MiniMemoryPool* pool)
 	pool->m_used -= constHeaderLen + pHeader->m_size;
 }
 
-LVoid printPoolSize(MiniMemoryPool* pool)
+LVoid printPoolSize(BoyiaMemoryPool* pool)
 {
-	__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS POOL addr=%x used=%d maxsize=%d", (LInt)pool->m_address, pool->m_used, pool->m_size);
+	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM POOL addr=%x used=%d maxsize=%d", (LInt)pool->m_address, pool->m_used, pool->m_size);
 }

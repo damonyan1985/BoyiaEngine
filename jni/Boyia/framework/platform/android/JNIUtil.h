@@ -2,7 +2,7 @@
 #define JNIUtil_h
 
 #include "UtilString.h"
-#include "MiniCore.h"
+#include "BoyiaCore.h"
 #include <jni.h>
 
 namespace yanbo
@@ -23,9 +23,9 @@ public:
 			const char* sign,
 			LInt signLen,
 			const char retType,
-			MiniValue* args,
+			BoyiaValue* args,
 			LInt argsLen,
-            MiniValue* result);
+            BoyiaValue* result);
 	static void callStaticVoidMethod(const char* className,
 			const char* method,
 			const char* signature,

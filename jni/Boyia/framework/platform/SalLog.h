@@ -13,8 +13,6 @@
 
 #include "PlatformLib.h"
 
-#define ENABLE_ANDROID_PORTING 1
-
 #if ENABLE(ANDROID_PORTING)
 #include <android/log.h>
 #endif

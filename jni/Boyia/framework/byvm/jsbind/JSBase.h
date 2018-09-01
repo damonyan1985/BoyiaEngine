@@ -3,9 +3,9 @@
 
 #include "IViewListener.h"
 #include "KVector.h"
-#include "MiniCore.h"
+#include "BoyiaCore.h"
 
-namespace mjs
+namespace boyia
 {
 #define EVENT_MAX_SIZE 10
 class JSBase : public yanbo::IViewListener
@@ -21,13 +21,13 @@ public:
     virtual void onKeyDown(int keyCode, void* view);
     virtual void onKeyUp(int keyCode, void* view);
 
-    virtual void addListener(LInt type, MiniValue* callback);
-    void setJSView(MiniValue* value);
+    virtual void addListener(LInt type, BoyiaValue* callback);
+    void setJSView(BoyiaValue* value);
 
 protected:
 	LInt m_type;
-	MiniValue m_callbacks[EVENT_MAX_SIZE];
-	MiniValue m_jsView;
+	BoyiaValue m_callbacks[EVENT_MAX_SIZE];
+	BoyiaValue m_jsView;
 };
 }
 

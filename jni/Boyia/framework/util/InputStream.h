@@ -26,7 +26,7 @@ public:
 	LBool isEnd();
 	
 protected:
-	String  m_stream;
+	String   m_stream;
 	LInt     m_readCount;
 	LInt     m_len;
 };

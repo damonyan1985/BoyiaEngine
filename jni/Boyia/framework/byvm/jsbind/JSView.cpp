@@ -8,7 +8,7 @@
 
 using namespace yanbo;
 
-namespace mjs
+namespace boyia
 {
 static LVoid startAnimtion(Animation* anim)
 {
@@ -30,7 +30,7 @@ JSView::~JSView()
 	}
 }
 
-void JSView::addListener(LInt type, MiniValue* callback)
+void JSView::addListener(LInt type, BoyiaValue* callback)
 {
 	JSBase::addListener(type, callback);
     if (!m_item->getListener())

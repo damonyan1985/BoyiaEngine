@@ -1,25 +1,25 @@
 /*
 ============================================================================
- Name        : MiniCore.h
+ Name        : BoyiaCore.h
  Author      : yanbo
- Version     : MiniCore v1.0
+ Version     : BoyiaCore v0.1
  Copyright   : All Copyright Reserved
  Date        : 2012-2-5
  Description : Support Original
 ============================================================================
 */
 
-#ifndef MiniCore_h
-#define MiniCore_h
+#ifndef BoyiaCore_h
+#define BoyiaCore_h
 
-#include "MiniValue.h"
+#include "BoyiaValue.h"
 
 typedef struct {
 	LInt             mFuncBody;
-	MiniValue*       mParams;
+	BoyiaValue*       mParams;
 	LInt             mParamSize;
 	LInt             mParamCount;
-} MiniFunction;
+} BoyiaFunction;
 
 typedef struct {
 	LUint mNameKey;
@@ -39,14 +39,12 @@ LVoid SetNativeResult(LVoid* result);
 LVoid GetLocalStack(LInt* stack, LInt* size);
 LVoid* GetNativeResult();
 LVoid* CopyObject(LUint hashKey, LInt size);
-//LUint HashCode(MiniStr* str);
-LVoid ValueCopy(MiniValue* dest, MiniValue* src);
-//LBool MStrcmp(MiniStr* src, MiniStr* dest);
+//LUint HashCode(BoyiaStr* str);
+LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
+//LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid GetGlobalTable(LInt* table, LInt* size);
-LVoid NativeCall(MiniValue* obj);
-LVoid LocalPush(MiniValue *value);
+LVoid NativeCall(BoyiaValue* obj);
+LVoid LocalPush(BoyiaValue *value);
 LVoid SaveLocalSize();
-void* miniNew(int size);
-void miniDelete(void* data);
 
 #endif

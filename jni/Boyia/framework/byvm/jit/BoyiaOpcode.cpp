@@ -1,4 +1,4 @@
-#include "MiniOpcode.h"
+#include "BoyiaOpcode.h"
 
 namespace mjs {
 Condition ReverseCondition(Condition cond)

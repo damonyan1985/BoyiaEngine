@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : MiniOpcode.h
+ Name        : BoyiaOpcode.h
  Author      : yanbo
  Version     : MiniOpcode v1.0
  Copyright   : All Copyright Reserved
@@ -10,8 +10,8 @@
  ============================================================================
  */
 
-#ifndef MiniOpcode_h
-#define MiniOpcode_h
+#ifndef BoyiaOpcode_h
+#define BoyiaOpcode_h
 
 #include "PlatformLib.h"
 

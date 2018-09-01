@@ -14,7 +14,7 @@
 #include "JNIUtil.h"
 #include "UIViewThread.h"
 #include "ArmFunction.h"
-#include "MiniExecution.h"
+#include "BoyiaExecution.h"
 #include "GLContext.h"
 #include "PaintThread.h"
 #include "ShaderUtil.h"
@@ -47,7 +47,7 @@ static void nativeInitUIView(
 		jint h,
 		jboolean isDebug)
 {
-	//mjs::MiniExecution exec;
+	//mjs::BoyiaExecution exec;
 	//exec.callCode();
 	TestLoadUrl();
 	JNI_LOG_ON = isDebug;

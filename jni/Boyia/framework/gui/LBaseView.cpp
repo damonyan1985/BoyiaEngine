@@ -6,14 +6,14 @@
  */
 
 #include "LBaseView.h"
-#include "MiniMemory.h"
+#include "BoyiaMemory.h"
 #include "SalLog.h"
 
 namespace util
 {
 // DOMView树构建在sDOMMemPool这块内存池上，大小为1MB
 #define DOM_MEMORY_SIZE      (LInt)1024*1024
-static MiniMemoryPool* sDOMMemPool = NULL;
+static BoyiaMemoryPool* sDOMMemPool = NULL;
 
 LBaseView::LBaseView()
     : m_visible(LTrue)

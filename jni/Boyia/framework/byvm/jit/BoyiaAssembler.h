@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : MiniAssembler.h
+ Name        : BoyiaAssembler.h
  Author      : yanbo
  Version     : MiniAssembler v1.0
  Copyright   : All Copyright Reserved
@@ -10,38 +10,38 @@
  ============================================================================
  */
 
-#ifndef MiniAssembler_h
-#define MiniAssembler_h
+#ifndef BoyiaAssembler_h
+#define BoyiaAssembler_h
 
-#include "MiniOperand.h"
+#include "BoyiaOperand.h"
 
 namespace mjs {
-class MiniAssembler {
+class BoyiaAssembler {
 public:
-	MiniAssembler();
+	BoyiaAssembler();
 	// Load/Store instructions
-	void ldr(MiniRegister dst, const MemOperand& src, Condition cond = al);
-	void str(MiniRegister src, const MemOperand& dst, Condition cond = al);
-	void ldrb(MiniRegister dst, const MemOperand& src, Condition cond = al);
-	void strb(MiniRegister src, const MemOperand& dst, Condition cond = al);
+	void ldr(BoyiaRegister dst, const MemOperand& src, Condition cond = al);
+	void str(BoyiaRegister src, const MemOperand& dst, Condition cond = al);
+	void ldrb(BoyiaRegister dst, const MemOperand& src, Condition cond = al);
+	void strb(BoyiaRegister src, const MemOperand& dst, Condition cond = al);
 
-	void mov(MiniRegister dst, const MiniOperand& src, SBit s = LeaveCC,
+	void mov(BoyiaRegister dst, const BoyiaOperand& src, SBit s = LeaveCC,
 			Condition cond = al);
-	void mov(MiniRegister dst, MiniRegister src, SBit s = LeaveCC,
+	void mov(BoyiaRegister dst, BoyiaRegister src, SBit s = LeaveCC,
 			Condition cond = al) {
-		mov(dst, MiniOperand(src), s, cond);
+		mov(dst, BoyiaOperand(src), s, cond);
 	}
 
 	// ARMv7 instructions for loading a 32 bit immediate in two instructions.
 	// This may actually emit a different mov instruction, but on an ARMv7 it
 	// is guaranteed to only emit one instruction.
-	void movw(MiniRegister reg, LUint32 immediate, Condition cond = al);
+	void movw(BoyiaRegister reg, LUint32 immediate, Condition cond = al);
 	// The constant for movt should be in the range 0-0xffff.
-	void movt(MiniRegister reg, LUint32 immediate, Condition cond = al);
+	void movt(BoyiaRegister reg, LUint32 immediate, Condition cond = al);
 
-	void addrmod1(Instr instr, MiniRegister rn, MiniRegister rd,
-			const MiniOperand& x);
-	void addrmod2(Instr instr, MiniRegister rd, const MemOperand& x);
+	void addrmod1(Instr instr, BoyiaRegister rn, BoyiaRegister rd,
+			const BoyiaOperand& x);
+	void addrmod2(Instr instr, BoyiaRegister rd, const MemOperand& x);
 
 	void b(int branch_offset, Condition cond);
 	// Convenience branch instructions using labels
@@ -50,38 +50,38 @@ public:
 	}
 	void bl(int branch_offset, Condition cond);
 	void blx(int branch_offset);
-	void blx(MiniRegister target, Condition cond);
-	void bx(MiniRegister target, Condition cond);
+	void blx(BoyiaRegister target, Condition cond);
+	void bx(BoyiaRegister target, Condition cond);
 
-	void and_(MiniRegister dst, MiniRegister src1, const MiniOperand& src2,
+	void and_(BoyiaRegister dst, BoyiaRegister src1, const BoyiaOperand& src2,
 			SBit s = LeaveCC, Condition cond = al);
 
-	void orr(MiniRegister dst, MiniRegister src1, const MiniOperand& src2,
+	void orr(BoyiaRegister dst, BoyiaRegister src1, const BoyiaOperand& src2,
 			SBit s = LeaveCC, Condition cond = al);
 
-	void sub(MiniRegister dst, MiniRegister src1, const MiniOperand& src2,
+	void sub(BoyiaRegister dst, BoyiaRegister src1, const BoyiaOperand& src2,
 			SBit s = LeaveCC, Condition cond = al);
 
-	void add(MiniRegister dst, MiniRegister src1, const MiniOperand& src2,
+	void add(BoyiaRegister dst, BoyiaRegister src1, const BoyiaOperand& src2,
 			SBit s = LeaveCC, Condition cond = al);
 
 	// Multiply instructions.
-	void mul(MiniRegister dst, MiniRegister src1, MiniRegister src2,
+	void mul(BoyiaRegister dst, BoyiaRegister src1, BoyiaRegister src2,
 			SBit s = LeaveCC, Condition cond = al);
 
-	void cmp(MiniRegister src1, const MiniOperand& src2, Condition cond = al);
+	void cmp(BoyiaRegister src1, const BoyiaOperand& src2, Condition cond = al);
 
 	// 堆栈操作
-	void push(MiniRegister src, Condition cond = al) {
+	void push(BoyiaRegister src, Condition cond = al) {
 		str(src, MemOperand(sp, 4, NegPreIndex), cond);
 	}
 
-	void pop(MiniRegister dst, Condition cond = al) {
+	void pop(BoyiaRegister dst, Condition cond = al) {
 		ldr(dst, MemOperand(sp, 4, PostIndex), cond);
 	}
 
 	void pop() {
-		add(sp, sp, MiniOperand(kPointerSize));
+		add(sp, sp, BoyiaOperand(kPointerSize));
 	}
 
 	void drop(int count, Condition cond = al);

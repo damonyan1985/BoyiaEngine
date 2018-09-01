@@ -1,19 +1,19 @@
-#ifndef MiniLib_h
-#define MiniLib_h
+#ifndef BoyiaLib_h
+#define BoyiaLib_h
 
-#include "MiniCore.h"
+#include "BoyiaCore.h"
 
-enum MValueType
+enum BYValueType
 {
-	M_CHAR = 2,
-	M_INT,
-	M_STRING,
-	M_JSFUN,
-	M_NAVCLASS,
-	M_CLASS,
+	BY_CHAR = 2,
+	BY_INT,
+	BY_STRING,
+	BY_FUN,
+	BY_NAVCLASS,
+	BY_CLASS,
 };
 
-char* convertMStr2Str(MiniStr* str);
+char* convertMStr2Str(BoyiaStr* str);
 
 LInt getFileContent();
 

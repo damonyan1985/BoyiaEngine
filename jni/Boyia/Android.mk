@@ -64,11 +64,11 @@ include $(LOCAL_PATH)/graphics/Android.graphics.mk
 
 include $(LOCAL_PATH)/network/Android.network.mk
 
-include $(LOCAL_PATH)/framework/Android.mjs.mk
+include $(LOCAL_PATH)/framework/Android.by.mk
 
 LOCAL_SRC_FILES += \
-    $(LOCAL_PATH)/porting/MiniJniOnLoad.cpp \
-    $(LOCAL_PATH)/porting/MiniViewCore.cpp
+    $(LOCAL_PATH)/porting/BoyiaJniOnLoad.cpp \
+    $(LOCAL_PATH)/porting/BoyiaViewCore.cpp
 
 include $(BUILD_SHARED_LIBRARY)
     

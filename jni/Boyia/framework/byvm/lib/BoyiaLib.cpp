@@ -1,6 +1,6 @@
-#include "MiniLib.h"
-#include "MiniCore.h"
-#include "MiniMemory.h"
+#include "BoyiaLib.h"
+#include "BoyiaCore.h"
+#include "BoyiaMemory.h"
 #include "cJSON.h"
 #include "StringUtils.h"
 #include "JSViewDoc.h"
@@ -14,10 +14,10 @@
 #include <stdio.h>
 
 extern void jsLog(const char* format, ...);
-extern LVoid MiniSort(MiniValue* vT, LInt len);
+//extern LVoid MiniSort(BoyiaValue* vT, LInt len);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 
-char* convertMStr2Str(MiniStr* str)
+char* convertMStr2Str(BoyiaStr* str)
 {
 	char* newStr = new char[str->mLen + 1];
 	LMemset(newStr, 0, str->mLen + 1);
@@ -29,7 +29,7 @@ char* convertMStr2Str(MiniStr* str)
 LInt getFileContent()
 {
 	// 0 索引第一个参数
-	MiniValue* value = (MiniValue*)GetLocalValue(0);
+	BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
 	if (!value)
 	{
 		return 0;
@@ -46,8 +46,8 @@ LInt getFileContent()
 	fread(buf, sizeof(char), len, file);
 	fclose(file);
 
-	MiniValue val;
-	val.mValueType = M_STRING;
+	BoyiaValue val;
+	val.mValueType = BY_STRING;
 	val.mValue.mStrVal.mPtr = buf;
 	val.mValue.mStrVal.mLen = len;
 
@@ -60,16 +60,16 @@ LInt getFileContent()
 LInt addElementToVector()
 {
 	jsLog("addElementToVector %d", 1);
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	MiniValue* element = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* element = (BoyiaValue*)GetLocalValue(1);
 
-	MiniFunction* fun = (MiniFunction*)val->mValue.mObj.mPtr;
+	BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
 	if (fun->mParamSize >= fun->mParamCount) {
-		MiniValue* value = fun->mParams;
+		BoyiaValue* value = fun->mParams;
 		LInt count = fun->mParamCount;
-		fun->mParams = NEW_ARRAY(MiniValue, (count + 10));
+		fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10));
 		fun->mParamCount = count + 10;
-		LMemcpy(fun->mParams, value, count * sizeof(MiniValue));
+		LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
 		DELETE(value);
 	}
 	jsLog("addElementToVector %d", 2);
@@ -81,31 +81,31 @@ LInt addElementToVector()
 
 LInt getElementFromVector()
 {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	MiniValue* index = (MiniValue*)GetLocalValue(1);
-	//MiniValue* deltaIndex = (MiniValue*)GetLocalValue(2);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* index = (BoyiaValue*)GetLocalValue(1);
+	//BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(2);
 
-	MiniFunction* fun = (MiniFunction*)val->mValue.mObj.mPtr;
-	MiniValue* result = &fun->mParams[index->mValue.mIntVal];
+	BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
+	BoyiaValue* result = &fun->mParams[index->mValue.mIntVal];
 	SetNativeResult(result);
 	return 1;
 }
 
-static LBool compareValue(MiniValue* src, MiniValue* dest) {
+static LBool compareValue(BoyiaValue* src, BoyiaValue* dest) {
 	if (src->mValueType != dest->mValueType) {
 		return LFalse;
 	}
 
 	switch (src->mValueType)
 	{
-	case M_CHAR:
-	case M_INT:
-	case M_NAVCLASS:
+	case BY_CHAR:
+	case BY_INT:
+	case BY_NAVCLASS:
 		return src->mValue.mIntVal == dest->mValue.mIntVal ? LTrue : LFalse;
-	case M_CLASS:
-	case M_JSFUN:
+	case BY_CLASS:
+	case BY_FUN:
 		return src->mValue.mObj.mPtr == dest->mValue.mObj.mPtr ? LTrue : LFalse;
-	case M_STRING:
+	case BY_STRING:
 		return MStrcmp(&src->mValue.mStrVal, &dest->mValue.mStrVal);
 	default:
 		break;
@@ -115,15 +115,15 @@ static LBool compareValue(MiniValue* src, MiniValue* dest) {
 }
 
 LInt removeElementFromVector() {
-	MiniValue* array = (MiniValue*)GetLocalValue(0);
-	//MiniValue* deltaIndex = (MiniValue*)GetLocalValue(1);
-	MiniValue* val = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* array = (BoyiaValue*)GetLocalValue(0);
+	//BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(1);
 
-	MiniFunction* fun = (MiniFunction*)array->mValue.mObj.mPtr;
+	BoyiaFunction* fun = (BoyiaFunction*)array->mValue.mObj.mPtr;
 	//LInt size = fun->mParamSize - deltaIndex->mValue.mIntVal;
 	LInt idx = fun->mParamSize-1;
 	while (idx >= 0) {
-		MiniValue* elem = fun->mParams + idx;
+		BoyiaValue* elem = fun->mParams + idx;
 		if (compareValue(elem, val)) {
 			for (LInt i = idx; i < fun->mParamSize - 1; ++i) {
 				ValueCopy(fun->mParams + i, fun->mParams + i + 1);
@@ -140,12 +140,12 @@ LInt removeElementFromVector() {
 }
 
 LInt getVectorSize() {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	//MiniValue* deltaIndex = (MiniValue*)GetLocalValue(1);
-	MiniFunction* fun = (MiniFunction*)val->mValue.mObj.mPtr;
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	//BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
+	BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
 
-	MiniValue value;
-	value.mValueType = M_INT;
+	BoyiaValue value;
+	value.mValueType = BY_INT;
 	value.mValue.mIntVal = fun->mParamSize;
 
 	SetNativeResult(&value);
@@ -154,9 +154,9 @@ LInt getVectorSize() {
 }
 
 LInt clearVector() {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	MiniValue* deltaIndex = (MiniValue*)GetLocalValue(1);
-	MiniFunction* fun = (MiniFunction*)val->mValue.mObj.mPtr;
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
+	BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
 	fun->mParamSize = deltaIndex->mValue.mIntVal;
 
 	return 1;
@@ -165,12 +165,12 @@ LInt clearVector() {
 LInt logPrint()
 {
 	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "logPrint execute");
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	if (val->mValueType == M_INT)
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	if (val->mValueType == BY_INT)
 	{
 		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS Log: %d", (int)val->mValue.mIntVal);
 	}
-	else if (val->mValueType == M_STRING) 
+	else if (val->mValueType == BY_STRING)
 	{
 		char* log = convertMStr2Str(&val->mValue.mStrVal);
 		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS Log: %s", (const char*)log);
@@ -186,28 +186,28 @@ static LUint getJsonObjHash(cJSON* json)
     return GenIdentByStr(json->string, LStrlen(_CS(json->string)));
 }
 
-static MiniFunction* getObjFun(cJSON* json) {
-	MiniFunction* fun = NEW(MiniFunction);
+static BoyiaFunction* getObjFun(cJSON* json) {
+	BoyiaFunction* fun = NEW(BoyiaFunction);
 	LInt size = cJSON_GetArraySize(json);
-	fun->mParams = NEW_ARRAY(MiniValue, size);
+	fun->mParams = NEW_ARRAY(BoyiaValue, size);
 	fun->mParamSize = size;
 	return fun;
 }
 
-LVoid jsonParse(cJSON* json, MiniValue* value) {
+LVoid jsonParse(cJSON* json, BoyiaValue* value) {
 	if (json->valuestring) {
 		value->mNameKey = getJsonObjHash(json);
 	}
 
 	if (json->type == cJSON_Object) {
-		value->mValueType = M_CLASS;
+		value->mValueType = BY_CLASS;
 		cJSON* child = json->child;
 		LInt index = 0;
 		
-		MiniFunction* fun = getObjFun(json);
+		BoyiaFunction* fun = getObjFun(json);
 		value->mValue.mObj.mPtr = (LInt)fun;
 		value->mValue.mObj.mSuper = 0;
-		GCAppendRef(fun, M_CLASS);
+		GCAppendRef(fun, BY_CLASS);
 
 		while (child) {
 			fun->mParams[index].mNameKey = getJsonObjHash(child);
@@ -215,13 +215,13 @@ LVoid jsonParse(cJSON* json, MiniValue* value) {
 			child = child->next;
 		}
 	} else if (json->type == cJSON_Array) {
-		value->mValueType = M_CLASS;
+		value->mValueType = BY_CLASS;
 
 		LInt size = cJSON_GetArraySize(json);
-		MiniFunction* fun = (MiniFunction*)CopyObject(GenIdentByStr("Array", 5), size);
+		BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size);
 		value->mValue.mObj.mPtr = (LInt)fun;
 		value->mValue.mObj.mSuper = 0;
-		GCAppendRef(fun, M_CLASS);
+		GCAppendRef(fun, BY_CLASS);
 
 		cJSON* child = json->child;
 		while (child) {
@@ -230,10 +230,10 @@ LVoid jsonParse(cJSON* json, MiniValue* value) {
 			child = child->next;
 		}
 	} else if (json->type == cJSON_Number || json->type == cJSON_True || json->type == cJSON_False) {
-		value->mValueType = M_INT;
+		value->mValueType = BY_INT;
 		value->mValue.mIntVal = json->valueint;
 	} else if (json->type == cJSON_String) {
-		value->mValueType = M_STRING;
+		value->mValueType = BY_STRING;
 		value->mValue.mStrVal.mPtr = json->valuestring; 
 		value->mValue.mStrVal.mLen = LStrlen(_CS(json->valuestring));
 	}
@@ -241,11 +241,11 @@ LVoid jsonParse(cJSON* json, MiniValue* value) {
 
 LInt jsonParseWithCJSON()
 {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
 	char* fileName = convertMStr2Str(&val->mValue.mStrVal);
 	cJSON* json = cJSON_Parse(fileName);
     delete[] fileName;
-	MiniValue* value = (MiniValue*) GetNativeResult();
+	BoyiaValue* value = (BoyiaValue*) GetNativeResult();
 	jsonParse(json, value);
 
 	//SetNativeResult(&value);
@@ -256,7 +256,7 @@ LInt jsonParseWithCJSON()
 LInt createJSDocument()
 {
 	KFORMATLOG("JSViewDoc::loadHTML createJSViewDoc %d", 1);
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
 	if (!val)
 	{
 		return 0;
@@ -264,28 +264,28 @@ LInt createJSDocument()
 
 	char* url = convertMStr2Str(&val->mValue.mStrVal);
 	String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
-	mjs::JSViewDoc* doc = new mjs::JSViewDoc();
+	boyia::JSViewDoc* doc = new boyia::JSViewDoc();
 	doc->loadHTML(strUrl);
 	return 1;
 }
 
 LInt appendView()
 {
-	MiniValue* parent = (MiniValue*)GetLocalValue(0);
-	MiniValue* child = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* parent = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* child = (BoyiaValue*)GetLocalValue(1);
 	if (!parent || !child)
 	{
 		return 0;
 	}
 
-	mjs::JSViewGroup* parentView = (mjs::JSViewGroup*) parent->mValue.mIntVal;
-	mjs::JSView* childView = (mjs::JSView*) child->mValue.mIntVal;
+	boyia::JSViewGroup* parentView = (boyia::JSViewGroup*) parent->mValue.mIntVal;
+	boyia::JSView* childView = (boyia::JSView*) child->mValue.mIntVal;
 
 	parentView->appendView(childView);
 	return 1;
 }
 
-MiniValue* FindProp(MiniFunction* fun, LUint key)
+BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
 {
 	LInt size = fun->mParamSize;
     while (size--)
@@ -301,18 +301,18 @@ MiniValue* FindProp(MiniFunction* fun, LUint key)
 
 LInt getRootDocument()
 {
-    mjs::JSViewDoc* doc = new mjs::JSViewDoc();
+    boyia::JSViewDoc* doc = new boyia::JSViewDoc();
     doc->setDocument(yanbo::UIView::getInstance()->getDocument());
     return 1;
 }
 
 LInt setDocument()
 {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	mjs::JSViewDoc* destDoc = (mjs::JSViewDoc*) val->mValue.mIntVal;
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSViewDoc* destDoc = (boyia::JSViewDoc*) val->mValue.mIntVal;
 
-	val = (MiniValue*)GetLocalValue(1);
-	mjs::JSViewDoc* srcDoc = (mjs::JSViewDoc*) val->mValue.mIntVal;
+	val = (BoyiaValue*)GetLocalValue(1);
+	boyia::JSViewDoc* srcDoc = (boyia::JSViewDoc*) val->mValue.mIntVal;
 	destDoc->setDocument(srcDoc->getDocument());
 
 	return 1;
@@ -325,10 +325,10 @@ LInt removeDocument()
 
 LInt setViewXpos()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* posX = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* posX = (BoyiaValue*)GetLocalValue(1);
 
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->setX(posX->mValue.mIntVal);
 
 	return 1;
@@ -336,10 +336,10 @@ LInt setViewXpos()
 
 LInt setViewYpos()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* posY = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* posY = (BoyiaValue*)GetLocalValue(1);
 
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->setY(posY->mValue.mIntVal);
 
 	return 1;
@@ -347,10 +347,10 @@ LInt setViewYpos()
 
 LInt getViewXpos()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	mjs::JSView* jsDoc = (mjs::JSView*) doc->mValue.mIntVal;
-	MiniValue val;
-	val.mValueType = M_INT;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSView* jsDoc = (boyia::JSView*) doc->mValue.mIntVal;
+	BoyiaValue val;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->left();
 	SetNativeResult(&val);
 
@@ -359,10 +359,10 @@ LInt getViewXpos()
 
 LInt getViewYpos()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
-	MiniValue val;
-	val.mValueType = M_INT;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue val;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->top();
 	SetNativeResult(&val);
 
@@ -371,10 +371,10 @@ LInt getViewYpos()
 
 LInt getViewWidth()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
-	MiniValue val;
-	val.mValueType = M_INT;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue val;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->width();
 	SetNativeResult(&val);
 
@@ -383,10 +383,10 @@ LInt getViewWidth()
 
 LInt getViewHeight()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
-	MiniValue val;
-	val.mValueType = M_INT;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue val;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->height();
 	SetNativeResult(&val);
 
@@ -395,9 +395,9 @@ LInt getViewHeight()
 
 LInt setViewStyle()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* style = (MiniValue*)GetLocalValue(1);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* style = (BoyiaValue*)GetLocalValue(1);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 
 	char* styleText = convertMStr2Str(&style->mValue.mStrVal);
 	String styleStr(_CS(styleText), LTrue, style->mValue.mStrVal.mLen);
@@ -409,8 +409,8 @@ LInt setViewStyle()
 
 LInt drawView()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->drawView();
 
 	return 1;
@@ -418,41 +418,41 @@ LInt drawView()
 
 LInt startScale()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* scale = (MiniValue*)GetLocalValue(1);
-	MiniValue* duration = (MiniValue*)GetLocalValue(2);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* scale = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(2);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startScale(scale->mValue.mIntVal, duration->mValue.mIntVal);
     return 1;
 }
 
 LInt startOpacity()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* opacity = (MiniValue*)GetLocalValue(1);
-	MiniValue* duration = (MiniValue*)GetLocalValue(2);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* opacity = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(2);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startOpacity(opacity->mValue.mIntVal, duration->mValue.mIntVal);
     return 1;
 }
 
 LInt startTranslate()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* posx = (MiniValue*)GetLocalValue(1);
-	MiniValue* posy = (MiniValue*)GetLocalValue(2);
-	MiniValue* duration = (MiniValue*)GetLocalValue(3);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* posx = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* posy = (BoyiaValue*)GetLocalValue(2);
+	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(3);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startTranslate(LPoint(posx->mValue.mIntVal, posy->mValue.mIntVal), duration->mValue.mIntVal);
     return 1;
 }
 
 LInt loadDataFromNative()
 {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
-	MiniValue* callback = (MiniValue*)GetLocalValue(1);
-	MiniValue* obj = (MiniValue*)GetLocalValue(2);
-	mjs::JSNetwork* network = new mjs::JSNetwork(callback, obj);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2);
+	boyia::JSNetwork* network = new boyia::JSNetwork(callback, obj);
 	char* url = convertMStr2Str(&val->mValue.mStrVal);
 	String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
 	network->load(strUrl);
@@ -462,7 +462,7 @@ LInt loadDataFromNative()
 
 LInt setJSTouchCallback()
 {
-	MiniValue* val = (MiniValue*)GetLocalValue(0);
+	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
 	yanbo::UIView::getInstance()->jsHandler()->setTouchCallback(val);
 
 	return 1;
@@ -470,9 +470,9 @@ LInt setJSTouchCallback()
 
 LInt callStaticMethod()
 {
-	MiniValue* clzz = (MiniValue*)GetLocalValue(0);
-	MiniValue* method = (MiniValue*)GetLocalValue(1);
-	MiniValue* sign = (MiniValue*)GetLocalValue(2);
+	BoyiaValue* clzz = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* method = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* sign = (BoyiaValue*)GetLocalValue(2);
 
 	char* strClzz = convertMStr2Str(&clzz->mValue.mStrVal);
 	char* strMethod = convertMStr2Str(&method->mValue.mStrVal);
@@ -486,7 +486,7 @@ LInt callStaticMethod()
 	}
 
 	LInt size = GetLocalSize() - 3;
-	MiniValue result;
+	BoyiaValue result;
 	yanbo::JNIUtil::callStaticMethod(
 			strClzz,
 			strMethod,
@@ -506,9 +506,9 @@ LInt callStaticMethod()
 
 LInt getHtmlItem()
 {
-	MiniValue* doc = (MiniValue*)GetLocalValue(0);
-	MiniValue* idArg = (MiniValue*)GetLocalValue(1);
-	mjs::JSViewDoc* jsDoc = (mjs::JSViewDoc*) doc->mValue.mIntVal;
+	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* idArg = (BoyiaValue*)GetLocalValue(1);
+	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
 
 	char* id = convertMStr2Str(&idArg->mValue.mStrVal);
 	String idStr(_CS(id), LTrue, idArg->mValue.mStrVal.mLen);
@@ -520,84 +520,84 @@ LInt getHtmlItem()
 
 LInt loadImageByUrl()
 {
-	MiniValue* itemArg = (MiniValue*)GetLocalValue(0);
-	MiniValue* urlArg = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1);
 
 	char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
 	String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
 
-	mjs::JSImageView* image = (mjs::JSImageView*)itemArg->mValue.mIntVal;
+	boyia::JSImageView* image = (boyia::JSImageView*)itemArg->mValue.mIntVal;
 	image->loadImage(urlStr);
 	return 1;
 }
 
 LInt setViewGroupText()
 {
-	MiniValue* itemArg = (MiniValue*)GetLocalValue(0);
-	MiniValue* textArg = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1);
 
 	char* text = convertMStr2Str(&textArg->mValue.mStrVal);
 	String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
 
-	mjs::JSViewGroup* view = (mjs::JSViewGroup*)itemArg->mValue.mIntVal;
+	boyia::JSViewGroup* view = (boyia::JSViewGroup*)itemArg->mValue.mIntVal;
 	view->setText(textStr);
 	textStr.ReleaseBuffer();
 	return 1;
 }
 
 LInt setInputViewText() {
-	MiniValue* input = (MiniValue*)GetLocalValue(0);
-	MiniValue* textArg = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* input = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1);
 
 	char* text = convertMStr2Str(&textArg->mValue.mStrVal);
 	String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
 
-	mjs::JSInputView* view = (mjs::JSInputView*)input->mValue.mIntVal;
+	boyia::JSInputView* view = (boyia::JSInputView*)input->mValue.mIntVal;
 	view->setText(textStr);
 	return 1;
 }
 
 LInt addEventListener() {
-	MiniValue* navVal = (MiniValue*)GetLocalValue(0);
-	MiniValue* type = (MiniValue*)GetLocalValue(1);
-	MiniValue* callback = (MiniValue*)GetLocalValue(2);
+	BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* type = (BoyiaValue*)GetLocalValue(1);
+	BoyiaValue* callback = (BoyiaValue*)GetLocalValue(2);
 
-	mjs::JSBase* navView = (mjs::JSBase*) navVal->mValue.mIntVal;
+	boyia::JSBase* navView = (boyia::JSBase*) navVal->mValue.mIntVal;
 	navView->addListener(type->mValue.mIntVal, callback);
 
     return 1;
 }
 
 LInt setJSViewToNativeView() {
-	MiniValue* navVal = (MiniValue*)GetLocalValue(0);
-	MiniValue* jsVal = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* jsVal = (BoyiaValue*)GetLocalValue(1);
 
-	mjs::JSBase* navView = (mjs::JSBase*) navVal->mValue.mIntVal;
+	boyia::JSBase* navView = (boyia::JSBase*) navVal->mValue.mIntVal;
 	navView->setJSView(jsVal);
 
 	return 1;
 }
 
 LInt createViewGroup() {
-	MiniValue* idVal = (MiniValue*)GetLocalValue(0);
-	MiniValue* selectVal = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* idVal = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* selectVal = (BoyiaValue*)GetLocalValue(1);
 
 	char* idStr = convertMStr2Str(&idVal->mValue.mStrVal);
 	String strUrl(_CS(idStr), LTrue, idVal->mValue.mStrVal.mLen);
-	new mjs::JSViewGroup(strUrl, selectVal->mValue.mIntVal);
+	new boyia::JSViewGroup(strUrl, selectVal->mValue.mIntVal);
 
 	return 1;
 }
 
 LInt instanceOfClass() {
-	MiniValue* obj = (MiniValue*)GetLocalValue(0);
-	MiniValue* cls = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* obj = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* cls = (BoyiaValue*)GetLocalValue(1);
 
-	MiniFunction* fun = (MiniFunction*)obj->mValue.mObj.mPtr;
-	MiniValue* baseCls = (MiniValue*)fun->mFuncBody;
+	BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+	BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
 
-	MiniFunction* judgeFun = (MiniFunction*)cls->mValue.mObj.mPtr;
-	MiniValue* judgeCls = (MiniValue*)judgeFun->mFuncBody;
+	BoyiaFunction* judgeFun = (BoyiaFunction*)cls->mValue.mObj.mPtr;
+	BoyiaValue* judgeCls = (BoyiaValue*)judgeFun->mFuncBody;
 
 	LInt result = 0;
 	while (baseCls) {
@@ -606,32 +606,32 @@ LInt instanceOfClass() {
 			break;
 		}
 
-		baseCls = (MiniValue*) baseCls->mValue.mObj.mSuper;
+		baseCls = (BoyiaValue*) baseCls->mValue.mObj.mSuper;
 	}
 
-	MiniValue value;
-	value.mValueType = M_INT;
+	BoyiaValue value;
+	value.mValueType = BY_INT;
 	value.mValue.mIntVal = result;
 	SetNativeResult(&value);
 	return 1;
 }
 
 LInt setImageUrl() {
-	MiniValue* itemArg = (MiniValue*)GetLocalValue(0);
-	MiniValue* urlArg = (MiniValue*)GetLocalValue(1);
+	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1);
 
 	char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
 	String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
 
-	mjs::JSImageView* image = (mjs::JSImageView*)itemArg->mValue.mIntVal;
+	boyia::JSImageView* image = (boyia::JSImageView*)itemArg->mValue.mIntVal;
 	image->setImageUrl(urlStr);
 	urlStr.ReleaseBuffer();
 	return 1;
 }
 
 LInt viewCommit() {
-	MiniValue* itemArg = (MiniValue*)GetLocalValue(0);
-	mjs::JSView* view = (mjs::JSView*)itemArg->mValue.mIntVal;
+	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
+	boyia::JSView* view = (boyia::JSView*)itemArg->mValue.mIntVal;
 	view->commit();
 
 	return 1;

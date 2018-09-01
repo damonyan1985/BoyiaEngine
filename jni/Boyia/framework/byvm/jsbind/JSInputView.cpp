@@ -1,7 +1,7 @@
 #include "JSInputView.h"
 #include "InputView.h"
 
-namespace mjs {
+namespace boyia {
 JSInputView::JSInputView(yanbo::HtmlView* item) {
 	m_item = item;
 	//m_item->setListener(this);

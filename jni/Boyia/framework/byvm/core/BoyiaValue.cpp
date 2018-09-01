@@ -3,7 +3,7 @@
 //
 
 #include "PlatformLib.h"
-#include "MiniMemory.h"
+#include "BoyiaMemory.h"
 #include "AutoLock.h"
 #include "MiniMutex.h"
 #include "JSBase.h"
@@ -15,7 +15,7 @@
 #define MAX_INT_LEN 20
 #define MINI_ANDROID_LOG
 #define MEMORY_SIZE           (LInt)1024*1024*6
-static MiniMemoryPool*        gMemPool = NULL;
+static BoyiaMemoryPool*        gMemPool = NULL;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 extern LVoid GCollectGarbage();
@@ -24,7 +24,7 @@ extern void jsLog(const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 #ifdef MINI_ANDROID_LOG
-	__android_log_vprint(ANDROID_LOG_INFO, "MiniJS", format, args);
+	__android_log_vprint(ANDROID_LOG_INFO, "BoyiaVM", format, args);
 #else
     printf(format, args);
 #endif
@@ -62,10 +62,10 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix) {
 }
 
 // 对MJS属性进行插入排序，方便二分查找
-extern LVoid MiniSort(MiniValue* vT, LInt len) {
+extern LVoid MiniSort(BoyiaValue* vT, LInt len) {
 	for (LInt i = 1; i<len; ++i) {
 		for (LInt j = i; j - 1 >= 0 && vT[j].mNameKey<vT[j - 1].mNameKey; --j) {
-			MiniValue tmp;
+			BoyiaValue tmp;
 			ValueCopy(&tmp, &vT[j]);
 			ValueCopy(&vT[j], &vT[j - 1]);
 			ValueCopy(&vT[j - 1], &tmp);
@@ -75,7 +75,7 @@ extern LVoid MiniSort(MiniValue* vT, LInt len) {
 
 // 主要作用用于优化MJS对象属性HashCode查找
 // 对属性Props数组进行二分查找
-LInt MiniSearch(MiniValue*  vT, LInt n, LUint key) {
+LInt MiniSearch(BoyiaValue*  vT, LInt n, LUint key) {
 	LInt low = 0, high = n - 1, mid;
 
 	while (low <= high) {
@@ -109,16 +109,16 @@ LVoid MiniDelete(LVoid* data) {
 	//free(data);
 }
 
-LVoid MStrcpy(MiniStr* dest, MiniStr* src) {
+LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src) {
     dest->mPtr = src->mPtr;
     dest->mLen = src->mLen;
 }
 
-//LUint HashCode(MiniStr* str) {
+//LUint HashCode(BoyiaStr* str) {
 //	return GenHashCode(str->mPtr, str->mLen);
 //}
 
-LVoid InitStr(MiniStr* str, LInt8* ptr) {
+LVoid InitStr(BoyiaStr* str, LInt8* ptr) {
     str->mLen = 0;
     str->mPtr = ptr;
 }
@@ -128,7 +128,7 @@ LBool MStrchr(const LInt8 *s, LInt8 ch) {
     return *s && *s == ch;
 }
 
-LBool MStrcmp(MiniStr* src, MiniStr* dest) {
+LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest) {
     if (src->mLen != dest->mLen) {
         return LFalse;
     }
@@ -149,7 +149,7 @@ LBool MStrcmp(MiniStr* src, MiniStr* dest) {
 }
 
 extern LVoid NativeDelete(LVoid* data) {
-	delete (mjs::JSBase*) data;
+	delete (boyia::JSBase*) data;
 }
 
 extern LVoid SystemGC() {
@@ -159,7 +159,7 @@ extern LVoid SystemGC() {
 }
 
 // "Hello" + "World"
-static LVoid FetchString(MiniStr* str, MiniValue* value) {
+static LVoid FetchString(BoyiaStr* str, BoyiaValue* value) {
 	if (value->mValueType == INT) {
 		str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN);
 		LMemset(str->mPtr, 0, MAX_INT_LEN);
@@ -170,9 +170,9 @@ static LVoid FetchString(MiniStr* str, MiniValue* value) {
 	}
 }
 
-extern LVoid StringAdd(MiniValue* left, MiniValue* right) {
+extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right) {
 	KLOG("StringAdd Begin");
-	MiniStr leftStr, rightStr;
+	BoyiaStr leftStr, rightStr;
 	LInt8 tmpArray[MAX_INT_LEN];
 	leftStr.mPtr = tmpArray;
 	rightStr.mPtr = tmpArray;
@@ -193,7 +193,7 @@ extern LVoid StringAdd(MiniValue* left, MiniValue* right) {
 }
 
 typedef struct MiniId {
-	MiniStr mStr;
+	BoyiaStr mStr;
 	LUint   mID;
 	MiniId* mNext;
 } MiniId;
@@ -206,13 +206,13 @@ typedef struct {
 static MiniIdLink* sIdLink = NULL;
 static LUint sIdCount = 0;
 LUint GenIdentByStr(const LInt8* str, LInt len) {
-	MiniStr strId;
+	BoyiaStr strId;
 	strId.mPtr = (LInt8*)str;
 	strId.mLen = len;
 	return GenIdentifier(&strId);
 }
 
-LUint GenIdentifier(MiniStr* str) {
+LUint GenIdentifier(BoyiaStr* str) {
     if (!sIdLink) {
     	sIdLink = new MiniIdLink;
     	sIdLink->mBegin = NULL;

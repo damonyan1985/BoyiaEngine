@@ -3,7 +3,7 @@
 
 #include "JSView.h"
 
-namespace mjs {
+namespace boyia {
 class JSInputView : public JSView {
 public:
 	JSInputView(yanbo::HtmlView* item);

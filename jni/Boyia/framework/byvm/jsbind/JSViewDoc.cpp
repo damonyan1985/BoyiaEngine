@@ -7,7 +7,7 @@
 #include "JSViewGroup.h"
 #include "JSInputView.h"
 
-namespace mjs
+namespace boyia
 {
 using namespace yanbo;
 

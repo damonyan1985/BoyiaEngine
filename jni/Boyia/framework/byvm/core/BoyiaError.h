@@ -1,7 +1,7 @@
 #include "PlatformLib.h"
 
-#ifndef MiniError_h
-#define MiniError_h
+#ifndef BoyiaError_h
+#define BoyiaError_h
 
 enum ErrorMsg {
 	SYNTAX,

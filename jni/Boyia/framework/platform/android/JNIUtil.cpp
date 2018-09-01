@@ -1,6 +1,6 @@
 #include "JNIUtil.h"
 #include "AutoObject.h"
-#include "MiniLib.h"
+#include "BoyiaLib.h"
 #include "KVector.h"
 #include <pthread.h>
 #include "JSView.h"
@@ -42,9 +42,9 @@ void JNIUtil::callStaticMethod(
 			const char* signature,
 			LInt signLen,
 			const char retType,
-			MiniValue* stack,
+			BoyiaValue* stack,
 			LInt argsLen,
-            MiniValue* result)
+            BoyiaValue* result)
 {
 	JNIEnv *env = getEnv();
 	jvalue *args = NULL;
@@ -54,17 +54,17 @@ void JNIUtil::callStaticMethod(
 		args = new jvalue[argsLen];
 		LInt idx = 0;
 		for (; idx < argsLen; idx++) {
-			MiniValue* val = stack + idx;
-			if (val->mValueType == M_STRING) {
+			BoyiaValue* val = stack + idx;
+			if (val->mValueType == BY_STRING) {
 				char* pStr = convertMStr2Str(&val->mValue.mStrVal);
 				jstring str = util::strToJstring(env, pStr);
 				args[idx].l = str;
 				delete[] pStr;
 				strVector.addElement(str);
-			} else if (val->mValueType == M_INT) {
+			} else if (val->mValueType == BY_INT) {
 				args[idx].i = val->mValue.mIntVal;
-			} else if (val->mValueType == M_NAVCLASS) {
-                mjs::JSView* view = (mjs::JSView*) val->mValue.mIntVal;
+			} else if (val->mValueType == BY_NAVCLASS) {
+                boyia::JSView* view = (boyia::JSView*) val->mValue.mIntVal;
                 args[idx].i = (LInt)view->item();
 			}
 		}
@@ -103,7 +103,7 @@ void JNIUtil::callStaticMethod(
 
 	        	String strResult;
 	        	util::jstringTostr(methodInfo.env, str, strResult);
-	        	result->mValueType = M_STRING;
+	        	result->mValueType = BY_STRING;
 	        	result->mValue.mStrVal.mPtr = (LInt8*) strResult.GetBuffer();
 	        	result->mValue.mStrVal.mLen = strResult.GetLength();
 	        	strResult.ReleaseBuffer();
@@ -114,7 +114,7 @@ void JNIUtil::callStaticMethod(
 	    {
 			if (getStaticMethodInfo(methodInfo, className, method, signature))
 			{
-				result->mValueType = M_INT;
+				result->mValueType = BY_INT;
 				result->mValue.mIntVal = methodInfo.env->CallStaticIntMethodA(
 						methodInfo.classID,
 						methodInfo.methodID,
