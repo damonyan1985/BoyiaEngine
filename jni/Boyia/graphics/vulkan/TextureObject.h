@@ -1,6 +1,5 @@
-//                  Copyright (c) 2016-2017 QUALCOMM Technologies Inc.
-//                              All Rights Reserved.
-#pragma once
+#ifndef TextureObject_h
+#define TextureObject_h
 
 #include <assert.h>
 #include <stdlib.h>
@@ -16,7 +15,7 @@ public:
     ImageViewObject() : mWidth(0), mHeight(0), mSample(nullptr), mImage(VK_NULL_HANDLE), mMem(VK_NULL_HANDLE), mView(VK_NULL_HANDLE) {}
     ~ImageViewObject();
 
-    static bool CreateImageView(VkFramework* sample, uint32_t width, uint32_t height, VkFormat format, VkImageAspectFlags aspect,
+    static bool CreateImageView(VkFramework* framework, uint32_t width, uint32_t height, VkFormat format, VkImageAspectFlags aspect,
                                 VkImageLayout layout, VkImageUsageFlags usage, VkFlags memoryRequirmentFlags, ImageViewObject* textureObject);
 
     void SetLayoutImmediate(VkImageAspectFlags aspect, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -73,7 +72,7 @@ protected:
     VkImageLayout mImageLayout;
     VkDeviceMemory mMem;
     VkImageView mView;
-    VkFramework* mSample;
+    VkFramework* mFramework;
 
     VkFormat mFormat;
     uint32_t mWidth;

@@ -1,16 +1,12 @@
-//                  Copyright (c) 2016 QUALCOMM Technologies Inc.
-//                              All Rights Reserved.
+#ifndef VkFramework_h
+#define VkFramework_h
 
-#pragma once
 
 // This definition enables the Android extensions
 #define VK_USE_PLATFORM_ANDROID_KHR
-
-// This definition allows prototypes of Vulkan API functions,
-// rather than dynamically loading entrypoints to the API manually.
 #define VK_PROTOTYPES
 
-#define ANDROID_TAG "VkSample"
+#define ANDROID_TAG "VkFramework"
 
 #include "PlatformLib.h"
 #include "native_app_glue/android_native_app_glue.h"

@@ -1,5 +1,3 @@
-//                  Copyright (c) 2016-2017 QUALCOMM Technologies Inc.
-//                              All Rights Reserved.
 #ifdef MINI_VULKAN
 
 #include <stdio.h>

@@ -1,6 +1,5 @@
-//                  Copyright (c) 2016-2017 QUALCOMM Technologies Inc.
-//                              All Rights Reserved.
-#pragma once
+#ifndef VkFramework_h
+#define VkFramework_h
 
 #include <assert.h>
 #include <stdlib.h>

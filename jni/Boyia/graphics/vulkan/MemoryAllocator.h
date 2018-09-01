@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MemoryAllocator_h
+#define MemoryAllocator_h
 
 // This definition enables the Android extensions
 #define VK_USE_PLATFORM_ANDROID_KHR
@@ -22,7 +23,7 @@ public:
     void SetSample(VkFramework* pSampleFramework){ mSampleFramework = pSampleFramework;};
 
 private:
-    VkFramework* mSampleFramework;
+    VkFramework* mFramework;
 
     static const int32_t NUM_MEMORY_TYPES = 32;
     static const int32_t ALLOCATION_SIZE = 1024 * 1024 * 50;

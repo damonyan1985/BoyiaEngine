@@ -1,5 +1,3 @@
-//                  Copyright (c) 2016-2017 QUALCOMM Technologies Inc.
-//                              All Rights Reserved.
 #ifdef MINI_VULKAN
 
 #include "VkFramework.h"
@@ -10,23 +8,23 @@
 
 bool ImageViewObject::Destroy()
 {
-    if (!mSample)
+    if (!mFramework)
     {
         //Uninitialized
         return false;
     }
 
-    if (!mSample->IsInitialized())
+    if (!mFramework->IsInitialized())
     {
-        //If the sample has already been torn down, bail out.
+        //If the framework has already been torn down, bail out.
         return false;
     }
 
-    vkDestroyImage(mSample->GetDevice(), mImage, nullptr);
-    vkFreeMemory(mSample->GetDevice(), mMem, nullptr);
-    vkDestroyImageView(mSample->GetDevice(), mView, nullptr);
+    vkDestroyImage(mFramework->GetDevice(), mImage, nullptr);
+    vkFreeMemory(mFramework->GetDevice(), mMem, nullptr);
+    vkDestroyImageView(mFramework->GetDevice(), mView, nullptr);
 
-    mSample = nullptr;
+    mFramework = nullptr;
     return true;
 }
 
@@ -45,7 +43,7 @@ void ImageViewObject::SetLayoutImmediate(VkImageAspectFlags aspect, VkImageLayou
 
     // We use a shared command buffer for setup operations to change layout.
     // Reset the setup command buffer
-    vkResetCommandBuffer(mSample->GetSetupCommandBuffer(), 0);
+    vkResetCommandBuffer(mFramework->GetSetupCommandBuffer(), 0);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo = {};
     commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -64,17 +62,17 @@ void ImageViewObject::SetLayoutImmediate(VkImageAspectFlags aspect, VkImageLayou
     setupCmdsBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
     // Begin recording to the command buffer.
-    vkBeginCommandBuffer(mSample->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
+    vkBeginCommandBuffer(mFramework->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
 
-    mSample->SetImageLayout(mImage, mSample->GetSetupCommandBuffer(), aspect, oldLayout, newLayout, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,0,0);
+    mFramework->SetImageLayout(mImage, mFramework->GetSetupCommandBuffer(), aspect, oldLayout, newLayout, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,0,0);
 
-    //SetLayout(mSample->GetSetupCommandBuffer(), aspect, oldLayout, newLayout );
+    //SetLayout(mFramework->GetSetupCommandBuffer(), aspect, oldLayout, newLayout );
 
     // We are finished recording operations.
-    vkEndCommandBuffer(mSample->GetSetupCommandBuffer());
+    vkEndCommandBuffer(mFramework->GetSetupCommandBuffer());
 
     VkCommandBuffer buffers[1];
-    buffers[0] = mSample->GetSetupCommandBuffer();
+    buffers[0] = mFramework->GetSetupCommandBuffer();
 
     VkSubmitInfo submit_info;
     submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -88,29 +86,29 @@ void ImageViewObject::SetLayoutImmediate(VkImageAspectFlags aspect, VkImageLayou
     submit_info.pSignalSemaphores = NULL;
 
     // Submit to our shared greaphics queue.
-    err = vkQueueSubmit(mSample->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
+    err = vkQueueSubmit(mFramework->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
     assert(!err);
 
     // Wait for the queue to become idle.
-    err = vkQueueWaitIdle(mSample->GetGraphicsQueue());
+    err = vkQueueWaitIdle(mFramework->GetGraphicsQueue());
     assert(!err);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool ImageViewObject::CreateImageView(VkFramework* sample, uint32_t width, uint32_t height, VkFormat format, VkImageAspectFlags aspect,
+bool ImageViewObject::CreateImageView(VkFramework* framework, uint32_t width, uint32_t height, VkFormat format, VkImageAspectFlags aspect,
                                       VkImageLayout layout, VkImageUsageFlags usage, VkFlags memoryRequirementFlags, ImageViewObject* imageViewObj)
 {
     VkResult   err;
     bool   pass;
 
-    if (!imageViewObj || !sample )
+    if (!imageViewObj || !framework )
     {
         return false;
     }
 
     imageViewObj->mFormat = format;
-    imageViewObj->mSample = sample;
+    imageViewObj->mFramework = framework;
     imageViewObj->mWidth = width;
     imageViewObj->mHeight = height;
     imageViewObj->mImageLayout = layout;
@@ -138,21 +136,21 @@ bool ImageViewObject::CreateImageView(VkFramework* sample, uint32_t width, uint3
 
     VkMemoryRequirements mem_reqs;
 
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, NULL, &imageViewObj->mImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, NULL, &imageViewObj->mImage);
     assert(!err);
 
-    vkGetImageMemoryRequirements(sample->GetDevice(), imageViewObj->mImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), imageViewObj->mImage, &mem_reqs);
 
     memoryAllocateInfo.allocationSize  = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, memoryRequirementFlags, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, memoryRequirementFlags, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
     // allocate memory
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &imageViewObj->mMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &imageViewObj->mMem);
     assert(!err);
 
     // bind memory
-    err = vkBindImageMemory(sample->GetDevice(), imageViewObj->mImage, imageViewObj->mMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), imageViewObj->mImage, imageViewObj->mMem, 0);
     assert(!err);
 
 
@@ -177,7 +175,7 @@ bool ImageViewObject::CreateImageView(VkFramework* sample, uint32_t width, uint3
     viewCreateInfo.subresourceRange.layerCount = 1;
     viewCreateInfo.flags = 0;
 
-    err = vkCreateImageView(sample->GetDevice(), &viewCreateInfo, NULL, &imageViewObj->mView);
+    err = vkCreateImageView(framework->GetDevice(), &viewCreateInfo, NULL, &imageViewObj->mView);
     assert(!err);
 
     // All relevant objects created
@@ -194,7 +192,7 @@ uint32_t TextureObject::mnStreamBufferSize;
 
 TextureObject::TextureObject()
 {
-    mSample         = NULL;
+    mFramework         = NULL;
     mImage          = VK_NULL_HANDLE;
     mImageLayout    = VK_IMAGE_LAYOUT_UNDEFINED;
     mMem            = VK_NULL_HANDLE;
@@ -215,19 +213,19 @@ TextureObject::~TextureObject()
 
 bool TextureObject::Destroy()
 {
-    if (!mSample)
+    if (!mFramework)
     {
         //Uninitialized texture, bail out
         return false;
     }
 
-    if (!mSample->IsInitialized())
+    if (!mFramework->IsInitialized())
     {
-        //If the sample has already been torn down, bail out.
+        //If the framework has already been torn down, bail out.
         return false;
     }
 
-    vkDestroySampler(mSample->GetDevice(), mSampler, nullptr);
+    vkDestroySampler(mFramework->GetDevice(), mSampler, nullptr);
 
     return ImageViewObject::Destroy();;
 }
@@ -478,7 +476,7 @@ bool ConvertFormat(uint32_t internalFormat, VkFormat &textureFormat)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_t* dataInMemory, uint32_t filesize, TextureObject* pTextureObject)
+TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* framework, const uint8_t* dataInMemory, uint32_t filesize, TextureObject* pTextureObject)
 {
     mpStreamBuffer = dataInMemory;
     mnStreamBufferSize = filesize;
@@ -533,7 +531,7 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     memoryAllocateInfo.memoryTypeIndex  = 0;
 
     // Reset the setup command buffer
-    vkResetCommandBuffer(sample->GetSetupCommandBuffer(), 0);
+    vkResetCommandBuffer(framework->GetSetupCommandBuffer(), 0);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo = {};
     commandBufferInheritanceInfo.sType                  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -552,7 +550,7 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     setupCmdsBeginInfo.pInheritanceInfo                 = &commandBufferInheritanceInfo;
 
     // Begin recording to the command buffer.
-    vkBeginCommandBuffer(sample->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
+    vkBeginCommandBuffer(framework->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
 
     // Per miplevel values
     VkImage mipImages[pTextureObject->mNumMipLevels];
@@ -615,37 +613,37 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
         imageCreateInfo.mipLevels = 1;
 
         // Create the mip level image
-        err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, NULL, &mipImages[nMipLevel]);
+        err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, NULL, &mipImages[nMipLevel]);
         assert(!err);
 
-        vkGetImageMemoryRequirements(sample->GetDevice(), mipImages[nMipLevel], &mem_reqs);
+        vkGetImageMemoryRequirements(framework->GetDevice(), mipImages[nMipLevel], &mem_reqs);
 
         memoryAllocateInfo.allocationSize   = mem_reqs.size;
-        pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
+        pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
         assert(pass);
 
         // allocate memory
-        err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &mipMemory[nMipLevel]);
+        err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &mipMemory[nMipLevel]);
         assert(!err);
 
         // bind memory
-        err = vkBindImageMemory(sample->GetDevice(), mipImages[nMipLevel], mipMemory[nMipLevel], 0);
+        err = vkBindImageMemory(framework->GetDevice(), mipImages[nMipLevel], mipMemory[nMipLevel], 0);
         assert(!err);
 
         // copy image data to the mip memory
         VkImageSubresource subRes = {};
         subRes.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         VkSubresourceLayout subResLayout;
-        vkGetImageSubresourceLayout(sample->GetDevice(), mipImages[nMipLevel], &subRes, &subResLayout);
+        vkGetImageSubresourceLayout(framework->GetDevice(), mipImages[nMipLevel], &subRes, &subResLayout);
         void *data;
-        err = vkMapMemory(sample->GetDevice(), mipMemory[nMipLevel], 0, mem_reqs.size, 0, &data);
+        err = vkMapMemory(framework->GetDevice(), mipMemory[nMipLevel], 0, mem_reqs.size, 0, &data);
         assert(!err);
         memcpy(data, pData, mem_reqs.size);
-        vkUnmapMemory(sample->GetDevice(), mipMemory[nMipLevel]);
+        vkUnmapMemory(framework->GetDevice(), mipMemory[nMipLevel]);
 
         // Change the mip image layout to transfer src
-        sample->SetImageLayout(mipImages[nMipLevel],
-                               sample->GetSetupCommandBuffer(),
+        framework->SetImageLayout(mipImages[nMipLevel],
+                               framework->GetSetupCommandBuffer(),
                                VK_IMAGE_ASPECT_COLOR_BIT,
                                VK_IMAGE_LAYOUT_PREINITIALIZED,
                                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
@@ -662,28 +660,28 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     imageCreateInfo.extent = {pTextureObject->mWidth, pTextureObject->mHeight, 1 };
 
     // Create the image
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, nullptr, &pTextureObject->mImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, nullptr, &pTextureObject->mImage);
     assert(!err);
 
     // Get the memory requirements
-    vkGetImageMemoryRequirements(sample->GetDevice(), pTextureObject->mImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), pTextureObject->mImage, &mem_reqs);
 
     // Get the memory type
     memoryAllocateInfo.allocationSize   = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
     // allocate memory
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &pTextureObject->mMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &pTextureObject->mMem);
     assert(!err);
 
     // bind memory
-    err = vkBindImageMemory(sample->GetDevice(), pTextureObject->mImage, pTextureObject->mMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), pTextureObject->mImage, pTextureObject->mMem, 0);
     assert(!err);
 
     // Change image layout to Transfer_DST so it can be filled.
-    sample->SetImageLayout(pTextureObject->mImage,
-                           sample->GetSetupCommandBuffer(),
+    framework->SetImageLayout(pTextureObject->mImage,
+                           framework->GetSetupCommandBuffer(),
                            VK_IMAGE_ASPECT_COLOR_BIT,
                            VK_IMAGE_LAYOUT_PREINITIALIZED,
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -715,15 +713,15 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
         region.extent.depth                     = 1;
 
         // Put image copy for this mip level into command buffer
-        vkCmdCopyImage(sample->GetSetupCommandBuffer(),
+        vkCmdCopyImage(framework->GetSetupCommandBuffer(),
                        mipImages[nMipLevel],
                        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                        pTextureObject->mImage,
                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
     }
 
-    sample->SetImageLayout(pTextureObject->mImage,
-                           sample->GetSetupCommandBuffer(),
+    framework->SetImageLayout(pTextureObject->mImage,
+                           framework->GetSetupCommandBuffer(),
                            VK_IMAGE_ASPECT_COLOR_BIT,
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -731,11 +729,11 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
                            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, pTextureObject->mNumMipLevels);
 
     // We are finished recording operations.
-    vkEndCommandBuffer(sample->GetSetupCommandBuffer());
+    vkEndCommandBuffer(framework->GetSetupCommandBuffer());
 
     // Prepare to submit the command buffer
     VkCommandBuffer buffers[1];
-    buffers[0] = sample->GetSetupCommandBuffer();
+    buffers[0] = framework->GetSetupCommandBuffer();
 
     VkSubmitInfo submit_info;
     submit_info.sType                   = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -749,18 +747,18 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     submit_info.pSignalSemaphores       = NULL;
 
     // Submit to our shared graphics queue.
-    err = vkQueueSubmit(sample->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
+    err = vkQueueSubmit(framework->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
     assert(!err);
 
     // Wait for the queue to become idle.
-    err = vkQueueWaitIdle(sample->GetGraphicsQueue());
+    err = vkQueueWaitIdle(framework->GetGraphicsQueue());
     assert(!err);
 
     // Cleanup the mip structures
     for (uint32_t nMipLevel = 0; nMipLevel <pTextureObject->mNumMipLevels; nMipLevel++)
     {
-        vkDestroyImage(sample->GetDevice(), mipImages[nMipLevel], nullptr);
-        vkFreeMemory(  sample->GetDevice(), mipMemory[nMipLevel], nullptr);
+        vkDestroyImage(framework->GetDevice(), mipImages[nMipLevel], nullptr);
+        vkFreeMemory(  framework->GetDevice(), mipMemory[nMipLevel], nullptr);
     }
 
     // Now create a sampler for this image, with required details
@@ -782,7 +780,7 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     samplerCreateInfo.borderColor               = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerCreateInfo.unnormalizedCoordinates   = VK_FALSE;
 
-    err = vkCreateSampler(sample->GetDevice(), &samplerCreateInfo, NULL, &pTextureObject->mSampler);
+    err = vkCreateSampler(framework->GetDevice(), &samplerCreateInfo, NULL, &pTextureObject->mSampler);
     assert(!err);
 
     // Create the image view
@@ -804,7 +802,7 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
     viewCreateInfo.flags                            = 0;
     viewCreateInfo.image                            = pTextureObject->mImage;
 
-    err = vkCreateImageView(sample->GetDevice(), &viewCreateInfo, NULL, &pTextureObject->mView);
+    err = vkCreateImageView(framework->GetDevice(), &viewCreateInfo, NULL, &pTextureObject->mView);
     assert(!err);
 
     // All relevant objects created
@@ -813,15 +811,15 @@ TKTXErrorCode TextureObject::LoadKTXFromMemory(VkFramework* sample, const uint8_
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureObject::FromKTXFile(VkFramework* sample, const char* filename, TextureObject* pTextureObject)
+bool TextureObject::FromKTXFile(VkFramework* framework, const char* filename, TextureObject* pTextureObject)
 {
-    if (!pTextureObject || !sample || !filename)
+    if (!pTextureObject || !framework || !filename)
     {
         return false;
     }
 
     // Get the image file from the Android asset manager
-    AAsset *file = AAssetManager_open(sample->GetAssetManager(), filename, AASSET_MODE_BUFFER);
+    AAsset *file = AAssetManager_open(framework->GetAssetManager(), filename, AASSET_MODE_BUFFER);
     assert(file);
 
     const uint8_t *file_buffer = (const uint8_t *) AAsset_getBuffer(file);
@@ -829,7 +827,7 @@ bool TextureObject::FromKTXFile(VkFramework* sample, const char* filename, Textu
 
     const uint32_t file_size = AAsset_getLength(file);
 
-    TKTXErrorCode error = LoadKTXFromMemory(sample, file_buffer, file_size, pTextureObject);
+    TKTXErrorCode error = LoadKTXFromMemory(framework, file_buffer, file_size, pTextureObject);
     AAsset_close(file);
 
     return error == KTX_SUCCESS;
@@ -837,15 +835,15 @@ bool TextureObject::FromKTXFile(VkFramework* sample, const char* filename, Textu
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureObject::FromTGAFile(VkFramework* sample, const char* filename, TextureObject* textureObject)
+bool TextureObject::FromTGAFile(VkFramework* framework, const char* filename, TextureObject* textureObject)
 {
-    if (!textureObject || !sample || !filename)
+    if (!textureObject || !framework || !filename)
     {
         return false;
     }
 
     // Get the image file from the Android asset manager
-    AAsset *file = AAssetManager_open(sample->GetAssetManager(), filename, AASSET_MODE_BUFFER);
+    AAsset *file = AAssetManager_open(framework->GetAssetManager(), filename, AASSET_MODE_BUFFER);
     assert(file);
 
     const uint8_t *file_buffer = (const uint8_t *) AAsset_getBuffer(file);
@@ -854,7 +852,7 @@ bool TextureObject::FromTGAFile(VkFramework* sample, const char* filename, Textu
     uint32_t *imageData = (uint32_t *) LoadTGAFromMemory(file_buffer, &textureObject->mWidth,&textureObject->mHeight, &textureObject->mFormat);
     AAsset_close(file);
 
-    bool ret = FromTGAImageData(sample, textureObject, imageData);
+    bool ret = FromTGAImageData(framework, textureObject, imageData);
     delete imageData;
 
     return ret;
@@ -862,14 +860,14 @@ bool TextureObject::FromTGAFile(VkFramework* sample, const char* filename, Textu
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *textureObject, uint32_t *imageData)
+bool TextureObject::FromTGAImageData(VkFramework *framework, TextureObject *textureObject, uint32_t *imageData)
 {
     // Only one format is supported here.
     assert(textureObject->mFormat == VK_FORMAT_R8G8B8A8_UNORM);
     VkResult   err;
     bool   pass;
 
-    textureObject->mSample = sample;
+    textureObject->mFramework = framework;
 
     // Initialize the CreateInfo structure
     VkImageCreateInfo imageCreateInfo = {};
@@ -899,7 +897,7 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     memoryAllocateInfo.memoryTypeIndex  = 0;
 
     // Reset the setup command buffer
-    vkResetCommandBuffer(sample->GetSetupCommandBuffer(), 0);
+    vkResetCommandBuffer(framework->GetSetupCommandBuffer(), 0);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo = {};
     commandBufferInheritanceInfo.sType                  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -918,7 +916,7 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     setupCmdsBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
     // Begin recording to the command buffer.
-    vkBeginCommandBuffer(sample->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
+    vkBeginCommandBuffer(framework->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
 
     // For now, just supporting a single miplevel...
     int numMipLevels = 1;
@@ -938,37 +936,37 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
         imageCreateInfo.extent.depth  = 1;
 
         // Create the mip level image
-        err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, NULL, &mipImages[level]);
+        err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, NULL, &mipImages[level]);
         assert(!err);
 
-        vkGetImageMemoryRequirements(sample->GetDevice(), mipImages[level], &mem_reqs);
+        vkGetImageMemoryRequirements(framework->GetDevice(), mipImages[level], &mem_reqs);
 
         memoryAllocateInfo.allocationSize   = mem_reqs.size;
-        pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
+        pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
         assert(pass);
 
         // allocate memory
-        err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &mipMemory[level]);
+        err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &mipMemory[level]);
         assert(!err);
 
         // bind memory
-        err = vkBindImageMemory(sample->GetDevice(), mipImages[level], mipMemory[level], 0);
+        err = vkBindImageMemory(framework->GetDevice(), mipImages[level], mipMemory[level], 0);
         assert(!err);
 
         // copy image data to the mip memory
         VkImageSubresource subRes = {};
         subRes.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         VkSubresourceLayout subResLayout;
-        vkGetImageSubresourceLayout(sample->GetDevice(), mipImages[level], &subRes, &subResLayout);
+        vkGetImageSubresourceLayout(framework->GetDevice(), mipImages[level], &subRes, &subResLayout);
         void *data;
-        err = vkMapMemory(sample->GetDevice(), mipMemory[level], 0, mem_reqs.size, 0, &data);
+        err = vkMapMemory(framework->GetDevice(), mipMemory[level], 0, mem_reqs.size, 0, &data);
         assert(!err);
         memcpy(data, imageData, mem_reqs.size);
-        vkUnmapMemory(sample->GetDevice(), mipMemory[level]);
+        vkUnmapMemory(framework->GetDevice(), mipMemory[level]);
 
         // Change the mip image layout to transfer src
-        sample->SetImageLayout(mipImages[level],
-                               sample->GetSetupCommandBuffer(),
+        framework->SetImageLayout(mipImages[level],
+                               framework->GetSetupCommandBuffer(),
                                VK_IMAGE_ASPECT_COLOR_BIT,
                                VK_IMAGE_LAYOUT_PREINITIALIZED,
                                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
@@ -983,28 +981,28 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     imageCreateInfo.extent = {textureObject->mWidth, textureObject->mHeight, 1 };
 
     // Create the image
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, nullptr, &textureObject->mImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, nullptr, &textureObject->mImage);
     assert(!err);
 
     // Get the memory requirements
-    vkGetImageMemoryRequirements(sample->GetDevice(), textureObject->mImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), textureObject->mImage, &mem_reqs);
 
     // Get the memory type
     memoryAllocateInfo.allocationSize   = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
     // allocate memory
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
     assert(!err);
 
     // bind memory
-    err = vkBindImageMemory(sample->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
     assert(!err);
 
     // Change image layout to Transfer_DST so it can be filled.
-    sample->SetImageLayout(textureObject->mImage,
-                           sample->GetSetupCommandBuffer(),
+    framework->SetImageLayout(textureObject->mImage,
+                           framework->GetSetupCommandBuffer(),
                            VK_IMAGE_ASPECT_COLOR_BIT,
                            VK_IMAGE_LAYOUT_PREINITIALIZED,
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -1032,15 +1030,15 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
         region.extent.depth                     = 1;
 
         // Put image copy for this mip level into command buffer
-        vkCmdCopyImage(sample->GetSetupCommandBuffer(),
+        vkCmdCopyImage(framework->GetSetupCommandBuffer(),
                        mipImages[level],
                        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                        textureObject->mImage,
                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
     }
 
-    sample->SetImageLayout(textureObject->mImage,
-                           sample->GetSetupCommandBuffer(),
+    framework->SetImageLayout(textureObject->mImage,
+                           framework->GetSetupCommandBuffer(),
                            VK_IMAGE_ASPECT_COLOR_BIT,
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -1048,11 +1046,11 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
                            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, numMipLevels);
 
     // We are finished recording operations.
-    vkEndCommandBuffer(sample->GetSetupCommandBuffer());
+    vkEndCommandBuffer(framework->GetSetupCommandBuffer());
 
     // Prepare to submit the command buffer
     VkCommandBuffer buffers[1];
-    buffers[0] = sample->GetSetupCommandBuffer();
+    buffers[0] = framework->GetSetupCommandBuffer();
 
     VkSubmitInfo submit_info;
     submit_info.sType                   = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -1066,18 +1064,18 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     submit_info.pSignalSemaphores       = NULL;
 
     // Submit to our shared graphics queue.
-    err = vkQueueSubmit(sample->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
+    err = vkQueueSubmit(framework->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
     assert(!err);
 
     // Wait for the queue to become idle.
-    err = vkQueueWaitIdle(sample->GetGraphicsQueue());
+    err = vkQueueWaitIdle(framework->GetGraphicsQueue());
     assert(!err);
 
     // Cleanup the mip structures
     for (uint32_t level = 0; level < numMipLevels; level++)
     {
-        vkDestroyImage(sample->GetDevice(), mipImages[level], nullptr);
-        vkFreeMemory(  sample->GetDevice(), mipMemory[level], nullptr);
+        vkDestroyImage(framework->GetDevice(), mipImages[level], nullptr);
+        vkFreeMemory(  framework->GetDevice(), mipMemory[level], nullptr);
     }
 
     // Now create a sampler for this image, with required details
@@ -1099,7 +1097,7 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     samplerCreateInfo.borderColor               = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerCreateInfo.unnormalizedCoordinates   = VK_FALSE;
 
-    err = vkCreateSampler(sample->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
+    err = vkCreateSampler(framework->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
     assert(!err);
 
     // Create the image view
@@ -1121,7 +1119,7 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
     viewCreateInfo.flags                            = 0;
     viewCreateInfo.image                            = textureObject->mImage;
 
-    err = vkCreateImageView(sample->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
+    err = vkCreateImageView(framework->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
     assert(!err);
 
     // All relevant objects created
@@ -1130,15 +1128,15 @@ bool TextureObject::FromTGAImageData(VkFramework *sample, TextureObject *texture
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, TextureObject* textureObject)
+bool TextureObject::FromASTCFile(VkFramework* framework, const char* filename, TextureObject* textureObject)
 {
-    if (!textureObject || !sample || !filename)
+    if (!textureObject || !framework || !filename)
     {
         return false;
     }
 
     // Get the image file from the Android asset manager
-    AAsset* file = AAssetManager_open(sample->GetAssetManager(), filename, AASSET_MODE_BUFFER);
+    AAsset* file = AAssetManager_open(framework->GetAssetManager(), filename, AASSET_MODE_BUFFER);
     assert(file);
 
     uint32_t file_buffer_size = AAsset_getLength(file);
@@ -1192,7 +1190,7 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     VkResult   err;
     bool   pass;
 
-    textureObject->mSample = sample;
+    textureObject->mFramework = framework;
 
 
     // Initialize the Create Info structure
@@ -1222,30 +1220,30 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
 
     // Create a source image that will help us load the texture
     VkImage srcImage;
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, NULL, &srcImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, NULL, &srcImage);
     assert(!err);
 
     // Get the memory requirements for this source image
     VkMemoryRequirements mem_reqs;
-    vkGetImageMemoryRequirements(sample->GetDevice(), srcImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), srcImage, &mem_reqs);
     memoryAllocateInfo.allocationSize  = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
     // Allocate and bind the memory for the source image
     VkDeviceMemory srcMem;
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &srcMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &srcMem);
     assert(!err);
-    err = vkBindImageMemory(sample->GetDevice(), srcImage, srcMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), srcImage, srcMem, 0);
     assert(!err);
 
     // Map the memory and copy to it, and then unmap
     void *data;
-    err = vkMapMemory(sample->GetDevice(), srcMem, 0, memoryAllocateInfo.allocationSize, 0, &data);
+    err = vkMapMemory(framework->GetDevice(), srcMem, 0, memoryAllocateInfo.allocationSize, 0, &data);
     assert(!err);
     assert(memoryAllocateInfo.allocationSize >= astc_data_size );
     memcpy( data, astc_data, astc_data_size);
-    vkUnmapMemory(sample->GetDevice(), srcMem);
+    vkUnmapMemory(framework->GetDevice(), srcMem);
 
     // Setup texture as blit (destination) target ( and also to be subsequently used as a sampled texture
     imageCreateInfo.tiling      = VK_IMAGE_TILING_OPTIMAL;
@@ -1254,23 +1252,23 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     imageCreateInfo.extent = {textureObject->mWidth, textureObject->mHeight, 1 };
 
     // Create the image
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, nullptr, &textureObject->mImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, nullptr, &textureObject->mImage);
     assert(!err);
 
     // Get the memory requirements for the image
-    vkGetImageMemoryRequirements(sample->GetDevice(), textureObject->mImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), textureObject->mImage, &mem_reqs);
     memoryAllocateInfo.allocationSize   = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
     // allocate and bind memory for the image
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
     assert(!err);
-    err = vkBindImageMemory(sample->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
     assert(!err);
 
     // Reset the setup command buffer
-    vkResetCommandBuffer(sample->GetSetupCommandBuffer(), 0);
+    vkResetCommandBuffer(framework->GetSetupCommandBuffer(), 0);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo = {};
     commandBufferInheritanceInfo.sType                  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -1289,13 +1287,13 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     setupCmdsBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
     // Begin recording to the command buffer.
-    vkBeginCommandBuffer(sample->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
+    vkBeginCommandBuffer(framework->GetSetupCommandBuffer(), &setupCmdsBeginInfo);
 
     // Change image layout to Transfer_DST so it can be filled.
-    sample->SetImageLayout(textureObject->mImage, sample->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
+    framework->SetImageLayout(textureObject->mImage, framework->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
 
     // Change source image layout to VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL.
-    sample->SetImageLayout(srcImage, sample->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
+    framework->SetImageLayout(srcImage, framework->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
 
     // Create a region for the image blit
     VkImageCopy region = {};
@@ -1315,17 +1313,17 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     region.extent.depth                     = 1;
 
     // Put image copy into command buffer
-    vkCmdCopyImage(sample->GetSetupCommandBuffer(), srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, textureObject->mImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    vkCmdCopyImage(framework->GetSetupCommandBuffer(), srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, textureObject->mImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
     // Change the layout of the image to shader read only
-    sample->SetImageLayout(textureObject->mImage, sample->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
+    framework->SetImageLayout(textureObject->mImage, framework->GetSetupCommandBuffer(), VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 1);
 
     // We are finished recording operation
-    vkEndCommandBuffer(sample->GetSetupCommandBuffer());
+    vkEndCommandBuffer(framework->GetSetupCommandBuffer());
 
     // Prepare to submit the command buffer
     VkCommandBuffer buffers[1];
-    buffers[0] = sample->GetSetupCommandBuffer();
+    buffers[0] = framework->GetSetupCommandBuffer();
 
     VkSubmitInfo submit_info;
     submit_info.sType                   = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -1339,16 +1337,16 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     submit_info.pSignalSemaphores       = NULL;
 
     // Submit to our shared graphics queue.
-    err = vkQueueSubmit(sample->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
+    err = vkQueueSubmit(framework->GetGraphicsQueue(), 1, &submit_info, VK_NULL_HANDLE);
     assert(!err);
 
     // Wait for the queue to become idle.
-    err = vkQueueWaitIdle(sample->GetGraphicsQueue());
+    err = vkQueueWaitIdle(framework->GetGraphicsQueue());
     assert(!err);
 
     // Cleanup
-    vkDestroyImage(sample->GetDevice(), srcImage, nullptr);
-    vkFreeMemory(sample->GetDevice(), srcMem, nullptr);
+    vkDestroyImage(framework->GetDevice(), srcImage, nullptr);
+    vkFreeMemory(framework->GetDevice(), srcMem, nullptr);
 
     // Update the layout so we remember it..
     textureObject->mImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -1371,7 +1369,7 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     samplerCreateInfo.maxLod                        = 0.0f;
     samplerCreateInfo.borderColor                   = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerCreateInfo.unnormalizedCoordinates       = VK_FALSE;
-    err = vkCreateSampler(sample->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
+    err = vkCreateSampler(framework->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
     assert(!err);
 
     // Create the image view
@@ -1392,7 +1390,7 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     viewCreateInfo.flags                            = 0;
     viewCreateInfo.image                            = textureObject->mImage;
 
-    err = vkCreateImageView(sample->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
+    err = vkCreateImageView(framework->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
     assert(!err);
 
     AAsset_close(file);
@@ -1401,17 +1399,15 @@ bool TextureObject::FromASTCFile(VkFramework* sample, const char* filename, Text
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-bool TextureObject::CreateTexture(VkFramework* sample, uint32_t width, uint32_t height, VkFormat format, VkImageUsageFlags additionalUsage, TextureObject* textureObject)
+bool TextureObject::CreateTexture(VkFramework* framework, uint32_t width, uint32_t height, VkFormat format, VkImageUsageFlags additionalUsage, TextureObject* textureObject)
 {
-    if (!textureObject || !sample)
+    if (!textureObject || !framework)
     {
         return false;
     }
 
     textureObject->mFormat      = format;
-    textureObject->mSample      = sample;
+    textureObject->mFramework   = framework;
     textureObject->mWidth       = width;
     textureObject->mHeight      = height;
     textureObject->mImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -1419,7 +1415,7 @@ bool TextureObject::CreateTexture(VkFramework* sample, uint32_t width, uint32_t 
     VkResult   err;
     bool   pass;
 
-    textureObject->mSample = sample;
+    //textureObject->mFramework = framework;
 
     VkImageCreateInfo imageCreateInfo = {};
     imageCreateInfo.sType               = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -1444,19 +1440,19 @@ bool TextureObject::CreateTexture(VkFramework* sample, uint32_t width, uint32_t 
 
     VkMemoryRequirements mem_reqs;
 
-    err = vkCreateImage(sample->GetDevice(), &imageCreateInfo, NULL, &textureObject->mImage);
+    err = vkCreateImage(framework->GetDevice(), &imageCreateInfo, NULL, &textureObject->mImage);
     assert(!err);
 
-    vkGetImageMemoryRequirements(sample->GetDevice(), textureObject->mImage, &mem_reqs);
+    vkGetImageMemoryRequirements(framework->GetDevice(), textureObject->mImage, &mem_reqs);
 
     memoryAllocateInfo.allocationSize  = mem_reqs.size;
-    pass = sample->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
+    pass = framework->GetMemoryTypeFromProperties( mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memoryAllocateInfo.memoryTypeIndex);
     assert(pass);
 
-    err = vkAllocateMemory(sample->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
+    err = vkAllocateMemory(framework->GetDevice(), &memoryAllocateInfo, NULL, &textureObject->mMem);
     assert(!err);
 
-    err = vkBindImageMemory(sample->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
+    err = vkBindImageMemory(framework->GetDevice(), textureObject->mImage, textureObject->mMem, 0);
     assert(!err);
 
     // Change the layout of the image to shader read only
@@ -1481,7 +1477,7 @@ bool TextureObject::CreateTexture(VkFramework* sample, uint32_t width, uint32_t 
     samplerCreateInfo.borderColor               = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerCreateInfo.unnormalizedCoordinates   = VK_FALSE;
 
-    err = vkCreateSampler(sample->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
+    err = vkCreateSampler(framework->GetDevice(), &samplerCreateInfo, NULL, &textureObject->mSampler);
     assert(!err);
 
     // Create the image view
@@ -1502,7 +1498,7 @@ bool TextureObject::CreateTexture(VkFramework* sample, uint32_t width, uint32_t 
     viewCreateInfo.flags                            = 0;
     viewCreateInfo.image                            = textureObject->mImage;
 
-    err = vkCreateImageView(sample->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
+    err = vkCreateImageView(framework->GetDevice(), &viewCreateInfo, NULL, &textureObject->mView);
     assert(!err);
 
     // All relevant objects created
