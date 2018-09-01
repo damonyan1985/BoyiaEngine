@@ -1,8 +1,8 @@
 /*
 * Date: 2011-11-07
-* Modify: 2018-5-14
+* Modify: 2018-9-1
 * Author: yanbo
-* Description: MiniJS interpreter
+* Description: Boyia interpreter
 * Copyright (c) reserved
 * As a independent module for game engine
 */
