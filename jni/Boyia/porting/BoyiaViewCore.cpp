@@ -35,7 +35,6 @@ static void nativeSetGLSurface(
 		jobject obj,
 		jobject surface)
 {
-    //util::GLContext::instance()->setWindow(surface);
     yanbo::PaintThread::instance()->initContext(surface);
 }
 
