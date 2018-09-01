@@ -1,5 +1,5 @@
-#ifndef MiniJniOnLoad_h
-#define MiniJniOnLoad_h
+#ifndef BoyiaJniOnLoad_h
+#define BoyiaJniOnLoad_h
 
 #include "jni.h"
 #include "AutoObject.h"

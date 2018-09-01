@@ -1,5 +1,5 @@
-#ifndef MINI_VIEW_CORE_H
-#define MINI_VIEW_CORE_H
+#ifndef BoyiaViewCore_h
+#define BoyiaViewCore_h
 
 #include <jni.h>
 #include "UIView.h"
