@@ -1,15 +1,15 @@
-# BoyiaUIÒýÇæ
+# BoyiaUIå¼•æ“Ž
 
-## ±¾ÒýÇæÎª×ÔÖ÷ÑÐ·¢£¬Ö÷Òª½è¼ø²¿·ÖW3C±ê×¼Ë¼ÏëºÍCSSÑùÊ½Æ¥ÅäË¼Ïë
-## ±¾ÒýÇæÎª×ÔÖ÷Ô­´´
-## 1£¬°üº¬²¼¾ÖÒýÇæ£¬widget×é¼þÖ÷Òª×÷ÓÃÎª×é¼þ²¼¾ÖºÍ»æÖÆ
-## 2£¬°üº¬äÖÈ¾ÒýÇæ£¬painterÓÉopengl½øÐÐ¶ÀÁ¢Ïß³Ì»æÖÆ
-## 3£¬°üº¬½Å±¾ÒýÇæ£¬boyia½Å±¾ÐéÄâ»úÔËÐÐboyia½Å±¾À´´¦ÀíUI´´½¨ºÍÒµÎñÂß¼­
+## æœ¬å¼•æ“Žä¸ºè‡ªä¸»ç ”å‘ï¼Œä¸»è¦å€Ÿé‰´éƒ¨åˆ†W3Cæ ‡å‡†ç›¸å…³CSSæ ·å¼åŒ¹é…æ€æƒ³ä»¥åŠå¸ƒå±€æ€æƒ³
+## æœ¬å¼•æ“Žä¸ºè‡ªä¸»åŽŸåˆ›
+## 1ï¼ŒåŒ…å«å¸ƒå±€å¼•æ“Žï¼Œwidgetç»„ä»¶ä¸»è¦ä½œç”¨ä¸ºç»„ä»¶å¸ƒå±€å’Œç»˜åˆ¶
+## 2ï¼ŒåŒ…å«æ¸²æŸ“å¼•æ“Žï¼Œpainterç”±ç‹¬ç«‹çš„openglçº¿ç¨‹è¿›è¡Œç»˜åˆ¶
+## 3ï¼ŒåŒ…å«è„šæœ¬å¼•æ“Žï¼Œboyiaè„šæœ¬è™šæ‹Ÿæœºè¿è¡Œboyiaè„šæœ¬æ¥å¤„ç†UIåˆ›å»ºå’Œä¸šåŠ¡é€»è¾‘
 
-ÁªÏµ·½Ê½£º2512854007@qq.com¡£ÈçÓÐÒÉÎÊ¿ÉÒÔ¸øÎÒ·¢ÓÊ¼þ
+è”ç³»æ–¹å¼ï¼š2512854007@qq.comã€‚å¦‚æœ‰ç–‘é—®å¯ä»¥ç»™æˆ‘å‘é‚®ä»¶
 
 
-donate£º£¨´òÉÍÐÒ¿à·Ñ£©
+donateï¼šï¼ˆæ‰“èµå¹¸è‹¦è´¹ï¼‰
 ![image](https://github.com/damonyan1985/MiniYan/blob/master/Donate/zfbzf.jpg)
 ![image](https://github.com/damonyan1985/MiniYan/blob/master/Donate/wxzf.jpg)
 ![image](https://github.com/damonyan1985/MiniYan/blob/master/Donate/zfbhb.jpg)
