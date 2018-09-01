@@ -14,7 +14,7 @@
 
 #include "BoyiaOpcode.h"
 
-namespace mjs {
+namespace boyia {
 struct BoyiaRegister {
 	// 主要寄存器有16个
 	static const int kNumBoyiaRegisters = 16;

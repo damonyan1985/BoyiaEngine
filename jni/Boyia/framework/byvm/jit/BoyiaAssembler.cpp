@@ -2,7 +2,7 @@
 #include "BoyiaAsmUtils.h"
 #include <android/log.h>
 
-namespace mjs {
+namespace boyia {
 
 const int kMaxCodeSize = 100 * KB;
 const int kInstrSize = sizeof(Instr);

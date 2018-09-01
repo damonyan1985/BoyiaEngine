@@ -8,7 +8,7 @@
 // void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
 // int munmap(void *start, size_t length);
 
-namespace mjs {
+namespace boyia {
 #define ACCESS_MASM(masm) masm.
 #define __ ACCESS_MASM(masm)
 

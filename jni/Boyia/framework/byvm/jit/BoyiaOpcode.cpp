@@ -1,6 +1,6 @@
 #include "BoyiaOpcode.h"
 
-namespace mjs {
+namespace boyia {
 Condition ReverseCondition(Condition cond)
 {
 	switch (cond)
