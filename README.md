@@ -11,8 +11,8 @@
 ## 7，本引擎包含图形和网络开源库，可自行处理适配图形网络到多端运行
 ## 8，本引擎已经包含了android端makefile文件，方便开发者编译
 
-作者：boyia，联系方式：2512854007@qq.com。如有疑问可以给我发邮件
-Author: boyia，Contacts: 2512854007@qq.com, If you have any questions, please contact me.
+### 作者：boyia，联系方式：2512854007@qq.com。如有疑问可以给我发邮件
+### Author: boyia，Contacts: 2512854007@qq.com, If you have any questions, please contact me.
 
 donate：（打赏幸苦费）
 ![image](https://github.com/damonyan1985/MiniYan/blob/master/Donate/zfbzf.jpg)
