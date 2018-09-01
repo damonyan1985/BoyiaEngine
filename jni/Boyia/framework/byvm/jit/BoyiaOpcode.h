@@ -15,7 +15,7 @@
 
 #include "PlatformLib.h"
 
-namespace mjs {
+namespace boyia {
 typedef LInt32 Instr;
 
 const LInt KB = 1024;

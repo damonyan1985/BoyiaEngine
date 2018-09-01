@@ -1,7 +1,7 @@
 #ifndef BoyiaExecution_h
 #define BoyiaExecution_h
 #include "PlatformLib.h"
-namespace mjs {
+namespace boyia {
 class NativeCode {
 public:
 	NativeCode();

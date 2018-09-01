@@ -15,7 +15,7 @@
 
 #include "BoyiaOperand.h"
 
-namespace mjs {
+namespace boyia {
 class BoyiaAssembler {
 public:
 	BoyiaAssembler();

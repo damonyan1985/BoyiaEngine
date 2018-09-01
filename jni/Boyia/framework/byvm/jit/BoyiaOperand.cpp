@@ -1,6 +1,6 @@
 #include "BoyiaOperand.h"
 
-namespace mjs {
+namespace boyia {
 BoyiaOperand::BoyiaOperand(LInt32 immediate, int rmode) {
 	rm_ = no_reg;
 	imm32_ = immediate;
