@@ -2,15 +2,15 @@
 #define JSNetwork_h
 
 #include "NetworkBase.h"
-#include "MiniCore.h"
+#include "BoyiaCore.h"
 
-namespace mjs
+namespace boyia
 {
 // JSNetwork会根据回调的情况，自动释放自己
 class JSNetwork : public yanbo::NetworkClient
 {
 public:
-	JSNetwork(MiniValue* callback, MiniValue* obj);
+	JSNetwork(BoyiaValue* callback, BoyiaValue* obj);
 	virtual ~JSNetwork();
 
 public:
@@ -24,8 +24,8 @@ public:
 	virtual void onLoadFinished(const String& data);
 
 private:
-	MiniValue m_callback;
-	MiniValue m_obj;
+	BoyiaValue m_callback;
+	BoyiaValue m_obj;
 };
 }
 #endif

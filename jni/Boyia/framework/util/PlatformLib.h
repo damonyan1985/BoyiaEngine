@@ -8,8 +8,8 @@
 ============================================================================
 */
 
-#ifndef Platform_h
-#define Platform_h
+#ifndef PlatformLib_h
+#define PlatformLib_h
 
 // Setting byte alignment with one byte
 // MiniMemory allocator data must byte alignment
@@ -18,8 +18,8 @@
 namespace util
 {
 // feature begin
+#define ENABLE_ANDROID_PORTING 1
 //#define ENABLE_BROWSER_KERNEL 1
-#define ENABLE_MINI_C 1
 // feature end
 // 
 #define LCONST const

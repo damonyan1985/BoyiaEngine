@@ -15,7 +15,7 @@
 #include "JSBase.h"
 #include "KVector.h"
 
-namespace mjs
+namespace boyia
 {
 
 class JSView : public JSBase
@@ -43,7 +43,7 @@ public:
 	void startOpacity(LInt opacity, LInt duration);
     void startTranslate(const LPoint& point, LInt duration);
 
-    virtual void addListener(LInt type, MiniValue* callback);
+    virtual void addListener(LInt type, BoyiaValue* callback);
 
 protected:
 	yanbo::HtmlView* m_item;

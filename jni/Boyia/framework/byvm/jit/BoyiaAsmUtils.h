@@ -1,5 +1,5 @@
-#ifndef AssemblerUtils_h
-#define AssemblerUtils_h
+#ifndef BoyiaAsmUtils_h
+#define BoyiaAsmUtils_h
 
 inline bool is_uintn(int x, int n) {
 	return (x & -(1 << n)) == 0;

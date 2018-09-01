@@ -2,7 +2,7 @@
 #include "ImageView.h"
 #include "UIOperation.h"
 
-namespace mjs
+namespace boyia
 {
 JSImageView::JSImageView(yanbo::HtmlView* item)
 {

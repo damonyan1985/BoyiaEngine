@@ -1,4 +1,4 @@
-#include "MiniError.h"
+#include "BoyiaError.h"
 #include <stdio.h>
 
 extern void jsLog(const char* format, ...);
@@ -32,5 +32,5 @@ LVoid SntxError(LInt error, LInt lineNum) {
 
 	char info[50];
 	sprintf(info, "Error=%s in line %d\n", errorMap[error], lineNum);
-	jsLog("MiniJS Error=%s \n", info);
+	jsLog("BoyiaVM Error=%s \n", info);
 }

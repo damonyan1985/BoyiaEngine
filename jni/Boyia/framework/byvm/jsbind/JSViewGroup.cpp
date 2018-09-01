@@ -5,7 +5,7 @@
 #include "BlockView.h"
 #include "UIOperation.h"
 
-namespace mjs
+namespace boyia
 {
 JSViewGroup::JSViewGroup(yanbo::HtmlView* item)
 {

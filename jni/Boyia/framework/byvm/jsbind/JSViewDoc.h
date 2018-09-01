@@ -15,7 +15,7 @@
 #include "Document.h"
 #include "JSView.h"
 
-namespace mjs
+namespace boyia
 {
 class JSViewDoc : public JSView
 {

@@ -1,10 +1,10 @@
 #include "JSNetwork.h"
 #include "UIView.h"
-#include "MiniLib.h"
+#include "BoyiaLib.h"
 
-namespace mjs
+namespace boyia
 {
-JSNetwork::JSNetwork(MiniValue* callback, MiniValue* obj)
+JSNetwork::JSNetwork(BoyiaValue* callback, BoyiaValue* obj)
 {
 	ValueCopy(&m_callback, callback);
 	ValueCopy(&m_obj, obj);
@@ -43,15 +43,15 @@ void JSNetwork::onLoadError(LInt error)
 void JSNetwork::onLoadFinished(const String& data)
 {
 	KFORMATLOG("JSNetwork::onLoadFinished %d", 1);
-	MiniValue value;
-	value.mValueType = M_STRING;
+	BoyiaValue value;
+	value.mValueType = BY_STRING;
 	value.mValue.mStrVal.mPtr = (LInt8*)data.GetBuffer();
 	value.mValue.mStrVal.mLen = data.GetLength();
 	KFORMATLOG("JSNetwork::onLoadFinished, data=%s", (const char*)data.GetBuffer());
 	SaveLocalSize();
 	LocalPush(&m_callback);
 	LocalPush(&value);
-	MiniValue* obj = m_obj.mValue.mObj.mPtr == 0 ? NULL : &m_obj;
+	BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? NULL : &m_obj;
 	NativeCall(obj);
 	delete this;
 }

@@ -1,6 +1,6 @@
 /*
 ============================================================================
- Name        : Bindings.cpp
+ Name        : JSBindings.cpp
  Author      : yanbo
  Version     : Bindings v1.0
  Copyright   : All Copyright Reserved
@@ -8,7 +8,7 @@
  Description : support Original
 ============================================================================
 */
-#include "MiniLib.h"
+#include "BoyiaLib.h"
 
 static NativeFunMap* sFunMap = NULL;
 static LVoid initLib() {

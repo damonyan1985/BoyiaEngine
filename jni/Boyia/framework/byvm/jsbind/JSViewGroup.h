@@ -2,7 +2,7 @@
 #define JSViewGroup_h
 
 #include "JSView.h"
-namespace mjs
+namespace boyia
 {
 class JSViewGroup : public JSView
 {

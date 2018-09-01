@@ -1,7 +1,7 @@
 #include "PlatformLib.h"
-#include "MiniCore.h"
-#include "MiniLib.h"
-#include "MiniMemory.h"
+#include "BoyiaCore.h"
+#include "BoyiaLib.h"
+#include "BoyiaMemory.h"
 #include "AutoLock.h"
 #include "SalLog.h"
 #include <stdio.h>
@@ -22,7 +22,7 @@ typedef struct MiniGC {
 static MiniGC* sGc = NULL;
 
 extern LVoid NativeDelete(LVoid* data);
-static LBool checkValue(MiniValue* val, MiniRef* ref);
+static LBool checkValue(BoyiaValue* val, MiniRef* ref);
 
 static LVoid GCInit() {
 	if (sGc == NULL) {
@@ -33,12 +33,12 @@ static LVoid GCInit() {
 	}
 }
 
-static LBool GCCheckObject(MiniValue* value, MiniRef* ref) {
+static LBool GCCheckObject(BoyiaValue* value, MiniRef* ref) {
 	if (value->mValue.mIntVal == (LInt)ref->mAddress) {
 		return LTrue;
 	}
 
-	MiniFunction* fun = (MiniFunction*) value->mValue.mIntVal;
+	BoyiaFunction* fun = (BoyiaFunction*) value->mValue.mIntVal;
 	LInt idx = 0;
 	for (; idx < fun->mParamSize; ++idx) {
 		if (checkValue(&fun->mParams[idx], ref)) {
@@ -49,13 +49,13 @@ static LBool GCCheckObject(MiniValue* value, MiniRef* ref) {
 	return LFalse;
 }
 
-static LBool checkValue(MiniValue* value, MiniRef* ref) {
-	if ((value->mValueType == M_NAVCLASS || value->mValueType == M_STRING)
+static LBool checkValue(BoyiaValue* value, MiniRef* ref) {
+	if ((value->mValueType == BY_NAVCLASS || value->mValueType == BY_STRING)
 			&& value->mValue.mIntVal == (LInt)ref->mAddress) {
 		return LTrue;
 	}
 
-    if (value->mValueType == M_CLASS && GCCheckObject(value, ref)) {
+    if (value->mValueType == BY_CLASS && GCCheckObject(value, ref)) {
     	return LTrue;
     }
 
@@ -64,16 +64,16 @@ static LBool checkValue(MiniValue* value, MiniRef* ref) {
 
 static LVoid deleteRef(MiniRef* ref) {
 	switch (ref->mType) {
-	case M_STRING: {
+	case BY_STRING: {
 		    DELETE(ref->mAddress);
 	    }
 	    break;
-	case M_NAVCLASS: {
+	case BY_NAVCLASS: {
 		    NativeDelete(ref->mAddress);
 	    }
 	    break;
-	case M_CLASS: {
-		    MiniFunction* fun = (MiniFunction*)ref->mAddress;
+	case BY_CLASS: {
+		    BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
 			DELETE(fun->mParams);
 			DELETE(fun);
 	    }
@@ -83,11 +83,11 @@ static LVoid deleteRef(MiniRef* ref) {
 	ref->mAddress = NULL;
 }
 
-static LBool checkValueTable(MiniRef* ref, MiniValue* table, LInt size) {
+static LBool checkValueTable(MiniRef* ref, BoyiaValue* table, LInt size) {
 	// 正式开始检查是否引用过期
 	LInt idx = 0;
 	for (; idx < size; idx++) {
-		MiniValue* value = table + idx;
+		BoyiaValue* value = table + idx;
 		if (checkValue(value, ref)) {
 			// 查出引用未过期，跳出循环
 			return LTrue;
@@ -101,18 +101,18 @@ static LBool checkValueTable(MiniRef* ref, MiniValue* table, LInt size) {
 static LVoid GCheckNoneRef(MiniRef* ref) {
 	LInt stackAddr, size;
 	GetLocalStack(&stackAddr, &size);
-	MiniValue* stack = (MiniValue*)stackAddr;
+	BoyiaValue* stack = (BoyiaValue*)stackAddr;
 	if (checkValueTable(ref, stack, size)) {
 		return;
 	}
 
 	GetGlobalTable(&stackAddr, &size);
-	stack = (MiniValue*)stackAddr;
+	stack = (BoyiaValue*)stackAddr;
 	if (checkValueTable(ref, stack, size)) {
 		return;
 	}
 	// 查找结果寄存器，是否有引用过期
-	MiniValue* val = (MiniValue*)GetNativeResult();
+	BoyiaValue* val = (BoyiaValue*)GetNativeResult();
 	if (checkValue(val, ref)) {
 		return;
 	}

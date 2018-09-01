@@ -1,5 +1,5 @@
-#include "MiniAssembler.h"
-#include "MiniAsmUtils.h"
+#include "BoyiaAssembler.h"
+#include "BoyiaAsmUtils.h"
 #include <android/log.h>
 
 namespace mjs {
@@ -7,7 +7,7 @@ namespace mjs {
 const int kMaxCodeSize = 100 * KB;
 const int kInstrSize = sizeof(Instr);
 
-MiniAssembler::MiniAssembler() {
+BoyiaAssembler::BoyiaAssembler() {
 	m_code.buffer = new LByte[kMaxCodeSize];
 	m_code.buffer_size = 0;
 	m_code.instr_size = 0;
@@ -16,19 +16,19 @@ MiniAssembler::MiniAssembler() {
 	m_pc = m_code.buffer;
 }
 
-void MiniAssembler::ldr(MiniRegister dst, const MemOperand& src,
+void BoyiaAssembler::ldr(BoyiaRegister dst, const MemOperand& src,
 		Condition cond) {
 	addrmod2(cond | B26 | L, dst, src);
 }
-void MiniAssembler::str(MiniRegister src, const MemOperand& dst,
+void BoyiaAssembler::str(BoyiaRegister src, const MemOperand& dst,
 		Condition cond) {
 	addrmod2(cond | B26, src, dst);
 }
-void MiniAssembler::ldrb(MiniRegister dst, const MemOperand& src,
+void BoyiaAssembler::ldrb(BoyiaRegister dst, const MemOperand& src,
 		Condition cond) {
 	addrmod2(cond | B26 | B | L, dst, src);
 }
-void MiniAssembler::strb(MiniRegister src, const MemOperand& dst,
+void BoyiaAssembler::strb(BoyiaRegister src, const MemOperand& dst,
 		Condition cond) {
 	addrmod2(cond | B26 | B, src, dst);
 }
@@ -39,7 +39,7 @@ void MiniAssembler::strb(MiniRegister src, const MemOperand& dst,
  * 目前该函数只针对寄存器之间的传值和立即数为8位的传值
  * 大立即数的传递由ldr从内存中获取完成
  */
-void MiniAssembler::mov(MiniRegister rd, const MiniOperand& src, SBit s,
+void BoyiaAssembler::mov(BoyiaRegister rd, const BoyiaOperand& src, SBit s,
 		Condition cond) {
 
 	Instr instr = cond | MOV | s | rd.code() * B12;
@@ -73,8 +73,8 @@ void MiniAssembler::mov(MiniRegister rd, const MiniOperand& src, SBit s,
 			}
 
 			if (low8) { // 通过OR运算将低8位传入
-				orr(rd, rd, MiniOperand(low8), s, cond);
-				//add(rd, rd, MiniOperand(low8), s, cond);
+				orr(rd, rd, BoyiaOperand(low8), s, cond);
+				//add(rd, rd, BoyiaOperand(low8), s, cond);
 			}
 
 			if (immHigh) { // 通过movt指令传入高16位
@@ -87,17 +87,17 @@ void MiniAssembler::mov(MiniRegister rd, const MiniOperand& src, SBit s,
 	emit(instr);
 }
 
-void MiniAssembler::movw(MiniRegister reg, LUint32 immediate, Condition cond) {
+void BoyiaAssembler::movw(BoyiaRegister reg, LUint32 immediate, Condition cond) {
 }
 
 // 存储到寄存器高16位
-void MiniAssembler::movt(MiniRegister reg, LUint32 immediate, Condition cond) {
+void BoyiaAssembler::movt(BoyiaRegister reg, LUint32 immediate, Condition cond) {
 	emit(cond | 0x34 * B20 | reg.code() * B12 | EncodeMovwImmediate(immediate));
 }
 
 // 硬性规定超过8位的立即数需要通过寄存器来进行运算，先mov，后计算
-void MiniAssembler::addrmod1(Instr instr, MiniRegister rn, MiniRegister rd,
-		const MiniOperand& src) {
+void BoyiaAssembler::addrmod1(Instr instr, BoyiaRegister rn, BoyiaRegister rd,
+		const BoyiaOperand& src) {
 	instr |= rn.code() * B16 | rd.code() * B12;
 	if (src.rm().is_valid()) {
 		instr |= src.rm().code() | src.shiftOp();
@@ -115,7 +115,7 @@ void MiniAssembler::addrmod1(Instr instr, MiniRegister rn, MiniRegister rd,
 	emit(instr);
 }
 
-void MiniAssembler::addrmod2(Instr instr, MiniRegister rd,
+void BoyiaAssembler::addrmod2(Instr instr, BoyiaRegister rd,
 		const MemOperand& x) {
 	int am = x.am();
 	if (!x.rm().is_valid()) {
@@ -126,12 +126,12 @@ void MiniAssembler::addrmod2(Instr instr, MiniRegister rd,
 			am ^= U;
 		}
 		if (!is_uint12(offset_12)) {
-			// Immediate offset cannot be encoded, load it first to MiniRegister ip
+			// Immediate offset cannot be encoded, load it first to BoyiaRegister ip
 			// rn (and rd in a load) should never be ip, or will be trashed.
 			// ASSERT(!x.rn_.is(ip) && ((instr & L) == L || !rd.is(ip)));
 			// ldr指令只能编码12位的立即数偏移地址，如果大于12位，则需要将立即数移至
 			// 寄存器中寻址
-			mov(ip, MiniOperand(x.offset()), LeaveCC,
+			mov(ip, BoyiaOperand(x.offset()), LeaveCC,
 					Instruction::ConditionField(instr));
 			addrmod2(instr, rd, MemOperand(x.rn(), ip, x.am()));
 			return;
@@ -145,13 +145,13 @@ void MiniAssembler::addrmod2(Instr instr, MiniRegister rd,
 	emit(instr | am | x.rn().code() * B16 | rd.code() * B12);
 }
 
-void MiniAssembler::b(int branch_offset, Condition cond) {
+void BoyiaAssembler::b(int branch_offset, Condition cond) {
 //	ASSERT((branch_offset & 3) == 0);
 	int imm24 = branch_offset >> 2;
 	emit(cond | B27 | B25 | (imm24 & kImm24Mask));
 }
 
-void MiniAssembler::bl(int branch_offset, Condition cond) {
+void BoyiaAssembler::bl(int branch_offset, Condition cond) {
 	//positions_recorder()->WriteRecordedPositions();
 	//ASSERT((branch_offset & 3) == 0);
 	int imm24 = branch_offset >> 2;
@@ -159,7 +159,7 @@ void MiniAssembler::bl(int branch_offset, Condition cond) {
 	emit(cond | B27 | B25 | B24 | (imm24 & kImm24Mask));
 }
 
-void MiniAssembler::blx(int branch_offset) {
+void BoyiaAssembler::blx(int branch_offset) {
 	//positions_recorder()->WriteRecordedPositions();
 	//ASSERT((branch_offset & 1) == 0);
 	int h = ((branch_offset & 2) >> 1) * B24;
@@ -168,76 +168,76 @@ void MiniAssembler::blx(int branch_offset) {
 	emit(kSpecialCondition | B27 | B25 | h | (imm24 & kImm24Mask));
 }
 
-void MiniAssembler::blx(MiniRegister target, Condition cond) {
+void BoyiaAssembler::blx(BoyiaRegister target, Condition cond) {
 	emit(
 			cond | B24 | B21 | 15 * B16 | 15 * B12 | 15 * B8 | BLX
 					| target.code());
 }
 
-void MiniAssembler::bx(MiniRegister target, Condition cond) {
+void BoyiaAssembler::bx(BoyiaRegister target, Condition cond) {
 	//positions_recorder()->WriteRecordedPositions();
 	//ASSERT(!target.is(pc));  // use of pc is actually allowed, but discouraged
 	emit(cond | B24 | B21 | 15 * B16 | 15 * B12 | 15 * B8 | BX | target.code());
 }
 
-void MiniAssembler::and_(MiniRegister rd, MiniRegister rn,
-		const MiniOperand& op, SBit s, Condition cond) {
+void BoyiaAssembler::and_(BoyiaRegister rd, BoyiaRegister rn,
+		const BoyiaOperand& op, SBit s, Condition cond) {
 	addrmod1(cond | AND | s, rn, rd, op);
 }
 
-void MiniAssembler::orr(MiniRegister rd, MiniRegister rn, const MiniOperand& op,
+void BoyiaAssembler::orr(BoyiaRegister rd, BoyiaRegister rn, const BoyiaOperand& op,
 		SBit s, Condition cond) {
 //	Instr instr = cond | ORR | s | rn.code() * B16 | rd.code() * B12
 //			| op.shiftOp();
 	addrmod1(cond | ORR | s, rn, rd, op);
 }
 
-void MiniAssembler::sub(MiniRegister dst, MiniRegister src1,
-		const MiniOperand& src2, SBit s, Condition cond) {
+void BoyiaAssembler::sub(BoyiaRegister dst, BoyiaRegister src1,
+		const BoyiaOperand& src2, SBit s, Condition cond) {
 	addrmod1(cond | SUB | s, src1, dst, src2);
 }
 
-void MiniAssembler::add(MiniRegister dst, MiniRegister src1,
-		const MiniOperand& src2, SBit s, Condition cond) {
+void BoyiaAssembler::add(BoyiaRegister dst, BoyiaRegister src1,
+		const BoyiaOperand& src2, SBit s, Condition cond) {
 	addrmod1(cond | ADD | s, src1, dst, src2);
 }
 
-void MiniAssembler::cmp(MiniRegister src1, const MiniOperand& src2,
+void BoyiaAssembler::cmp(BoyiaRegister src1, const BoyiaOperand& src2,
 		Condition cond) {
 	addrmod1(cond | CMP | S, src1, r0, src2);
 }
 
-void MiniAssembler::mul(MiniRegister dst, MiniRegister src1, MiniRegister src2,
+void BoyiaAssembler::mul(BoyiaRegister dst, BoyiaRegister src1, BoyiaRegister src2,
 		SBit s, Condition cond) {
 	emit(
 			cond | s | dst.code() * B16 | src2.code() * B8 | B7 | B4
 					| src1.code());
 }
 
-void MiniAssembler::db(LUint8 data) {
+void BoyiaAssembler::db(LUint8 data) {
 	*reinterpret_cast<LUint8*>(m_pc) = data;
 	m_pc += sizeof(LUint8);
 }
 
-void MiniAssembler::dd(LUint32 data) {
+void BoyiaAssembler::dd(LUint32 data) {
 	*reinterpret_cast<LUint32*>(m_pc) = data;
 	m_pc += sizeof(LUint32);
 }
 
-void MiniAssembler::emit(Instr x) {
+void BoyiaAssembler::emit(Instr x) {
 	*reinterpret_cast<Instr*>(m_pc) = x;
 	m_pc += kInstrSize;
 }
 
-Instr MiniAssembler::EncodeMovwImmediate(LUint32 immediate) {
+Instr BoyiaAssembler::EncodeMovwImmediate(LUint32 immediate) {
 	return ((immediate & 0xf000) << 4) | (immediate & 0xfff);
 }
 
-void MiniAssembler::bind(Label* L) {
+void BoyiaAssembler::bind(Label* L) {
 	bind_to(L, pc_offset());
 }
 
-void MiniAssembler::bind_to(Label* L, int pos) {
+void BoyiaAssembler::bind_to(Label* L, int pos) {
 	//ASSERT(0 <= pos && pos <= pc_offset()); // must have a valid binding position
 	// 对之前使用该Label的条件分支指令进行修改
 	while (L->is_linked()) {
@@ -256,7 +256,7 @@ void MiniAssembler::bind_to(Label* L, int pos) {
 	//	last_bound_pos_ = pos;
 }
 
-int MiniAssembler::pc_offset() const {
+int BoyiaAssembler::pc_offset() const {
 	return m_pc - m_code.buffer;
 }
 
@@ -278,7 +278,7 @@ const int kEndOfChain = -4;
 // ARM 3级流水线，取指令，译码，执行，PC寄存器的值位置在
 // 为与当前指令的地址相差两个指令长度，即4bytes * 2=8
 static const int kPcLoadDelta = 8;
-int MiniAssembler::branch_offset(Label* L) {
+int BoyiaAssembler::branch_offset(Label* L) {
 	int target_pos;
 	if (L->is_bound()) {
 		target_pos = L->pos();
@@ -300,7 +300,7 @@ int MiniAssembler::branch_offset(Label* L) {
 	return target_pos - (pc_offset() + kPcLoadDelta);
 }
 
-int MiniAssembler::target_at(int pos) {
+int BoyiaAssembler::target_at(int pos) {
 	Instr instr = instr_at(pos);
 //	if ((instr & ~kImm24Mask) == 0) {
 //	    // Emitted label constant, not part of a branch.
@@ -316,7 +316,7 @@ int MiniAssembler::target_at(int pos) {
 	return pos + kPcLoadDelta + imm26;
 }
 
-void MiniAssembler::next(Label* L) {
+void BoyiaAssembler::next(Label* L) {
 	//ASSERT(L->is_linked());
 	int link = target_at(L->pos());
 	if (link == kEndOfChain) {
@@ -327,7 +327,7 @@ void MiniAssembler::next(Label* L) {
 	}
 }
 
-void MiniAssembler::target_at_put(int pos, int target_pos) {
+void BoyiaAssembler::target_at_put(int pos, int target_pos) {
 	Instr instr = instr_at(pos);
 //	  if ((instr & ~kImm24Mask) == 0) {
 //	    ASSERT(target_pos == kEndOfChain || target_pos >= 0);
@@ -353,36 +353,36 @@ void MiniAssembler::target_at_put(int pos, int target_pos) {
 	instr_at_put(pos, instr | (imm24 & kImm24Mask));
 }
 
-void MiniAssembler::instr_at_put(int pos, Instr instr) {
+void BoyiaAssembler::instr_at_put(int pos, Instr instr) {
 	*reinterpret_cast<Instr*>(m_code.buffer + pos) = instr;
 }
 
-Instr MiniAssembler::instr_at(int pos) {
+Instr BoyiaAssembler::instr_at(int pos) {
 	return *reinterpret_cast<Instr*>(m_code.buffer + pos);
 }
 
-void MiniAssembler::getCode(CodeDesc* desc) {
+void BoyiaAssembler::getCode(CodeDesc* desc) {
 	desc->buffer = m_code.buffer;
 	desc->instr_size = pc_offset();
 	//LMemcpy(desc->buffer, m_code.buffer, pc_offset());
 }
 
-void MiniAssembler::drop(int count, Condition cond) {
+void BoyiaAssembler::drop(int count, Condition cond) {
 	if (count > 0) {
-		add(sp, sp, MiniOperand(count * kPointerSize), LeaveCC, cond);
+		add(sp, sp, BoyiaOperand(count * kPointerSize), LeaveCC, cond);
 	}
 }
 
-void MiniAssembler::ret(int count, Condition cond) {
+void BoyiaAssembler::ret(int count, Condition cond) {
 	drop(count, cond);
 	ret(cond);
 }
 
-void MiniAssembler::ret(Condition cond) {
+void BoyiaAssembler::ret(Condition cond) {
 #if USE_BX
 	bx(lr, cond);
 #else
-	mov(pc, MiniOperand(lr), LeaveCC, cond);
+	mov(pc, BoyiaOperand(lr), LeaveCC, cond);
 #endif
 }
 }

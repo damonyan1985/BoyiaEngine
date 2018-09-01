@@ -1,10 +1,10 @@
 #ifndef JSEventHandler_h
 #define JSEventHandler_h
 
-#include "MiniCore.h"
+#include "BoyiaCore.h"
 #include "LEvent.h"
 
-namespace mjs
+namespace boyia
 {
 class JSEventHandler
 {
@@ -12,15 +12,15 @@ public:
 	JSEventHandler();
 	~JSEventHandler();
 
-	LVoid setTouchCallback(MiniValue* callback);
+	LVoid setTouchCallback(BoyiaValue* callback);
 	LVoid handleTouch(const util::LTouchEvent& evt);
 
-	LVoid setKeyCallback(MiniValue* callback);
+	LVoid setKeyCallback(BoyiaValue* callback);
 	LVoid handleKey(const util::LKeyEvent& evt);
 
 private:
-	MiniValue* m_touchCallback;
-	MiniValue* m_keyCallback;
+	BoyiaValue* m_touchCallback;
+	BoyiaValue* m_keyCallback;
 };
 }
 

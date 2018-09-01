@@ -1,5 +1,5 @@
-#include "MiniExecution.h"
-#include "MiniAssembler.h"
+#include "BoyiaExecution.h"
+#include "BoyiaAssembler.h"
 #include "PlatformLib.h"
 #include <android/log.h>
 #include <string.h>
@@ -60,7 +60,7 @@ LByte* NativeCode::codeStart() {
 	return m_codeSegment;
 }
 
-void MiniExecution::callCode() {
+void BoyiaExecution::callCode() {
 	char testBuffer[100];
 	LMemset(testBuffer, 0, 100);
 	const char* testStr = "Hello World";
@@ -69,29 +69,29 @@ void MiniExecution::callCode() {
 	//LInt addr = (LInt)callCode;
 
 	// 测试实现一个memcpy
-	MiniAssembler masm;
+	BoyiaAssembler masm;
 	Label armmemcpy;
 	Label armend;
 	// 长度11
 
-	__ cmp(r2, MiniOperand(0));
+	__ cmp(r2, BoyiaOperand(0));
 	__ b(&armend, le);
 	__ bind(&armmemcpy);
 	__ ldrb(r3, MemOperand(r1, 1, PostIndex));
 	__ strb(r3, MemOperand(r0, 1, PostIndex));
-	__ sub(r2, r2, MiniOperand(1), SetCC);
+	__ sub(r2, r2, BoyiaOperand(1), SetCC);
 	__ b(&armmemcpy, ne);
 	__ bind(&armend);
 //    __ ret();
 
 
-	//__ mov(r1, MiniOperand(70000));
+	//__ mov(r1, BoyiaOperand(70000));
 	//__ ldr(r1, MemOperand(r1, 8));
-	//__ add(r0, r0, MiniOperand(r1));
+	//__ add(r0, r0, BoyiaOperand(r1));
 	__ ret();
 	CodeDesc desc;
 	masm.getCode(&desc);
-	//__ mov(pc, MiniOperand(r0), LeaveCC);
+	//__ mov(pc, BoyiaOperand(r0), LeaveCC);
 
 	// mmap可以在代码段申请一段内存
 	//LByte* mem = (LByte*) mmap(NULL, 100, PROT_WRITE | PROT_EXEC,
@@ -105,7 +105,7 @@ void MiniExecution::callCode() {
 
 	LInt res = reinterpret_cast<LInt>(CALL_GENERATED_CODE(f, (LInt)testBuffer, (LInt)testStr, 11, 0, 0));
 
-	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS call addr=%d", res);
-	__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS call str=%s", testBuffer);
+	//__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM call addr=%d", res);
+	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM call str=%s", testBuffer);
 }
 }

@@ -6,8 +6,8 @@
 * Copyright (c) reserved
 * As a independent module for game engine
 */
-#include "MiniCore.h"
-#include "MiniError.h"
+#include "BoyiaCore.h"
+#include "BoyiaError.h"
 //#include <android/log.h>
 
 #define ENABLE_LOG
@@ -105,12 +105,12 @@ typedef struct {
 // Reg的mNameKey没有任何意义，
 // 但是在处理变量时变得有意义，即指向变量地址，
 typedef struct {
-    MiniValue     mReg0;    // result register, 结果寄存器
-    MiniValue     mReg1;    // help register, 辅助运算寄存器
+    BoyiaValue     mReg0;    // result register, 结果寄存器
+    BoyiaValue     mReg1;    // help register, 辅助运算寄存器
 } VMCpu;
 
 struct KeywordPair {
-    MiniStr  mName; /* keyword lookup table */
+    BoyiaStr  mName; /* keyword lookup table */
     LUint8   mType;
 } gKeywordTable[] = {  /* Commands must be entered lowercase */
         {D_STR("if", 2),       IF},  /* in this table. */
@@ -136,16 +136,16 @@ struct KeywordPair {
 /* mTokenValue:   此变量是存放Token的值                          */
 /* ------------------------------------------------------------ */
 typedef struct {
-    MiniStr mTokenName;
+    BoyiaStr mTokenName;
     LUint8  mTokenType; /* contains type of token*/
     LUint8  mTokenValue; /* internal representation of token */
 } MiniToken;
 
 /* Global value define begin */
-static MiniFunction*   gFunTable         = NULL; // 堆上取数组
-static MiniValue*      gGlobalsTable     = NULL;
-static MiniValue*      gLocalsStack      = NULL;
-static MiniValue*      gOpStack          = NULL;
+static BoyiaFunction*   gFunTable         = NULL; // 堆上取数组
+static BoyiaValue*      gGlobalsTable     = NULL;
+static BoyiaValue*      gLocalsStack      = NULL;
+static BoyiaValue*      gOpStack          = NULL;
 static CommandTable*   gCommandTable     = NULL;
 static NativeFunction* gNativeFunTable   = NULL;
 
@@ -159,7 +159,7 @@ typedef struct {
     LInt             mTmpLValSize;
     LInt             mLValSize; /* count of global variable stack */
     LInt             mResultNum;
-    MiniValue*       mClass;
+    BoyiaValue*       mClass;
     CommandTable*    mContext;
     Instruction*     mPC;       // pc , 指令指针
 } ExecState;
@@ -170,7 +170,7 @@ typedef struct {
 	LInt             mTmpLValSize;
     LInt             mLoopSize;
     CommandTable*    mContext;
-    MiniValue*       mClass;
+    BoyiaValue*       mClass;
 } ExecScene;
 
 // 调用堆栈
@@ -186,7 +186,7 @@ static LUint gSuper = GenIdentByStr("super", 5);
 /* Global value define end */
 static LVoid LocalStatement();
 
-static MiniValue* GetLeftOpValue(Instruction* inst);
+static BoyiaValue* GetLeftOpValue(Instruction* inst);
 
 static LVoid IfStatement();
 
@@ -196,7 +196,7 @@ static LVoid WhileStatement();
 
 static LVoid DoStatement();
 
-static MiniValue* FindVal(LUint key);
+static BoyiaValue* FindVal(LUint key);
 
 static LVoid BlockStatement();
 
@@ -210,7 +210,7 @@ static LVoid EvalAssignment();
 
 static LInt HandleAssignment(LVoid* ins);
 
-static MiniValue* FindObjProp(MiniValue* lVal, LUint rVal);
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal);
 
 static Instruction* PutInstruction(
 	OpCommand* left,
@@ -292,7 +292,7 @@ static LVoid Putback() {
     gEState.mProg -= gToken.mTokenName.mLen;
 }
 
-static LUint8 LookUp(MiniStr* name) {
+static LUint8 LookUp(BoyiaStr* name) {
     register LInt i = 0;
     for (; gKeywordTable[i].mName.mLen; ++i) {
         if (MStrcmp(&gKeywordTable[i].mName, name))
@@ -312,14 +312,14 @@ static LInt FindNativeFunc(LUint key) {
     return -1;
 }
 
-static MiniFunction* CopyFunction(MiniValue* clsVal, LInt count) {
-    MiniFunction* newFunc = NEW(MiniFunction);
+static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count) {
+    BoyiaFunction* newFunc = NEW(BoyiaFunction);
     // copy function
     EngineLog("HandleCallInternal CreateObject %d", 5);
 
-    MiniFunction* func = (MiniFunction*) clsVal->mValue.mObj.mPtr;
+    BoyiaFunction* func = (BoyiaFunction*) clsVal->mValue.mObj.mPtr;
     EngineLog("HandleCallInternal CreateObject %d", 6);
-    newFunc->mParams = NEW_ARRAY(MiniValue, NUM_FUNC_PARAMS);
+    newFunc->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS);
     //EngineLog("HandleCallInternal CreateObject %d", 7);
     newFunc->mParamSize = 0;
     newFunc->mFuncBody = func->mFuncBody;
@@ -328,7 +328,7 @@ static MiniFunction* CopyFunction(MiniValue* clsVal, LInt count) {
 	//EngineLog("HandleCallInternal CreateObject mParams mAddr %d",  (int)newFunc->mParams);
 
     while (clsVal) {
-    	MiniFunction* func = (MiniFunction*) clsVal->mValue.mObj.mPtr;
+    	BoyiaFunction* func = (BoyiaFunction*) clsVal->mValue.mObj.mPtr;
     	LInt idx = func->mParamSize;
     	while (idx--) {
     	    if (func->mParams[idx].mValueType != FUNC) {
@@ -336,7 +336,7 @@ static MiniFunction* CopyFunction(MiniValue* clsVal, LInt count) {
     	    }
     	}
 
-    	clsVal = (MiniValue*) clsVal->mValue.mObj.mSuper;
+    	clsVal = (BoyiaValue*) clsVal->mValue.mObj.mSuper;
     }
 
     return newFunc;
@@ -344,7 +344,7 @@ static MiniFunction* CopyFunction(MiniValue* clsVal, LInt count) {
 
 static LInt CreateObject() {
 	EngineLog("HandleCallInternal CreateObject %d", 1);
-	MiniValue* value = (MiniValue*) GetLocalValue(0);
+	BoyiaValue* value = (BoyiaValue*) GetLocalValue(0);
     if (!value || value->mValueType != CLASS) {
         return 0;
     }
@@ -353,11 +353,11 @@ static LInt CreateObject() {
     // 获取CLASS的内部实现
     EngineLog("HandleCallInternal CreateObject %d", 3);
     // 指针引用R0
-    MiniValue* result = &gVM.mReg0;
+    BoyiaValue* result = &gVM.mReg0;
     // 设置result的值
     ValueCopy(result, value);
     // 拷贝出新的内部实现
-    MiniFunction* newFunc = CopyFunction(value, NUM_FUNC_PARAMS);
+    BoyiaFunction* newFunc = CopyFunction(value, NUM_FUNC_PARAMS);
     result->mValue.mObj.mPtr = (LInt) newFunc;
     result->mValue.mObj.mSuper = value->mValue.mObj.mSuper;
     EngineLog("HandleCallInternal CreateObject %d", 4);
@@ -366,7 +366,7 @@ static LInt CreateObject() {
     return 1;
 }
 
-LVoid ValueCopyNoName(MiniValue* dest, MiniValue* src) {
+LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
 	dest->mValueType = src->mValueType;
 	switch (src->mValueType) {
 		case INT:
@@ -391,7 +391,7 @@ LVoid ValueCopyNoName(MiniValue* dest, MiniValue* src) {
 	}
 }
 
-LVoid ValueCopy(MiniValue* dest, MiniValue* src) {
+LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src) {
 	dest->mNameKey = src->mNameKey;
 	ValueCopyNoName(dest, src);
 }
@@ -410,7 +410,7 @@ static LVoid BreakStatement() {
 
 static LInt HandleCreateProp(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	MiniFunction* func = (MiniFunction*)gEState.mClass->mValue.mObj.mPtr;
+	BoyiaFunction* func = (BoyiaFunction*)gEState.mClass->mValue.mObj.mPtr;
 	func->mParams[func->mParamSize++].mNameKey = (LUint)inst->mOPLeft.mValue;
 	return 1;
 }
@@ -432,7 +432,7 @@ static LVoid PropStatement() {
 	}
 }
 
-LVoid LocalPush(MiniValue* value) {
+LVoid LocalPush(BoyiaValue* value) {
 	if (gEState.mLValSize > NUM_LOCAL_VARS) {
 		SntxError(TOO_MANY_LVARS, gEState.mPC->mCodeLine);
 	}
@@ -440,7 +440,7 @@ LVoid LocalPush(MiniValue* value) {
 	ValueCopy(gLocalsStack + (gEState.mLValSize++), value);
 }
 
-static MiniValue* FindGlobal(LUint key) {
+static BoyiaValue* FindGlobal(LUint key) {
 	for (LInt idx = 0; idx < gEState.mGValSize; ++idx) {
 		if (gGlobalsTable[idx].mNameKey == key)
 			return &gGlobalsTable[idx];
@@ -450,14 +450,14 @@ static MiniValue* FindGlobal(LUint key) {
 }
 
 /* Find the value of a variable. */
-static MiniValue* GetVal(LUint key) {
+static BoyiaValue* GetVal(LUint key) {
 	/* First, see if has obj scope */
 	if (key == gThis) {
 		return gEState.mClass;
 	}
 
 	if (key == gSuper) {
-		return gEState.mClass ? (MiniValue*)gEState.mClass->mValue.mObj.mSuper : NULL;
+		return gEState.mClass ? (BoyiaValue*)gEState.mClass->mValue.mObj.mSuper : NULL;
 	}
 
 	/* second, see if it's a local variable */
@@ -470,14 +470,14 @@ static MiniValue* GetVal(LUint key) {
 	}
 
 	/* otherwise, try global vars */
-	MiniValue* val = FindGlobal(key);
+	BoyiaValue* val = FindGlobal(key);
 	if (val) { return val; }
 
 	return FindObjProp(gEState.mClass, key);
 }
 
-static MiniValue* FindVal(LUint key) {
-	MiniValue* value = GetVal(key);
+static BoyiaValue* FindVal(LUint key) {
+	BoyiaValue* value = GetVal(key);
 	if (!value) {
 		SntxError(NOT_VAR, gEState.mPC->mCodeLine);
 	}
@@ -485,8 +485,8 @@ static MiniValue* FindVal(LUint key) {
 	return value;
 }
 
-static MiniValue* GetLeftOpValue(Instruction* inst) {
-	MiniValue* left = NULL;
+static BoyiaValue* GetLeftOpValue(Instruction* inst) {
+	BoyiaValue* left = NULL;
 	switch (inst->mOPLeft.mType) { // 赋值左值不可能是常量
 	case OP_REG0:
 		left = &gVM.mReg0;
@@ -533,7 +533,7 @@ static LInt HandlePushScene(LVoid* ins) {
 
 static LInt HandlePushArg(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	MiniValue* value = GetLeftOpValue(inst);
+	BoyiaValue* value = GetLeftOpValue(inst);
 	LocalPush(value);
 	return 1;
 }
@@ -545,7 +545,7 @@ static LInt HandlePushObj(LVoid* ins) {
 	if (inst->mOPLeft.mType == OP_VAR) {
 		LUint objKey = (LUint) inst->mOPLeft.mValue;
 		if (objKey != gSuper) {
-			gEState.mClass = (MiniValue*)gVM.mReg0.mNameKey;
+			gEState.mClass = (BoyiaValue*)gVM.mReg0.mNameKey;
 		}
 	} else {
 		gEState.mClass = NULL;
@@ -842,8 +842,8 @@ static LInt HandleCreateParam(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
 	LUint hashKey = (LUint)inst->mOPLeft.mValue;
 
-	MiniFunction* function = &gFunTable[gEState.mFunSize-1];
-	MiniValue* value = &function->mParams[function->mParamSize++];
+	BoyiaFunction* function = &gFunTable[gEState.mFunSize-1];
+	BoyiaValue* value = &function->mParams[function->mParamSize++];
 	value->mNameKey = hashKey;
 	return 1;
 }
@@ -869,17 +869,17 @@ static CommandTable* CreateExecutor() {
     return newTable;
 }
 
-static LVoid InitFunction(MiniFunction* fun) {
+static LVoid InitFunction(BoyiaFunction* fun) {
     fun->mParamSize = 0;
-    fun->mParams = NEW_ARRAY(MiniValue, NUM_FUNC_PARAMS);
+    fun->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS);
 	fun->mParamCount = NUM_FUNC_PARAMS;
 	++gEState.mFunSize;
 }
 
-static MiniValue* CreateFunVal(LUint hashKey, LUint8 type) {
+static BoyiaValue* CreateFunVal(LUint hashKey, LUint8 type) {
     // 初始化class类或函数变量
-    MiniValue* val = &gGlobalsTable[gEState.mGValSize++];
-    MiniFunction* fun = &gFunTable[gEState.mFunSize];
+    BoyiaValue* val = &gGlobalsTable[gEState.mGValSize++];
+    BoyiaFunction* fun = &gFunTable[gEState.mFunSize];
     val->mValueType = type;
     val->mNameKey = hashKey;
     val->mValue.mObj.mPtr = (LInt) fun;
@@ -926,8 +926,8 @@ static LInt HandleCreateClass(LVoid* ins) {
 
 static LInt HandleExtend(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	MiniValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
-	MiniValue* extendVal = FindGlobal((LUint)inst->mOPRight.mValue);
+	BoyiaValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
+	BoyiaValue* extendVal = FindGlobal((LUint)inst->mOPRight.mValue);
 
     // 设置super指针
 	classVal->mValue.mObj.mSuper = (LInt)extendVal;
@@ -936,8 +936,8 @@ static LInt HandleExtend(LVoid* ins) {
 
 static LInt HandlePropsSort(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	MiniValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
-	MiniFunction* classBody = (MiniFunction*)classVal->mValue.mObj.mPtr;
+	BoyiaValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
+	BoyiaFunction* classBody = (BoyiaFunction*)classVal->mValue.mObj.mPtr;
 	return 1;
 }
 
@@ -976,7 +976,7 @@ static LInt HandleFunCreate(LVoid* ins) {
 	LUint hashKey = (LUint)inst->mOPLeft.mValue;
 
 	if (gEState.mClass) {
-		MiniFunction* func = (MiniFunction*)gEState.mClass->mValue.mObj.mPtr;
+		BoyiaFunction* func = (BoyiaFunction*)gEState.mClass->mValue.mObj.mPtr;
 		func->mParams[func->mParamSize].mNameKey = hashKey;
 		func->mParams[func->mParamSize].mValueType = FUNC;
 		func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LInt)&gFunTable[gEState.mFunSize];
@@ -1036,7 +1036,7 @@ static LVoid ExecuteCode(CommandTable* cmds) {
 
 static LInt HandleDeclGlobal(LVoid* ins) {
 	Instruction* inst = (Instruction*) ins;
-	MiniValue val;
+	BoyiaValue val;
 	val.mValueType = inst->mOPLeft.mValue;
 	val.mNameKey = (LUint) inst->mOPRight.mValue;
 	ValueCopy(gGlobalsTable + gEState.mGValSize++, &val);
@@ -1101,7 +1101,7 @@ static LVoid ParseStatement() {
 
 static LInt HandleDeclLocal(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue local;
+    BoyiaValue local;
     local.mValueType = inst->mOPLeft.mValue;
     local.mNameKey = (LUint) inst->mOPRight.mValue;
     LocalPush(&local);                              // 塞入本地符号表
@@ -1130,8 +1130,8 @@ static LInt HandleCallFunction(LVoid* ins) {
     //EngineLog("HandleFunction begin %d \n", 1);
 	// localstack第一个值为函数指针
     LInt start = gCallStack[gEState.mFunctos - 1].mLValSize;
-    MiniValue* value = &gLocalsStack[start];
-    MiniFunction* func = (MiniFunction*) value->mValue.mObj.mPtr;
+    BoyiaValue* value = &gLocalsStack[start];
+    BoyiaFunction* func = (BoyiaFunction*) value->mValue.mObj.mPtr;
 
     gEState.mContext = (CommandTable*) func->mFuncBody;
     gEState.mPC = gEState.mContext->mBegin;
@@ -1141,10 +1141,10 @@ static LInt HandleCallFunction(LVoid* ins) {
 static LInt HandlePushParams(LVoid* ins) {
     // 第一个参数为调用该函数的函数指针
     LInt start = gCallStack[gEState.mFunctos - 1].mLValSize;
-    MiniValue* value = &gLocalsStack[start];
+    BoyiaValue* value = &gLocalsStack[start];
     EngineLog("HandlePushParams functionName=%u \n", value->mValueType);
     if (value->mValueType == FUNC) {
-        MiniFunction* func = (MiniFunction*) value->mValue.mObj.mPtr;
+        BoyiaFunction* func = (BoyiaFunction*) value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
             return 1;
         }
@@ -1166,7 +1166,7 @@ static LInt HandlePop(LVoid* ins) {
 		--gEState.mResultNum;
 		return 1;
 	}
-    MiniValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
     ValueCopy(value, gOpStack + (--gEState.mResultNum));
     return 1;
 }
@@ -1213,8 +1213,8 @@ static LVoid PushArgStatement() {
     } while (gToken.mTokenValue == COMMA);
 }
 
-static MiniValue* GetRightOpValue(Instruction* inst) {
-    MiniValue* right = NULL;
+static BoyiaValue* GetRightOpValue(Instruction* inst) {
+    BoyiaValue* right = NULL;
     switch (inst->mOPRight.mType) { // 赋值左值不可能是常量
         case OP_REG0:
             right = &gVM.mReg0;
@@ -1233,12 +1233,12 @@ static MiniValue* GetRightOpValue(Instruction* inst) {
 /* Assign a value to a Register 0 or 1. */
 static LInt HandleAssignment(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
     if (!left) return 0;
 
     switch (inst->mOPRight.mType) {
         case OP_CONST_STRING: { // 字符串是存在全局表中
-            MiniValue* val = (MiniValue*) inst->mOPRight.mValue;
+            BoyiaValue* val = (BoyiaValue*) inst->mOPRight.mValue;
             ValueCopyNoName(left, val);
         }
             break;
@@ -1248,7 +1248,7 @@ static LInt HandleAssignment(LVoid* ins) {
         }
             break;
         case OP_VAR: {
-            MiniValue *val = FindVal((LUint) inst->mOPRight.mValue);
+            BoyiaValue *val = FindVal((LUint) inst->mOPRight.mValue);
             ValueCopyNoName(left, val);
             left->mNameKey = (LUint) val;
         }
@@ -1284,7 +1284,7 @@ static LInt HandleIfEnd(LVoid* ins) {
 
 static LInt HandleJumpToIfTrue(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* value = &gVM.mReg0;
+    BoyiaValue* value = &gVM.mReg0;
     if (!value->mValue.mIntVal) {
         gEState.mPC = (Instruction*) inst->mOPRight.mValue;
     }
@@ -1314,7 +1314,7 @@ static LInt HandleLoopBegin(LVoid* ins) {
 
 static LInt HandleLoopIfTrue(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* value = &gVM.mReg0;
+    BoyiaValue* value = &gVM.mReg0;
     //EngineLog("HandleLoopIfTrue value=%d", value->mValue.mIntVal);
     if (!value->mValue.mIntVal) {
         gEState.mPC = (Instruction*) inst->mOPRight.mValue;
@@ -1383,8 +1383,8 @@ static LVoid DoStatement() {
 
 static LInt HandleAdd(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
     //EngineLog("HandleAdd left=%d \n", left->mValue.mIntVal);
     //EngineLog("HandleAdd right=%d \n", right->mValue.mIntVal);
 	if (left->mValueType == INT && right->mValueType == INT) {
@@ -1404,8 +1404,8 @@ static LInt HandleAdd(LVoid* ins) {
 
 static LInt HandleSub(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1417,8 +1417,8 @@ static LInt HandleSub(LVoid* ins) {
 
 static LInt HandleMul(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     EngineLog("HandleMul left=%d \n", left->mValue.mIntVal);
     EngineLog("HandleMul right=%d \n", right->mValue.mIntVal);
@@ -1432,8 +1432,8 @@ static LInt HandleMul(LVoid* ins) {
 
 static LInt HandleDiv(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1447,8 +1447,8 @@ static LInt HandleDiv(LVoid* ins) {
 
 static LInt HandleMod(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1462,8 +1462,8 @@ static LInt HandleMod(LVoid* ins) {
 
 static LInt HandleRelational(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     EngineLog("HandleLogic left=%d \n", left->mValue.mIntVal);
     EngineLog("HandleLogic right=%d \n", right->mValue.mIntVal);
@@ -1497,8 +1497,8 @@ static LInt HandleRelational(LVoid* ins) {
 
 static LInt HandleLogic(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* right = GetRightOpValue(inst);
 
     LInt result = 0;
     switch (inst->mOPCode) {
@@ -1535,16 +1535,16 @@ static LVoid EvalExpression() {
 
 static LInt HandlePush(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
     ValueCopy(gOpStack + (gEState.mResultNum++), value);
     return 1;
 }
 
 static LInt HandleAssignVar(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    MiniValue* left = GetLeftOpValue(inst);
-    MiniValue* value = (MiniValue*) left->mNameKey;
-    MiniValue* result = GetRightOpValue(inst);
+    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* value = (BoyiaValue*) left->mNameKey;
+    BoyiaValue* result = GetRightOpValue(inst);
 
     ValueCopyNoName(value, result);
     ValueCopy(&gVM.mReg0, value);
@@ -1578,13 +1578,13 @@ static LVoid CallNativeStatement(LInt idx) {
     pushInst->mOPLeft.mValue = (LInt) popInst;
 }
 
-static MiniValue* FindObjProp(MiniValue* lVal, LUint rVal) {
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal) {
 	if (!lVal || lVal->mValueType != CLASS) {
 		return NULL;
 	}
 
 	// 找props
-	MiniFunction* fun = (MiniFunction*)lVal->mValue.mObj.mPtr;
+	BoyiaFunction* fun = (BoyiaFunction*)lVal->mValue.mObj.mPtr;
 	LInt idx = 0;
 	for (; idx < fun->mParamSize; ++idx) {
 		if (fun->mParams[idx].mNameKey == rVal) {
@@ -1593,9 +1593,9 @@ static MiniValue* FindObjProp(MiniValue* lVal, LUint rVal) {
 	}
 
 	// 找function
-	MiniValue* cls = (MiniValue*) fun->mFuncBody;
+	BoyiaValue* cls = (BoyiaValue*) fun->mFuncBody;
 	while (cls && cls->mValueType == CLASS) {
-		MiniFunction* clsMap = (MiniFunction*)cls->mValue.mObj.mPtr;
+		BoyiaFunction* clsMap = (BoyiaFunction*)cls->mValue.mObj.mPtr;
 		LInt funIdx = 0;
 		for (; funIdx < clsMap->mParamSize; ++funIdx) {
 			if (clsMap->mParams[funIdx].mNameKey == rVal) {
@@ -1603,14 +1603,14 @@ static MiniValue* FindObjProp(MiniValue* lVal, LUint rVal) {
 			}
 		}
 
-		cls = (MiniValue*) cls->mValue.mObj.mSuper;
+		cls = (BoyiaValue*) cls->mValue.mObj.mSuper;
 	}
 
 	return NULL;
 }
 
-static LInt FindProp(MiniValue* lVal, LUint rVal) {
-	MiniValue* propVal = FindObjProp(lVal, rVal);
+static LInt FindProp(BoyiaValue* lVal, LUint rVal) {
+	BoyiaValue* propVal = FindObjProp(lVal, rVal);
 	// 找到
 	if (propVal) {
 		gVM.mReg0.mNameKey = (LUint)propVal;
@@ -1623,7 +1623,7 @@ static LInt FindProp(MiniValue* lVal, LUint rVal) {
 
 static LInt HandleGetProp(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-	MiniValue* lVal = GetLeftOpValue(inst);
+	BoyiaValue* lVal = GetLeftOpValue(inst);
 	LUint rVal = (LUint)inst->mOPRight.mValue;
 	return FindProp(lVal, rVal);
 }
@@ -1664,7 +1664,7 @@ static LVoid EvalGetValue(LUint objKey) {
     }
 }
 
-static LVoid CopyStringFromToken(MiniStr* str) {
+static LVoid CopyStringFromToken(BoyiaStr* str) {
 	str->mLen = gToken.mTokenName.mLen - 2;
 	str->mPtr = NEW_ARRAY(LInt8, str->mLen);
 	LMemcpy(str->mPtr, gToken.mTokenName.mPtr, str->mLen * sizeof(LInt8));
@@ -1710,7 +1710,7 @@ static LVoid Atom() {
             return;
         case STRING_VALUE: {
             // 设置常量字符串， 所有常量hash值为0
-        	MiniStr constStr;
+        	BoyiaStr constStr;
         	CopyStringFromToken(&constStr);
         	OpCommand lCmd = { OP_CONST_NUMBER, (LInt) constStr.mPtr };
         	OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
@@ -1865,16 +1865,16 @@ static LVoid InitGlobalData() {
 		// 初始化MJS内存分配池
 		CreateMiniMemory();
 		/* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
-		gGlobalsTable = NEW_ARRAY(MiniValue, NUM_GLOBAL_VARS);
-		//LMemset(gGlobalsTable, 0, NUM_GLOBAL_VARS * sizeof(MiniValue));
+		gGlobalsTable = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
+		//LMemset(gGlobalsTable, 0, NUM_GLOBAL_VARS * sizeof(BoyiaValue));
 
-		gLocalsStack = NEW_ARRAY(MiniValue, NUM_LOCAL_VARS);
-		//LMemset(gLocalsStack, 0, NUM_LOCAL_VARS * sizeof(MiniValue));
+		gLocalsStack = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
+		//LMemset(gLocalsStack, 0, NUM_LOCAL_VARS * sizeof(BoyiaValue));
 
-		gFunTable = NEW_ARRAY(MiniFunction, NUM_FUNC);
-		//LMemset(gFunTable, 0, NUM_FUNC * sizeof(MiniFunction));
+		gFunTable = NEW_ARRAY(BoyiaFunction, NUM_FUNC);
+		//LMemset(gFunTable, 0, NUM_FUNC * sizeof(BoyiaFunction));
 
-		gOpStack = NEW_ARRAY(MiniValue, NUM_RESULT);
+		gOpStack = NEW_ARRAY(BoyiaValue, NUM_RESULT);
 
 		gCallStack = NEW_ARRAY(ExecScene, FUNC_CALLS);
 		gLoopStack = NEW_ARRAY(LInt, LOOP_NEST);
@@ -1901,7 +1901,7 @@ static LVoid InitNativeFun(LVoid* map) {
 }
 
 LVoid SetNativeResult(LVoid* result) {
-	MiniValue* value = (MiniValue*)result;
+	BoyiaValue* value = (BoyiaValue*)result;
 	ValueCopy(&gVM.mReg0, value);
 }
 
@@ -1955,7 +1955,7 @@ LVoid CallFunction(LInt8* fun, LVoid* ret) {
 	ExecuteCode(cmds);
 
 	if (ret) {
-		MiniValue* value = (MiniValue*)ret;
+		BoyiaValue* value = (BoyiaValue*)ret;
 		ValueCopy(value, &gVM.mReg0);
 	}
 }
@@ -1964,7 +1964,7 @@ LVoid SaveLocalSize() {
 	HandleTempLocalSize(NULL);
 }
 
-LVoid NativeCall(MiniValue* obj) {
+LVoid NativeCall(BoyiaValue* obj) {
 	gCallStack[gEState.mFunctos].mClass = gEState.mClass;
 	gCallStack[gEState.mFunctos].mLValSize = gEState.mTmpLValSize;
 	gCallStack[gEState.mFunctos].mPC = gEState.mPC;

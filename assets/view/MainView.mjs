@@ -17,7 +17,7 @@ class MainView extends ViewDoc {
     }
     
     fun appendHeader() {
-        this.headerView = ViewDoc.createView(SearchHeader, "boyia://html/search_header.html");
+        this.headerView = ViewDoc.createView(SearchHeader, "boyia://layout/search_header.html");
         this.headerView.initView();
         this.headerContainer.appendView(this.headerView);
     }

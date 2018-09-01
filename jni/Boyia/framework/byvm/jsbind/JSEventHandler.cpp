@@ -1,8 +1,8 @@
 #include "JSEventHandler.h"
-#include "MiniLib.h"
+#include "BoyiaLib.h"
 #include "SalLog.h"
 
-namespace mjs
+namespace boyia
 {
 JSEventHandler::JSEventHandler()
     : m_touchCallback(NULL)
@@ -23,9 +23,9 @@ JSEventHandler::~JSEventHandler()
 	}
 }
 
-LVoid JSEventHandler::setTouchCallback(MiniValue* callback)
+LVoid JSEventHandler::setTouchCallback(BoyiaValue* callback)
 {
-	m_touchCallback = new MiniValue;
+	m_touchCallback = new BoyiaValue;
 	ValueCopy(m_touchCallback, callback);
 }
 
@@ -37,24 +37,24 @@ LVoid JSEventHandler::handleTouch(const util::LTouchEvent& evt)
 	SaveLocalSize();
 	LocalPush(m_touchCallback);
 
-	MiniValue val;
-	val.mValueType = M_INT;
+	BoyiaValue val;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = evt.getType();
 	LocalPush(&val);
 
-	val.mValueType = M_INT;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = evt.getPosition().iX;
 	LocalPush(&val);
 
-	val.mValueType = M_INT;
+	val.mValueType = BY_INT;
 	val.mValue.mIntVal = evt.getPosition().iY;
 	LocalPush(&val);
 	NativeCall(NULL);
 }
 
-LVoid JSEventHandler::setKeyCallback(MiniValue* callback)
+LVoid JSEventHandler::setKeyCallback(BoyiaValue* callback)
 {
-	m_keyCallback = new MiniValue;
+	m_keyCallback = new BoyiaValue;
 	ValueCopy(m_keyCallback, callback);
 }
 

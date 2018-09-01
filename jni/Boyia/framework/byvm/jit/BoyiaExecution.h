@@ -1,5 +1,5 @@
-#ifndef MiniExecution_h
-#define MiniExecution_h
+#ifndef BoyiaExecution_h
+#define BoyiaExecution_h
 #include "PlatformLib.h"
 namespace mjs {
 class NativeCode {
@@ -13,7 +13,7 @@ private:
 	LByte* m_codeSegment;
     LInt m_codeSize;
 };
-class MiniExecution {
+class BoyiaExecution {
 public:
     void callCode();
 };

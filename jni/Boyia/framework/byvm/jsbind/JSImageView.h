@@ -2,7 +2,7 @@
 #define JSImageView_h
 
 #include "JSView.h"
-namespace mjs
+namespace boyia
 {
 class JSImageView : public JSView
 {
