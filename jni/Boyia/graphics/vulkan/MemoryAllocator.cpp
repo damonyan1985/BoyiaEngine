@@ -7,7 +7,7 @@
 
 MemoryAllocator::MemoryAllocator()
 {
-    mSampleFramework = NULL;
+    mFramework = NULL;
 
     for (int i=0; i< NUM_MEMORY_TYPES; i++)
     {
@@ -25,7 +25,7 @@ MemoryAllocator::~MemoryAllocator()
         if (mDeviceMemory[i] != VK_NULL_HANDLE )
         {
 
-            vkFreeMemory(mSampleFramework->GetDevice(), mDeviceMemory[i], nullptr);
+            vkFreeMemory(mFramework->GetDevice(), mDeviceMemory[i], nullptr);
             mDeviceMemory[i] = VK_NULL_HANDLE;
             mDeviceMemoryOffset[i] = 0;
         }
@@ -49,7 +49,7 @@ VkResult MemoryAllocator::AllocateMemory(VkMemoryAllocateInfo* pInfo, VkDeviceMe
         info.allocationSize     = ALLOCATION_SIZE;
         info.sType              = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         info.pNext              = nullptr;
-        VkResult  err = vkAllocateMemory(mSampleFramework->GetDevice(), &info, nullptr, &mDeviceMemory[memoryIndex] );
+        VkResult  err = vkAllocateMemory(mFramework->GetDevice(), &info, nullptr, &mDeviceMemory[memoryIndex] );
         if (err != VK_SUCCESS)
         {
             // out of memory or too many memory objects created.
