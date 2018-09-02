@@ -92,8 +92,6 @@ void CssTags::destroyInstance()
 {
 	if (s_cssTags != NULL)
 	{
-		//s_cssTags->clear();
-	    
 	    delete s_cssTags;
 	    s_cssTags = NULL;
 	}

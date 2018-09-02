@@ -27,7 +27,7 @@ LVoid TagMap::put(LUint hash, LInt tag)
 
 LVoid TagMap::put(const String& key, LInt tag)
 {
-	put(StringUtils::hashCode(key), tag);
+	put(StringUtils::genIdentify(key), tag);
 }
 
 LInt TagMap::get(const LUint hash)
@@ -50,7 +50,7 @@ LInt TagMap::get(const LUint hash)
 
 LInt TagMap::get(const String& key)
 {
-	return get(StringUtils::hashCode(key));
+	return get(StringUtils::genIdentify(key));
 }
 
 LVoid TagMap::sort()

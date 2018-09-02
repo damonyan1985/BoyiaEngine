@@ -6,9 +6,6 @@
 
 namespace yanbo
 {
-
-//typedef KMap<LUint, LInt> HtmlTagMap;
-
 class HtmlTags
 {
 public:
