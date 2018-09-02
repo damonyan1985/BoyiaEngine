@@ -2,11 +2,13 @@
  * StringUtils.cpp
  *
  *  Created on: 2011-6-25
+ *  Modify on: 2018-9-2 9:30
  *      Author: yanbo
  */
 
 #include "StringUtils.h"
 #include "SalLog.h"
+#include "BoyiaValue.h"
 
 namespace util
 {
@@ -294,4 +296,8 @@ LUint StringUtils::hashCode(const String& keyName)
     return GenHashCode((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
 }
 
+LUint StringUtils::genIdentify(const String& keyName)
+{
+	return GenIdentByStr((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
+}
 }

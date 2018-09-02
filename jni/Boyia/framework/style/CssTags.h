@@ -14,8 +14,6 @@
 
 namespace util
 {
-
-//typedef KMap<LUint, LInt> CssTypeMap;
 /**
  * Objects of this class holds the symbol table for CSS tags.
  * See this class for more info.

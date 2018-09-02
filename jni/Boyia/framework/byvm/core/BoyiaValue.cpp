@@ -192,18 +192,18 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right) {
 	KLOG("StringAdd End");
 }
 
-typedef struct MiniId {
-	BoyiaStr mStr;
-	LUint   mID;
-	MiniId* mNext;
-} MiniId;
+typedef struct BoyiaId {
+	BoyiaStr  mStr;
+	LUint     mID;
+	BoyiaId*  mNext;
+} BoyiaId;
 
 typedef struct {
-	MiniId* mBegin;
-	MiniId* mEnd;
-} MiniIdLink;
+	BoyiaId* mBegin;
+	BoyiaId* mEnd;
+} IdLink;
 
-static MiniIdLink* sIdLink = NULL;
+static IdLink* sIdLink = NULL;
 static LUint sIdCount = 0;
 LUint GenIdentByStr(const LInt8* str, LInt len) {
 	BoyiaStr strId;
@@ -214,12 +214,12 @@ LUint GenIdentByStr(const LInt8* str, LInt len) {
 
 LUint GenIdentifier(BoyiaStr* str) {
     if (!sIdLink) {
-    	sIdLink = new MiniIdLink;
+    	sIdLink = new IdLink;
     	sIdLink->mBegin = NULL;
     	sIdLink->mEnd = NULL;
     }
 
-    MiniId* id = sIdLink->mBegin;
+    BoyiaId* id = sIdLink->mBegin;
     while (id) {
         if (MStrcmp(str, &id->mStr)) {
         	return id->mID;
@@ -228,7 +228,7 @@ LUint GenIdentifier(BoyiaStr* str) {
         id = id->mNext;
     }
 
-    id = new MiniId;
+    id = new BoyiaId;
     id->mID = ++sIdCount;
     id->mStr.mPtr = new LInt8[str->mLen];
     id->mStr.mLen = str->mLen;

@@ -32,6 +32,8 @@ public:
 
 	static LUint               hashCode(const String& keyName);
 
+	static LUint               genIdentify(const String& keyName);
+
 	static LBool               isspace(LInt ch);
 	static LBool               isdigit(LInt ch);
 	static LBool               isalpha(LInt ch);
