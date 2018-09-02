@@ -61,37 +61,6 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix) {
     return total * sign;
 }
 
-// 对MJS属性进行插入排序，方便二分查找
-extern LVoid MiniSort(BoyiaValue* vT, LInt len) {
-	for (LInt i = 1; i<len; ++i) {
-		for (LInt j = i; j - 1 >= 0 && vT[j].mNameKey<vT[j - 1].mNameKey; --j) {
-			BoyiaValue tmp;
-			ValueCopy(&tmp, &vT[j]);
-			ValueCopy(&vT[j], &vT[j - 1]);
-			ValueCopy(&vT[j - 1], &tmp);
-		}
-	}
-}
-
-// 主要作用用于优化MJS对象属性HashCode查找
-// 对属性Props数组进行二分查找
-LInt MiniSearch(BoyiaValue*  vT, LInt n, LUint key) {
-	LInt low = 0, high = n - 1, mid;
-
-	while (low <= high) {
-		mid = (low + high) / 2;
-		if (key < vT[mid].mNameKey) {
-			high = mid - 1;
-		} else if (key > vT[mid].mNameKey) {
-			low = mid + 1;
-		} else {
-			return mid;
-		}
-	}
-
-	return -1;
-}
-
 LVoid CreateMiniMemory() {
 	gMemPool = initMemoryPool(MEMORY_SIZE);
 }
@@ -113,10 +82,6 @@ LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src) {
     dest->mPtr = src->mPtr;
     dest->mLen = src->mLen;
 }
-
-//LUint HashCode(BoyiaStr* str) {
-//	return GenHashCode(str->mPtr, str->mLen);
-//}
 
 LVoid InitStr(BoyiaStr* str, LInt8* ptr) {
     str->mLen = 0;
