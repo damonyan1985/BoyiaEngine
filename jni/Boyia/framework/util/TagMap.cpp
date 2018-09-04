@@ -5,8 +5,16 @@ namespace util
 TagMap::TagMap(LInt capacity)
     : m_size(0)
     , m_capacity(capacity)
+    , m_idCreator(NULL)
 {
 	m_pairs = new TagPair[capacity];
+	m_idCreator = new IDCreator();
+}
+
+TagMap::~TagMap()
+{
+	delete m_pairs;
+	delete m_idCreator;
 }
 
 LVoid TagMap::put(LUint hash, LInt tag)
@@ -27,7 +35,7 @@ LVoid TagMap::put(LUint hash, LInt tag)
 
 LVoid TagMap::put(const String& key, LInt tag)
 {
-	put(StringUtils::genIdentify(key), tag);
+	put(m_idCreator->genIdentify(key), tag);
 }
 
 LInt TagMap::get(const LUint hash)
@@ -50,7 +58,7 @@ LInt TagMap::get(const LUint hash)
 
 LInt TagMap::get(const String& key)
 {
-	return get(StringUtils::genIdentify(key));
+	return get(m_idCreator->genIdentify(key));
 }
 
 LVoid TagMap::sort()
@@ -73,5 +81,10 @@ LVoid TagMap::sort()
 LVoid TagMap::clear()
 {
 	m_size = 0;
+}
+
+LUint TagMap::genKey(const String& key)
+{
+	return m_idCreator->genIdentify(key);
 }
 }

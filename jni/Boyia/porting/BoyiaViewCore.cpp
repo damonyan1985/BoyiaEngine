@@ -48,7 +48,7 @@ static void nativeInitUIView(
 {
 	//mjs::BoyiaExecution exec;
 	//exec.callCode();
-	TestLoadUrl();
+	//TestLoadUrl();
 	JNI_LOG_ON = isDebug;
 	//ArmMemeset(NULL, 0, 0);
 	KLOG("MiniTaskThread::run nativeInitUIView");

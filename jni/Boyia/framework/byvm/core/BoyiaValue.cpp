@@ -8,6 +8,7 @@
 #include "MiniMutex.h"
 #include "JSBase.h"
 #include "SalLog.h"
+#include "IDCreator.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <android/log.h>
@@ -157,56 +158,19 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right) {
 	KLOG("StringAdd End");
 }
 
-typedef struct BoyiaId {
-	BoyiaStr  mStr;
-	LUint     mID;
-	BoyiaId*  mNext;
-} BoyiaId;
-
-typedef struct {
-	BoyiaId* mBegin;
-	BoyiaId* mEnd;
-} IdLink;
-
-static IdLink* sIdLink = NULL;
-static LUint sIdCount = 0;
+static util::IDCreator* s_idCreator = NULL;
 LUint GenIdentByStr(const LInt8* str, LInt len) {
-	BoyiaStr strId;
-	strId.mPtr = (LInt8*)str;
-	strId.mLen = len;
-	return GenIdentifier(&strId);
+	if (!s_idCreator) {
+	    s_idCreator = new util::IDCreator();
+	}
+
+	return s_idCreator->genIdentByStr(str, len);
 }
 
 LUint GenIdentifier(BoyiaStr* str) {
-    if (!sIdLink) {
-    	sIdLink = new IdLink;
-    	sIdLink->mBegin = NULL;
-    	sIdLink->mEnd = NULL;
+    if (!s_idCreator) {
+    	s_idCreator = new util::IDCreator();
     }
 
-    BoyiaId* id = sIdLink->mBegin;
-    while (id) {
-        if (MStrcmp(str, &id->mStr)) {
-        	return id->mID;
-        }
-
-        id = id->mNext;
-    }
-
-    id = new BoyiaId;
-    id->mID = ++sIdCount;
-    id->mStr.mPtr = new LInt8[str->mLen];
-    id->mStr.mLen = str->mLen;
-    LMemcpy(id->mStr.mPtr, str->mPtr, str->mLen);
-    id->mNext = NULL;
-
-    if (!sIdLink->mBegin) {
-    	sIdLink->mBegin = id;
-    	sIdLink->mEnd = id;
-    } else {
-        sIdLink->mEnd->mNext = id;
-        sIdLink->mEnd = id;
-    }
-
-    return id->mID;
+    return s_idCreator->genIdentifier(str);
 }

@@ -83,9 +83,11 @@ public:
 	void defineInitialSymbol(const String& cssText, LInt cssType);
 	~CssTags();
 	
-	int symbolAsInt(LUint hash);
+	LInt symbolAsInt(LUint hash);
 	void clear();
 	
+	LUint genIdentify(const String& key);
+
 private:
 	CssTags();	
 	

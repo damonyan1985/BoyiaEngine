@@ -296,8 +296,8 @@ LUint StringUtils::hashCode(const String& keyName)
     return GenHashCode((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
 }
 
-LUint StringUtils::genIdentify(const String& keyName)
-{
-	return GenIdentByStr((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
-}
+//LUint StringUtils::genIdentify(const String& keyName)
+//{
+//	return GenIdentByStr((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
+//}
 }
