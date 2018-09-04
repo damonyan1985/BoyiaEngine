@@ -244,7 +244,7 @@ void CssParser::addDeclaration(PropertyMap* properties, PropertyName& prop, Prop
 		// 除去空白
 		PropertyName realProp = StringUtils::skipBlank(prop);
 		// 计算处理了大小写的字符串的哈希值
-	    properties->put(StringUtils::genIdentify(realProp.ToLower()), value);
+	    properties->put(CssTags::getInstance()->genIdentify(realProp.ToLower()), value);
 	}
 }
 

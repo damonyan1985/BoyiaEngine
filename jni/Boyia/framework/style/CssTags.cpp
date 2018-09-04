@@ -97,9 +97,13 @@ void CssTags::destroyInstance()
 	}
 }
 
-int CssTags::symbolAsInt(LUint hash)
+LInt CssTags::symbolAsInt(LUint hash)
 {
 	return m_map.get(hash);
 }
 
+LUint CssTags::genIdentify(const String& key)
+{
+	return m_map.genKey(key);
+}
 }
