@@ -1,4 +1,4 @@
-#include "BitmapAndroid.h"
+#include "ImageAndroid.h"
 #include "AutoObject.h"
 #include "SalLog.h"
 #include "StringUtils.h"

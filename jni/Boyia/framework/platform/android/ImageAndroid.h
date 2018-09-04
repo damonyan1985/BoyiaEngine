@@ -1,5 +1,5 @@
-#ifndef BITMAP_ANDROID_H
-#define BITMAP_ANDROID_H
+#ifndef ImageAndroid_h
+#define ImageAndroid_h
 
 #include "LGdi.h"
 #include "AutoObject.h"
