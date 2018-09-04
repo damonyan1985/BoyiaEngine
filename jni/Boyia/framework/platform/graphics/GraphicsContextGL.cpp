@@ -1,7 +1,7 @@
 #include "GraphicsContextGL.h"
 #include "ShaderUtil.h"
 #include "MatrixState.h"
-#include "BitmapAndroid.h"
+#include "ImageAndroid.h"
 #include "HtmlView.h"
 #include "UIView.h"
 #include "JNIUtil.h"

@@ -37,7 +37,7 @@ LOCAL_SRC_FILES += \
     \
     $(LOCAL_PATH)/framework/platform/android/LoaderAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/android/AutoObject.cpp \
-    $(LOCAL_PATH)/framework/platform/android/BitmapAndroid.cpp \
+    $(LOCAL_PATH)/framework/platform/android/ImageAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/android/FontAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/android/JNIUtil.cpp \
     $(LOCAL_PATH)/framework/platform/android/MediaPlayerAndroid.cpp \
