@@ -230,7 +230,7 @@ public:
 		&iter = NULL;
 	}
 
-	LVoid insert(Iterator& iter, const NodeValue& value)
+	Iterator insert(Iterator& iter, const NodeValue& value)
 	{
 		NodePtr nodePtr = new ListNode<NodeValue>;
 		nodePtr->m_value = value;
@@ -253,6 +253,7 @@ public:
 		}
 
 		++m_count;
+		return Iterator(nodePtr);
 	}
 
 	LVoid clear()

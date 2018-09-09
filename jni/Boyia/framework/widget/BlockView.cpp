@@ -278,7 +278,12 @@ void BlockView::makeChildrenNonInline(HtmlView* block)
 	}
 
 	b->setParent(this);
-	m_children.insert(tmpIter, b);
+	insertChild(tmpIter, b);
+}
+
+LVoid BlockView::insertChild(HtmlViewList::Iterator& iter, HtmlView* child)
+{
+	child->setViewIter(m_children.insert(iter, child));
 }
 
 BlockView* BlockView::createAnonymousBlock()
