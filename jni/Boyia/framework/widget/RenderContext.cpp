@@ -160,7 +160,7 @@ void RenderContext::addLineItem(HtmlView* item)
 {
 	if (m_center == LTrue)
 	{
-	    m_lineItems.push_back(item);
+	    m_lineItems.push(item);
 	}
 }
 

@@ -64,7 +64,7 @@ void MiniThreadPool::sendMiniTask(MiniTaskBase* task)
 	if (m_threadList.count() < KMiniThreadPoolSize)
 	{
 		KRefPtr<MiniTaskThread> thread = new MiniTaskThread(m_queue.get());
-        m_threadList.push_back(thread);
+        m_threadList.push(thread);
         thread->start();
 	}
 }

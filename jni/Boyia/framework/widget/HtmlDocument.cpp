@@ -81,7 +81,7 @@ HtmlView* HtmlDocument::getNextItem()
 
 void HtmlDocument::addForm(HtmlForm* form)
 {
-	m_formList.push_back(form);
+	m_formList.push(form);
 }
 
 HtmlView* HtmlDocument::getCurrentItem()
@@ -91,7 +91,7 @@ HtmlView* HtmlDocument::getCurrentItem()
 
 void HtmlDocument::addHtmlView(HtmlView* item)
 {
-	m_itemList.push_back(item);	
+	m_itemList.push(item);
 }
 
 void HtmlDocument::resetHtmlFocus()

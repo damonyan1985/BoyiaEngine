@@ -42,7 +42,7 @@ public:
 
 		if (!find)
 		{
-			m_container.push_back(v);
+			m_container.push(v);
 		}
 	}
 

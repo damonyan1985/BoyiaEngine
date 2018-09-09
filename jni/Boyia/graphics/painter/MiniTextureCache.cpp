@@ -136,7 +136,7 @@ MiniTexture* MiniTextureCache::fetchTexture(HtmlView* item, const LRect& rect, c
 //	pair->tex->height = image->height();
 	pair->tex = new MiniTexture();
 	pair->tex->initWithData(image->pixels(), key, image->width(), image->height());
-	m_texMap.push_back(pair);
+	m_texMap.push(pair);
 
 //	glBindTexture(GL_TEXTURE_2D, textID);
 //	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
