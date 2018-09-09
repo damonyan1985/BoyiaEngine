@@ -237,7 +237,8 @@ void BlockView::addChild(HtmlView* child, LBool isNotAnonymousBlock)
 
 			BlockView* b = createAnonymousBlock();
 			b->setDocument(getDocument());
-			m_children.push(b);
+			//m_children.push(b);
+			HtmlView::addChild(b);
 			b->setParent(this);
 			b->addChild(child, LFalse);
 			child->setParent(b);
