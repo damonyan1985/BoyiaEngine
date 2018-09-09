@@ -10,8 +10,6 @@
 
 #include "HtmlView.h"
 #include "HtmlForm.h"
-//#include "KMap.h"
-//#include "UIView.h"
 #include "TagMap.h"
 
 namespace yanbo

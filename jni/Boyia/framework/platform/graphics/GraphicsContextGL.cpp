@@ -53,7 +53,7 @@ LVoid GraphicsContextGL::drawLine(const LPoint& p1, const LPoint& p2)
 	KRefPtr<yanbo::GLPainter> line = new yanbo::GLPainter();
     line->setLine(p1, p2);
     line->setColor(m_penColor);
-    painter->painters.push_back(line);
+    painter->painters.push(line);
 }
 
 LVoid GraphicsContextGL::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
@@ -68,7 +68,7 @@ LVoid GraphicsContextGL::drawRect(const LRect& aRect)
 	shapeRect->setRect(aRect);
 	//m_brushColor.m_alpha = 0x33;
 	shapeRect->setColor(m_brushColor);
-    painter->painters.push_back(shapeRect);
+    painter->painters.push(shapeRect);
 }
 
 LVoid GraphicsContextGL::drawRect(LInt x, LInt y, LInt w, LInt h)
@@ -127,7 +127,7 @@ LVoid GraphicsContextGL::drawImage(const LImage* image)
     KRefPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(m_brushColor);
     paint->setImage(tex, image->rect());
-    painter->painters.push_back(paint);
+    painter->painters.push(paint);
 
     KLOG("GraphicsContextGL::drawBitmap end");
 }
@@ -159,7 +159,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 	amp->updateTexture(paint->stMatrix());
 	//KFORMATLOG("GraphicsContextGL drawVideo error=%d texId=%d", glGetError(), tex->texId);
 
-	painter->painters.push_back(paint);
+	painter->painters.push(paint);
 }
 
 LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAlign align)
@@ -176,7 +176,7 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 		KRefPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
 		paint->setColor(m_brushColor);
 		paint->setImage(tex, image->rect());
-		painter->painters.push_back(paint);
+		painter->painters.push(paint);
 	}
 	else
 	{

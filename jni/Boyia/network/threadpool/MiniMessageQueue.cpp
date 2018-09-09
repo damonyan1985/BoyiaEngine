@@ -61,7 +61,7 @@ MiniMessage* MiniMessageCache::obtain()
 void MiniMessageQueue::push(MiniMessage* msg)
 {
 	AutoLock lock(&m_queueMutex);
-	m_list.push_back(msg);
+	m_list.push(msg);
 }
 
 LInt MiniMessageQueue::size()

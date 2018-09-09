@@ -51,7 +51,7 @@ HtmlForm::~HtmlForm()
 
 void HtmlForm::addFormView(FormView* aFormView)
 {
-	m_formList.push_back(aFormView);
+	m_formList.push(aFormView);
 }
 
 const FormViewList& HtmlForm::getFormViews() const

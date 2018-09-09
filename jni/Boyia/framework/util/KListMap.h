@@ -75,7 +75,7 @@ public:
 			}
 		}
 
-		m_container.push_back(new MapPair(k, v));
+		m_container.push(new MapPair(k, v));
 	}
 
 	LVoid clear()
@@ -132,7 +132,7 @@ private:
 		MapPair* pair = new MapPair;
 		pair->mKey = key;
 		KFORMATLOG("get pair count=%d", pair->count());
-		m_container.push_back(pair);
+		m_container.push(pair);
 		KFORMATLOG("get pair end count=%d", pair->count());
 		return pair;
 	}

@@ -40,7 +40,7 @@ CssManager::~CssManager()
 
 void CssManager::addCssRule(CssRule* rule)
 {
-	m_ruleList.push_back(rule);
+	m_ruleList.push(rule);
 }
 
 // get Specified htmitem's cssrule

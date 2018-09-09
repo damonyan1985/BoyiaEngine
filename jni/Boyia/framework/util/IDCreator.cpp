@@ -47,11 +47,11 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 
 	if (!m_idLink->mBegin) {
 		m_idLink->mBegin = id;
-		m_idLink->mEnd = id;
 	} else {
 		m_idLink->mEnd->mNext = id;
-		m_idLink->mEnd = id;
 	}
+
+	m_idLink->mEnd = id;
 
 	return id->mID;
 }

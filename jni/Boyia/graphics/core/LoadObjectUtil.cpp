@@ -75,9 +75,9 @@ void LoadObjectUtil::loadFromFileVertexOnly(const CString& fname, float rz,float
 	    {
 	    	// 此行为顶点坐标
 	      	// 若为顶点坐标行则提取出此顶点的XYZ坐标添加到原始顶点坐标列表中
-	        alv->push_back(atofUtil(tempsa->elementAt(1)));
-	      	alv->push_back(atofUtil(tempsa->elementAt(2)));
-	      	alv->push_back(atofUtil(tempsa->elementAt(3)));
+	        alv->push(atofUtil(tempsa->elementAt(1)));
+	      	alv->push(atofUtil(tempsa->elementAt(2)));
+	      	alv->push(atofUtil(tempsa->elementAt(3)));
 	    }
 	    else if (tempsa->elementAt(0) == _CS("vt"))
 	    {
@@ -103,9 +103,9 @@ void LoadObjectUtil::loadFromFileVertexOnly(const CString& fname, float rz,float
 	      	float x0=(*alv)[3*index[0]];
 	      	float y0=(*alv)[3*index[0]+1];
 	      	float z0=(*alv)[3*index[0]+2];
-	      	alvResult->push_back(x0);
-	      	alvResult->push_back(y0);
-	      	alvResult->push_back(z0);
+	      	alvResult->push(x0);
+	      	alvResult->push(y0);
+	      	alvResult->push(z0);
 
 	      	// 计算第1个顶点的索引，并获取此顶点的XYZ三个坐标
 	      	KVector<String>* tempsaList2 = util::StringUtils::split(tempsa->elementAt(2), _CS("/"));
@@ -113,9 +113,9 @@ void LoadObjectUtil::loadFromFileVertexOnly(const CString& fname, float rz,float
 	      	float x1=(*alv)[3*index[1]];
 	      	float y1=(*alv)[3*index[1]+1];
 	      	float z1=(*alv)[3*index[1]+2];
-	      	alvResult->push_back(x1);
-	      	alvResult->push_back(y1);
-	      	alvResult->push_back(z1);
+	      	alvResult->push(x1);
+	      	alvResult->push(y1);
+	      	alvResult->push(z1);
 
 	      	// 计算第2个顶点的索引，并获取此顶点的XYZ三个坐标
 	      	KVector<String>* tempsaList3 = util::StringUtils::split(tempsa->elementAt(3), _CS("/"));
@@ -123,14 +123,14 @@ void LoadObjectUtil::loadFromFileVertexOnly(const CString& fname, float rz,float
 	      	float x2=(*alv)[3*index[2]];
 	      	float y2=(*alv)[3*index[2]+1];
 	      	float z2=(*alv)[3*index[2]+2];
-	      	alvResult->push_back(x2);
-	      	alvResult->push_back(y2);
-	      	alvResult->push_back(z2);
+	      	alvResult->push(x2);
+	      	alvResult->push(y2);
+	      	alvResult->push(z2);
 
 	      	// 记录此面的顶点索引
-	      	alFaceIndex->push_back(index[0]);
-	      	alFaceIndex->push_back(index[1]);
-	      	alFaceIndex->push_back(index[2]);
+	      	alFaceIndex->push(index[0]);
+	      	alFaceIndex->push(index[1]);
+	      	alFaceIndex->push(index[2]);
 
 	      	// 通过三角形面两个边向量0-1，0-2求叉积得到此面的法向量
 	      	// 求0号点到1号点的向量
@@ -172,16 +172,16 @@ void LoadObjectUtil::loadFromFileVertexOnly(const CString& fname, float rz,float
 	      	if (alt.size() > 0)
 	      	{
 	      	    int indexTex = atoi((char*)tempsaList1->elementAt(1).GetBuffer())-1;
-      		    altResult->push_back(alt[indexTex*2]);
-      		    altResult->push_back(alt[indexTex*2+1]);
+      		    altResult->push(alt[indexTex*2]);
+      		    altResult->push(alt[indexTex*2+1]);
       	        //第1个顶点的纹理坐标
       		    indexTex = atoi((char*)tempsaList2->elementAt(1).GetBuffer())-1;
-      		    altResult->push_back(alt[indexTex*2]);
-      		    altResult->push_back(alt[indexTex*2+1]);
+      		    altResult->push(alt[indexTex*2]);
+      		    altResult->push(alt[indexTex*2+1]);
       	        //第2个顶点的纹理坐标
       		    indexTex = atoi((char*)tempsaList3->elementAt(1).GetBuffer())-1;
-      		    altResult->push_back(alt[indexTex*2]);
-      		    altResult->push_back(alt[indexTex*2+1]);
+      		    altResult->push(alt[indexTex*2]);
+      		    altResult->push(alt[indexTex*2+1]);
 	      	}
 	    }
     }

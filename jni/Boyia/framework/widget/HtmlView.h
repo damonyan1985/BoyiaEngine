@@ -75,8 +75,9 @@ public:
 	virtual LBool isInline() const;
 
 	virtual void addChild(HtmlView* child);
+	void removeChild(HtmlView* child);
 
-	void setParent(HtmlView* o);
+	void setParent(HtmlView* view);
 	HtmlView* getParent() const;
 
 	LBool isPositioned() const;
@@ -135,6 +136,7 @@ protected:
 	LBool                     m_clip;
 	LayoutRect                m_clipRect;
 	LBool                     m_needLayout;
+	HtmlViewList::Iterator    m_iter; // 保留iter信息便于删除
 };
 
 }

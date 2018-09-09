@@ -21,7 +21,7 @@ MiniBlockQueue::~MiniBlockQueue()
 void MiniBlockQueue::addTask(MiniTaskBase* task)
 {
 	AutoLock lock(&m_queueMutex);
-	m_list.push_back(task);
+	m_list.push(task);
 }
 
 KRefPtr<MiniTaskBase> MiniBlockQueue::pollTask()

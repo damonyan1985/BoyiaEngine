@@ -157,7 +157,7 @@ AnimationTask::~AnimationTask()
 
 LVoid AnimationTask::addAnimation(Animation* anim)
 {
-	m_animList.push_back(anim);
+	m_animList.push(anim);
 }
 
 LVoid AnimationTask::runTask()
@@ -209,7 +209,7 @@ AnimationThread* AnimationThread::instance()
 LVoid AnimationThread::addTask(AnimationTask* task)
 {
 	AutoLock lock(&m_lock);
-	m_taskList.push_back(task);
+	m_taskList.push(task);
 }
 
 LVoid AnimationThread::runTask(AnimationTask* task)

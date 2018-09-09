@@ -396,7 +396,7 @@ HtmlView* HtmlView::getNextItem()
 	{
 	    item = getNextItem(this);
 	}
-	
+
 	if(NULL == item)
 	{
 	    item = this;
@@ -431,9 +431,9 @@ HtmlView* HtmlView::getNextItem(HtmlView* currentItem)
 			{
 			    if((++iter) != iterEnd)
 			    {
-					item = *iter;					
+					item = *iter;
 			    }
-			    
+
 			    break;
 			}
 		}
@@ -545,7 +545,12 @@ void HtmlView::layout()
 
 void HtmlView::addChild(HtmlView* child)
 {
-	m_children.push_back(child);
+	child->m_iter = m_children.push(child);
+}
+
+void HtmlView::removeChild(HtmlView* child)
+{
+	m_children.erase(child->m_iter);
 }
 
 LBool HtmlView::hasTransform() const
@@ -675,7 +680,7 @@ LVoid HtmlView::relayoutZIndexChild()
 			KFORMATLOG("HtmlView::relayoutZIndexChild child->getStyle()->zindex=%d", child->getStyle()->zindex);
 			HtmlViewList::Iterator tmpIter = iter++;
 			m_children.erase(tmpIter);
-			m_children.push_back(child);
+			m_children.push(child);
 
 			lastChild = child;
 		}

@@ -73,7 +73,7 @@ void StringBuffer::append(const LByte* buffer, int pos, int len, LBool isConst)
 	item->length = len;
 	item->pos = pos;
 	m_length += len;
-	m_buffer.push_back(item);
+	m_buffer.push(item);
 }
 
 KRefPtr<String> StringBuffer::toString() const
