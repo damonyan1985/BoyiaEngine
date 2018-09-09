@@ -553,6 +553,11 @@ void HtmlView::removeChild(HtmlView* child)
 	m_children.erase(child->m_iter);
 }
 
+LVoid HtmlView::setViewIter(const HtmlViewList::Iterator& iter)
+{
+	m_iter = iter;
+}
+
 LBool HtmlView::hasTransform() const
 {
 	return LTrue;

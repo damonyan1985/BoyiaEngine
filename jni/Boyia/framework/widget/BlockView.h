@@ -60,6 +60,8 @@ public:
 	// Can scroll max height
 	LInt scrollHeight() const;
 
+	LVoid insertChild(HtmlViewList::Iterator& iter, HtmlView* child);
+
 private:
 	LBool           m_isChildrenInline;
 	LBool           m_isAnonymous;

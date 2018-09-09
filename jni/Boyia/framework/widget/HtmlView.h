@@ -100,6 +100,8 @@ public:
 	LVoid setListener(IViewListener* listener);
 	IViewListener* getListener() const;
 
+	LVoid setViewIter(const HtmlViewList::Iterator& iter);
+
 private:
 	HtmlView* getPreItem(HtmlView* currentItem);
 	HtmlView* getNextItem(HtmlView* currentItem);
