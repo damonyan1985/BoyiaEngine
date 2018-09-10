@@ -111,8 +111,8 @@ protected:
 	
 public:	
 	HtmlViewList     m_children;
-	HtmlView*        m_parent;
 	
+
 protected:
     /**
      * The listener who will receive event callbacks.
@@ -139,6 +139,7 @@ protected:
 	LayoutRect                m_clipRect;
 	LBool                     m_needLayout;
 	HtmlViewList::Iterator    m_iter; // 保留iter信息便于删除
+	HtmlView*                 m_parent;
 };
 
 }

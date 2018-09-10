@@ -551,6 +551,7 @@ void HtmlView::addChild(HtmlView* child)
 void HtmlView::removeChild(HtmlView* child)
 {
 	m_children.erase(child->m_iter);
+	delete child;
 }
 
 LVoid HtmlView::setViewIter(const HtmlViewList::Iterator& iter)
