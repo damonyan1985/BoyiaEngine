@@ -4,6 +4,7 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/network/test/TestLoader.cpp \
     $(LOCAL_PATH)/network/StringBuffer.cpp \
     $(LOCAL_PATH)/network/image/NetImage.cpp \
+    $(LOCAL_PATH)/network/font/FontFreeType.cpp \
     $(LOCAL_PATH)/network/ipc/MiniProcess.cpp \
     $(LOCAL_PATH)/network/threadpool/MiniMutex.cpp \
     $(LOCAL_PATH)/network/threadpool/MiniBlockQueue.cpp \
