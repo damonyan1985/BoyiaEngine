@@ -83,13 +83,6 @@ void UIViewThread::handleMessage(MiniMessage* msg)
 			image->setLoaded(LTrue);
 		}
 		break;
-//	case UIView_TOUCH_EVENT:
-//		{
-//			LTouchEvent* evt = (LTouchEvent*)msg->obj;
-//			UIView::getInstance()->handleTouchEvent(*evt);
-//			delete evt;
-//		}
-//		break;
 	}
 }
 

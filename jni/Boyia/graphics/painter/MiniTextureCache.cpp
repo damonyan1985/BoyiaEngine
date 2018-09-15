@@ -53,7 +53,7 @@ TexturePair::TexturePair()
 
 MiniTextureCache* MiniTextureCache::getInst()
 {
-	if (NULL == s_instance)
+	if (!s_instance)
 	{
 		s_instance = new MiniTextureCache();
 	}

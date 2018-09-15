@@ -143,6 +143,10 @@ LVoid PaintThread::handleMessage(MiniMessage* msg)
         	m_context.destroyGL();
         	m_continue = LFalse;
         }
+    case UI_RESET:
+        {
+    	    resetGL();
+        }
         break;
     }
 }
@@ -152,6 +156,7 @@ LVoid PaintThread::initGL()
 	//int width = yanbo::UIView::getInstance()->getClientRange().GetWidth();
 	//int height = yanbo::UIView::getInstance()->getClientRange().GetHeight();
 
+	MiniTextureCache::getInst()->clear();
 	//GLContext::initGLContext(GLContext::EWindow);
 	m_context.initGL(GLContext::EWindow);
 	glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());
@@ -229,5 +234,20 @@ LVoid PaintThread::handleTouchEvent(LTouchEvent* evt)
 
 	m_queue->push(msg);
 	notify();
+}
+
+LVoid PaintThread::resetContext(LVoid* win)
+{
+	m_context.setWindow(win);
+	MiniMessage* msg = obtain();
+	msg->type = UI_RESET;
+	postMessage(msg);
+}
+
+LVoid PaintThread::resetGL()
+{
+	//m_context.initGL(GLContext::EWindow);
+	initGL();
+	drawUI(UIView::getInstance()->getDocument()->getRenderTreeRoot());
 }
 }
