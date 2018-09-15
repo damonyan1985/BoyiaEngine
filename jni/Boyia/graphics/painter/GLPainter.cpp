@@ -149,18 +149,23 @@ void GLPainter::setScale(float scale)
 
 void GLPainter::init()
 {
-	if (s_program == NULL)
+	//MiniTextureCache::getInst()->clear();
+	if (s_program != NULL)
 	{
-		s_program = new GLProgram();
-		s_program->initShader();
+        delete s_program;
 	}
 
-	if (s_renderer == NULL)
+	s_program = new GLProgram();
+	s_program->initShader();
+
+	if (s_renderer != NULL)
 	{
-		s_renderer = new MiniRenderer();
-		s_renderer->setupIndices();
-		s_renderer->createVBO();
+		delete s_renderer;
 	}
+
+	s_renderer = new MiniRenderer();
+	s_renderer->setupIndices();
+	s_renderer->createVBO();
 }
 
 void GLPainter::bindVBO()

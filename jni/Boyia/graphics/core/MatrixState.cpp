@@ -13,17 +13,27 @@ Stack<KVector<float>* >* MatrixState::m_stack = NULL;
 
 void MatrixState::init()
 {
-	m_projMatrix = new KVector<float>(16);
-	m_vMatrix = new KVector<float>(16);
-	m_currMatrix = new KVector<float>(16);
-	m_mVPMatrix = new KVector<float>(16);
-	m_lightLocation = new KVector<float>(3);
-	m_cameraLocation = new KVector<float>(3);
-	m_vMatrixForSpecFrame = new KVector<float>(16);
-	(*m_lightLocation)[0] = 0;
-	(*m_lightLocation)[1] = 0;
-	(*m_lightLocation)[2] = 0;
-	m_stack = new Stack<KVector<float>* >(10);
+	if (!m_projMatrix)
+	{
+		m_projMatrix = new KVector<float>(16);
+		m_vMatrix = new KVector<float>(16);
+		m_currMatrix = new KVector<float>(16);
+		m_mVPMatrix = new KVector<float>(16);
+		m_lightLocation = new KVector<float>(3);
+		m_cameraLocation = new KVector<float>(3);
+		m_vMatrixForSpecFrame = new KVector<float>(16);
+		(*m_lightLocation)[0] = 0;
+		(*m_lightLocation)[1] = 0;
+		(*m_lightLocation)[2] = 0;
+		m_stack = new Stack<KVector<float>* >(10);
+	}
+	else
+	{
+		(*m_lightLocation)[0] = 0;
+		(*m_lightLocation)[1] = 0;
+		(*m_lightLocation)[2] = 0;
+	}
+
 }
 
 void MatrixState::destroy()
@@ -48,7 +58,7 @@ void MatrixState::pushMatrix()
 
 	KVector<float>* matrix = new KVector<float>(16);
     int idx = 16;
-    while(idx--)
+    while (idx--)
     {
     	(*matrix)[idx] = (*m_currMatrix)[idx];
     }
@@ -79,7 +89,7 @@ void MatrixState::scale(float x,float y,float z)
 //插入自带矩阵
 void MatrixState::matrix(const KVector<float>& self)
 {
-	KVector<float>* result=new KVector<float>(16);
+	KVector<float>* result = new KVector<float>(16);
 	Matrix::multiplyMM(*result, 0, *m_currMatrix,0,self,0);
 	delete m_currMatrix;
 	m_currMatrix = result;
@@ -148,7 +158,7 @@ void MatrixState::setProjectOrtho
 
 void MatrixState::copyMVMatrix()
 {
-	for(int i=0;i<16;++i)
+	for(int i = 0;i < 16;++i)
 	{
 		(*m_vMatrixForSpecFrame)[i] = m_vMatrix->elementAt(i);
 	}

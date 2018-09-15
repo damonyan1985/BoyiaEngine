@@ -49,10 +49,12 @@ public:
 		: m_nodePtr(NULL)
 	{
 	}
-	ListIterator(NodePtr& nodePtr)
+
+	ListIterator(const NodePtr& nodePtr)
 		: m_nodePtr(nodePtr)
 	{
 	}
+
 	ListIterator(const ListIterator<NodeValue>& iter)
 	{
 		m_nodePtr = iter.m_nodePtr;
@@ -105,20 +107,12 @@ public:
 
 	LBool operator == (const ListIterator<NodeValue>& iter)
 	{
-		if (m_nodePtr == iter.m_nodePtr)
-		{
-			return LTrue;
-		}
-		return LFalse;
+		return m_nodePtr == iter.m_nodePtr ? LTrue : LFalse;
 	}
 
 	LBool operator != (const ListIterator<NodeValue>& iter)
 	{
-		if (m_nodePtr == iter.m_nodePtr)
-		{
-			return LFalse;
-		}
-		return LTrue;
+		return m_nodePtr == iter.m_nodePtr ? LFalse : LTrue;
 	}
 
 public:
@@ -155,7 +149,7 @@ public:
 		Iterator itEnd = oldKlist.end();
 		for (; it != itEnd; ++it)
 		{
-			push_back(*it);
+			push(*it);
 		}
 
 		m_count = oldKlist.count();
@@ -183,14 +177,12 @@ public:
 
 	const Iterator end() const
 	{
-		NodePtr end_ptr = m_header;
-		return Iterator(end_ptr);
+		return Iterator(m_header);
 	}
 
 	Iterator end()
 	{
-		NodePtr end_ptr = m_header;
-		return Iterator(end_ptr);
+		return Iterator(m_header);
 	}
 
 	Iterator push(const NodeValue& value)
@@ -258,7 +250,7 @@ public:
 
 	LVoid clear()
 	{
-		if (m_header == NULL)
+		if (!m_count)
 		{
 			return;
 		}
@@ -284,18 +276,13 @@ public:
 
 	LBool empty()
 	{
-		if (m_header->m_next == m_header)
-		{
-			return LTrue;
-		}
-
-		return LFalse;
+		return m_count == 0 ? LTrue : LFalse;
 	}
 
 	NodeValue operator [] (LInt aIndex)
 	{
 		Iterator iter = begin();
-		for (LInt i=0 ; i < aIndex; i++)
+		for (LInt i = 0 ; i < aIndex; i++)
 		{
 			iter++;
 		}

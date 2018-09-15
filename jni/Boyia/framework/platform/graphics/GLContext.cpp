@@ -28,8 +28,9 @@ void GLContext::setWindow(void* win)
 {
 	if (m_window != NULL)
 	{
-		ANativeWindow_release(m_window->win);
-		delete m_window;
+		//ANativeWindow_release(m_window->win);
+		//delete m_window;
+		destroyGL();
 	}
 
 	m_window = new GLWindow;

@@ -16,6 +16,7 @@ public:
 	enum MessageType
 	{
 		UI_INIT = 1,
+		UI_RESET,
 		UI_DRAW,
 		UI_DRAWONLY,
 		UI_CREATE_TEX,
@@ -32,6 +33,8 @@ public:
 	LVoid setGC(LGraphicsContext* gc);
 
 	LVoid initContext(LVoid* win);
+	LVoid resetContext(LVoid* win);
+
 	LVoid draw(LVoid* item);
 	LVoid drawOnly(LVoid* item);
 	LVoid submit();
@@ -47,6 +50,7 @@ public:
 private:
 	PaintThread();
 	LVoid initGL();
+	LVoid resetGL();
 	LVoid flush();
 
 	LVoid drawUI(LVoid* view);

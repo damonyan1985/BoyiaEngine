@@ -38,6 +38,14 @@ static void nativeSetGLSurface(
     yanbo::PaintThread::instance()->initContext(surface);
 }
 
+static void nativeResetGLSurface(
+		JNIEnv* env,
+		jobject obj,
+		jobject surface)
+{
+    yanbo::PaintThread::instance()->resetContext(surface);
+}
+
 extern LVoid TestLoadUrl();
 static void nativeInitUIView(
 		JNIEnv* env,
@@ -198,6 +206,7 @@ static JNINativeMethod gBrowserMethods[] = {
 	{"nativeHandleTouchEvent", "(III)V", (void*)nativeHandleTouchEvent},
 	{"nativeInitJNIContext", "(Lcom/boyia/app/base/BaseActivity;)V", (void*)nativeInitJNIContext},
 	{"nativeSetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeSetGLSurface},
+	{"nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface},
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,
