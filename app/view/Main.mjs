@@ -18,7 +18,7 @@ class App
 	    var root = ViewDoc.rootView();
 	    var appBox = root.itemByID(ViewGroup, "AppBox");
 	    
-        this.main = ViewDoc.createView(MainView, "boyia://layout/main.html");
+        this.main = ViewDoc.createView(MainView, "boyia://app/layout/main.html");
 	    this.main.initView();
 	    
 	    appBox.appendView(this.main);
@@ -26,7 +26,7 @@ class App
 	    appBox.commit();
 	    JS_CallStaticMethod("com/boyia/app/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", "test mjs callstaticmethod");
 	
-	    Network.load("boyia://json/mock.json", App.loadCallback, App);
+	    Network.load("boyia://app/json/mock.json", App.loadCallback, App);
 	}
 	
 	fun loadCallback(data)
@@ -42,7 +42,7 @@ class App
 	        size = size - 1;
 	        var categoryItem = obj.data.categoryList.get(size);
 	        
-	        view = ViewDoc.createView(CategoryItem, "boyia://layout/category_item.html");
+	        view = ViewDoc.createView(CategoryItem, "boyia://app/layout/category_item.html");
 	        view.initView();
 	        view.setTitle(categoryItem.title);
 	        categoryView.appendView(view);
@@ -55,7 +55,7 @@ class App
 	    while (size > 0) {
 	        size = size - 1;
 	        var detailItem = detailList.get(size);
-	        view = ViewDoc.createView(NewTextItem, "boyia://layout/news_text_item.html");
+	        view = ViewDoc.createView(NewTextItem, "boyia://app/layout/news_text_item.html");
 	        view.initView();
 	        detailContainer.appendView(view);
 	        view.setTitle(detailItem.title);
