@@ -934,12 +934,12 @@ static LInt HandleExtend(LVoid* ins) {
 	return 1;
 }
 
-static LInt HandlePropsSort(LVoid* ins) {
-	Instruction* inst = (Instruction*)ins;
-	BoyiaValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
-	BoyiaFunction* classBody = (BoyiaFunction*)classVal->mValue.mObj.mPtr;
-	return 1;
-}
+//static LInt HandlePropsSort(LVoid* ins) {
+//	Instruction* inst = (Instruction*)ins;
+//	BoyiaValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
+//	BoyiaFunction* classBody = (BoyiaFunction*)classVal->mValue.mObj.mPtr;
+//	return 1;
+//}
 
 static LVoid ClassStatement() {
     NextToken();
@@ -964,7 +964,7 @@ static LVoid ClassStatement() {
 	}
 
     // 对PROPS进行排序, 优化属性查找
-	PutInstruction(&cmd, NULL, PROPS_SORT, HandlePropsSort);
+	//PutInstruction(&cmd, NULL, PROPS_SORT, HandlePropsSort);
 
 	// 执行完后需将CLASS置为NULL
 	OpCommand cmdEnd = { OP_NONE, 0 };
