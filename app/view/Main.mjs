@@ -26,7 +26,7 @@ class App
 	    appBox.commit();
 	    
 	    Util.showToast("test mjs callstaticmethod");
-	    Network.load("boyia://app/json/mock.json", App.loadCallback, App);
+	    Network.load("https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/app/json/mock.json", App.loadCallback, App);
 	}
 	
 	fun loadCallback(data)
