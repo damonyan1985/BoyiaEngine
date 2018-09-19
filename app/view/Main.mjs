@@ -24,8 +24,8 @@ class App
 	    appBox.appendView(this.main);
 	    appBox.draw();
 	    appBox.commit();
-	    JS_CallStaticMethod("com/boyia/app/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", "test mjs callstaticmethod");
-	
+	    
+	    Util.showToast("test mjs callstaticmethod");
 	    Network.load("boyia://app/json/mock.json", App.loadCallback, App);
 	}
 	
@@ -58,9 +58,9 @@ class App
 	        view = ViewDoc.createView(NewTextItem, "boyia://app/layout/news_text_item.html");
 	        view.initView();
 	        detailContainer.appendView(view);
-	        view.setTitle(detailItem.title);
-	        view.setInfo(detailItem.info1);
-	        view.setImage(detailItem.image1);
+	        view.setTitle(detailList.get(size).title);
+	        view.setInfo(detailList.get(size).info1);
+	        view.setImage(detailList.get(size).image1);
 	    }
 
 	    this.main.draw();
