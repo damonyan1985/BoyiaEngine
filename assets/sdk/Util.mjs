@@ -12,4 +12,8 @@ class Util {
     fun instanceof(obj, cls) {
         JS_InstanceOfClass(obj, cls);
     }
+    
+    fun showToast(info) {
+        JS_CallStaticMethod("com/boyia/app/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", info);
+    }
 }

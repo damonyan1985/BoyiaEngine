@@ -159,7 +159,7 @@ typedef struct {
     LInt             mTmpLValSize;
     LInt             mLValSize; /* count of global variable stack */
     LInt             mResultNum;
-    BoyiaValue*       mClass;
+    BoyiaValue*      mClass;
     CommandTable*    mContext;
     Instruction*     mPC;       // pc , 指令指针
 } ExecState;
@@ -170,7 +170,7 @@ typedef struct {
 	LInt             mTmpLValSize;
     LInt             mLoopSize;
     CommandTable*    mContext;
-    BoyiaValue*       mClass;
+    BoyiaValue*      mClass;
 } ExecScene;
 
 // 调用堆栈
@@ -934,13 +934,6 @@ static LInt HandleExtend(LVoid* ins) {
 	return 1;
 }
 
-//static LInt HandlePropsSort(LVoid* ins) {
-//	Instruction* inst = (Instruction*)ins;
-//	BoyiaValue* classVal = FindGlobal((LUint)inst->mOPLeft.mValue);
-//	BoyiaFunction* classBody = (BoyiaFunction*)classVal->mValue.mObj.mPtr;
-//	return 1;
-//}
-
 static LVoid ClassStatement() {
     NextToken();
 	LUint classKey = GenIdentifier(&gToken.mTokenName);
@@ -962,9 +955,6 @@ static LVoid ClassStatement() {
 		OpCommand extendCmd = { OP_CONST_NUMBER, (LInt)extendKey };
 		PutInstruction(&cmd, &extendCmd, HANDLE_EXTEND, HandleExtend);
 	}
-
-    // 对PROPS进行排序, 优化属性查找
-	//PutInstruction(&cmd, NULL, PROPS_SORT, HandlePropsSort);
 
 	// 执行完后需将CLASS置为NULL
 	OpCommand cmdEnd = { OP_NONE, 0 };
@@ -1557,7 +1547,6 @@ static LVoid CallNativeStatement(LInt idx) {
     	SntxErrorBuild(PAREN_EXPECTED);
 
     PutInstruction(NULL, NULL, TMP_LOCAL, HandleTempLocalSize);
-
     do {
         // 参数值在R0中
         EvalExpression(); // => R0
@@ -1583,7 +1572,7 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal) {
 		return NULL;
 	}
 
-	// 找props
+	// find props, such as obj.prop1.
 	BoyiaFunction* fun = (BoyiaFunction*)lVal->mValue.mObj.mPtr;
 	LInt idx = 0;
 	for (; idx < fun->mParamSize; ++idx) {
@@ -1592,7 +1581,7 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal) {
 		}
 	}
 
-	// 找function
+	// find function, such as obj.func1
 	BoyiaValue* cls = (BoyiaValue*) fun->mFuncBody;
 	while (cls && cls->mValueType == CLASS) {
 		BoyiaFunction* clsMap = (BoyiaFunction*)cls->mValue.mObj.mPtr;
@@ -1628,28 +1617,33 @@ static LInt HandleGetProp(LVoid* ins) {
 	return FindProp(lVal, rVal);
 }
 
-static LVoid EvalGetProp(LUint objKey) {
+// According to reg0, get reg0 obj's prop
+static LVoid EvalGetProp() {
 	NextToken();
 	if (gToken.mTokenType != IDENTIFIER) {
 		return;
 	}
 
-	// ident is property
-	OpCommand objCmd = { OP_VAR, (LInt) objKey };
+	// Push class context for callstatement
 	PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
 	LUint propKey = GenIdentifier(&gToken.mTokenName);
 	OpCommand cmdR = { OP_CONST_NUMBER, (LInt) propKey };
 	PutInstruction(&COMMAND_R0, &cmdR, GET_PROP, HandleGetProp);
 
-	// last must next
+	// Last must next
 	NextToken();
 	if (gToken.mTokenValue == LPTR) {
-		CallStatement(&objCmd);
+		OpCommand objCmd = { OP_VAR, 0 };
+		CallStatement(&objCmd); // result into r0
 		NextToken();
+		if (gToken.mTokenValue == DOT) {
+			// obj.func().prop
+			EvalGetProp();
+		}
 	} else if (gToken.mTokenValue == DOT) {
 		OpCommand cmd = { OP_CONST_NUMBER, 0 };
 		PutInstruction(&cmd, NULL, POP, HandlePop);
-		EvalGetProp(propKey);
+		EvalGetProp();
 	} else {
 		OpCommand cmd = { OP_CONST_NUMBER, 0 };
 		PutInstruction(&cmd, NULL, POP, HandlePop);
@@ -1660,7 +1654,7 @@ static LVoid EvalGetValue(LUint objKey) {
     OpCommand cmdL = { OP_VAR, (LInt) objKey };
 	PutInstruction(&COMMAND_R0, &cmdL, ASSIGN, HandleAssignment);
     if (gToken.mTokenValue == DOT) {
-		EvalGetProp(objKey);
+		EvalGetProp();
     }
 }
 
@@ -1689,11 +1683,14 @@ static LVoid Atom() {
                 LUint key = GenIdentifier(&gToken.mTokenName);
                 NextToken();
                 if (gToken.mTokenValue == LPTR) {
-                    OpCommand objCmd = {OP_CONST_NUMBER, 0};
                     OpCommand cmd = { OP_VAR, (LInt) key };
                     PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
+                    OpCommand objCmd = {OP_CONST_NUMBER, 0};
                     CallStatement(&objCmd);
                     NextToken();
+                    if (gToken.mTokenValue == DOT) {
+                    	//EvalGetProp(propKey);
+                    }
                 } else {
                     //EngineLog("Atom var name %u \n", key);
                     EvalGetValue(key);
