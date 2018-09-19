@@ -1689,7 +1689,7 @@ static LVoid Atom() {
                     CallStatement(&objCmd);
                     NextToken();
                     if (gToken.mTokenValue == DOT) {
-                    	//EvalGetProp(propKey);
+                    	EvalGetProp();
                     }
                 } else {
                     //EngineLog("Atom var name %u \n", key);
