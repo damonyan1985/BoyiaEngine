@@ -16,7 +16,7 @@
 
 typedef struct {
 	LInt             mFuncBody;
-	BoyiaValue*       mParams;
+	BoyiaValue*      mParams;
 	LInt             mParamSize;
 	LInt             mParamCount;
 } BoyiaFunction;

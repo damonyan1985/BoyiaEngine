@@ -34,7 +34,7 @@ ImageView::~ImageView()
 	}
 }
 
-void ImageView::paint(util::LGraphicsContext& gc)
+void ImageView::paint(LGraphicsContext& gc)
 {
 	if (m_image && m_image->isLoaded())
 	{
