@@ -28,7 +28,7 @@ public:
 	void setUrl(const String& url);
 	void loadImage(const String& url);
 	
-	virtual void paint(LGraphicsContext& dc);
+	virtual void paint(LGraphicsContext& gc);
 	virtual void layoutInline(RenderContext& rc);
 	
 private:

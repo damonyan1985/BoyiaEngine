@@ -111,7 +111,7 @@ typedef struct {
 
 struct KeywordPair {
     BoyiaStr  mName; /* keyword lookup table */
-    LUint8   mType;
+    LUint8    mType;
 } gKeywordTable[] = {  /* Commands must be entered lowercase */
         {D_STR("if", 2),       IF},  /* in this table. */
         {D_STR("elif", 4),     ELIF},
@@ -137,8 +137,8 @@ struct KeywordPair {
 /* ------------------------------------------------------------ */
 typedef struct {
     BoyiaStr mTokenName;
-    LUint8  mTokenType; /* contains type of token*/
-    LUint8  mTokenValue; /* internal representation of token */
+    LUint8   mTokenType; /* contains type of token*/
+    LUint8   mTokenValue; /* internal representation of token */
 } MiniToken;
 
 /* Global value define begin */
