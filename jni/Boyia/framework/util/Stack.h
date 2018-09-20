@@ -8,7 +8,7 @@
 #ifndef Stack_h
 #define Stack_h
 
-#include "kvector.h"
+#include "KVector.h"
 namespace util
 {
 template <class T>

@@ -8,9 +8,9 @@
 #ifndef CssRule_h
 #define CssRule_h
 
-#include "String.h"
+#include "UtilString.h"
 #include "KListMap.h"
-#include "kvector.h"
+#include "KVector.h"
 #include "Style.h"
 #include "KRef.h"
 

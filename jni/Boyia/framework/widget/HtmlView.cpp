@@ -8,7 +8,7 @@
 #include "HtmlView.h"
 #include "LColor.h"
 #include "HtmlDocument.h"
-#include "kvector.h"
+#include "KVector.h"
 #include "StringUtils.h"
 #include "RenderContext.h"
 #include "SalLog.h"

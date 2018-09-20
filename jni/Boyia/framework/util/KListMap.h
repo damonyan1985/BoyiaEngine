@@ -1,7 +1,7 @@
 #ifndef ListMap_h
 #define ListMap_h
 
-#include "klist.h"
+#include "KList.h"
 #include "KRef.h"
 #include "KRefPtr.h"
 #include "SalLog.h"

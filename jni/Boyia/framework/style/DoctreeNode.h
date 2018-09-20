@@ -9,7 +9,7 @@
 #define DoctreeNode_h
 
 #include "UtilString.h"
-#include "kvector.h"
+#include "KVector.h"
 namespace util
 {
 

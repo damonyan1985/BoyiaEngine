@@ -1,7 +1,7 @@
 #ifndef GLPainter_h
 #define GLPainter_h
 
-#include "kvector.h"
+#include "KVector.h"
 #include "LGdi.h"
 #include "KRef.h"
 #include "KListMap.h"

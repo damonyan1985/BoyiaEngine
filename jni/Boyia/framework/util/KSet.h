@@ -10,7 +10,7 @@
 #ifndef KSet_h
 #define KSet_h
 
-#include "klist.h"
+#include "KList.h"
 
 namespace util
 {
