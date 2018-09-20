@@ -7,7 +7,7 @@
  */
 
 #include "CssParser.h"
-#include "kvector.h"
+#include "KVector.h"
 #include "CssTags.h"
 #include "StringUtils.h"
 #include "Style.h"

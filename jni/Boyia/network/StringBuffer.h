@@ -1,7 +1,7 @@
 #ifndef StringBuffer_h
 #define StringBuffer_h
 
-#include "klist.h"
+#include "KList.h"
 #include "UtilString.h"
 #include "KRefPtr.h"
 

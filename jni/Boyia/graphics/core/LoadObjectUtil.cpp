@@ -2,7 +2,7 @@
 #include "MiniNormal.h"
 #include "AssetManager.h"
 #include "StringUtils.h"
-#include "klist.h"
+#include "KList.h"
 #include "KSet.h"
 #include "KListMap.h"
 #include <math.h>

@@ -1,7 +1,7 @@
 #ifndef Matrix_h
 #define Matrix_h
 
-#include "kvector.h"
+#include "KVector.h"
 namespace yanbo
 {
 class Matrix

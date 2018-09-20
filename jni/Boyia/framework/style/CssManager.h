@@ -8,7 +8,7 @@
 #ifndef CssManager_h
 #define CssManager_h
 
-#include "klist.h"
+#include "KList.h"
 #include "CssRule.h"
 #include "Stack.h"
 #include "DoctreeNode.h"

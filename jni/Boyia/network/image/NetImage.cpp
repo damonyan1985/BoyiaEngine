@@ -19,7 +19,7 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
 
 	if (isource->offset + length <= isource->size)
 	{
-	    memcpy(data, isource->data+isource->offset, length);
+	    LMemcpy(data, isource->data+isource->offset, length);
 	    isource->offset += length;
 	}
 	else
@@ -125,7 +125,7 @@ LVoid NetImage::readPNG(const LByte* data, size_t size)
 	 if (color_type == PNG_COLOR_TYPE_GRAY)
 	 {
 		 m_pixels = new LByte[width*height];
-	     memset(m_pixels, 0, width*height);
+	     LMemset(m_pixels, 0, width*height);
 	     for (int i=0; i < height; i++)
 	     {
 	         for(int j=0; j < width; j+=1)
@@ -137,7 +137,7 @@ LVoid NetImage::readPNG(const LByte* data, size_t size)
 	  else
 	  {
 		  m_pixels = new LByte[width*height*3];
-	      memset(m_pixels,0,width*height*3);
+	      LMemset(m_pixels,0,width*height*3);
 	      for(int i = 0; i < height; i++)
 	      {
 	          for(int j = 0; j < 3*width; j += 3)
