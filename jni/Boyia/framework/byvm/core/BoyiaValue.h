@@ -43,14 +43,14 @@ typedef struct {
     } mValue;
 } BoyiaValue;
 
-#define NEW(type) (type*)MiniNew(sizeof(type))
-#define NEW_ARRAY(type, n) (type*)MiniNew(n*sizeof(type))
-#define DELETE(ptr) MiniDelete(ptr);
+#define NEW(type) (type*)BoyiaNew(sizeof(type))
+#define NEW_ARRAY(type, n) (type*)BoyiaNew(n*sizeof(type))
+#define DELETE(ptr) BoyiaDelete(ptr);
 #define D_STR(str, len) {(LInt8*)str, len}
 
 LVoid CreateMiniMemory();
-LVoid* MiniNew(LInt size);
-LVoid MiniDelete(LVoid* data);
+LVoid* BoyiaNew(LInt size);
+LVoid BoyiaDelete(LVoid* data);
 //LUint HashCode(BoyiaStr* str);
 LVoid InitStr(BoyiaStr* str, LInt8* ptr);
 LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);

@@ -26,7 +26,7 @@ static LBool checkValue(BoyiaValue* val, MiniRef* ref);
 
 static LVoid GCInit() {
 	if (sGc == NULL) {
-		sGc = new MiniGC;
+		sGc = FAST_NEW(MiniGC);
 		sGc->mBegin = NULL;
 		sGc->mEnd = NULL;
 		sGc->mSize = 0;
@@ -124,7 +124,7 @@ static LVoid GClearGarbage() {
 	MiniRef* prev = sGc->mBegin;
 	while (prev && !prev->mAddress) {
 		sGc->mBegin = prev->mNext;
-		delete prev;
+		FAST_DELETE(prev);
 		--sGc->mSize;
 		prev = sGc->mBegin;
 	}
@@ -138,9 +138,8 @@ static LVoid GClearGarbage() {
 	while (current) {
 		if (!current->mAddress) {
 			prev->mNext = current->mNext;
-			delete current;
+			FAST_DELETE(current);
 			--sGc->mSize;
-
 			current = prev->mNext;
 		} else {
 			prev = current;
@@ -154,7 +153,7 @@ static LVoid GClearGarbage() {
 extern LVoid GCAppendRef(LVoid* address, LUint8 type) {
 	GCInit();
 
-	MiniRef* ref = new MiniRef;
+	MiniRef* ref = FAST_NEW(MiniRef);
 	ref->mAddress = address;
 	ref->mType = type;
 	ref->mNext = NULL;
