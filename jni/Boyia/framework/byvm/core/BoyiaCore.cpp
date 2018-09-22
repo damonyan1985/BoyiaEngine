@@ -80,8 +80,8 @@ enum OpType {
 };
 
 typedef struct {
-    LUint8 mType;
-    LInt   mValue;
+    LUint8    mType;
+    LIntPtr   mValue;
 } OpCommand;
 
 static OpCommand COMMAND_R0 = { OP_REG0, 0 };
@@ -358,7 +358,7 @@ static LInt CreateObject() {
     ValueCopy(result, value);
     // 拷贝出新的内部实现
     BoyiaFunction* newFunc = CopyFunction(value, NUM_FUNC_PARAMS);
-    result->mValue.mObj.mPtr = (LInt) newFunc;
+    result->mValue.mObj.mPtr = (LIntPtr) newFunc;
     result->mValue.mObj.mSuper = value->mValue.mObj.mSuper;
     EngineLog("HandleCallInternal CreateObject %d", 4);
 
@@ -419,7 +419,7 @@ static LVoid PropStatement() {
     NextToken();
     //EngineStrLog("PropStatement name=%s", gToken.mTokenName);
     if (gToken.mTokenType == IDENTIFIER) {
-		OpCommand cmd = {OP_CONST_NUMBER, (LInt) GenIdentifier(&gToken.mTokenName) };
+		OpCommand cmd = {OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
 		PutInstruction(&cmd, NULL, PROP_CREATE, HandleCreateProp);
 		Putback();
 		EvalExpression();
@@ -559,7 +559,7 @@ static LVoid ElseStatement() {
 	BlockStatement();
 	Instruction* endInst = PutInstruction(NULL, NULL, IF_END, NULL);
 	logicInst->mOPRight.mType = OP_CONST_NUMBER;
-	logicInst->mOPRight.mValue = (LInt)endInst; // 最后地址值
+	logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
 }
 
 static LInt HandleReturn(LVoid* ins) {
@@ -852,7 +852,7 @@ static LVoid InitParams() {
     do {
         NextToken(); // 得到属性名
         if (gToken.mTokenValue != RPTR) {
-			OpCommand cmd = { OP_CONST_NUMBER, (LInt)GenIdentifier(&gToken.mTokenName) };
+			OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
 			PutInstruction(&cmd, NULL, PARAM_CREATE, HandleCreateParam);
 			NextToken(); // 获取逗号分隔符','
         } else
@@ -882,10 +882,10 @@ static BoyiaValue* CreateFunVal(LUint hashKey, LUint8 type) {
     BoyiaFunction* fun = &gFunTable[gEState.mFunSize];
     val->mValueType = type;
     val->mNameKey = hashKey;
-    val->mValue.mObj.mPtr = (LInt) fun;
+    val->mValue.mObj.mPtr = (LIntPtr) fun;
     val->mValue.mObj.mSuper = 0;
     if (type == CLASS) {
-    	fun->mFuncBody = (LInt) val;
+    	fun->mFuncBody = (LIntPtr) val;
     }
     // 初始化类属性成员列表
     InitFunction(fun);
@@ -903,7 +903,7 @@ static LVoid BodyStatement(LInt type) {
 	if (FUN_CREATE == type) {
 		// 类成员的创建在主体上下中进行
 		CommandTable* funCmds = CreateExecutor();
-		OpCommand cmd = { OP_CONST_NUMBER, (LInt)funCmds };
+		OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) funCmds };
 		PutInstruction(&cmd, NULL, EXE_CREATE, HandleCreateExecutor);
 
 		gEState.mContext = funCmds;
@@ -930,14 +930,14 @@ static LInt HandleExtend(LVoid* ins) {
 	BoyiaValue* extendVal = FindGlobal((LUint)inst->mOPRight.mValue);
 
     // 设置super指针
-	classVal->mValue.mObj.mSuper = (LInt)extendVal;
+	classVal->mValue.mObj.mSuper = (LIntPtr) extendVal;
 	return 1;
 }
 
 static LVoid ClassStatement() {
     NextToken();
 	LUint classKey = GenIdentifier(&gToken.mTokenName);
-	OpCommand cmd = { OP_CONST_NUMBER, (LInt)classKey };
+	OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) classKey };
 	PutInstruction(&cmd, NULL, CLASS_CREATE, HandleCreateClass);
     // 判断继承关系
 	NextToken();
@@ -952,7 +952,7 @@ static LVoid ClassStatement() {
     BodyStatement(CLASS_CREATE);
 	// 设置继承成员
 	if (extendKey != 0) {
-		OpCommand extendCmd = { OP_CONST_NUMBER, (LInt)extendKey };
+		OpCommand extendCmd = { OP_CONST_NUMBER, (LIntPtr) extendKey };
 		PutInstruction(&cmd, &extendCmd, HANDLE_EXTEND, HandleExtend);
 	}
 
@@ -969,7 +969,7 @@ static LInt HandleFunCreate(LVoid* ins) {
 		BoyiaFunction* func = (BoyiaFunction*)gEState.mClass->mValue.mObj.mPtr;
 		func->mParams[func->mParamSize].mNameKey = hashKey;
 		func->mParams[func->mParamSize].mValueType = FUNC;
-		func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LInt)&gFunTable[gEState.mFunSize];
+		func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr) &gFunTable[gEState.mFunSize];
 		// 初始化函数参数列表
 		InitFunction(&gFunTable[gEState.mFunSize]);
 	} else {
@@ -983,7 +983,7 @@ static LVoid FunStatement() {
     NextToken();
     //EngineStrLog("HandlePushParams FunStatement name %s", gToken.mTokenName);
     // 第一步，Function变量
-	OpCommand cmd = { OP_CONST_NUMBER, (LInt)GenIdentifier(&gToken.mTokenName) };
+	OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
 	PutInstruction(&cmd, NULL, FUN_CREATE, HandleFunCreate);
     //EngineStrLog("FunctionName=%s", gToken.mTokenName);
     // 第二步，初始化函数参数
@@ -1038,7 +1038,7 @@ static LVoid GlobalStatement() {
     do {
         NextToken(); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LInt) GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
 
         PutInstruction(&cmdLeft, &cmdRight, DECL_GLOBAL, HandleDeclGlobal);
 		Putback();
@@ -1104,7 +1104,7 @@ static LVoid LocalStatement() {
     do {
         NextToken(); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LInt) GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
         //EngineStrLog("value Name=%s", gToken.mTokenName);
         PutInstruction(&cmdLeft, &cmdRight, DECL_LOCAL, HandleDeclLocal);
 		Putback();
@@ -1180,7 +1180,7 @@ static void CallStatement(OpCommand* objCmd) {
     Instruction* funInst = PutInstruction(NULL, NULL, CALL, HandleCallFunction);
     //EngineLog("CallStatement=>%d HandleFunction", 1);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LInt) funInst;
+    pushInst->mOPLeft.mValue = (LIntPtr) funInst;
 }
 
 /* Push the arguments to a function onto the local variable stack. */
@@ -1240,7 +1240,7 @@ static LInt HandleAssignment(LVoid* ins) {
         case OP_VAR: {
             BoyiaValue *val = FindVal((LUint) inst->mOPRight.mValue);
             ValueCopyNoName(left, val);
-            left->mNameKey = (LUint) val;
+            left->mNameKey = (LUintPtr) val;
         }
             break;
         case OP_REG0: {
@@ -1292,7 +1292,7 @@ static LVoid IfStatement() {
     BlockStatement();  /* if true, interpret */
     Instruction* endInst = PutInstruction(NULL, NULL, IF_END, HandleIfEnd);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue= (LInt) endInst; // 最后地址值
+    logicInst->mOPRight.mValue= (LIntPtr) endInst; // 最后地址值
 }
 
 static LInt HandleLoopBegin(LVoid* ins) {
@@ -1341,11 +1341,11 @@ static LVoid WhileStatement() {
     BlockStatement();  /* if true, interpret */
     Instruction* endInst = PutInstruction(NULL, NULL, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LInt) endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr) endInst; // 最后地址值
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LInt) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LInt) beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr) beginInst; // LOOP开始地址值
 }
 
 /* Execute a do loop. */
@@ -1364,11 +1364,11 @@ static LVoid DoStatement() {
     Instruction* logicInst = PutInstruction(&COMMAND_R0, NULL, LOOP_TRUE, HandleLoopIfTrue);
     Instruction* endInst = PutInstruction(NULL, NULL, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LInt) endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr) endInst; // 最后地址值
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LInt) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LInt) beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr) beginInst; // LOOP开始地址值
 }
 
 static LInt HandleAdd(LVoid* ins) {
@@ -1564,7 +1564,7 @@ static LVoid CallNativeStatement(LInt idx) {
     PutInstruction(&cmd, NULL, CALL, HandleCallInternal);
     Instruction* popInst = PutInstruction(NULL, NULL, POP_SCENE, HandlePopScene);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LInt) popInst;
+    pushInst->mOPLeft.mValue = (LIntPtr) popInst;
 }
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal) {
@@ -1627,7 +1627,7 @@ static LVoid EvalGetProp() {
 	// Push class context for callstatement
 	PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
 	LUint propKey = GenIdentifier(&gToken.mTokenName);
-	OpCommand cmdR = { OP_CONST_NUMBER, (LInt) propKey };
+	OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr) propKey };
 	PutInstruction(&COMMAND_R0, &cmdR, GET_PROP, HandleGetProp);
 
 	// Last must next
@@ -1651,7 +1651,7 @@ static LVoid EvalGetProp() {
 }
 
 static LVoid EvalGetValue(LUint objKey) {
-    OpCommand cmdL = { OP_VAR, (LInt) objKey };
+    OpCommand cmdL = { OP_VAR, (LIntPtr) objKey };
 	PutInstruction(&COMMAND_R0, &cmdL, ASSIGN, HandleAssignment);
     if (gToken.mTokenValue == DOT) {
 		EvalGetProp();
@@ -1683,7 +1683,7 @@ static LVoid Atom() {
                 LUint key = GenIdentifier(&gToken.mTokenName);
                 NextToken();
                 if (gToken.mTokenValue == LPTR) {
-                    OpCommand cmd = { OP_VAR, (LInt) key };
+                    OpCommand cmd = { OP_VAR, (LIntPtr) key };
                     PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
                     OpCommand objCmd = {OP_CONST_NUMBER, 0};
                     CallStatement(&objCmd);
@@ -1709,7 +1709,7 @@ static LVoid Atom() {
             // 设置常量字符串， 所有常量hash值为0
         	BoyiaStr constStr;
         	CopyStringFromToken(&constStr);
-        	OpCommand lCmd = { OP_CONST_NUMBER, (LInt) constStr.mPtr };
+        	OpCommand lCmd = { OP_CONST_NUMBER, (LIntPtr) constStr.mPtr };
         	OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
         	PutInstruction(&lCmd, &rCmd, HANDLE_CONST_STR, HandleConstString);
         	NextToken();
@@ -1911,12 +1911,12 @@ LVoid* GetNativeResult() {
 }
 
 LVoid GetLocalStack(LInt* stack, LInt* size) {
-	*stack = (LInt) gLocalsStack;
+	*stack = (LIntPtr) gLocalsStack;
 	*size = gEState.mLValSize;
 }
 
 LVoid GetGlobalTable(LInt* table, LInt* size) {
-	*table = (LInt) gGlobalsTable;
+	*table = (LIntPtr) gGlobalsTable;
 	*size = gEState.mGValSize;
 }
 

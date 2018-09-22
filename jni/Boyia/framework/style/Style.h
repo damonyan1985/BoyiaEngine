@@ -55,8 +55,17 @@ public:
 		DISPLAY_BLOCK,
 		DISPLAY_INLINEBLOCK,
 		DISPLAY_INLINE,
-		DIPLAY_ANY
-	} DisplayType;	
+		DISPLAY_ANY
+	} DisplayType;
+
+	typedef enum FlexDirection
+	{
+		FLEX_NONE,
+        FLEX_ROW,
+        FLEX_COLUMN,
+        FLEX_ROW_REVERSE,
+        FLEX_COLUMN_REVERSE
+	} FlexDirection;
 
 public:
 	Style();
@@ -97,6 +106,7 @@ public:
 	LUint8                        drawOpacity;
 	Border                        border;
 	LBool                         focusable;
+	LInt                          flexDirection;
 };
 }
 #endif

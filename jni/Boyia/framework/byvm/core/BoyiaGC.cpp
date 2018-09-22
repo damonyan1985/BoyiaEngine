@@ -34,7 +34,7 @@ static LVoid GCInit() {
 }
 
 static LBool GCCheckObject(BoyiaValue* value, MiniRef* ref) {
-	if (value->mValue.mIntVal == (LInt)ref->mAddress) {
+	if (value->mValue.mIntVal == (LIntPtr)ref->mAddress) {
 		return LTrue;
 	}
 
@@ -51,7 +51,7 @@ static LBool GCCheckObject(BoyiaValue* value, MiniRef* ref) {
 
 static LBool checkValue(BoyiaValue* value, MiniRef* ref) {
 	if ((value->mValueType == BY_NAVCLASS || value->mValueType == BY_STRING)
-			&& value->mValue.mIntVal == (LInt)ref->mAddress) {
+			&& value->mValue.mIntVal == (LIntPtr)ref->mAddress) {
 		return LTrue;
 	}
 

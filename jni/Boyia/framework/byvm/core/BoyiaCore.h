@@ -15,15 +15,15 @@
 #include "BoyiaValue.h"
 
 typedef struct {
-	LInt             mFuncBody;
-	BoyiaValue*      mParams;
-	LInt             mParamSize;
-	LInt             mParamCount;
+    LIntPtr          mFuncBody;
+    BoyiaValue*      mParams;
+    LInt             mParamSize;
+    LInt             mParamCount;
 } BoyiaFunction;
 
 typedef struct {
-	LUint mNameKey;
-	LInt (*mAddr)();
+    LUintPtr mNameKey;
+    LInt     (*mAddr)();
 } NativeFunction;
 
 typedef struct {

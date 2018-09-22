@@ -212,6 +212,7 @@ using util::LStrlen;
 using util::GenHashCode;
 using util::LInt2StrWithLength;
 using util::LIntPtr;
+using util::LUintPtr;
 
 #endif // PLATFORMLIB_H
 

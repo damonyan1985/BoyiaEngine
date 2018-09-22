@@ -120,6 +120,7 @@ Style::Style(const Style& style)
     displayType        = style.displayType;
     scale              = style.scale;
     focusable          = style.focusable;
+    flexDirection      = style.flexDirection;
     border             = style.getBorder();
 }
 
@@ -157,6 +158,7 @@ const Style& Style::operator=(const Style& style)
     rightPadding       = style.rightPadding;
     displayType        = style.displayType;
     focusable          = style.focusable;
+    flexDirection      = style.flexDirection;
     border             = style.getBorder();
     return *this;
 }
@@ -168,7 +170,7 @@ void Style::init()
     opacity            = 255;
     drawOpacity        = 255;
     positionType       = STATICPOSITION;
-    displayType        = DIPLAY_ANY;
+    displayType        = DISPLAY_ANY;
     left               = 0;
     top                = 0;
     width              = 0;
@@ -185,6 +187,7 @@ void Style::init()
     rightPadding       = 0;
     focusable          = LFalse;
     scale              = 1;
+    flexDirection      = FLEX_NONE;
 }
 
 }
