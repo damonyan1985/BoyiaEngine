@@ -6,6 +6,7 @@
 */
 #include "BoyiaMemory.h"
 #include <android/log.h>
+#include <stdlib.h>
 
 
 const LInt constHeaderLen = sizeof(MemoryBlockHeader);
@@ -16,20 +17,15 @@ const LInt constAlignNum = sizeof(LIntPtr);
 // 字节对齐后的地址值
 #define ADDR_ALIGN(addr) (addr%constAlignNum == 0 ? addr : (addr + (constAlignNum - addr%constAlignNum)))
 
-static LVoid* fastMalloc(LInt size)
+LVoid* fastMalloc(LInt size)
 {
-	return new LByte[size];
+	return malloc(size);
 }
 
-static LVoid fastFree(LVoid* data)
+LVoid fastFree(LVoid* data)
 {
-	LByte* p = (LByte*)data;
-	delete[] p;
+	free(data);
 }
-
-#define NEW_DATA(type) (type*)fastMalloc(sizeof(type))
-#define NEW_DATA_ARRAY(type, n) (type*)fastMalloc(n*sizeof(type))
-#define DELETE_DATA(p)  fastFree(p)
 
 LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool)
 {
@@ -39,8 +35,8 @@ LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool)
 
 BoyiaMemoryPool* initMemoryPool(LInt size)
 {
-	BoyiaMemoryPool* pool = NEW_DATA(BoyiaMemoryPool);
-    pool->m_address = NEW_DATA_ARRAY(LByte, size);
+	BoyiaMemoryPool* pool = FAST_NEW(BoyiaMemoryPool);
+    pool->m_address = FAST_NEW_ARRAY(LByte, size);
     pool->m_size = size;
     pool->m_next = NULL;
     pool->m_used = 0;
@@ -53,8 +49,8 @@ LVoid freeMemoryPool(BoyiaMemoryPool* pool)
 	while (pool)
 	{
 		BoyiaMemoryPool* poolNext = pool->m_next;
-		DELETE_DATA(pool->m_address);
-		DELETE_DATA(pool);
+		FAST_DELETE(pool->m_address);
+		FAST_DELETE(pool);
 		pool = poolNext;
 	}
 }

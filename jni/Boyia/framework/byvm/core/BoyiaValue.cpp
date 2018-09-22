@@ -66,17 +66,15 @@ LVoid CreateMiniMemory() {
 	gMemPool = initMemoryPool(MEMORY_SIZE);
 }
 
-LVoid* MiniNew(LInt size) {
+LVoid* BoyiaNew(LInt size) {
 	LVoid* data = newData(size, gMemPool);
 	__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS POOL addrmax=%x ptr=%x long size=%d", (LInt)gMemPool->m_address + gMemPool->m_size, (LInt)data, sizeof(long));
 	printPoolSize(gMemPool);
 	return data;
-	//return malloc(size);
 }
 
-LVoid MiniDelete(LVoid* data) {
+LVoid BoyiaDelete(LVoid* data) {
     deleteData(data, gMemPool);
-	//free(data);
 }
 
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src) {
