@@ -1,5 +1,5 @@
 LOCAL_SRC_FILES += \
-    $(LOCAL_PATH)/network/MiniHttpEngine.cpp \
+    $(LOCAL_PATH)/network/BoyiaHttpEngine.cpp \
     $(LOCAL_PATH)/network/Loader.cpp \
     $(LOCAL_PATH)/network/test/TestLoader.cpp \
     $(LOCAL_PATH)/network/StringBuffer.cpp \

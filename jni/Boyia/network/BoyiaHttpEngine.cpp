@@ -1,9 +1,9 @@
-#include "MiniHttpEngine.h"
+#include "BoyiaHttpEngine.h"
 #include "SalLog.h"
 
 namespace yanbo
 {
-MiniHttpEngine::MiniHttpEngine(HttpCallback* callback)
+BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
     : m_callback(callback)
     , m_size(0)
 {
@@ -13,7 +13,7 @@ MiniHttpEngine::MiniHttpEngine(HttpCallback* callback)
 	curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, this);
 }
 
-MiniHttpEngine::~MiniHttpEngine()
+BoyiaHttpEngine::~BoyiaHttpEngine()
 {
 	if (m_curl)
 	{
@@ -22,10 +22,10 @@ MiniHttpEngine::~MiniHttpEngine()
 	}
 }
 
-size_t MiniHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param)
+size_t BoyiaHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param)
 {
 	size_t len  = size * membyte;
-	MiniHttpEngine* engine = (MiniHttpEngine*) param;
+	BoyiaHttpEngine* engine = (BoyiaHttpEngine*) param;
 	if (engine && engine->m_callback)
 	{
 	    engine->m_callback->onDataRecevied((const LCharA*)buffer, len);
@@ -37,7 +37,7 @@ size_t MiniHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte,
 	return len;
 }
 
-LVoid MiniHttpEngine::setHeader(const NetworkMap& headers)
+LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 {
 	if (headers.size())
 	{
@@ -57,7 +57,7 @@ LVoid MiniHttpEngine::setHeader(const NetworkMap& headers)
 	}
 }
 
-LVoid MiniHttpEngine::request(const String& url, LInt method)
+LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
 	if (m_curl)
 	{

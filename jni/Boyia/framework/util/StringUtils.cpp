@@ -277,7 +277,7 @@ void StringUtils::strWtoStr(const StringW& src, String& dest)
 	LMemset(d, 0, 3*len+1);
 	KLOG("strWtoStr1");
 	sUxU8((char*)d, (LUint16*)src.GetBuffer(), /*2*len*/len);
-	dest.CopyString(d, LTrue, 3*len+1);
+	dest.Copy(d, LTrue, 3*len+1);
 	KFORMATLOG("strWtoStr d=%s", (const char*)d);
 }
 

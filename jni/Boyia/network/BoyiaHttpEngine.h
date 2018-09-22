@@ -1,5 +1,5 @@
-#ifndef MiniHttpEngine_h
-#define MiniHttpEngine_h
+#ifndef BoyiaHttpEngine_h
+#define BoyiaHttpEngine_h
 
 //#include "UtilString.h"
 #include "NetworkBase.h"
@@ -13,11 +13,11 @@ class HttpCallback
 public:
 	virtual LVoid onStatusCode(LInt code) = 0;
 	virtual LVoid onContentLength(LInt length) = 0;
-	virtual LVoid  onDataRecevied(const LCharA* buffer, LInt size) = 0;
+	virtual LVoid onDataRecevied(const LCharA* buffer, LInt size) = 0;
 	virtual LVoid onLoadFinished() = 0;
 	virtual LVoid onLoadError(LInt code) = 0;
 };
-class MiniHttpEngine
+class BoyiaHttpEngine
 {
 public:
 	enum EMethod
@@ -26,8 +26,8 @@ public:
 		EHTTP_POST
 	};
 
-	MiniHttpEngine(HttpCallback* callback);
-	~MiniHttpEngine();
+	BoyiaHttpEngine(HttpCallback* callback);
+	~BoyiaHttpEngine();
 
 	LVoid setHeader(const NetworkMap& headers);
     LVoid request(const String& url, LInt method);

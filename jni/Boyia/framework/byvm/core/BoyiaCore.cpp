@@ -787,6 +787,7 @@ static LInt GetStringValue() {
         	SntxErrorBuild(SYNTAX);
         }
         ++gEState.mProg;
+        // +2 for putback just in case
         gToken.mTokenName.mLen = len+2;
         return (gToken.mTokenType = STRING_VALUE);
     }

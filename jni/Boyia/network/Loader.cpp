@@ -4,7 +4,7 @@
 namespace yanbo
 {
 LoaderTask::LoaderTask()
-    : m_method(MiniHttpEngine::EHTTP_GET)
+    : m_method(BoyiaHttpEngine::EHTTP_GET)
     , m_engine(this)
     , m_client(NULL)
 {
