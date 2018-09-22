@@ -60,7 +60,7 @@ namespace util
 		LString(T ch, LInt nRepeat = 1);
 		LString(const T *lpsz, LInt nLength);
 		LVoid AllocBuffer(LInt nLen);
-		LVoid CopyString(const T* lpsz, Bool isDeep = LTrue, LInt size = -1);
+		LVoid Copy(const T* lpsz, Bool isDeep = LTrue, LInt size = -1);
 	
 	protected:
 		LVoid StrAssignment(const T* lpsz);
@@ -168,7 +168,7 @@ namespace util
 	LString<T>::LString(const T *lpsz, Bool isDeep, LInt size)
 	    : m_pchData(NULL)
 	{
-		LString<T>::CopyString(lpsz, isDeep, size);
+		LString<T>::Copy(lpsz, isDeep, size);
 	}
 
 	template<class T>
@@ -211,7 +211,7 @@ namespace util
 	}
 
 	template<class T>
-	LVoid LString<T>::CopyString(const T* lpsz, Bool isDeep, LInt size)
+	LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
 	{
 		if (lpsz == NULL)
 		{

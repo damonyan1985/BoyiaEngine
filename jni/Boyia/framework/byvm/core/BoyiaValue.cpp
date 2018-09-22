@@ -118,7 +118,7 @@ extern LVoid NativeDelete(LVoid* data) {
 
 extern LVoid SystemGC() {
     if (gMemPool->m_used >= (MEMORY_SIZE/2)) {
-    	GCollectGarbage();
+        GCollectGarbage();
     }
 }
 

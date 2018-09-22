@@ -65,7 +65,7 @@ LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result)
     env->DeleteLocalRef(encode);
     env->DeleteLocalRef(jstrObj);
     // 接受字符串
-    result.CopyString(_CS(pStr), LTrue, strLen);
+    result.Copy(_CS(pStr), LTrue, strLen);
 }
 
 }

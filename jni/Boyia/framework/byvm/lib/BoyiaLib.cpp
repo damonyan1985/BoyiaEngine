@@ -41,6 +41,7 @@ LInt getFileContent()
 	fseek(file, 0, SEEK_END);
 	int len = ftell(file); //获取文件长度
 	LInt8* buf = NEW_ARRAY(LInt8, (len + 1));
+	GCAppendRef(buf, STRING);
 	LMemset(buf, 0, len + 1);
 	rewind(file);
 	fread(buf, sizeof(char), len, file);
@@ -234,22 +235,24 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value) {
 		value->mValue.mIntVal = json->valueint;
 	} else if (json->type == cJSON_String) {
 		value->mValueType = BY_STRING;
-		value->mValue.mStrVal.mPtr = json->valuestring; 
-		value->mValue.mStrVal.mLen = LStrlen(_CS(json->valuestring));
+		LInt len = LStrlen(_CS(json->valuestring));
+        LInt8* ptr = NEW_ARRAY(LInt8, len);
+        LMemcpy(ptr, json->valuestring, len);
+		value->mValue.mStrVal.mPtr = ptr;
+		value->mValue.mStrVal.mLen = len;
+		GCAppendRef(ptr, STRING);
 	}
 }
 
 LInt jsonParseWithCJSON()
 {
 	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
-	char* fileName = convertMStr2Str(&val->mValue.mStrVal);
-	cJSON* json = cJSON_Parse(fileName);
-    delete[] fileName;
+	char* content = convertMStr2Str(&val->mValue.mStrVal);
+	cJSON* json = cJSON_Parse(content);
+    delete[] content;
 	BoyiaValue* value = (BoyiaValue*) GetNativeResult();
 	jsonParse(json, value);
-
-	//SetNativeResult(&value);
-
+	cJSON_Delete(json);
 	return 1;
 }
 

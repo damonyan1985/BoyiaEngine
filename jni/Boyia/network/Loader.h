@@ -1,7 +1,7 @@
 #ifndef Loader_h
 #define Loader_h
 
-#include "MiniHttpEngine.h"
+#include "BoyiaHttpEngine.h"
 #include "MiniTaskBase.h"
 #include "MiniMessageThread.h"
 #include "UtilString.h"
@@ -12,7 +12,7 @@ namespace yanbo
 class LoaderTask : public MiniTaskBase, HttpCallback
 {
 public:
-	LoaderTask();
+    LoaderTask();
 	virtual void execute();
 
 	LVoid setMethod(LInt method);
@@ -26,11 +26,11 @@ public:
 	virtual LVoid onLoadError(LInt code);
 
 private:
-	LInt            m_method;
-	String          m_url;
-	MiniHttpEngine  m_engine;
-	NetworkClient*  m_client;
-	StringBuffer    m_buffer;
+    LInt            m_method;
+    String          m_url;
+    BoyiaHttpEngine m_engine;
+    NetworkClient*  m_client;
+    StringBuffer    m_buffer;
 };
 
 class Loader : public MiniMessageThread
