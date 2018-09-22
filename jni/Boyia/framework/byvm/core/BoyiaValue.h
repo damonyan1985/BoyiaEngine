@@ -29,18 +29,18 @@ typedef struct {
 } BoyiaStr;
 
 typedef struct {
-	LInt mPtr;
-	LInt mSuper;
+	LIntPtr mPtr;
+	LIntPtr mSuper;
 } BoyiaClass;
 
 typedef struct {
-	LUint   mNameKey; // HASH KEY 用来加快查找速度
-	LUint8  mValueType;
-	union RealValue {
-		LInt        mIntVal;
-		BoyiaClass  mObj; // 类应该存储于方法区
-		BoyiaStr    mStrVal;
-	} mValue;
+    LUintPtr   mNameKey; // HASH KEY 用来加快查找速度
+    LUint8     mValueType;
+    union RealValue {
+        LIntPtr     mIntVal;
+        BoyiaClass  mObj; // 类应该存储于方法区
+        BoyiaStr    mStrVal;
+    } mValue;
 } BoyiaValue;
 
 #define NEW(type) (type*)MiniNew(sizeof(type))
@@ -55,7 +55,7 @@ LVoid MiniDelete(LVoid* data);
 LVoid InitStr(BoyiaStr* str, LInt8* ptr);
 LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src);
-LBool MStrchr(const LInt8 *s, LInt8 ch);
+LBool MStrchr(const LInt8* s, LInt8 ch);
 LVoid StringAdd(BoyiaValue* left, BoyiaValue* right);
 LUint GenIdentifier(BoyiaStr* str);
 LUint GenIdentByStr(const LInt8* str, LInt len);

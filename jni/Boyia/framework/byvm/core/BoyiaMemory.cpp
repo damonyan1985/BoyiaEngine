@@ -10,9 +10,9 @@
 
 const LInt constHeaderLen = sizeof(MemoryBlockHeader);
 // 字节对齐数
-const LInt constAlignNum = sizeof(LInt);
+const LInt constAlignNum = sizeof(LIntPtr);
 // 数据块尾部地址值
-#define DATA_TAIL(data) ((LInt)data + data->m_size + constHeaderLen)
+#define DATA_TAIL(data) ((LIntPtr)data + data->m_size + constHeaderLen)
 // 字节对齐后的地址值
 #define ADDR_ALIGN(addr) (addr%constAlignNum == 0 ? addr : (addr + (constAlignNum - addr%constAlignNum)))
 
@@ -71,7 +71,7 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 
     if (!pool->m_firstBlock)
 	{
-        pHeader = (MemoryBlockHeader*)ADDR_ALIGN((LInt)pool->m_address);
+        pHeader = (MemoryBlockHeader*)ADDR_ALIGN((LIntPtr)pool->m_address);
 		pHeader->m_size = size;
 		pHeader->m_address = (LByte*)pHeader + constHeaderLen;
 		pHeader->m_next = NULL;
@@ -81,10 +81,10 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 	else
 	{
 		MemoryBlockHeader* current = pool->m_firstBlock;
-		if ((LInt)current - (LInt)pool->m_address >= mallocSize)
+		if ((LIntPtr)current - (LIntPtr)pool->m_address >= mallocSize)
 		{
-			LInt newAddr = ADDR_ALIGN((LInt)pool->m_address);
-			if ((LInt)current - newAddr >= mallocSize)
+			LIntPtr newAddr = ADDR_ALIGN((LIntPtr)pool->m_address);
+			if ((LIntPtr)current - newAddr >= mallocSize)
 			{
 				pHeader = (MemoryBlockHeader*)newAddr;
 				pHeader->m_size = size;
@@ -103,10 +103,10 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 		{
 			if (!current->m_next)
 			{
-				if ((((LInt)pool->m_address + pool->m_size) - DATA_TAIL(current)) >= mallocSize)
+				if ((((LIntPtr)pool->m_address + pool->m_size) - DATA_TAIL(current)) >= mallocSize)
 				{
-					LInt newAddr = ADDR_ALIGN(DATA_TAIL(current));
-					if (((LInt)pool->m_address + pool->m_size) - newAddr >= mallocSize)
+					LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+					if (((LIntPtr)pool->m_address + pool->m_size) - newAddr >= mallocSize)
 					{
 	                    pHeader = (MemoryBlockHeader*)newAddr;
 					    pHeader->m_size = size;
@@ -123,10 +123,10 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 			}
             else
 			{
-            	if ((LInt)current->m_next - DATA_TAIL(current) >= mallocSize)
+            	if ((LIntPtr)current->m_next - DATA_TAIL(current) >= mallocSize)
             	{
-            		LInt newAddr = ADDR_ALIGN(DATA_TAIL(current));
-            		if ((LInt)current->m_next - newAddr >= mallocSize)
+            		LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+            		if ((LIntPtr)current->m_next - newAddr >= mallocSize)
             		{
                         pHeader = (MemoryBlockHeader*)newAddr;
         				pHeader->m_size = size;
@@ -150,9 +150,9 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
 
 LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool)
 {
-    MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LInt)data - constHeaderLen);
+    MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LIntPtr)data - constHeaderLen);
 	// If error pointer, then return.
-	if ((LInt)pHeader < (LInt)pool->m_address)
+	if ((LIntPtr)pHeader < (LIntPtr)pool->m_address)
 	{
 		return;
 	}
@@ -182,5 +182,5 @@ LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool)
 
 LVoid printPoolSize(BoyiaMemoryPool* pool)
 {
-	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM POOL addr=%x used=%d maxsize=%d", (LInt)pool->m_address, pool->m_used, pool->m_size);
+	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->m_address, pool->m_used, pool->m_size);
 }

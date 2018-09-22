@@ -89,7 +89,7 @@ LVoid InitStr(BoyiaStr* str, LInt8* ptr) {
     str->mPtr = ptr;
 }
 
-LBool MStrchr(const LInt8 *s, LInt8 ch) {
+LBool MStrchr(const LInt8* s, LInt8 ch) {
     while (*s && *s != ch) ++s;
     return *s && *s == ch;
 }

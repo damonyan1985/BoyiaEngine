@@ -205,7 +205,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value) {
 		LInt index = 0;
 		
 		BoyiaFunction* fun = getObjFun(json);
-		value->mValue.mObj.mPtr = (LInt)fun;
+		value->mValue.mObj.mPtr = (LIntPtr)fun;
 		value->mValue.mObj.mSuper = 0;
 		GCAppendRef(fun, BY_CLASS);
 
@@ -219,7 +219,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value) {
 
 		LInt size = cJSON_GetArraySize(json);
 		BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size);
-		value->mValue.mObj.mPtr = (LInt)fun;
+		value->mValue.mObj.mPtr = (LIntPtr)fun;
 		value->mValue.mObj.mSuper = 0;
 		GCAppendRef(fun, BY_CLASS);
 
