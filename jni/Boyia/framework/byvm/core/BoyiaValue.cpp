@@ -68,7 +68,7 @@ LVoid CreateMiniMemory() {
 
 LVoid* BoyiaNew(LInt size) {
 	LVoid* data = newData(size, gMemPool);
-	__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS POOL addrmax=%x ptr=%x long size=%d", (LInt)gMemPool->m_address + gMemPool->m_size, (LInt)data, sizeof(long));
+	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS POOL addrmax=%x ptr=%x long size=%d", (LInt)gMemPool->m_address + gMemPool->m_size, (LInt)data, sizeof(long));
 	printPoolSize(gMemPool);
 	return data;
 }
@@ -117,7 +117,7 @@ extern LVoid NativeDelete(LVoid* data) {
 }
 
 extern LVoid SystemGC() {
-    if (gMemPool->m_used >= (MEMORY_SIZE/2)) {
+    if (gMemPool->mUsed >= (MEMORY_SIZE/2)) {
         GCollectGarbage();
     }
 }
