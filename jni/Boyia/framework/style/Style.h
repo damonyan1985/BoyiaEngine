@@ -41,31 +41,31 @@ public:
 class Style
 {
 public:
-	typedef enum PositionType
-	{
-		ABSOLUTEPOSITION,
-		FIXEDPOSITION,
-		STATICPOSITION,
-		RELATIVEPOSITION
-	} PositionType;
+    typedef enum PositionType
+    {
+        ABSOLUTEPOSITION,
+        FIXEDPOSITION,
+        STATICPOSITION,
+        RELATIVEPOSITION
+    } PositionType;
 	
-	typedef enum DisplayType
-	{
-		DISPLAY_NONE,
-		DISPLAY_BLOCK,
-		DISPLAY_INLINEBLOCK,
-		DISPLAY_INLINE,
-		DISPLAY_ANY
+    typedef enum DisplayType
+    {
+        DISPLAY_NONE,
+        DISPLAY_BLOCK,
+        DISPLAY_INLINEBLOCK,
+        DISPLAY_INLINE,
+        DISPLAY_ANY
 	} DisplayType;
 
-	typedef enum FlexDirection
-	{
-		FLEX_NONE,
+    typedef enum FlexDirection
+    {
+        FLEX_NONE,
         FLEX_ROW,
         FLEX_COLUMN,
         FLEX_ROW_REVERSE,
         FLEX_COLUMN_REVERSE
-	} FlexDirection;
+    } FlexDirection;
 
 public:
 	Style();

@@ -4,18 +4,18 @@
 #include "PlatformLib.h"
 
 typedef struct MemoryBlockHeader {
-	LInt               m_size;
-	LByte*             m_address;
-    MemoryBlockHeader* m_next;
-	MemoryBlockHeader* m_previous;
+    LInt               mSize;
+    LByte*             mAddress;
+    MemoryBlockHeader* mNext;
+    MemoryBlockHeader* mPrevious;
 } MemoryBlockHeader;
 
 typedef struct BoyiaMemoryPool {
-    LInt               m_size;
-    LInt               m_used;
-    LByte*             m_address;
-    BoyiaMemoryPool*   m_next;
-    MemoryBlockHeader* m_firstBlock;
+    LInt               mSize;
+    LInt               mUsed;
+    LByte*             mAddress;
+    BoyiaMemoryPool*   mNext;
+    MemoryBlockHeader* mFirstBlock;
 } BoyiaMemoryPool;
 
 #define FAST_NEW(type) (type*)fastMalloc(sizeof(type))
