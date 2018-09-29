@@ -64,14 +64,14 @@ enum OpCodeType {
     ASSIGN_VAR = BLOCK_END + 1, PUSH, POP, CALL, LOOP, LOOP_TRUE,
     JMP, JMP_TRUE, ELIF, IF_END, DECL_LOCAL, DECL_GLOBAL,
     PUSH_ARG, PUSH_PARAMS, GET_PROP, TMP_LOCAL, PUSH_SCENE, POP_SCENE,
-	CLASS_CREATE, FUN_CREATE, EXE_CREATE, PARAM_CREATE, PROP_CREATE,
-	HANDLE_EXTEND, PUSH_OBJ, HANDLE_CONST_STR, PROPS_SORT,
+    CLASS_CREATE, FUN_CREATE, EXE_CREATE, PARAM_CREATE, PROP_CREATE,
+    HANDLE_EXTEND, PUSH_OBJ, HANDLE_CONST_STR, PROPS_SORT,
 };
 
 typedef LInt (*OPHandler)(LVoid* instruction);
 
 enum OpType {
-	OP_NONE,
+    OP_NONE,
     OP_CONST_NUMBER,
     OP_CONST_STRING,
     OP_REG0,
@@ -167,7 +167,7 @@ typedef struct {
 typedef struct {
     Instruction*     mPC;
     LInt             mLValSize;
-	LInt             mTmpLValSize;
+    LInt             mTmpLValSize;
     LInt             mLoopSize;
     CommandTable*    mContext;
     BoyiaValue*      mClass;

@@ -19,7 +19,7 @@ class NewTextItem extends ViewDoc {
     }
     
     fun touchDownCallback() {
-        JS_CallStaticMethod("com/boyia/app/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", this.titleText);
+        Util.showToast(this.titleText);
     }
     
     fun setTitle(t) {

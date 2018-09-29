@@ -74,7 +74,7 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
         pHeader->mPrevious = NULL;
         pool->mFirstBlock = pHeader;
     }
-	else
+    else
     {
         MemoryBlockHeader* current = pool->mFirstBlock;
         if ((LIntPtr)current - (LIntPtr)pool->mAddress >= mallocSize)
@@ -105,10 +105,10 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
                     if (((LIntPtr)pool->mAddress + pool->mSize) - newAddr >= mallocSize)
                     {
 	                    pHeader = (MemoryBlockHeader*)newAddr;
-					    pHeader->mSize = size;
-					    pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
+                        pHeader->mSize = size;
+                        pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
 	                    pHeader->mPrevious = current;
-					    pHeader->mNext = NULL;
+                        pHeader->mNext = NULL;
                         current->mNext = pHeader;
                         break;
                     }
@@ -148,7 +148,7 @@ LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool)
 {
     MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LIntPtr)data - constHeaderLen);
     // If error pointer, then return.
-	if ((LIntPtr)pHeader < (LIntPtr)pool->mAddress)
+    if ((LIntPtr)pHeader < (LIntPtr)pool->mAddress)
     {
         return;
     }
