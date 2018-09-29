@@ -12,15 +12,15 @@ class Array {
         return JS_GetFromArray(this, idx);
     }
 
-	fun size() {
-	    return JS_GetArraySize(this);
-	}
+    fun size() {
+        return JS_GetArraySize(this);
+    }
 	
-	fun remove(elem) {
-	    JS_RemoveFromArray(this, elem);
-	}
+    fun remove(elem) {
+        JS_RemoveFromArray(this, elem);
+    }
 
-	fun clear() {
-	    JS_ClearArray(this);
-	}
+    fun clear() {
+        JS_ClearArray(this);
+    }
 }
