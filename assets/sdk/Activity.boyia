@@ -1,0 +1,18 @@
+class Activity {
+    prop contentView;
+    // Refresh sub ui dom
+    fun setState(state) {
+        var view = diffDOM();
+        if (view) {
+            // ReDraw
+            view.draw();
+            // Commit draw command
+            view.commit();
+        }
+    }
+    
+    // Diff will compute in native c++ code
+    fun diffDOM() {
+        return null;
+    }
+}
