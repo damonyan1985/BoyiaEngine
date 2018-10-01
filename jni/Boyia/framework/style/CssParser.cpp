@@ -633,11 +633,11 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
         {
             if (value.CompareNoCase(_CS("row")))
         	{
-                rule->addProperty(CssTags::DISPLAY, Style::FLEX_ROW);
+                rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_ROW);
             }
             else if (value.CompareNoCase(_CS("column")))
             {
-                rule->addProperty(CssTags::DISPLAY, Style::FLEX_COLUMN);
+                rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_COLUMN);
             }
         }
         break;
