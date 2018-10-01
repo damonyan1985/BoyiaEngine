@@ -8,7 +8,8 @@ namespace yanbo
 class FlexLayout
 {
 public:
-	static void flexRowLayout(HtmlView* view);
+	static LVoid flexRowLayout(HtmlView* view);
+	static LVoid flexRowReverse(HtmlView* view);
 };
 }
 
