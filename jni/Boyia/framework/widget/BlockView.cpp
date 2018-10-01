@@ -83,16 +83,21 @@ void BlockView::layout()
 
 void BlockView::layoutBlock(LBool relayoutChildren)
 {
-	if (isChildrenInline())
-	{
-		layoutInlineChildren();
+    if (isChildrenInline())
+    {
+        layoutInlineChildren();
 	    return;
-	}
+    }
 
-	if (m_style.flexDirection == util::Style::FLEX_ROW)
-	{
-		layoutFlexRow();
-	}
+    if (m_style.flexDirection == util::Style::FLEX_ROW)
+    {
+        FlexLayout::flexRowLayout(this);
+        KFORMATLOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
+    }
+    else if (m_style.flexDirection == util::Style::FLEX_ROW_REVERSE)
+    {
+    	FlexLayout::flexRowReverse(this);
+    }
 	else
 	{
 	    layoutBlockChildren(relayoutChildren);
@@ -137,30 +142,6 @@ void BlockView::layoutPositionChild(HtmlView* child, LayoutUnit& previousLogical
 	}
 	KFORMATLOG("adjustPositioned, x=%d, y=%d", child->getStyle()->left, child->getStyle()->top);
 	KFORMATLOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
-}
-
-void BlockView::layoutFlexRow()
-{
-//	HtmlViewList::Iterator iter = m_children.begin();
-//	HtmlViewList::Iterator iterEnd = m_children.end();
-//	LInt x = m_style.leftPadding;
-//	LInt y = m_style.topPadding;
-//	KFORMATLOG("layoutInlineBlock, child size=%d", m_children.count());
-//	for (; iter != iterEnd; ++iter)
-//	{
-//		(*iter)->setPos(x, y);
-//		KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
-//		(*iter)->layout();
-//		x += (*iter)->getWidth();
-//		if (m_height < (*iter)->getHeight())
-//		{
-//			m_height = (*iter)->getHeight();
-//		}
-//	}
-
-	FlexLayout::flexRowLayout(this);
-
-	KFORMATLOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
 }
 
 void BlockView::layoutInlineChildren()
