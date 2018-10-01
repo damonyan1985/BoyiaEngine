@@ -113,7 +113,6 @@ protected:
 public:	
 	HtmlViewList     m_children;
 	
-
 protected:
     /**
      * The listener who will receive event callbacks.
