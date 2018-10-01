@@ -12,6 +12,7 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "HtmlDocument.h"
+#include "FlexLayout.h"
 
 namespace yanbo
 {
@@ -90,7 +91,7 @@ void BlockView::layoutBlock(LBool relayoutChildren)
 
 	if (m_style.flexDirection == util::Style::FLEX_ROW)
 	{
-		layoutInlineBlock();
+		layoutFlexRow();
 	}
 	else
 	{
@@ -138,24 +139,26 @@ void BlockView::layoutPositionChild(HtmlView* child, LayoutUnit& previousLogical
 	KFORMATLOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
 }
 
-void BlockView::layoutInlineBlock()
+void BlockView::layoutFlexRow()
 {
-	HtmlViewList::Iterator iter = m_children.begin();
-	HtmlViewList::Iterator iterEnd = m_children.end();
-	LInt x = m_style.leftPadding;
-	LInt y = m_style.topPadding;
-	KFORMATLOG("layoutInlineBlock, child size=%d", m_children.count());
-	for (; iter != iterEnd; ++iter)
-	{
-		(*iter)->setPos(x, y);
-		KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
-		(*iter)->layout();
-		x += (*iter)->getWidth();
-		if (m_height < (*iter)->getHeight())
-		{
-			m_height = (*iter)->getHeight();
-		}
-	}
+//	HtmlViewList::Iterator iter = m_children.begin();
+//	HtmlViewList::Iterator iterEnd = m_children.end();
+//	LInt x = m_style.leftPadding;
+//	LInt y = m_style.topPadding;
+//	KFORMATLOG("layoutInlineBlock, child size=%d", m_children.count());
+//	for (; iter != iterEnd; ++iter)
+//	{
+//		(*iter)->setPos(x, y);
+//		KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
+//		(*iter)->layout();
+//		x += (*iter)->getWidth();
+//		if (m_height < (*iter)->getHeight())
+//		{
+//			m_height = (*iter)->getHeight();
+//		}
+//	}
+
+	FlexLayout::flexRowLayout(this);
 
 	KFORMATLOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
 }

@@ -34,6 +34,7 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/widget/VideoView.cpp \
     $(LOCAL_PATH)/framework/widget/dom/Tiny2Dom.cpp \
     $(LOCAL_PATH)/framework/widget/dom/Document.cpp \
+    $(LOCAL_PATH)/framework/widget/flex/FlexLayout.cpp \
     \
     $(LOCAL_PATH)/framework/platform/android/LoaderAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/android/AutoObject.cpp \

@@ -36,7 +36,7 @@ public:
 	void layoutBlockChildren(LBool relayoutChildren);
 	void layoutInlineChildren();
 
-	virtual void layoutInlineBlock();
+	virtual void layoutFlexRow();
 	// layout block child
 	void layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
 	//void layoutInlineChild(HtmlView* child);

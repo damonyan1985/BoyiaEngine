@@ -720,5 +720,10 @@ void HtmlView::relayout()
     }
 }
 
+const HtmlViewList& HtmlView::getChildren() const
+{
+	return m_children;
+}
+
 }
 
