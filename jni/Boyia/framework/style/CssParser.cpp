@@ -639,6 +639,14 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             {
                 rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_COLUMN);
             }
+            else if (value.CompareNoCase(_CS("row-reverse")))
+            {
+                rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_ROW_REVERSE);
+            }
+            else if (value.CompareNoCase(_CS("column-reverse")))
+            {
+                rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_COLUMN_REVERSE);
+            }
         }
         break;
     default:

@@ -101,6 +101,7 @@ public:
 	IViewListener* getListener() const;
 
 	LVoid setViewIter(const HtmlViewList::Iterator& iter);
+	const HtmlViewList& getChildren() const;
 
 private:
 	HtmlView* getPreItem(HtmlView* currentItem);
@@ -117,22 +118,16 @@ protected:
     /**
      * The listener who will receive event callbacks.
      */
-	IViewListener*            m_itemListener;
-    /**
-     * Standard Html and XHTML attribute. A unique id for the element. Used with CSS or JavaScript
-     */
-	String                    m_id;
+    IViewListener*            m_itemListener;
+    String                    m_id;
     
-	// html type
-	HtmlTags::HtmlType        m_type;
-    
+    // html type
+    HtmlTags::HtmlType        m_type;
     /**  True if this item is selected */
     LBool                     m_selected;
-    
     HtmlDocument*             m_doc;
     
     String                    m_className;
-
 	LBool                     m_isViewRoot;
 	LVoid*                    m_painter;
 	LBool                     m_clip;

@@ -24,6 +24,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/framework/gui \
     $(LOCAL_PATH)/framework/widget \
     $(LOCAL_PATH)/framework/widget/dom \
+    $(LOCAL_PATH)/framework/widget/flex \
     $(LOCAL_PATH)/framework/loader \
     $(LOCAL_PATH)/framework/parser \
     $(LOCAL_PATH)/framework/util \
