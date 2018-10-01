@@ -70,6 +70,7 @@ CssTags* CssTags::getInstance()
         s_cssTags->defineInitialSymbol(_CS("scale"), SCALE);
         s_cssTags->defineInitialSymbol(_CS("z-index"), Z_INDEX);
         s_cssTags->defineInitialSymbol(_CS("focusable"), FOCUSABLE);
+        s_cssTags->defineInitialSymbol(_CS("flex-direction"), FLEX_DIRECTION);
 
         s_cssTags->m_map.sort();
 	}

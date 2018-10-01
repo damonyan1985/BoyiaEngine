@@ -97,7 +97,7 @@ body {
 }
 .underline {
 	border-bottom: #e8e8e8 solid 1;
-	display: inline-block;
+	flex-direction: row;
 	focusable: true; 
 }
 #hot {
@@ -156,7 +156,7 @@ body {
     height: 70px;
     border-bottom: #e8e8e8 solid 1;
     background-color: #FFF;
-    display: inline-block;
+    flex-direction: row;
 }
 
 .category_item {

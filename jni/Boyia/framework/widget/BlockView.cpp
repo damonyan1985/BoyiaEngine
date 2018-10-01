@@ -85,8 +85,10 @@ void BlockView::layoutBlock(LBool relayoutChildren)
 	if (isChildrenInline())
 	{
 		layoutInlineChildren();
+	    return;
 	}
-	else if (m_style.displayType == util::Style::DISPLAY_INLINEBLOCK)
+
+	if (m_style.flexDirection == util::Style::FLEX_ROW)
 	{
 		layoutInlineBlock();
 	}

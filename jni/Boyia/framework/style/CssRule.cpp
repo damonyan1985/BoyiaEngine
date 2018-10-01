@@ -583,6 +583,10 @@ void CssRule::setStyleProperties(Style& style, LInt property,
 		    style.focusable = value.intVal;
 	    }
 	    break;
+    case CssTags::FLEX_DIRECTION:
+        {
+            style.flexDirection = value.intVal;
+        }
 	default:
 		break;
 	}

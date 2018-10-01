@@ -601,10 +601,6 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     	    {
     	        rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_BLOCK);
     	    }
-    	    else if (value.CompareNoCase(_CS("inline-block")))
-    	    {
-    	        rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_INLINEBLOCK);
-    	    }
     	    else if (value.CompareNoCase(_CS("inline")))
     	    {
     	        rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_INLINE);
@@ -631,6 +627,18 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
         	{
         		rule->addProperty(cssTag, LFalse);
         	}
+        }
+        break;
+    case CssTags::FLEX_DIRECTION:
+        {
+            if (value.CompareNoCase(_CS("row")))
+        	{
+                rule->addProperty(CssTags::DISPLAY, Style::FLEX_ROW);
+            }
+            else if (value.CompareNoCase(_CS("column")))
+            {
+                rule->addProperty(CssTags::DISPLAY, Style::FLEX_COLUMN);
+            }
         }
         break;
     default:

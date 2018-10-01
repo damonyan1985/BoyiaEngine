@@ -30,6 +30,7 @@ public:
 	    WIDTH,
 	    HEIGHT,
 	    DISPLAY,
+	    FLEX_DIRECTION,
 	    FLOAT,		
 		BACKGROUND_IMAGE,
 		PADDING,

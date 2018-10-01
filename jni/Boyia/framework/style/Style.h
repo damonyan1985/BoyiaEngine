@@ -53,7 +53,6 @@ public:
     {
         DISPLAY_NONE,
         DISPLAY_BLOCK,
-        DISPLAY_INLINEBLOCK,
         DISPLAY_INLINE,
         DISPLAY_ANY
 	} DisplayType;
