@@ -12,7 +12,7 @@ void FlexLayout::flexRowLayout(HtmlView* view)
     KFORMATLOG("layoutInlineBlock, child size=%d", list.count());
     for (; iter != iterEnd; ++iter)
     {
-    	x += (*iter)->getStyle()->leftMargin;
+        x += (*iter)->getStyle()->leftMargin;
         (*iter)->setPos(x, y);
         KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
         (*iter)->layout();

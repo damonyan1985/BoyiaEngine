@@ -50,18 +50,18 @@ static LBool GCCheckObject(BoyiaValue* value, MiniRef* ref) {
 }
 
 static LBool checkValue(BoyiaValue* value, MiniRef* ref) {
-	if (value->mValueType == BY_NAVCLASS
+    if (value->mValueType == BY_NAVCLASS
 			&& value->mValue.mIntVal == (LIntPtr)ref->mAddress) {
-		return LTrue;
-	}
+        return LTrue;
+    }
 
-	if (value->mValueType == BY_STRING
+    if (value->mValueType == BY_STRING
 			&& (LIntPtr)value->mValue.mStrVal.mPtr == (LIntPtr)ref->mAddress) {
         return LTrue;
-	}
+    }
 
     if (value->mValueType == BY_CLASS && GCCheckObject(value, ref)) {
-    	return LTrue;
+        return LTrue;
     }
 
     return LFalse;
