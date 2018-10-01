@@ -5,11 +5,11 @@ class MainView extends ViewDoc {
     prop headerView;
     
     fun initView() {
-        if (this.headerContainer == null) {
+        if (!this.headerContainer) {
             this.headerContainer = this.itemByID(ViewGroup, "header");
         }
         
-        if (this.detailContainer == null) {
+        if (!this.detailContainer) {
             this.detailContainer = this.itemByID(ViewGroup, "category_detail");
         }
         

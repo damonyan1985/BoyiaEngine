@@ -5,7 +5,6 @@
 
 namespace yanbo
 {
-
 class VideoView: public BlockView
 {
 public:

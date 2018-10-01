@@ -23,15 +23,18 @@ LUint IDCreator::genIdentByStr(const LInt8* str, LInt len)
 
 LUint IDCreator::genIdentifier(BoyiaStr* str)
 {
-	if (!m_idLink) {
+	if (!m_idLink)
+	{
 		m_idLink = new IdLink;
 		m_idLink->mBegin = NULL;
 		m_idLink->mEnd = NULL;
 	}
 
 	BoyiaId* id = m_idLink->mBegin;
-	while (id) {
-		if (MStrcmp(str, &id->mStr)) {
+	while (id)
+	{
+		if (MStrcmp(str, &id->mStr))
+		{
 			return id->mID;
 		}
 
@@ -45,9 +48,12 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 	LMemcpy(id->mStr.mPtr, str->mPtr, str->mLen);
 	id->mNext = NULL;
 
-	if (!m_idLink->mBegin) {
+	if (!m_idLink->mBegin)
+	{
 		m_idLink->mBegin = id;
-	} else {
+	}
+	else
+	{
 		m_idLink->mEnd->mNext = id;
 	}
 

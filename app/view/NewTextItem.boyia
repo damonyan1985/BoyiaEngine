@@ -5,13 +5,15 @@ class NewTextItem extends ViewDoc {
     prop titleText = null;
     
     fun initView() {
-        if (this.image == null) {
+        Util.log("NewTextItem0");
+        if (!this.image) {
+            Util.log("NewTextItem1");
             this.image = this.itemByID(ImageView, "hot");
         }
-        if (this.title == null) {
+        if (!this.title) {
             this.title = this.itemByID(ViewGroup, "title");
         }
-        if (this.info == null) {
+        if (!this.info) {
             this.info = this.itemByID(ViewGroup, "info");
         }
         

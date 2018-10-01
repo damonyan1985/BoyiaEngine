@@ -4,12 +4,12 @@ class PosterView extends ViewDoc
     prop textView = null;
     
     fun initView() {
-        if (this.image == null) {
+        if (!this.image) {
             this.image = this.itemByID(ImageView, "img");
         }
 
         //this.image.loadImage("https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1832296905,803709198&fm=58");
-        if (this.textView == null) {
+        if (!this.textView) {
             this.textView = this.itemByID(ViewGroup, "text");
         }
 

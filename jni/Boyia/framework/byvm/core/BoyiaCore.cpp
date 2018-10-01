@@ -87,6 +87,11 @@ typedef struct {
 static OpCommand COMMAND_R0 = { OP_REG0, 0 };
 static OpCommand COMMAND_R1 = { OP_REG1, 0 };
 
+enum OpInstType {
+    OpLeft,
+    OpRight,
+};
+
 typedef struct Instruction {
     LUint8         mOPCode;
     LInt           mCodeLine;
@@ -185,8 +190,6 @@ static LUint gThis = GenIdentByStr("this", 4);
 static LUint gSuper = GenIdentByStr("super", 5);
 /* Global value define end */
 static LVoid LocalStatement();
-
-static BoyiaValue* GetLeftOpValue(Instruction* inst);
 
 static LVoid IfStatement();
 
@@ -485,21 +488,22 @@ static BoyiaValue* FindVal(LUint key) {
 	return value;
 }
 
-static BoyiaValue* GetLeftOpValue(Instruction* inst) {
-	BoyiaValue* left = NULL;
-	switch (inst->mOPLeft.mType) { // 赋值左值不可能是常量
+static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type) {
+	BoyiaValue* val = NULL;
+	OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
+	switch (op->mType) { // 赋值左值不可能是常量
 	case OP_REG0:
-		left = &gVM.mReg0;
+		val = &gVM.mReg0;
 		break;
 	case OP_REG1:
-		left = &gVM.mReg1;
+		val = &gVM.mReg1;
 		break;
 	case OP_VAR:
-		left = FindVal((LUint)inst->mOPLeft.mValue);
+		val = FindVal((LUint)op->mValue);
 		break;
 	}
 
-	return left;
+	return val;
 }
 
 static LInt HandleCallInternal(LVoid* ins) {
@@ -533,7 +537,7 @@ static LInt HandlePushScene(LVoid* ins) {
 
 static LInt HandlePushArg(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	BoyiaValue* value = GetLeftOpValue(inst);
+	BoyiaValue* value = GetOpValue(inst, OpLeft);
 	LocalPush(value);
 	return 1;
 }
@@ -1204,27 +1208,10 @@ static LVoid PushArgStatement() {
     } while (gToken.mTokenValue == COMMA);
 }
 
-static BoyiaValue* GetRightOpValue(Instruction* inst) {
-    BoyiaValue* right = NULL;
-    switch (inst->mOPRight.mType) { // 赋值左值不可能是常量
-        case OP_REG0:
-            right = &gVM.mReg0;
-            break;
-        case OP_REG1:
-            right = &gVM.mReg1;
-            break;
-        case OP_VAR:
-            right = FindVal((LUint) inst->mOPRight.mValue);
-            break;
-    }
-
-    return right;
-}
-
 /* Assign a value to a Register 0 or 1. */
 static LInt HandleAssignment(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
     if (!left) return 0;
 
     switch (inst->mOPRight.mType) {
@@ -1374,8 +1361,8 @@ static LVoid DoStatement() {
 
 static LInt HandleAdd(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
     //EngineLog("HandleAdd left=%d \n", left->mValue.mIntVal);
     //EngineLog("HandleAdd right=%d \n", right->mValue.mIntVal);
 	if (left->mValueType == INT && right->mValueType == INT) {
@@ -1395,8 +1382,8 @@ static LInt HandleAdd(LVoid* ins) {
 
 static LInt HandleSub(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1408,8 +1395,8 @@ static LInt HandleSub(LVoid* ins) {
 
 static LInt HandleMul(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     EngineLog("HandleMul left=%d \n", left->mValue.mIntVal);
     EngineLog("HandleMul right=%d \n", right->mValue.mIntVal);
@@ -1423,8 +1410,8 @@ static LInt HandleMul(LVoid* ins) {
 
 static LInt HandleDiv(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1438,8 +1425,8 @@ static LInt HandleDiv(LVoid* ins) {
 
 static LInt HandleMod(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     if (left->mValueType != INT || right->mValueType != INT)
         return 0;
@@ -1453,14 +1440,17 @@ static LInt HandleMod(LVoid* ins) {
 
 static LInt HandleRelational(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     EngineLog("HandleLogic left=%d \n", left->mValue.mIntVal);
     EngineLog("HandleLogic right=%d \n", right->mValue.mIntVal);
 
     LInt result = 0;
     switch (inst->mOPCode) {
+        case NOT:
+        	result = right->mValue.mIntVal ? 0 : 1;
+            break;
         case LT:
             result = left->mValue.mIntVal < right->mValue.mIntVal ? 1 : 0;
             break;
@@ -1488,8 +1478,8 @@ static LInt HandleRelational(LVoid* ins) {
 
 static LInt HandleLogic(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
-    BoyiaValue* right = GetRightOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* right = GetOpValue(inst, OpRight);
 
     LInt result = 0;
     switch (inst->mOPCode) {
@@ -1498,9 +1488,6 @@ static LInt HandleLogic(LVoid* ins) {
             break;
         case OR:
             result = left->mValue.mIntVal || right->mValue.mIntVal ? 1 : 0;
-            break;
-        case NOT:
-            result = left->mValue.mIntVal ? 0 : 1;
             break;
     }
 
@@ -1533,9 +1520,9 @@ static LInt HandlePush(LVoid* ins) {
 
 static LInt HandleAssignVar(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* left = GetLeftOpValue(inst);
+    BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* value = (BoyiaValue*) left->mNameKey;
-    BoyiaValue* result = GetRightOpValue(inst);
+    BoyiaValue* result = GetOpValue(inst, OpRight);
 
     ValueCopyNoName(value, result);
     ValueCopy(&gVM.mReg0, value);
@@ -1613,7 +1600,7 @@ static LInt FindProp(BoyiaValue* lVal, LUint rVal) {
 
 static LInt HandleGetProp(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-	BoyiaValue* lVal = GetLeftOpValue(inst);
+	BoyiaValue* lVal = GetOpValue(inst, OpLeft);
 	LUint rVal = (LUint)inst->mOPRight.mValue;
 	return FindProp(lVal, rVal);
 }
@@ -1799,22 +1786,30 @@ static LVoid EvalAddSub() {
 
 // 关系比较判断,>,<,==,!=
 static LVoid EvalRelational() {
-	static LInt8 relops[7] = {
-		LT, LE, GT, GE, EQ, NE, 0
-	};
+    static LInt8 relops[8] = {
+        NOT, LT, LE, GT, GE, EQ, NE, 0
+    };
 
-	EvalAddSub(); // 计算结果 => R0
+	// '<' and '>' etc need both sides of expression
+	// ，but '!' only need right side.
+    if (gToken.mTokenValue != NOT) {
+        EvalAddSub(); // 计算结果 => R0
+    }
 
 	LInt8 op = gToken.mTokenValue;
 	if (MStrchr(relops, op)) {
 		// 计算的结果存入栈中
-		PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
+        if (op != NOT) {
+            PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
+        }
 
 		NextToken(); // 查找标识符或者常量
 		EvalAddSub(); // 先执行优先级高的操作 => R0
 		// pop R1
 		// 上次计算的结果出栈至R1
-		PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
+        if (op != NOT) {
+            PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
+        }
 
 		// 计算R0 OP R1, 结果存入R0中
 		PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
@@ -1822,25 +1817,25 @@ static LVoid EvalRelational() {
 }
 
 static LVoid EvalLogic() {
-	static LInt8 logicops[4] = {
-		AND, OR, NOT, 0
+	static LInt8 logicops[3] = {
+		AND, OR, 0
 	};
 
 	EvalRelational();
 	LInt8 op = 0;
-	while (MStrchr(logicops, (op = gToken.mTokenValue))) {
+    while (MStrchr(logicops, (op = gToken.mTokenValue))) {
 		// 计算的结果存入栈中
-	    PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
+        PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
 
-		NextToken(); // 查找标识符或者常量
-		EvalRelational(); // 先执行优先级高的操作 => R0
+        NextToken(); // 查找标识符或者常量
+        EvalRelational(); // 先执行优先级高的操作 => R0
 		// pop R1
 		// 上次计算的结果出栈至R1
-		PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
+        PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
 
-		// 计算R0 OP R1, 结果存入R0中
-		PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleLogic);
-	}
+        // 计算R0 OP R1, 结果存入R0中
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleLogic);
+    }
 }
 
 // 赋值,=
