@@ -1797,40 +1797,40 @@ static LVoid EvalRelational() {
     }
 
 	LInt8 op = gToken.mTokenValue;
-	if (MStrchr(relops, op)) {
-		// 计算的结果存入栈中
+    if (MStrchr(relops, op)) {
+        // 计算的结果存入栈中
         if (op != NOT) {
             PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
         }
 
-		NextToken(); // 查找标识符或者常量
-		EvalAddSub(); // 先执行优先级高的操作 => R0
-		// pop R1
-		// 上次计算的结果出栈至R1
+        NextToken(); // 查找标识符或者常量
+        EvalAddSub(); // 先执行优先级高的操作 => R0
+        // pop R1
+        // 上次计算的结果出栈至R1
         if (op != NOT) {
             PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
         }
 
-		// 计算R0 OP R1, 结果存入R0中
-		PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
-	}
+        // 计算R0 OP R1, 结果存入R0中
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
+    }
 }
 
 static LVoid EvalLogic() {
-	static LInt8 logicops[3] = {
-		AND, OR, 0
-	};
+    static LInt8 logicops[3] = {
+        AND, OR, 0
+    };
 
-	EvalRelational();
-	LInt8 op = 0;
+    EvalRelational();
+    LInt8 op = 0;
     while (MStrchr(logicops, (op = gToken.mTokenValue))) {
-		// 计算的结果存入栈中
+        // 计算的结果存入栈中
         PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
 
         NextToken(); // 查找标识符或者常量
         EvalRelational(); // 先执行优先级高的操作 => R0
-		// pop R1
-		// 上次计算的结果出栈至R1
+        // pop R1
+        // 上次计算的结果出栈至R1
         PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
 
         // 计算R0 OP R1, 结果存入R0中
