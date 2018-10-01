@@ -2,8 +2,8 @@
 cd jni
 ndk-build
 cd ..
-rm -r bin
-rm -r gen
+rm -rf bin
+rm -rf gen
 mkdir -p gen/com/boyia/app
 BUILD_TOOL_VERSION=28.0.3
 SDK_VERSION=android-28
