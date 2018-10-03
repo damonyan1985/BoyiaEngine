@@ -19,6 +19,10 @@ class Array {
     fun remove(elem) {
         JS_RemoveFromArray(this, elem);
     }
+    
+    fun removeIndex(idx) {
+        JS_RemoveWidthIndex(this, idx);
+    }
 
     fun clear() {
         JS_ClearArray(this);

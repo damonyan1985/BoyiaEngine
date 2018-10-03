@@ -1,18 +1,18 @@
 class Activity {
-    prop contentView;
-    // Refresh sub ui dom
-    fun setState(state) {
-        var view = diffDOM();
-        if (view) {
-            // ReDraw
-            view.draw();
-            // Commit draw command
-            view.commit();
+    prop contentView = null;
+   
+    // Life Cycle onCreate();
+    fun setContent(view) {
+        this.contentView = view;
+    }
+    
+    fun onCreate() {
+        if (this.contentView) {
+            this.contentView.draw();
+            this.contentView.commit();
         }
     }
     
-    // Diff will compute in native c++ code
-    fun diffDOM() {
-        return null;
+    fun onDistroy() {
     }
 }

@@ -49,6 +49,8 @@ LInt startScale();
 
 LInt startOpacity();
 
+LInt removeElementWidthIndex();
+
 LInt removeElementFromVector();
 
 LInt getViewXpos();

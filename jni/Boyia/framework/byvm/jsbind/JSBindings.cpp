@@ -14,10 +14,14 @@ static NativeFunMap* sFunMap = NULL;
 static LVoid initLib() {
 	NativeFunction funs[] = {
 		{ GenIdentByStr("JS_Content", 10) , getFileContent },
+		// Array Api Begin
 		{ GenIdentByStr("JS_GetFromArray", 15),   getElementFromVector },
 		{ GenIdentByStr("JS_AddInArray", 13),  addElementToVector },
 		{ GenIdentByStr("JS_GetArraySize", 15), getVectorSize },
 		{ GenIdentByStr("JS_ClearArray", 13), clearVector },
+		{ GenIdentByStr("JS_RemoveWidthIndex", 19), removeElementWidthIndex },
+		{ GenIdentByStr("JS_RemoveFromArray", 18), removeElementFromVector },
+		// Array Api End
 		{ GenIdentByStr("JS_Log", 6),  logPrint },
 		{ GenIdentByStr("JS_Json", 7),  jsonParseWithCJSON },
 		{ GenIdentByStr("JS_CreateDocument", 17), createJSDocument },
@@ -28,7 +32,6 @@ static LVoid initLib() {
 		{ GenIdentByStr("JS_SetXpos", 10), setViewXpos},
 		{ GenIdentByStr("JS_SetYpos", 10), setViewYpos},
 		{ GenIdentByStr("JS_DrawView", 11), drawView},
-		{ GenIdentByStr("JS_RemoveFromArray", 18), removeElementFromVector },
 		{ GenIdentByStr("JS_GetViewXpos", 14), getViewXpos },
 		{ GenIdentByStr("JS_GetViewYpos", 14), getViewYpos },
 		{ GenIdentByStr("JS_GetViewWidth", 15), getViewWidth },
