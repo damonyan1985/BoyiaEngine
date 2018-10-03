@@ -20,6 +20,9 @@
 <script src="boyiasdk://sdk/ViewDoc.boyia" />
 <script src="boyiasdk://sdk/InputView.boyia" />
 <script src="boyiasdk://sdk/ImageView.boyia" />
+<script src="boyiasdk://sdk/AppStack.boyia" />
+<script src="boyiasdk://sdk/App.boyia" />
+<script src="boyiasdk://sdk/Activity.boyia" />
 <script src="boyia://app/view/PosterView.boyia" />
 <script src="boyia://app/view/NewTextItem.boyia" />
 <script src="boyia://app/view/CategoryItem.boyia" />

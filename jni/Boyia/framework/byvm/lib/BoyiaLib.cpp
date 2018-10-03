@@ -115,6 +115,19 @@ static LBool compareValue(BoyiaValue* src, BoyiaValue* dest) {
 	return LFalse;
 }
 
+LInt removeElementWidthIndex() {
+    BoyiaValue* array = (BoyiaValue*)GetLocalValue(0);
+    BoyiaValue* idxVal = (BoyiaValue*)GetLocalValue(1);
+
+    LInt idx = idxVal->mValue.mIntVal;
+    BoyiaFunction* fun = (BoyiaFunction*)array->mValue.mObj.mPtr;
+    for (LInt i = idx; i < fun->mParamSize - 1; ++i) {
+        ValueCopy(fun->mParams + i, fun->mParams + i + 1);
+    }
+
+    --fun->mParamSize;
+}
+
 LInt removeElementFromVector() {
 	BoyiaValue* array = (BoyiaValue*)GetLocalValue(0);
 	//BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
