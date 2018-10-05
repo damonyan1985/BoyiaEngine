@@ -3,7 +3,7 @@
 #include "BoyiaLib.h"
 #include "KVector.h"
 #include <pthread.h>
-#include "JSView.h"
+#include "BoyiaView.h"
 //#include <stdarg.h>
 
 namespace yanbo
@@ -64,7 +64,7 @@ void JNIUtil::callStaticMethod(
 			} else if (val->mValueType == BY_INT) {
 				args[idx].i = val->mValue.mIntVal;
 			} else if (val->mValueType == BY_NAVCLASS) {
-                boyia::JSView* view = (boyia::JSView*) val->mValue.mIntVal;
+                boyia::BoyiaView* view = (boyia::BoyiaView*) val->mValue.mIntVal;
                 args[idx].i = (LInt)view->item();
 			}
 		}

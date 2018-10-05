@@ -3,13 +3,13 @@
 #include "BoyiaMemory.h"
 #include "cJSON.h"
 #include "StringUtils.h"
-#include "JSViewDoc.h"
+#include "BoyiaViewDoc.h"
 #include "UIView.h"
-#include "JSNetwork.h"
+#include "BoyiaNetwork.h"
 #include "JNIUtil.h"
-#include "JSImageView.h"
-#include "JSViewGroup.h"
-#include "JSInputView.h"
+#include "BoyiaImageView.h"
+#include "BoyiaViewGroup.h"
+#include "BoyiaInputView.h"
 #include <android/log.h>
 #include <stdio.h>
 
@@ -271,7 +271,7 @@ LInt jsonParseWithCJSON()
 
 LInt createJSDocument()
 {
-	KFORMATLOG("JSViewDoc::loadHTML createJSViewDoc %d", 1);
+	KFORMATLOG("BoyiaViewDoc::loadHTML createBoyiaViewDoc %d", 1);
 	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
 	if (!val)
 	{
@@ -280,7 +280,7 @@ LInt createJSDocument()
 
 	char* url = convertMStr2Str(&val->mValue.mStrVal);
 	String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
-	boyia::JSViewDoc* doc = new boyia::JSViewDoc();
+	boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc();
 	doc->loadHTML(strUrl);
 	return 1;
 }
@@ -294,8 +294,8 @@ LInt appendView()
 		return 0;
 	}
 
-	boyia::JSViewGroup* parentView = (boyia::JSViewGroup*) parent->mValue.mIntVal;
-	boyia::JSView* childView = (boyia::JSView*) child->mValue.mIntVal;
+	boyia::BoyiaViewGroup* parentView = (boyia::BoyiaViewGroup*) parent->mValue.mIntVal;
+	boyia::BoyiaView* childView = (boyia::BoyiaView*) child->mValue.mIntVal;
 
 	parentView->appendView(childView);
 	return 1;
@@ -317,7 +317,7 @@ BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
 
 LInt getRootDocument()
 {
-    boyia::JSViewDoc* doc = new boyia::JSViewDoc();
+    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc();
     doc->setDocument(yanbo::UIView::getInstance()->getDocument());
     return 1;
 }
@@ -325,10 +325,10 @@ LInt getRootDocument()
 LInt setDocument()
 {
 	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSViewDoc* destDoc = (boyia::JSViewDoc*) val->mValue.mIntVal;
+	boyia::BoyiaViewDoc* destDoc = (boyia::BoyiaViewDoc*) val->mValue.mIntVal;
 
 	val = (BoyiaValue*)GetLocalValue(1);
-	boyia::JSViewDoc* srcDoc = (boyia::JSViewDoc*) val->mValue.mIntVal;
+	boyia::BoyiaViewDoc* srcDoc = (boyia::BoyiaViewDoc*) val->mValue.mIntVal;
 	destDoc->setDocument(srcDoc->getDocument());
 
 	return 1;
@@ -344,7 +344,7 @@ LInt setViewXpos()
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* posX = (BoyiaValue*)GetLocalValue(1);
 
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->setX(posX->mValue.mIntVal);
 
 	return 1;
@@ -355,7 +355,7 @@ LInt setViewYpos()
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* posY = (BoyiaValue*)GetLocalValue(1);
 
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->setY(posY->mValue.mIntVal);
 
 	return 1;
@@ -364,7 +364,7 @@ LInt setViewYpos()
 LInt getViewXpos()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSView* jsDoc = (boyia::JSView*) doc->mValue.mIntVal;
+	boyia::BoyiaView* jsDoc = (boyia::BoyiaView*) doc->mValue.mIntVal;
 	BoyiaValue val;
 	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->left();
@@ -376,7 +376,7 @@ LInt getViewXpos()
 LInt getViewYpos()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	BoyiaValue val;
 	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->top();
@@ -388,7 +388,7 @@ LInt getViewYpos()
 LInt getViewWidth()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	BoyiaValue val;
 	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->width();
@@ -400,7 +400,7 @@ LInt getViewWidth()
 LInt getViewHeight()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	BoyiaValue val;
 	val.mValueType = BY_INT;
 	val.mValue.mIntVal = jsDoc->height();
@@ -413,7 +413,7 @@ LInt setViewStyle()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* style = (BoyiaValue*)GetLocalValue(1);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 
 	char* styleText = convertMStr2Str(&style->mValue.mStrVal);
 	String styleStr(_CS(styleText), LTrue, style->mValue.mStrVal.mLen);
@@ -426,7 +426,7 @@ LInt setViewStyle()
 LInt drawView()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->drawView();
 
 	return 1;
@@ -437,7 +437,7 @@ LInt startScale()
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* scale = (BoyiaValue*)GetLocalValue(1);
 	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(2);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startScale(scale->mValue.mIntVal, duration->mValue.mIntVal);
     return 1;
 }
@@ -447,7 +447,7 @@ LInt startOpacity()
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* opacity = (BoyiaValue*)GetLocalValue(1);
 	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(2);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startOpacity(opacity->mValue.mIntVal, duration->mValue.mIntVal);
     return 1;
 }
@@ -458,7 +458,7 @@ LInt startTranslate()
 	BoyiaValue* posx = (BoyiaValue*)GetLocalValue(1);
 	BoyiaValue* posy = (BoyiaValue*)GetLocalValue(2);
 	BoyiaValue* duration = (BoyiaValue*)GetLocalValue(3);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 	jsDoc->startTranslate(LPoint(posx->mValue.mIntVal, posy->mValue.mIntVal), duration->mValue.mIntVal);
     return 1;
 }
@@ -468,7 +468,7 @@ LInt loadDataFromNative()
 	BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1);
 	BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2);
-	boyia::JSNetwork* network = new boyia::JSNetwork(callback, obj);
+	boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(callback, obj);
 	char* url = convertMStr2Str(&val->mValue.mStrVal);
 	String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
 	network->load(strUrl);
@@ -524,7 +524,7 @@ LInt getHtmlItem()
 {
 	BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* idArg = (BoyiaValue*)GetLocalValue(1);
-	boyia::JSViewDoc* jsDoc = (boyia::JSViewDoc*) doc->mValue.mIntVal;
+	boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*) doc->mValue.mIntVal;
 
 	char* id = convertMStr2Str(&idArg->mValue.mStrVal);
 	String idStr(_CS(id), LTrue, idArg->mValue.mStrVal.mLen);
@@ -542,7 +542,7 @@ LInt loadImageByUrl()
 	char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
 	String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
 
-	boyia::JSImageView* image = (boyia::JSImageView*)itemArg->mValue.mIntVal;
+	boyia::BoyiaImageView* image = (boyia::BoyiaImageView*)itemArg->mValue.mIntVal;
 	image->loadImage(urlStr);
 	return 1;
 }
@@ -555,7 +555,7 @@ LInt setViewGroupText()
 	char* text = convertMStr2Str(&textArg->mValue.mStrVal);
 	String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
 
-	boyia::JSViewGroup* view = (boyia::JSViewGroup*)itemArg->mValue.mIntVal;
+	boyia::BoyiaViewGroup* view = (boyia::BoyiaViewGroup*)itemArg->mValue.mIntVal;
 	view->setText(textStr);
 	textStr.ReleaseBuffer();
 	return 1;
@@ -568,7 +568,7 @@ LInt setInputViewText() {
 	char* text = convertMStr2Str(&textArg->mValue.mStrVal);
 	String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
 
-	boyia::JSInputView* view = (boyia::JSInputView*)input->mValue.mIntVal;
+	boyia::BoyiaInputView* view = (boyia::BoyiaInputView*)input->mValue.mIntVal;
 	view->setText(textStr);
 	return 1;
 }
@@ -578,18 +578,18 @@ LInt addEventListener() {
 	BoyiaValue* type = (BoyiaValue*)GetLocalValue(1);
 	BoyiaValue* callback = (BoyiaValue*)GetLocalValue(2);
 
-	boyia::JSBase* navView = (boyia::JSBase*) navVal->mValue.mIntVal;
+	boyia::BoyiaBase* navView = (boyia::BoyiaBase*) navVal->mValue.mIntVal;
 	navView->addListener(type->mValue.mIntVal, callback);
 
     return 1;
 }
 
-LInt setJSViewToNativeView() {
+LInt setToNativeView() {
 	BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0);
 	BoyiaValue* jsVal = (BoyiaValue*)GetLocalValue(1);
 
-	boyia::JSBase* navView = (boyia::JSBase*) navVal->mValue.mIntVal;
-	navView->setJSView(jsVal);
+	boyia::BoyiaBase* navView = (boyia::BoyiaBase*) navVal->mValue.mIntVal;
+	navView->setBoyiaView(jsVal);
 
 	return 1;
 }
@@ -600,7 +600,7 @@ LInt createViewGroup() {
 
 	char* idStr = convertMStr2Str(&idVal->mValue.mStrVal);
 	String strUrl(_CS(idStr), LTrue, idVal->mValue.mStrVal.mLen);
-	new boyia::JSViewGroup(strUrl, selectVal->mValue.mIntVal);
+	new boyia::BoyiaViewGroup(strUrl, selectVal->mValue.mIntVal);
 
 	return 1;
 }
@@ -639,7 +639,7 @@ LInt setImageUrl() {
 	char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
 	String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
 
-	boyia::JSImageView* image = (boyia::JSImageView*)itemArg->mValue.mIntVal;
+	boyia::BoyiaImageView* image = (boyia::BoyiaImageView*)itemArg->mValue.mIntVal;
 	image->setImageUrl(urlStr);
 	urlStr.ReleaseBuffer();
 	return 1;
@@ -647,7 +647,7 @@ LInt setImageUrl() {
 
 LInt viewCommit() {
 	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
-	boyia::JSView* view = (boyia::JSView*)itemArg->mValue.mIntVal;
+	boyia::BoyiaView* view = (boyia::BoyiaView*)itemArg->mValue.mIntVal;
 	view->commit();
 
 	return 1;

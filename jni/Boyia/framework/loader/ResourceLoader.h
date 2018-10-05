@@ -46,7 +46,7 @@ public:
 	
 	void executeDocument(const String& data);
 	void executeCss(const String& data);
-	void executeJavaScript(const String& data);
+	void executeScript(const String& data);
 	HtmlRenderer* render() const;
 	UIView* view() const;
 

@@ -1,5 +1,5 @@
-#include "JSView.h"
-#include "JSViewDoc.h"
+#include "BoyiaView.h"
+#include "BoyiaViewDoc.h"
 #include "JNIUtil.h"
 #include "AutoObject.h"
 #include "UIView.h"
@@ -17,12 +17,12 @@ static LVoid startAnimtion(Animation* anim)
 	AnimationThread::instance()->runTask(task);
 }
 
-JSView::JSView()
+BoyiaView::BoyiaView()
     : m_item(NULL)
 {
 }
 
-JSView::~JSView()
+BoyiaView::~BoyiaView()
 {
 	if (m_item)
 	{
@@ -30,60 +30,60 @@ JSView::~JSView()
 	}
 }
 
-void JSView::addListener(LInt type, BoyiaValue* callback)
+void BoyiaView::addListener(LInt type, BoyiaValue* callback)
 {
-	JSBase::addListener(type, callback);
+	BoyiaBase::addListener(type, callback);
     if (!m_item->getListener())
     {
     	m_item->setListener(this);
     }
 }
 
-void JSView::setX(LInt x)
+void BoyiaView::setX(LInt x)
 {
 	m_item->getStyle()->left = x;
 	m_item->setXpos(x);
 }
 
-void JSView::setY(LInt y)
+void BoyiaView::setY(LInt y)
 {
 	m_item->getStyle()->top = y;
 	m_item->setYpos(y);
 }
 
-LInt JSView::left() const
+LInt BoyiaView::left() const
 {
 	return m_item->getXpos();
 }
 
-LInt JSView::top() const
+LInt BoyiaView::top() const
 {
 	return m_item->getYpos();
 }
 
-LInt JSView::width() const
+LInt BoyiaView::width() const
 {
 	return m_item->getWidth();
 }
 
-LInt JSView::height() const
+LInt BoyiaView::height() const
 {
 	return m_item->getHeight();
 }
 
-void JSView::drawView()
+void BoyiaView::drawView()
 {
 	//m_item->relayout();
 	//UIView::getInstance()->getLoader()->render()->paint(m_item);
 	yanbo::UIOperation::instance()->opViewDraw(m_item);
 }
 
-void JSView::commit()
+void BoyiaView::commit()
 {
 	yanbo::UIOperation::instance()->swapBuffer();
 }
 
-void JSView::setStyle(String& cls)
+void BoyiaView::setStyle(String& cls)
 {
 	if (m_item)
 	{
@@ -104,14 +104,14 @@ void JSView::setStyle(String& cls)
 	}
 }
 
-HtmlView* JSView::item() const
+HtmlView* BoyiaView::item() const
 {
 	return m_item;
 }
 
 
 // 动画
-void JSView::startOpacity(LInt opacity, LInt duration)
+void BoyiaView::startOpacity(LInt opacity, LInt duration)
 {
 	OpacityAnimation* anim = new OpacityAnimation(m_item);
 	anim->setDuration(duration);
@@ -120,7 +120,7 @@ void JSView::startOpacity(LInt opacity, LInt duration)
 	startAnimtion(anim);
 }
 
-void JSView::startScale(LInt scale, LInt duration)
+void BoyiaView::startScale(LInt scale, LInt duration)
 {
 	ScaleAnimation* anim = new ScaleAnimation(m_item);
 	anim->setDuration(duration);
@@ -129,7 +129,7 @@ void JSView::startScale(LInt scale, LInt duration)
 	startAnimtion(anim);
 }
 
-void JSView::startTranslate(const LPoint& point, LInt duration)
+void BoyiaView::startTranslate(const LPoint& point, LInt duration)
 {
     TranslateAnimation* anim = new TranslateAnimation(m_item);
 	anim->setDuration(duration);

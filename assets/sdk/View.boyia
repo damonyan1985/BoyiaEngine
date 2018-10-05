@@ -2,11 +2,11 @@ class View {
     prop nativeView = null;
     
     fun addEventListener(type, callback) {
-        JS_AddEventListener(this.nativeView, type, callback);
+        BY_AddEventListener(this.nativeView, type, callback);
     }
     
     fun setViewToNative() {
-        JS_SetJSViewToNativeView(this.nativeView, this);
+        BY_SetToNativeView(this.nativeView, this);
     }
     
     fun setNativeView(view) {
@@ -14,51 +14,51 @@ class View {
     }
     
     fun setLeft(x) {
-        JS_SetXpos(this.nativeView, x);
+        BY_SetXpos(this.nativeView, x);
     }
        
     fun setTop(y) {
-        JS_SetYpos(this.nativeView, y);
+        BY_SetYpos(this.nativeView, y);
     }
         
     fun left() {
-        return JS_GetViewXpos(this.nativeView);
+        return BY_GetViewXpos(this.nativeView);
     }
     
     fun top() {
-        return JS_GetViewYpos(this.nativeView);
+        return BY_GetViewYpos(this.nativeView);
     }
     
     fun width() {
-        return JS_GetViewWidth(this.nativeView);
+        return BY_GetViewWidth(this.nativeView);
     }
     
     fun height() {
-        return JS_GetViewHeight(this.nativeView);
+        return BY_GetViewHeight(this.nativeView);
     }
     
     fun setStyle(style) {
-        JS_SetViewStyle(this.nativeView, style);
+        BY_SetViewStyle(this.nativeView, style);
     }
     
     fun startScale(scale, duration) {
-        JS_StartScale(this.nativeView, scale, duration);
+        BY_StartScale(this.nativeView, scale, duration);
     }
     
     fun startOpacity(opacity, duration) {
-        JS_StartOpacity(this.nativeView, opacity, duration);
+        BY_StartOpacity(this.nativeView, opacity, duration);
     }
     
     fun draw() {
-        JS_DrawView(this.nativeView);
+        BY_DrawView(this.nativeView);
     }
     
     fun startTranslate(x, y, duration) {
-        JS_StartTranslate(this.nativeView, x, y, duration);
+        BY_StartTranslate(this.nativeView, x, y, duration);
     }
     
     fun commit() {
-        JS_ViewCommit(this.nativeView);
+        BY_ViewCommit(this.nativeView);
     }
 }
 
@@ -73,13 +73,13 @@ class ViewGroup extends View {
     
     fun createVgWithId(id, sel) {
         var vg = new(ViewGroup);
-        vg.nativeView = JS_CreateViewGroup(id, sel);
+        vg.nativeView = BY_CreateViewGroup(id, sel);
         vg.children = new(Array);
         return vg;
     }
  
     fun setText(text) {
-        JS_SetViewText(this.nativeView, text);
+        BY_SetViewText(this.nativeView, text);
     }
     
     fun appendView(view) {
@@ -87,6 +87,6 @@ class ViewGroup extends View {
         //if (this.children) {
             this.children.put(view);
         //}
-        JS_AppendView(this.nativeView, view.nativeView);
+        BY_AppendView(this.nativeView, view.nativeView);
     }
 }

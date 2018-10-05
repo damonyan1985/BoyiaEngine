@@ -81,7 +81,7 @@ LInt setInputViewText();
 
 LInt addEventListener();
 
-LInt setJSViewToNativeView();
+LInt setToNativeView();
 
 LInt instanceOfClass();
 

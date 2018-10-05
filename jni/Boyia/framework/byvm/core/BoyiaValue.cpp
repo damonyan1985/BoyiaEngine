@@ -6,7 +6,7 @@
 #include "BoyiaMemory.h"
 #include "AutoLock.h"
 #include "MiniMutex.h"
-#include "JSBase.h"
+#include "BoyiaBase.h"
 #include "SalLog.h"
 #include "IDCreator.h"
 #include <stdlib.h>
@@ -113,7 +113,7 @@ LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest) {
 }
 
 extern LVoid NativeDelete(LVoid* data) {
-	delete (boyia::JSBase*) data;
+	delete (boyia::BoyiaBase*) data;
 }
 
 extern LVoid SystemGC() {

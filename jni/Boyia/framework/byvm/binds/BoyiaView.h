@@ -1,28 +1,27 @@
 /*
 ============================================================================
- Name        : JSView.h
+ Name        : BoyiaView.h
  Author      : yanbo
- Version     : JSView v1.0
+ Version     : BoyiaView v1.0
  Copyright   : All Copyright Reserved
  Date        : 2018-2-5
  Description : support Original
 ============================================================================
 */
-#ifndef JSView_h
-#define JSView_h
+#ifndef BoyiaView_h
+#define BoyiaView_h
 
 #include "HtmlView.h"
-#include "JSBase.h"
+#include "BoyiaBase.h"
 #include "KVector.h"
 
 namespace boyia
 {
-
-class JSView : public JSBase
+class BoyiaView : public BoyiaBase
 {
 public:
-	JSView();
-	virtual ~JSView();
+	BoyiaView();
+	virtual ~BoyiaView();
 	void setX(LInt x);
 	void setY(LInt y);
 

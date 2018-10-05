@@ -10,7 +10,7 @@
 #include "StringUtils.h"
 #include <android/log.h>
 
-extern LVoid compileJs(char* code);
+extern LVoid CompileScript(char* code);
 namespace yanbo
 {
 class ResourceHandle : public NetworkClient
@@ -120,7 +120,7 @@ void ResourceLoader::onLoadFinished(const String& data, LInt resType)
 		break;
 	case CACHEJS:
 		{
-			executeJavaScript(data);
+			executeScript(data);
 		}
 		break;
 	case CACHECSS:
@@ -219,10 +219,10 @@ void ResourceLoader::executeCss(const String& data)
 	}
 }
 
-// Execute external JS
-void ResourceLoader::executeJavaScript(const String& data)
+// Execute external script
+void ResourceLoader::executeScript(const String& data)
 {
-	compileJs((char*)data.GetBuffer());
+	CompileScript((char*)data.GetBuffer());
 }
 
 void ResourceLoader::repaint(HtmlView* item)

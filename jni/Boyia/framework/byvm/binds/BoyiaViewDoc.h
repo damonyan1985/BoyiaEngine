@@ -1,35 +1,35 @@
 /*
 ============================================================================
- Name        : JSViewDoc.h
+ Name        : BoyiaViewDoc.h
  Author      : yanbo
- Version     : JSViewDoc v1.0
+ Version     : BoyiaViewDoc v1.0
  Copyright   : All Copyright Reserved
  Date        : 2018-2-5
  Description : support Original
 ============================================================================
 */
-#ifndef JSViewDoc_h
-#define JSViewDoc_h
+#ifndef BoyiaViewDoc_h
+#define BoyiaViewDoc_h
 
 #include "HtmlDocument.h"
 #include "Document.h"
-#include "JSView.h"
+#include "BoyiaView.h"
 
 namespace boyia
 {
-class JSViewDoc : public JSView
+class BoyiaViewDoc : public BoyiaView
 {
 public:
-	JSViewDoc();
-	virtual ~JSViewDoc();
+	BoyiaViewDoc();
+	virtual ~BoyiaViewDoc();
 
 	void loadHTML(const String& url);
 	void setDocument(yanbo::HtmlDocument* doc);
-	void removeDocument(String& id, JSViewDoc* doc);
+	void removeDocument(String& id, BoyiaViewDoc* doc);
 
 	yanbo::HtmlDocument* getDocument() const;
 
-	JSView* getItemByID(const String& id) const;
+	BoyiaView* getItemByID(const String& id) const;
 
 private:
 	void fetchStream(const String& url, String& stream);

@@ -1,4 +1,4 @@
-#include "JSBase.h"
+#include "BoyiaBase.h"
 #include "PlatformLib.h"
 #include "LEvent.h"
 #include "SalLog.h"
@@ -8,7 +8,7 @@ extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 // C++对象垃圾回收基类
 namespace boyia
 {
-JSBase::JSBase()
+BoyiaBase::BoyiaBase()
     : m_type(0)
 {
 	BoyiaValue value;
@@ -20,24 +20,24 @@ JSBase::JSBase()
 	GCAppendRef(this, BY_NAVCLASS);
 }
 
-JSBase::~JSBase()
+BoyiaBase::~BoyiaBase()
 {
 }
 
-void JSBase::onPressDown(void* view)
+void BoyiaBase::onPressDown(void* view)
 {
     if (m_type & LTouchEvent::ETOUCH_DOWN)
     {
-    	KLOG("JSBase::onPressDown");
+    	KLOG("BoyiaBase::onPressDown");
         // 处理touchdown
     	BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
     	SaveLocalSize();
     	LocalPush(val);
-    	BoyiaValue* obj = m_jsView.mValue.mObj.mPtr == 0 ? NULL : &m_jsView;
+    	BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
     	NativeCall(obj);
     }
 }
-void JSBase::onPressMove(void* view)
+void BoyiaBase::onPressMove(void* view)
 {
 	if (m_type & LTouchEvent::ETOUCH_MOVE)
 	{
@@ -46,44 +46,44 @@ void JSBase::onPressMove(void* view)
 
 		SaveLocalSize();
 		LocalPush(val);
-		BoyiaValue* obj = m_jsView.mValue.mObj.mPtr == 0 ? NULL : &m_jsView;
+		BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
 		NativeCall(obj);
 	}
 }
 
-void JSBase::onPressUp(void* view)
+void BoyiaBase::onPressUp(void* view)
 {
-	KFORMATLOG("JSBase::onPressUp m_type=%d ETOUCH_UP=%d", m_type, LTouchEvent::ETOUCH_UP);
+	KFORMATLOG("BoyiaBase::onPressUp m_type=%d ETOUCH_UP=%d", m_type, LTouchEvent::ETOUCH_UP);
 	if (m_type & LTouchEvent::ETOUCH_UP)
 	{
 		// 处理touchup
     	BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
     	SaveLocalSize();
     	LocalPush(val);
-    	BoyiaValue* obj = m_jsView.mValue.mObj.mPtr == 0 ? NULL : &m_jsView;
+    	BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
     	NativeCall(obj);
 	}
 }
 
-void JSBase::onKeyDown(int keyCode, void* view)
+void BoyiaBase::onKeyDown(int keyCode, void* view)
 {
 
 }
 
-void JSBase::onKeyUp(int keyCode, void* view)
+void BoyiaBase::onKeyUp(int keyCode, void* view)
 {
 
 }
 
-void JSBase::addListener(LInt type, BoyiaValue* callback)
+void BoyiaBase::addListener(LInt type, BoyiaValue* callback)
 {
     m_type |= type;
-    KFORMATLOG("JSBase::addListener m_type=%d", m_type);
+    KFORMATLOG("BoyiaBase::addListener m_type=%d", m_type);
     ValueCopy(&m_callbacks[type >> 1], callback);
 }
 
-void JSBase::setJSView(BoyiaValue* value)
+void BoyiaBase::setBoyiaView(BoyiaValue* value)
 {
-	ValueCopy(&m_jsView, value);
+	ValueCopy(&m_boyiaView, value);
 }
 }
