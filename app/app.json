@@ -1,0 +1,26 @@
+{
+    "appName" : "BoyiaApp",
+    "styles" : ["boyia://app/css/main.css"],
+    "scripts" : [
+        "boyiasdk://sdk/Util.boyia",
+        "boyiasdk://sdk/Array.boyia",
+        "boyiasdk://sdk/Network.boyia",
+        "boyiasdk://sdk/View.boyia",
+        "boyiasdk://sdk/ViewDoc.boyia",
+        "boyiasdk://sdk/InputView.boyia",
+        "boyiasdk://sdk/ImageView.boyia",
+        "boyiasdk://sdk/AppStack.boyia",
+        "boyiasdk://sdk/App.boyia",
+        "boyiasdk://sdk/Activity.boyia",
+        "boyia://app/view/PosterView.boyia",
+        "boyia://app/view/NewTextItem.boyia",
+        "boyia://app/view/CategoryItem.boyia",
+        "boyia://app/view/SearchHeader.boyia",
+        "boyia://app/view/MainView.boyia",
+        "boyia://app/view/Main.boyia",
+    ],
+    "jar" : "",
+    "so" : "",
+    "versionCode" : 1,
+    "versionName" : "v0.0.1"
+}
