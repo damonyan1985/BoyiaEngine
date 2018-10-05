@@ -18,20 +18,20 @@ typedef struct BoyiaMemoryPool {
     MemoryBlockHeader* mFirstBlock;
 } BoyiaMemoryPool;
 
-#define FAST_NEW(type) (type*)fastMalloc(sizeof(type))
-#define FAST_NEW_ARRAY(type, n) (type*)fastMalloc(n*sizeof(type))
-#define FAST_DELETE(p)  fastFree(p)
+#define FAST_NEW(type) (type*)FastMalloc(sizeof(type))
+#define FAST_NEW_ARRAY(type, n) (type*)FastMalloc(n*sizeof(type))
+#define FAST_DELETE(p)  FastFree(p)
 
-LVoid* fastMalloc(LInt size);
-LVoid fastFree(LVoid* data);
+LVoid* FastMalloc(LInt size);
+LVoid FastFree(LVoid* data);
 
 BoyiaMemoryPool* InitMemoryPool(LInt size);
 LVoid FreeMemoryPool(BoyiaMemoryPool* pool);
 
-LVoid* newData(LInt size, BoyiaMemoryPool* pool);
-LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool);
+LVoid* NewData(LInt size, BoyiaMemoryPool* pool);
+LVoid DeleteData(LVoid* data, BoyiaMemoryPool* pool);
 
-LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool);
+LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool);
 
 LVoid printPoolSize(BoyiaMemoryPool* pool);
 
