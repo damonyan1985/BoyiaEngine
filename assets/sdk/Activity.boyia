@@ -13,6 +13,6 @@ class Activity {
         }
     }
     
-    fun onDistroy() {
+    fun onDestroy() {
     }
 }

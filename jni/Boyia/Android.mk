@@ -41,6 +41,7 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/framework/byvm/lib \
     $(LOCAL_PATH)/framework/byvm/binds \
     $(LOCAL_PATH)/framework/byvm/jit \
+    $(LOCAL_PATH)/framework/byvm/app \
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/network \

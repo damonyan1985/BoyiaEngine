@@ -42,5 +42,6 @@ LVoid SaveLocalSize();
 LVoid* InitVM();
 LInt CreateObject();
 LVoid InitNativeFun(NativeFunction* funs);
+LVoid ChangeVM(LVoid* vm);
 
 #endif
