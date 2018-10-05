@@ -8,12 +8,21 @@
 #ifndef BoyiaAppStack_h
 #define BoyiaAppStack_h
 
+#include "BoyiaApplication.h"
+
 namespace boyia
 {
 class BoyiaAppStack
 {
 public:
-    LVoid initStack();
+    BoyiaAppStack();
+    ~BoyiaAppStack();
+
+    LVoid pushApp(BoyiaApplication* app);
+    LVoid popApp();
+
+private:
+    Stack<BoyiaApplication*> m_appStack;
 };
 }
 

@@ -8,7 +8,7 @@
 #define BoyiaApplication_h
 
 #include "Stack.h"
-#include "BoyiaActivity.h"
+#include "BoyiaCore.h"
 
 namespace boyia
 {
@@ -16,10 +16,12 @@ class BoyiaApplication
 {
 public:
 	BoyiaApplication();
+	~BoyiaApplication();
     LVoid initApp();
+    LVoid resume();
 
 private:
-    Stack<BoyiaActivity*> m_stack;
+    Stack<BoyiaValue*> m_actStack;
     LVoid* m_vm;
 };
 }

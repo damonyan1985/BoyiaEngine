@@ -23,3 +23,6 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/byvm/jit/BoyiaOpcode.cpp \
     $(LOCAL_PATH)/framework/byvm/jit/BoyiaOperand.cpp \
     $(LOCAL_PATH)/framework/byvm/jit/BoyiaExecution.cpp \
+    \
+    $(LOCAL_PATH)/framework/byvm/app/BoyiaApplication.cpp \
+    $(LOCAL_PATH)/framework/byvm/app/BoyiaAppStack.cpp \

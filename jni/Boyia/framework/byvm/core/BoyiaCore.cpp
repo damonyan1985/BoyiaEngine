@@ -245,6 +245,10 @@ LVoid* InitVM() {
     return vm;
 }
 
+LVoid ChangeVM(LVoid* vm) {
+	gBoyiaVM = (BoyiaVM*) vm;
+}
+
 static Instruction* PutInstruction(
     OpCommand* left,
     OpCommand* right,
@@ -1884,28 +1888,6 @@ static LVoid EvalAssignment() {
 
 // init global data such as gBoyiaVM->mGlobals, gBoyiaVM->mLocals, gBoyiaVM->mFunTable
 static LVoid InitGlobalData() {
-//	if (!gBoyiaVM->mGlobals) {
-//		// 初始化MJS内存分配池
-//		CreateBoyiaMemory();
-//		/* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
-//		gBoyiaVM->mGlobals = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
-//		//LMemset(gBoyiaVM->mGlobals, 0, NUM_GLOBAL_VARS * sizeof(BoyiaValue));
-//
-//		gBoyiaVM->mLocals = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
-//		//LMemset(gBoyiaVM->mLocals, 0, NUM_LOCAL_VARS * sizeof(BoyiaValue));
-//
-//		gBoyiaVM->mFunTable = NEW_ARRAY(BoyiaFunction, NUM_FUNC);
-//		//LMemset(gBoyiaVM->mFunTable, 0, NUM_FUNC * sizeof(BoyiaFunction));
-//
-//		gBoyiaVM->mOpStack = NEW_ARRAY(BoyiaValue, NUM_RESULT);
-//
-//		gBoyiaVM->mExecStack = NEW_ARRAY(ExecScene, FUNC_CALLS);
-//		gBoyiaVM->mLoopStack = NEW_ARRAY(LInt, LOOP_NEST);
-//
-//		gBoyiaVM->mEState->mGValSize = 0;
-//		gBoyiaVM->mEState->mFunSize = 0;
-//	}
-
 	if (!gBoyiaVM) {
 		gBoyiaVM = (BoyiaVM*) InitVM();
 	}
@@ -1943,7 +1925,6 @@ LVoid GetGlobalTable(LInt* table, LInt* size) {
 /*  output function */
 LVoid CompileCode(LInt8* code) {
     InitGlobalData();
-	//InitNativeFun(map);
     gBoyiaVM->mEState->mProg        = code;
     gBoyiaVM->mEState->mLineNum     = 0;
 	gBoyiaVM->mEState->mTmpLValSize = 0;
