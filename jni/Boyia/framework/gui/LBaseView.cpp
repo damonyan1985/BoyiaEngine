@@ -150,7 +150,7 @@ void* LBaseView::operator new(size_t sz)
     }
 
 
-	void* data = newData(sz, sDOMMemPool);
+	void* data = NewData(sz, sDOMMemPool);
 	//printPoolSize(sDOMMemPool);
 	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "DOMMemPool  addr=%x size=%d", (LInt)sDOMMemPool->m_address, sDOMMemPool->m_used);
 	return data;
@@ -158,6 +158,6 @@ void* LBaseView::operator new(size_t sz)
 
 void LBaseView::operator delete(void *p)
 {
-	deleteData(p, sDOMMemPool);
+	DeleteData(p, sDOMMemPool);
 }
 }

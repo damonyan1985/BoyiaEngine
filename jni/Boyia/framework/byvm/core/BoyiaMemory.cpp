@@ -17,17 +17,17 @@ const LInt constAlignNum = sizeof(LIntPtr);
 // 字节对齐后的地址值
 #define ADDR_ALIGN(addr) (addr%constAlignNum == 0 ? addr : (addr + (constAlignNum - addr%constAlignNum)))
 
-LVoid* fastMalloc(LInt size)
+LVoid* FastMalloc(LInt size)
 {
     return malloc(size);
 }
 
-LVoid fastFree(LVoid* data)
+LVoid FastFree(LVoid* data)
 {
     free(data);
 }
 
-LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool)
+LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool)
 {
     LInt iAddr = (LInt) addr;
     return iAddr >= (LInt) pool->mAddress && iAddr < ((LInt)pool->mAddress + pool->mSize);
@@ -55,7 +55,7 @@ LVoid FreeMemoryPool(BoyiaMemoryPool* pool)
     }
 }
 
-LVoid* newData(LInt size, BoyiaMemoryPool* pool)
+LVoid* NewData(LInt size, BoyiaMemoryPool* pool)
 {
     MemoryBlockHeader* pHeader = NULL;
 
@@ -144,7 +144,7 @@ LVoid* newData(LInt size, BoyiaMemoryPool* pool)
     return pHeader ? pHeader->mAddress : NULL;
 }
 
-LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool)
+LVoid DeleteData(LVoid* data, BoyiaMemoryPool* pool)
 {
     MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LIntPtr)data - constHeaderLen);
     // If error pointer, then return.

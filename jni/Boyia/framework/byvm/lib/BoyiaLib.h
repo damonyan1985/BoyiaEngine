@@ -91,5 +91,5 @@ LInt setImageUrl();
 
 LInt viewCommit();
 
-#endif // !MiniLib_h
+#endif // !BoyiaLib_h
 
