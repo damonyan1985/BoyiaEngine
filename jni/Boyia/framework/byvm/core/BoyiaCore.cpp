@@ -181,33 +181,18 @@ typedef struct {
 typedef struct {
 	BoyiaMemoryPool*  mPool;
 	BoyiaFunction*    mFunTable;
-	NativeFunction*   mNativeTable;
 	BoyiaValue*       mGlobals;
 	BoyiaValue*       mLocals;
-	VMCpu             mCpu;
+	VMCpu*            mCpu;
 	ExecState*        mEState;
 	ExecScene*        mExecStack;
 	LInt*             mLoopStack;
 	BoyiaValue*       mOpStack;
 } BoyiaVM;
 
-/* Global value define begin */
-//static BoyiaFunction*   gFunTable         = NULL; // 堆上取数组
-//static BoyiaValue*      gGlobalsTable     = NULL;
-//static BoyiaValue*      gLocalsStack      = NULL;
-//static BoyiaValue*      gOpStack          = NULL;
-static NativeFunction*  gNativeFunTable   = NULL;
-
-// 调用堆栈
-//static ExecScene* gCallStack = NULL;
-//static LInt* gLoopStack = NULL;
-
-static BoyiaToken      gToken;
-static VMCpu           gVM;
-//static ExecState       gEState;
-
-static BoyiaVM         vm;
-static BoyiaVM*        gBoyiaVM = NULL;
+static NativeFunction*  gNativeFunTable = NULL;
+static BoyiaToken       gToken;
+static BoyiaVM*         gBoyiaVM = NULL;
 
 static LUint gThis = GenIdentByStr("this", 4);
 static LUint gSuper = GenIdentByStr("super", 5);
@@ -252,6 +237,7 @@ LVoid* InitVM() {
     vm->mExecStack = NEW_ARRAY(ExecScene, FUNC_CALLS);
     vm->mLoopStack = NEW_ARRAY(LInt, LOOP_NEST);
     vm->mEState = NEW(ExecState);
+    vm->mCpu = NEW(VMCpu);
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
@@ -400,7 +386,7 @@ LInt CreateObject() {
     // 获取CLASS的内部实现
     EngineLog("HandleCallInternal CreateObject %d", 3);
     // 指针引用R0
-    BoyiaValue* result = &gVM.mReg0;
+    BoyiaValue* result = &gBoyiaVM->mCpu->mReg0;
     // 设置result的值
     ValueCopy(result, value);
     // 拷贝出新的内部实现
@@ -537,10 +523,10 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type) {
 	OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
 	switch (op->mType) { // 赋值左值不可能是常量
 	case OP_REG0:
-		val = &gVM.mReg0;
+		val = &gBoyiaVM->mCpu->mReg0;
 		break;
 	case OP_REG1:
-		val = &gVM.mReg1;
+		val = &gBoyiaVM->mCpu->mReg1;
 		break;
 	case OP_VAR:
 		val = FindVal((LUint)op->mValue);
@@ -593,7 +579,7 @@ static LInt HandlePushObj(LVoid* ins) {
 	if (inst->mOPLeft.mType == OP_VAR) {
 		LUint objKey = (LUint) inst->mOPLeft.mValue;
 		if (objKey != gSuper) {
-			gBoyiaVM->mEState->mClass = (BoyiaValue*)gVM.mReg0.mNameKey;
+			gBoyiaVM->mEState->mClass = (BoyiaValue*)gBoyiaVM->mCpu->mReg0.mNameKey;
 		}
 	} else {
 		gBoyiaVM->mEState->mClass = NULL;
@@ -1205,7 +1191,7 @@ static LInt HandlePop(LVoid* ins) {
 		--gBoyiaVM->mEState->mResultNum;
 		return 1;
 	}
-    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gBoyiaVM->mCpu->mReg0 : &gBoyiaVM->mCpu->mReg1;
     ValueCopy(value, gBoyiaVM->mOpStack + (--gBoyiaVM->mEState->mResultNum));
     return 1;
 }
@@ -1276,11 +1262,11 @@ static LInt HandleAssignment(LVoid* ins) {
         }
             break;
         case OP_REG0: {
-        	ValueCopyNoName(left, &gVM.mReg0);
+        	ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg0);
         }
             break;
         case OP_REG1: {
-        	ValueCopyNoName(left, &gVM.mReg1);
+        	ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg1);
         }
             break;
     }
@@ -1306,7 +1292,7 @@ static LInt HandleIfEnd(LVoid* ins) {
 
 static LInt HandleJumpToIfTrue(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* value = &gVM.mReg0;
+    BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     if (!value->mValue.mIntVal) {
         gBoyiaVM->mEState->mPC = (Instruction*) inst->mOPRight.mValue;
     }
@@ -1336,7 +1322,7 @@ static LInt HandleLoopBegin(LVoid* ins) {
 
 static LInt HandleLoopIfTrue(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* value = &gVM.mReg0;
+    BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     //EngineLog("HandleLoopIfTrue value=%d", value->mValue.mIntVal);
     if (!value->mValue.mIntVal) {
         gBoyiaVM->mEState->mPC = (Instruction*) inst->mOPRight.mValue;
@@ -1433,7 +1419,7 @@ static LInt HandleSub(LVoid* ins) {
         return 0;
 
     right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
-    EngineLog("HandleSub R0=>%d \n", gVM.mReg0.mValue.mIntVal);
+    EngineLog("HandleSub R0=>%d \n", gBoyiaVM->mCpu->mReg0.mValue.mIntVal);
     return 1;
 }
 
@@ -1557,7 +1543,7 @@ static LVoid EvalExpression() {
 
 static LInt HandlePush(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
-    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gVM.mReg0 : &gVM.mReg1;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gBoyiaVM->mCpu->mReg0 : &gBoyiaVM->mCpu->mReg1;
     ValueCopy(gBoyiaVM->mOpStack + (gBoyiaVM->mEState->mResultNum++), value);
     return 1;
 }
@@ -1569,7 +1555,7 @@ static LInt HandleAssignVar(LVoid* ins) {
     BoyiaValue* result = GetOpValue(inst, OpRight);
 
     ValueCopyNoName(value, result);
-    ValueCopy(&gVM.mReg0, value);
+    ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
     return 1;
 }
 
@@ -1634,9 +1620,9 @@ static LInt FindProp(BoyiaValue* lVal, LUint rVal) {
 	BoyiaValue* propVal = FindObjProp(lVal, rVal);
 	// 找到
 	if (propVal) {
-		gVM.mReg0.mNameKey = (LUint)propVal;
-		gVM.mReg0.mValue = propVal->mValue;
-		gVM.mReg0.mValueType = propVal->mValueType; // maybe function
+		gBoyiaVM->mCpu->mReg0.mNameKey = (LUint)propVal;
+		gBoyiaVM->mCpu->mReg0.mValue = propVal->mValue;
+		gBoyiaVM->mCpu->mReg0.mValueType = propVal->mValueType; // maybe function
 		return 1;
 	}
 	return 0;
@@ -1698,9 +1684,9 @@ static LVoid CopyStringFromToken(BoyiaStr* str) {
 
 static LInt HandleConstString(LVoid* ins) {
 	Instruction* inst = (Instruction*)ins;
-	gVM.mReg0.mValueType = STRING;
-	gVM.mReg0.mValue.mStrVal.mPtr = (LInt8*) inst->mOPLeft.mValue;
-	gVM.mReg0.mValue.mStrVal.mLen = inst->mOPRight.mValue;
+	gBoyiaVM->mCpu->mReg0.mValueType = STRING;
+	gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mPtr = (LInt8*) inst->mOPLeft.mValue;
+	gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mLen = inst->mOPRight.mValue;
 	return 1;
 }
 
@@ -1933,7 +1919,7 @@ LVoid InitNativeFun(NativeFunction* funs) {
 
 LVoid SetNativeResult(LVoid* result) {
 	BoyiaValue* value = (BoyiaValue*)result;
-	ValueCopy(&gVM.mReg0, value);
+	ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
 }
 
 LVoid* CopyObject(LUint hashKey, LInt size) {
@@ -1941,7 +1927,7 @@ LVoid* CopyObject(LUint hashKey, LInt size) {
 }
 
 LVoid* GetNativeResult() {
-	return &gVM.mReg0;
+	return &gBoyiaVM->mCpu->mReg0;
 }
 
 LVoid GetLocalStack(LInt* stack, LInt* size) {
@@ -1987,7 +1973,7 @@ LVoid CallFunction(LInt8* fun, LVoid* ret) {
 
 	if (ret) {
 		BoyiaValue* value = (BoyiaValue*)ret;
-		ValueCopy(value, &gVM.mReg0);
+		ValueCopy(value, &gBoyiaVM->mCpu->mReg0);
 	}
 }
 
