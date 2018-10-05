@@ -14,7 +14,7 @@
 #include "ResourceLoaderClient.h"
 #include "LEvent.h"
 #include "UIViewController.h"
-#include "JSEventHandler.h"
+#include "BoyiaEventHandler.h"
 
 namespace yanbo
 {
@@ -38,7 +38,7 @@ public:
 	HtmlDocument* getDocument() const;
 	ResourceLoader* getLoader() const;
 	NetworkBase* network() const;
-	boyia::JSEventHandler* jsHandler() const;
+	boyia::BoyiaEventHandler* jsHandler() const;
 	LGraphicsContext* getGraphicsContext() const;
 	
 	void handleMouseEvent(const LMouseEvent& evt);
@@ -55,7 +55,7 @@ private:
 	NetworkBase*               m_network;
 	LRect                      m_clientRect;
 	UIViewController*          m_controller;
-	boyia::JSEventHandler*     m_jsHandler;
+	boyia::BoyiaEventHandler*     m_jsHandler;
 
 	static UIView*             s_instance;
 };

@@ -1,5 +1,5 @@
-#ifndef JSBase_h
-#define JSBase_h
+#ifndef BoyiaBase_h
+#define BoyiaBase_h
 
 #include "IViewListener.h"
 #include "KVector.h"
@@ -8,11 +8,11 @@
 namespace boyia
 {
 #define EVENT_MAX_SIZE 10
-class JSBase : public yanbo::IViewListener
+class BoyiaBase : public yanbo::IViewListener
 {
 public:
-	JSBase();
-	virtual ~JSBase();
+	BoyiaBase();
+	virtual ~BoyiaBase();
 
     // HTMLView事件监听
     virtual void onPressDown(void* view);
@@ -22,12 +22,12 @@ public:
     virtual void onKeyUp(int keyCode, void* view);
 
     virtual void addListener(LInt type, BoyiaValue* callback);
-    void setJSView(BoyiaValue* value);
+    void setBoyiaView(BoyiaValue* value);
 
 protected:
 	LInt m_type;
 	BoyiaValue m_callbacks[EVENT_MAX_SIZE];
-	BoyiaValue m_jsView;
+	BoyiaValue m_boyiaView;
 };
 }
 

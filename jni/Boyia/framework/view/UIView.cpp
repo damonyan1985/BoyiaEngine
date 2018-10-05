@@ -97,7 +97,7 @@ void UIView::setComponents(NetworkBase* network,
 	    m_doc = new HtmlDocument();
 	    m_loader->setView(this);
 	    m_doc->setView(this);
-	    m_jsHandler = new boyia::JSEventHandler();
+	    m_jsHandler = new boyia::BoyiaEventHandler();
 	    
 	    m_controller = new UIViewController(this);
 	}
@@ -202,7 +202,7 @@ void UIView::loadString(const String& src)
 	m_loader->loadString(src);
 }
 
-boyia::JSEventHandler* UIView::jsHandler() const
+boyia::BoyiaEventHandler* UIView::jsHandler() const
 {
 	return m_jsHandler;
 }

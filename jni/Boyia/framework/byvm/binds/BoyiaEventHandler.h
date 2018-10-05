@@ -1,16 +1,16 @@
-#ifndef JSEventHandler_h
-#define JSEventHandler_h
+#ifndef BoyiaEventHandler_h
+#define BoyiaEventHandler_h
 
 #include "BoyiaCore.h"
 #include "LEvent.h"
 
 namespace boyia
 {
-class JSEventHandler
+class BoyiaEventHandler
 {
 public:
-	JSEventHandler();
-	~JSEventHandler();
+	BoyiaEventHandler();
+	~BoyiaEventHandler();
 
 	LVoid setTouchCallback(BoyiaValue* callback);
 	LVoid handleTouch(const util::LTouchEvent& evt);

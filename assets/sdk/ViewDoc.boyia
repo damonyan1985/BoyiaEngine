@@ -3,7 +3,7 @@ class ViewDoc extends View {
     fun rootView() {
         if (root == null) {
             root = new(ViewDoc);
-            root.nativeView = JS_GetRootDocument();
+            root.nativeView = BY_GetRootDocument();
         }
        
         return root;
@@ -18,15 +18,15 @@ class ViewDoc extends View {
     }
     
     fun createDoc(docText) {
-        nativeView = JS_CreateDocument(docText);
+        nativeView = BY_CreateDocument(docText);
     }
     
     fun setDoc(doc) {
-        JS_SetDocument(this.nativeView, doc);
+        BY_SetDocument(this.nativeView, doc);
     }
     
     fun removeView(view) {
-        JS_RemoveDocument(this.nativeView, view);
+        BY_RemoveDocument(this.nativeView, view);
     }
    
     fun itemByID(view, id) {
@@ -34,7 +34,7 @@ class ViewDoc extends View {
         if (Util.instanceof(v, ViewGroup)) {
             v.children = new(Array);
         }
-        v.nativeView = JS_GetHtmlItem(this.nativeView, id);
+        v.nativeView = BY_GetHtmlItem(this.nativeView, id);
         v.setViewToNative();
         return v;
     }

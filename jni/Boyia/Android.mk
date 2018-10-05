@@ -39,7 +39,7 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/framework/byvm/core \
     $(LOCAL_PATH)/framework/byvm/json \
     $(LOCAL_PATH)/framework/byvm/lib \
-    $(LOCAL_PATH)/framework/byvm/jsbind \
+    $(LOCAL_PATH)/framework/byvm/binds \
     $(LOCAL_PATH)/framework/byvm/jit \
 
 LOCAL_C_INCLUDES += \

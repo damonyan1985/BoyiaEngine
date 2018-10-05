@@ -5,6 +5,6 @@ class InputView extends View {
     }
     
     fun touchDownCallback() {
-        //JS_CallStaticMethod("com/boyia/app/core/MiniUIView", "showKeyboard", "(I)V", this.nativeView);
+        //BY_CallStaticMethod("com/boyia/app/core/MiniUIView", "showKeyboard", "(I)V", this.nativeView);
     }
 }

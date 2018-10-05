@@ -1,16 +1,16 @@
-#include "JSEventHandler.h"
+#include "BoyiaEventHandler.h"
 #include "BoyiaLib.h"
 #include "SalLog.h"
 
 namespace boyia
 {
-JSEventHandler::JSEventHandler()
+BoyiaEventHandler::BoyiaEventHandler()
     : m_touchCallback(NULL)
     , m_keyCallback(NULL)
 {
 }
 
-JSEventHandler::~JSEventHandler()
+BoyiaEventHandler::~BoyiaEventHandler()
 {
 	if (NULL != m_touchCallback)
 	{
@@ -23,17 +23,17 @@ JSEventHandler::~JSEventHandler()
 	}
 }
 
-LVoid JSEventHandler::setTouchCallback(BoyiaValue* callback)
+LVoid BoyiaEventHandler::setTouchCallback(BoyiaValue* callback)
 {
 	m_touchCallback = new BoyiaValue;
 	ValueCopy(m_touchCallback, callback);
 }
 
-LVoid JSEventHandler::handleTouch(const util::LTouchEvent& evt)
+LVoid BoyiaEventHandler::handleTouch(const util::LTouchEvent& evt)
 {
 	if (!m_touchCallback)
 		return;
-	KFORMATLOG("JSEventHandler::handleTouch %d", 1);
+	KFORMATLOG("BoyiaEventHandler::handleTouch %d", 1);
 	SaveLocalSize();
 	LocalPush(m_touchCallback);
 
@@ -52,13 +52,13 @@ LVoid JSEventHandler::handleTouch(const util::LTouchEvent& evt)
 	NativeCall(NULL);
 }
 
-LVoid JSEventHandler::setKeyCallback(BoyiaValue* callback)
+LVoid BoyiaEventHandler::setKeyCallback(BoyiaValue* callback)
 {
 	m_keyCallback = new BoyiaValue;
 	ValueCopy(m_keyCallback, callback);
 }
 
-LVoid JSEventHandler::handleKey(const util::LKeyEvent& evt)
+LVoid BoyiaEventHandler::handleKey(const util::LKeyEvent& evt)
 {
 
 }

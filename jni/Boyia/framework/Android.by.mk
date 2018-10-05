@@ -9,15 +9,15 @@ LOCAL_SRC_FILES += \
     \
     $(LOCAL_PATH)/framework/byvm/json/cJSON.c \
     \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSBase.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSView.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSInputView.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSViewDoc.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSViewGroup.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSImageView.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSEventHandler.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSNetwork.cpp \
-    $(LOCAL_PATH)/framework/byvm/jsbind/JSBindings.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaBase.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaView.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaInputView.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaViewDoc.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaViewGroup.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaImageView.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaEventHandler.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaNetwork.cpp \
+    $(LOCAL_PATH)/framework/byvm/binds/BoyiaBindings.cpp \
     \
     $(LOCAL_PATH)/framework/byvm/jit/BoyiaAssembler.cpp \
     $(LOCAL_PATH)/framework/byvm/jit/BoyiaOpcode.cpp \

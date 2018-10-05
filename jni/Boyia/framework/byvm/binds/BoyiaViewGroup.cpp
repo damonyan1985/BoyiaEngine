@@ -1,4 +1,4 @@
-#include "JSViewGroup.h"
+#include "BoyiaViewGroup.h"
 #include "TextView.h"
 #include "UIView.h"
 #include "SalLog.h"
@@ -7,17 +7,17 @@
 
 namespace boyia
 {
-JSViewGroup::JSViewGroup(yanbo::HtmlView* item)
+BoyiaViewGroup::BoyiaViewGroup(yanbo::HtmlView* item)
 {
 	m_item = item;
 }
 
-JSViewGroup::JSViewGroup(const String& id, LBool selectable)
+BoyiaViewGroup::BoyiaViewGroup(const String& id, LBool selectable)
 {
 	m_item = new yanbo::BlockView(id, selectable);
 }
 
-LVoid JSViewGroup::setText(const String& text)
+LVoid BoyiaViewGroup::setText(const String& text)
 {
 //    if (m_item->m_children.count()) {
 //    	yanbo::HtmlView* firstChild = *m_item->m_children.begin();
@@ -37,14 +37,14 @@ LVoid JSViewGroup::setText(const String& text)
     yanbo::UIOperation::instance()->opSetText(m_item, text);
 }
 
-void JSViewGroup::appendView(JSView* view)
+void BoyiaViewGroup::appendView(BoyiaView* view)
 {
-	//KLOG("JSViewDoc::appendDocument0");
+	//KLOG("BoyiaViewDoc::appendDocument0");
     //HtmlView* item = m_doc->getItemByID(id);
-    //KLOG("JSViewDoc::appendDocument");
+    //KLOG("BoyiaViewDoc::appendDocument");
     if (view && view->item())
     {
-    	KFORMATLOG("JSViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());
+    	KFORMATLOG("BoyiaViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());
     	//view->item()->setParent(m_item);
     	//m_item->addChild(view->item());
     	yanbo::UIOperation::instance()->opAddChild(m_item, view->item());

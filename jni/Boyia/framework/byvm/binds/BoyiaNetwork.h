@@ -1,17 +1,17 @@
-#ifndef JSNetwork_h
-#define JSNetwork_h
+#ifndef BoyiaNetwork_h
+#define BoyiaNetwork_h
 
 #include "NetworkBase.h"
 #include "BoyiaCore.h"
 
 namespace boyia
 {
-// JSNetwork会根据回调的情况，自动释放自己
-class JSNetwork : public yanbo::NetworkClient
+// BoyiaNetwork会根据回调的情况，自动释放自己
+class BoyiaNetwork : public yanbo::NetworkClient
 {
 public:
-	JSNetwork(BoyiaValue* callback, BoyiaValue* obj);
-	virtual ~JSNetwork();
+	BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj);
+	virtual ~BoyiaNetwork();
 
 public:
 	void load(const String& url);
