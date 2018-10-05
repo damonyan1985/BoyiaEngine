@@ -33,7 +33,7 @@ LBool containAddress(LVoid* addr, BoyiaMemoryPool* pool)
     return iAddr >= (LInt) pool->mAddress && iAddr < ((LInt)pool->mAddress + pool->mSize);
 }
 
-BoyiaMemoryPool* initMemoryPool(LInt size)
+BoyiaMemoryPool* InitMemoryPool(LInt size)
 {
     BoyiaMemoryPool* pool = FAST_NEW(BoyiaMemoryPool);
     pool->mAddress = FAST_NEW_ARRAY(LByte, size);
@@ -44,7 +44,7 @@ BoyiaMemoryPool* initMemoryPool(LInt size)
     return pool;
 }
 
-LVoid freeMemoryPool(BoyiaMemoryPool* pool)
+LVoid FreeMemoryPool(BoyiaMemoryPool* pool)
 {
     while (pool)
     {

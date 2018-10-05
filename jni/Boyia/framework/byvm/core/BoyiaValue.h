@@ -1,5 +1,5 @@
-#ifndef MiniUtil_h
-#define MiniUtil_h
+#ifndef BoyiaValue_h
+#define BoyiaValue_h
 
 #include "PlatformLib.h"
 
@@ -43,12 +43,19 @@ typedef struct {
     } mValue;
 } BoyiaValue;
 
+typedef struct {
+    LIntPtr          mFuncBody;
+    BoyiaValue*      mParams;
+    LInt             mParamSize;
+    LInt             mParamCount;
+} BoyiaFunction;
+
 #define NEW(type) (type*)BoyiaNew(sizeof(type))
 #define NEW_ARRAY(type, n) (type*)BoyiaNew(n*sizeof(type))
 #define DELETE(ptr) BoyiaDelete(ptr);
 #define D_STR(str, len) {(LInt8*)str, len}
 
-LVoid CreateMiniMemory();
+LVoid CreateBoyiaMemory();
 LVoid* BoyiaNew(LInt size);
 LVoid BoyiaDelete(LVoid* data);
 //LUint HashCode(BoyiaStr* str);
@@ -59,4 +66,5 @@ LBool MStrchr(const LInt8* s, LInt8 ch);
 LVoid StringAdd(BoyiaValue* left, BoyiaValue* right);
 LUint GenIdentifier(BoyiaStr* str);
 LUint GenIdentByStr(const LInt8* str, LInt len);
+LVoid ChangeMemory(LVoid* mem);
 #endif

@@ -25,8 +25,8 @@ typedef struct BoyiaMemoryPool {
 LVoid* fastMalloc(LInt size);
 LVoid fastFree(LVoid* data);
 
-BoyiaMemoryPool* initMemoryPool(LInt size);
-LVoid freeMemoryPool(BoyiaMemoryPool* pool);
+BoyiaMemoryPool* InitMemoryPool(LInt size);
+LVoid FreeMemoryPool(BoyiaMemoryPool* pool);
 
 LVoid* newData(LInt size, BoyiaMemoryPool* pool);
 LVoid deleteData(LVoid* data, BoyiaMemoryPool* pool);

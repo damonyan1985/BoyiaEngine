@@ -146,7 +146,7 @@ void* LBaseView::operator new(size_t sz)
 	KLOG("LBaseView::operator new");
 	if (sDOMMemPool == NULL)
     {
-    	sDOMMemPool = initMemoryPool(DOM_MEMORY_SIZE);
+    	sDOMMemPool = InitMemoryPool(DOM_MEMORY_SIZE);
     }
 
 
