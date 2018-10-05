@@ -8,6 +8,7 @@
 */
 #include "BoyiaCore.h"
 #include "BoyiaError.h"
+#include "BoyiaMemory.h"
 //#include <android/log.h>
 
 #define ENABLE_LOG
@@ -35,6 +36,7 @@ extern void jsLog(const char* format, ...);
 #define FUNC_CALLS       ((LInt)32)
 #define NUM_PARAMS       ((LInt)32)
 #define LOOP_NEST        ((LInt)32)
+#define MEMORY_SIZE      ((LInt)1024*1024*6)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -106,14 +108,6 @@ typedef struct {
     Instruction*   mEnd;
 } CommandTable;
 
-// 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
-// Reg的mNameKey没有任何意义，
-// 但是在处理变量时变得有意义，即指向变量地址，
-typedef struct {
-    BoyiaValue     mReg0;    // result register, 结果寄存器
-    BoyiaValue     mReg1;    // help register, 辅助运算寄存器
-} VMCpu;
-
 struct KeywordPair {
     BoyiaStr  mName; /* keyword lookup table */
     LUint8    mType;
@@ -144,15 +138,14 @@ typedef struct {
     BoyiaStr mTokenName;
     LUint8   mTokenType; /* contains type of token*/
     LUint8   mTokenValue; /* internal representation of token */
-} MiniToken;
+} BoyiaToken;
 
 /* Global value define begin */
 static BoyiaFunction*   gFunTable         = NULL; // 堆上取数组
 static BoyiaValue*      gGlobalsTable     = NULL;
 static BoyiaValue*      gLocalsStack      = NULL;
 static BoyiaValue*      gOpStack          = NULL;
-static CommandTable*   gCommandTable     = NULL;
-static NativeFunction* gNativeFunTable   = NULL;
+static NativeFunction*  gNativeFunTable   = NULL;
 
 typedef struct {
     LInt8*           mProg;
@@ -178,11 +171,38 @@ typedef struct {
     BoyiaValue*      mClass;
 } ExecScene;
 
+// 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
+// Reg的mNameKey没有任何意义，
+// 但是在处理变量时变得有意义，即指向变量地址，
+typedef struct {
+    BoyiaValue     mReg0;    // result register, 结果寄存器
+    BoyiaValue     mReg1;    // help register, 辅助运算寄存器
+} VMCpu;
+
+/* Boyia VM Define
+ * Member
+ * 1, mPool
+ * 2, Function Area
+ * 3, gGlobalsTable
+ */
+typedef struct {
+	BoyiaMemoryPool*  mPool;
+	BoyiaFunction*    mFunTable;
+	NativeFunction*   mNativeTable;
+	BoyiaValue*       mGlobals;
+	BoyiaValue*       mLocals;
+	VMCpu             mCpu;
+	ExecState*        mEState;
+	ExecScene*        mExecStack;
+	LInt*             mLoopStack;
+	BoyiaValue*       mOpStack;
+} BoyiaVM;
+
 // 调用堆栈
 static ExecScene* gCallStack = NULL;
 static LInt* gLoopStack = NULL;
 
-static MiniToken       gToken;
+static BoyiaToken      gToken;
 static VMCpu           gVM;
 static ExecState       gEState;
 
@@ -215,35 +235,56 @@ static LInt HandleAssignment(LVoid* ins);
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUint rVal);
 
+LVoid* InitVM() {
+    BoyiaVM* vm = FAST_NEW(BoyiaVM);
+    vm->mPool = InitMemoryPool(MEMORY_SIZE);
+    ChangeMemory(vm->mPool);
+    /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
+    vm->mGlobals = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
+    vm->mLocals = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
+    vm->mFunTable = NEW_ARRAY(BoyiaFunction, NUM_FUNC);
+
+    vm->mOpStack = NEW_ARRAY(BoyiaValue, NUM_RESULT);
+
+    vm->mExecStack = NEW_ARRAY(ExecScene, FUNC_CALLS);
+    vm->mLoopStack = NEW_ARRAY(LInt, LOOP_NEST);
+    vm->mEState = NEW(ExecState);
+
+    vm->mEState->mGValSize = 0;
+    vm->mEState->mFunSize = 0;
+
+    return vm;
+}
+
 static Instruction* PutInstruction(
-	OpCommand* left,
-	OpCommand* right,
-	LUint8 op,
-	OPHandler handler) {
-	Instruction* newIns = NEW(Instruction);
-	if (left) {
-		newIns->mOPLeft.mType = left->mType;
-		newIns->mOPLeft.mValue = left->mValue;
-	}
+    OpCommand* left,
+    OpCommand* right,
+    LUint8 op,
+    OPHandler handler) {
+    Instruction* newIns = NEW(Instruction);
+    if (left) {
+        newIns->mOPLeft.mType = left->mType;
+        newIns->mOPLeft.mValue = left->mValue;
+    }
 
-	if (right) {
-		newIns->mOPRight.mType = right->mType;
-		newIns->mOPRight.mValue = right->mValue;
-	}
+    if (right) {
+        newIns->mOPRight.mType = right->mType;
+        newIns->mOPRight.mValue = right->mValue;
+    }
 
-	newIns->mCodeLine = gEState.mLineNum;
-	newIns->mOPCode = op;
-	newIns->mHandler = handler;
-	newIns->mNext = NULL;
-	Instruction* ins = gEState.mContext->mEnd;
-	if (!ins) {
-		gEState.mContext->mBegin = newIns;
-	} else {
-		ins->mNext = newIns;
-	}
+    newIns->mCodeLine = gEState.mLineNum;
+    newIns->mOPCode = op;
+    newIns->mHandler = handler;
+    newIns->mNext = NULL;
+    Instruction* ins = gEState.mContext->mEnd;
+    if (!ins) {
+        gEState.mContext->mBegin = newIns;
+    } else {
+        ins->mNext = newIns;
+    }
 
-	gEState.mContext->mEnd = newIns;
-	return newIns;
+    gEState.mContext->mEnd = newIns;
+    return newIns;
 }
 
 static LInt HandlePopScene(LVoid* ins) {
@@ -1856,7 +1897,7 @@ static LVoid EvalAssignment() {
 static LVoid InitGlobalData() {
 	if (!gGlobalsTable) {
 		// 初始化MJS内存分配池
-		CreateMiniMemory();
+		CreateBoyiaMemory();
 		/* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
 		gGlobalsTable = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
 		//LMemset(gGlobalsTable, 0, NUM_GLOBAL_VARS * sizeof(BoyiaValue));

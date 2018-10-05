@@ -15,13 +15,6 @@
 #include "BoyiaValue.h"
 
 typedef struct {
-    LIntPtr          mFuncBody;
-    BoyiaValue*      mParams;
-    LInt             mParamSize;
-    LInt             mParamCount;
-} BoyiaFunction;
-
-typedef struct {
     LUintPtr mNameKey;
     LInt     (*mAddr)();
 } NativeFunction;
@@ -46,5 +39,6 @@ LVoid GetGlobalTable(LInt* table, LInt* size);
 LVoid NativeCall(BoyiaValue* obj);
 LVoid LocalPush(BoyiaValue *value);
 LVoid SaveLocalSize();
+LVoid* InitVM();
 
 #endif
