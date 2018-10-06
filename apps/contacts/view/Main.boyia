@@ -24,7 +24,7 @@ class MainActivity extends Activity {
 	    appBox.commit();
 	    
 	    Util.showToast("test mjs callstaticmethod");
-	    Network.load("https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/app/json/mock.json", this.loadCallback, this);
+	    Network.load("https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/apps/contacts/json/mock.json", this.loadCallback, this);
 	}
 	
 	fun loadCallback(data) {
