@@ -51,10 +51,10 @@ public:
 	UIView* view() const;
 
 protected:
-	HtmlRenderer*                     m_render;
-	UIView*                          m_view;
-	ResourceLoaderClient*             m_client;
-	LInt                              m_cssSize;
+    HtmlRenderer*                     m_render;
+    UIView*                           m_view;
+    ResourceLoaderClient*             m_client;
+    LInt                              m_cssSize;
 };
 
 }
