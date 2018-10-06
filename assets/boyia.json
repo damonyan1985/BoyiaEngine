@@ -10,7 +10,7 @@
     "apps" : [{
         "version" : 1,
         "path" : "boyiasdk://apps/contacts.zip",
-        "name" : "launcher"
+        "name" : "contacts"
     }],
     "entry" : 
 }
