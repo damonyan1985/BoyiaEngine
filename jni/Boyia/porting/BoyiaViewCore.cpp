@@ -191,7 +191,7 @@ static void nativeVideoTextureUpdate(JNIEnv*  env, jobject obj, jlong item)
 	yanbo::PaintThread::instance()->videoUpdate(item);
 }
 
-static void nativeStartBoyiaApp(JNIEnv*  env, jobject obj)
+static void nativeStartAppLoad(JNIEnv*  env, jobject obj)
 {
 
 }
@@ -212,7 +212,7 @@ static JNINativeMethod gBrowserMethods[] = {
 	{"nativeInitJNIContext", "(Lcom/boyia/app/base/BaseActivity;)V", (void*)nativeInitJNIContext},
 	{"nativeSetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeSetGLSurface},
 	{"nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface},
-	{"nativeStartBoyiaApp", "()V", (void*)nativeStartBoyiaApp},
+	{"nativeStartAppLoad", "()V", (void*)nativeStartAppLoad},
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,
