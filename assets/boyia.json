@@ -1,0 +1,16 @@
+{
+    "jar" : {
+        "version" : 1,
+        "path" : ""
+    },
+    "so"  : {
+        "version" : 1,
+        "path" : ""
+    },
+    "apps" : [{
+        "version" : 1,
+        "path" : "boyiasdk://apps/contacts.zip",
+        "name" : "launcher"
+    }],
+    "entry" : 
+}

@@ -13,7 +13,7 @@ class MainActivity extends Activity {
 	    var root = ViewDoc.rootView();
 	    var appBox = root.itemByID(ViewGroup, "AppBox");
 	    
-        this.main = ViewDoc.createView(MainView, "boyia://app/layout/main.ui");
+        this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/layout/main.ui");
 	    this.main.initView();
 	    
 	    appBox.appendView(this.main);
@@ -38,7 +38,7 @@ class MainActivity extends Activity {
 	        size = size - 1;
 	        var categoryItem = obj.data.categoryList.get(size);
 	        
-	        view = ViewDoc.createView(CategoryItem, "boyia://app/layout/category_item.ui");
+	        view = ViewDoc.createView(CategoryItem, "boyia://apps/contacts/layout/category_item.ui");
 	        view.initView();
 	        view.setTitle(categoryItem.title);
 	        categoryView.appendView(view);
@@ -51,7 +51,7 @@ class MainActivity extends Activity {
 	    while (size > 0) {
 	        size = size - 1;
 	        var detailItem = detailList.get(size);
-	        view = ViewDoc.createView(NewTextItem, "boyia://app/layout/news_text_item.ui");
+	        view = ViewDoc.createView(NewTextItem, "boyia://apps/contacts/layout/news_text_item.ui");
 	        view.initView();
 	        detailContainer.appendView(view);
 	        view.setTitle(detailList.get(size).title);

@@ -247,6 +247,7 @@ LVoid* InitVM() {
 
 LVoid ChangeVM(LVoid* vm) {
 	gBoyiaVM = (BoyiaVM*) vm;
+	ChangeMemory(gBoyiaVM->mPool);
 }
 
 static Instruction* PutInstruction(

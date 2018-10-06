@@ -62,10 +62,6 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix) {
     return total * sign;
 }
 
-LVoid CreateBoyiaMemory() {
-	gMemPool = InitMemoryPool(MEMORY_SIZE);
-}
-
 LVoid ChangeMemory(LVoid* mem) {
 	gMemPool = (BoyiaMemoryPool*) mem;
 }

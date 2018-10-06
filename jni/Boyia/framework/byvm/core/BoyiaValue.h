@@ -55,7 +55,6 @@ typedef struct {
 #define DELETE(ptr) BoyiaDelete(ptr);
 #define D_STR(str, len) {(LInt8*)str, len}
 
-LVoid CreateBoyiaMemory();
 LVoid* BoyiaNew(LInt size);
 LVoid BoyiaDelete(LVoid* data);
 //LUint HashCode(BoyiaStr* str);
