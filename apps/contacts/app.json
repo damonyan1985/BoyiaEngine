@@ -1,5 +1,5 @@
 {
-    "appName" : "BoyiaApp",
+    "appName" : "contacts",
     "styles" : ["boyia://app/css/main.css"],
     "scripts" : [
         "boyiasdk://sdk/Util.boyia",
@@ -12,15 +12,13 @@
         "boyiasdk://sdk/AppStack.boyia",
         "boyiasdk://sdk/App.boyia",
         "boyiasdk://sdk/Activity.boyia",
-        "boyia://app/view/PosterView.boyia",
-        "boyia://app/view/NewTextItem.boyia",
-        "boyia://app/view/CategoryItem.boyia",
-        "boyia://app/view/SearchHeader.boyia",
-        "boyia://app/view/MainView.boyia",
-        "boyia://app/view/Main.boyia",
+        "boyia://apps/contacts/view/PosterView.boyia",
+        "boyia://app/contacts/view/NewTextItem.boyia",
+        "boyia://app/contacts/view/CategoryItem.boyia",
+        "boyia://app/contacts/view/SearchHeader.boyia",
+        "boyia://app/contacts/view/MainView.boyia",
+        "boyia://app/contacts/view/Main.boyia",
     ],
-    "jar" : "",
-    "so" : "",
     "versionCode" : 1,
     "versionName" : "v0.0.1"
 }
