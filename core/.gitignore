@@ -1,0 +1,10 @@
+/build
+#/src/main/java/com/boyia/app
+/src/main/java/com/boyia/app/base
+/src/main/java/com/boyia/app/file
+/src/main/java/com/boyia/app/http
+/src/main/java/com/boyia/app/job
+/src/main/java/com/boyia/app/loader
+/src/main/java/com/boyia/app/ui
+/src/main/java/com/boyia/app/upgrade
+/src/main/java/com/boyia/app/utils

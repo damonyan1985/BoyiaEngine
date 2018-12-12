@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+    <meta http-equiv="Cache-control" content="no-cache" />
+    <title></title>
+	<link rel="stylesheet" type="text/css" href="boyia://apps/contacts/css/main.css" />
+</head>
+<body>
+
+<div id="AppBox" class="full" />
+<!--<video class="video" src="http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4" />
+-->
+</body>
+<script src="boyiasdk://sdk/Util.boyia" />
+<script src="boyiasdk://sdk/Array.boyia" />
+<script src="boyiasdk://sdk/Network.boyia" />
+<script src="boyiasdk://sdk/View.boyia" />
+<script src="boyiasdk://sdk/ViewDoc.boyia" />
+<script src="boyiasdk://sdk/InputView.boyia" />
+<script src="boyiasdk://sdk/ImageView.boyia" />
+<script src="boyiasdk://sdk/AppStack.boyia" />
+<script src="boyiasdk://sdk/App.boyia" />
+<script src="boyiasdk://sdk/Activity.boyia" />
+<script src="boyia://apps/contacts/src/PosterView.boyia" />
+<script src="boyia://apps/contacts/src/NewTextItem.boyia" />
+<script src="boyia://apps/contacts/src/CategoryItem.boyia" />
+<script src="boyia://apps/contacts/src/SearchHeader.boyia" />
+<script src="boyia://apps/contacts/src/MainView.boyia" />
+<script src="boyia://apps/contacts/src/Main.boyia" />
+</html>

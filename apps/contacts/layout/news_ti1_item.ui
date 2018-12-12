@@ -1,7 +1,0 @@
-<view>
-<div>
-<div id="title" />
-<div id="info" />
-</div>
-<img id="poster" />
-</view>
