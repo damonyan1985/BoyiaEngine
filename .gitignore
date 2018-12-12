@@ -1,7 +1,10 @@
-# Gen 自动生成文件
-bin/
-gen/
-libs/
-obj/
-src/
-
+*.iml
+.gradle
+/local.properties
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild

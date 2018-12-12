@@ -1,0 +1,24 @@
+class MainView extends ViewDoc {
+    prop headerContainer;
+    prop detailContainer;
+    
+    prop headerView;
+    
+    fun initView() {
+        if (!this.headerContainer) {
+            this.headerContainer = this.itemByID(ViewGroup, "header");
+        }
+        
+        if (!this.detailContainer) {
+            this.detailContainer = this.itemByID(ViewGroup, "category_detail");
+        }
+        
+        this.appendHeader();
+    }
+    
+    fun appendHeader() {
+        this.headerView = ViewDoc.createView(SearchHeader, "boyia://apps/contacts/view/search_header.ui");
+        this.headerView.initView();
+        this.headerContainer.appendView(this.headerView);
+    }
+}
