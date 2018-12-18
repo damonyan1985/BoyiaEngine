@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply from: "$rootDir/library.gradle"
 
 android {
     compileSdkVersion 23
@@ -25,9 +26,16 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'; dirs library_dir
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':core')
+    //implementation project(':core')
+    implementation(name: "core-debug", ext: "aar")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.3'
