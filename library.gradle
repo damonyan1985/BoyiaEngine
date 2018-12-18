@@ -1,0 +1,10 @@
+def initExtension() {
+    def localLibDir = file("$rootDir/local.properties")
+    if (localLibDir.exists()) {
+        def properties = new Properties()
+        properties.load(localLibDir.newDataInputStream())
+        ext.library_dir = properties.getProperty("library_dir")
+    }
+}
+
+initExtension()
