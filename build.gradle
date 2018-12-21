@@ -20,7 +20,6 @@ allprojects {
         google()
         jcenter()
         //maven { url uri("$rootDir/maven") }
-        maven { url "https://raw.githubusercontent.com/Geroff/MavenTest/master" }
         maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaMaven/master/" }
     }
 }
