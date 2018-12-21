@@ -1,10 +1,8 @@
 package com.boyia.app.input;
 
 import com.boyia.app.core.BoyiaUIView;
-import com.boyia.app.utils.BoyiaLog;
 import com.boyia.app.utils.BoyiaUtils;
 
-import android.view.View;
 import android.view.inputmethod.BaseInputConnection;
 
 

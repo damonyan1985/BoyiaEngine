@@ -4,6 +4,7 @@ def initExtension() {
         def properties = new Properties()
         properties.load(localLibDir.newDataInputStream())
         ext.library_dir = properties.getProperty("library_dir")
+        ext.maven_dir = properties.getProperty("maven_dir")
     }
 }
 
