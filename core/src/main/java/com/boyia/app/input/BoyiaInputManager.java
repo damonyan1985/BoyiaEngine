@@ -2,13 +2,11 @@ package com.boyia.app.input;
 
 import com.boyia.app.base.BaseActivity;
 import com.boyia.app.core.BoyiaUIView;
-import com.boyia.app.utils.BoyiaUtils;
 
 import android.content.Context;
 import android.os.Message;
 import android.os.ResultReceiver;
 import android.os.Handler;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public class BoyiaInputManager {

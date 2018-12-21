@@ -1,9 +1,5 @@
 package com.boyia.app.core;
 
-import com.boyia.app.http.HttpResponseData;
-import com.boyia.app.http.HttpUtil;
-import com.boyia.app.job.JobBase;
-import com.boyia.app.job.JobScheduler;
 import com.boyia.app.loader.ILoadImage;
 import com.boyia.app.loader.BoyiaImageManager;
 import com.boyia.app.utils.BoyiaLog;
@@ -11,7 +7,6 @@ import com.boyia.app.utils.BoyiaUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;

@@ -1,7 +1,6 @@
 package com.boyia.app.core;
 
 //import android.graphics.PixelFormat;
-import android.graphics.Color;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
