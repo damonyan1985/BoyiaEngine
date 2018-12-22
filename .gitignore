@@ -7,6 +7,5 @@
 .DS_Store
 /build
 /captures
-/librarys
 /common
 .externalNativeBuild
