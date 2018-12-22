@@ -2,9 +2,9 @@ package com.boyia.app.core;
 
 import java.io.UnsupportedEncodingException;
 
-import com.boyia.app.http.HttpUtil;
-import com.boyia.app.loader.ILoaderCallback;
-import com.boyia.app.loader.BoyiaLoader;
+import com.boyia.app.common.http.HttpUtil;
+import com.boyia.app.common.loader.ILoaderCallback;
+import com.boyia.app.common.loader.BoyiaLoader;
 
 public class ResourceLoader implements ILoaderCallback {
 	private BoyiaLoader mLoader = null;

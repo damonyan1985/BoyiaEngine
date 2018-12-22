@@ -10,10 +10,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
-import com.boyia.app.base.BaseActivity;
+import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.input.BoyiaInputConnection;
 import com.boyia.app.input.BoyiaInputManager;
-import com.boyia.app.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaLog;
+import android.app.Activity;
 
 /*
  * surfaceview和view不同，view是谁后创建谁在上面
@@ -104,7 +105,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public static native void nativeOnLoadError(String error, long callback);
 	
-	public static native void nativeInitJNIContext(BaseActivity context);
+	public static native void nativeInitJNIContext(Activity context);
 	
 	public static native void nativeSetInputText(String text, long item);
 	

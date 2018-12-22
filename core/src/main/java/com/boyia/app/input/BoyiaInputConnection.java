@@ -1,11 +1,8 @@
 package com.boyia.app.input;
 
 import com.boyia.app.core.BoyiaUIView;
-import com.boyia.app.utils.BoyiaUtils;
-
+import com.boyia.app.common.utils.BoyiaUtils;
 import android.view.inputmethod.BaseInputConnection;
-
-
 
 public class BoyiaInputConnection extends BaseInputConnection {
     private BoyiaUIView mView;

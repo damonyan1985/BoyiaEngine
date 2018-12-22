@@ -2,6 +2,7 @@ package com.boyia.app;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.boyia.app.common.BoyiaApplication;
 
 public class BoyiaMultiApplication extends BoyiaApplication {
     private RefWatcher mWatcher;

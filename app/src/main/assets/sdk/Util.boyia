@@ -14,6 +14,6 @@ class Util {
     }
     
     fun showToast(info) {
-        BY_CallStaticMethod("com/boyia/app/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", info);
+        BY_CallStaticMethod("com/boyia/app/common/utils/BoyiaUtils", "showToast", "(Ljava/lang/String;)V", info);
     }
 }

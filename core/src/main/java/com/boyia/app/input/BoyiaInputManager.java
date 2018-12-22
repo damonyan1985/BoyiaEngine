@@ -1,6 +1,6 @@
 package com.boyia.app.input;
 
-import com.boyia.app.base.BaseActivity;
+import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.core.BoyiaUIView;
 
 import android.content.Context;
