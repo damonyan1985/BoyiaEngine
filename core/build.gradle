@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply from: "$rootDir/library.gradle"
 
 android {
     compileSdkVersion 23
@@ -31,6 +33,18 @@ android {
         }
     }
 
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        //def mavenDirPath = file('F:\\mavendir') // 本地存放目录(自行选择)，可放在gradle.properties文件中引用
+        repository(url:"file://${maven_dir}") // 必须双引号，单引号不会转义$
+        pom.project {
+            groupId "com.boyia.app.core" // 可以随意取，一般取包名
+            artifactId "core" // 可以随意取，一般取库的名字
+            version "1.0.0" // 版本号
+        }
+    }
 }
 
 dependencies {
