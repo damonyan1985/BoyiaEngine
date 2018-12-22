@@ -1,13 +1,14 @@
 package com.boyia.app;
 
-import com.boyia.app.base.BaseActivity;
-import com.boyia.app.job.JobScheduler;
+import com.boyia.app.common.base.BaseActivity;
+import com.boyia.app.common.job.JobScheduler;
 import com.boyia.app.ui.BoyiaWindow;
 import com.boyia.app.upgrade.UpgradeUtil;
-import com.boyia.app.utils.BoyiaLog;
-import com.boyia.app.utils.BoyiaUtils;
-import com.boyia.app.utils.JSONUtil;
-import com.boyia.app.utils.BoyiaFileUtil;
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.common.utils.JSONUtil;
+import com.boyia.app.common.utils.BoyiaFileUtil;
+import com.boyia.app.common.BoyiaApplication;
 
 import android.content.Context;
 import android.content.Intent;

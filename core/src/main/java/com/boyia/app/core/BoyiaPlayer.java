@@ -2,8 +2,8 @@ package com.boyia.app.core;
 
 import java.io.IOException;
 
-import com.boyia.app.BoyiaApplication;
-import com.boyia.app.utils.BoyiaLog;
+import com.boyia.app.common.BoyiaApplication;
+import com.boyia.app.common.utils.BoyiaLog;
 
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;

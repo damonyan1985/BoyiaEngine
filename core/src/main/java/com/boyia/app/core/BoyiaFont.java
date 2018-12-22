@@ -1,7 +1,7 @@
 package com.boyia.app.core;
 
-import com.boyia.app.utils.BoyiaLog;
-import com.boyia.app.utils.BoyiaUtils;
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaUtils;
 
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;

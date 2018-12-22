@@ -206,7 +206,7 @@ static JNINativeMethod sUIViewMethods[] = {
 	{"nativeSetInputText", "(Ljava/lang/String;J)V", (void*)nativeSetInputText},
 	{"nativeVideoTextureUpdate", "(J)V", (void*)nativeVideoTextureUpdate},
 	{"nativeHandleTouchEvent", "(III)V", (void*)nativeHandleTouchEvent},
-	{"nativeInitJNIContext", "(Lcom/boyia/app/base/BaseActivity;)V", (void*)nativeInitJNIContext},
+	{"nativeInitJNIContext", "(Landroid/app/Activity;)V", (void*)nativeInitJNIContext},
 	{"nativeSetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeSetGLSurface},
 	{"nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface},
 };

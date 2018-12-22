@@ -8,4 +8,5 @@
 /build
 /captures
 /librarys
+/common
 .externalNativeBuild

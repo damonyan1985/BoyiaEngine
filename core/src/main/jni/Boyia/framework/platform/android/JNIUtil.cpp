@@ -182,7 +182,7 @@ void JNIUtil::loadHTML(const String& url, String& stream)
 	// 将地址转为jstring
 	jstring strUrl = util::strToJstring(env, (const char*)url.GetBuffer());
 	jstring text = callStaticStringMethod(
-			"com/boyia/app/utils/BoyiaUtils",
+			"com/boyia/app/common/utils/BoyiaUtils",
 			"syncLoadResource",
 			"(Ljava/lang/String;)Ljava/lang/String;",
 			strUrl);
@@ -409,7 +409,7 @@ void JNIUtil::unzip(const String& zipFile, const String& dir)
 	KFORMATLOG("boyia app AppHandler unzip dir=%s", GET_STR(dir));
 
 	JNIUtil::callStaticVoidMethod(
-			"com/boyia/app/utils/ZipOperation",
+			"com/boyia/app/common/utils/ZipOperation",
 			"unZipFile",
 			"(Ljava/lang/String;Ljava/lang/String;)V",
 			jpath, jdir);

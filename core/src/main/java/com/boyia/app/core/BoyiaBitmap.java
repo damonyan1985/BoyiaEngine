@@ -1,9 +1,10 @@
 package com.boyia.app.core;
 
-import com.boyia.app.loader.ILoadImage;
-import com.boyia.app.loader.BoyiaImageManager;
-import com.boyia.app.utils.BoyiaLog;
-import com.boyia.app.utils.BoyiaUtils;
+import com.boyia.app.common.loader.ILoadImage;
+import com.boyia.app.common.loader.BoyiaImageManager;
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.common.utils.GraphicsConst;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
