@@ -63,7 +63,7 @@ public class BoyiaActivity extends BaseActivity implements UpgradeUtil.UpgradeLi
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		BoyiaApplication.setCurrenContext(this);
+		//BoyiaApplication.setCurrenContext(this);
 		setContentView(new FrameLayout(this));
 		getMainView().setBackgroundColor(Color.WHITE);
 		
