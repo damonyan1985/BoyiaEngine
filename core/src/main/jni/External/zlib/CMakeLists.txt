@@ -1,23 +1,23 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(bsdiff)
+project(zlib)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
 
 file(
     GLOB 
-    bsdiff_src
+    zlib_src
     "source/*.c"
-    )
+)
 
 add_library(
-    bsdiff
+    zlib
     SHARED
-    ${bsdiff_src}
+    ${zlib_src}
 )
 
 target_include_directories(
-    bsdiff
+    zlib
     PRIVATE
     include
     )
