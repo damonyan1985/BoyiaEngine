@@ -33,9 +33,9 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //implementation project(':core')
-    implementation 'com.boyia.app.core:core:1.0.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':core')
+    //implementation 'com.boyia.app.core:core:1.0.0'
     api project(':common')
     //implementation(name: "core-debug", ext: "aar")
     //implementation project(':utils')
