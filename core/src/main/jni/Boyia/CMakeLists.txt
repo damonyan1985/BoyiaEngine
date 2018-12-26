@@ -2,7 +2,19 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(boyia)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
+add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1)
+
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
+
+set(EXTERNAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../External")
+
+if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
+    include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)
+elseif(${ANDROID_ABI} STREQUAL "arm64-v8a")
+    include_directories(${ANDROID_SYSROOT}/usr/include/aarch64-linux-android)
+else()
+    include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)
+endif()
 
 file(
     GLOB 
@@ -13,6 +25,7 @@ file(
     "framework/byvm/jit/*.cpp"
     "framework/byvm/lib/*.cpp"
     "framework/byvm/json/*.c"
+    "framework/byvm/json/*.cpp"
     "framework/dom/*.cpp"
     "framework/gui/*.cpp"
     "framework/loader/*.cpp"
@@ -23,6 +36,7 @@ file(
     "framework/util/*.cpp"
     "framework/view/*.cpp"
     "framework/widget/*.cpp"
+    "framework/widget/flex/*.cpp"
     )
 
 file(
@@ -81,6 +95,7 @@ target_include_directories(
     framework/util
     framework/view
     framework/widget
+    framework/widget/flex
     graphics/core
     graphics/shaders
     graphics/painter
@@ -91,6 +106,20 @@ target_include_directories(
     network/image
     network/ipc
     network/threadpool
+    ${EXTERNAL_PATH}/curl/include
+    ${EXTERNAL_PATH}/jpeg
+    ${EXTERNAL_PATH}/lpng/include
+    ${EXTERNAL_PATH}/ft2/include
+    ${EXTERNAL_PATH}/trace
+)
+
+find_library(
+    boyia_link_lib
+    log
+    EGL
+    GLESv3
+    android
+    jnigraphics
 )
 
 target_link_libraries(
@@ -99,6 +128,9 @@ target_link_libraries(
     jpeg
     png
     ft2
-    android
     log
+    EGL
+    GLESv3
+    android
+    jnigraphics
 )

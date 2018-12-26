@@ -153,7 +153,7 @@ LVoid FileUtil::printAllFiles(const char* path)
 		}
 		else
 		{
-			KFORMATLOG("FileUtil::printAllFiles filePath=%s", subPath);
+			KFORMATLOG("FileUtil::printAllFiles final filePath=%s", subPath);
 		}
 	}
 
