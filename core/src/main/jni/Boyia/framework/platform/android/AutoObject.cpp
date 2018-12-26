@@ -49,7 +49,7 @@ LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result)
     jsize      strLen    = env->GetArrayLength(byteArray);
     jbyte      *jBuf     = env->GetByteArrayElements(byteArray, JNI_FALSE);
 
-    if (jBuf > 0)
+    if (jBuf != NULL)
     {
         pStr = new char[strLen + 1];//(char*)malloc(strLen + 1);
         if (!pStr)
