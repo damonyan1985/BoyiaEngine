@@ -7,6 +7,7 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/network/image/NetImage.cpp \
     $(LOCAL_PATH)/network/font/FontFreeType.cpp \
     $(LOCAL_PATH)/network/ipc/MiniProcess.cpp \
+    $(LOCAL_PATH)/network/server/ProxyServer.cpp \
     $(LOCAL_PATH)/network/threadpool/MiniMutex.cpp \
     $(LOCAL_PATH)/network/threadpool/MiniBlockQueue.cpp \
     $(LOCAL_PATH)/network/threadpool/MiniThread.cpp \
