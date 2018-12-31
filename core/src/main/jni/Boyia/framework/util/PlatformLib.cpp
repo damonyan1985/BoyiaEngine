@@ -129,8 +129,8 @@ LInt8* LStrcpy(LInt8* aDest, const LInt8* aSrc) {
 LVoid* LMemset(LVoid* dest, LInt value, LInt len) {
 #ifdef SOFT_LIB
 	LUint8* p = (LUint8*)dest;
-	while (len) {
-		*(p + (--len)) = value;
+	while (len--) {
+		*(p + len) = value;
 	}
 #else
 	ArmMemeset(dest, value, len);
@@ -142,8 +142,8 @@ LVoid* LMemcpy(LVoid* dest, const LVoid* src, LInt len) {
 #ifdef SOFT_LIB
 	LUint8 *d = (LUint8*)dest;
 	LUint8 *s = (LUint8*)src;
-	while (len) {
-		*(d + (--len)) = *(s + len);
+	while (len--) {
+		*(d + len) = *(s + len);
 	}
 #else
 	ArmMemcpy(dest, src, len);

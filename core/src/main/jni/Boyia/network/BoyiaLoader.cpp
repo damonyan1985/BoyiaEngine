@@ -18,6 +18,8 @@ LVoid LoaderTask::setMethod(LInt method)
 LVoid LoaderTask::setUrl(const String& url)
 {
     m_url = url;
+
+    KFORMATLOG("boyia app LoaderTask::setUrl url=%s", GET_STR(m_url));
 }
 
 LVoid LoaderTask::setClient(NetworkClient* client)
