@@ -150,7 +150,7 @@ namespace util
 	// LString<char> str = _DSTR("hello")
 	#define _DSTR(a) util::String(a)
 
-    #define GET_STR(str) ((const char*)(str).GetBuffer())
+    #define GET_STR(str) ((const char*)str.GetBuffer())
 
 	template<class T>
 	LString<T>::LString()
@@ -551,8 +551,7 @@ namespace util
 	LInt LString<T>::CountString(const T* lpsz) const
 	{
 		LInt nLen = 0;
-		//T* p = (T*)lpsz;
-		while ( *(lpsz + nLen) != 0 )
+		while (*(lpsz + nLen))
 		{
 			++nLen;
 		}

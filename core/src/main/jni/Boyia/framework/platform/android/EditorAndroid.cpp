@@ -26,5 +26,6 @@ Editor* Editor::get(LVoid* view)
     }
 
     s_instance->setView(view);
+    return s_instance;
 }
 }

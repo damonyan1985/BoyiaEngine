@@ -82,6 +82,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
 		LInt resultCode = curl_easy_perform(m_curl);
 
+        KFORMATLOG("boyia curl_easy_perform url=%s", GET_STR(url));
         KFORMATLOG("boyia curl_easy_perform code=%d", resultCode);
 		if (m_callback && resultCode == CURLcode::CURLE_OK)
 		{

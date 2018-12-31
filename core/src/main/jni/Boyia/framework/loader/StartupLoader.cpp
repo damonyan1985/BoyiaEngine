@@ -160,8 +160,10 @@ LVoid StartupLoader::startLoad()
 
     m_file = fopen(APPS_JSON_PATH, "wb+");
 
-    String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
-    m_loader.loadUrl(url, this);
+    //String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
+    
+    //KFORMATLOG("boyia app StartupLoader url=%s", GET_STR(url));
+    m_loader.loadUrl(_CS(APP_LOAD_URL), this);
     KFORMATLOG("boyia app StartupLoader m_file=%d", (LInt)m_file);
 }
 

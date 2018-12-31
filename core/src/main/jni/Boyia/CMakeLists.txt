@@ -4,7 +4,7 @@ project(boyia)
 
 add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 
 set(EXTERNAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../External")
 

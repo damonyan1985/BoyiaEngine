@@ -85,7 +85,7 @@ public:
 
 	LInt size() const
 	{
-		m_container.count();
+		return m_container.count();
 	}
 
 	LBool isEmpty()
