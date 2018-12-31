@@ -51,7 +51,7 @@ public:
 			return;
 		}
 
-        struct sockaddr_in remote;
+        struct sockaddr_in client;
         struct epoll_event ev;
         ev.events = EPOLLIN;
 	    ev.data.fd = m_socket;
@@ -77,12 +77,12 @@ public:
 				int sockfd = events[i].data.fd;
 				if (sockfd == m_socket)
 				{
-					while ((connfd = accept(m_socket, (struct sockaddr *)&remote, &addrlen)) > 0)
+					while ((connfd = accept(m_socket, (struct sockaddr *)&client, &addrlen)) > 0)
 					{
-	                    char *ipaddr = inet_ntoa (remote.sin_addr);
+	                    char *ipaddr = inet_ntoa(client.sin_addr);
 	                    printf("accept a connection from [%s]\n", ipaddr);
-						setnonblocking (connfd);	//设置连接socket为非阻塞
-						ev.events = EPOLLIN | EPOLLET;	//边沿触发要求套接字为非阻塞模式；水平触发可以是阻塞或非阻塞模式
+						setNonblock(connfd);
+						ev.events = EPOLLIN | EPOLLET;
 						ev.data.fd = connfd;
 						if (epoll_ctl(m_epoll, EPOLL_CTL_ADD, connfd, &ev) == -1)
 						{
@@ -110,14 +110,14 @@ public:
 	                printf("recv from client data [%s]\n", buf);
 					ev.data.fd = sockfd;
 					ev.events = events[i].events | EPOLLOUT;
-					if (epoll_ctl (m_epoll, EPOLL_CTL_MOD, sockfd, &ev) == -1)
+					if (epoll_ctl(m_epoll, EPOLL_CTL_MOD, sockfd, &ev) == -1)
 					{
 						printf("epoll_ctl: mod");
 					}
 				}
 				if (events[i].events & EPOLLOUT)
 				{
-					snprintf (buf, sizeof(buf), "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World", 11);
+					snprintf(buf, sizeof(buf), "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World", 11);
 					int nwrite, data_size = strlen (buf);
 					int n = data_size;
 					while (n > 0)
@@ -134,7 +134,7 @@ public:
 						n -= nwrite;
 					}
 	                printf("send to client data [%s]\n", buf);
-					close (sockfd);
+					close(sockfd);
 	                events[i].data.fd = -1;
 				}
 			}
@@ -147,7 +147,7 @@ public:
 	}
 
 private:
-    void setnonblocking(int fd)
+    void setNonblock(int fd)
     {
 		int opts = fcntl(fd, F_GETFL);
 		if (opts < 0)
