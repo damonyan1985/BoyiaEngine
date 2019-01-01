@@ -2,7 +2,7 @@ package com.boyia.app.core;
 
 import java.io.UnsupportedEncodingException;
 
-import com.boyia.app.common.http.HttpUtil;
+import com.boyia.app.common.http.HTTPUtil;
 import com.boyia.app.common.loader.ILoaderCallback;
 import com.boyia.app.common.loader.BoyiaLoader;
 
@@ -38,7 +38,7 @@ public class ResourceLoader implements ILoaderCallback {
 	}
 
 	@Override
-	public void onLoaderDataLen(int size) {
+	public void onLoaderDataSize(long size) {
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ResourceLoader implements ILoaderCallback {
 	public void onLoaderFinished(byte[] data, Object msg) {
 		try {	
 			ResInfo info = (ResInfo) msg;
-			info.mData = new String(data, HttpUtil.HTTP_CHARSET_UTF8);
+			info.mData = new String(data, HTTPUtil.HTTP_CHARSET_UTF8);
 			BoyiaUIView.nativeOnDataFinished(info.mData, info.mCallback);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
