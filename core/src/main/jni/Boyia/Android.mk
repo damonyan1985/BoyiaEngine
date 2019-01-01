@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 #编译器优化会导致一些问题
 LOCAL_PROGUARD_ENABLED := disabled
-LOCAL_MODULE    := Boyia
+LOCAL_MODULE    := boyia
 LOCAL_ARM_MODE  := arm
 LOCAL_CFLAGS    := -Werror
 LOCAL_CFLAGS    += -DFT2_BUILD_LIBRARY=1 -DANDROID_NDK

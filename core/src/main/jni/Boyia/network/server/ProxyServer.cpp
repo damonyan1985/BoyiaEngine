@@ -29,11 +29,11 @@ public:
         setnonblocking(m_socket);
 
         struct sockaddr_in local;
-        bzero (&local, sizeof (local));
+        bzero (&local, sizeof(local));
 		local.sin_family = AF_INET;
 		local.sin_addr.s_addr = htonl(INADDR_ANY);;
 		local.sin_port = htons(PORT);
-		if (bind(m_socket, (struct sockaddr *) &local, sizeof (local)) < 0)
+		if (bind(m_socket, (struct sockaddr *) &local, sizeof(local)) < 0)
 		{
 			return;
 		}
@@ -55,7 +55,7 @@ public:
         struct epoll_event ev;
         ev.events = EPOLLIN;
 	    ev.data.fd = m_socket;
-		if (epoll_ctl (m_epoll, EPOLL_CTL_ADD, m_socket, &ev) == -1)
+		if (epoll_ctl(m_epoll, EPOLL_CTL_ADD, m_socket, &ev) == -1)
 		{
 			return;
 		}
@@ -118,7 +118,7 @@ public:
 				if (events[i].events & EPOLLOUT)
 				{
 					snprintf(buf, sizeof(buf), "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World", 11);
-					int nwrite, data_size = strlen (buf);
+					int nwrite, data_size = strlen(buf);
 					int n = data_size;
 					while (n > 0)
 					{
