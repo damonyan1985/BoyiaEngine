@@ -11,7 +11,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        this.getSystemService(Context.WINDOW_SERVICE);
+        //this.getSystemService(Context.WINDOW_SERVICE);
         final Intent intent = new Intent(this, BoyiaActivity.class);
         startActivity(intent);
     }

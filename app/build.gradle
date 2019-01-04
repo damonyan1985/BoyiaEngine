@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 apply from: "$rootDir/library.gradle"
 
@@ -21,6 +20,13 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

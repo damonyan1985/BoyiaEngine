@@ -19,3 +19,17 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn com.squareup.**
+-dontwarn okio.**
+
+-keep class com.boyia.app.core.** {*;}
+-keep class com.boyia.app.common.utils.BoyiaUtils {*;}
+-keep class com.boyia.app.common.utils.ZipOperation {*;}
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class java.nio.* { *; }
