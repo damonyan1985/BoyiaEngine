@@ -116,10 +116,7 @@ target_include_directories(
 find_library(
     boyia_link_lib
     log
-    EGL
-    GLESv3
     android
-    jnigraphics
 )
 
 target_link_libraries(
