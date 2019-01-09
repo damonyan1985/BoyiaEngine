@@ -54,5 +54,5 @@ uploadArchives {
 }
 
 dependencies {
-    compileOnly project(':common')
+    compileOnly 'com.boyia.app.common:common:1.0.0'
 }
