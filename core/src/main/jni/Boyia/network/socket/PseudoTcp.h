@@ -28,11 +28,15 @@
 #ifndef __PSEUDOTCP_H__
 #define __PSEUDOTCP_H__
 
-//#include <list>
+#include <list>
 //#include "talk/base/basictypes.h"
+#include "PlatformLib.h"
 
 namespace yanbo {
 
+typedef LUint32 uint32;
+typedef LUint16 uint16;
+typedef LUint8 uint8;
 //////////////////////////////////////////////////////////////////////
 // IPseudoTcpNotify
 //////////////////////////////////////////////////////////////////////
