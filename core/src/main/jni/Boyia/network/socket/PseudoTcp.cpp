@@ -264,8 +264,7 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
 PseudoTcp::~PseudoTcp() {
 }
 
-int
-PseudoTcp::Connect() {
+int PseudoTcp::Connect() {
   if (m_state != TCP_LISTEN) {
     m_error = EINVAL;
     return -1;
@@ -282,16 +281,14 @@ PseudoTcp::Connect() {
   return 0;
 }
 
-void
-PseudoTcp::NotifyMTU(uint16 mtu) {
+void PseudoTcp::NotifyMTU(uint16 mtu) {
   m_mtu_advise = mtu;
   if (m_state == TCP_ESTABLISHED) {
     adjustMTU();
   }
 }
 
-void
-PseudoTcp::NotifyClock(uint32 now) {
+void PseudoTcp::NotifyClock(uint32 now) {
   if (m_state == TCP_CLOSED)
     return;
 
@@ -361,8 +358,7 @@ PseudoTcp::NotifyClock(uint32 now) {
 #endif // PSEUDO_KEEPALIVE
 }
 
-bool
-PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
+bool PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
   if (len > MAX_PACKET) {
     LOG_F(WARNING) << "packet too large";
     return false;
@@ -370,8 +366,7 @@ PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
   return parse(reinterpret_cast<const uint8 *>(buffer), uint32(len));
 }
 
-bool
-PseudoTcp::GetNextClock(uint32 now, long& timeout) {
+bool PseudoTcp::GetNextClock(uint32 now, long& timeout) {
   return clock_check(now, timeout);
 }
 
@@ -379,8 +374,7 @@ PseudoTcp::GetNextClock(uint32 now, long& timeout) {
 // IPStream Implementation
 //
 
-int
-PseudoTcp::Recv(char * buffer, size_t len) {
+int PseudoTcp::Recv(char * buffer, size_t len) {
   if (m_state != TCP_ESTABLISHED) {
     m_error = ENOTCONN;
     return SOCKET_ERROR;
@@ -413,8 +407,7 @@ PseudoTcp::Recv(char * buffer, size_t len) {
   return read;
 }
 
-int
-PseudoTcp::Send(const char * buffer, size_t len) {
+int PseudoTcp::Send(const char * buffer, size_t len) {
   if (m_state != TCP_ESTABLISHED) {
     m_error = ENOTCONN;
     return SOCKET_ERROR;
@@ -431,8 +424,7 @@ PseudoTcp::Send(const char * buffer, size_t len) {
   return written;
 }
 
-void
-PseudoTcp::Close(bool force) {
+void PseudoTcp::Close(bool force) {
   LOG_F(LS_VERBOSE) << "(" << (force ? "true" : "false") << ")";
   m_shutdown = force ? SD_FORCEFUL : SD_GRACEFUL;
 }
@@ -445,8 +437,7 @@ int PseudoTcp::GetError() {
 // Internal Implementation
 //
 
-uint32
-PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
+uint32 PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
   if (len > sizeof(m_sbuf) - m_slen) {
     ASSERT(!bCtrl);
     len = sizeof(m_sbuf) - m_slen;
