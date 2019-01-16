@@ -30,8 +30,8 @@ public class Downloader implements ILoaderCallback {
     public void download(DownloadData info) {
         mInfo = info;
         mLoader = new BoyiaLoader(this, true);
-        BoyiaLog.d("yanbo", "download url="+info.getFile_url());
-        mLoader.load(info.getFile_url());
+        BoyiaLog.d("yanbo", "download url="+info.getFileUrl());
+        mLoader.load(info.getFileUrl());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Downloader implements ILoaderCallback {
             downDir.mkdirs();
         }
 
-        File downFile = new File(mInfo.getFile_path());
+        File downFile = new File(mInfo.getFilePath());
         if (downFile.exists()) {
             rangeStart = downFile.length();
         }
@@ -57,7 +57,7 @@ public class Downloader implements ILoaderCallback {
         }
 
         try {
-            mSavedFile = new RandomAccessFile(mInfo.getFile_path(), "rw");
+            mSavedFile = new RandomAccessFile(mInfo.getFilePath(), "rw");
             mSavedFile.seek(rangeStart);
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class Downloader implements ILoaderCallback {
     @Override
     public void onLoaderDataSize(long size) {
         BoyiaLog.d("yanbo", "download size="+size);
-        mInfo.setMax_len(size);
+        mInfo.setMaxLength(size);
     }
 
     @Override
