@@ -42,9 +42,9 @@ namespace util
 
 #define LSTATIC_CAST(typ, object) static_cast<tpy>(object)
 
-#define LMax(a, b) (a>=b)?a:b
+#define LMax(a, b) ((a>=b)?a:b)
 
-#define LMin(a, b) (a>=b)?b:a
+#define LMin(a, b) ((a>=b)?b:a)
 
 
 //
