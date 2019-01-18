@@ -2,6 +2,7 @@ package com.boyia.app.update;
 
 import com.boyia.app.BoyiaMultiApplication;
 import com.boyia.app.AppDB;
+import com.boyia.app.common.BoyiaApplication;
 
 import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
@@ -12,7 +13,7 @@ public class DownloadUtil {
         AppDB dbHelper = null;
         try {
             if (null == dbHelper) {
-                dbHelper = new AppDB(BoyiaMultiApplication.getCurrenContext());
+                dbHelper = new AppDB(BoyiaApplication.getCurrenContext());
             }
             db = dbHelper.getWritableDatabase();
         } catch (Exception e) {
@@ -54,5 +55,17 @@ public class DownloadUtil {
             infoDAO.update(info);
             db.close();
         }
+    }
+
+    public static String getDownloadTableName() {
+	    String name = "";
+        SQLiteDatabase db = getAppDB();
+        if (db != null) {
+            DownloadDAO infoDAO = new DownloadDAO(db);
+            name = infoDAO.getTableName();
+            db.close();
+        }
+
+        return name;
     }
 }

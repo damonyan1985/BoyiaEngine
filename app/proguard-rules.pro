@@ -32,4 +32,8 @@
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.database.sqlite.SQLiteOpenHelper{*;}
+-keep public class * extends java.lang.annotation.Annotation {*;}
+-keep public class com.boyia.app.common.db.BoyiaData {*;}
+-keep public class com.boyia.app.update.DownloadData {*;}
 -keep public class java.nio.* { *; }
