@@ -34,6 +34,7 @@
 // #include "talk/base/stringutils.h"
 // #include "talk/base/time.h"
 #include "PseudoTcp.h"
+#include "SystemUtil.h"
 
 #ifdef POSIX
 extern "C" {
@@ -48,6 +49,22 @@ extern "C" {
 #define _DEBUGMSG _DBG_NONE
 
 namespace yanbo {
+
+inline uint16 HostToNetwork16(uint16 n) {
+  return htons(n);
+}
+
+inline uint32 HostToNetwork32(uint32 n) {
+  return htonl(n);
+}
+
+inline uint16 NetworkToHost16(uint16 n) {
+  return ntohs(n);
+}
+
+inline uint32 NetworkToHost32(uint32 n) {
+  return ntohl(n);
+}
 
 //////////////////////////////////////////////////////////////////////
 // Network Constants
@@ -152,23 +169,23 @@ const uint32 IDLE_TIMEOUT = 90 * 1000; // 90 seconds;
 //////////////////////////////////////////////////////////////////////
 
 inline void long_to_bytes(uint32 val, void* buf) {
-  *static_cast<uint32*>(buf) = talk_base::HostToNetwork32(val);
+  *static_cast<uint32*>(buf) = HostToNetwork32(val);
 }
 
 inline void short_to_bytes(uint16 val, void* buf) {
-  *static_cast<uint16*>(buf) = talk_base::HostToNetwork16(val);
+  *static_cast<uint16*>(buf) = HostToNetwork16(val);
 }
 
 inline uint32 bytes_to_long(const void* buf) {
-  return talk_base::NetworkToHost32(*static_cast<const uint32*>(buf));
+  return NetworkToHost32(*static_cast<const uint32*>(buf));
 }
 
 inline uint16 bytes_to_short(const void* buf) {
-  return talk_base::NetworkToHost16(*static_cast<const uint16*>(buf));
+  return NetworkToHost16(*static_cast<const uint16*>(buf));
 }
 
 uint32 bound(uint32 lower, uint32 middle, uint32 upper) {
-  return talk_base::_min(talk_base::_max(lower, middle), upper);
+  return LMin(LMax(lower, middle), upper);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -217,7 +234,8 @@ uint32 PseudoTcp::Now() {
 #if 0  // Use this to synchronize timers with logging timestamps (easier debug)
   return talk_base::ElapsedTime();
 #else
-  return talk_base::Time();
+  //return talk_base::Time();
+  return SystemUtil::getSystemTime();
 #endif
 }
 
@@ -293,7 +311,7 @@ void PseudoTcp::NotifyClock(uint32 now) {
     return;
 
     // Check if it's time to retransmit a segment
-  if (m_rto_base && (talk_base::TimeDiff(m_rto_base + m_rx_rto, now) <= 0)) {
+  if (m_rto_base && (SystemUtil::timeDiff(m_rto_base + m_rx_rto, now) <= 0)) {
     if (m_slist.empty()) {
       ASSERT(false);
     } else {
@@ -312,21 +330,21 @@ void PseudoTcp::NotifyClock(uint32 now) {
       }
 
       uint32 nInFlight = m_snd_nxt - m_snd_una;
-      m_ssthresh = talk_base::_max(nInFlight / 2, 2 * m_mss);
+      m_ssthresh = LMax(nInFlight / 2, 2 * m_mss);
       //LOG(LS_INFO) << "m_ssthresh: " << m_ssthresh << "  nInFlight: " << nInFlight << "  m_mss: " << m_mss;
       m_cwnd = m_mss;
 
       // Back off retransmit timer.  Note: the limit is lower when connecting.
       uint32 rto_limit = (m_state < TCP_ESTABLISHED) ? DEF_RTO : MAX_RTO;
-      m_rx_rto = talk_base::_min(rto_limit, m_rx_rto * 2);
+      m_rx_rto = LMin(rto_limit, m_rx_rto * 2);
       m_rto_base = now;
     }
   }
   
   // Check if it's time to probe closed windows
   if ((m_snd_wnd == 0) 
-        && (talk_base::TimeDiff(m_lastsend + m_rx_rto, now) <= 0)) {
-    if (talk_base::TimeDiff(now, m_lastrecv) >= 15000) {
+        && (SystemUtil::timeDiff(m_lastsend + m_rx_rto, now) <= 0)) {
+    if (SystemUtil::timeDiff(now, m_lastrecv) >= 15000) {
       closedown(ECONNABORTED);
       return;
     }
@@ -336,11 +354,11 @@ void PseudoTcp::NotifyClock(uint32 now) {
     m_lastsend = now;
 
     // back off retransmit timer
-    m_rx_rto = talk_base::_min(MAX_RTO, m_rx_rto * 2);
+    m_rx_rto = LMin(MAX_RTO, m_rx_rto * 2);
   }
 
   // Check if it's time to send delayed acks
-  if (m_t_ack && (talk_base::TimeDiff(m_t_ack + ACK_DELAY, now) <= 0)) {
+  if (m_t_ack && (SystemUtil::timeDiff(m_t_ack + ACK_DELAY, now) <= 0)) {
     packet(m_snd_nxt, 0, 0, 0);
   }
 
@@ -558,20 +576,20 @@ PseudoTcp::clock_check(uint32 now, long& nTimeout) {
   nTimeout = DEFAULT_TIMEOUT;
 
   if (m_t_ack) {
-    nTimeout = talk_base::_min(nTimeout, 
-      talk_base::TimeDiff(m_t_ack + ACK_DELAY, now));
+    nTimeout = LMin(nTimeout, 
+    SystemUtil::timeDiff(m_t_ack + ACK_DELAY, now));
   }
   if (m_rto_base) {
-    nTimeout = talk_base::_min(nTimeout, 
-      talk_base::TimeDiff(m_rto_base + m_rx_rto, now));
+    nTimeout = LMin(nTimeout, 
+    SystemUtil::timeDiff(m_rto_base + m_rx_rto, now));
   }
   if (m_snd_wnd == 0) {
-    nTimeout = talk_base::_min(nTimeout, talk_base::TimeDiff(m_lastsend + m_rx_rto, now));
+    nTimeout = LMin(nTimeout, SystemUtil::timeDiff(m_lastsend + m_rx_rto, now));
   }
 #if PSEUDO_KEEPALIVE
   if (m_state == TCP_ESTABLISHED) {
-    nTimeout = talk_base::_min(nTimeout, 
-      talk_base::TimeDiff(m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3/2 : IDLE_PING), now));
+    nTimeout = LMin(nTimeout, 
+      SystemUtil::timeDiff(m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3/2 : IDLE_PING), now));
   }
 #endif // PSEUDO_KEEPALIVE
   return true;
@@ -643,7 +661,7 @@ PseudoTcp::process(Segment& seg) {
   if ((seg.ack > m_snd_una) && (seg.ack <= m_snd_nxt)) {
     // Calculate round-trip time
     if (seg.tsecr) {
-      long rtt = talk_base::TimeDiff(now, seg.tsecr);
+      long rtt = SystemUtil::timeDiff(now, seg.tsecr);
       if (rtt >= 0) {
         if (m_rx_srtt == 0) {
           m_rx_srtt = rtt;
@@ -691,7 +709,7 @@ PseudoTcp::process(Segment& seg) {
     if (m_dup_acks >= 3) {
       if (m_snd_una >= m_recover) { // NewReno
         uint32 nInFlight = m_snd_nxt - m_snd_una;
-        m_cwnd = talk_base::_min(m_ssthresh, nInFlight + m_mss); // (Fast Retransmit) 
+        m_cwnd = LMin(m_ssthresh, nInFlight + m_mss); // (Fast Retransmit) 
 #if _DEBUGMSG >= _DBG_NORMAL
         LOG(LS_INFO) << "exit recovery";
 #endif // _DEBUGMSG
@@ -704,7 +722,7 @@ PseudoTcp::process(Segment& seg) {
           closedown(ECONNABORTED);
           return false;
         }
-        m_cwnd += m_mss - talk_base::_min(nAcked, m_cwnd);
+        m_cwnd += m_mss - LMin(nAcked, m_cwnd);
       }
     } else {
       m_dup_acks = 0;
@@ -712,7 +730,7 @@ PseudoTcp::process(Segment& seg) {
       if (m_cwnd < m_ssthresh) {
         m_cwnd += m_mss;
       } else {
-        m_cwnd += talk_base::_max(1LU, m_mss * m_mss / m_cwnd);
+        m_cwnd += LMax(1LU, m_mss * m_mss / m_cwnd);
       }
     }
 
@@ -758,7 +776,7 @@ PseudoTcp::process(Segment& seg) {
         }
         m_recover = m_snd_nxt;
         uint32 nInFlight = m_snd_nxt - m_snd_una;
-        m_ssthresh = talk_base::_max(nInFlight / 2, 2 * m_mss);
+        m_ssthresh = LMax(nInFlight / 2, 2 * m_mss);
         //LOG(LS_INFO) << "m_ssthresh: " << m_ssthresh << "  nInFlight: " << nInFlight << "  m_mss: " << m_mss;
         m_cwnd = m_ssthresh + 3 * m_mss;
       } else if (m_dup_acks > 3) {
@@ -879,7 +897,7 @@ PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
     return false;
   }
 
-  uint32 nTransmit = talk_base::_min(seg->len, m_mss);
+  uint32 nTransmit = LMin(seg->len, m_mss);
 
   while (true) {
     uint32 seq = seg->seq;
@@ -944,7 +962,7 @@ void
 PseudoTcp::attemptSend(SendFlags sflags) {
   uint32 now = Now();
 
-  if (talk_base::TimeDiff(now, m_lastsend) > static_cast<long>(m_rx_rto)) {
+  if (SystemUtil::timeDiff(now, m_lastsend) > static_cast<long>(m_rx_rto)) {
     m_cwnd = m_mss;
   }
 
@@ -958,11 +976,11 @@ PseudoTcp::attemptSend(SendFlags sflags) {
     if ((m_dup_acks == 1) || (m_dup_acks == 2)) { // Limited Transmit
       cwnd += m_dup_acks * m_mss;
     }
-    uint32 nWindow = talk_base::_min(m_snd_wnd, cwnd);
+    uint32 nWindow = LMin(m_snd_wnd, cwnd);
     uint32 nInFlight = m_snd_nxt - m_snd_una;
     uint32 nUseable = (nInFlight < nWindow) ? (nWindow - nInFlight) : 0;
 
-    uint32 nAvailable = talk_base::_min(m_slen - nInFlight, m_mss);
+    uint32 nAvailable = LMin(m_slen - nInFlight, m_mss);
 
     if (nAvailable > nUseable) {
       if (nUseable * 4 < nWindow) {
@@ -1055,8 +1073,8 @@ PseudoTcp::adjustMTU() {
   LOG(LS_INFO) << "Adjusting mss to " << m_mss << " bytes";
 #endif // _DEBUGMSG
   // Enforce minimums on ssthresh and cwnd
-  m_ssthresh = talk_base::_max(m_ssthresh, 2 * m_mss);
-  m_cwnd = talk_base::_max(m_cwnd, m_mss);
+  m_ssthresh = LMax(m_ssthresh, 2 * m_mss);
+  m_cwnd = LMax(m_cwnd, m_mss);
 }
 
 } // namespace cricket
