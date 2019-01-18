@@ -3,6 +3,7 @@ package com.boyia.app;
 import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.common.job.JobScheduler;
 import com.boyia.app.ui.BoyiaWindow;
+import com.boyia.app.update.DownloadUtil;
 import com.boyia.app.upgrade.UpgradeUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -68,6 +69,7 @@ public class BoyiaActivity extends BaseActivity implements UpgradeUtil.UpgradeLi
 		getMainView().setBackgroundColor(Color.WHITE);
 		
 		initView();
+
 		//UpgradeUtil.upgradeAsset(this);
 		//UpgradeUtil.upgradeAppFromUrl(UpgradeUtil.ZIP_URL, this);
     }

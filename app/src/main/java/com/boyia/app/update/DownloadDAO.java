@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
-import com.boyia.app.common.db.DBAnnotation.DBTable;
 
 public class DownloadDAO extends BoyiaDAO<DownloadData> {
     //public static final String TABLE_NAME = "downloads";
@@ -44,7 +43,7 @@ public class DownloadDAO extends BoyiaDAO<DownloadData> {
 
     @Override
     public String getTableName() {
-        return DownloadData.class.getAnnotation(DBTable.class).name();
+        return super.getTableName();
     }
 }
 

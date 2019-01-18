@@ -1,7 +1,7 @@
 package com.boyia.app.update;
 
 import com.boyia.app.common.db.BoyiaData;
-import com.boyia.app.common.db.DBAnnotation.DBField;
+import com.boyia.app.common.db.DBAnnotation.DBColumn;
 import com.boyia.app.common.db.DBAnnotation.DBTable;
 
 @DBTable(name = "downloads")
@@ -12,22 +12,22 @@ public class DownloadData extends BoyiaData {
     public static final int FINISHED = 0x3;
     public static final int ERROR = 0x4;
 
-    @DBField(name = "file_url")
+    @DBColumn(name = "file_url")
     private String fileUrl;
 
-    @DBField(name = "file_path")
+    @DBColumn(name = "file_path")
     private String filePath;
 
-    @DBField(name = "file_name")
+    @DBColumn(name = "file_name")
     private String fileName;
 
-    @DBField(name = "current_size")
+    @DBColumn(name = "current_size")
     private int currentSize = 0;
 
-    @DBField(name = "max_len")
+    @DBColumn(name = "max_len")
     private long maxLength = 0;
 
-    @DBField(name = "status")
+    @DBColumn(name = "status")
     private int status = PAUSE;
 
     public String getFileUrl() {
