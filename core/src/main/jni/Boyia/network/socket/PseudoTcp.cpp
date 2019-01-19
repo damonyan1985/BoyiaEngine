@@ -38,9 +38,13 @@
 
 #ifdef POSIX
 extern "C" {
+#include <arpa/inet.h>
+#include <sys/socket.h>
 #include <errno.h>
+
+#define SOCKET_ERROR (-1)  
 }
-#endif // POSIX
+#endif
 
 // The following logging is for detailed (packet-level) pseudotcp analysis only.
 #define _DBG_NONE     0
@@ -243,7 +247,7 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
     : m_notify(notify), m_shutdown(SD_NONE), m_error(0) {
 
   // Sanity check on buffer sizes (needed for OnTcpWriteable notification logic)
-  ASSERT(sizeof(m_rbuf) + MIN_PACKET < sizeof(m_sbuf));
+  //ASSERT(sizeof(m_rbuf) + MIN_PACKET < sizeof(m_sbuf));
 
   uint32 now = Now();
 
@@ -259,7 +263,7 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
 
   m_msslevel = 0;
   m_largest = 0;
-  ASSERT(MIN_PACKET > PACKET_OVERHEAD);
+  //ASSERT(MIN_PACKET > PACKET_OVERHEAD);
   m_mss = MIN_PACKET - PACKET_OVERHEAD;
   m_mtu_advise = MAX_PACKET;
 
@@ -289,7 +293,7 @@ int PseudoTcp::Connect() {
   }
 
   m_state = TCP_SYN_SENT;
-  LOG(LS_INFO) << "State: TCP_SYN_SENT";
+  //LOG(LS_INFO) << "State: TCP_SYN_SENT";
 
   char buffer[1];
   buffer[0] = CTL_CONNECT;
@@ -313,16 +317,16 @@ void PseudoTcp::NotifyClock(uint32 now) {
     // Check if it's time to retransmit a segment
   if (m_rto_base && (SystemUtil::timeDiff(m_rto_base + m_rx_rto, now) <= 0)) {
     if (m_slist.empty()) {
-      ASSERT(false);
+      //ASSERT(false);
     } else {
       // Note: (m_slist.front().xmit == 0)) {
       // retransmit segments
 #if _DEBUGMSG >= _DBG_NORMAL
-      LOG(LS_INFO) << "timeout retransmit (rto: " << m_rx_rto
-                   << ") (rto_base: " << m_rto_base
-                   << ") (now: " << now
-                   << ") (dup_acks: " << static_cast<unsigned>(m_dup_acks)
-                   << ")";
+      // LOG(LS_INFO) << "timeout retransmit (rto: " << m_rx_rto
+      //              << ") (rto_base: " << m_rto_base
+      //              << ") (now: " << now
+      //              << ") (dup_acks: " << static_cast<unsigned>(m_dup_acks)
+      //              << ")";
 #endif // _DEBUGMSG
       if (!transmit(m_slist.begin(), now)) {
         closedown(ECONNABORTED);
@@ -378,7 +382,7 @@ void PseudoTcp::NotifyClock(uint32 now) {
 
 bool PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
   if (len > MAX_PACKET) {
-    LOG_F(WARNING) << "packet too large";
+    //LOG_F(WARNING) << "packet too large";
     return false;
   }
   return parse(reinterpret_cast<const uint8 *>(buffer), uint32(len));
@@ -404,7 +408,7 @@ int PseudoTcp::Recv(char * buffer, size_t len) {
     return SOCKET_ERROR;
   }
 
-  uint32 read = talk_base::_min(uint32(len), m_rlen);
+  uint32 read = LMin(uint32(len), m_rlen);
   memcpy(buffer, m_rbuf, read);
   m_rlen -= read;
 
@@ -412,7 +416,7 @@ int PseudoTcp::Recv(char * buffer, size_t len) {
   memmove(m_rbuf, m_rbuf + read, sizeof(m_rbuf) - read/*m_rlen*/);
 
   if ((sizeof(m_rbuf) - m_rlen - m_rcv_wnd) 
-      >= talk_base::_min<uint32>(sizeof(m_rbuf) / 2, m_mss)) {
+      >= (uint32)LMin(sizeof(m_rbuf) / 2, m_mss)) {
     bool bWasClosed = (m_rcv_wnd == 0); // !?! Not sure about this was closed business
 
     m_rcv_wnd = sizeof(m_rbuf) - m_rlen;
@@ -443,7 +447,7 @@ int PseudoTcp::Send(const char * buffer, size_t len) {
 }
 
 void PseudoTcp::Close(bool force) {
-  LOG_F(LS_VERBOSE) << "(" << (force ? "true" : "false") << ")";
+  //LOG_F(LS_VERBOSE) << "(" << (force ? "true" : "false") << ")";
   m_shutdown = force ? SD_FORCEFUL : SD_GRACEFUL;
 }
 
@@ -457,7 +461,7 @@ int PseudoTcp::GetError() {
 
 uint32 PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
   if (len > sizeof(m_sbuf) - m_slen) {
-    ASSERT(!bCtrl);
+    //ASSERT(!bCtrl);
     len = sizeof(m_sbuf) - m_slen;
   }
 
@@ -478,7 +482,7 @@ uint32 PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
 
 IPseudoTcpNotify::WriteResult
 PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
-  ASSERT(HEADER_SIZE + len <= MAX_PACKET);
+  //ASSERT(HEADER_SIZE + len <= MAX_PACKET);
 
   uint32 now = Now();
 
@@ -498,14 +502,14 @@ PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
   memcpy(buffer + HEADER_SIZE, data, len);
 
 #if _DEBUGMSG >= _DBG_VERBOSE
-  LOG(LS_INFO) << "<-- <CONV=" << m_conv
-               << "><FLG=" << static_cast<unsigned>(flags)
-               << "><SEQ=" << seq << ":" << seq + len
-               << "><ACK=" << m_rcv_nxt
-               << "><WND=" << m_rcv_wnd
-               << "><TS="  << (now % 10000)
-               << "><TSR=" << (m_ts_recent % 10000)
-               << "><LEN=" << len << ">";
+  // LOG(LS_INFO) << "<-- <CONV=" << m_conv
+  //              << "><FLG=" << static_cast<unsigned>(flags)
+  //              << "><SEQ=" << seq << ":" << seq + len
+  //              << "><ACK=" << m_rcv_nxt
+  //              << "><WND=" << m_rcv_wnd
+  //              << "><TS="  << (now % 10000)
+  //              << "><TSR=" << (m_ts_recent % 10000)
+  //              << "><LEN=" << len << ">";
 #endif // _DEBUGMSG
 
   IPseudoTcpNotify::WriteResult wres = m_notify->TcpWritePacket(this, reinterpret_cast<char *>(buffer), len + HEADER_SIZE);
@@ -544,14 +548,14 @@ PseudoTcp::parse(const uint8 * buffer, uint32 size) {
   seg.len = size - HEADER_SIZE;
 
 #if _DEBUGMSG >= _DBG_VERBOSE
-  LOG(LS_INFO) << "--> <CONV=" << seg.conv
-               << "><FLG=" << static_cast<unsigned>(seg.flags)
-               << "><SEQ=" << seg.seq << ":" << seg.seq + seg.len
-               << "><ACK=" << seg.ack
-               << "><WND=" << seg.wnd
-               << "><TS="  << (seg.tsval % 10000)
-               << "><TSR=" << (seg.tsecr % 10000)
-               << "><LEN=" << seg.len << ">";
+  // LOG(LS_INFO) << "--> <CONV=" << seg.conv
+  //              << "><FLG=" << static_cast<unsigned>(seg.flags)
+  //              << "><SEQ=" << seg.seq << ":" << seg.seq + seg.len
+  //              << "><ACK=" << seg.ack
+  //              << "><WND=" << seg.wnd
+  //              << "><TS="  << (seg.tsval % 10000)
+  //              << "><TSR=" << (seg.tsecr % 10000)
+  //              << "><LEN=" << seg.len << ">";
 #endif // _DEBUGMSG
 
   return process(seg);
@@ -589,7 +593,7 @@ PseudoTcp::clock_check(uint32 now, long& nTimeout) {
 #if PSEUDO_KEEPALIVE
   if (m_state == TCP_ESTABLISHED) {
     nTimeout = LMin(nTimeout, 
-      SystemUtil::timeDiff(m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3/2 : IDLE_PING), now));
+    SystemUtil::timeDiff(m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3/2 : IDLE_PING), now));
   }
 #endif // PSEUDO_KEEPALIVE
   return true;
@@ -602,7 +606,7 @@ PseudoTcp::process(Segment& seg) {
     //if ((seg.flags & FLAG_RST) == 0) {
     //  packet(tcb, seg.ack, 0, FLAG_RST, 0, 0);
     //}
-    LOG_F(LS_ERROR) << "wrong conversation";
+    //LOG_F(LS_ERROR) << "wrong conversation";
     return false;
   }
 
@@ -612,7 +616,7 @@ PseudoTcp::process(Segment& seg) {
 
   if (m_state == TCP_CLOSED) {
     // !?! send reset?
-    LOG_F(LS_ERROR) << "closed";
+    //LOG_F(LS_ERROR) << "closed";
     return false;
   }
 
@@ -626,20 +630,20 @@ PseudoTcp::process(Segment& seg) {
   bool bConnect = false;
   if (seg.flags & FLAG_CTL) {
     if (seg.len == 0) {
-      LOG_F(LS_ERROR) << "Missing control code";
+      //LOG_F(LS_ERROR) << "Missing control code";
       return false;
     } else if (seg.data[0] == CTL_CONNECT) {
       bConnect = true;
       if (m_state == TCP_LISTEN) {
         m_state = TCP_SYN_RECEIVED;
-        LOG(LS_INFO) << "State: TCP_SYN_RECEIVED";
+        //LOG(LS_INFO) << "State: TCP_SYN_RECEIVED";
         //m_notify->associate(addr);
         char buffer[1];
         buffer[0] = CTL_CONNECT;
         queue(buffer, 1, true);
       } else if (m_state == TCP_SYN_SENT) {
         m_state = TCP_ESTABLISHED;
-        LOG(LS_INFO) << "State: TCP_ESTABLISHED";
+        //LOG(LS_INFO) << "State: TCP_ESTABLISHED";
         adjustMTU();
         if (m_notify) {
           m_notify->OnTcpOpen(this);
@@ -647,7 +651,7 @@ PseudoTcp::process(Segment& seg) {
         //notify(evOpen);
       }
     } else {
-      LOG_F(LS_WARNING) << "Unknown control code: " << seg.data[0];
+      //LOG_F(LS_WARNING) << "Unknown control code: " << seg.data[0];
       return false;
     }
   }
@@ -670,14 +674,14 @@ PseudoTcp::process(Segment& seg) {
           m_rx_rttvar = (3 * m_rx_rttvar + abs(long(rtt - m_rx_srtt))) / 4;
           m_rx_srtt = (7 * m_rx_srtt + rtt) / 8;
         }
-        m_rx_rto = bound(MIN_RTO, m_rx_srtt + talk_base::_max(1LU, 4 * m_rx_rttvar), MAX_RTO);
+        m_rx_rto = bound(MIN_RTO, m_rx_srtt + LMax(1LU, 4 * m_rx_rttvar), MAX_RTO);
 #if _DEBUGMSG >= _DBG_VERBOSE
-        LOG(LS_INFO) << "rtt: " << rtt
-                     << "  srtt: " << m_rx_srtt
-                     << "  rto: " << m_rx_rto;
+        // LOG(LS_INFO) << "rtt: " << rtt
+        //              << "  srtt: " << m_rx_srtt
+        //              << "  rto: " << m_rx_rto;
 #endif // _DEBUGMSG
       } else {
-        ASSERT(false);
+        //ASSERT(false);
       }
     }
 
@@ -693,7 +697,7 @@ PseudoTcp::process(Segment& seg) {
     //LOG(LS_INFO) << "PseudoTcp::process - m_slen = " << m_slen;
 
     for (uint32 nFree = nAcked; nFree > 0; ) {
-      ASSERT(!m_slist.empty());
+      //ASSERT(!m_slist.empty());
       if (nFree < m_slist.front().len) {
         m_slist.front().len -= nFree;
         nFree = 0;
@@ -711,12 +715,12 @@ PseudoTcp::process(Segment& seg) {
         uint32 nInFlight = m_snd_nxt - m_snd_una;
         m_cwnd = LMin(m_ssthresh, nInFlight + m_mss); // (Fast Retransmit) 
 #if _DEBUGMSG >= _DBG_NORMAL
-        LOG(LS_INFO) << "exit recovery";
+        //LOG(LS_INFO) << "exit recovery";
 #endif // _DEBUGMSG
         m_dup_acks = 0;
       } else {
 #if _DEBUGMSG >= _DBG_NORMAL
-        LOG(LS_INFO) << "recovery retransmit";
+        //LOG(LS_INFO) << "recovery retransmit";
 #endif // _DEBUGMSG
         if (!transmit(m_slist.begin(), now)) {
           closedown(ECONNABORTED);
@@ -737,7 +741,7 @@ PseudoTcp::process(Segment& seg) {
     // !?! A bit hacky
     if ((m_state == TCP_SYN_RECEIVED) && !bConnect) {
       m_state = TCP_ESTABLISHED;
-      LOG(LS_INFO) << "State: TCP_ESTABLISHED";
+      //LOG(LS_INFO) << "State: TCP_ESTABLISHED";
       adjustMTU();
       if (m_notify) {
         m_notify->OnTcpOpen(this);
@@ -767,8 +771,8 @@ PseudoTcp::process(Segment& seg) {
       m_dup_acks += 1;
       if (m_dup_acks == 3) { // (Fast Retransmit)
 #if _DEBUGMSG >= _DBG_NORMAL
-        LOG(LS_INFO) << "enter recovery";
-        LOG(LS_INFO) << "recovery retransmit";
+        //LOG(LS_INFO) << "enter recovery";
+        //LOG(LS_INFO) << "recovery retransmit";
 #endif // _DEBUGMSG
         if (!transmit(m_slist.begin(), now)) {
           closedown(ECONNABORTED);
@@ -802,9 +806,9 @@ PseudoTcp::process(Segment& seg) {
 #if _DEBUGMSG >= _DBG_NORMAL
   if (sflags == sfImmediateAck) {
     if (seg.seq > m_rcv_nxt) {
-      LOG_F(LS_INFO) << "too new";
+      //LOG_F(LS_INFO) << "too new";
     } else if (seg.seq + seg.len <= m_rcv_nxt) {
-      LOG_F(LS_INFO) << "too old";
+      //LOG_F(LS_INFO) << "too old";
     }
   }
 #endif // _DEBUGMSG
@@ -852,7 +856,7 @@ PseudoTcp::process(Segment& seg) {
             sflags = sfImmediateAck; // (Fast Recovery)
             uint32 nAdjust = (it->seq + it->len) - m_rcv_nxt;
 #if _DEBUGMSG >= _DBG_NORMAL
-            LOG(LS_INFO) << "Recovered " << nAdjust << " bytes (" << m_rcv_nxt << " -> " << m_rcv_nxt + nAdjust << ")";
+            //LOG(LS_INFO) << "Recovered " << nAdjust << " bytes (" << m_rcv_nxt << " -> " << m_rcv_nxt + nAdjust << ")";
 #endif // _DEBUGMSG
             m_rlen += nAdjust;
             m_rcv_nxt += nAdjust;
@@ -862,7 +866,7 @@ PseudoTcp::process(Segment& seg) {
         }
       } else {
 #if _DEBUGMSG >= _DBG_NORMAL
-        LOG(LS_INFO) << "Saving " << seg.len << " bytes (" << seg.seq << " -> " << seg.seq + seg.len << ")";
+        //LOG(LS_INFO) << "Saving " << seg.len << " bytes (" << seg.seq << " -> " << seg.seq + seg.len << ")";
 #endif // _DEBUGMSG
         RSegment rseg;
         rseg.seq = seg.seq;
@@ -893,7 +897,7 @@ PseudoTcp::process(Segment& seg) {
 bool
 PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
   if (seg->xmit >= ((m_state == TCP_ESTABLISHED) ? 15 : 30)) {
-    LOG_F(LS_VERBOSE) << "too many retransmits";
+    //LOG_F(LS_VERBOSE) << "too many retransmits";
     return false;
   }
 
@@ -909,15 +913,15 @@ PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
       break;
 
     if (wres == IPseudoTcpNotify::WR_FAIL) {
-      LOG_F(LS_VERBOSE) << "packet failed";
+      //LOG_F(LS_VERBOSE) << "packet failed";
       return false;
     }
 
-    ASSERT(wres == IPseudoTcpNotify::WR_TOO_LARGE);
+    //ASSERT(wres == IPseudoTcpNotify::WR_TOO_LARGE);
 
     while (true) {
       if (PACKET_MAXIMUMS[m_msslevel + 1] == 0) {
-        LOG_F(LS_VERBOSE) << "MTU too small";
+        //LOG_F(LS_VERBOSE) << "MTU too small";
         return false;
       }
       // !?! We need to break up all outstanding and pending packets and then retransmit!?!
@@ -930,12 +934,12 @@ PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
       }
     }
 #if _DEBUGMSG >= _DBG_NORMAL
-    LOG(LS_INFO) << "Adjusting mss to " << m_mss << " bytes";
+    //LOG(LS_INFO) << "Adjusting mss to " << m_mss << " bytes";
 #endif // _DEBUGMSG
   }
 
   if (nTransmit < seg->len) {
-    LOG_F(LS_VERBOSE) << "mss reduced to " << m_mss;
+    //LOG_F(LS_VERBOSE) << "mss reduced to " << m_mss;
 
     SSegment subseg(seg->seq + nTransmit, seg->len - nTransmit, seg->bCtrl);
     //subseg.tstamp = seg->tstamp;
@@ -994,13 +998,13 @@ PseudoTcp::attemptSend(SendFlags sflags) {
 #if _DEBUGMSG >= _DBG_VERBOSE
     if (bFirst) {
       bFirst = false;
-      LOG(LS_INFO) << "[cwnd: " << m_cwnd
-                   << "  nWindow: " << nWindow
-                   << "  nInFlight: " << nInFlight
-                   << "  nAvailable: " << nAvailable
-                   << "  nQueued: " << m_slen - nInFlight
-                   << "  nEmpty: " << sizeof(m_sbuf) - m_slen
-                   << "  ssthresh: " << m_ssthresh << "]";
+      // LOG(LS_INFO) << "[cwnd: " << m_cwnd
+      //              << "  nWindow: " << nWindow
+      //              << "  nInFlight: " << nInFlight
+      //              << "  nAvailable: " << nAvailable
+      //              << "  nQueued: " << m_slen - nInFlight
+      //              << "  nEmpty: " << sizeof(m_sbuf) - m_slen
+      //              << "  ssthresh: " << m_ssthresh << "]";
     }
 #endif // _DEBUGMSG
 
@@ -1026,7 +1030,7 @@ PseudoTcp::attemptSend(SendFlags sflags) {
     SList::iterator it = m_slist.begin();
     while (it->xmit > 0) {
       ++it;
-      ASSERT(it != m_slist.end());
+      //ASSERT(it != m_slist.end());
     }
     SList::iterator seg = it;
 
@@ -1038,7 +1042,7 @@ PseudoTcp::attemptSend(SendFlags sflags) {
     }
 
     if (!transmit(seg, now)) {
-      LOG_F(LS_VERBOSE) << "transmit failed";
+      //LOG_F(LS_VERBOSE) << "transmit failed";
       // TODO: consider closing socket
       return;
     }
@@ -1051,7 +1055,7 @@ void
 PseudoTcp::closedown(uint32 err) {
   m_slen = 0;
 
-  LOG(LS_INFO) << "State: TCP_CLOSED";
+  //LOG(LS_INFO) << "State: TCP_CLOSED";
   m_state = TCP_CLOSED;
   if (m_notify) {
     m_notify->OnTcpClosed(this, err);

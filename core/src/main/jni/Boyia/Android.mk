@@ -15,6 +15,7 @@ LOCAL_SHARED_LIBRARIES := libcurl libjpeg libpng libft2
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_CPP_EXTENSION := .cpp
 LOCAL_DISABLE_FORMAT_STRING_CHECKS := true
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 # platform instance by gl
 # LOCAL_LDLIBS := -llog -lGLESv1_CM -ldl
 # draw api instance
@@ -47,6 +48,7 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/network/image \
     $(LOCAL_PATH)/network/font \
     $(LOCAL_PATH)/network/threadpool \
+    $(LOCAL_PATH)/network/socket \
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/graphics/core \
