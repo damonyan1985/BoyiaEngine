@@ -1,5 +1,7 @@
 #include "EditorAndroid.h"
 #include "JNIUtil.h"
+#include "AutoObject.h"
+
 namespace util
 {
 static EditorAndroid* s_instance = NULL;
@@ -8,9 +10,14 @@ EditorAndroid::EditorAndroid()
 {
 }
 
-LVoid EditorAndroid::showKeyboard()
+LVoid EditorAndroid::showKeyboard(const String& text)
 {
-	JNIUtil::callStaticVoidMethod("com/boyia/app/core/BoyiaUIView", "showKeyboard", "(J)V", (jlong)m_view);
+	jstring strText = strToJstring(yanbo::JNIUtil::getEnv(), GET_STR(text));
+	JNIUtil::callStaticVoidMethod(
+		"com/boyia/app/core/BoyiaUIView", 
+		"showKeyboard", 
+		"(JLjava/lang/String;)V", 
+		(jlong)m_view, strText);
 }
 
 LVoid EditorAndroid::setView(LVoid* view)

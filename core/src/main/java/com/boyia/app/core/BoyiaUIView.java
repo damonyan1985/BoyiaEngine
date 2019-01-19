@@ -61,14 +61,14 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		nativeSetInputText(text, mInputManager.item());
 	}
 	
-	public void resetCommitText() {
+	public void resetCommitText(final String text) {
 		if (mInputConnect != null) {
-			mInputConnect.resetCommitText();
+			mInputConnect.resetCommitText(text);
 		}
 	}
 	
-	public static void showKeyboard(long callback) {
-		mInputManager.show(callback);
+	public static void showKeyboard(long callback, String text) {
+		mInputManager.show(callback, text);
 	}
 	
 	public void onTouchDown(MotionEvent event) {

@@ -25,7 +25,7 @@ public class BoyiaInputManager {
     	});
     }
     
-    public void show(final long item) {
+    public void show(final long item, final String text) {
     	//BoyiaUtils.showToast("重新弹起");
     	BaseActivity context = (BaseActivity) mView.getContext();
     	context.runOnUiThread(new Runnable() {
@@ -36,7 +36,7 @@ public class BoyiaInputManager {
 		    	InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		    	//imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 		    	imm.showSoftInput(mView, 0, mReceiver);
-		    	mView.resetCommitText();
+		    	mView.resetCommitText(text);
 			}
     	});
     }

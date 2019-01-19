@@ -338,7 +338,7 @@ void InputView::setSelected(const LBool selected)
         {
         case TEXT:
             {
-            	Editor::get(this)->showKeyboard();
+            	Editor::get(this)->showKeyboard(m_value);
             }
         	break;
         }
