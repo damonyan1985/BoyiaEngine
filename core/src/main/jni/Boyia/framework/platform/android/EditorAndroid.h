@@ -9,7 +9,7 @@ class EditorAndroid : public Editor
 {
 public:
 	EditorAndroid();
-	virtual LVoid showKeyboard();
+	virtual LVoid showKeyboard(const String& text);
 	LVoid setView(LVoid* view);
 
 private:
