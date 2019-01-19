@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(boyia)
 
-add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1)
+add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 
@@ -55,6 +55,7 @@ file(
     "network/font/*.cpp"
     "network/image/*.cpp"
     "network/ipc/*.cpp"
+    "network/socket/*.cpp"
     "network/test/*.cpp"
     "network/threadpool/*.cpp"
     "network/*.cpp"
@@ -106,6 +107,7 @@ target_include_directories(
     network/image
     network/ipc
     network/threadpool
+    network/socket
     ${EXTERNAL_PATH}/curl/include
     ${EXTERNAL_PATH}/jpeg
     ${EXTERNAL_PATH}/lpng/include
