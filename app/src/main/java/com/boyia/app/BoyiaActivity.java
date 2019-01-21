@@ -69,7 +69,7 @@ public class BoyiaActivity extends BaseActivity implements UpgradeUtil.UpgradeLi
 		getMainView().setBackgroundColor(Color.WHITE);
 		
 		initView();
-
+		testJsonParse();
 		//UpgradeUtil.upgradeAsset(this);
 		//UpgradeUtil.upgradeAppFromUrl(UpgradeUtil.ZIP_URL, this);
     }
