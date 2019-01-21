@@ -6,7 +6,7 @@ LOCAL_PROGUARD_ENABLED := disabled
 LOCAL_MODULE    := boyia
 LOCAL_ARM_MODE  := arm
 LOCAL_CFLAGS    := -Werror
-LOCAL_CFLAGS    += -DFT2_BUILD_LIBRARY=1 -DANDROID_NDK
+LOCAL_CFLAGS    += -DFT2_BUILD_LIBRARY=1 -DANDROID_NDK -DPOSIX
 #LOCAL_CFLAGS    += -DMINI_VULKAN
 LOCAL_LDLIBS    := -llog -lEGL -lGLESv3 -landroid -ljnigraphics
 #LOCAL_STATIC_LIBRARIES := libcurl
@@ -55,6 +55,10 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/graphics/shaders \
     $(LOCAL_PATH)/graphics/painter \
     $(LOCAL_PATH)/graphics/vulkan \
+    $(LOCAL_PATH)/graphics/utils \
+
+LOCAL_C_INCLUDES += \
+    $(LOCAL_PATH)/imessage/ptcp/ \
     
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/../External/curl/include \
@@ -72,6 +76,8 @@ include $(LOCAL_PATH)/graphics/Android.graphics.mk
 include $(LOCAL_PATH)/network/Android.network.mk
 
 include $(LOCAL_PATH)/framework/Android.by.mk
+
+include $(LOCAL_PATH)/imessage/Android.im.mk
 
 LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/porting/BoyiaJniOnLoad.cpp \

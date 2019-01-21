@@ -25,8 +25,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __PSEUDOTCP_H__
-#define __PSEUDOTCP_H__
+#ifndef PseudoTcp_h
+#define PseudoTcp_h
 
 #include <list>
 //#include "talk/base/basictypes.h"

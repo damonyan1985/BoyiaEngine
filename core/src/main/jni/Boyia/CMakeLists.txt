@@ -55,11 +55,16 @@ file(
     "network/font/*.cpp"
     "network/image/*.cpp"
     "network/ipc/*.cpp"
-    "network/socket/*.cpp"
     "network/test/*.cpp"
     "network/threadpool/*.cpp"
     "network/*.cpp"
     )
+
+file(
+    GLOB 
+    imessage_src
+    "imessage/ptcp/*.cpp"
+    )    
 
 file(
     GLOB 
@@ -73,6 +78,7 @@ add_library(
     ${framework_src}
     ${graphics_src}
     ${network_src}
+    ${imessage_src}
     ${porting_src}
 )
 
@@ -107,7 +113,7 @@ target_include_directories(
     network/image
     network/ipc
     network/threadpool
-    network/socket
+    imessage/ptcp
     ${EXTERNAL_PATH}/curl/include
     ${EXTERNAL_PATH}/jpeg
     ${EXTERNAL_PATH}/lpng/include
