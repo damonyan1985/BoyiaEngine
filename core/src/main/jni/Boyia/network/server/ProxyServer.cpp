@@ -26,7 +26,7 @@ public:
 	ProxyServer()
 	{
         m_socket = socket(AF_INET, SOCK_STREAM, 0);
-        setnonblocking(m_socket);
+        setNonblock(m_socket);
 
         struct sockaddr_in local;
         bzero (&local, sizeof(local));
