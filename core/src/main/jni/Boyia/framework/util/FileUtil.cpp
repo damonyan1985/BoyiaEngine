@@ -12,6 +12,9 @@ namespace util
 LVoid FileUtil::readFile(const String& fileName, String& content)
 {
     FILE* file = fopen(GET_STR(fileName), "r");
+    if (!file) {
+    	return;
+    }
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = new LInt8[len+1];
