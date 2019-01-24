@@ -156,7 +156,10 @@ LBool UIViewController::hitTest(const LPoint& pt)
 
 void UIViewController::onTouchDown(const LPoint& pt)
 {
-
+	if (!m_view->canHit())
+	{
+		return;
+	}
 	//KFORMATLOG("m_target x=%d, y=%d", pt.iX, pt.iY);
 	m_target = findViewByPosition(pt, m_view->getDocument()->getRenderTreeRoot());
 	m_targetPoint = pt;
@@ -179,6 +182,11 @@ void UIViewController::onTouchDown(const LPoint& pt)
 
 void UIViewController::onTouchUp(const LPoint& pt)
 {
+	if (!m_view->canHit())
+	{
+		return;
+	}
+
     if (hitTest(pt))
 	{
     	if (m_target->isSelectable())

@@ -45,6 +45,8 @@ public:
 	void handleKeyEvent(const LKeyEvent& evt);
 	void handleTouchEvent(const LTouchEvent& evt);
 
+	LBool canHit() const;
+
 private:
 	UIView();
 
