@@ -12,7 +12,6 @@
 #include "KListMap.h"
 #include "KVector.h"
 #include "Style.h"
-#include "KRef.h"
 
 namespace util
 {
@@ -124,7 +123,7 @@ public:
 typedef KListMap<LUint, PropertyValue>             PropertyMap;
 typedef KListMap<LInt, CssPropertyValue>           AttributeMap;
 
-class CssRule : public KRef
+class CssRule : public BoyiaRef
 {
 public:
 	static CssRule* New();

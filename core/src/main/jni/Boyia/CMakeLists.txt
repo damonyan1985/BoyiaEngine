@@ -58,6 +58,8 @@ file(
     "network/test/*.cpp"
     "network/threadpool/*.cpp"
     "network/*.cpp"
+    "network/proxy/ptcp/*.cpp"
+    "network/proxy/server/*.cpp"
     )
 
 file(
@@ -113,7 +115,8 @@ target_include_directories(
     network/image
     network/ipc
     network/threadpool
-    imessage/ptcp
+    network/proxy/ptcp
+    network/proxy/server
     ${EXTERNAL_PATH}/curl/include
     ${EXTERNAL_PATH}/jpeg
     ${EXTERNAL_PATH}/lpng/include

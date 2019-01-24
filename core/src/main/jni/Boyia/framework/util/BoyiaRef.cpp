@@ -1,22 +1,22 @@
-#include "KRef.h"
+#include "BoyiaRef.h"
 
 namespace util
 {
-KRef::KRef()
+BoyiaRef::BoyiaRef()
     : m_refCount(0)
 {
 }
 
-KRef::~KRef()
+BoyiaRef::~BoyiaRef()
 {
 }
 
-void KRef::ref()
+void BoyiaRef::ref()
 {
 	++m_refCount;
 }
 
-void KRef::deref()
+void BoyiaRef::deref()
 {
     if (--m_refCount <= 0)
     {
@@ -24,7 +24,7 @@ void KRef::deref()
     }
 }
 
-LInt KRef::count()
+LInt BoyiaRef::count()
 {
     return m_refCount;
 }

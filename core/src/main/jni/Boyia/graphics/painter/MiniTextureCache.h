@@ -1,7 +1,7 @@
 #ifndef MiniTextureCache_h
 #define MiniTextureCache_h
 
-#include "KRef.h"
+#include "BoyiaPtr.h"
 #include "KList.h"
 #include "HtmlView.h"
 #include <GLES3/gl3.h>
@@ -9,7 +9,7 @@
 
 namespace yanbo
 {
-class MiniTexture : public KRef
+class MiniTexture : public BoyiaRef
 {
 public:
 	MiniTexture();
@@ -23,16 +23,16 @@ public:
 	LInt height;
 };
 
-class TexturePair : public KRef
+class TexturePair : public BoyiaRef
 {
 public:
 	TexturePair();
 
 	HtmlView* item;
-	KRefPtr<MiniTexture> tex;
+	BoyiaPtr<MiniTexture> tex;
 };
 
-typedef KList<KRefPtr<TexturePair> > TextureMap;
+typedef KList<BoyiaPtr<TexturePair> > TextureMap;
 class MiniTextureCache
 {
 public:

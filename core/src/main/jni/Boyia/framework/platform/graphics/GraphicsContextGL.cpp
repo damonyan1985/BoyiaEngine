@@ -50,7 +50,7 @@ ItemPainter* GraphicsContextGL::currentPainter()
 LVoid GraphicsContextGL::drawLine(const LPoint& p1, const LPoint& p2)
 {
     ItemPainter* painter = currentPainter();
-	KRefPtr<yanbo::GLPainter> line = new yanbo::GLPainter();
+	BoyiaPtr<yanbo::GLPainter> line = new yanbo::GLPainter();
     line->setLine(p1, p2);
     line->setColor(m_penColor);
     painter->painters.push(line);
@@ -64,7 +64,7 @@ LVoid GraphicsContextGL::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 LVoid GraphicsContextGL::drawRect(const LRect& aRect)
 {
     ItemPainter* painter = currentPainter();
-    KRefPtr<yanbo::GLPainter> shapeRect = new yanbo::GLPainter();
+    BoyiaPtr<yanbo::GLPainter> shapeRect = new yanbo::GLPainter();
 	shapeRect->setRect(aRect);
 	//m_brushColor.m_alpha = 0x33;
 	shapeRect->setColor(m_brushColor);
@@ -124,7 +124,7 @@ LVoid GraphicsContextGL::drawImage(const LImage* image)
     yanbo::MiniTexture* tex = yanbo::MiniTextureCache::getInst()->put(image);
 
     ItemPainter* painter = currentPainter();
-    KRefPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+    BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(m_brushColor);
     paint->setImage(tex, image->rect());
     painter->painters.push(paint);
@@ -144,7 +144,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 	if (!amp->texId()) return;
 
 
-	KRefPtr<yanbo::MiniTexture> tex = new yanbo::MiniTexture();
+	BoyiaPtr<yanbo::MiniTexture> tex = new yanbo::MiniTexture();
 	tex->width = rect.GetWidth();
 	tex->height = rect.GetHeight();
 	tex->texId = amp->texId();
@@ -152,7 +152,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 	//KFORMATLOG("GraphicsContextGL drawVideo error=%d", glGetError());
 
 	ItemPainter* painter = currentPainter();
-	KRefPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+	BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
 	paint->setColor(LRgb(0,0,0,0xFF));
 
 	paint->setVideo(tex.get(), rect);
@@ -164,7 +164,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
 LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAlign align)
 {
-	KRefPtr<ImageAndroid> image = new ImageAndroid();
+	BoyiaPtr<ImageAndroid> image = new ImageAndroid();
 	image->drawText(text, rect, align, m_font, m_penColor, m_brushColor);
 	image->unlockPixels();
 	image->setRect(rect);
@@ -173,7 +173,7 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 	{
 		yanbo::MiniTexture* tex = yanbo::MiniTextureCache::getInst()->updateTexture(image.get());
 		ItemPainter* painter = currentPainter();
-		KRefPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+		BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
 		paint->setColor(m_brushColor);
 		paint->setImage(tex, image->rect());
 		painter->painters.push(paint);

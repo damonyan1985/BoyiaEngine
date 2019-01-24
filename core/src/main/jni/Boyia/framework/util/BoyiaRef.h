@@ -1,27 +1,27 @@
-#ifndef KRef_h
-#define KRef_h
+#ifndef BoyiaRef_h
+#define BoyiaRef_h
 
 #include "PlatformLib.h"
 
 namespace util
 {
-class KRef
+class BoyiaRef
 {
 public:
-	virtual ~KRef();
+	virtual ~BoyiaRef();
 
 	void ref();
 	void deref();
 	LInt count();
 
 protected:
-	KRef();
+	BoyiaRef();
 
 protected:
 	LInt m_refCount;
 };
 }
 
-using util::KRef;
+using util::BoyiaRef;
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef UIOperation_h
 #define UIOperation_h
 
-#include "KRef.h"
 #include "KVector.h"
 #include "MiniMessageQueue.h"
 #include "UtilString.h"

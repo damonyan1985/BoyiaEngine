@@ -13,7 +13,6 @@
 
 #include "LGraphic.h"
 #include "UtilString.h"
-#include "KRef.h"
 
 // software abstraction layer API
 // graphic abstract class
@@ -148,7 +147,7 @@ public:
 	LUint8 m_alpha;
 };
 
-class LImage : public KRef
+class LImage : public BoyiaRef
 {
 public:
 	LImage()
@@ -190,7 +189,7 @@ protected:
     LInt      m_height;
 };
 
-class LFont : public KRef
+class LFont : public BoyiaRef
 {
 public:
 	typedef enum FontStyle

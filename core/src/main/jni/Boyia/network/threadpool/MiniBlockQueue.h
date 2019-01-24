@@ -3,24 +3,24 @@
 
 #include "MiniTaskBase.h"
 #include "KList.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 #include "MiniMutex.h"
 
 namespace yanbo
 {
-class MiniBlockQueue : public KRef
+class MiniBlockQueue : public BoyiaRef
 {
 public:
 	MiniBlockQueue();
 	~MiniBlockQueue();
 
 	void addTask(MiniTaskBase* task);
-	KRefPtr<MiniTaskBase> pollTask();
+	BoyiaPtr<MiniTaskBase> pollTask();
 	void clear();
 	int size();
 
 private:
-	KList<KRefPtr<MiniTaskBase> > m_list;
+	KList<BoyiaPtr<MiniTaskBase> > m_list;
 	MiniMutex m_queueMutex;
 };
 }

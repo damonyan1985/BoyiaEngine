@@ -1,9 +1,7 @@
 #ifndef BoyiaHttpEngine_h
 #define BoyiaHttpEngine_h
 
-//#include "UtilString.h"
 #include "NetworkBase.h"
-#include "StringBuffer.h"
 #include "curl/curl.h"
 
 namespace yanbo

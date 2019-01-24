@@ -1,12 +1,12 @@
-#ifndef MiniProcess_h
-#define MiniProcess_h
+#ifndef BoyiaProcess_h
+#define BoyiaProcess_h
 
 #include "PlatformLib.h"
 
 namespace yanbo {
-class MiniProcess {
+class BoyiaProcess {
 public:
-	MiniProcess();
+	BoyiaProcess();
 	void init();
 	void procExec();
 

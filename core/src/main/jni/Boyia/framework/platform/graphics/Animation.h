@@ -4,12 +4,12 @@
 #include "HtmlView.h"
 #include "MiniThread.h"
 #include "KList.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 #include "LGraphic.h"
 
 namespace yanbo
 {
-class Animation : public KRef
+class Animation : public BoyiaRef
 {
 public:
 	enum AnimType
@@ -73,8 +73,8 @@ private:
 };
 
 
-typedef KList<KRefPtr<Animation> > AnimList;
-class AnimationTask : public KRef
+typedef KList<BoyiaPtr<Animation> > AnimList;
+class AnimationTask : public BoyiaRef
 {
 public:
     virtual ~AnimationTask();
@@ -86,7 +86,7 @@ private:
     AnimList m_animList;
 };
 
-typedef KList<KRefPtr<AnimationTask> > AnimTaskList;
+typedef KList<BoyiaPtr<AnimationTask> > AnimTaskList;
 class AnimationThread : public MiniThread
 {
 public:

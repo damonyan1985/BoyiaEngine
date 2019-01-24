@@ -6,7 +6,7 @@
 
 namespace yanbo
 {
-class MiniTaskThread : public MiniThread, public KRef
+class MiniTaskThread : public MiniThread, public BoyiaRef
 {
 public:
 	MiniTaskThread(MiniBlockQueue* queue);

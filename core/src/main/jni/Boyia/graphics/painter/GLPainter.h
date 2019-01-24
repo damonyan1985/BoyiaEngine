@@ -3,7 +3,6 @@
 
 #include "KVector.h"
 #include "LGdi.h"
-#include "KRef.h"
 #include "KListMap.h"
 #include "MiniTextureCache.h"
 #include "GLProgram.h"
@@ -36,7 +35,7 @@ public:
 	LInt       type;
 };
 
-class GLPainter : public KRef
+class GLPainter : public BoyiaRef
 {
 public:
 	enum ShapeType

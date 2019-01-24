@@ -4,11 +4,11 @@
 #include "LGdi.h"
 #include "KList.h"
 #include "GLPainter.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 
 namespace util
 {
-typedef KList<KRefPtr<yanbo::GLPainter> > ListPainter;
+typedef KList<BoyiaPtr<yanbo::GLPainter> > ListPainter;
 // ItemPainter顾名思义，一个HtmlView对应的所有GLPainter
 struct ItemPainter
 {
