@@ -207,4 +207,14 @@ boyia::BoyiaEventHandler* UIView::jsHandler() const
 	return m_jsHandler;
 }
 
+LBool UIView::canHit() const
+{
+	if (getDocument() && getDocument()->getRenderTreeRoot())
+	{
+		return LTrue;
+	}
+
+	return LFalse;
+}
+
 }

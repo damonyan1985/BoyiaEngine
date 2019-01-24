@@ -139,6 +139,10 @@ static void nativeUIViewDraw(JNIEnv* env, jobject obj)
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
 {
+	if (!yanbo::UIView::getInstance()->canHit())
+	{
+		return;
+	}
 	LTouchEvent* evt = new LTouchEvent;
 
 	evt->m_type = 1 << type;
