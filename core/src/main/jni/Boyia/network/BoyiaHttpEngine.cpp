@@ -72,7 +72,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 		// 设置HTTP头
 		curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1);
 		// 设置发送超时时间
-		curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1000);
+		curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1000 * 10);
 
 		curl_easy_setopt(m_curl, CURLOPT_FORBID_REUSE, 1);
 
