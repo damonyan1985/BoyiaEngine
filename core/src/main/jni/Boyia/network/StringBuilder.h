@@ -3,7 +3,7 @@
 
 #include "KList.h"
 #include "UtilString.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 
 namespace yanbo
 {
@@ -20,13 +20,13 @@ public:
 	void append(const LByte* buffer, int pos, int len, LBool isConst);
 	//void append(const char* buffer, int len, LBool isConst = LFalse);
 	void append(const LByte* buffer);
-	KRefPtr<String> toString() const;
+	BoyiaPtr<String> toString() const;
 	void clear();
 
 	LInt size() const;
 
 private:
-    KList<KRefPtr<BufferItem> > m_buffer;
+    KList<BoyiaPtr<BufferItem> > m_buffer;
     int m_length;
 };
 }

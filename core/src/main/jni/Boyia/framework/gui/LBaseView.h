@@ -10,8 +10,6 @@
 
 #include "PlatformLib.h"
 #include "Style.h"
-#include "KRef.h"
-#include "KRefPtr.h"
 #include <stdlib.h>
 
 namespace util

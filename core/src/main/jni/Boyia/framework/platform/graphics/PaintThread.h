@@ -1,7 +1,6 @@
 #ifndef PaintThread_h
 #define PaintThread_h
 
-#include "KRef.h"
 #include "LGdi.h"
 #include "MiniMessageThread.h"
 #include "GLContext.h"

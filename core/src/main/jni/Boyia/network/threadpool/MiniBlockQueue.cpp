@@ -24,13 +24,13 @@ void MiniBlockQueue::addTask(MiniTaskBase* task)
 	m_list.push(task);
 }
 
-KRefPtr<MiniTaskBase> MiniBlockQueue::pollTask()
+BoyiaPtr<MiniTaskBase> MiniBlockQueue::pollTask()
 {
 	AutoLock lock(&m_queueMutex);
-	KRefPtr<MiniTaskBase> task = NULL;
+	BoyiaPtr<MiniTaskBase> task = NULL;
 	if (!m_list.empty())
 	{
-		KList<KRefPtr<MiniTaskBase> >::Iterator iter = m_list.begin();
+		KList<BoyiaPtr<MiniTaskBase> >::Iterator iter = m_list.begin();
 		task = *iter;
 		m_list.erase(iter);
 	}

@@ -13,7 +13,7 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "BlockView.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 
 namespace yanbo
 {
@@ -308,7 +308,7 @@ HtmlTags::HtmlType HtmlView::getTagType() const
 void HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
 {
 	KLOG("HtmlView::setStyle");
-	KRefPtr<KVector<String> > classNames = util::StringUtils::split(m_className, _CS(" "));
+	BoyiaPtr<KVector<String> > classNames = util::StringUtils::split(m_className, _CS(" "));
 	String idCss = _CS("#") + m_id;
 	int size = classNames->size();
 	for (int i=0; i<size; ++i)
@@ -318,7 +318,7 @@ void HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
 	KLOG("HtmlView::setStyle1");
 	manager->pushDoctreeNode(idCss, *(classNames.get()), m_tagName);
 	KLOG("HtmlView::setStyle2");
-	KRefPtr<util::CssRule> newRule = manager->createNewCssRule(parentRule, manager->getCssRule());
+	BoyiaPtr<util::CssRule> newRule = manager->createNewCssRule(parentRule, manager->getCssRule());
 	KLOG("HtmlView::setStyle3");
 	HtmlViewList::Iterator iter = m_children.begin();
 	HtmlViewList::Iterator iterEnd = m_children.end();

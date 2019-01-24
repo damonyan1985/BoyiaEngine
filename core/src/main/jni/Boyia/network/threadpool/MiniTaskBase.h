@@ -6,11 +6,11 @@
  */
 #ifndef MiniTaskBase_h
 #define MiniTaskBase_h
-#include "KRef.h"
+#include "BoyiaRef.h"
 
 namespace yanbo
 {
-class MiniTaskBase : public KRef
+class MiniTaskBase : public BoyiaRef
 {
 public:
 	virtual ~MiniTaskBase();

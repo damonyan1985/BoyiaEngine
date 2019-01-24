@@ -18,11 +18,14 @@ android {
     }
 
     externalNativeBuild{
-//        ndkBuild {
-//            path "src/main/jni/Android.mk"
-//        }
-        cmake {
-            path "src/main/jni/CMakeLists.txt"
+        if (use_cmake) {
+            cmake {
+                path "src/main/jni/CMakeLists.txt"
+            }
+        } else {
+            ndkBuild {
+                path "src/main/jni/Android.mk"
+            }
         }
     }
 

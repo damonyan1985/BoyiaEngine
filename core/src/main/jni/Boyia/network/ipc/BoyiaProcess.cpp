@@ -1,12 +1,12 @@
-#include "MiniProcess.h"
+#include "BoyiaProcess.h"
 #include <unistd.h>
 
 namespace yanbo {
-MiniProcess::MiniProcess()
+BoyiaProcess::BoyiaProcess()
     : m_pid(0) {
 }
 
-void MiniProcess::init() {
+void BoyiaProcess::init() {
 	m_pid = fork();
 	if (m_pid < 0) {
         // 创建进程失败
@@ -20,7 +20,7 @@ void MiniProcess::init() {
 	}
 }
 
-void MiniProcess::procExec() {
+void BoyiaProcess::procExec() {
 
 }
 }

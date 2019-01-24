@@ -14,13 +14,13 @@
 #define KVector_h
 
 #include "PlatformLib.h"
-#include "KRef.h"
+#include "BoyiaRef.h"
 
 namespace util
 {
 
 template <class T>
-class KVector : public KRef
+class KVector : public BoyiaRef
 {
 public:
 	KVector();

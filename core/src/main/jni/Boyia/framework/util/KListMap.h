@@ -2,15 +2,14 @@
 #define ListMap_h
 
 #include "KList.h"
-#include "KRef.h"
-#include "KRefPtr.h"
+#include "BoyiaPtr.h"
 #include "SalLog.h"
 
 namespace util
 {
 
 template<class Key, class Value>
-class ObjectPair : public KRef
+class ObjectPair : public BoyiaRef
 {
 public:
 	ObjectPair() {}
@@ -40,8 +39,8 @@ class KListMap
 {
 public:
 	typedef ObjectPair<Key, Value> MapPair;
-	typedef KList<KRefPtr<MapPair> > MapContainer;
-	typedef ListIterator<KRefPtr<MapPair> > Iterator;
+	typedef KList<BoyiaPtr<MapPair> > MapContainer;
+	typedef ListIterator<BoyiaPtr<MapPair> > Iterator;
 
 public:
 	KListMap() {}

@@ -6,6 +6,8 @@ def initExtension() {
         ext.library_dir = properties.getProperty("library_dir")
         ext.maven_dir = properties.getProperty("maven_dir")
     }
+
+    ext.use_cmake = true
 }
 
 initExtension()

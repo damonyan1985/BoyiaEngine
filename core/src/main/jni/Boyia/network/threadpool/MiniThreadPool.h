@@ -20,8 +20,8 @@ private:
 	MiniThreadPool();
 
 	static MiniThreadPool* s_pool;
-	KList<KRefPtr<MiniTaskThread> > m_threadList;
-	KRefPtr<MiniBlockQueue> m_queue;
+	KList<BoyiaPtr<MiniTaskThread> > m_threadList;
+	BoyiaPtr<MiniBlockQueue> m_queue;
 };
 }
 

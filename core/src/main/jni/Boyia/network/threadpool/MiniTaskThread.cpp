@@ -36,7 +36,7 @@ void MiniTaskThread::run()
     	}
 
 
-    	KRefPtr<MiniTaskBase> task = m_queue->pollTask();
+    	BoyiaPtr<MiniTaskBase> task = m_queue->pollTask();
         if (task.get() != NULL)
         {
         	m_working = LTrue;

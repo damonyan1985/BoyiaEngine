@@ -48,7 +48,9 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/network/image \
     $(LOCAL_PATH)/network/font \
     $(LOCAL_PATH)/network/threadpool \
-    $(LOCAL_PATH)/network/socket \
+    $(LOCAL_PATH)/network/ipc \
+    $(LOCAL_PATH)/network/proxy/ptcp \
+    $(LOCAL_PATH)/network/proxy/server \
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/graphics/core \
@@ -56,9 +58,6 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/graphics/painter \
     $(LOCAL_PATH)/graphics/vulkan \
     $(LOCAL_PATH)/graphics/utils \
-
-LOCAL_C_INCLUDES += \
-    $(LOCAL_PATH)/imessage/ptcp/ \
     
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/../External/curl/include \
@@ -76,8 +75,6 @@ include $(LOCAL_PATH)/graphics/Android.graphics.mk
 include $(LOCAL_PATH)/network/Android.network.mk
 
 include $(LOCAL_PATH)/framework/Android.by.mk
-
-include $(LOCAL_PATH)/imessage/Android.im.mk
 
 LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/porting/BoyiaJniOnLoad.cpp \

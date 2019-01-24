@@ -9,7 +9,6 @@
 #define Style_h
 
 #include "LGdi.h"
-#include "KRef.h"
 
 namespace util
 {

@@ -1,6 +1,6 @@
 #include "BoyiaLoader.h"
 #include "SalLog.h"
-#include "StringBuffer.h"
+#include "StringBuilder.h"
 #include "FileUtil.h"
 #include "StartupLoader.h"
 #include <stdio.h>

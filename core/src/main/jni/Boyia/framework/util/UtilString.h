@@ -17,7 +17,7 @@
 #define UtilString_h
 
 #include "PlatformLib.h"
-#include "KRef.h"
+#include "BoyiaRef.h"
 #include "SalLog.h"
 
 namespace util
@@ -47,7 +47,7 @@ namespace util
 	};
 
 	template <class T>
-	class LString : public KRef
+	class LString : public BoyiaRef
 	{
 	public:
 		typedef LStringPolicy<T> Policy;

@@ -18,8 +18,8 @@ MiniThreadPool::MiniThreadPool()
 
 MiniThreadPool::~MiniThreadPool()
 {
-	KList<KRefPtr<MiniTaskThread> >::Iterator iter = m_threadList.begin();
-	KList<KRefPtr<MiniTaskThread> >::Iterator iterEnd = m_threadList.end();
+	KList<BoyiaPtr<MiniTaskThread> >::Iterator iter = m_threadList.begin();
+	KList<BoyiaPtr<MiniTaskThread> >::Iterator iterEnd = m_threadList.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->stop();
@@ -50,8 +50,8 @@ void MiniThreadPool::sendMiniTask(MiniTaskBase* task)
 		m_queue->addTask(task);
 	}
 
-	KList<KRefPtr<MiniTaskThread> >::Iterator iter = m_threadList.begin();
-	KList<KRefPtr<MiniTaskThread> >::Iterator iterEnd = m_threadList.end();
+	KList<BoyiaPtr<MiniTaskThread> >::Iterator iter = m_threadList.begin();
+	KList<BoyiaPtr<MiniTaskThread> >::Iterator iterEnd = m_threadList.end();
 	for (; iter != iterEnd; ++iter)
 	{
         if (!(*iter)->working())
@@ -63,7 +63,7 @@ void MiniThreadPool::sendMiniTask(MiniTaskBase* task)
 
 	if (m_threadList.count() < KMiniThreadPoolSize)
 	{
-		KRefPtr<MiniTaskThread> thread = new MiniTaskThread(m_queue.get());
+		BoyiaPtr<MiniTaskThread> thread = new MiniTaskThread(m_queue.get());
         m_threadList.push(thread);
         thread->start();
 	}

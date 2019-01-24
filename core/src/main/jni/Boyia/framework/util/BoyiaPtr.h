@@ -1,23 +1,23 @@
-#ifndef KRefPtr_h
-#define KRefPtr_h
+#ifndef BoyiaPtr_h
+#define BoyiaPtr_h
 
-#include "KRef.h"
+#include "BoyiaRef.h"
 
 namespace util
 {
 template<class T>
-class KRefPtr
+class BoyiaPtr
 {
 public:
-	KRefPtr() : m_ptr(0) { }
-	KRefPtr(T* ptr);
-    KRefPtr(const KRefPtr<T>& ptr);
-	~KRefPtr();
+	BoyiaPtr() : m_ptr(0) { }
+	BoyiaPtr(T* ptr);
+    BoyiaPtr(const BoyiaPtr<T>& ptr);
+	~BoyiaPtr();
 
 	T* get() const;
 
-	KRefPtr<T>& operator=(const KRefPtr<T>& ptr);
-	KRefPtr<T>& operator=(T* ptr);
+	BoyiaPtr<T>& operator=(const BoyiaPtr<T>& ptr);
+	BoyiaPtr<T>& operator=(T* ptr);
     LBool operator==(T* ptr) const;
     LBool operator!=(T* ptr) const;
 	T* operator->() const;
@@ -31,14 +31,14 @@ private:
 };
 
 template<class T>
-KRefPtr<T>::KRefPtr(T* ptr)
+BoyiaPtr<T>::BoyiaPtr(T* ptr)
     : m_ptr(ptr)
 {
 	refIfNotNull(m_ptr);
 }
 
 template<class T>
-KRefPtr<T>::KRefPtr(const KRefPtr<T>& ptr)
+BoyiaPtr<T>::BoyiaPtr(const BoyiaPtr<T>& ptr)
 {
     T* dptr = ptr.get();
     // 新持有的指针进行加操作
@@ -50,37 +50,37 @@ KRefPtr<T>::KRefPtr(const KRefPtr<T>& ptr)
 }
 
 template<class T>
-KRefPtr<T>::~KRefPtr()
+BoyiaPtr<T>::~BoyiaPtr()
 {
 	defIfNotNull(m_ptr);
 }
 
 template<class T>
-void KRefPtr<T>::refIfNotNull(T* ptr)
+void BoyiaPtr<T>::refIfNotNull(T* ptr)
 {
     if (ptr)
     {
-        const_cast<KRef*>(static_cast<const KRef*>(ptr))->ref();
+        const_cast<BoyiaRef*>(static_cast<const BoyiaRef*>(ptr))->ref();
     }
 }
 
 template<class T>
-void KRefPtr<T>::defIfNotNull(T* ptr)
+void BoyiaPtr<T>::defIfNotNull(T* ptr)
 {
     if (ptr)
     {
-        const_cast<KRef*>(static_cast<const KRef*>(ptr))->deref();
+        const_cast<BoyiaRef*>(static_cast<const BoyiaRef*>(ptr))->deref();
     }
 }
 
 template<class T>
-T* KRefPtr<T>::get() const
+T* BoyiaPtr<T>::get() const
 {
 	return m_ptr;
 }
 
 template<class T>
-KRefPtr<T>& KRefPtr<T>::operator=(const KRefPtr<T>& ptr)
+BoyiaPtr<T>& BoyiaPtr<T>::operator=(const BoyiaPtr<T>& ptr)
 {
 	T* dptr = ptr.get();
 	// 新持有的指针进行加操作
@@ -93,7 +93,7 @@ KRefPtr<T>& KRefPtr<T>::operator=(const KRefPtr<T>& ptr)
 }
 
 template<class T>
-KRefPtr<T>& KRefPtr<T>::operator=(T* optr)
+BoyiaPtr<T>& BoyiaPtr<T>::operator=(T* optr)
 {
 	// 新持有的指针进行加操作
     refIfNotNull(optr);
@@ -105,24 +105,26 @@ KRefPtr<T>& KRefPtr<T>::operator=(T* optr)
 }
 
 template<class T>
-T* KRefPtr<T>::operator->() const
+T* BoyiaPtr<T>::operator->() const
 {
     return m_ptr;
 }
 
 template<class T>
-LBool KRefPtr<T>::operator==(T* ptr) const
+LBool BoyiaPtr<T>::operator==(T* ptr) const
 {
-    return m_ptr == ptr ? LTrue : LFalse;
+    return m_ptr == ptr;
 }
 
 template<class T>
-LBool KRefPtr<T>::operator!=(T* ptr) const
+LBool BoyiaPtr<T>::operator!=(T* ptr) const
 {
-    return m_ptr != ptr ? LTrue : LFalse;
+    return m_ptr != ptr;
 }
 
 }
 
-using util::KRefPtr;
+using util::BoyiaPtr;
+
+
 #endif
