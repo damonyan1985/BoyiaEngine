@@ -1,5 +1,5 @@
-#ifndef StringBuffer_h
-#define StringBuffer_h
+#ifndef StringBuilder_h
+#define StringBuilder_h
 
 #include "KList.h"
 #include "UtilString.h"
@@ -8,11 +8,11 @@
 namespace yanbo
 {
 struct BufferItem;
-class StringBuffer
+class StringBuilder
 {
 public:
-	StringBuffer();
-	virtual ~StringBuffer();
+	StringBuilder();
+	virtual ~StringBuilder();
 
 public:
 	void append(const LByte ch);

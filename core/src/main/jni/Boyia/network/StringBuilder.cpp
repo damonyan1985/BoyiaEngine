@@ -33,33 +33,33 @@ public:
 	int bConst;
 };
 
-StringBuffer::StringBuffer()
+StringBuilder::StringBuilder()
     : m_length(0)
 {
 }
 
-StringBuffer::~StringBuffer()
+StringBuilder::~StringBuilder()
 {
 }
 
-void StringBuffer::append(const LByte ch)
+void StringBuilder::append(const LByte ch)
 {
 	LByte* chPtr = new LByte[1];
 	*chPtr = ch;
 	append(chPtr, 0, 1, LFalse);
 }
 
-void StringBuffer::append(const String& str)
+void StringBuilder::append(const String& str)
 {
     append(str.GetBuffer(), 0, str.GetLength(), LTrue);
 }
 
-void StringBuffer::append(const LByte* buffer)
+void StringBuilder::append(const LByte* buffer)
 {
 	append(buffer, 0, util::LStrlen((const LByte*)buffer), LTrue);
 }
 
-void StringBuffer::append(const LByte* buffer, int pos, int len, LBool isConst)
+void StringBuilder::append(const LByte* buffer, int pos, int len, LBool isConst)
 {
 	if (len <= 0)
 	{
@@ -74,15 +74,15 @@ void StringBuffer::append(const LByte* buffer, int pos, int len, LBool isConst)
 	m_buffer.push(item);
 }
 
-BoyiaPtr<String> StringBuffer::toString() const
+BoyiaPtr<String> StringBuilder::toString() const
 {
-	KFORMATLOG("StringBuffer::append str m_length=%d", m_length);
+	KFORMATLOG("StringBuilder::append str m_length=%d", m_length);
 	if (!m_length)
 	{
 		return NULL;
 	}
 
-	//KFORMATLOG("StringBuffer::append str m_length1=%d", m_length);
+	//KFORMATLOG("StringBuilder::append str m_length1=%d", m_length);
 	LByte* buffer = new LByte[m_length+1];
     util::LMemset(buffer, 0, m_length+1);
     KList<BoyiaPtr<BufferItem> >::Iterator iter = m_buffer.begin();
@@ -100,13 +100,13 @@ BoyiaPtr<String> StringBuffer::toString() const
 	return new String(buffer, LTrue, m_length);
 }
 
-void StringBuffer::clear()
+void StringBuilder::clear()
 {
 	m_length = 0;
 	m_buffer.clear();
 }
 
-LInt StringBuffer::size() const
+LInt StringBuilder::size() const
 {
 	return m_buffer.count();
 }
