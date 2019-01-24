@@ -113,13 +113,13 @@ T* BoyiaPtr<T>::operator->() const
 template<class T>
 LBool BoyiaPtr<T>::operator==(T* ptr) const
 {
-    return m_ptr == ptr;
+    return m_ptr == ptr ? LTrue : LFalse;
 }
 
 template<class T>
 LBool BoyiaPtr<T>::operator!=(T* ptr) const
 {
-    return m_ptr != ptr;
+    return m_ptr != ptr ? LTrue : LFalse;
 }
 
 }
