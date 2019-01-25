@@ -10,7 +10,6 @@
 
 #include "PlatformLib.h"
 #include "Style.h"
-#include <stdlib.h>
 
 namespace util
 {
@@ -20,7 +19,7 @@ namespace util
  * 隶属于GuiLayer即抽象接口层
  */
 
-class LBaseView
+class LBaseView : public BoyiaRef
 {
 public:
 	LBaseView();
@@ -59,9 +58,6 @@ public:
 
 	void setTagName(const String& tagName);
 	const String& getTagName() const;
-
-	void* operator new(size_t sz);
-	void operator delete(void *p);
 
 protected:
 	LBool           m_visible;

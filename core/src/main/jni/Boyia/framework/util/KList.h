@@ -17,7 +17,7 @@
 
 namespace util
 {
-template<class NodeValue>
+template<typename NodeValue>
 class ListNode
 {
 public:
@@ -38,7 +38,7 @@ public:
 	}
 };
 
-template<class NodeValue>
+template<typename NodeValue>
 class ListIterator
 {
 public:
@@ -122,7 +122,7 @@ protected:
 	NodePtr m_nodePtr;
 };
 
-template<class NodeValue>
+template<typename NodeValue>
 class KList
 {
 public:
@@ -303,5 +303,8 @@ protected:
 }
 
 using util::KList;
+
+template<typename T>
+using BoyiaList = KList<T>;
 
 #endif

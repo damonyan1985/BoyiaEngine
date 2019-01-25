@@ -39,7 +39,7 @@ class KListMap
 {
 public:
 	typedef ObjectPair<Key, Value> MapPair;
-	typedef KList<BoyiaPtr<MapPair> > MapContainer;
+	typedef BoyiaList<BoyiaPtr<MapPair> > MapContainer;
 	typedef ListIterator<BoyiaPtr<MapPair> > Iterator;
 
 public:
