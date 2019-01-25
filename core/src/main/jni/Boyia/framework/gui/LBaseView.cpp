@@ -6,15 +6,10 @@
  */
 
 #include "LBaseView.h"
-#include "BoyiaMemory.h"
 #include "SalLog.h"
 
 namespace util
 {
-// DOMView树构建在sDOMMemPool这块内存池上，大小为1MB
-#define DOM_MEMORY_SIZE      (LInt)1024*1024
-static LVoid* sDOMMemPool = NULL;
-
 LBaseView::LBaseView()
     : m_visible(LTrue)
     , m_x(0)
@@ -139,26 +134,5 @@ void LBaseView::setTagName(const String& tagName)
 const String& LBaseView::getTagName() const
 {
 	return m_tagName;
-}
-
-void* LBaseView::operator new(size_t sz)
-{
-	KLOG("LBaseView::operator new");
-//	if (sDOMMemPool == NULL)
-//    {
-//    	sDOMMemPool = InitMemoryPool(DOM_MEMORY_SIZE);
-//    }
-//
-//	void* data = NewData(sz, sDOMMemPool);
-//	//PrintPoolSize(sDOMMemPool);
-//	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "DOMMemPool  addr=%x size=%d", (LInt)sDOMMemPool->m_address, sDOMMemPool->m_used);
-//	return data;
-	return malloc(sz);
-}
-
-void LBaseView::operator delete(void *p)
-{
-	//DeleteData(p, sDOMMemPool);
-	free(p);
 }
 }
