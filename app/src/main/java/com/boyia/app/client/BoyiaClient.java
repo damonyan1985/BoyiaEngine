@@ -19,7 +19,7 @@ public class BoyiaClient {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new BoyiaClientHandler());
+                    .handler(new BoyiaClientInitializer());
 
             mChannel = bootstrap.connect(InetAddress.getByName(BOYIA_CLIENT_IP), BOYIA_CLIENT_PORT).sync().channel();
         } catch (Exception ex) {
