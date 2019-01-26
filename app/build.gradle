@@ -43,6 +43,7 @@ dependencies {
     implementation project(':core')
     //implementation 'com.boyia.app.core:core:1.0.0'
     api project(':common')
+    implementation 'io.netty:netty-all:5.0.0.Alpha2'
     //api 'com.boyia.app.common:common:1.0.0'
     //implementation(name: "core-debug", ext: "aar")
     //implementation project(':utils')

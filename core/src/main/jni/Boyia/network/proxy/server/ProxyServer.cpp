@@ -66,6 +66,7 @@ public:
         socklen_t addrlen;
 		for (;;)
 		{
+			// 让出CPU，该线程处于挂起状态等待内核响应
 			nfds = epoll_wait(m_epoll, events, MAX_EVENTS, -1);
 			if (nfds == -1)
 			{
@@ -96,6 +97,8 @@ public:
 					}
 					continue;
 				}
+
+				// 如果数据是可读的
 				if (events[i].events & EPOLLIN)
 				{
 					int n = 0, nread = -1;
@@ -115,6 +118,8 @@ public:
 						printf("epoll_ctl: mod");
 					}
 				}
+
+				// 如果数据是可写的
 				if (events[i].events & EPOLLOUT)
 				{
 					snprintf(buf, sizeof(buf), "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World", 11);

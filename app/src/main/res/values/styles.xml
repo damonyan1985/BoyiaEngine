@@ -54,5 +54,12 @@
         <!-- 是否全屏 -->
         <item name="android:windowFullscreen">true</item>
     </style>
+    <style name="BoyiaStartStyle" parent="android:Theme">
+        <item name="android:windowBackground">@drawable/ic_launcher</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 
 </resources>

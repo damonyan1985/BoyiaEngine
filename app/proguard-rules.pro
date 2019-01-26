@@ -37,3 +37,12 @@
 -keep public class com.boyia.app.common.db.BoyiaData {*;}
 -keep public class com.boyia.app.update.DownloadData {*;}
 -keep public class java.nio.* { *; }
+
+# netty begin
+-keepattributes Signature,InnerClasses
+-keepclasseswithmembers class io.netty.** {
+    *;
+}
+-dontwarn io.netty.**
+-dontwarn sun.**
+# netty end
