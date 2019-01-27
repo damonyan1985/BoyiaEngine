@@ -1,0 +1,11 @@
+syntax = "proto3";
+package com.boyia.app.proto;
+// 输出包名
+//option java_package = "com.boyia.app.proto";
+// 输出sever类名
+//option java_outer_classname = "ServerInfo";
+
+message BoyiaMessage {
+    int32 msgId = 1;
+    string info = 2;
+}
