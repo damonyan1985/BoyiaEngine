@@ -46,3 +46,9 @@
 -dontwarn io.netty.**
 -dontwarn sun.**
 # netty end
+
+# protobuf
+-dontwarn com.google.**
+-keep class com.google.protobuf.** {*;}
+-keepattributes Annotation
+-keepattributes Signature

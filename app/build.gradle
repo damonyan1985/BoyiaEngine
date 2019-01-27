@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.protobuf'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: "$rootDir/library.gradle"
@@ -38,12 +38,31 @@ repositories {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.1.0'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.builtins {
+                java {}
+            }
+        }
+    }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
     //implementation 'com.boyia.app.core:core:1.0.0'
     api project(':common')
     implementation 'io.netty:netty-all:5.0.0.Alpha2'
+    // use protobuf begin
+    implementation 'com.google.protobuf:protobuf-java:3.4.0'
+    // use protobuf end
     //api 'com.boyia.app.common:common:1.0.0'
     //implementation(name: "core-debug", ext: "aar")
     //implementation project(':utils')
