@@ -10,12 +10,12 @@
 
 #include "HtmlView.h"
 #include "HtmlForm.h"
-#include "TagMap.h"
+#include "IdentityMap.h"
 
 namespace yanbo
 {
 
-typedef KList<HtmlForm*> FormList;
+typedef BoyiaList<HtmlForm*> FormList;
 //typedef KMap<LUint, HtmlView*> IDMap;
 class UIView;
 class HtmlDocument
@@ -76,7 +76,7 @@ private:
 	HtmlViewList                  m_itemList;
 	HtmlViewList::Iterator        m_currentItemIter; // control up, down key event display
 	LayoutRect                    m_viewRect;
-	TagMap                        m_idMap;
+	IdentityMap                   m_idMap;
 	UIView*                       m_view;
 };
 

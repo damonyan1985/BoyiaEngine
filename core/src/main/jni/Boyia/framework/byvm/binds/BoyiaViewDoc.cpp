@@ -13,7 +13,7 @@ namespace boyia
 {
 using namespace yanbo;
 
-TagMap BoyiaViewDoc::m_domMap(20);
+IdentityMap BoyiaViewDoc::m_domMap(20);
 
 BoyiaViewDoc::BoyiaViewDoc()
     : m_doc(NULL)
