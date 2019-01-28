@@ -10,7 +10,7 @@
 
 //#include "kmap.h"
 #include "UtilString.h"
-#include "TagMap.h"
+#include "IdentityMap.h"
 
 namespace util
 {
@@ -94,7 +94,7 @@ private:
 	
 private:
 	static CssTags* s_cssTags;
-	TagMap m_map;
+	IdentityMap m_map;
 };
 }
 #endif

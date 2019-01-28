@@ -1,7 +1,7 @@
 #ifndef HtmlTags_h
 #define HtmlTags_h
 
-#include "TagMap.h"
+#include "IdentityMap.h"
 #include "UtilString.h"
 
 namespace yanbo
@@ -71,7 +71,7 @@ private:
 	
 private:
 	static HtmlTags* m_htmlTags;
-	TagMap m_map;
+	IdentityMap m_map;
 };
 
 }
