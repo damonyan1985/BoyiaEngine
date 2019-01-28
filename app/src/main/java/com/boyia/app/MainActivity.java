@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 
 import com.boyia.app.common.base.BaseActivity;
+import com.boyia.app.proto.Server;
 
 public class MainActivity extends BaseActivity {
     @Override
