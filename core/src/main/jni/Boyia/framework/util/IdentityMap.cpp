@@ -209,7 +209,7 @@ LIntPtr IdentityMap::get(const String& key)
 
 LVoid IdentityMap::sort()
 {
-	IdentitySort::heapSort(m_pairs, m_size);
+	IdentitySort::quickSort(m_pairs, m_size);
 }
 
 LVoid IdentityMap::clear()
