@@ -33,7 +33,7 @@ public:
 private:
 	void fetchStream(const String& url, String& stream);
 
-	static TagMap m_domMap;
+	static IdentityMap m_domMap;
 	yanbo::HtmlDocument* m_doc;
 };
 }
