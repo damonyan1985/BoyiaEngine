@@ -63,7 +63,7 @@ LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src);
 LBool MStrchr(const LInt8* s, LInt8 ch);
 LVoid StringAdd(BoyiaValue* left, BoyiaValue* right);
-LUint GenIdentifier(BoyiaStr* str);
-LUint GenIdentByStr(const LInt8* str, LInt len);
+LUintPtr GenIdentifier(BoyiaStr* str);
+LUintPtr GenIdentByStr(const LInt8* str, LInt len);
 LVoid ChangeMemory(LVoid* mem);
 #endif

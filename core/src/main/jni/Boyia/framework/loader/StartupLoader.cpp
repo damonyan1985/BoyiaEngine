@@ -164,7 +164,7 @@ LVoid StartupLoader::startLoad()
     
     //KFORMATLOG("boyia app StartupLoader url=%s", GET_STR(url));
     m_loader.loadUrl(_CS(APP_LOAD_URL), this);
-    KFORMATLOG("boyia app StartupLoader m_file=%d", (LInt)m_file);
+    KFORMATLOG("boyia app StartupLoader m_file=%d", (LIntPtr)m_file);
 }
 
 LVoid StartupLoader::onDataReceived(const LByte* data, LInt size)

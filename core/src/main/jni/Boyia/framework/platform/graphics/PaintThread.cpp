@@ -186,7 +186,7 @@ LVoid PaintThread::flush()
 	m_context.postBuffer();
 }
 
-LVoid PaintThread::setInputText(const String& text, LInt item)
+LVoid PaintThread::setInputText(const String& text, LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_SETINPUT;

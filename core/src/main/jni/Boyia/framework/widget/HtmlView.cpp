@@ -30,6 +30,7 @@ HtmlView::HtmlView(
     , m_painter(NULL)
     , m_clip(LTrue)
     , m_needLayout(LTrue)
+    , m_itemListener(NULL)
 {
 	m_style.focusable = selectable;
 }

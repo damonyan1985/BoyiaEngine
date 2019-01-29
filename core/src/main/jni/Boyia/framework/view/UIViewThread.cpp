@@ -101,7 +101,7 @@ void UIViewThread::load(const String& url)
 	notify();
 }
 
-void UIViewThread::loadFinished(const String& data, LInt callback)
+void UIViewThread::loadFinished(const String& data, LIntPtr callback)
 {
 	MiniMessage* msg = m_queue->obtain();
     msg->type = UIView_LOAD_FINISHED;
@@ -113,7 +113,7 @@ void UIViewThread::loadFinished(const String& data, LInt callback)
 	notify();
 }
 
-void UIViewThread::loadError(LInt callback, LInt error)
+void UIViewThread::loadError(LIntPtr callback, LInt error)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_LOAD_ERROR;
@@ -124,7 +124,7 @@ void UIViewThread::loadError(LInt callback, LInt error)
 	notify();
 }
 
-void UIViewThread::imageLoaded(LInt item)
+void UIViewThread::imageLoaded(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_IMAGE_LOADED;
@@ -144,7 +144,7 @@ void UIViewThread::handleKeyEvent(LKeyEvent* evt)
 	notify();
 }
 
-void UIViewThread::draw(LInt item)
+void UIViewThread::draw(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_DRAW;

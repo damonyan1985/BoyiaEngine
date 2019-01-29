@@ -65,7 +65,7 @@ void JNIUtil::callStaticMethod(
 				args[idx].i = val->mValue.mIntVal;
 			} else if (val->mValueType == BY_NAVCLASS) {
                 boyia::BoyiaView* view = (boyia::BoyiaView*) val->mValue.mIntVal;
-                args[idx].i = (LInt)view->item();
+                args[idx].i = (LIntPtr)view->item();
 			}
 		}
 	}

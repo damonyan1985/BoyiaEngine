@@ -63,10 +63,10 @@ typedef unsigned long LDWORD;
 typedef unsigned short LWORD;
 
 #if defined(__LP64__)
-typedef long LInt;
+typedef int LInt;
 typedef long LIntPtr;
 typedef unsigned long LUintPtr;
-typedef unsigned long LUint;
+typedef unsigned int LUint;
 #else
 typedef int LInt;
 typedef int LIntPtr;

@@ -38,7 +38,7 @@ public:
 	LVoid drawOnly(LVoid* item);
 	LVoid submit();
 	// EditText渲染
-	LVoid setInputText(const String& text, LInt item);
+	LVoid setInputText(const String& text, LIntPtr item);
 	// Video渲染
 	LVoid videoUpdate(LIntPtr item);
 	LVoid destroy();

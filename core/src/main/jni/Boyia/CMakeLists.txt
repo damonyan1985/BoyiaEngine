@@ -19,13 +19,12 @@ endif()
 file(
     GLOB 
     framework_src
-    "framework/byvm/app/*.cpp"
-    "framework/byvm/binds/*.cpp"
-    "framework/byvm/core/*.cpp"
-    "framework/byvm/jit/*.cpp"
-    "framework/byvm/lib/*.cpp"
-    "framework/byvm/json/*.c"
-    "framework/byvm/json/*.cpp"
+    "framework/vm/view/*.cpp"
+    "framework/vm/core/*.cpp"
+    "framework/vm/jit/*.cpp"
+    "framework/vm/lib/*.cpp"
+    "framework/vm/json/*.c"
+    "framework/vm/json/*.cpp"
     "framework/dom/*.cpp"
     "framework/gui/*.cpp"
     "framework/loader/*.cpp"
@@ -87,12 +86,11 @@ add_library(
 target_include_directories(
     boyia
     PRIVATE
-    framework/byvm/app
-    framework/byvm/binds
-    framework/byvm/core
-    framework/byvm/jit
-    framework/byvm/json
-    framework/byvm/lib
+    framework/vm/view
+    framework/vm/core
+    framework/vm/jit
+    framework/vm/json
+    framework/vm/lib
     framework/dom
     framework/gui
     framework/loader

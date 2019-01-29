@@ -35,7 +35,7 @@ void GLContext::setWindow(void* win)
 
 	m_window = new GLWindow;
 	m_window->win = ANativeWindow_fromSurface(yanbo::JNIUtil::getEnv(), (jobject)win);
-	KFORMATLOG("m_window win=%d", (LInt)m_window->win);
+	KFORMATLOG("m_window win=%d", (LIntPtr)m_window->win);
 }
 
 void GLContext::initGL(EGLType type)
