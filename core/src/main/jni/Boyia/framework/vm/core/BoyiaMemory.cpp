@@ -40,8 +40,8 @@ LVoid FastFree(LVoid* data) {
 }
 
 LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool) {
-    LInt iAddr = (LInt) addr;
-    return iAddr >= (LInt) pool->mAddress && iAddr < ((LInt)pool->mAddress + pool->mSize);
+    LIntPtr iAddr = (LIntPtr) addr;
+    return iAddr >= (LIntPtr) pool->mAddress && iAddr < ((LIntPtr)pool->mAddress + pool->mSize);
 }
 
 LVoid* InitMemoryPool(LInt size) {

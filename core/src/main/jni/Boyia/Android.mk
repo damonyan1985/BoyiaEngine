@@ -36,12 +36,11 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/framework/utils \
 
 LOCAL_C_INCLUDES += \
-    $(LOCAL_PATH)/framework/byvm/core \
-    $(LOCAL_PATH)/framework/byvm/json \
-    $(LOCAL_PATH)/framework/byvm/lib \
-    $(LOCAL_PATH)/framework/byvm/binds \
-    $(LOCAL_PATH)/framework/byvm/jit \
-    $(LOCAL_PATH)/framework/byvm/app \
+    $(LOCAL_PATH)/framework/vm/core \
+    $(LOCAL_PATH)/framework/vm/json \
+    $(LOCAL_PATH)/framework/vm/lib \
+    $(LOCAL_PATH)/framework/vm/view \
+    $(LOCAL_PATH)/framework/vm/jit \
 
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/network \
@@ -74,7 +73,7 @@ include $(LOCAL_PATH)/graphics/Android.graphics.mk
 
 include $(LOCAL_PATH)/network/Android.network.mk
 
-include $(LOCAL_PATH)/framework/Android.by.mk
+include $(LOCAL_PATH)/framework/Android.vm.mk
 
 LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/porting/BoyiaJniOnLoad.cpp \

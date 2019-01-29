@@ -31,7 +31,7 @@ LVoid* GetLocalValue(LInt idx);
 LVoid SetNativeResult(LVoid* result);
 LVoid GetLocalStack(LInt* stack, LInt* size);
 LVoid* GetNativeResult();
-LVoid* CopyObject(LUint hashKey, LInt size);
+LVoid* CopyObject(LUintPtr hashKey, LInt size);
 //LUint HashCode(BoyiaStr* str);
 LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 //LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);

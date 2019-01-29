@@ -14,7 +14,7 @@ namespace boyia {
 
 template<typename F>
 F FUNCTION_CAST(LByte* addr) {
-	return reinterpret_cast<F>(reinterpret_cast<LInt>(addr));
+	return reinterpret_cast<F>(reinterpret_cast<LIntPtr>(addr));
 }
 
 // When running without a simulator we call the entry directly.
@@ -22,7 +22,7 @@ F FUNCTION_CAST(LByte* addr) {
   (entry(p0, p1, p2, p3, p4))
 
 //typedef void (*F0)();
-typedef void* (*F2)(LInt x, LInt y, LInt p2, LInt p3, LInt p4);
+typedef void* (*F2)(LInt32 x, LInt32 y, LInt32 p2, LInt32 p3, LInt32 p4);
 //"ldr r2,%2 \t\n"
 //"cmp r2, #0 \t\n"
 //"ble end\t\n"
@@ -103,7 +103,7 @@ void BoyiaExecution::callCode() {
 	code.copyCode(desc.buffer, desc.instr_size);
 	F2 f = FUNCTION_CAST<F2>(code.codeStart());
 
-	LInt res = reinterpret_cast<LInt>(CALL_GENERATED_CODE(f, (LInt)testBuffer, (LInt)testStr, 11, 0, 0));
+	LInt res = reinterpret_cast<LIntPtr>(CALL_GENERATED_CODE(f, (LIntPtr)testBuffer, (LIntPtr)testStr, 11, 0, 0));
 
 	//__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM call addr=%d", res);
 	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM call str=%s", testBuffer);

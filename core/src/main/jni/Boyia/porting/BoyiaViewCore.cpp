@@ -178,7 +178,7 @@ static void nativeImageLoaded(JNIEnv* env, jobject obj, jlong item)
 	yanbo::UIViewThread::instance()->imageLoaded(item);
 }
 
-static void nativeInitJNIContext(JNIEnv*  env, jobject obj, jobject context)
+static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
 {
     yanbo::JNIUtil::setClassLoaderFrom(context);
 }

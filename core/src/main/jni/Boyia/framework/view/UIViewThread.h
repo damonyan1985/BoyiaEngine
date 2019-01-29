@@ -30,11 +30,11 @@ public:
 
 	void destroy();
 	void load(const String& url);
-	void loadFinished(const String& data, LInt callback);
-    void loadError(LInt callback, LInt error);
-    void imageLoaded(LInt item);
+	void loadFinished(const String& data, LIntPtr callback);
+    void loadError(LIntPtr callback, LInt error);
+    void imageLoaded(LIntPtr item);
 	void handleKeyEvent(LKeyEvent* evt);
-	void draw(LInt item);
+	void draw(LIntPtr item);
 
 private:
     static UIViewThread*    s_instance;

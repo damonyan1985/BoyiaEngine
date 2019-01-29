@@ -115,7 +115,7 @@ const LayoutRect& HtmlDocument::getViewPort() const
 
 void HtmlDocument::putItemID(String& id, HtmlView* item)
 {
-	m_idMap.put(id, (LInt) item);
+	m_idMap.put(id, (LIntPtr) item);
 }
 
 HtmlView* HtmlDocument::getItemByID(const String& id)
