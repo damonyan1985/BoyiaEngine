@@ -139,6 +139,13 @@ body {
 	width:200px;
 	height:200px;
 }
+.video1 {
+	position:absolute;
+	left:300px;
+	top:200px;
+	width:200px;
+	height:200px;
+}
 .header_center {
     text-align:center;
     padding-top: 10px;

@@ -19,12 +19,9 @@ public:
             return;
         }
 
-        LInt left = 0;
-        LInt right = size - 1;
-
         Stack<LInt> stack(20);
-        stack.push(left);
-        stack.push(right);
+        stack.push(0);
+        stack.push(size - 1);
         while (stack.size())
 	    {
 	        LInt right = stack.pop();

@@ -10,7 +10,8 @@
 <body>
 
 <div id="AppBox" class="full" />
-<!--<video class="video" src="http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4" />
+<video class="video" src="http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4" />
+<!--<video class="video1" src="http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4" />
 -->
 </body>
 <script src="boyiasdk://sdk/Util.boyia" />

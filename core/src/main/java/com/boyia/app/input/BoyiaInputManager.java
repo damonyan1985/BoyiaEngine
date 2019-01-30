@@ -29,7 +29,6 @@ public class BoyiaInputManager {
     	//BoyiaUtils.showToast("重新弹起");
     	BaseActivity context = (BaseActivity) mView.getContext();
     	context.runOnUiThread(new Runnable() {
-
 			@Override
 			public void run() {
 		    	mItem = item;
