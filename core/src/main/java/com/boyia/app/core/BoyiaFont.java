@@ -55,21 +55,19 @@ public class BoyiaFont {
         mList.clear();
 
         char[] charArray = text.toCharArray();
-        int length = charArray.length;
         int currentLineWidth = 0;
         int maxLineWidth = 0;
         StringBuilder builder = new StringBuilder();
         BoyiaLog.d("libboyia", "java text="+text);
-        for (int index = 0; index < length; ++index) {
+        for (int index = 0; index < charArray.length; ++index) {
             int width = BoyiaUtils.getFontWidth(mFontPaint, charArray, index);
             BoyiaLog.d("libboyia", "text="+charArray[index] +" and width="+width);
             if (currentLineWidth + width <= maxWidth) {
                 builder.append(charArray[index]);
                 currentLineWidth += width;
             } else {
-                if (maxLineWidth < currentLineWidth) {
-                    maxLineWidth = currentLineWidth;
-                }
+                maxLineWidth = maxLineWidth < currentLineWidth ?
+                        currentLineWidth : maxLineWidth;
                 mList.add(new LineText(builder.toString(), currentLineWidth));
                 currentLineWidth = 0;
                 builder.delete(0, builder.length());
@@ -77,12 +75,9 @@ public class BoyiaFont {
         }
 
         if (currentLineWidth > 0) {
-            if (maxLineWidth < currentLineWidth) {
-                maxLineWidth = currentLineWidth;
-            }
-
+            maxLineWidth = maxLineWidth < currentLineWidth ? 
+                currentLineWidth : maxLineWidth;
             mList.add(new LineText(builder.toString(), currentLineWidth));
-            builder.delete(0, builder.length());
         }
 
         return maxLineWidth;
