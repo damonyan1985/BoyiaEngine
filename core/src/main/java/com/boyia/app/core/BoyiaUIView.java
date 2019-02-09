@@ -87,11 +87,9 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public static native void nativeInitUIView(int width, int height, boolean isDebug);
 
-	public static native void nativeOnDataReceive(String data);
+	public static native void nativeOnDataReceive(byte[] data, int length, long callback);
 
 	public static native void nativeOnDataFinished(String data, long callback);
-
-	public static native void nativeLoadUrl(String url);
 	
 	public static native void nativeUIViewDraw();
 
@@ -115,8 +113,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static native void nativeResetGLSurface(Surface surface);
 	
-	public static native void nativeStartAppLoad();
-	
 	public void loadUrl(String url) {
 		mUrl = url;
 	}
@@ -134,8 +130,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		nativeInitUIView(mHolder.getSurfaceFrame().width(),
 				mHolder.getSurfaceFrame().height(),
 				BoyiaLog.ENABLE_LOG);
-
-		//nativeLoadUrl(url);
 	}
 
 	@Override
@@ -160,12 +154,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-	}
-	
-	public void receiveData(String data) {
-		BoyiaLog.d(TAG, "UIView_RECEIVE");
-		BoyiaLog.d(TAG, data);
-		nativeOnDataReceive(data);
 	}
 	
 	public void draw() {

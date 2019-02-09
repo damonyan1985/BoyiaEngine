@@ -85,36 +85,18 @@ static void nativeDistroyUIView(JNIEnv* env, jobject obj)
 	yanbo::UIViewThread::instance()->destroy();
 }
 
-static void nativeLoadUrl(JNIEnv* env, jobject obj, jstring s)
+static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)
 {
-#if 1
-	String url;
-	util::jstringTostr(env, s, url);
-	//yanbo::UIView::getInstance()->loadPage(url);
-    yanbo::UIViewThread::instance()->load(url);
-	url.ReleaseBuffer();
-#endif
+	//String result;
+	//util::jstringTostr(env, s, result);
+	//yanbo::UIView::getInstance()->getLoader()->onDataReceived(result);
+	//result.ReleaseBuffer();
 
-#if 0
-    String htmlSource = _CS("<html>"
-    		                 "<head><style>"
-    		                 "body{background-color:#ffffff;font-size:60px;color:#0000ff;}"
-    		                 ".first{border: 1 solid #ff0000;background-color:#00ff00;color:#e32ede;}"
-    		                 "</style></head>"
-    		                 "<body>"
-    		                 "<p>测试 my browser</p>"
-    		                 "<p class=\"first\">测试CSS的CLASS</p>"
-    		                 "</body></html>");
-    yanbo::UIView::getInstance()->loadString(htmlSource);
-#endif
-}
-
-static void nativeOnDataReceive(JNIEnv* env, jobject obj, jstring s)
-{
-	String result;
-	util::jstringTostr(env, s, result);
-	yanbo::UIView::getInstance()->getLoader()->onDataReceived(result);
-	result.ReleaseBuffer();
+	jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
+    LByte* buffer = new LByte[len];
+    LMemcpy(buffer, bytes, len);
+    env->ReleaseByteArrayElements(byteArray, bytes, 0);
+    yanbo::UIViewThread::instance()->dataReceived(buffer, len, (LIntPtr)callback);
 }
 
 static void nativeOnDataFinished(JNIEnv* env, jobject obj, jstring s, jlong callback)
@@ -199,8 +181,7 @@ static void nativeVideoTextureUpdate(JNIEnv*  env, jobject obj, jlong item)
 
 static JNINativeMethod sUIViewMethods[] = {
 	{"nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView},
-	{"nativeLoadUrl", "(Ljava/lang/String;)V", (void*)nativeLoadUrl},
-	{"nativeOnDataReceive", "(Ljava/lang/String;)V", (void*)nativeOnDataReceive},
+	{"nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive},
 	{"nativeOnDataFinished", "(Ljava/lang/String;J)V", (void*)nativeOnDataFinished},
 	{"nativeOnLoadError", "(Ljava/lang/String;J)V", (void*)nativeOnLoadError},
 	{"nativeUIViewDraw", "()V", (void*)nativeUIViewDraw},

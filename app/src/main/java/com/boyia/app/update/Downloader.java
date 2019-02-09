@@ -75,7 +75,7 @@ public class Downloader implements ILoaderCallback {
     }
 
     @Override
-    public void onLoaderDataReceive(byte[] data, int length) {
+    public void onLoaderDataReceive(byte[] data, int length, Object msg) {
         try {
             mSavedFile.write(data, 0, length);
         } catch (IOException e) {

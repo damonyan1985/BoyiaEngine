@@ -78,7 +78,7 @@ public class UpgradeUtil {
 			}
 
 			@Override
-			public void onLoaderDataReceive(byte[] data, int length) {
+			public void onLoaderDataReceive(byte[] data, int length, Object msg) {
 				try {
 					mOutPut.write(data, 0, length);
 				} catch (IOException e) {

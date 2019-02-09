@@ -8,6 +8,7 @@
 #include "UIView.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "StringBuilder.h"
 #include <android/log.h>
 
 extern LVoid CompileScript(char* code);
@@ -25,16 +26,17 @@ public:
 
 	virtual void onDataReceived(const LByte* data, LInt size)
 	{
+		m_builder.append(data, 0, size, LFalse);
 	}
 
 	virtual void onStatusCode(LInt statusCode)
 	{
-		m_loader->onStatusCode(statusCode);
+		//m_loader->onStatusCode(statusCode);
 	}
 
 	virtual void onRedirectUrl(const String& redirectUrl)
 	{
-		m_loader->onRedirectUrl(redirectUrl);
+		//m_loader->onRedirectUrl(redirectUrl);
 	}
 
 	virtual void onLoadError(LInt error)
@@ -46,7 +48,9 @@ public:
 	virtual void onLoadFinished(const String& data)
 	{
 		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)m_url.GetBuffer());
-		m_loader->onLoadFinished(data, m_resType);
+		//m_loader->onLoadFinished(data, m_resType);
+		BoyiaPtr<String> sptr = m_builder.toString();
+		m_loader->onLoadFinished(*sptr.get(), m_resType);
 		delete this;
 	}
 
@@ -59,6 +63,7 @@ private:
 	ResourceLoader* m_loader;
 	LInt            m_resType;
 	String          m_url;
+	StringBuilder   m_builder;
 };
 
 ResourceLoader::ResourceLoader(ResourceLoaderClient* client)
@@ -84,27 +89,8 @@ void ResourceLoader::onFileLen(LInt len)
     YanLog("dataLen=%d", len);
 }
 
-
-void ResourceLoader::onDataReceived(const String& data)
-{
-	KLOG("ResourceLoader::onDataReceived");
-	//m_data += data;
-	KSTRLOG8(data);
-	KLOG("onDataReceived end");
-}
-
-void ResourceLoader::onStatusCode(LInt statusCode)
-{
-	
-}
-
-void ResourceLoader::onRedirectUrl(const String& redirectUrl)
-{
-}
-
 void ResourceLoader::onLoadError(LInt error)
 {
-	
 }
 
 void ResourceLoader::onLoadFinished(const String& data, LInt resType)

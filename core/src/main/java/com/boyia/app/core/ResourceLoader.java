@@ -46,7 +46,9 @@ public class ResourceLoader implements ILoaderCallback {
 	}
 
 	@Override
-	public void onLoaderDataReceive(byte[] data, int length) {
+	public void onLoaderDataReceive(byte[] data, int length, Object msg) {
+		ResInfo info = (ResInfo) msg;
+		BoyiaUIView.nativeOnDataReceive(data, length, info.mCallback);
 	}
 
 	@Override

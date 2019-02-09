@@ -30,9 +30,6 @@ public:
 	virtual ~ResourceLoader();
 	
 public:
-	void onDataReceived(const String& data);
-	void onStatusCode(LInt statusCode);
-	void onRedirectUrl(const String& redirectUrl);
 	void onLoadError(LInt error);
 	void onLoadFinished(const String& data, LInt resType);
 	void onFileLen(LInt len);
