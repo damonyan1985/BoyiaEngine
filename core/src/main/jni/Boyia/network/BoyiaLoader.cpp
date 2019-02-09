@@ -49,7 +49,7 @@ LVoid LoaderTask::onDataRecevied(const LByte* buffer, LInt size)
 
 LVoid LoaderTask::onLoadFinished()
 {
-	if (m_client) m_client->onLoadFinished(_CS(""));
+	if (m_client) m_client->onLoadFinished();
 }
 
 LVoid LoaderTask::onLoadError(LInt code)

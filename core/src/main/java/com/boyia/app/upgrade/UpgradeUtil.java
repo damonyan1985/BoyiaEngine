@@ -93,7 +93,7 @@ public class UpgradeUtil {
 			}
 
 			@Override
-			public void onLoaderFinished(byte[] data, Object msg) {
+			public void onLoaderFinished(Object msg) {
 				try {
 					mOutPut.close();
 				} catch (IOException e) {

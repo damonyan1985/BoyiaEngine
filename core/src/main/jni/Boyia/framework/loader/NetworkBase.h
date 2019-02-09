@@ -24,7 +24,7 @@ public:
 	virtual LVoid onFileLen(LInt len) = 0;
 	virtual LVoid onRedirectUrl(const String& redirectUrl) = 0;
 	virtual LVoid onLoadError(LInt error) = 0;
-	virtual LVoid onLoadFinished(const String& data) = 0;
+	virtual LVoid onLoadFinished() = 0;
 };
 
 typedef KListMap<String, String> NetworkMap;

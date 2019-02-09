@@ -45,12 +45,13 @@ public:
 		delete this;
 	}
 
-	virtual void onLoadFinished(const String& data)
+	virtual void onLoadFinished()
 	{
-		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)m_url.GetBuffer());
+		//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)m_url.GetBuffer());
 		//m_loader->onLoadFinished(data, m_resType);
 		BoyiaPtr<String> sptr = m_builder.toString();
 		m_loader->onLoadFinished(*sptr.get(), m_resType);
+		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)sptr->GetBuffer());
 		delete this;
 	}
 

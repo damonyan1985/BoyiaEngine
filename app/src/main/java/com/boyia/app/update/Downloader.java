@@ -84,7 +84,7 @@ public class Downloader implements ILoaderCallback {
     }
 
     @Override
-    public void onLoaderFinished(byte[] data, Object msg) {
+    public void onLoaderFinished(Object msg) {
         try {
             mSavedFile.close();
             mInfo.setStatus(DownloadData.FINISHED);

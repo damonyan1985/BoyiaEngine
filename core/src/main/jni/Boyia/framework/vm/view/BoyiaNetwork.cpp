@@ -21,6 +21,7 @@ void BoyiaNetwork::load(const String& url)
 
 void BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
 {
+	m_builder.append(data, 0, size, LFalse);
 }
 
 void BoyiaNetwork::onStatusCode(LInt statusCode)
@@ -40,14 +41,15 @@ void BoyiaNetwork::onLoadError(LInt error)
     delete this;
 }
 
-void BoyiaNetwork::onLoadFinished(const String& data)
+void BoyiaNetwork::onLoadFinished()
 {
+	BoyiaPtr<String> sptr = m_builder.toString();
 	KFORMATLOG("BoyiaNetwork::onLoadFinished %d", 1);
 	BoyiaValue value;
 	value.mValueType = BY_STRING;
-	value.mValue.mStrVal.mPtr = (LInt8*)data.GetBuffer();
-	value.mValue.mStrVal.mLen = data.GetLength();
-	KFORMATLOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)data.GetBuffer());
+	value.mValue.mStrVal.mPtr = (LInt8*)sptr->GetBuffer();
+	value.mValue.mStrVal.mLen = sptr->GetLength();
+	KFORMATLOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)sptr->GetBuffer());
 	SaveLocalSize();
 	LocalPush(&m_callback);
 	LocalPush(&value);

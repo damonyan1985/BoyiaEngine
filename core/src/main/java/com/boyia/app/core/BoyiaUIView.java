@@ -89,7 +89,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public static native void nativeOnDataReceive(byte[] data, int length, long callback);
 
-	public static native void nativeOnDataFinished(String data, long callback);
+	public static native void nativeOnDataFinished(long callback);
 	
 	public static native void nativeUIViewDraw();
 

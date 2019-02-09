@@ -116,7 +116,7 @@ public:
 		delete this;
 	}
 
-	virtual void onLoadFinished(const String& data)
+	virtual void onLoadFinished()
 	{
 		fclose(m_appFile);
 		JNIUtil::unzip(m_appFilePath, m_appDir);
@@ -198,7 +198,7 @@ LVoid StartupLoader::onLoadError(LInt error)
 	}
 }
 
-LVoid StartupLoader::onLoadFinished(const String& data)
+LVoid StartupLoader::onLoadFinished()
 {
 	if (!m_file)
 	{
