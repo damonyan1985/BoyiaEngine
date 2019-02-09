@@ -82,6 +82,7 @@ void MiniThread::waitTimeOut(long timeout)
 	pthread_cond_timedwait(&m_condition, m_lock.getMutex(), &outtime);
 }
 
+// milliseconds
 void MiniThread::sleep(long time)
 {
 //	struct timeval delay;
@@ -89,7 +90,11 @@ void MiniThread::sleep(long time)
 //	delay.tv_usec = time; // time us
 //	select(0, NULL, NULL, NULL, &delay);
 
-	usleep(time);
+//	usleep(time);
+    struct timespec ts;
+    ts.tv_sec = time / 1000;
+    ts.tv_nsec = (time % 1000) * 1000000;
+    nanosleep(&ts, NULL);
 }
 
 int MiniThread::getId()
