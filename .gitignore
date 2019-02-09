@@ -7,7 +7,11 @@
 .DS_Store
 /build
 /captures
-/common
+/common/src/main/java/com/boyia/app/common/http
+/common/src/main/java/com/boyia/app/common/job
+/common/src/main/java/com/boyia/app/common/loader
+/common/src/main/java/com/boyia/app/common/base
+/common/src/main/java/com/boyia/app/common/utils
 /maven
 /library
 .externalNativeBuild
