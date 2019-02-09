@@ -33,7 +33,7 @@ void DOMBuilder::createDocument(
 	m_htmlDoc = doc;
 	m_cssParser = cssParser;
 
-	if (NULL == m_xmlDoc)
+	if (!m_xmlDoc)
 	{
 		m_xmlDoc = new XMLDocument;
 		m_xmlDoc->Parse((const LCharA*)buffer.GetBuffer());
