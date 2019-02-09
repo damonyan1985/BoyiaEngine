@@ -99,12 +99,9 @@ static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, 
     yanbo::UIViewThread::instance()->dataReceived(buffer, len, (LIntPtr)callback);
 }
 
-static void nativeOnDataFinished(JNIEnv* env, jobject obj, jstring s, jlong callback)
+static void nativeOnDataFinished(JNIEnv* env, jobject obj, jlong callback)
 {
-	String result;
-	util::jstringTostr(env, s, result);
-	yanbo::UIViewThread::instance()->loadFinished(result, callback);
-	result.ReleaseBuffer();
+	yanbo::UIViewThread::instance()->loadFinished(callback);
 }
 
 static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong callback)
@@ -182,7 +179,7 @@ static void nativeVideoTextureUpdate(JNIEnv*  env, jobject obj, jlong item)
 static JNINativeMethod sUIViewMethods[] = {
 	{"nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView},
 	{"nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive},
-	{"nativeOnDataFinished", "(Ljava/lang/String;J)V", (void*)nativeOnDataFinished},
+	{"nativeOnDataFinished", "(J)V", (void*)nativeOnDataFinished},
 	{"nativeOnLoadError", "(Ljava/lang/String;J)V", (void*)nativeOnLoadError},
 	{"nativeUIViewDraw", "()V", (void*)nativeUIViewDraw},
 	{"nativeDistroyUIView", "()V", (void*)nativeDistroyUIView},

@@ -52,14 +52,9 @@ public class ResourceLoader implements ILoaderCallback {
 	}
 
 	@Override
-	public void onLoaderFinished(byte[] data, Object msg) {
-		try {	
-			ResInfo info = (ResInfo) msg;
-			info.mData = new String(data, HTTPUtil.HTTP_CHARSET_UTF8);
-			BoyiaUIView.nativeOnDataFinished(info.mData, info.mCallback);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+	public void onLoaderFinished(Object msg) {
+    	ResInfo info = (ResInfo) msg;
+    	BoyiaUIView.nativeOnDataFinished(info.mCallback);
 	}
 
 	@Override

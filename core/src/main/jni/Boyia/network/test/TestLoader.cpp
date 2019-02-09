@@ -53,7 +53,7 @@ public:
 		fclose(m_file);
 	}
 
-	virtual LVoid onLoadFinished(const String& data)
+	virtual LVoid onLoadFinished()
 	{
 	    //KRefPtr<String> contentPtr = m_buffer.toString();
 	    //String& content = *contentPtr.get();

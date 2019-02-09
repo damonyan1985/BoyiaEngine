@@ -26,7 +26,7 @@ public:
     virtual LVoid onFileLen(LInt len);
     virtual LVoid onRedirectUrl(const String& redirectUrl);
     virtual LVoid onLoadError(LInt error);
-    virtual LVoid onLoadFinished(const String& data);
+    virtual LVoid onLoadFinished();
 
 private:
     LVoid parseConfig();

@@ -32,7 +32,7 @@ public:
 	void destroy();
 	void load(const String& url);
 	void dataReceived(LByte* bytes, LInt len, LIntPtr callback);
-	void loadFinished(const String& data, LIntPtr callback);
+	void loadFinished(LIntPtr callback);
     void loadError(LIntPtr callback, LInt error);
     void imageLoaded(LIntPtr item);
 	void handleKeyEvent(LKeyEvent* evt);

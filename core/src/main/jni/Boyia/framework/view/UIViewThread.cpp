@@ -54,11 +54,11 @@ void UIViewThread::handleMessage(MiniMessage* msg)
 	case UIView_LOAD_FINISHED:
 		{
 			KFORMATLOG("uithread threadid=%d", getId());
-			String data((LUint8*)msg->obj, LTrue, msg->arg0);
+			//String data((LUint8*)msg->obj, LTrue, msg->arg0);
 			NetworkClient* client = (NetworkClient*)msg->arg1;
 			if (client)
 			{
-				client->onLoadFinished(data);
+				client->onLoadFinished();
 			}
 		}
 		break;
@@ -108,14 +108,11 @@ void UIViewThread::load(const String& url)
 	notify();
 }
 
-void UIViewThread::loadFinished(const String& data, LIntPtr callback)
+void UIViewThread::loadFinished(LIntPtr callback)
 {
 	MiniMessage* msg = m_queue->obtain();
     msg->type = UIView_LOAD_FINISHED;
-    msg->obj = data.GetBuffer();
-	msg->arg0 = data.GetLength();
 	msg->arg1 = callback;
-
 	m_queue->push(msg);
 	notify();
 }

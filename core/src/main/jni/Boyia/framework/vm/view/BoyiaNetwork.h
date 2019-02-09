@@ -3,6 +3,7 @@
 
 #include "NetworkBase.h"
 #include "BoyiaCore.h"
+#include "StringBuilder.h"
 
 namespace boyia
 {
@@ -21,11 +22,12 @@ public:
 	virtual void onFileLen(LInt len);
 	virtual void onRedirectUrl(const String& redirectUrl);
 	virtual void onLoadError(LInt error);
-	virtual void onLoadFinished(const String& data);
+	virtual void onLoadFinished();
 
 private:
 	BoyiaValue m_callback;
 	BoyiaValue m_obj;
+	yanbo::StringBuilder m_builder;
 };
 }
 #endif
