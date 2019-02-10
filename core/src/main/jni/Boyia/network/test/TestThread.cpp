@@ -9,14 +9,17 @@ class TimeThread : public MiniThread
 public:
     void run() 
     {
+        long now = SystemUtil::getSystemTime();
         while (true)
         {
         	//KLOG("waitTimeOut TimeThread begin");
-        	//waitTimeOut(1000);
-            long now = SystemUtil::getSystemTime();
-            sleep(1000);
+        	waitTimeOut(1000);
+            
+            //MiniThread::sleepMS(1000);
         	//KLOG("waitTimeOut 1000");
+
             KFORMATLOG("TimeThread sleepTime=%ld", SystemUtil::getSystemTime() - now);
+            now = SystemUtil::getSystemTime();
         }
     }	
 };

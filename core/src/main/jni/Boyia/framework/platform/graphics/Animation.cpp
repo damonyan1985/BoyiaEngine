@@ -248,7 +248,7 @@ LVoid AnimationThread::run()
     	if (m_taskList.count())
     	{
     		runTasks();
-    		MiniThread::sleep(CONST_REFRESH_TIME * 1000);
+    		MiniThread::sleepMS(CONST_REFRESH_TIME);
     		//MiniThread::sleep(10);
     	}
     	else

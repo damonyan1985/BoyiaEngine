@@ -27,7 +27,7 @@ public:
     void                        waitTimeOut(long time);
     int                         getId();
 
-    static  void                sleep(long time);
+    static  void                sleepMS(long time);
     virtual void				stop();
 
 protected:
