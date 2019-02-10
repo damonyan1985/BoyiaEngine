@@ -83,7 +83,7 @@ void MiniThread::waitTimeOut(long timeout)
 }
 
 // milliseconds
-void MiniThread::sleep(long time)
+void MiniThread::sleepMS(long time)
 {
 //	struct timeval delay;
 //	delay.tv_sec = 0;
