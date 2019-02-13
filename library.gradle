@@ -11,3 +11,8 @@ def initExtension() {
 }
 
 initExtension()
+
+gradle.ext.library = [
+    boyia_core: 'com.boyia.app.core:core:1.0.0',
+    boyia_common: 'com.boyia.app.common:common:1.0.0',
+]
