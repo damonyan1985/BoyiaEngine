@@ -56,8 +56,9 @@ protobuf {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':core')
+    //implementation project(':core')
     //implementation 'com.boyia.app.core:core:1.0.0'
+    implementation gradle.library.boyia_core
     api project(':common')
     implementation 'io.netty:netty-all:5.0.0.Alpha2'
     // use protobuf begin
