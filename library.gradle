@@ -15,4 +15,10 @@ initExtension()
 gradle.ext.library = [
     boyia_core: 'com.boyia.app.core:core:1.0.0',
     boyia_common: 'com.boyia.app.common:common:1.0.0',
+    okhttp_lib: 'com.squareup.okhttp3:okhttp:3.6.0',
+    okio_lib: 'com.squareup.okio:okio:1.11.0',
+    netty_lib: 'io.netty:netty-all:5.0.0.Alpha2',
+    protobuf_lib:  'com.google.protobuf:protobuf-java:3.4.0',
+    leakcanary_debug: 'com.squareup.leakcanary:leakcanary-android:1.3',
+    leakcanary_release: 'com.squareup.leakcanary:leakcanary-android-no-op:1.3',
 ]

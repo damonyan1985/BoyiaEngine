@@ -38,6 +38,6 @@ uploadArchives {
 }
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
-    implementation 'com.squareup.okio:okio:1.11.0'
+    implementation gradle.library.okhttp_lib
+    implementation gradle.library.okio_lib
 }
