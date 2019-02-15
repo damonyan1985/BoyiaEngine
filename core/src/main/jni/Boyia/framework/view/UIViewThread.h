@@ -8,6 +8,16 @@
 
 namespace yanbo
 {
+class BoyiaEvent
+{
+private:
+	LVoid execute();
+    
+protected:
+    virtual LVoid run() = 0;
+    friend class UIViewThread;
+};
+
 class UIViewThread : public MiniMessageThread
 {
 public:
@@ -22,21 +32,23 @@ public:
 	    UIView_IMAGE_LOADED,
 	    UIView_TOUCH_EVENT,
 	    UIView_DATA_RECV,
+	    UIView_SEND_EVENT,
 	};
 
 	UIViewThread();
 	static UIViewThread* instance();
 
-	virtual void handleMessage(MiniMessage* msg);
+	virtual LVoid handleMessage(MiniMessage* msg);
 
-	void destroy();
-	void load(const String& url);
-	void dataReceived(LByte* bytes, LInt len, LIntPtr callback);
-	void loadFinished(LIntPtr callback);
-    void loadError(LIntPtr callback, LInt error);
-    void imageLoaded(LIntPtr item);
-	void handleKeyEvent(LKeyEvent* evt);
-	void draw(LIntPtr item);
+	LVoid destroy();
+	LVoid load(const String& url);
+	LVoid dataReceived(LByte* bytes, LInt len, LIntPtr callback);
+	LVoid loadFinished(LIntPtr callback);
+    LVoid loadError(LIntPtr callback, LInt error);
+    LVoid imageLoaded(LIntPtr item);
+	LVoid handleKeyEvent(LKeyEvent* evt);
+	LVoid draw(LIntPtr item);
+	LVoid sendEvent(BoyiaEvent* event);
 
 private:
     static UIViewThread*    s_instance;

@@ -37,8 +37,6 @@ class MiniMessageQueue : public MiniMessageCache
 {
 public:
 	MiniMessage* obtain();
-
-	LVoid initCache();
 	LVoid push(MiniMessage* msg);
 	LVoid removeMessage(LInt type);
 	LInt size();
