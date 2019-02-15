@@ -7,7 +7,7 @@ fun jsNew(cls) {
 
 class MainActivity extends Activity {   
     prop main;
-	fun onCreate() {
+    fun onCreate() {
 	    var a = 9;
 	    var b = 5;
 	    var c = a % b;
@@ -29,8 +29,8 @@ class MainActivity extends Activity {
 	    appBox.draw();
 	    appBox.commit();
 	    
-	    //Util.showToast("test mjs callstaticmethod");
-	    Network.load("https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/src/contacts/json/mock.json", this.loadCallback, this);
+	    //Util.showToast("test boyia callstaticmethod");
+	    this.fetch("https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/src/contacts/json/mock.json", this.loadCallback);
 	}
 	
 	fun loadCallback(data) {

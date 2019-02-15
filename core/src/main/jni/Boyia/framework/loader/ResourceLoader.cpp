@@ -51,7 +51,7 @@ public:
 		//m_loader->onLoadFinished(data, m_resType);
 		BoyiaPtr<String> sptr = m_builder.toString();
 		m_loader->onLoadFinished(*sptr.get(), m_resType);
-		__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)sptr->GetBuffer());
+		__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "Parse script=%s", (const char*)sptr->GetBuffer());
 		delete this;
 	}
 

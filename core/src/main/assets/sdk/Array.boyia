@@ -1,4 +1,4 @@
-// 大规模JS编程
+// 大规模Boyia编程
 // 这个是数组类的定义
 class Array {
     fun ctor() {
