@@ -5,6 +5,9 @@
 
 namespace yanbo
 {
+BoyiaEvent::~BoyiaEvent()
+{	
+}	
 LVoid BoyiaEvent::execute()
 {
 	run();
@@ -84,13 +87,6 @@ LVoid UIViewThread::handleMessage(MiniMessage* msg)
 			image->setLoaded(LTrue);
 		}
 		break;
-	case UIView_DATA_RECV:
-	    {
-            if (!msg->obj || !msg->arg0) return;
-            NetworkClient* client = (NetworkClient*)msg->arg1;
-            client->onDataReceived((LByte*)msg->obj, msg->arg0);
-	    }
-	    break;
 	case UIView_SEND_EVENT:
 	    {
             if (!msg->obj) return;
@@ -169,16 +165,16 @@ LVoid UIViewThread::draw(LIntPtr item)
 	notify();
 }
 
-LVoid UIViewThread::dataReceived(LByte* bytes, LInt len, LIntPtr callback)
-{
-	MiniMessage* msg = m_queue->obtain();
-	msg->type = UIView_DATA_RECV;
-	msg->obj = bytes;
-	msg->arg0 = len;
-	msg->arg1 = callback;
-	m_queue->push(msg);
-	notify();
-}
+// LVoid UIViewThread::dataReceived(LByte* bytes, LInt len, LIntPtr callback)
+// {
+// 	MiniMessage* msg = m_queue->obtain();
+// 	msg->type = UIView_DATA_RECV;
+// 	msg->obj = bytes;
+// 	msg->arg0 = len;
+// 	msg->arg1 = callback;
+// 	m_queue->push(msg);
+// 	notify();
+// }
 
 LVoid UIViewThread::sendEvent(BoyiaEvent* event)
 {

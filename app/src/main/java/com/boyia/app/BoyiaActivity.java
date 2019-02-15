@@ -106,8 +106,8 @@ public class BoyiaActivity extends BaseActivity implements UpgradeUtil.UpgradeLi
 		//printSystemInfo();
 
 		//loadTest2();
-		BoyiaMultiApplication application = (BoyiaMultiApplication) getApplication();
-		application.watcher().watch(this);
+		//BoyiaMultiApplication application = (BoyiaMultiApplication) getApplication();
+		//application.watcher().watch(this);
 	}
 
 	private void resetScreen() {

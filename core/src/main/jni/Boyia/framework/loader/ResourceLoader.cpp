@@ -15,13 +15,14 @@
 extern LVoid CompileScript(char* code);
 namespace yanbo
 {
-class ResourceHandle : public NetworkClient
+class ResourceHandle : public NetworkClient, BoyiaEvent
 {
 public:
-	ResourceHandle(ResourceLoader* loader, const String& url, LInt type)
+	ResourceHandle(ResourceLoader* loader, LInt type)
 	    : m_loader(loader)
+	    , m_result(NetworkClient::NETWORK_SUCCESS)
 	    , m_resType(type)
-	    , m_url(url)
+	   
 	{
 	}
 
@@ -32,40 +33,54 @@ public:
 
 	virtual void onStatusCode(LInt statusCode)
 	{
-		//m_loader->onStatusCode(statusCode);
 	}
 
 	virtual void onRedirectUrl(const String& redirectUrl)
 	{
-		//m_loader->onRedirectUrl(redirectUrl);
 	}
 
 	virtual void onLoadError(LInt error)
 	{
-		m_loader->onLoadError(error);
-		delete this;
+		//m_loader->onLoadError(error);
+		m_result = error;
+		UIViewThread::instance()->sendEvent(this);
 	}
 
 	virtual void onLoadFinished()
 	{
-		//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "Parse url=%s", (const char*)m_url.GetBuffer());
-		//m_loader->onLoadFinished(data, m_resType);
-		BoyiaPtr<String> sptr = m_builder.toString();
-		m_loader->onLoadFinished(*sptr.get(), m_resType);
-		__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "Parse script=%s", (const char*)sptr->GetBuffer());
-		delete this;
+		m_data = m_builder.toString();
+		UIViewThread::instance()->sendEvent(this);
 	}
+
+	virtual LVoid run()
+    {
+    	__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run");
+    	if (m_result == NetworkClient::NETWORK_SUCCESS)
+    	{
+    		//BoyiaPtr<String> sptr = m_builder.toString();
+    		__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run NETWORK_SUCCESS");
+    		__android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "Parse script=%s", (const char*)m_data->GetBuffer());
+    		m_loader->onLoadFinished(*m_data.get(), m_resType);
+    	}
+    	else
+    	{
+    		m_loader->onLoadError(m_result);
+    	}
+    }
 
 	virtual void onFileLen(LInt len)
 	{
-		m_loader->onFileLen(len);
+		//m_loader->onFileLen(len);
 	}
 
 private:
-	ResourceLoader* m_loader;
-	LInt            m_resType;
-	String          m_url;
-	StringBuilder   m_builder;
+	ResourceLoader*  m_loader;
+	LInt             m_resType;
+	//ResourceEvent*  m_event;
+	String           m_url;
+	StringBuilder    m_builder;
+	LInt             m_result;
+	BoyiaPtr<String> m_data;
 };
 
 ResourceLoader::ResourceLoader(ResourceLoaderClient* client)
@@ -126,7 +141,7 @@ void ResourceLoader::load(const String& url, LoadType type)
 	{
 		++m_cssSize;
 	}
-	ResourceHandle* handle = new ResourceHandle(this, url, type);
+	ResourceHandle* handle = new ResourceHandle(this, type);
 	m_view->network()->loadUrl(url, handle);
 }
 
