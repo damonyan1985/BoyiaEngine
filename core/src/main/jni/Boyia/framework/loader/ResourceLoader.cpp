@@ -15,14 +15,13 @@
 extern LVoid CompileScript(char* code);
 namespace yanbo
 {
-class ResourceHandle : public NetworkClient, BoyiaEvent
+class ResourceHandle : public NetworkClient, public BoyiaEvent
 {
 public:
 	ResourceHandle(ResourceLoader* loader, LInt type)
 	    : m_loader(loader)
 	    , m_result(NetworkClient::NETWORK_SUCCESS)
-	    , m_resType(type)
-	   
+	    , m_resType(type)  
 	{
 	}
 
