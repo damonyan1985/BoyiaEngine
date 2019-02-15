@@ -76,8 +76,6 @@ public:
 private:
 	ResourceLoader*  m_loader;
 	LInt             m_resType;
-	//ResourceEvent*  m_event;
-	String           m_url;
 	StringBuilder    m_builder;
 	LInt             m_result;
 	BoyiaPtr<String> m_data;
