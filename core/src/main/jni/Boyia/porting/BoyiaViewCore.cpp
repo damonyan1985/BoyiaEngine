@@ -102,14 +102,16 @@ static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, 
 
 static void nativeOnDataFinished(JNIEnv* env, jobject obj, jlong callback)
 {
-	yanbo::UIViewThread::instance()->loadFinished(callback);
+	reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadFinished();
+	//yanbo::UIViewThread::instance()->loadFinished(callback);
 }
 
 static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong callback)
 {
-	String result;
-	util::jstringTostr(env, error, result);
-	yanbo::UIViewThread::instance()->loadError(callback, 0);
+	//String result;
+	//util::jstringTostr(env, error, result);
+	reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::NETWORK_FILE_ERROR);
+	//yanbo::UIViewThread::instance()->loadError(callback, 0);
 }
 
 static void nativeUIViewDraw(JNIEnv* env, jobject obj)

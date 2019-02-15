@@ -10,6 +10,9 @@ namespace yanbo
 {
 class BoyiaEvent
 {
+public:
+    virtual ~BoyiaEvent();
+
 private:
 	LVoid execute();
     
@@ -42,7 +45,6 @@ public:
 
 	LVoid destroy();
 	LVoid load(const String& url);
-	LVoid dataReceived(LByte* bytes, LInt len, LIntPtr callback);
 	LVoid loadFinished(LIntPtr callback);
     LVoid loadError(LIntPtr callback, LInt error);
     LVoid imageLoaded(LIntPtr item);
