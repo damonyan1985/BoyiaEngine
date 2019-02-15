@@ -5,6 +5,12 @@
 
 namespace yanbo
 {
+LVoid BoyiaEvent::execute()
+{
+	run();
+	delete this;
+}
+
 UIViewThread* UIViewThread::s_instance = NULL;
 
 UIViewThread* UIViewThread::instance()
@@ -22,7 +28,7 @@ UIViewThread::UIViewThread()
 {
 }
 
-void UIViewThread::handleMessage(MiniMessage* msg)
+LVoid UIViewThread::handleMessage(MiniMessage* msg)
 {
 	switch (msg->type)
 	{
@@ -85,10 +91,16 @@ void UIViewThread::handleMessage(MiniMessage* msg)
             client->onDataReceived((LByte*)msg->obj, msg->arg0);
 	    }
 	    break;
+	case UIView_SEND_EVENT:
+	    {
+            if (!msg->obj) return;
+            static_cast<BoyiaEvent*>(msg->obj)->execute();
+	    }
+	    break; 
 	}
 }
 
-void UIViewThread::destroy()
+LVoid UIViewThread::destroy()
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_QUIT;
@@ -97,7 +109,7 @@ void UIViewThread::destroy()
 	notify();
 }
 
-void UIViewThread::load(const String& url)
+LVoid UIViewThread::load(const String& url)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_INIT;
@@ -108,7 +120,7 @@ void UIViewThread::load(const String& url)
 	notify();
 }
 
-void UIViewThread::loadFinished(LIntPtr callback)
+LVoid UIViewThread::loadFinished(LIntPtr callback)
 {
 	MiniMessage* msg = m_queue->obtain();
     msg->type = UIView_LOAD_FINISHED;
@@ -117,7 +129,7 @@ void UIViewThread::loadFinished(LIntPtr callback)
 	notify();
 }
 
-void UIViewThread::loadError(LIntPtr callback, LInt error)
+LVoid UIViewThread::loadError(LIntPtr callback, LInt error)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_LOAD_ERROR;
@@ -128,7 +140,7 @@ void UIViewThread::loadError(LIntPtr callback, LInt error)
 	notify();
 }
 
-void UIViewThread::imageLoaded(LIntPtr item)
+LVoid UIViewThread::imageLoaded(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_IMAGE_LOADED;
@@ -138,7 +150,7 @@ void UIViewThread::imageLoaded(LIntPtr item)
 	notify();
 }
 
-void UIViewThread::handleKeyEvent(LKeyEvent* evt)
+LVoid UIViewThread::handleKeyEvent(LKeyEvent* evt)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_KEYEVENT;
@@ -148,7 +160,7 @@ void UIViewThread::handleKeyEvent(LKeyEvent* evt)
 	notify();
 }
 
-void UIViewThread::draw(LIntPtr item)
+LVoid UIViewThread::draw(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_DRAW;
@@ -157,13 +169,22 @@ void UIViewThread::draw(LIntPtr item)
 	notify();
 }
 
-void UIViewThread::dataReceived(LByte* bytes, LInt len, LIntPtr callback)
+LVoid UIViewThread::dataReceived(LByte* bytes, LInt len, LIntPtr callback)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UIView_DATA_RECV;
 	msg->obj = bytes;
 	msg->arg0 = len;
 	msg->arg1 = callback;
+	m_queue->push(msg);
+	notify();
+}
+
+LVoid UIViewThread::sendEvent(BoyiaEvent* event)
+{
+	MiniMessage* msg = m_queue->obtain();
+	msg->type = UIView_SEND_EVENT;
+	msg->obj = event;
 	m_queue->push(msg);
 	notify();
 }

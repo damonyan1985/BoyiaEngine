@@ -9,6 +9,7 @@
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "StringBuilder.h"
+#include "UIViewThread.h"
 #include <android/log.h>
 
 extern LVoid CompileScript(char* code);

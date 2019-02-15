@@ -96,7 +96,8 @@ static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, 
     LByte* buffer = new LByte[len];
     LMemcpy(buffer, bytes, len);
     env->ReleaseByteArrayElements(byteArray, bytes, 0);
-    yanbo::UIViewThread::instance()->dataReceived(buffer, len, (LIntPtr)callback);
+    //yanbo::UIViewThread::instance()->dataReceived(buffer, len, (LIntPtr)callback);
+    reinterpret_cast<yanbo::NetworkClient*>(callback)->onDataReceived(buffer, len);
 }
 
 static void nativeOnDataFinished(JNIEnv* env, jobject obj, jlong callback)
