@@ -9,7 +9,7 @@
 namespace yanbo
 {
 class GraphicsContextGL;
-class PaintThread : public MiniMessageThread
+class UIThread : public MiniMessageThread
 {
 public:
 	enum MessageType
@@ -28,9 +28,9 @@ public:
 		UI_OP_EXEC,
 		UI_DESTROY,
 	};
-	static PaintThread* instance();
+	static UIThread* instance();
 
-	virtual ~PaintThread();
+	virtual ~UIThread();
 	LVoid setGC(LGraphicsContext* gc);
 
 	LVoid initContext(LVoid* win);
@@ -51,7 +51,7 @@ public:
 	virtual LVoid handleMessage(MiniMessage* msg);
 
 private:
-	PaintThread();
+	UIThread();
 	LVoid initGL();
 	LVoid resetGL();
 	LVoid flush();
@@ -59,7 +59,7 @@ private:
 	LVoid drawUI(LVoid* view);
 	LGraphicsContext*            m_gc;
 	util::GLContext              m_context;
-	static PaintThread*          s_inst;
+	static UIThread*          s_inst;
 };
 }
 #endif

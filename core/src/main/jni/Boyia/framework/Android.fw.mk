@@ -16,7 +16,7 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/dom/DOMBuilder.cpp \
     \
     $(LOCAL_PATH)/framework/view/UIView.cpp \
-    $(LOCAL_PATH)/framework/view/UIViewThread.cpp \
+    $(LOCAL_PATH)/framework/view/UIThread.cpp \
     $(LOCAL_PATH)/framework/view/UIViewController.cpp \
     $(LOCAL_PATH)/framework/view/UIOperation.cpp \
     \
@@ -44,7 +44,6 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/platform/android/MediaPlayerAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/android/EditorAndroid.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/GraphicsContextGL.cpp \
-    $(LOCAL_PATH)/framework/platform/graphics/PaintThread.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/GLContext.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/Animation.cpp \
     $(LOCAL_PATH)/framework/platform/arm/ArmFunction.cpp

@@ -1,5 +1,5 @@
 #include "Animation.h"
-#include "PaintThread.h"
+#include "UIThread.h"
 #include "AutoLock.h"
 #include "UIView.h"
 #include "LColor.h"
@@ -73,7 +73,7 @@ LVoid ScaleAnimation::setDeltaScale(HtmlView* item, float dt)
 
 LVoid ScaleAnimation::step()
 {
-	//AutoLock lock(&util::PaintThread::s_drawSyncMutex);
+	//AutoLock lock(&util::UIThread::s_drawSyncMutex);
 
 	m_item->getStyle()->scale += m_deltaScale;
 	// for child
@@ -81,7 +81,7 @@ LVoid ScaleAnimation::step()
 	// layout
 	m_item->layout();
 	// draw
-	PaintThread::instance()->drawOnly(m_item);
+	UIThread::instance()->drawOnly(m_item);
 
 	Animation::step();
 }
@@ -121,7 +121,7 @@ LVoid OpacityAnimation::step()
 		// for child
 		updateChildOpacity(m_item, m_item->getStyle()->opacity);
 		// draw
-		PaintThread::instance()->drawOnly(m_item);
+		UIThread::instance()->drawOnly(m_item);
 	}
 
     Animation::step();
@@ -138,7 +138,7 @@ LVoid TranslateAnimation::step()
 	m_item->setXpos(m_item->getXpos() + m_deltaPoint.iX);
 	m_item->setYpos(m_item->getYpos() + m_deltaPoint.iY);
 
-	PaintThread::instance()->drawOnly(m_item);
+	UIThread::instance()->drawOnly(m_item);
 
 	Animation::step();
 }
@@ -238,7 +238,7 @@ LVoid AnimationThread::runTasks()
 	    }
 	}
 
-    PaintThread::instance()->submit();
+    UIThread::instance()->submit();
 }
 
 LVoid AnimationThread::run()
