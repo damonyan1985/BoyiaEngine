@@ -15,7 +15,7 @@
 #include "ArmFunction.h"
 #include "BoyiaExecution.h"
 #include "GLContext.h"
-#include "PaintThread.h"
+#include "UIThread.h"
 #include "ShaderUtil.h"
 #include "FileUtil.h"
 #include <jni.h>
@@ -38,7 +38,7 @@ static void nativeSetGLSurface(
 		jobject obj,
 		jobject surface)
 {
-    yanbo::PaintThread::instance()->initContext(surface);
+    yanbo::UIThread::instance()->initContext(surface);
 }
 
 static void nativeResetGLSurface(
@@ -46,7 +46,7 @@ static void nativeResetGLSurface(
 		jobject obj,
 		jobject surface)
 {
-    yanbo::PaintThread::instance()->resetContext(surface);
+    yanbo::UIThread::instance()->resetContext(surface);
 }
 
 extern LVoid TestLoadUrl();
@@ -125,7 +125,7 @@ static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, 
 	evt->m_type = 1 << type;
     evt->m_position.Set(yanbo::ShaderUtil::viewX(x), yanbo::ShaderUtil::viewY(y));
     KLOG("nativeHandleTouchEvent");
-    yanbo::PaintThread::instance()->handleTouchEvent(evt);
+    yanbo::UIThread::instance()->handleTouchEvent(evt);
 }
 
 static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint isDown)
@@ -147,12 +147,12 @@ static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint is
     }
 
     LKeyEvent* evt = new LKeyEvent(mKeyCode, isDown);
-    yanbo::PaintThread::instance()->handleKeyEvent(evt);
+    yanbo::UIThread::instance()->handleKeyEvent(evt);
 }
 
 static void nativeImageLoaded(JNIEnv* env, jobject obj, jlong item)
 {
-	yanbo::PaintThread::instance()->imageLoaded(item);
+	yanbo::UIThread::instance()->imageLoaded(item);
 }
 
 static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
@@ -165,13 +165,13 @@ static void nativeSetInputText(JNIEnv*  env, jobject obj, jstring text, jlong it
 	String result;
 	util::jstringTostr(env, text, result);
 	KFORMATLOG("nativeSetInputText text=%s", (const char*)result.GetBuffer());
-	yanbo::PaintThread::instance()->setInputText(result, item);
+	yanbo::UIThread::instance()->setInputText(result, item);
 	result.ReleaseBuffer();
 }
 
 static void nativeVideoTextureUpdate(JNIEnv*  env, jobject obj, jlong item)
 {
-	yanbo::PaintThread::instance()->videoUpdate(item);
+	yanbo::UIThread::instance()->videoUpdate(item);
 }
 
 static JNINativeMethod sUIViewMethods[] = {

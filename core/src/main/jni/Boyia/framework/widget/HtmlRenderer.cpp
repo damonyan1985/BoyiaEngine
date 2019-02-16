@@ -11,6 +11,7 @@
 #include "SalLog.h"
 #include "UIView.h"
 #include "DOMBuilder.h"
+#include "UIThread.h"
 
 namespace yanbo
 {
@@ -36,7 +37,7 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
 		const LayoutRect& rect,
 		ResourceLoader* loader)
 {
-	PaintThread::instance()->setGC(loader->view()->getGraphicsContext());
+	UIThread::instance()->setGC(loader->view()->getGraphicsContext());
 
 	m_htmlDoc = doc;
 	m_htmlDoc->clearHtmlList();
@@ -77,7 +78,7 @@ void HtmlRenderer::layout()
 
 void HtmlRenderer::paint(HtmlView* item)
 {
-	PaintThread::instance()->draw(item ? item : m_htmlDoc->getRenderTreeRoot());
+	UIThread::instance()->draw(item ? item : m_htmlDoc->getRenderTreeRoot());
 }
 
 }

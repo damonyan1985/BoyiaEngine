@@ -3,7 +3,7 @@
 #include "TextView.h"
 #include "ImageView.h"
 #include "UIView.h"
-#include "MiniThread.h"
+#include "UIThread.h"
 
 namespace yanbo
 {
@@ -115,7 +115,7 @@ LVoid UIOperation::swapBuffer()
 			m_swapMsgs = buffer;
 			m_msgs->clear();
 
-			PaintThread::instance()->uiExecute();
+			UIThread::instance()->uiExecute();
 		}
 	}
 }

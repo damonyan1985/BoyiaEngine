@@ -1,4 +1,4 @@
-#include "PaintThread.h"
+#include "UIThread.h"
 #include "GraphicsContextGL.h"
 #include "KList.h"
 #include "AutoLock.h"
@@ -14,13 +14,13 @@
 
 namespace yanbo
 {
-PaintThread* PaintThread::s_inst = NULL;
-PaintThread::PaintThread()
+UIThread* UIThread::s_inst = NULL;
+UIThread::UIThread()
     : m_gc(NULL)
 {
 }
 
-PaintThread::~PaintThread()
+UIThread::~UIThread()
 {
 	if (NULL != m_queue)
 	{
@@ -29,23 +29,23 @@ PaintThread::~PaintThread()
 	}
 }
 
-PaintThread* PaintThread::instance()
+UIThread* UIThread::instance()
 {
 	if (NULL == s_inst)
 	{
-		s_inst = new PaintThread();
+		s_inst = new UIThread();
 		s_inst->start();
 	}
 
 	return s_inst;
 }
 
-LVoid PaintThread::setGC(LGraphicsContext* gc)
+LVoid UIThread::setGC(LGraphicsContext* gc)
 {
 	m_gc = gc;
 }
 
-LVoid PaintThread::draw(LVoid* item)
+LVoid UIThread::draw(LVoid* item)
 {
 	MiniMessage* msg = obtain();
 	msg->type = UI_DRAW;
@@ -53,7 +53,7 @@ LVoid PaintThread::draw(LVoid* item)
 	postMessage(msg);
 }
 
-LVoid PaintThread::drawOnly(LVoid* item)
+LVoid UIThread::drawOnly(LVoid* item)
 {
 	MiniMessage* msg = obtain();
 	msg->type = UI_DRAWONLY;
@@ -61,21 +61,21 @@ LVoid PaintThread::drawOnly(LVoid* item)
 	postMessage(msg);
 }
 
-LVoid PaintThread::submit()
+LVoid UIThread::submit()
 {
 	MiniMessage* msg = obtain();
 	msg->type = UI_SUBMIT;
 	postMessage(msg);
 }
 
-LVoid PaintThread::destroy()
+LVoid UIThread::destroy()
 {
 	MiniMessage* msg = obtain();
 	msg->type = UI_DESTROY;
 	postMessage(msg);
 }
 
-LVoid PaintThread::initContext(LVoid* win)
+LVoid UIThread::initContext(LVoid* win)
 {
 	m_context.setWindow(win);
 	MiniMessage* msg = obtain();
@@ -83,7 +83,7 @@ LVoid PaintThread::initContext(LVoid* win)
 	postMessage(msg);
 }
 
-LVoid PaintThread::handleMessage(MiniMessage* msg)
+LVoid UIThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type)
     {
@@ -164,7 +164,7 @@ LVoid PaintThread::handleMessage(MiniMessage* msg)
     }
 }
 
-LVoid PaintThread::initGL()
+LVoid UIThread::initGL()
 {
 	//int width = yanbo::UIView::getInstance()->getClientRange().GetWidth();
 	//int height = yanbo::UIView::getInstance()->getClientRange().GetHeight();
@@ -192,14 +192,14 @@ LVoid PaintThread::initGL()
 	GLPainter::init();
 }
 
-LVoid PaintThread::flush()
+LVoid UIThread::flush()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_gc->submit();
 	m_context.postBuffer();
 }
 
-LVoid PaintThread::setInputText(const String& text, LIntPtr item)
+LVoid UIThread::setInputText(const String& text, LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_SETINPUT;
@@ -210,7 +210,7 @@ LVoid PaintThread::setInputText(const String& text, LIntPtr item)
 	notify();
 }
 
-void PaintThread::videoUpdate(LIntPtr item)
+void UIThread::videoUpdate(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_VIDEO_UPDATE;
@@ -219,7 +219,7 @@ void PaintThread::videoUpdate(LIntPtr item)
 	notify();
 }
 
-LVoid PaintThread::imageLoaded(LIntPtr item)
+LVoid UIThread::imageLoaded(LIntPtr item)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_IMAGE_LOADED;
@@ -229,7 +229,7 @@ LVoid PaintThread::imageLoaded(LIntPtr item)
 	notify();
 }
 
-LVoid PaintThread::drawUI(LVoid* view)
+LVoid UIThread::drawUI(LVoid* view)
 {
     HtmlView* item = (HtmlView*) view;
 	if (item)
@@ -240,7 +240,7 @@ LVoid PaintThread::drawUI(LVoid* view)
 	flush();
 }
 
-LVoid PaintThread::uiExecute()
+LVoid UIThread::uiExecute()
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_OP_EXEC;
@@ -248,7 +248,7 @@ LVoid PaintThread::uiExecute()
 	notify();
 }
 
-LVoid PaintThread::handleTouchEvent(LTouchEvent* evt)
+LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 {
 	m_queue->removeMessage(UI_TOUCH_EVENT);
 	MiniMessage* msg = m_queue->obtain();
@@ -259,7 +259,7 @@ LVoid PaintThread::handleTouchEvent(LTouchEvent* evt)
 	notify();
 }
 
-LVoid PaintThread::handleKeyEvent(LKeyEvent* evt)
+LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 {
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_KEY_EVENT;
@@ -269,7 +269,7 @@ LVoid PaintThread::handleKeyEvent(LKeyEvent* evt)
 	notify();
 }
 
-LVoid PaintThread::resetContext(LVoid* win)
+LVoid UIThread::resetContext(LVoid* win)
 {
 	m_context.setWindow(win);
 	MiniMessage* msg = obtain();
@@ -277,7 +277,7 @@ LVoid PaintThread::resetContext(LVoid* win)
 	postMessage(msg);
 }
 
-LVoid PaintThread::resetGL()
+LVoid UIThread::resetGL()
 {
 	//m_context.initGL(GLContext::EWindow);
 	initGL();

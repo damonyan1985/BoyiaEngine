@@ -4,7 +4,6 @@
 #include "HtmlDocument.h"
 #include "HtmlForm.h"
 #include "CssParser.h"
-#include "PaintThread.h"
 
 namespace yanbo
 {
