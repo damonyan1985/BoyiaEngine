@@ -2,7 +2,7 @@
 #include "FileUtil.h"
 #include "JNIUtil.h"
 #include "AutoObject.h"
-#include "UIViewThread.h"
+#include "BoyiaThread.h"
 #include "JSONParser.h"
 #include <fcntl.h>
 #include <dirent.h>
@@ -19,10 +19,10 @@
 
 namespace yanbo
 {
-static LVoid uiViewThreadLoad(const char* entry)
+static LVoid BoyiaThreadLoad(const char* entry)
 {
 	String url = _CS(entry);
-	UIViewThread::instance()->load(url);
+	BoyiaThread::instance()->load(url);
 	url.ReleaseBuffer();
 }
 
@@ -129,7 +129,7 @@ public:
 		if (entry)
 		{
 			KFORMATLOG("boyia app AppHandler entry=%s", entry->valuestring);
-			uiViewThreadLoad(entry->valuestring);
+			BoyiaThreadLoad(entry->valuestring);
 		}
 
 		delete this;
@@ -281,7 +281,7 @@ LVoid StartupLoader::startLoadApp()
 			cJSON* entry = parser.get("entry");
 			if (entry)
 			{
-				uiViewThreadLoad(entry->valuestring);
+				BoyiaThreadLoad(entry->valuestring);
 			}
 		}
 	}

@@ -6,6 +6,7 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/vm/core/BoyiaValue.cpp \
     \
     $(LOCAL_PATH)/framework/vm/lib/BoyiaLib.cpp \
+    $(LOCAL_PATH)/framework/vm/lib/BoyiaThread.cpp \
     \
     $(LOCAL_PATH)/framework/vm/json/cJSON.c \
     $(LOCAL_PATH)/framework/vm/json/JSONParser.cpp \

@@ -4,7 +4,7 @@
 #include "NetworkBase.h"
 #include "BoyiaCore.h"
 #include "StringBuilder.h"
-#include "UIViewThread.h"
+#include "BoyiaThread.h"
 
 namespace boyia
 {

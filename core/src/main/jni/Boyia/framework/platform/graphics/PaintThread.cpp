@@ -99,7 +99,7 @@ LVoid PaintThread::handleMessage(MiniMessage* msg)
          break;
     case UI_DRAWONLY:
         {
-        	yanbo::HtmlView* item = (yanbo::HtmlView*) msg->obj;
+        	yanbo::HtmlView* item = static_cast<yanbo::HtmlView*>(msg->obj);
         	if (item)
         	{
         	    item->paint(*m_gc);
@@ -108,12 +108,19 @@ LVoid PaintThread::handleMessage(MiniMessage* msg)
         break;
     case UI_TOUCH_EVENT:
         {
-			LTouchEvent* evt = (LTouchEvent*)msg->obj;
+			LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
 			UIView::getInstance()->handleTouchEvent(*evt);
 			flush();
 			delete evt;
         }
         break;
+   case UI_KEY_EVENT:
+		{
+			LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
+			UIView::getInstance()->handleKeyEvent(*evt);
+			delete evt;
+		}
+		break;    
     case UI_SETINPUT:
         {
         	String text(_CS(msg->obj), LTrue, msg->arg0);
@@ -127,6 +134,12 @@ LVoid PaintThread::handleMessage(MiniMessage* msg)
         	drawUI((LVoid*)msg->arg0);
         }
         break;
+    case UI_IMAGE_LOADED:
+		{
+			if (!msg->arg0) return;
+			reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
+		}
+		break;    
     case UI_OP_EXEC:
         {
         	UIOperation::instance()->execute();
@@ -206,6 +219,16 @@ void PaintThread::videoUpdate(LIntPtr item)
 	notify();
 }
 
+LVoid PaintThread::imageLoaded(LIntPtr item)
+{
+	MiniMessage* msg = m_queue->obtain();
+	msg->type = UI_IMAGE_LOADED;
+    msg->arg0 = item;
+
+	m_queue->push(msg);
+	notify();
+}
+
 LVoid PaintThread::drawUI(LVoid* view)
 {
     HtmlView* item = (HtmlView*) view;
@@ -231,6 +254,16 @@ LVoid PaintThread::handleTouchEvent(LTouchEvent* evt)
 	MiniMessage* msg = m_queue->obtain();
 	msg->type = UI_TOUCH_EVENT;
 	msg->obj = evt;
+
+	m_queue->push(msg);
+	notify();
+}
+
+LVoid PaintThread::handleKeyEvent(LKeyEvent* evt)
+{
+	MiniMessage* msg = m_queue->obtain();
+	msg->type = UI_KEY_EVENT;
+    msg->obj = evt;
 
 	m_queue->push(msg);
 	notify();

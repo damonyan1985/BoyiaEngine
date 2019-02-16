@@ -21,8 +21,10 @@ public:
 		UI_CREATE_TEX,
 		UI_SUBMIT,
 		UI_TOUCH_EVENT,
+		UI_KEY_EVENT,
 		UI_SETINPUT,
 		UI_VIDEO_UPDATE,
+		UI_IMAGE_LOADED,
 		UI_OP_EXEC,
 		UI_DESTROY,
 	};
@@ -41,8 +43,10 @@ public:
 	LVoid setInputText(const String& text, LIntPtr item);
 	// Video渲染
 	LVoid videoUpdate(LIntPtr item);
+	LVoid imageLoaded(LIntPtr item);
 	LVoid destroy();
 	LVoid handleTouchEvent(LTouchEvent* evt);
+	LVoid handleKeyEvent(LKeyEvent* evt);
 	LVoid uiExecute();
 	virtual LVoid handleMessage(MiniMessage* msg);
 

@@ -11,7 +11,7 @@
 #include "MiniThread.h"
 #include "MiniThreadPool.h"
 #include "JNIUtil.h"
-#include "UIViewThread.h"
+#include "BoyiaThread.h"
 #include "ArmFunction.h"
 #include "BoyiaExecution.h"
 #include "GLContext.h"
@@ -82,7 +82,7 @@ static void nativeInitUIView(
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)
 {
-	yanbo::UIViewThread::instance()->destroy();
+	yanbo::BoyiaThread::instance()->destroy();
 }
 
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)
@@ -112,11 +112,6 @@ static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong cal
 	//util::jstringTostr(env, error, result);
 	reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::NETWORK_FILE_ERROR);
 	//yanbo::UIViewThread::instance()->loadError(callback, 0);
-}
-
-static void nativeUIViewDraw(JNIEnv* env, jobject obj)
-{
-	yanbo::UIViewThread::instance()->draw(0);
 }
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
@@ -152,12 +147,12 @@ static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint is
     }
 
     LKeyEvent* evt = new LKeyEvent(mKeyCode, isDown);
-    yanbo::UIViewThread::instance()->handleKeyEvent(evt);
+    yanbo::PaintThread::instance()->handleKeyEvent(evt);
 }
 
 static void nativeImageLoaded(JNIEnv* env, jobject obj, jlong item)
 {
-	yanbo::UIViewThread::instance()->imageLoaded(item);
+	yanbo::PaintThread::instance()->imageLoaded(item);
 }
 
 static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
@@ -184,7 +179,6 @@ static JNINativeMethod sUIViewMethods[] = {
 	{"nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive},
 	{"nativeOnDataFinished", "(J)V", (void*)nativeOnDataFinished},
 	{"nativeOnLoadError", "(Ljava/lang/String;J)V", (void*)nativeOnLoadError},
-	{"nativeUIViewDraw", "()V", (void*)nativeUIViewDraw},
 	{"nativeDistroyUIView", "()V", (void*)nativeDistroyUIView},
 	{"nativeHandleKeyEvent", "(II)V", (void*)nativeHandleKeyEvent},
 	{"nativeImageLoaded", "(J)V", (void*)nativeImageLoaded},
