@@ -9,7 +9,7 @@
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "StringBuilder.h"
-#include "UIViewThread.h"
+#include "BoyiaThread.h"
 #include <android/log.h>
 
 extern LVoid CompileScript(char* code);
@@ -42,13 +42,13 @@ public:
 	{
 		//m_loader->onLoadError(error);
 		m_result = error;
-		UIViewThread::instance()->sendEvent(this);
+		BoyiaThread::instance()->sendEvent(this);
 	}
 
 	virtual void onLoadFinished()
 	{
 		m_data = m_builder.toString();
-		UIViewThread::instance()->sendEvent(this);
+		BoyiaThread::instance()->sendEvent(this);
 	}
 
 	virtual LVoid run()

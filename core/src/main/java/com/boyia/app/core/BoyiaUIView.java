@@ -90,8 +90,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	public static native void nativeOnDataReceive(byte[] data, int length, long callback);
 
 	public static native void nativeOnDataFinished(long callback);
-	
-	public static native void nativeUIViewDraw();
 
 	public static native void nativeHandleKeyEvent(int keyCode, int isDown);
 	
@@ -154,10 +152,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-	}
-	
-	public void draw() {
-		nativeUIViewDraw();
 	}
 	
 	// 这个方法继承自View。把自定义的BaseInputConnection通道传递给InputMethodService

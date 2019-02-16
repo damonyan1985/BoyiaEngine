@@ -44,7 +44,7 @@ void BoyiaNetwork::onLoadError(LInt error)
 void BoyiaNetwork::onLoadFinished()
 {
 	m_data = m_builder.toString();
-	yanbo::UIViewThread::instance()->sendEvent(this);
+	yanbo::BoyiaThread::instance()->sendEvent(this);
 }
 
 LVoid BoyiaNetwork::run()
