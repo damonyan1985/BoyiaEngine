@@ -1,8 +1,18 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: "$rootDir/library.gradle"
+
+def getCurrentTime() {
+    //DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss")
+    //return df.format(Calendar.getInstance(Locale.CHINA).getTime())
+    Date date = new Date(System.currentTimeMillis())
+    return date.format("yyyyMMddhhmmss")
+}
 
 android {
     compileSdkVersion 27
@@ -28,6 +38,19 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        def outputFile
+        def outputFileName
+        variant.outputs.each {
+            outputFile = it.outputFile
+            if (null != outputFile && outputFile.name.endsWith('apk')) {
+                outputFileName = outputFile.name.substring(0, outputFile.name.indexOf('.'))
+                println("outputFileName="+outputFileName)
+                it.outputFileName = outputFileName + "-" + getCurrentTime() + ".apk"
+            }
         }
     }
 }
