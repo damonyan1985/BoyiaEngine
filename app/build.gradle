@@ -24,6 +24,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        flavorDimensions "default"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,6 +39,40 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        boyia {
+            applicationId 'com.boyia.app'
+            versionName "1.0"
+            versionCode 1
+            manifestPlaceholders = [
+                    boyiaChannel: "BoyiaApp"
+            ]
+        }
+
+        boyiaPlugin {
+            applicationId 'com.boyia.app.plugin'
+            versionName "1.0"
+            versionCode 1
+            manifestPlaceholders = [
+                    boyiaChannel: "BoyiaPluginApp"
+            ]
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/aidl']
+        }
+
+        boyiaPlugin {
+            java.srcDirs = ['src/main/plugin']
+            //aidl.srcDirs = []
+            //manifest.srcFile ''
+            //assets.srcDirs = []
+            //res.srcDirs = []
         }
     }
 
