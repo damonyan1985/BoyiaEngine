@@ -15,11 +15,13 @@ class TestLoader : public NetworkClient
 public:
 	TestLoader()
 	{
-		m_file = fopen(APP_PATH, "wb+");
-		String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
+		//m_file = fopen(APP_PATH, "wb+");
+		//String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
 
 		m_loader = new BoyiaLoader();
-		m_loader->loadUrl(url, this);
+		m_loader->putHeader(_CS("Content-Type"), _CS("application/x-www-form-urlencoded"));
+		
+		m_loader->postData(_CS("http://192.168.0.10:8011/user/login"), this, LTrue);
 	}
 
 	virtual LVoid onDataReceived(const LByte* data, LInt size)
@@ -30,7 +32,8 @@ public:
 		//m_buffer.append(data, 0, size, LFalse);
 		//m_buffer.append(buffer);
 		//buffer.ReleaseBuffer();
-		fwrite(data, size, 1, m_file);
+		//fwrite(data, size, 1, m_file);
+		m_buffer.append(data, 0, size, LFalse);
 	}
 
 	virtual LVoid onStatusCode(LInt statusCode)
@@ -50,28 +53,29 @@ public:
 
 	virtual LVoid onLoadError(LInt error)
 	{
-		fclose(m_file);
+		//fclose(m_file);
 	}
 
 	virtual LVoid onLoadFinished()
 	{
-	    //KRefPtr<String> contentPtr = m_buffer.toString();
-	    //String& content = *contentPtr.get();
-	    //KFORMATLOG("boyia content=%s", GET_STR(content));
-		fclose(m_file);
+	    BoyiaPtr<String> contentPtr = m_buffer.toString();
+	    String& content = *contentPtr.get();
+	    KFORMATLOG("boyia app content=%s", GET_STR(content));
+		//fclose(m_file);
 
-		String content;
+		//String content;
 
-		String path(_CS(APP_PATH), LFalse, LStrlen((LUint8*)APP_PATH));
-		util::FileUtil::readFile(path, content);
-		KFORMATLOG("boyia app content=%s", GET_STR(content));
+		//String path(_CS(APP_PATH), LFalse, LStrlen((LUint8*)APP_PATH));
+		//util::FileUtil::readFile(path, content);
+
+		//KFORMATLOG("boyia app content=%s", GET_STR(content));
 	}
 
 private:
     BoyiaLoader* m_loader;
-    //StringBuffer m_buffer;
+    StringBuilder m_buffer;
 
-    FILE* m_file;
+    //FILE* m_file;
 };
 
 }
@@ -80,5 +84,5 @@ extern LVoid TestLoadUrl()
 {
 	yanbo::StartupLoader* loader = new yanbo::StartupLoader;
 	loader->startLoad();
-	//new yanbo::TestLoader;
+	new yanbo::TestLoader;
 }
