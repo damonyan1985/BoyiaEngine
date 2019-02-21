@@ -15,9 +15,11 @@ public:
     LoaderTask();
 	virtual void execute();
 
+    LVoid setHeader(const NetworkMap& map);
 	LVoid setMethod(LInt method);
 	LVoid setUrl(const String& url);
 	LVoid setClient(NetworkClient* client);
+	LVoid setPostData(LByte* data);
 
 	virtual LVoid onStatusCode(LInt code);
 	virtual LVoid onContentLength(LInt length);

@@ -2,11 +2,14 @@
 #include "SalLog.h"
 #include <CallStack.h>
 
+#define FORM_HEADER_VALUE "Content-Type:application/x-www-form-urlencoded"
+
 namespace yanbo
 {
 BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
     : m_callback(callback)
     , m_size(0)
+    , m_data(NULL)
 {
 	m_curl = curl_easy_init();
 
@@ -58,6 +61,11 @@ LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 	}
 }
 
+LVoid BoyiaHttpEngine::setPostData(LByte* data)
+{
+	m_data = data;
+}
+
 LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
 //	android::CallStack callstack;
@@ -66,9 +74,15 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 	if (m_curl)
 	{
 		// 设置请求方式
-		curl_easy_setopt(m_curl, method == EHTTP_GET ? CURLOPT_HTTPGET : CURLOPT_POST, 1);
+		curl_easy_setopt(m_curl, method == NetworkBase::GET ? CURLOPT_HTTPGET : CURLOPT_POST, 1);
 		// 设置请求的url地址
 		curl_easy_setopt(m_curl, CURLOPT_URL, GET_STR(url));
+		// 设置POST数据
+		if (method == NetworkBase::POST && m_data)
+		{
+			curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, m_data);
+		}
+		//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, dataSize);
 		// 设置HTTP头
 		curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1);
 		// 设置发送超时时间

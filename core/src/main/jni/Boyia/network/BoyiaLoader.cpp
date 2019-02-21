@@ -4,7 +4,7 @@
 namespace yanbo
 {
 LoaderTask::LoaderTask()
-    : m_method(BoyiaHttpEngine::EHTTP_GET)
+    : m_method(NetworkBase::GET)
     , m_engine(this)
     , m_client(NULL)
 {
@@ -18,13 +18,22 @@ LVoid LoaderTask::setMethod(LInt method)
 LVoid LoaderTask::setUrl(const String& url)
 {
     m_url = url;
-
     KFORMATLOG("boyia app LoaderTask::setUrl url=%s", GET_STR(m_url));
 }
 
 LVoid LoaderTask::setClient(NetworkClient* client)
 {
 	m_client = client;
+}
+
+LVoid LoaderTask::setPostData(LByte* data)
+{
+	m_engine.setPostData(data);
+}
+
+LVoid LoaderTask::setHeader(const NetworkMap& map)
+{
+	m_engine.setHeader(map);
 }
 
 LVoid LoaderTask::execute()
@@ -72,6 +81,7 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, bool isWait
 {
     LoaderTask* task = new LoaderTask();
     // Set Task Info
+    task->setHeader(m_headers);
     task->setUrl(url);
     task->setClient(client);
 
@@ -92,7 +102,29 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, bool isWait
 
 LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, bool isWait)
 {
+    LoaderTask* task = new LoaderTask();
+    // Set Task Info
+    task->setHeader(m_headers);
+    task->setUrl(url);
+    task->setMethod(NetworkBase::POST);
+    //task->setUrl(_CS("http://192.168.0.10:8011/user/login"));
+    const char* data = "name=test&pwd=test";
+    task->setPostData((LByte*)data);
+    task->setClient(client);
 
+	if (isWait)
+	{
+		// SendMessage
+		MiniMessage* msg = m_queue->obtain();
+		msg->type = ELOAD_URL;
+		msg->obj = task;
+		m_queue->push(msg);
+		notify();
+	}
+	else
+	{
+		MiniThreadPool::getInstance()->sendMiniTask(task);
+	}
 }
 
 LVoid BoyiaLoader::handleMessage(MiniMessage* msg)
