@@ -18,9 +18,10 @@ public:
 		//m_file = fopen(APP_PATH, "wb+");
 		//String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
 
+        BoyiaPtr<String> data = new String(_CS("name=test&pwd=test"));
 		m_loader = new BoyiaLoader();
 		m_loader->putHeader(_CS("Content-Type"), _CS("application/x-www-form-urlencoded"));
-		
+		m_loader->setPostData(data);
 		m_loader->postData(_CS("http://192.168.0.10:8011/user/login"), this, LTrue);
 	}
 

@@ -41,7 +41,7 @@ LoaderAndroid::~LoaderAndroid()
 	}
 }
 
-void LoaderAndroid::initLoader()
+LVoid LoaderAndroid::initLoader()
 {
 	JNIEnv* env = JNIUtil::getEnv();
 	jclass clazz = env->FindClass("com/boyia/app/core/ResourceLoader");
@@ -59,22 +59,27 @@ void LoaderAndroid::initLoader()
     env->DeleteLocalRef(clazz);
 }
 
-void LoaderAndroid::loadUrl(const String& url, NetworkClient* client, bool isWait)
+LVoid LoaderAndroid::loadUrl(const String& url, NetworkClient* client, LBool isWait)
 {
 	request(url, client, isWait, NetworkBase::GET);
 }
 
-void LoaderAndroid::loadUrl(const String& url, NetworkClient* client)
+LVoid LoaderAndroid::loadUrl(const String& url, NetworkClient* client)
 {
-	loadUrl(url, client, true);
+	loadUrl(url, client, LTrue);
 }
 
-void LoaderAndroid::postData(const String& url, NetworkClient* client, bool isWait)
+LVoid LoaderAndroid::postData(const String& url, NetworkClient* client)
+{
+	postData(url, client, LTrue);
+}
+
+LVoid LoaderAndroid::postData(const String& url, NetworkClient* client, LBool isWait)
 {
     request(url, client, isWait, NetworkBase::POST);
 }
 
-void LoaderAndroid::request(const String& url, NetworkClient* client, bool isWait, int method)
+LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isWait, LInt method)
 {
 	JNIEnv* env = JNIUtil::getEnv();
 	util::AutoJObject javaObject = m_privateLoader->object(env);
@@ -123,9 +128,12 @@ void LoaderAndroid::request(const String& url, NetworkClient* client, bool isWai
 	env->CallVoidMethod(javaObject.get(), m_privateLoader->m_endRequest,
 	    		strUrl, isWait, (jlong)client);
 	env->DeleteLocalRef(strUrl);
+
+	m_headers.clear();
+	m_params.clear();
 }
 
-void LoaderAndroid::cancel()
+LVoid LoaderAndroid::cancel()
 {
 
 }

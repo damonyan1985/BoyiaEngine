@@ -15,6 +15,7 @@ public:
 	virtual LVoid onLoadFinished() = 0;
 	virtual LVoid onLoadError(LInt code) = 0;
 };
+
 class BoyiaHttpEngine
 {
 public:
@@ -23,15 +24,15 @@ public:
 
 	LVoid setHeader(const NetworkMap& headers);
     LVoid request(const String& url, LInt method);
-    LVoid setPostData(LByte* data);
+    LVoid setPostData(const BoyiaPtr<String>& data);
 
     static size_t writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param);
 
 private:
-    CURL*           m_curl;
-    HttpCallback*   m_callback;
-    LInt            m_size;
-    LByte*          m_data;
+    CURL*             m_curl;
+    HttpCallback*     m_callback;
+    LInt              m_size;
+    BoyiaPtr<String>  m_data;
 };
 }
 

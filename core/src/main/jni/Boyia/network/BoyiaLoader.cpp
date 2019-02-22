@@ -26,7 +26,7 @@ LVoid LoaderTask::setClient(NetworkClient* client)
 	m_client = client;
 }
 
-LVoid LoaderTask::setPostData(LByte* data)
+LVoid LoaderTask::setPostData(const BoyiaPtr<String>& data)
 {
 	m_engine.setPostData(data);
 }
@@ -77,7 +77,7 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
 	loadUrl(url, client, true);
 }
 
-LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, bool isWait)
+LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
 {
     LoaderTask* task = new LoaderTask();
     // Set Task Info
@@ -100,7 +100,12 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, bool isWait
 	}
 }
 
-LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, bool isWait)
+LVoid BoyiaLoader::postData(const String& url, NetworkClient* client)
+{
+    postData(url, client, LTrue);
+}
+
+LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, LBool isWait)
 {
     LoaderTask* task = new LoaderTask();
     // Set Task Info
@@ -108,10 +113,10 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, bool isWai
     task->setUrl(url);
     task->setMethod(NetworkBase::POST);
     //task->setUrl(_CS("http://192.168.0.10:8011/user/login"));
-    const char* data = "name=test&pwd=test";
-    task->setPostData((LByte*)data);
+    //const char* data = "name=test&pwd=test";
+    task->setPostData(m_data);
     task->setClient(client);
-
+    
 	if (isWait)
 	{
 		// SendMessage
@@ -125,6 +130,9 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, bool isWai
 	{
 		MiniThreadPool::getInstance()->sendMiniTask(task);
 	}
+
+    // 置空数据指针
+	m_data = NULL;
 }
 
 LVoid BoyiaLoader::handleMessage(MiniMessage* msg)

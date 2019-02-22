@@ -22,17 +22,21 @@ public:
 	LoaderAndroid();
 	virtual ~LoaderAndroid();
 	
-	void initLoader();
+	LVoid initLoader();
 
 public:
 	virtual LVoid loadUrl(const String& url, NetworkClient* client);
-	virtual LVoid loadUrl(const String& url, NetworkClient* client, bool isWait);
-	virtual LVoid postData(const String& url, NetworkClient* client, bool isWait);
+	virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait);
+
+	virtual LVoid postData(const String& url, NetworkClient* client);
+	virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait);
 	virtual LVoid cancel();
 
 private:
-	void request(const String& url, NetworkClient* client, bool isWait, int method);
+	LVoid request(const String& url, NetworkClient* client, LBool isWait, LInt method);
 	struct JLoader* m_privateLoader;
+
+	NetworkMap m_params;
 };
 
 }
