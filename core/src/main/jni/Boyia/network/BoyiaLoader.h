@@ -19,7 +19,7 @@ public:
 	LVoid setMethod(LInt method);
 	LVoid setUrl(const String& url);
 	LVoid setClient(NetworkClient* client);
-	LVoid setPostData(LByte* data);
+	LVoid setPostData(const BoyiaPtr<String>& data);
 
 	virtual LVoid onStatusCode(LInt code);
 	virtual LVoid onContentLength(LInt length);
@@ -44,8 +44,10 @@ public:
 	BoyiaLoader();
 
 	virtual LVoid loadUrl(const String& url, NetworkClient* client);
-	virtual LVoid loadUrl(const String& url, NetworkClient* client, bool isWait);
-	virtual LVoid postData(const String& url, NetworkClient* client, bool isWait);
+	virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait);
+	
+    virtual LVoid postData(const String& url, NetworkClient* client);
+	virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait);
     virtual LVoid cancel();
     virtual LVoid handleMessage(MiniMessage* msg);
 };

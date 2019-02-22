@@ -9,7 +9,6 @@ namespace yanbo
 BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
     : m_callback(callback)
     , m_size(0)
-    , m_data(NULL)
 {
 	m_curl = curl_easy_init();
 
@@ -61,7 +60,7 @@ LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 	}
 }
 
-LVoid BoyiaHttpEngine::setPostData(LByte* data)
+LVoid BoyiaHttpEngine::setPostData(const BoyiaPtr<String>& data)
 {
 	m_data = data;
 }
@@ -78,9 +77,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 		// 设置请求的url地址
 		curl_easy_setopt(m_curl, CURLOPT_URL, GET_STR(url));
 		// 设置POST数据
-		if (method == NetworkBase::POST && m_data)
+		if (method == NetworkBase::POST && m_data.get())
 		{
-			curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, m_data);
+			curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, m_data->GetBuffer());
 		}
 		//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, dataSize);
 		// 设置HTTP头

@@ -42,12 +42,15 @@ public:
 
 public:
 	virtual LVoid loadUrl(const String& url, NetworkClient* client) = 0;
-	virtual LVoid loadUrl(const String& url, NetworkClient* client, bool isWait) = 0;
-	virtual LVoid postData(const String& url, NetworkClient* client, bool isWait) = 0;
+	virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait) = 0;
+	
+	virtual LVoid postData(const String& url, NetworkClient* client) = 0;
+	virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait) = 0;
 	virtual LVoid cancel() = 0;
-	virtual LVoid putParam(const String& key, const String& value)
+
+	virtual LVoid setPostData(const BoyiaPtr<String>& data) 
 	{
-		m_params.put(key, value);
+        m_data = data;
 	}
 
 	virtual LVoid putHeader(const String& key, const String& value)
@@ -55,19 +58,14 @@ public:
 		m_headers.put(key, value);
 	}
 
-	void clearHeaders()
+	LVoid clearHeaders()
 	{
 		m_headers.clear();
 	}
 
-	void clearParams()
-	{
-		m_params.clear();
-	}
-
 protected:
-	NetworkMap m_params;
 	NetworkMap m_headers;
+	BoyiaPtr<String> m_data; // Post data
 };
 
 }
