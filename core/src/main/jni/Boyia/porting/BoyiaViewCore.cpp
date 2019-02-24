@@ -6,6 +6,7 @@
 #include "AutoObject.h"
 #include "StringUtils.h"
 #include "LoaderAndroid.h"
+#include "BoyiaLoader.h"
 #include "SalLog.h"
 #include "LEvent.h"
 #include "MiniThread.h"
@@ -73,6 +74,7 @@ static void nativeInitUIView(
 	yanbo::ShaderUtil::setScreenSize(w, h);
 	util::GraphicsContextGL* gc = new util::GraphicsContextGL();
     yanbo::LoaderAndroid* loader = new yanbo::LoaderAndroid();
+    //yanbo::BoyiaLoader* loader = new yanbo::BoyiaLoader;
     loader->initLoader();
     yanbo::UIView::getInstance()->setClientRange(LRect(0, 0, w, h));
     yanbo::UIView::getInstance()->setComponents(loader, gc, NULL);

@@ -52,3 +52,6 @@
 -keep class com.google.protobuf.** {*;}
 -keepattributes Annotation
 -keepattributes Signature
+
+# rxJava
+-keep class rx.** {*;}

@@ -121,6 +121,8 @@ dependencies {
     implementation gradle.library.netty_lib
     // use protobuf begin
     implementation gradle.library.protobuf_lib
+    implementation gradle.library.rxJavaLib
+    implementation gradle.library.rxAndroidLib
     // use protobuf end
     //api 'com.boyia.app.common:common:1.0.0'
     //implementation(name: "core-debug", ext: "aar")
