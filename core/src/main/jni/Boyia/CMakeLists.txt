@@ -139,4 +139,5 @@ target_link_libraries(
     GLESv3
     android
     jnigraphics
+    bsdiff
 )

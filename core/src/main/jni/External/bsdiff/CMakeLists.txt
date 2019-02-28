@@ -8,6 +8,7 @@ file(
     GLOB 
     bsdiff_src
     "source/*.c"
+    "source/*.cpp"
     )
 
 add_library(

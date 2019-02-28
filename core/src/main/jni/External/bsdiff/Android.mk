@@ -14,6 +14,6 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/source/randtable.c \
     $(LOCAL_PATH)/source/bsdiff.c \
     $(LOCAL_PATH)/source/bspatch.c \
-    $(LOCAL_PATH)/source/bsdiffjni.c
+    $(LOCAL_PATH)/source/bsdiffjni.cpp
     
 include $(BUILD_SHARED_LIBRARY)
