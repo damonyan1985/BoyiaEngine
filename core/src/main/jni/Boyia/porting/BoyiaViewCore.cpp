@@ -23,6 +23,7 @@
 #include <CallStack.h>
 
 const char* kBoyiaUIViewClass = "com/boyia/app/core/BoyiaUIView";
+const char* kBoyiaUtilClass = "com/boyia/app/common/utils/BoyiaUtils";
 
 enum KeyEventType
 {
@@ -33,6 +34,10 @@ enum KeyEventType
 };
 
 bool JNI_LOG_ON = true;
+
+extern void nativeUpdatePatch(
+	JNIEnv *env, jobject object, 
+	jstring oldApkPath, jstring newApkPath, jstring patchFilePath);
 
 static void nativeSetGLSurface(
 		JNIEnv* env,
@@ -192,6 +197,10 @@ static JNINativeMethod sUIViewMethods[] = {
 	{"nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface},
 };
 
+static JNINativeMethod sUtilMethods[] = {
+    {"nativeUpdatePatch", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", (void*)nativeUpdatePatch},
+};
+
 extern int registerNativeMethods(JNIEnv* env, const char* className,
         JNINativeMethod* methods, int numMethods);
 
@@ -202,6 +211,12 @@ int registerUIViewNatives(JNIEnv* env)
 {
 	if (!registerNativeMethods(env, kBoyiaUIViewClass, sUIViewMethods,
                                  sizeof(sUIViewMethods) / sizeof(sUIViewMethods[0])))
+	{
+		return JNI_FALSE;
+	}
+
+	if (!registerNativeMethods(env, kBoyiaUtilClass, sUtilMethods,
+                                 sizeof(sUtilMethods) / sizeof(sUtilMethods[0])))
 	{
 		return JNI_FALSE;
 	}

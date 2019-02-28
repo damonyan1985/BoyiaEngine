@@ -10,7 +10,7 @@ LOCAL_CFLAGS    += -DFT2_BUILD_LIBRARY=1 -DANDROID_NDK -DPOSIX
 #LOCAL_CFLAGS    += -DMINI_VULKAN
 LOCAL_LDLIBS    := -llog -lEGL -lGLESv3 -landroid -ljnigraphics
 #LOCAL_STATIC_LIBRARIES := libcurl
-LOCAL_SHARED_LIBRARIES := libcurl libjpeg libpng libft2
+LOCAL_SHARED_LIBRARIES := libcurl libjpeg libpng libft2 libbsdiff
 #LOCAL_LDLIBS    += -lvulkan
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 LOCAL_CPP_EXTENSION := .cpp
