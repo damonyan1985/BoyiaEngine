@@ -3,8 +3,8 @@ package com.boyia.app.update;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import com.boyia.app.common.loader.BoyiaLoader;
-import com.boyia.app.common.loader.ILoaderCallback;
+import com.boyia.app.loader.BoyiaLoader;
+import com.boyia.app.loader.ILoaderCallback;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 
