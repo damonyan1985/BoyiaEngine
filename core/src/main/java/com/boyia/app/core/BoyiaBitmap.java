@@ -1,7 +1,7 @@
 package com.boyia.app.core;
 
-import com.boyia.app.common.loader.ILoadImage;
-import com.boyia.app.common.loader.BoyiaImageManager;
+import com.boyia.app.loader.image.ILoadImage;
+import com.boyia.app.loader.image.BoyiaImageManager;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.common.utils.GraphicsConst;

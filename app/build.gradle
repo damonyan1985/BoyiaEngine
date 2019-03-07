@@ -123,6 +123,7 @@ dependencies {
     implementation gradle.library.protobuf_lib
     implementation gradle.library.rxJavaLib
     implementation gradle.library.rxAndroidLib
+    implementation gradle.library.glideLib
     // use protobuf end
     //api 'com.boyia.app.common:common:1.0.0'
     //implementation(name: "core-debug", ext: "aar")

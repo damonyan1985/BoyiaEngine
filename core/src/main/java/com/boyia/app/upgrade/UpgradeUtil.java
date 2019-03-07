@@ -7,10 +7,10 @@ import java.io.InputStream;
 import android.content.res.AssetManager;
 
 import com.boyia.app.common.BoyiaApplication;
-import com.boyia.app.common.job.JobBase;
-import com.boyia.app.common.job.JobScheduler;
-import com.boyia.app.common.loader.BoyiaLoader;
-import com.boyia.app.common.loader.ILoaderCallback;
+import com.boyia.app.task.JobBase;
+import com.boyia.app.task.JobScheduler;
+import com.boyia.app.loader.BoyiaLoader;
+import com.boyia.app.loader.ILoaderCallback;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.FileUtil;
 import com.boyia.app.common.utils.ZipOperation;
