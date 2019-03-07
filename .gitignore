@@ -12,6 +12,8 @@
 /common/src/main/java/com/boyia/app/common/loader
 /common/src/main/java/com/boyia/app/common/base
 /common/src/main/java/com/boyia/app/common/utils
+/task
+/loader
 /maven
 /library
 .externalNativeBuild

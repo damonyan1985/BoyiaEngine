@@ -11,6 +11,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/leaker" />
+            <option value="$PROJECT_DIR$/loader" />
+            <option value="$PROJECT_DIR$/task" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
