@@ -118,12 +118,14 @@ dependencies {
     //implementation 'com.boyia.app.core:core:1.0.0'
     //implementation gradle.library.boyia_core
     api project(':common')
+    api project(':task')
+    api project(':loader')
     implementation gradle.library.netty_lib
     // use protobuf begin
     implementation gradle.library.protobuf_lib
     implementation gradle.library.rxJavaLib
     implementation gradle.library.rxAndroidLib
-    implementation gradle.library.glideLib
+    //implementation gradle.library.glideLib
     // use protobuf end
     //api 'com.boyia.app.common:common:1.0.0'
     //implementation(name: "core-debug", ext: "aar")
