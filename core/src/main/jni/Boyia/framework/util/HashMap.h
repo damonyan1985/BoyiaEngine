@@ -37,8 +37,8 @@ template <typename K, typename V>
 class HashMap
 {
 public:
-	typedef MapEntry<K, V>* HashMapEntryPtr;
-	typedef MapEntry<K, V> HashMapEntry;
+	using HashMapEntryPtr = MapEntry<K, V>*;
+	using HashMapEntry = MapEntry<K, V>;
 
 public:
 	HashMap()
