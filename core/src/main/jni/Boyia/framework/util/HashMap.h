@@ -1,6 +1,11 @@
 #ifndef HashMap_h
 #define HashMap_h
 
+// 
+// Author: Yanbo
+// Create: 2019-3-9
+// All Copyright reserved
+//
 #include "PlatformLib.h"
 
 namespace util
@@ -29,49 +34,51 @@ public:
 };
 
 template <typename K, typename V>
-class EntryList
-{
-public:
-	EntryList()
-		: head(NULL)
-		, tail(NULL)
-	{
-	}
-
-	MapEntry<K, V>* head;
-	MapEntry<K, V>* tail;
-};
-
-template <typename K, typename V>
 class HashMap
 {
 public:
+	typedef MapEntry<K, V>* HashMapEntryPtr;
+	typedef MapEntry<K, V> HashMapEntry;
+
+public:
 	HashMap()
-		: m_size(HASH_TABLE_DEFAULT_SIZE)
-		, m_table(new EntryList<K, V>[m_size])
+		: m_capacity(HASH_TABLE_DEFAULT_SIZE)
+		, m_size(0)
+		, m_table(new HashMapEntryPtr[m_capacity])
 		, m_threshold(HASH_TABLE_DEFAULT_SIZE * HASH_TABLE_DEFAULT_FACTOR)
 	{
+		LMemset(m_table, 0, m_capacity * sizeof(HashMapEntryPtr));
 	}
 
 	LVoid put(K key, V val)
 	{
 		LInt index = indexHash(key);
-		if (m_table[index].head)
-		{
-			m_table[index].tail->next = new MapEntry<K, V>(key, val);
-			m_table[index].tail = m_table[index].tail->next;
-		}
-		else
-		{
-			m_table[index].head = new MapEntry<K, V>(key, val);
-			m_table[index].tail = m_table[index].head;
-		}
+		// 如果entry存在，则判断是否有相同的Key
+		HashMapEntryPtr entry = m_table[index];
+		for (; entry; entry->next)
+        {
+        	if (entry->key == key)
+        	{
+        		entry->value = val;
+        		return;
+        	}
+        }
+		
+        // 如果超过阈值
+        if (++m_size > m_threshold)
+        {
+			resize();
+			addEntry(indexHash(key), key, val);
+        }
+        else
+        {
+        	addEntry(index, key, val);
+        }
 	}
 	
 	V get(K ket)
 	{
-		EntryList* list = &m_table[indexHash(key)];
-		MapEntry* entry = list->head;
+		HashMapEntryPtr entry = m_table[indexHash(key)];
 		for (; entry; entry->next)
 		{
 			if (entry->key == key)
@@ -88,15 +95,60 @@ public:
 		return m_size;
 	}
 
+	LVoid resize()
+	{
+		// 双倍扩容
+		LInt oldCapacity = m_capacity;
+
+		m_capacity *= 2;
+		MapEntry<K, V>* table = new MapEntry<K, V>[oldCapacity];
+
+		// 拷贝原table数据到新table中
+		for (LInt i = 0; i < oldCapacity; ++i)
+		{
+			MapEntry<K, V>* entry = &m_table[i];
+			for (; entry; entry->next)
+			{
+				addEntry(indexHash(entry->key), entry);
+			}
+		}
+
+		m_threshold = (LInt) m_capacity * HASH_TABLE_DEFAULT_FACTOR;
+		
+		delete m_table;
+		m_table = table;
+	}
+
 private:
 	LInt indexHash(K key)
 	{
 		LUint hash = (hash = key.hash()) ^ (hash >> 16);
-		return hash;
+		return hash & m_capacity;
 	}
 
-	EntryList* m_table;
+	LVoid addEntry(LInt index, HashMapEntryPtr ptr)
+	{
+		// 如果链表头部为空，则创建头部
+    	if (!m_table[index])
+    	{
+			m_table[index] = ptr;
+    	}
+    	else // 如果头部不为空，则将entry插在最前面
+    	{
+    		HashMapEntryPtr ptr = ptr;
+        	ptr->next = m_table[index];
+        	m_table[index] = ptr;
+    	}
+	}
+
+	LVoid addEntry(LInt index, T key, V value)
+	{
+		addEntry(index, new HashMapEntry(key, value));
+	}
+
+	HashMapEntryPtr* m_table;
 	LInt m_size;
+	LInt m_capacity;
 	LInt m_threshold;
 };
 }
