@@ -101,7 +101,7 @@ public:
 		LInt oldCapacity = m_capacity;
 
 		m_capacity *= 2;
-		MapEntry<K, V>* table = new MapEntry<K, V>[oldCapacity];
+		HashMapEntryPtr table = new HashMapEntry[oldCapacity];
 
 		// 拷贝原table数据到新table中
 		for (LInt i = 0; i < oldCapacity; ++i)

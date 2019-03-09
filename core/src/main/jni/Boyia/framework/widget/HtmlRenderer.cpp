@@ -50,7 +50,10 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
 	}
 
 	DOMBuilder dom;
-	dom.createDocument(buffer, m_htmlDoc, m_cssParser);
+	dom.add(m_htmlDoc)
+	   .add(m_cssParser)
+	   .build(buffer);
+	//dom.createDocument(buffer, m_htmlDoc, m_cssParser);
 	m_htmlDoc->resetHtmlFocus();
 }
 

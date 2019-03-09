@@ -15,10 +15,10 @@ public:
 	DOMBuilder();
 	~DOMBuilder();
 
-	virtual void createDocument(
-			const String& buffer,
-			HtmlDocument* doc,
-			util::CssParser* cssParser);
+	DOMBuilder& add(HtmlDocument* doc);
+	DOMBuilder& add(util::CssParser* cssParser);
+
+	virtual LVoid build(const String& buffer);
 
 private:
 	HtmlView* createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent);
