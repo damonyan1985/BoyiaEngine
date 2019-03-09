@@ -25,14 +25,20 @@ DOMBuilder::~DOMBuilder()
 	}
 }
 
-void DOMBuilder::createDocument(
-		const String& buffer,
-		HtmlDocument* doc,
-		util::CssParser* cssParser)
+DOMBuilder& DOMBuilder::add(HtmlDocument* doc)
 {
 	m_htmlDoc = doc;
-	m_cssParser = cssParser;
+	return *this;
+}
 
+DOMBuilder& DOMBuilder::add(util::CssParser* cssParser)
+{
+	m_cssParser = cssParser;
+	return *this;
+}
+
+LVoid DOMBuilder::build(const String& buffer)
+{
 	if (!m_xmlDoc)
 	{
 		m_xmlDoc = new XMLDocument;
@@ -230,7 +236,7 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
 			case HtmlTags::STYLE:
 			    {
 					util::InputStream is(text);
-					m_cssParser->parseCss(is);
+					if (m_cssParser) { m_cssParser->parseCss(is); }
 			    }
 				break;
 			case HtmlTags::TITLE:
