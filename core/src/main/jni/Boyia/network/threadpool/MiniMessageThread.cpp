@@ -8,6 +8,11 @@ MiniMessageThread::MiniMessageThread()
 {
 }
 
+MiniMessageThread::~MiniMessageThread()
+{
+	delete m_queue;
+}
+
 LVoid MiniMessageThread::postMessage(MiniMessage* msg)
 {
 	m_queue->push(msg);

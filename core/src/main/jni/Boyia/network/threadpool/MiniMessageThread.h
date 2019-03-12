@@ -10,6 +10,7 @@ class MiniMessageThread : public MiniThread
 {
 public:
 	MiniMessageThread();
+	virtual ~MiniMessageThread();
 
 	virtual void handleMessage(MiniMessage* msg) = 0;
 	void postMessage(MiniMessage* msg);

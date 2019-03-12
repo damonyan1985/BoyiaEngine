@@ -14,21 +14,15 @@ LVoid BoyiaEvent::execute()
 	delete this;
 }
 
-BoyiaThread* BoyiaThread::s_instance = NULL;
+BoyiaThread::BoyiaThread()
+{
+	start();
+}
 
 BoyiaThread* BoyiaThread::instance()
 {
-    if (!s_instance)
-    {
-    	s_instance = new BoyiaThread();
-    	s_instance->start();
-    }
-
-    return s_instance;
-}
-
-BoyiaThread::BoyiaThread()
-{
+    static BoyiaThread sThread;
+    return &sThread;
 }
 
 LVoid BoyiaThread::handleMessage(MiniMessage* msg)
