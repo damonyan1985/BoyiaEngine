@@ -14,30 +14,21 @@
 
 namespace yanbo
 {
-UIThread* UIThread::s_inst = NULL;
 UIThread::UIThread()
     : m_gc(NULL)
 {
+	start();
 }
 
 UIThread::~UIThread()
 {
-	if (NULL != m_queue)
-	{
-		delete m_queue;
-		m_queue = NULL;
-	}
 }
 
 UIThread* UIThread::instance()
 {
-	if (NULL == s_inst)
-	{
-		s_inst = new UIThread();
-		s_inst->start();
-	}
-
-	return s_inst;
+	// C++11单例高并发处理方法
+	static UIThread sThread;
+    return &sThread;
 }
 
 LVoid UIThread::setGC(LGraphicsContext* gc)

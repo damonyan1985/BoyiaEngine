@@ -38,9 +38,6 @@ public:
 	LVoid destroy();
 	LVoid load(const String& url);
 	LVoid sendEvent(BoyiaEvent* event);
-
-private:
-    static BoyiaThread*    s_instance;
 };
 }
 

@@ -59,7 +59,6 @@ private:
 	LVoid drawUI(LVoid* view);
 	LGraphicsContext*            m_gc;
 	util::GLContext              m_context;
-	static UIThread*          s_inst;
 };
 }
 #endif
