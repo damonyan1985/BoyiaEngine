@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity {
         Observer<String> observer = new Observer<String>() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override
@@ -44,12 +43,10 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable e) {
-
             }
 
             @Override
             public void onComplete() {
-
             }
         };
         Observable observable = Observable.create(new ObservableOnSubscribe<String>() {
