@@ -99,7 +99,7 @@ void MiniRenderer::bind()
 void MiniRenderer::unbind()
 {
 	// 解绑VAO
-	glBindVertexArray(m_buffersVAO);
+	glBindVertexArray(0);
 
 	// 解绑VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
