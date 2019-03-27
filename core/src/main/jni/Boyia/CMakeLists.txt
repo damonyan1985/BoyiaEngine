@@ -59,6 +59,7 @@ file(
     "network/*.cpp"
     "network/proxy/ptcp/*.cpp"
     "network/proxy/server/*.cpp"
+    "network/proxy/socket/*.cpp"
     )
 
 file(
@@ -115,6 +116,7 @@ target_include_directories(
     network/threadpool
     network/proxy/ptcp
     network/proxy/server
+    network/proxy/socket
     ${EXTERNAL_PATH}/curl/include
     ${EXTERNAL_PATH}/jpeg
     ${EXTERNAL_PATH}/lpng/include

@@ -119,7 +119,8 @@ public:
 					}
 				}
 
-				// 如果数据是可写的
+				// 如果数据是可写的, 只有在可读时才会触发一次写，
+				// 如果要强制触发写操作，必须重新执行一次epoll_ctl
 				if (events[i].events & EPOLLOUT)
 				{
 					snprintf(buf, sizeof(buf), "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World", 11);
