@@ -35,4 +35,12 @@ class Activity extends Object {
     
     fun onDestroy() {
     }
+
+    fun test() {
+        this.testLog();
+    }
+
+    fun testLog() {
+        Util.log("test super use");
+    }
 }

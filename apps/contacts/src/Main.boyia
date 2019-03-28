@@ -31,6 +31,9 @@ class MainActivity extends Activity {
 	    
 	    //Util.showToast("test boyia callstaticmethod");
 	    this.fetch("https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/src/contacts/json/mock.json", this.loadCallback);
+
+	    Util.log("test super begin");
+	    super.test();
 	}
 	
 	fun loadCallback(data) {
