@@ -40,7 +40,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	protected static final String TAG = "BoyiaUIView";
 	private boolean mIsUIViewDistroy = true;
 	private SurfaceHolder mHolder = null;
-	private String mUrl = null;
 	private BoyiaInputConnection mInputConnect = null;
 	private static BoyiaInputManager mInputManager = null;
 	
@@ -119,10 +118,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	public static native void nativeSetGLSurface(Surface surface);
 	
 	public static native void nativeResetGLSurface(Surface surface);
-	
-	public void loadUrl(String url) {
-		mUrl = url;
-	}
 	
 	public View getView() {
 		return this;

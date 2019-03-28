@@ -1,0 +1,5 @@
+class ChatPage extends Activity {
+	fun onCreate() {
+		var root = ViewDoc.rootView();
+	}
+}

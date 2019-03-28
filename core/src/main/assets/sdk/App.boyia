@@ -12,6 +12,6 @@ class App {
         }
         
         actStack.put(act);
-        act.onCreate();
+        act.init();
     }
 }

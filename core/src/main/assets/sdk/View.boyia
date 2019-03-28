@@ -60,6 +60,10 @@ class View {
     fun commit() {
         BY_ViewCommit(this.nativeView);
     }
+
+    fun setVisible(visible) {
+
+    }
 }
 
 class ViewGroup extends View {
