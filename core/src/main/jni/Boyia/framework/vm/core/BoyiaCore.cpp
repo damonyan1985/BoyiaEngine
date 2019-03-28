@@ -1676,6 +1676,7 @@ static LInt FindProp(BoyiaValue* lVal, LUintPtr rVal) {
 
 static LInt HandleGetProp(LVoid* ins) {
     Instruction* inst = (Instruction*) ins;
+    // r0 -> lVal
 	BoyiaValue* lVal = GetOpValue(inst, OpLeft);
 	if (!lVal) {
 		return 0;
@@ -1718,8 +1719,8 @@ static LVoid EvalGetProp() {
 }
 
 static LVoid EvalGetValue(LUintPtr objKey) {
-    OpCommand cmdL = { OP_VAR, (LIntPtr) objKey };
-	PutInstruction(&COMMAND_R0, &cmdL, ASSIGN, HandleAssignment);
+    OpCommand cmdR = { OP_VAR, (LIntPtr) objKey };
+	PutInstruction(&COMMAND_R0, &cmdR, ASSIGN, HandleAssignment);
     if (gToken.mTokenValue == DOT) {
 		EvalGetProp();
     }

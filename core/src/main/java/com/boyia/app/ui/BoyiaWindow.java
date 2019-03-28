@@ -26,10 +26,6 @@ public class BoyiaWindow extends BaseWindow {
 		mWebView.setBackgroundColor(color);
 	}
 
-	public void loadUrl(String url) {
-		mWebView.loadUrl(url);
-	}
-
 	public void quitUIView() {
 		mWebView.quitUIView();
 	}
