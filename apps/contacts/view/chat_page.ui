@@ -1,0 +1,8 @@
+<view>
+<div class="msg_window">
+</div>
+<div class="edit_view">
+<input id="chat_edit" type="text" value="" />
+<img class="msg_submit" src="" />
+</div>
+</view>

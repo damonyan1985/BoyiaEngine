@@ -126,7 +126,11 @@ void HtmlView::handleXYPos(RenderContext& rc)
 
 void HtmlView::paint(LGraphicsContext& gc)
 {
-
+	if (m_style.displayType == util::Style::DISPLAY_NONE)
+	{
+		return;
+	}
+	
 	gc.setHtmlView(this);
 
 	setClipRect(gc);

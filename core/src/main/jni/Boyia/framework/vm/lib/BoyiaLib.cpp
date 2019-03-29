@@ -652,3 +652,14 @@ LInt viewCommit() {
 
 	return 1;
 }
+
+LInt setViewVisible() {
+	BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
+	BoyiaValue* visibleArg = (BoyiaValue*)GetLocalValue(1);
+	boyia::BoyiaView* view = (boyia::BoyiaView*)itemArg->mValue.mIntVal;
+
+	view->item()->getStyle()->displayType = visibleArg->mValue.mIntVal;
+	view->commit();
+
+	return 1;
+}

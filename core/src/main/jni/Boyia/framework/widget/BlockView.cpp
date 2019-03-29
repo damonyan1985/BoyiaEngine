@@ -42,15 +42,15 @@ LBool BlockView::isChildrenInline()
 	return m_isChildrenInline;
 }
 
-void BlockView::paint(LGraphicsContext& gc)
-{
-	if (m_style.displayType == util::Style::DISPLAY_NONE)
-	{
-		return;
-	}
+// void BlockView::paint(LGraphicsContext& gc)
+// {
+// 	if (m_style.displayType == util::Style::DISPLAY_NONE)
+// 	{
+// 		return;
+// 	}
 
-	HtmlView::paint(gc);
-}
+// 	HtmlView::paint(gc);
+// }
 
 LBool BlockView::isBlockView() const
 {
