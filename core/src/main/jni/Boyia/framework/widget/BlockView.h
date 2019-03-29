@@ -43,7 +43,7 @@ public:
 	BlockView* createAnonymousBlock();
 
 	// paint child
-	virtual void paint(LGraphicsContext& gc);
+	//virtual void paint(LGraphicsContext& gc);
 	virtual LBool isBlockView() const;
 
 	void setIsAnonymousBlock(LBool isAnonymous);
