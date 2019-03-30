@@ -27,6 +27,7 @@ public:
 	enum CssType
 	{
 		TAGNONE = 0,
+		ALIGN,
 	    WIDTH,
 	    HEIGHT,
 	    DISPLAY,

@@ -29,6 +29,7 @@ CssTags* CssTags::getInstance()
         /*
          * Initializing Css tokens.
          */
+        s_cssTags->defineInitialSymbol(_CS("align"), ALIGN);
 		s_cssTags->defineInitialSymbol(_CS("margin-top"), MARGIN_TOP);
 		s_cssTags->defineInitialSymbol(_CS("margin-left"), MARGIN_LEFT);
 		s_cssTags->defineInitialSymbol(_CS("border-style"), BORDER_STYLE);

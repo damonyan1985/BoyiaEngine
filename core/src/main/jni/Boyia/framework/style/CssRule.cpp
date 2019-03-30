@@ -377,6 +377,11 @@ void CssRule::setStyleProperties(Style& style, LInt property,
 {
 	switch (property)
 	{
+	case CssTags::ALIGN:
+		{
+			style.align = value.intVal;
+		}
+		break;
 	case CssTags::BACKGROUND_COLOR:
 		{
 		    style.bgColor = util::LColor::parseArgbInt(value.intVal);
