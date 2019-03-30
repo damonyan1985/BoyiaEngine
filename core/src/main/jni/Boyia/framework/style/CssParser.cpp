@@ -310,6 +310,30 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     LInt cssTag = tags->symbolAsInt(property);
     switch (cssTag)
     {
+    case CssTags::ALIGN:
+    	{
+			if (value.CompareNoCase(_CS("top")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_TOP);
+    		} 
+    		else if (value.CompareNoCase(_CS("left")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_LEFT);
+    		}
+    		else if (value.CompareNoCase(_CS("right")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_RIGHT);
+    		}
+    		else if (value.CompareNoCase(_CS("bottom")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_BOTTOM);
+    		}
+    		else if (value.CompareNoCase(_CS("center")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_CENTER);
+    		}
+    	}
+    	break;	
     case CssTags::FONT_WEIGHT:
     	{
     		if (value.CompareNoCase(_CS("bold")))
@@ -413,6 +437,18 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     	    {
     	        rule->addProperty(cssTag, LGraphicsContext::SolidPen);
     	    }
+    	}
+    	break;
+    case CssTags::BORDER_BOTTOM_WIDTH:
+    case CssTags::BORDER_TOP_WIDTH:
+    case CssTags::BORDER_LEFT_WIDTH:
+    case CssTags::BORDER_RIGHT_WIDTH:
+    	{
+    		if (value.EndWithNoCase(_CS("px")))
+    		{
+    			LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength()-2));
+    			rule->addProperty(cssTag, intValue);
+    		}
     	}
     	break;
     case CssTags::BACKGROUND:
@@ -562,6 +598,11 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     	        else if (oneValue.StartWithNoCase(_CS("solid")))
     	        {
     	            rule->addProperty(CssTags::BORDER_TOP_STYLE, LGraphicsContext::SolidPen);
+    	        }
+    	        else if (oneValue.StartWithNoCase(_CS("px")))
+    	        {
+    	        	LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength()-2));
+    	        	rule->addProperty(CssTags::BORDER_TOP_WIDTH, intValue);
     	        }
     	    }
     	    
