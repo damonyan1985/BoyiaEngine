@@ -42,16 +42,6 @@ LBool BlockView::isChildrenInline()
 	return m_isChildrenInline;
 }
 
-// void BlockView::paint(LGraphicsContext& gc)
-// {
-// 	if (m_style.displayType == util::Style::DISPLAY_NONE)
-// 	{
-// 		return;
-// 	}
-
-// 	HtmlView::paint(gc);
-// }
-
 LBool BlockView::isBlockView() const
 {
     return m_style.displayType != util::Style::DISPLAY_INLINE;
@@ -110,13 +100,13 @@ void BlockView::layoutBlockChildren(LBool relayoutChildren)
     HtmlViewList::Iterator iterEnd = m_children.end();
 
 	LayoutUnit previousLogicalHeight = 0;
-	LayoutUnit absoluteLogicalHeight = 0;
+	//LayoutUnit absoluteLogicalHeight = 0;
 	for (; iter != iterEnd; ++iter)
 	{
 		HtmlView* child = *iter;
 		if (child->isPositioned())
 		{
-			layoutPositionChild(child, absoluteLogicalHeight);
+			layoutPositionChild(child);
 			continue;
 		}
 
@@ -125,21 +115,35 @@ void BlockView::layoutBlockChildren(LBool relayoutChildren)
 
 	previousLogicalHeight += m_style.topPadding;
 
-	m_height = absoluteLogicalHeight > previousLogicalHeight ? absoluteLogicalHeight : previousLogicalHeight;
+	if (!m_style.height && previousLogicalHeight > m_height)
+	{
+		m_height = previousLogicalHeight;
+	}
+	//m_height = absoluteLogicalHeight > previousLogicalHeight ? absoluteLogicalHeight : previousLogicalHeight;
 
 	KFORMATLOG("BlockView layoutBlockChildren m_height=%d", m_height);
 }
 
-void BlockView::layoutPositionChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
+void BlockView::layoutPositionChild(HtmlView* child)
 {
-	child->setXpos(child->getStyle()->left);
-	child->setYpos(child->getStyle()->top);
 	child->layout();
-
-	if (previousLogicalHeight < child->getYpos() + child->getHeight())
+	if (m_style.height &&
+		child->getStyle()->align == util::Style::ALIGN_BOTTOM)
 	{
-		previousLogicalHeight = child->getYpos() + child->getHeight();
+		child->setXpos(child->getStyle()->left);
+		child->setYpos(m_height - child->getHeight());
 	}
+	else
+	{
+		child->setXpos(child->getStyle()->left);
+		child->setYpos(child->getStyle()->top);
+	}
+	
+
+	// if (previousLogicalHeight < child->getYpos() + child->getHeight())
+	// {
+	// 	previousLogicalHeight = child->getYpos() + child->getHeight();
+	// }
 	KFORMATLOG("adjustPositioned, x=%d, y=%d", child->getStyle()->left, child->getStyle()->top);
 	KFORMATLOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
 }
@@ -172,7 +176,7 @@ void BlockView::layoutInlineChildren()
 
 	rc.addY(getStyle()->bottomPadding);
 
-	m_height = rc.getY();
+	m_height = rc.getY() > m_height ? rc.getY() : m_height;
 }
 
 void BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
@@ -308,7 +312,14 @@ LInt BlockView::getScrollYPos() const
 
 LBool BlockView::canScroll() const
 {
-    return m_style.height && m_style.height < m_height;
+    if (getParent())
+    {
+    	return m_height > getParent()->getHeight();
+    }
+    else
+    {
+    	return m_height > m_doc->getViewPort().GetHeight();
+    }
 }
 
 LInt BlockView::getHeight() const
@@ -318,6 +329,14 @@ LInt BlockView::getHeight() const
 
 LInt BlockView::scrollHeight() const
 {
-	return m_height - m_style.height;
+	//return m_height - m_style.height;
+	if (getParent())
+    {
+    	return m_height - getParent()->getHeight();
+    }
+    else
+    {
+    	return m_height - m_doc->getViewPort().GetHeight();
+    }
 }
 }

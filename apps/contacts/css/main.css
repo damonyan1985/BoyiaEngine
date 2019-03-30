@@ -88,6 +88,8 @@
 .full{
 	position:absolute;
 	background-color:#FFFFFFFF;
+	height: 1280px;
+	width: 720px;
 }
 .image_poster {
     background-color:#FFFFFFFF;
@@ -124,13 +126,10 @@ body {
 #header {
 	position: absolute;
 }
-#category_detail {
+.items {
     position: absolute;
     top: 155px;
     height: 1125px;
-}
-.search {
-	position:absolute;
 }
 .video {
 	position:absolute;
@@ -178,4 +177,12 @@ body {
     color: #777;
     font-size: 30px;
     text-align:center;
+}
+
+#footer {
+	position: absolute;
+	align: bottom;
+	width: 720px;
+	height: 100px;
+	background-color: #FF00FF;
 }

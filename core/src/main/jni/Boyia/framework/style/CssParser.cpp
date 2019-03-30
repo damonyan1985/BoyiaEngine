@@ -310,6 +310,26 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     LInt cssTag = tags->symbolAsInt(property);
     switch (cssTag)
     {
+    case CssTags::ALIGN:
+    	{
+			if (value.CompareNoCase(_CS("top")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_TOP);
+    		} 
+    		else if (value.CompareNoCase(_CS("left")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_LEFT);
+    		}
+    		else if (value.CompareNoCase(_CS("right")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_RIGHT);
+    		}
+    		else if (value.CompareNoCase(_CS("bottom")))
+    		{
+    		    rule->addProperty(cssTag, Style::ALIGN_BOTTOM);
+    		}
+    	}
+    	break;	
     case CssTags::FONT_WEIGHT:
     	{
     		if (value.CompareNoCase(_CS("bold")))
