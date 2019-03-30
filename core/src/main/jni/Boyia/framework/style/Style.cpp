@@ -102,7 +102,7 @@ Style::Style(const Style& style)
     opacity            = style.opacity;
     drawOpacity        = style.drawOpacity;
     font               = style.font;
-    positionType       = style.positionType ;
+    positionType       = style.positionType;
     left               = style.left;
     top                = style.top;
     width              = style.width;
@@ -121,6 +121,7 @@ Style::Style(const Style& style)
     scale              = style.scale;
     focusable          = style.focusable;
     flexDirection      = style.flexDirection;
+    align              = style.align;
     border             = style.getBorder();
 }
 
@@ -159,6 +160,7 @@ const Style& Style::operator=(const Style& style)
     displayType        = style.displayType;
     focusable          = style.focusable;
     flexDirection      = style.flexDirection;
+    align              = style.align;
     border             = style.getBorder();
     return *this;
 }
@@ -188,6 +190,7 @@ void Style::init()
     focusable          = LFalse;
     scale              = 1;
     flexDirection      = FLEX_NONE;
+    align              = ALIGN_NONE;
 }
 
 }

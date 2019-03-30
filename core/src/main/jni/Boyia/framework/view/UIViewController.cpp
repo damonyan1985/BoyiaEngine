@@ -218,6 +218,8 @@ void UIViewController::onTouchMove(const LPoint& pt)
 		LBool cantScoll = !view->canScroll()
 				|| (scrollY == 0 && deltaY >= 0)
 				|| (scrollY == view->scrollHeight() && deltaY <= 0);
+		
+		KFORMATLOG("onTouchMove canScroll=%d scrollY=%d deltaY=%d scrollHeight=%d height=%d", view->canScroll(), scrollY, deltaY, view->scrollHeight(), view->getHeight());
 		if (!cantScoll)
 		{
 		    LInt newScrollY = scrollY + deltaY;

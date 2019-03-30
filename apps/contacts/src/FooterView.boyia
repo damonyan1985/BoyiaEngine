@@ -1,0 +1,25 @@
+class FooterView extends ViewDoc {
+	prop mytab = null;
+    prop newsTab = null;
+    prop appTab = null;
+    prop videoTab = null;
+    
+    fun initView() {
+        if (!this.mytab) {
+        	this.mytab = this.itemByID(InputView, "my_tab");
+            this.mytab.initView();
+        }
+        if (!this.newsTab) {
+        	this.newsTab = this.itemByID(InputView, "news_tab");
+            this.newsTab.initView();
+        }
+        if (!this.appTab) {
+            this.appTab = this.itemByID(InputView, "app_tab");
+            this.appTab.initView();
+        }
+        
+        if (!this.videoTab) {
+            this.videoTab = this.itemByID(ViewGroup, "video_tab");
+        }
+    }
+}

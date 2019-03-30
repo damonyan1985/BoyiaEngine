@@ -40,6 +40,17 @@ public:
 class Style
 {
 public:
+	// must be used with absolute or fixed
+	typedef enum AlignType
+	{
+		ALIGN_NONE,
+		ALIGN_TOP,
+		ALIGN_LEFT,
+		ALIGN_RIGHT,
+		ALIGN_BOTTOM,
+		ALIGN_CENTER
+	} AlignType;
+
     typedef enum PositionType
     {
         ABSOLUTEPOSITION,
@@ -105,6 +116,7 @@ public:
 	Border                        border;
 	LBool                         focusable;
 	LInt                          flexDirection;
+	LInt                          align;
 };
 }
 #endif

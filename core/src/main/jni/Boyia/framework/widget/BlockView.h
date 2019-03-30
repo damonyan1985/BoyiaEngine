@@ -37,15 +37,12 @@ public:
 	void layoutInlineChildren();
 	// layout block child
 	void layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
-	//void layoutInlineChild(HtmlView* child);
-	void layoutPositionChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
+
+	void layoutPositionChild(HtmlView* child);
 	void makeChildrenNonInline(HtmlView* block);
 	BlockView* createAnonymousBlock();
 
-	// paint child
-	//virtual void paint(LGraphicsContext& gc);
 	virtual LBool isBlockView() const;
-
 	void setIsAnonymousBlock(LBool isAnonymous);
 	virtual LBool isAnonymousBlock();
 
