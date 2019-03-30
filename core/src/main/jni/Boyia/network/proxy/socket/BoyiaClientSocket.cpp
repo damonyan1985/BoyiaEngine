@@ -9,14 +9,16 @@
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
 namespace yanbo
 {
 const int KMaxReceiveLength = 1024;
 BoyiaClientSocket::BoyiaClientSocket(BoyiaClientListener* listener)
-    : m_socketHandle(-1)
+	: m_socketHandle(-1)
     , m_listener(listener)
 {
+	initSocket();
 }
 
 BoyiaClientSocket::~BoyiaClientSocket()
@@ -24,8 +26,23 @@ BoyiaClientSocket::~BoyiaClientSocket()
 	closeSocket();
 }
 
-int BoyiaClientSocket::initClientSocket(const CString& hostName, int serverPort)
+LVoid BoyiaClientSocket::initSocket()
 {
+	if ((m_socketHandle = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	{
+		//close(m_socketHandle);
+		KLOG("Create Socket Error");
+        return;
+	}
+}
+
+LInt BoyiaClientSocket::connectServer(const CString& hostName, int serverPort)
+{
+	if (m_socketHandle == -1) 
+	{
+		return EConnectError;
+	}
+
 	struct hostent *host;
 	struct sockaddr_in serv_addr;
 
@@ -34,19 +51,11 @@ int BoyiaClientSocket::initClientSocket(const CString& hostName, int serverPort)
         return EParseHostError;
 	}
 
-	KFORMATLOG("initClientSocket gethostbyname hostname=%s", host->h_name);
-
-	if ((m_socketHandle = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-	{
-		close(m_socketHandle);
-        return ECreateSocketError;
-	}
-
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(serverPort);
 	serv_addr.sin_addr = *((struct in_addr *)host->h_addr);
 	bzero(&(serv_addr.sin_zero), sizeof(serv_addr.sin_zero));
-
+	// inet_pton(AF_INET, "192.168.0.10", &serv_addr.sin_addr)
 	/*调用connect函数主动发起对服务器端的连接*/
 	if (connect(m_socketHandle, (struct sockaddr *)&serv_addr,
 	                sizeof(struct sockaddr)) == -1)
@@ -57,9 +66,10 @@ int BoyiaClientSocket::initClientSocket(const CString& hostName, int serverPort)
 	}
 
 	KLOG("initClientSocket connect Success");
+	return EConnectSuccess;
 }
 
-int BoyiaClientSocket::requestData(const CString& data)
+LInt BoyiaClientSocket::sendData(const CString& data)
 {
 	KSTRFORMAT("requestData data=%s", data);
 	KFORMATLOG("requestData dataLength=%d", data.GetLength());
@@ -71,20 +81,11 @@ int BoyiaClientSocket::requestData(const CString& data)
 		closeSocket();
         return ESendDataError;
 	}
-	else
-	{
-		KLOG("requestData receiveData begin");
-		if (receiveData() < 0)
-		{
-			//KLOG("requestData receiveData Error");
-			return EReceiveDataError;
-		}
-
-		return ESendDataSuccess;
-	}
+	
+	return ESendDataSuccess;
 }
 
-int BoyiaClientSocket::receiveData()
+LInt BoyiaClientSocket::recvData()
 {
 	int recvLength = -1;
 	do
@@ -101,8 +102,6 @@ int BoyiaClientSocket::receiveData()
 		}
 	    else if (recvLength <= 0) // 非正常结束
 	    {
-			//closeSocket();
-			AutoLock lock(&m_mutex);
 			if (m_socketHandle != -1)
 			{
 				closeSocket();

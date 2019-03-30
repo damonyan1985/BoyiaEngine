@@ -8,9 +8,7 @@
 
 namespace yanbo
 {
-const int KMiniThreadPoolSize = 1;
-// 注意线程安全, 使用饿汉模式
-MiniThreadPool* MiniThreadPool::s_pool = new MiniThreadPool();
+const int KMiniThreadPoolSize = 9;
 MiniThreadPool::MiniThreadPool()
 {
 	m_queue = new MiniBlockQueue();
@@ -30,16 +28,12 @@ MiniThreadPool::~MiniThreadPool()
 
 MiniThreadPool* MiniThreadPool::getInstance()
 {
-    return s_pool;
+	static MiniThreadPool sPool;
+    return &sPool;
 }
 
 void MiniThreadPool::destroy()
 {
-	if (s_pool != NULL)
-	{
-		delete s_pool;
-		s_pool = NULL;
-	}
 }
 
 void MiniThreadPool::sendMiniTask(MiniTaskBase* task)
