@@ -19,7 +19,6 @@ private:
 	~MiniThreadPool();
 	MiniThreadPool();
 
-	static MiniThreadPool* s_pool;
 	KList<BoyiaPtr<MiniTaskThread> > m_threadList;
 	BoyiaPtr<MiniBlockQueue> m_queue;
 };

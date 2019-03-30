@@ -9,14 +9,14 @@
 namespace yanbo
 {
 // 客户端socket的封装
-class BoyiaClientSocket : public BoyiaRef
+class BoyiaClientSocket
 {
 public:
 	enum ClientState
 	{
         EParseHostError,
-        ECreateSocketError,
         EConnectError,
+        EConnectSuccess,
         ESendDataError,
         ESendDataSuccess,
         EReceiveDataError,
@@ -27,15 +27,16 @@ public:
 	virtual ~BoyiaClientSocket();
 
 public:
-	int initClientSocket(const CString& hostName, int serverPort);
-	int requestData(const CString& data);
-    int receiveData();
-	void blockClose();
+	LInt connectServer(const CString& hostName, int serverPort);
+	LInt sendData(const CString& data);
+    LInt recvData();
+	LVoid blockClose();
 
 private:
-	void closeSocket();
+	LVoid closeSocket();
+	LVoid initSocket();
 
-	int m_socketHandle;
+	LInt m_socketHandle;
 	BoyiaClientListener *m_listener;
 	MiniMutex m_mutex;
 };
