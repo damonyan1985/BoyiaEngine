@@ -189,8 +189,10 @@ body {
 }
 
 .tabs {
+	position: absolute;
 	align: center;
 	flex-direction: row;
+	width: 400px;
 }
 
 .tab_item {
