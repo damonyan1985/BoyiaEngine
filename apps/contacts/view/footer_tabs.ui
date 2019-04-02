@@ -2,5 +2,10 @@
 <div class="tab_item" id="news_tab">资讯</div>
 <div class="tab_item" id="video_tab">视频</div>
 <div class="tab_item" id="app_tab">应用</div>
-<div class="tab_item" id="my_tab">我的</div>
+<div class="tab_item" id="my_tab">
+<div class="tab_center">
+<div class="my_tab_img"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
+<div>我的</div>
+</div>
+</div>
 </view>

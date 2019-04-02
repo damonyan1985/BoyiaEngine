@@ -185,7 +185,7 @@ body {
 	width: 720px;
 	height: 100px;
 	border-top: 1px solid #8F8F8F;
-	background-color: #FFFFFF;
+	background-color: #FFFFFFCC;
 }
 
 .tabs {
@@ -200,5 +200,14 @@ body {
 	width: 100px;
 	height: 100px;
 	font-size: 30px;
-	background-color: #FF00FF;
+}
+
+.tab_center {
+	position: absolute;
+	align: center;
+}
+
+.my_tab_img {
+	width: 20px;
+	height: 50px;
 }
