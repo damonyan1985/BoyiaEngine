@@ -16,9 +16,10 @@ class MainActivity extends Activity {
 	
 	    Util.log("main function begin");
 	    
-	    var root = ViewDoc.rootView();
-	    var appBox = root.itemByID(ViewGroup, "AppBox");
-	    
+	    //var root = ViewDoc.rootView();
+	    //var appBox = root.itemByID(ViewGroup, "AppBox");
+	    var appBox = ViewRoot.getRoot();
+
         this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.ui");
 	    this.main.initView();
 	    

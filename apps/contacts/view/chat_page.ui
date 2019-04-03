@@ -1,8 +1,8 @@
-<view>
-<div class="msg_window">
+<view class="chat_window">
+<div id="msg_window">
 </div>
 <div class="edit_view">
 <input id="chat_edit" type="text" value="" />
-<img class="msg_submit" src="" />
+<img class="msg_submit" src="boyia://apps/contacts/img/send.png" />
 </div>
 </view>

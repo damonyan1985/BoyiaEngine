@@ -218,3 +218,8 @@ body {
 	text-align: center;
 	height: 50px;
 }
+
+.chat_window {
+	position: absolute;
+	background-color: #FF00FF;
+}
