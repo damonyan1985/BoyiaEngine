@@ -6,20 +6,22 @@ class FooterView extends ViewDoc {
     
     fun initView() {
         if (!this.mytab) {
-        	this.mytab = this.itemByID(InputView, "my_tab");
-            this.mytab.initView();
+        	this.mytab = this.itemByID(ViewGroup, "my_tab");
+            this.mytab.addEventListener(TOUCH_UP, this.myTabClick);
         }
         if (!this.newsTab) {
-        	this.newsTab = this.itemByID(InputView, "news_tab");
-            this.newsTab.initView();
+        	this.newsTab = this.itemByID(ViewGroup, "news_tab");
         }
         if (!this.appTab) {
-            this.appTab = this.itemByID(InputView, "app_tab");
-            this.appTab.initView();
+            this.appTab = this.itemByID(ViewGroup, "app_tab");
         }
         
         if (!this.videoTab) {
             this.videoTab = this.itemByID(ViewGroup, "video_tab");
         }
+    }
+
+    fun myTabClick() {
+        Util.showToast("My Tab Show");
     }
 }
