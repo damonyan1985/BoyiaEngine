@@ -1,6 +1,10 @@
-class ChatPage extends Activity {
-	fun onCreate() {
-		var root = ViewDoc.rootView();
-		var appBox = root.itemByID(ViewGroup, "AppBox");
+class ChatPage extends ViewDoc {
+	prop msgWindow = null;
+	prop chatEdit = null;
+	fun initView() {
+		if (!this.msgWindow) {
+        	this.msgWindow = this.itemByID(ViewGroup, "msg_window");
+        	this.chatEdit = this.itemByID(ViewGroup, "chat_edit");
+        }
 	}
 }

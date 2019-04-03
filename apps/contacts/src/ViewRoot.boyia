@@ -1,0 +1,10 @@
+class ViewRoot {
+	prop root = null;
+	fun getRoot() {
+		if (!this.root) {
+	    	this.root = ViewDoc.rootView().itemByID(ViewGroup, "AppBox");
+	    }
+
+	    return this.root;
+	}
+}
