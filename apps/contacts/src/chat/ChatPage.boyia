@@ -1,5 +1,6 @@
 class ChatPage extends Activity {
 	fun onCreate() {
 		var root = ViewDoc.rootView();
+		var appBox = root.itemByID(ViewGroup, "AppBox");
 	}
 }
