@@ -1,5 +1,8 @@
+// Boolean Object And Null
 var true = 1, false = 0, null = 0;
-//var touchDown = 1, touchUp = 2, touchMove = 4;
+// Touch Event
+var TOUCH_DOWN = 1, TOUCH_UP = 2, TOUCH_MOVE = 4;
+// Util Class
 class Util {
     fun log(info) {
         BY_Log(info);

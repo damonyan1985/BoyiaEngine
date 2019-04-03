@@ -200,6 +200,7 @@ body {
 	width: 100px;
 	height: 100px;
 	font-size: 30px;
+	focusable: true;
 }
 
 .tab_center {
@@ -209,5 +210,10 @@ body {
 
 .my_tab_img {
 	width: 20px;
+	height: 50px;
+}
+
+.my_tab_div {
+	text-align: center;
 	height: 50px;
 }

@@ -56,7 +56,7 @@ void BlockView::layout()
 	}
 	else
 	{
-		m_width = getParent() ? getParent()->getWidth() : m_doc->getViewPort().GetWidth();
+		m_width = getParent() ? (getParent()->getWidth() - m_x) : m_doc->getViewPort().GetWidth();
 	}
 
 	if (m_style.height)
