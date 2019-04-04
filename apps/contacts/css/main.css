@@ -221,5 +221,24 @@ body {
 
 .chat_window {
 	position: absolute;
-	background-color: #FF00FF;
+	height: 1280px;
+	background-color: #FFFFFF;
+}
+
+#chat_header {
+	position: absolute;
+	height: 80px;
+	background-color: #EDEDED;
+}
+
+.edit_view {
+	position: absolute;
+	height: 80px;
+	background-color: #EDEDED;
+	align: bottom;
+}
+
+#chat_view {
+	height: 1200px;
+	background-color: #FFFFFF;
 }
