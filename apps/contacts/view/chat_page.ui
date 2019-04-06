@@ -1,5 +1,4 @@
 <view class="chat_window">
-<div id="chat_header" />
 <div id="chat_view">
 	<div id="chat_msg_view" />
 	<div class="edit_view">
@@ -7,4 +6,5 @@
 	<img class="msg_submit" src="boyia://apps/contacts/img/send.png" />
 	</div>
 </div>
+<div id="chat_header" />
 </view>

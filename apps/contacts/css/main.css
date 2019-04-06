@@ -233,12 +233,14 @@ body {
 
 .edit_view {
 	position: absolute;
-	height: 80px;
+	height: 100px;
 	background-color: #EDEDED;
 	align: bottom;
 }
 
 #chat_view {
+	position: absolute;
+	top: 80px;
 	height: 1200px;
 	background-color: #FFFFFF;
 }
