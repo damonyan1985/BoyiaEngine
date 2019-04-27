@@ -51,24 +51,24 @@ void CssParser::parseCss(InputStream& is)
 	LInt i = is.read();
 	while (i != -1 && !done)
 	{
-	    if (i >= 32)
-	    {
-	        LCharA c = (LCharA)i;
-	        if (inComment)
-	        {
+		if (i >= 32)
+		{
+			LCharA c = (LCharA)i;
+			if (inComment)
+			{
 				if (c == '/' && prevChar == '*')
 				{
 					inComment = LFalse;
 				}
 	        }
-	        else
-	        {
+			else
+			{
 				switch (c)
 				{
-	            case '<': 
+				case '<': 
 					{
-					    done = LTrue;
-					    return;
+						done = LTrue;
+						return;
 					}
 				case '{': 
 					{
@@ -93,7 +93,7 @@ void CssParser::parseCss(InputStream& is)
 							declarations = NULL;
 						}
 
-	            	}
+					}
 					break;
 				case ',': 
 					{
@@ -123,15 +123,15 @@ void CssParser::parseCss(InputStream& is)
 				case '*':
 					{
 						if (prevChar == '/')
-					    {
+						{
 							inComment = LTrue;
 						}	            	
 					}
 					break;
 				default: 
 					{            
-				        selectText += (LUint8)c;
-				    }
+						selectText += (LUint8)c;
+					}
 					break;
 		        }
 		    }
@@ -150,14 +150,14 @@ void CssParser::parseCss(InputStream& is)
 	// last judge the new selector
 	if (selector->size() == 0)
 	{
-	    delete selector;
-	    selector = NULL;
+		delete selector;
+		selector = NULL;
 	}
 	
 	if (selectorGroup->size() == 0)
 	{
 		delete selectorGroup;
-	    selectorGroup = NULL;
+		selectorGroup = NULL;
 	}
 
 
