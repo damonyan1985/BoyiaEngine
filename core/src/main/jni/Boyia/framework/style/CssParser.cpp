@@ -60,7 +60,7 @@ void CssParser::parseCss(InputStream& is)
 				{
 					inComment = LFalse;
 				}
-	        }
+			}
 			else
 			{
 				switch (c)
