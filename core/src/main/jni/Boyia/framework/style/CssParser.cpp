@@ -63,28 +63,28 @@ void CssParser::parseCss(InputStream& is)
 	        }
 	        else
 	        {
-	            switch (c)
+				switch (c)
 				{
 	            case '<': 
-				    {
-	            	    done = LTrue;
-	            	    return;
-	            	}
-	            case '{': 
+					{
+					    done = LTrue;
+					    return;
+					}
+				case '{': 
 					{
 	            	    
-	            	    PropertyMap* declarations = parseDeclarations(is);
-	            	    if (selectText.GetLength() > 0)
+						PropertyMap* declarations = parseDeclarations(is);
+						if (selectText.GetLength() > 0)
 						{
 							SimpleSelector* realSelecor = new SimpleSelector();
 							realSelecor->setSelectorText(selectText);
-	            	        selector->addElement(realSelecor);
-	            	    }
-	            	    selectorGroup->addElement(selector);
-	            	    addSelectorGroup(selectorGroup, declarations);
-	            	    
-	            	    selector = new Selector();
-	            	    selectText = _CS(NULL);
+							selector->addElement(realSelecor);
+						}
+						selectorGroup->addElement(selector);
+						addSelectorGroup(selectorGroup, declarations);
+
+						selector = new Selector();
+						selectText = _CS(NULL);
 						selectorGroup = new SelectorGroup();
 
 						if (declarations != NULL)
@@ -95,54 +95,54 @@ void CssParser::parseCss(InputStream& is)
 
 	            	}
 					break;
-	            case ',': 
+				case ',': 
 					{
 						SimpleSelector* realSelecor = new SimpleSelector();
 						realSelecor->setSelectorText(selectText);
-	            	    selector->addElement(realSelecor);
-	            	    selectorGroup->addElement(selector);
-	            	    selectText = _CS(NULL);
-	            	    selector = new Selector();
-	            	}
+						selector->addElement(realSelecor);
+						selectorGroup->addElement(selector);
+						selectText = _CS(NULL);
+						selector = new Selector();
+					}
 					break;
-	            case ' ': 
-				    {
-	            	    if (selectText.GetLength() > 0)
-	            	    {
+				case ' ': 
+					{
+						if (selectText.GetLength() > 0)
+						{
 							SimpleSelector* realSelecor = new SimpleSelector();
 							realSelecor->setSelectorText(selectText);
-	            	        selector->addElement(realSelecor);
-	            	        selectText = _CS(NULL);
-	            	    }
-	            	}
-				    break;
-	            case '/': 
-					{	            	
-	            	}
+							selector->addElement(realSelecor);
+							selectText = _CS(NULL);
+						}
+					}
 					break;
-	            case '*':
+				case '/': 
+					{	            	
+					}
+					break;
+				case '*':
 					{
 						if (prevChar == '/')
 					    {
 							inComment = LTrue;
 						}	            	
-	            	}
+					}
 					break;
-                default: 
+				default: 
 					{            
-                        selectText += (LUint8)c;
-                    }
+				        selectText += (LUint8)c;
+				    }
 					break;
-	            }
-	        }
-	        prevChar = c;
-	    }
-	    
-	    i = is.read();
-	    if (is.isEnd())
-	    {
-	        done = LTrue;
-	    }
+		        }
+		    }
+		    prevChar = c;
+		}
+
+		i = is.read();
+		if (is.isEnd())
+		{
+		    done = LTrue;
+		}
 
 
 	}
