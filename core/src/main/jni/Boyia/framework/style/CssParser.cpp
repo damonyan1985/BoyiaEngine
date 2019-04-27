@@ -28,7 +28,6 @@ CssParser::~CssParser()
 	if (m_cssManager)
 	{
 	    delete m_cssManager;
-	    m_cssManager = NULL;
 	}
 }
 
@@ -36,7 +35,7 @@ void CssParser::parseCss(InputStream& is)
 {
 	if (!m_cssManager)
 	{
-	    m_cssManager = new CssManager();
+		m_cssManager = new CssManager();
 	}
 
 	SelectorGroup* selectorGroup = new SelectorGroup(0, 20);
@@ -87,10 +86,9 @@ void CssParser::parseCss(InputStream& is)
 						selectText = _CS(NULL);
 						selectorGroup = new SelectorGroup();
 
-						if (declarations != NULL)
+						if (declarations)
 						{
 							delete declarations;
-							declarations = NULL;
 						}
 
 					}
@@ -151,13 +149,11 @@ void CssParser::parseCss(InputStream& is)
 	if (selector->size() == 0)
 	{
 		delete selector;
-		selector = NULL;
 	}
 	
 	if (selectorGroup->size() == 0)
 	{
 		delete selectorGroup;
-		selectorGroup = NULL;
 	}
 
 
@@ -174,51 +170,51 @@ PropertyMap* CssParser::parseDeclarations(InputStream& is)
 	PropertyValue     value;
 	
 	do {
-	    LInt i = is.read();
-	    if (i < 0)
+		LInt i = is.read();
+		if (i < 0)
 		{
-	        done = LTrue;
-	    }
-	    else if (i >= 32)
+			done = LTrue;
+		}
+		else if (i >= 32)
 		{
-	        LCharA c = (LCharA)i;
-	        switch (c)
+			LCharA c = (LCharA)i;
+			switch (c)
 			{
-	        case '}': 
-			    {
-	        	    addDeclaration(declarations, property, value);
-	        	    done = LTrue;
-	        	}
-				break;
-	        case ':': 
+			case '}': 
 				{
-	        	    if(inPropertyField) 
+					addDeclaration(declarations, property, value);
+					done = LTrue;
+				}
+				break;
+			case ':': 
+				{
+					if (inPropertyField) 
 					{
-	        	        inPropertyField = !inPropertyField;
-	        	    } 
+						inPropertyField = !inPropertyField;
+					} 
 					else 
 					{
-	        	        value += (LUint8)c;
-	        	    }
-	        	}
+						value += (LUint8)c;
+					}
+				}
 				break;
-	        case ';': 
+			case ';': 
 				{
-	        	    addDeclaration(declarations, property, value);
-	        	    property                = _CS(NULL);
-	        	    value                   = _CS(NULL);
-	        	    inPropertyField         = LTrue;
-	        	}
+					addDeclaration(declarations, property, value);
+					property                = _CS(NULL);
+					value                   = _CS(NULL);
+					inPropertyField         = LTrue;
+				}
 				break;
-	        case ' ': 
+			case ' ': 
 				{
-	        	    if (!inPropertyField)
+					if (!inPropertyField)
 					{
-	        	        value += (LUint8)c;
-	        	    }
-	        	}
+						value += (LUint8)c;
+					}
+				}
 				break;
-	        default: 
+			default: 
 				{
 					if (inPropertyField)
 					{
@@ -228,10 +224,10 @@ PropertyMap* CssParser::parseDeclarations(InputStream& is)
 					{
 						value += (LUint8)c;
 					}
-	        	}
+				}
 				break;
-	        }
-	    }
+			}
+		}
 	} while (!done);
 
 	return declarations;
