@@ -131,6 +131,7 @@ public:
 
 			//KFORMATLOG("boyia app AppHandler entry=%s", entry->valuestring);
 			BoyiaThreadLoad(parser.get("entry")->valuestring);
+			FileUtil::deleteFile(GET_STR(m_appFilePath));
 		}
 
 		delete this;
@@ -254,18 +255,36 @@ LVoid StartupLoader::parseConfig()
 	cJSON_Delete(json);
 }
 
+LVoid StartupLoader::upgradeApp(const String& name)
+{
+	String appDir = _CS(APPS_PATH) + name;
+	String appFilePath = appDir + _CS("_tmp.zip");
+	if (FileUtil::isExist(GET_STR(appFilePath)))
+	{
+		// 删除APP目录
+		FileUtil::deleteFile(GET_STR(appDir));
+		// 解压到当前目录
+		JNIUtil::unzip(appFilePath, appDir);
+		// 删除下载的文件
+		FileUtil::deleteFile(GET_STR(appFilePath));
+	}
+}
+
 LVoid StartupLoader::startLoadApp()
 {
 	LInt size = m_appInfos.size();
 	for (LInt id = 0; id < size; ++id)
 	{
+		// 升级App
+		upgradeApp(m_appInfos[id]->name);
 		String appDir = _CS(APPS_PATH) + m_appInfos[id]->name;
-		String appJsonPath = appDir + _CS(APP_JSON);
+		
 		LInt versionCode = 0;
 		LBool hasApp = FileUtil::isExist(GET_STR(appDir));
 		if (hasApp)
 		{
 			// Get App Json Info
+			String appJsonPath = appDir + _CS(APP_JSON);
 			KFORMATLOG("boyia app content=%s", GET_STR(appJsonPath));
 			boyia::JSONParser parser(appJsonPath);
 			// Get App Version
