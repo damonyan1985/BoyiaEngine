@@ -29,6 +29,7 @@ public:
     virtual LVoid onLoadFinished();
 
 private:
+    LVoid loadApp();
     LVoid parseConfig();
     LVoid startLoadApp();
 

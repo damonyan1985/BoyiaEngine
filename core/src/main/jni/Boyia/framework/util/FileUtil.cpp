@@ -72,12 +72,17 @@ LVoid FileUtil::deleteFile(const char* path)
     if (isDir(path))
     {
         if ((dir = opendir(path)) == NULL)
+        {
             return;
+        }
+        
         while ((dirInfo = readdir(dir)) != NULL)
         {
             //get_file_path(path, dirInfo->d_name, filePath);
             if (isSpecialDir(dirInfo->d_name))
+            {
                 continue;
+            }
 
             String filePath = _CS(path);
             LInt len = filePath.GetLength();
