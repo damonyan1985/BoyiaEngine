@@ -32,6 +32,7 @@ private:
     LVoid loadApp();
     LVoid parseConfig();
     LVoid startLoadApp();
+    LVoid upgradeApp(const String& name);
 
 	BoyiaLoader m_loader;
 	FILE* m_file;
