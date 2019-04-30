@@ -87,7 +87,8 @@ public:
 class AppHandler : public NetworkClient
 {
 public:
-	AppHandler(const String& name)
+	AppHandler(const String& name, LBool launchable)
+		: m_launchable(launchable)
 	{
 		m_appDir = _CS(APPS_PATH) + name;
 		m_appFilePath = m_appDir + _CS("_tmp.zip");
@@ -99,7 +100,6 @@ public:
 	virtual void onDataReceived(const LByte* data, LInt size)
 	{
 		fwrite(data, size, 1, m_appFile);
-		//fflush(m_appFile);
 	}
 
 	virtual void onStatusCode(LInt statusCode)
@@ -118,18 +118,19 @@ public:
 
 	virtual void onLoadFinished()
 	{
+		// 下载完成
 		fclose(m_appFile);
-		JNIUtil::unzip(m_appFilePath, m_appDir);
-		FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
-
-		String appJsonPath = m_appDir + _CS(APP_JSON);
-		boyia::JSONParser parser(appJsonPath);
-
-		cJSON* entry = parser.get("entry");
-		if (entry)
+		// 解压到应用程序目录
+		if (m_launchable)
 		{
-			KFORMATLOG("boyia app AppHandler entry=%s", entry->valuestring);
-			BoyiaThreadLoad(entry->valuestring);
+			JNIUtil::unzip(m_appFilePath, m_appDir);
+			FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
+
+			String appJsonPath = m_appDir + _CS(APP_JSON);
+			boyia::JSONParser parser(appJsonPath);
+
+			//KFORMATLOG("boyia app AppHandler entry=%s", entry->valuestring);
+			BoyiaThreadLoad(parser.get("entry")->valuestring);
 		}
 
 		delete this;
@@ -144,6 +145,7 @@ private:
 	FILE* m_appFile;
 	String m_appDir;
 	String m_appFilePath;
+	LBool m_launchable;
 };
 
 StartupLoader::StartupLoader()
@@ -165,6 +167,16 @@ LVoid StartupLoader::startLoad()
     //KFORMATLOG("boyia app StartupLoader url=%s", GET_STR(url));
     m_loader.loadUrl(_CS(APP_LOAD_URL), this);
     KFORMATLOG("boyia app StartupLoader m_file=%d", (LIntPtr)m_file);
+}
+
+LVoid StartupLoader::loadApp()
+{
+	if (!FileUtil::isExist(APPS_JSON_PATH))
+	{
+		return;
+	}
+	parseConfig();
+	startLoadApp();
 }
 
 LVoid StartupLoader::onDataReceived(const LByte* data, LInt size)
@@ -206,8 +218,7 @@ LVoid StartupLoader::onLoadFinished()
 	}
 
 	fclose(m_file);
-	parseConfig();
-	startLoadApp();
+	loadApp();
 }
 
 LVoid StartupLoader::parseConfig()
@@ -251,7 +262,8 @@ LVoid StartupLoader::startLoadApp()
 		String appDir = _CS(APPS_PATH) + m_appInfos[id]->name;
 		String appJsonPath = appDir + _CS(APP_JSON);
 		LInt versionCode = 0;
-		if (FileUtil::isExist(GET_STR(appDir)))
+		LBool hasApp = FileUtil::isExist(GET_STR(appDir));
+		if (hasApp)
 		{
 			// Get App Json Info
 			KFORMATLOG("boyia app content=%s", GET_STR(appJsonPath));
@@ -262,28 +274,33 @@ LVoid StartupLoader::startLoadApp()
 			{
 				versionCode = version->valueint;
 			}
+
+			if (m_appInfos[id]->isEntry)
+			{
+				BoyiaThreadLoad(parser.get("entry")->valuestring);
+			}
 		}
 
 		// If the versionCode boyia.json greater than the version
 		// which in local app.json
 		if (m_appInfos[id]->versionCode > versionCode)
 		{
-			if (FileUtil::isExist(GET_STR(appDir)))
-			{
-				FileUtil::deleteFile(GET_STR(appDir));
-			}
+			// if (FileUtil::isExist(GET_STR(appDir)))
+			// {
+			// 	FileUtil::deleteFile(GET_STR(appDir));
+			// }
 
-			m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name));
+			m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name, !hasApp && m_appInfos[id]->isEntry));
 		}
-		else
-		{
-			boyia::JSONParser parser(appJsonPath);
-			cJSON* entry = parser.get("entry");
-			if (entry)
-			{
-				BoyiaThreadLoad(entry->valuestring);
-			}
-		}
+		// else
+		// {
+		// 	boyia::JSONParser parser(appJsonPath);
+		// 	cJSON* entry = parser.get("entry");
+		// 	if (entry)
+		// 	{
+		// 		BoyiaThreadLoad(entry->valuestring);
+		// 	}
+		// }
 	}
 }
 }
