@@ -313,20 +313,20 @@ static LVoid ExecPopFunction() {
 static LVoid ExecInstruction() {
     // 通过指令寄存器进行计算
     while (gBoyiaVM->mEState->mPC) {
-		if (gBoyiaVM->mEState->mPC->mHandler) {
-			LInt result = gBoyiaVM->mEState->mPC->mHandler(gBoyiaVM->mEState->mPC);
-			if (result == 0) {        // 指令运行出错跳出循环
-				break;
-			} else if (gBoyiaVM->mEState->mPC && result == 2) { // 函数跳转
-				continue;
-			} // 指令计算结果为1即为正常情况
-		}
+        if (gBoyiaVM->mEState->mPC->mHandler) {
+            LInt result = gBoyiaVM->mEState->mPC->mHandler(gBoyiaVM->mEState->mPC);
+            if (result == 0) {        // 指令运行出错跳出循环
+                break;
+            } else if (gBoyiaVM->mEState->mPC && result == 2) { // 函数跳转
+                continue;
+            } // 指令计算结果为1即为正常情况
+        }
 
-		if (gBoyiaVM->mEState->mPC) {
-			gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
-		}
+        if (gBoyiaVM->mEState->mPC) {
+            gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
+        }
 
-		ExecPopFunction();
+        ExecPopFunction();
     }
 }
 
@@ -365,9 +365,9 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count) {
     //EngineLog("HandleCallInternal CreateObject %d", 7);
     newFunc->mParamSize = 0;
     newFunc->mFuncBody = func->mFuncBody;
-	newFunc->mParamCount = count;
-	//EngineLog("HandleCallInternal CreateObject %d", 7);
-	//EngineLog("HandleCallInternal CreateObject mParams mAddr %d",  (int)newFunc->mParams);
+    newFunc->mParamCount = count;
+    //EngineLog("HandleCallInternal CreateObject %d", 7);
+    //EngineLog("HandleCallInternal CreateObject mParams mAddr %d",  (int)newFunc->mParams);
 
     while (clsVal) {
     	BoyiaFunction* func = (BoyiaFunction*) clsVal->mValue.mObj.mPtr;
@@ -409,33 +409,33 @@ LInt CreateObject() {
 }
 
 LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
-	dest->mValueType = src->mValueType;
-	switch (src->mValueType) {
-		case INT:
-		case CHAR:
-		case NAVCLASS:
-			dest->mValue.mIntVal = src->mValue.mIntVal;
-			break;
-		case FUNC:
-			dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
-			break;
-		case CLASS: {
-				dest->mValue.mIntVal = src->mValue.mIntVal;
-				dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
-			}
-			break;
-		case STRING:
-			MStrcpy(&dest->mValue.mStrVal, &src->mValue.mStrVal);
-			break;
-		default:
-			dest->mValue = src->mValue;
-			break;
-	}
+    dest->mValueType = src->mValueType;
+    switch (src->mValueType) {
+    case INT:
+    case CHAR:
+    case NAVCLASS:
+        dest->mValue.mIntVal = src->mValue.mIntVal;
+        break;
+    case FUNC:
+        dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
+        break;
+    case CLASS: {
+            dest->mValue.mIntVal = src->mValue.mIntVal;
+            dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
+        }
+        break;
+    case STRING:
+        MStrcpy(&dest->mValue.mStrVal, &src->mValue.mStrVal);
+        break;
+    default:
+        dest->mValue = src->mValue;
+        break;
+    }
 }
 
 LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src) {
-	dest->mNameKey = src->mNameKey;
-	ValueCopyNoName(dest, src);
+    dest->mNameKey = src->mNameKey;
+    ValueCopyNoName(dest, src);
 }
 
 static LInt HandleBreak(LVoid* ins) {
