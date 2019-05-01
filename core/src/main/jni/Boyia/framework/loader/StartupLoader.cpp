@@ -304,22 +304,8 @@ LVoid StartupLoader::startLoadApp()
 		// which in local app.json
 		if (m_appInfos[id]->versionCode > versionCode)
 		{
-			// if (FileUtil::isExist(GET_STR(appDir)))
-			// {
-			// 	FileUtil::deleteFile(GET_STR(appDir));
-			// }
-
 			m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name, !hasApp && m_appInfos[id]->isEntry));
 		}
-		// else
-		// {
-		// 	boyia::JSONParser parser(appJsonPath);
-		// 	cJSON* entry = parser.get("entry");
-		// 	if (entry)
-		// 	{
-		// 		BoyiaThreadLoad(entry->valuestring);
-		// 	}
-		// }
 	}
 }
 }

@@ -1,5 +1,5 @@
 /*
- * MiniThreadAndroid.cpp
+ * MiniThread.cpp
  *
  *  Created on: 2015-7-29
  *      Author: yanbo
