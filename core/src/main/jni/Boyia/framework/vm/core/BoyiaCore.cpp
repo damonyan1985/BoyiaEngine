@@ -12,7 +12,7 @@
 //#include <android/log.h>
 
 #define ENABLE_LOG
-extern void jsLog(const char* format, ...);
+extern LVoid jsLog(const char* format, ...);
 
 #ifdef ENABLE_LOG
 #define EngineLog(format, ...) jsLog(format, __VA_ARGS__)
@@ -111,19 +111,19 @@ struct KeywordPair {
     BoyiaStr  mName; /* keyword lookup table */
     LUint8    mType;
 } gKeywordTable[] = {  /* Commands must be entered lowercase */
-        {D_STR("if", 2),       IF},  /* in this table. */
-        {D_STR("elif", 4),     ELIF},
-        {D_STR("else", 4),     ELSE},
-        {D_STR("do", 2),       DO},
-        {D_STR("while", 5),    WHILE},
-        {D_STR("break", 5),    BREAK},
-        {D_STR("fun", 3),      FUNC},
-        {D_STR("class", 5),    CLASS},
-        {D_STR("extends", 7),  EXTEND},
-        {D_STR("prop", 4),     PROP},
-        {D_STR("var", 3),      VAR},
-        {D_STR("return", 6),   RETURN},
-        {D_STR("", 0),         0}  /* mark end of table */
+    {D_STR("if", 2),       IF},  /* in this table. */
+    {D_STR("elif", 4),     ELIF},
+    {D_STR("else", 4),     ELSE},
+    {D_STR("do", 2),       DO},
+    {D_STR("while", 5),    WHILE},
+    {D_STR("break", 5),    BREAK},
+    {D_STR("fun", 3),      FUNC},
+    {D_STR("class", 5),    CLASS},
+    {D_STR("extends", 7),  EXTEND},
+    {D_STR("prop", 4),     PROP},
+    {D_STR("var", 3),      VAR},
+    {D_STR("return", 6),   RETURN},
+    {D_STR("", 0),         0}  /* mark end of table */
 };
 
 /* ----------------------------------------------------------- */
@@ -178,15 +178,15 @@ typedef struct {
  * 3, gBoyiaVM->mGlobals
  */
 typedef struct {
-	LVoid*            mPool;
-	BoyiaFunction*    mFunTable;
-	BoyiaValue*       mGlobals;
-	BoyiaValue*       mLocals;
-	VMCpu*            mCpu;
-	ExecState*        mEState;
-	ExecScene*        mExecStack;
-	LInt*             mLoopStack;
-	BoyiaValue*       mOpStack;
+    LVoid*            mPool;
+    BoyiaFunction*    mFunTable;
+    BoyiaValue*       mGlobals;
+    BoyiaValue*       mLocals;
+    VMCpu*            mCpu;
+    ExecState*        mEState;
+    ExecScene*        mExecStack;
+    LInt*             mLoopStack;
+    BoyiaValue*       mOpStack;
 } BoyiaVM;
 
 static NativeFunction*  gNativeFunTable = NULL;
@@ -245,14 +245,14 @@ LVoid* InitVM() {
 }
 
 LVoid DestroyVM(LVoid* vm) {
-	BoyiaVM* vmPtr = (BoyiaVM*) vm;
-	FreeMemoryPool(vmPtr->mPool);
-	FAST_DELETE(vmPtr);
+    BoyiaVM* vmPtr = (BoyiaVM*) vm;
+    FreeMemoryPool(vmPtr->mPool);
+    FAST_DELETE(vmPtr);
 }
 
 LVoid ChangeVM(LVoid* vm) {
-	gBoyiaVM = (BoyiaVM*) vm;
-	ChangeMemory(gBoyiaVM->mPool);
+    gBoyiaVM = (BoyiaVM*) vm;
+    ChangeMemory(gBoyiaVM->mPool);
 }
 
 static Instruction* PutInstruction(
@@ -287,30 +287,30 @@ static Instruction* PutInstruction(
 }
 
 static LInt HandlePopScene(LVoid* ins) {
-	if (gBoyiaVM->mEState->mFunctos > 0) {
-		gBoyiaVM->mEState->mLValSize = gBoyiaVM->mExecStack[--gBoyiaVM->mEState->mFunctos].mLValSize;
-		gBoyiaVM->mEState->mPC = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC;
-		gBoyiaVM->mEState->mContext = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mContext;
-		gBoyiaVM->mEState->mLoopSize = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mLoopSize;
-		gBoyiaVM->mEState->mClass = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mClass;
-		gBoyiaVM->mEState->mTmpLValSize = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mTmpLValSize;
-	}
+    if (gBoyiaVM->mEState->mFunctos > 0) {
+        gBoyiaVM->mEState->mLValSize = gBoyiaVM->mExecStack[--gBoyiaVM->mEState->mFunctos].mLValSize;
+        gBoyiaVM->mEState->mPC = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC;
+        gBoyiaVM->mEState->mContext = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mContext;
+        gBoyiaVM->mEState->mLoopSize = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mLoopSize;
+        gBoyiaVM->mEState->mClass = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mClass;
+        gBoyiaVM->mEState->mTmpLValSize = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mTmpLValSize;
+    }
 
-	return 1;
+    return 1;
 }
 
-static void ExecPopFunction() {
-	// 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
-	if (!gBoyiaVM->mEState->mPC && gBoyiaVM->mEState->mFunctos > 0) {
-		HandlePopScene(NULL);
-		if (gBoyiaVM->mEState->mPC) {
-			gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
-			ExecPopFunction();
+static LVoid ExecPopFunction() {
+    // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
+    if (!gBoyiaVM->mEState->mPC && gBoyiaVM->mEState->mFunctos > 0) {
+        HandlePopScene(NULL);
+        if (gBoyiaVM->mEState->mPC) {
+            gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
+            ExecPopFunction();
 		}
 	}
 }
 
-static void ExecInstruction() {
+static LVoid ExecInstruction() {
     // 通过指令寄存器进行计算
     while (gBoyiaVM->mEState->mPC) {
 		if (gBoyiaVM->mEState->mPC->mHandler) {
@@ -385,8 +385,8 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count) {
 }
 
 LInt CreateObject() {
-	EngineLog("HandleCallInternal CreateObject %d", 1);
-	BoyiaValue* value = (BoyiaValue*) GetLocalValue(0);
+    EngineLog("HandleCallInternal CreateObject %d", 1);
+    BoyiaValue* value = (BoyiaValue*) GetLocalValue(0);
     if (!value || value->mValueType != CLASS) {
         return 0;
     }

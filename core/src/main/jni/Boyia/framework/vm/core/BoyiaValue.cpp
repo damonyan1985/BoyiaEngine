@@ -21,7 +21,7 @@ static LVoid*        gMemPool = NULL;
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 extern LVoid GCollectGarbage();
 
-extern void jsLog(const char* format, ...) {
+extern LVoid jsLog(const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 #ifdef MINI_ANDROID_LOG
