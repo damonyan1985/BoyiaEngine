@@ -39,6 +39,7 @@ public:
 	MiniMessage* obtain();
 	LVoid push(MiniMessage* msg);
 	LVoid removeMessage(LInt type);
+	LBool isFirstMessage(LInt type);
 	LInt size();
 	MiniMessage* poll();
 
