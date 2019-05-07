@@ -34,8 +34,8 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 	private long mNativePtr = 0;
 	private float[] mSTMatrix = new float[16];
 	private boolean mUpdateSurface = false;
-	private static HandlerThread mThread = null;
-	private static Handler mHandler = null;
+	private HandlerThread mThread = null;
+	private Handler mHandler = null;
 	private int mTextureID = 0;
 	private static long mLastPlayTime = 0;
 	
@@ -52,31 +52,27 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     	public void handleMessage(Message msg) {
     		BoyiaPlayer player = (BoyiaPlayer) msg.obj;
     		switch (msg.what) {
-    		case GL_VIDEO_START:
-    			player.initPlayer();
-    			player.prepare();
-    			break;
-    		case GL_VIDEO_PAUSE:
-    			player.mPlayer.pause();
-    			break;
-    		case GL_VIDEO_STOP:
-    			player.mPlayer.release();
-    			break;
-    		case GL_VIDEO_SEEK:
-    			player.mPlayer.seekTo((int)msg.arg1);
-    			break;
-    		}
-    		
+				case GL_VIDEO_START:
+					player.initPlayer();
+					player.prepare();
+					break;
+				case GL_VIDEO_PAUSE:
+					player.mPlayer.pause();
+					break;
+				case GL_VIDEO_STOP:
+					player.mPlayer.release();
+					break;
+				case GL_VIDEO_SEEK:
+					player.mPlayer.seekTo((int) msg.arg1);
+					break;
+			}
     	}
     }
 
-    // 多个播放器共用一个播放线程
 	public BoyiaPlayer() {
-		if (mThread == null) {
-			mThread = new HandlerThread("glvideo");
-			mThread.start();
-			mHandler = new PlayerHandler(mThread.getLooper());
-		}
+    	mThread = new HandlerThread(this.toString());
+    	mThread.start();
+    	mHandler = new PlayerHandler(mThread.getLooper());
 	}
 
 	public void setNativePtr(long nativePtr) {

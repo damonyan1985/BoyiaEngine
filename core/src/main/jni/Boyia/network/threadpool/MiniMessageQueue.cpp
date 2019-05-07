@@ -89,6 +89,18 @@ MiniMessage* MiniMessageQueue::obtain()
 	return MiniMessageCache::obtain();
 }
 
+LBool MiniMessageQueue::isFirstMessage(LInt type)
+{
+    AutoLock lock(&m_queueMutex);
+    if (m_list.empty())
+    {
+        return LFalse;
+    }
+
+    MiniMessage* msg = *m_list.begin();
+    return msg->type == type;
+}
+
 // 删除所有type一样的消息
 LVoid MiniMessageQueue::removeMessage(LInt type)
 {

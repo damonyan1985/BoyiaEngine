@@ -49,7 +49,6 @@ private:
 	KVector<MiniMessage*>* m_msgs;
 	KVector<MiniMessage*>* m_swapMsgs;
 	MiniMutex              m_uiMutex;
-	static UIOperation*    s_operation;
 };
 }
 #endif

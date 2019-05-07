@@ -8,16 +8,11 @@
 namespace yanbo
 {
 #define MAX_OPMSG_SIZE 50
-UIOperation* UIOperation::s_operation = NULL;
 
 UIOperation* UIOperation::instance()
 {
-    if (s_operation == NULL)
-    {
-    	s_operation = new UIOperation();
-    }
-
-    return s_operation;
+    static UIOperation sOperation;
+    return &sOperation;
 }
 
 UIOperation::UIOperation()
@@ -96,28 +91,14 @@ LVoid UIOperation::opApplyDomStyle(LVoid* view)
 // 交换buffer，m_swapMsgs指针作为绘制时使用
 LVoid UIOperation::swapBuffer()
 {
-	{
-		AutoLock lock(&m_uiMutex);
-		if (m_swapMsgs->size())
-		{
-			LInt size = m_msgs->size();
-			for (LInt index = 0; index < size; ++index)
-			{
-				m_swapMsgs->addElement(m_msgs->elementAt(index));
-			}
+    AutoLock lock(&m_uiMutex);
+		
+    KVector<MiniMessage*>* buffer = m_msgs;
+    m_msgs = m_swapMsgs;
+    m_swapMsgs = buffer;
+    m_msgs->clear();
 
-			m_msgs->clear();
-		}
-		else
-		{
-			KVector<MiniMessage*>* buffer = m_msgs;
-			m_msgs = m_swapMsgs;
-			m_swapMsgs = buffer;
-			m_msgs->clear();
-
-			UIThread::instance()->uiExecute();
-		}
-	}
+    UIThread::instance()->uiExecute();
 }
 
 LVoid UIOperation::execute()
