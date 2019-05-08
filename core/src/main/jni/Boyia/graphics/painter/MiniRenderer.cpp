@@ -37,7 +37,25 @@ MiniRenderer::~MiniRenderer()
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
 }
 
-void MiniRenderer::createVBO()
+LVoid MiniRenderer::bindPosition()
+{
+    // 启动顶点索引
+    glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
+    glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
+    glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
+
+    // vertices
+    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, vec3D));
+
+    // colors
+    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, color));
+
+    // tex coords
+    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, texCoord));
+
+}
+
+LVoid MiniRenderer::createVBO()
 {
 	// 创建VAO
 	glGenVertexArrays(1, &m_buffersVAO);
@@ -53,20 +71,7 @@ void MiniRenderer::createVBO()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffersVBO[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices[0]) * INDEX_SIZE, m_indices, GL_STATIC_DRAW);
 
-	// 启动顶点索引
-	glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
-	glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
-	glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
-
-	// vertices
-    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, vec3D));
-
-    // colors
-    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, color));
-
-    // tex coords
-    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*) offsetProps(Vertex, texCoord));
-
+    bindPosition();
 
     // 解绑缓冲区
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -75,7 +80,7 @@ void MiniRenderer::createVBO()
     glBindVertexArray(0);
 }
 
-void MiniRenderer::appendQuad(const Quad& quad)
+LVoid MiniRenderer::appendQuad(const Quad& quad)
 {
 	if (m_quadNum < VBO_SIZE)
 	{
@@ -83,7 +88,7 @@ void MiniRenderer::appendQuad(const Quad& quad)
 	}
 }
 
-void MiniRenderer::bind()
+LVoid MiniRenderer::bind()
 {
 	// 绑定VAO
 	glBindVertexArray(m_buffersVAO);
@@ -94,9 +99,10 @@ void MiniRenderer::bind()
 
     // 绑定索引缓冲区
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffersVBO[1]);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices[0]) * INDEX_SIZE, m_indices, GL_STATIC_DRAW);
 }
 
-void MiniRenderer::unbind()
+LVoid MiniRenderer::unbind()
 {
 	// 解绑VAO
 	glBindVertexArray(0);
@@ -108,9 +114,9 @@ void MiniRenderer::unbind()
     m_quadNum = 0;
 }
 
-void MiniRenderer::setupIndices()
+LVoid MiniRenderer::setupIndices()
 {
-    for(int i=0; i < VBO_SIZE; i++)
+    for (int i=0; i < VBO_SIZE; i++)
     {
     	m_indices[i*6+0] = (GLushort) (i*4+0);
     	m_indices[i*6+1] = (GLushort) (i*4+1);

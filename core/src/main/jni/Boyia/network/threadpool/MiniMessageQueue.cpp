@@ -89,16 +89,23 @@ MiniMessage* MiniMessageQueue::obtain()
 	return MiniMessageCache::obtain();
 }
 
-LBool MiniMessageQueue::isFirstMessage(LInt type)
+LBool MiniMessageQueue::hasMessage(LInt type)
 {
     AutoLock lock(&m_queueMutex);
-    if (m_list.empty())
-    {
-        return LFalse;
-    }
+    MiniMessageList::Iterator iter = m_list.begin();
+	MiniMessageList::Iterator iterEnd = m_list.end();
+	while (iter != iterEnd)
+	{
+		MiniMessage* msg = *iter;
+		if (msg->type == type)
+		{
+			return LTrue;
+		}
 
-    MiniMessage* msg = *m_list.begin();
-    return msg->type == type;
+		++iter;
+	}
+
+	return LFalse;
 }
 
 // 删除所有type一样的消息
