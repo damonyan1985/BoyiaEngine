@@ -29,6 +29,8 @@ class PaintCommand
 public:
 	PaintCommand();
 
+	LInt       top;
+
 	Quad       quad;
 	RotateInfo rotate;
 	GLuint     texId;

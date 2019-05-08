@@ -54,10 +54,10 @@ LVoid UIThread::drawOnly(LVoid* item)
 
 LVoid UIThread::submit()
 {
-    if (m_queue->hasMessage(UI_SUBMIT))
-    {
-        return;
-    }
+    // if (m_queue->hasMessage(UI_SUBMIT))
+    // {
+    //     return;
+    // }
 
     MiniMessage* msg = obtain();
     msg->type = UI_SUBMIT;
@@ -107,7 +107,8 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
             LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
             UIView::getInstance()->handleTouchEvent(*evt);
             delete evt;
-            submit();
+            //submit();
+            flush();
         }
         break;
    case UI_KEY_EVENT:
@@ -139,8 +140,8 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
     case UI_OP_EXEC:
         {
             UIOperation::instance()->execute();
-            //flush();
-            submit(); 
+            flush();
+            //submit(); 
         }
         break;
     case UI_SUBMIT:
@@ -236,8 +237,8 @@ LVoid UIThread::drawUI(LVoid* view)
         item->paint(*m_gc);
     }
 
-    //flush();
-    submit();
+    flush();
+    //submit();
 }
 
 LVoid UIThread::uiExecute()

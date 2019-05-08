@@ -73,6 +73,7 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
 		m_stMatrix = new float[16];
 	}
 
+	m_cmd.top = rect.iTopLeft.iY;
 	m_cmd.type = EShapeVideo;
 	m_cmd.texId = tex->texId;
 
@@ -223,32 +224,32 @@ void GLPainter::paint()
 
 		KLOG("BaseShape::drawSelf()7");
 
-		 if (m_cmd.type == EShapeImage)
-		 {
-		     glUniform1i(s_program->sampler2D(), 0);
-		     //绑定纹理
-		     glActiveTexture(GL_TEXTURE0);
-		     glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
-		 }
-		 else if (m_cmd.type == EShapeVideo)
-		 {
-			 //KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-			 glUniform1i(s_program->videoSampler2D(), 0);
-			 // 绑定纹理
-			 glActiveTexture(GL_TEXTURE0);
-			 // 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
-			 // 作者表示自己也很晕
-			 // 可能出错信息会驱动GLConsumer去创建EGLImage吧
-			 // 纯JAVA实现的情况会不同，蛋疼，艹
-			 glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
+		if (m_cmd.type == EShapeImage)
+		{
+		    glUniform1i(s_program->sampler2D(), 0);
+		    //绑定纹理
+		    glActiveTexture(GL_TEXTURE0);
+		    glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
+		}
+		else if (m_cmd.type == EShapeVideo)
+		{
+			//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
+			glUniform1i(s_program->videoSampler2D(), 0);
+			// 绑定纹理
+			glActiveTexture(GL_TEXTURE0);
+			// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
+			// 作者表示自己也很晕
+			// 可能出错信息会驱动GLConsumer去创建EGLImage吧
+			// 纯JAVA实现的情况会不同，蛋疼，艹
+			glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
 
-			 KFORMATLOG("m_shapeType == EShapeVideo error=%d and texId=%d", glGetError(), m_cmd.texId);
-		 }
+			KFORMATLOG("m_shapeType == EShapeVideo error=%d and texId=%d top=%d", glGetError(), m_cmd.texId, m_cmd.top);
+		}
 
-		 // 绘制矩形
-		 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
-		 MatrixState::popMatrix();
-		 s_drawQuadIndex += 1;
+		// 绘制矩形
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
+		MatrixState::popMatrix();
+		s_drawQuadIndex += 1;
     }
 }
 
