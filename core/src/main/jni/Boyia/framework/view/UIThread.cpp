@@ -54,7 +54,7 @@ LVoid UIThread::drawOnly(LVoid* item)
 
 LVoid UIThread::submit()
 {
-    if (m_queue->isFirstMessage(UI_SUBMIT))
+    if (m_queue->hasMessage(UI_SUBMIT))
     {
         return;
     }

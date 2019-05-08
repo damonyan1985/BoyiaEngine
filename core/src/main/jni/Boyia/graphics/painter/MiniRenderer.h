@@ -49,13 +49,15 @@ class MiniRenderer
 public:
 	MiniRenderer();
 	~MiniRenderer();
-    void createVBO();
-    void appendQuad(const Quad& quad);
-    void bind();
-    void unbind();
-    void setupIndices();
+    LVoid createVBO();
+    LVoid appendQuad(const Quad& quad);
+    LVoid bind();
+    LVoid unbind();
+    LVoid setupIndices();
 
 private:
+	LVoid bindPosition();
+
     Quad     m_quads[VBO_SIZE];
 	LUint16  m_indices[INDEX_SIZE];
 	// 顶点和索引两个缓冲区
