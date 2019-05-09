@@ -1,1 +1,1 @@
-include ':app', ':core', ':common', ':leaker', ':task', ':loader'
+include ':app', ':core', ':util', ':leaker', ':task', ':loader'
