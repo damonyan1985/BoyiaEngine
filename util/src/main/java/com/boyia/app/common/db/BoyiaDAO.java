@@ -49,19 +49,6 @@ public class BoyiaDAO<T> {
                     || Modifier.isFinal(field.getModifiers())) {
                 continue;
             }
-
-
-//            Method method = null;
-//            try {
-//                String name = Character.toUpperCase(field.getName().charAt(0))
-//                        + field.getName().substring(1);
-//                method = cls.getDeclaredMethod("set" + name,
-//                        new Class[] { field.getType() });
-//            } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
-//                bean = null;
-//            }
-
             setFieldValue(bean, field, cursor);
         }
 
@@ -84,18 +71,12 @@ public class BoyiaDAO<T> {
             if (bean != null) {
                 String columnName = getColumnName(field);
                 if (field.getType() == int.class) {
-//                    method.invoke(bean, cursor.getInt(cursor
-//                            .getColumnIndex(field.getName())));
                     field.set(bean, cursor.getInt(cursor
                             .getColumnIndex(columnName)));
                 } else if (field.getType() == String.class) {
-//                    method.invoke(bean, cursor.getString(cursor
-//                            .getColumnIndex(field.getName())));
                     field.set(bean, cursor.getString(cursor
                             .getColumnIndex(columnName)));
                 } else if (field.getType() == float.class) {
-//                    method.invoke(bean, cursor.getFloat(cursor
-//                            .getColumnIndex(field.getName())));
                     field.set(bean, cursor.getFloat(cursor
                             .getColumnIndex(columnName)));
                 }

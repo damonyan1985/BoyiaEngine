@@ -2,7 +2,7 @@
 <div id="chat_view">
 	<div id="chat_msg_view" />
 	<div class="edit_view">
-	<input id="chat_edit" type="text" value="" />
+	<input id="chat_edit" type="password" value="" />
 	<img class="msg_submit" src="boyia://apps/contacts/img/send.png" />
 	</div>
 </div>

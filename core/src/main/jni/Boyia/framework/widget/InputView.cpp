@@ -261,50 +261,46 @@ void InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
     
     paintBorder(gc, getStyle()->border, x + m_leftPadding, y);
 	
-	if (m_value.GetLength() > 0)
-	{
-		if (m_type == PASSWORD)
-		{
-			//gc.drawText(_WS("********"), util::LPoint(m_x, m_y));
-			gc.drawText(_CS("********"), LRect(x + m_leftPadding, y + 6, m_width-m_leftPadding, m_height-6), util::LGraphicsContext::TextLeft);
-		}
-		else
-		{
-		    //util::String strW;
-		    //util::StringUtils::strTostrW(m_value, strW);
-		    // dc.drawText(strW, util::LPoint(m_x, m_y));
-			gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width-m_leftPadding, m_height-6), util::LGraphicsContext::TextLeft);
-		}
-	}	
-
-	
+    if (m_value.GetLength() > 0)
+    {
+        if (m_type == PASSWORD)
+        {
+        	//String pwdText('*', m_value.GetLength())
+            gc.drawText(
+            	String('*', m_value.GetLength()), 
+            	LRect(x + m_leftPadding, y + 6, 
+            		m_width-m_leftPadding, m_height-6), 
+            	util::LGraphicsContext::TextLeft);
+        }
+        else
+        {
+            gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width-m_leftPadding, m_height-6), util::LGraphicsContext::TextLeft);
+        }
+    }
 }
 
 void InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
-	if (getStyle()->bgColor.m_alpha == 0)
-	{
-	    gc.setBrushStyle(LGraphicsContext::SolidBrush);
+    if (getStyle()->bgColor.m_alpha == 0)
+    {
+        gc.setBrushStyle(LGraphicsContext::SolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(COLOR_LIGHTGRAY));
-        //dc.drawRect(m_x + m_leftPadding, m_y - m_scrollY, m_width, m_height);
 
         gc.setPenStyle(LGraphicsContext::SolidPen);
         gc.setPenColor(util::LColor::parseArgbInt(COLOR_DARKGRAY));
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
-	}
+    }
 	else
-	{
-	    gc.setBrushStyle(LGraphicsContext::SolidBrush);
-	    gc.setBrushColor(getStyle()->bgColor);
+    {
+        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushColor(getStyle()->bgColor);
        
         gc.setPenStyle(LGraphicsContext::NullPen);
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
         
         gc.setPenStyle(LGraphicsContext::SolidPen);
         paintBorder(gc, getStyle()->border, x, y);
-        
-
-	}
+    }
 	
     if (m_value.GetLength() > 0) {
         gc.setPenStyle(LGraphicsContext::SolidPen);
@@ -312,10 +308,12 @@ void InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 	    //util::String strW;
 	    //util::StringUtils::strTostrW(m_value, strW);
         //dc.drawText(strW, util::LPoint(m_x + m_leftPadding, m_y - m_scrollY + m_height));
-		gc.drawText(m_value, LRect(x + m_leftPadding,
-				y + 6, m_width-m_leftPadding,
-				m_height-6),
-				LGraphicsContext::TextCenter);
+        gc.drawText(m_value, 
+        	LRect(x + m_leftPadding,
+            y + 6, 
+            m_width-m_leftPadding,
+            m_height-6),
+            LGraphicsContext::TextCenter);
     }
 }
 
@@ -337,6 +335,7 @@ void InputView::setSelected(const LBool selected)
         switch (m_type)
         {
         case TEXT:
+        case PASSWORD:
             {
             	Editor::get(this)->showKeyboard(m_value);
             }
