@@ -16,7 +16,7 @@ class HtmlView;
 class RenderContext;
 class HtmlDocument;
 class BlockView;
-typedef KList<HtmlView*> HtmlViewList;
+typedef BoyiaList<HtmlView*> HtmlViewList;
 typedef LRect LayoutRect;
 typedef LInt  LayoutUnit;
 typedef LPoint LayoutPoint;
@@ -28,45 +28,45 @@ public:
 	virtual ~HtmlView();
 	
 public:
-	virtual void layout(RenderContext& rc);
+	virtual LVoid layout(RenderContext& rc);
 	
 	// prepare to reconstruct the layout
-	virtual void layout();
-	void relayout();
+	virtual LVoid layout();
+	LVoid relayout();
 
-	virtual void paint(LGraphicsContext& gc);
-	virtual void paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y);
+	virtual LVoid paint(LGraphicsContext& gc);
+	virtual LVoid paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y);
 	virtual LBool isText() const;
 	virtual LBool isLink() const;
 	virtual LBool isBlockView() const;
 	virtual LBool isImage() const;
 	virtual LBool isStyle() const;
 	virtual LBool isJavaScript() const;
-	virtual void execute();
-	virtual void setStyle(util::CssManager* manager, util::CssRule* parentRule);
+	virtual LVoid execute();
+	virtual LVoid setStyle(util::CssManager* manager, util::CssRule* parentRule);
 	
-	void setId(const String& id);
+	LVoid setId(const String& id);
 	const String& getId() const;
 	
-	void setClassName(const String& className);
+	LVoid setClassName(const String& className);
 	const String& getClassName() const;
 	
-	void setTagType(HtmlTags::HtmlType tagType);
+	LVoid setTagType(HtmlTags::HtmlType tagType);
 	HtmlTags::HtmlType getTagType() const;
 	
-	virtual void setSelected(const LBool selected);
+	virtual LVoid setSelected(const LBool selected);
 	LBool isSelected();
 	LBool isSelectable();
 	
-	void itemCenter(RenderContext& rc);
-	virtual void layoutInline(RenderContext& rc);
+	LVoid itemCenter(RenderContext& rc);
+	virtual LVoid layoutInline(RenderContext& rc);
 	
 	HtmlView* getPreItem();
 	HtmlView* getNextItem();
 	BlockView* getContainingBlock() const;
 
 	LBool isViewRoot() const;
-	void setIsViewRoot(LBool isViewRoot);
+	LVoid setIsViewRoot(LBool isViewRoot);
 
 	LBool hasTransform() const;
 
@@ -74,10 +74,10 @@ public:
 
 	virtual LBool isInline() const;
 
-	virtual void addChild(HtmlView* child);
-	void removeChild(HtmlView* child);
+	virtual LVoid addChild(HtmlView* child);
+	LVoid removeChild(HtmlView* child);
 
-	void setParent(HtmlView* view);
+	LVoid setParent(HtmlView* view);
 	HtmlView* getParent() const;
 
 	LBool isPositioned() const;
@@ -85,7 +85,7 @@ public:
 	util::Style* getStyle() const;
 
 	LayoutPoint getAbsoluteContainerTopLeft() const;
-	void setDocument(HtmlDocument* doc);
+	LVoid setDocument(HtmlDocument* doc);
 	HtmlDocument* getDocument() const;
 
 	LVoid setPainter(LVoid* painter);
@@ -108,7 +108,7 @@ private:
 	HtmlView* getNextItem(HtmlView* currentItem);
 	
 protected:
-	void handleXYPos(RenderContext& rc);
+	LVoid handleXYPos(RenderContext& rc);
 	
 public:	
 	HtmlViewList     m_children;

@@ -265,12 +265,11 @@ void InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
     {
         if (m_type == PASSWORD)
         {
-        	//String pwdText('*', m_value.GetLength())
             gc.drawText(
-            	String('*', m_value.GetLength()), 
-            	LRect(x + m_leftPadding, y + 6, 
-            		m_width-m_leftPadding, m_height-6), 
-            	util::LGraphicsContext::TextLeft);
+                String('*', m_value.GetLength()), 
+                LRect(x + m_leftPadding, y + 6, 
+                    m_width-m_leftPadding, m_height-6), 
+                util::LGraphicsContext::TextLeft);
         }
         else
         {
