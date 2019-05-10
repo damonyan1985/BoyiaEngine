@@ -32,7 +32,7 @@ BlockView::~BlockView()
 {
 }
 
-void BlockView::setChildrenInline(LBool isInline)
+LVoid BlockView::setChildrenInline(LBool isInline)
 {
 	m_isChildrenInline = isInline;
 }
@@ -47,7 +47,7 @@ LBool BlockView::isBlockView() const
     return m_style.displayType != util::Style::DISPLAY_INLINE;
 }
 
-void BlockView::layout()
+LVoid BlockView::layout()
 {
 	// style属性优先级最高
 	if (m_style.width)
@@ -71,7 +71,7 @@ void BlockView::layout()
     layoutBlock(LFalse);
 }
 
-void BlockView::layoutBlock(LBool relayoutChildren)
+LVoid BlockView::layoutBlock(LBool relayoutChildren)
 {
     if (isChildrenInline())
     {
@@ -94,7 +94,7 @@ void BlockView::layoutBlock(LBool relayoutChildren)
 	}
 }
 
-void BlockView::layoutBlockChildren(LBool relayoutChildren)
+LVoid BlockView::layoutBlockChildren(LBool relayoutChildren)
 {
 	HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
@@ -124,7 +124,7 @@ void BlockView::layoutBlockChildren(LBool relayoutChildren)
 	KFORMATLOG("BlockView layoutBlockChildren m_height=%d", m_height);
 }
 
-void BlockView::layoutPositionChild(HtmlView* child)
+LVoid BlockView::layoutPositionChild(HtmlView* child)
 {
 	if (child->getStyle()->align == util::Style::ALIGN_CENTER)
 	{
@@ -160,7 +160,7 @@ void BlockView::layoutPositionChild(HtmlView* child)
 	KFORMATLOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
 }
 
-void BlockView::layoutInlineChildren()
+LVoid BlockView::layoutInlineChildren()
 {
 	RenderContext rc;
 
@@ -191,7 +191,7 @@ void BlockView::layoutInlineChildren()
 	m_height = rc.getY() > m_height ? rc.getY() : m_height;
 }
 
-void BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
+LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
 {
 	int y = previousLogicalHeight + child->getStyle()->topMargin + m_style.topPadding;
 	int x = child->getStyle()->leftMargin + m_style.leftPadding;
@@ -203,12 +203,12 @@ void BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHei
 	KFORMATLOG("BlockView previousLogicalHeight=%d", previousLogicalHeight);
 }
 
-void BlockView::addChild(HtmlView* child)
+LVoid BlockView::addChild(HtmlView* child)
 {
 	addChild(child, LTrue);
 }
 
-void BlockView::addChild(HtmlView* child, LBool isNotAnonymousBlock)
+LVoid BlockView::addChild(HtmlView* child, LBool isNotAnonymousBlock)
 {
 	if (isNotAnonymousBlock)
 	{
@@ -257,7 +257,7 @@ void BlockView::addChild(HtmlView* child, LBool isNotAnonymousBlock)
 	}
 }
 
-void BlockView::makeChildrenNonInline(HtmlView* block)
+LVoid BlockView::makeChildrenNonInline(HtmlView* block)
 {
 	BlockView* b = createAnonymousBlock();
 	b->setDocument(getDocument());
@@ -301,12 +301,12 @@ LBool BlockView::isAnonymousBlock()
 	return m_isAnonymous;
 }
 
-void BlockView::setIsAnonymousBlock(LBool isAnonymous)
+LVoid BlockView::setIsAnonymousBlock(LBool isAnonymous)
 {
 	m_isAnonymous = isAnonymous;
 }
 
-void BlockView::setScrollPos(LInt x, LInt y)
+LVoid BlockView::setScrollPos(LInt x, LInt y)
 {
 	m_scrollX = x;
 	m_scrollY = y;
@@ -341,7 +341,6 @@ LInt BlockView::getHeight() const
 
 LInt BlockView::scrollHeight() const
 {
-	//return m_height - m_style.height;
 	if (getParent())
     {
     	return m_height - getParent()->getHeight();
