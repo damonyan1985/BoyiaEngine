@@ -169,4 +169,8 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     public static native void nativeSetGLSurface(Surface surface);
 
     public static native void nativeResetGLSurface(Surface surface);
+
+    public static native void nativeOnKeyboardShow(long item, int keyboardHeight);
+
+	public static native void nativeOnKeyboardHide(long item, int keyboardHeight);
 }

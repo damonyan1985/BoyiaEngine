@@ -15,6 +15,7 @@ public class BoyiaInputManager {
 	private static final String TAG = BoyiaInputManager.class.getSimpleName();
 	private BoyiaUIView mView;
 	private long mItem = 0;
+	private int mRootViewVisibleHeight = 0;
 
     public BoyiaInputManager(BoyiaUIView view) {
     	mView = view;
@@ -32,11 +33,25 @@ public class BoyiaInputManager {
 				BoyiaLog.d(
 						TAG,
 						"rect.bottom="+rect.bottom +" height="+rootView.getHeight());
-				if (rootView.getHeight() - rect.bottom > 200) {
+				if (mRootViewVisibleHeight == 0) {
+					mRootViewVisibleHeight = rect.height();
+					return;
+				}
+
+				if (mRootViewVisibleHeight == rect.height()) {
+					return;
+				}
+
+				if (mRootViewVisibleHeight - rect.height() > 200) {
 					// 软键盘弹起
+					//mKeyboardHeight = rootView.getHeight() - rect.bottom;
 					BoyiaLog.d(TAG, "BoyiaInputManager SHOW");
-				} else {
+					BoyiaUIView.nativeOnKeyboardShow(mItem, mRootViewVisibleHeight - rect.height());
+					mRootViewVisibleHeight = rect.height();
+				} else if (rect.height() - mRootViewVisibleHeight > 200) {
 					BoyiaLog.d(TAG, "BoyiaInputManager HIDE");
+					BoyiaUIView.nativeOnKeyboardHide(mItem, rect.height() - mRootViewVisibleHeight);
+					mRootViewVisibleHeight = rect.height();
 				}
 			}
 		});

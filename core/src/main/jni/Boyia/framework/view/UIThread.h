@@ -25,6 +25,8 @@ public:
 		UI_SETINPUT,
 		UI_VIDEO_UPDATE,
 		UI_IMAGE_LOADED,
+		UI_ON_KEYBOARD_SHOW,
+		UI_ON_KEYBOARD_HIDE,
 		UI_OP_EXEC,
 		UI_DESTROY,
 	};
@@ -48,6 +50,8 @@ public:
 	LVoid handleTouchEvent(LTouchEvent* evt);
 	LVoid handleKeyEvent(LKeyEvent* evt);
 	LVoid uiExecute();
+	LVoid onKeyboardShow(LIntPtr item, LInt keyboardHeight);
+	LVoid onKeyboardHide(LIntPtr item, LInt keyboardHeight);
 	virtual LVoid handleMessage(MiniMessage* msg);
 
 private:
