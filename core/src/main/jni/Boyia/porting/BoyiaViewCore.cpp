@@ -94,31 +94,21 @@ static void nativeDistroyUIView(JNIEnv* env, jobject obj)
 
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)
 {
-	//String result;
-	//util::jstringTostr(env, s, result);
-	//yanbo::UIView::getInstance()->getLoader()->onDataReceived(result);
-	//result.ReleaseBuffer();
-
 	jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
     LByte* buffer = new LByte[len];
     LMemcpy(buffer, bytes, len);
     env->ReleaseByteArrayElements(byteArray, bytes, 0);
-    //yanbo::UIViewThread::instance()->dataReceived(buffer, len, (LIntPtr)callback);
     reinterpret_cast<yanbo::NetworkClient*>(callback)->onDataReceived(buffer, len);
 }
 
 static void nativeOnDataFinished(JNIEnv* env, jobject obj, jlong callback)
 {
 	reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadFinished();
-	//yanbo::UIViewThread::instance()->loadFinished(callback);
 }
 
 static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong callback)
 {
-	//String result;
-	//util::jstringTostr(env, error, result);
 	reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::NETWORK_FILE_ERROR);
-	//yanbo::UIViewThread::instance()->loadError(callback, 0);
 }
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
@@ -167,7 +157,7 @@ static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
     yanbo::JNIUtil::setClassLoaderFrom(context);
 }
 
-static void nativeSetInputText(JNIEnv*  env, jobject obj, jstring text, jlong item)
+static void nativeSetInputText(JNIEnv* env, jobject obj, jstring text, jlong item)
 {
 	String result;
 	util::jstringTostr(env, text, result);
@@ -176,9 +166,19 @@ static void nativeSetInputText(JNIEnv*  env, jobject obj, jstring text, jlong it
 	result.ReleaseBuffer();
 }
 
-static void nativeVideoTextureUpdate(JNIEnv*  env, jobject obj, jlong item)
+static void nativeVideoTextureUpdate(JNIEnv* env, jobject obj, jlong item)
 {
 	yanbo::UIThread::instance()->videoUpdate(item);
+}
+
+static void nativeOnKeyboardShow(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
+{
+	yanbo::UIThread::instance()->onKeyboardShow(item, yanbo::ShaderUtil::viewY(keyboardHight));
+}
+
+static void nativeOnKeyboardHide(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
+{
+	yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::ShaderUtil::viewY(keyboardHight));
 }
 
 static JNINativeMethod sUIViewMethods[] = {
@@ -195,6 +195,8 @@ static JNINativeMethod sUIViewMethods[] = {
 	{"nativeInitJNIContext", "(Landroid/app/Activity;)V", (void*)nativeInitJNIContext},
 	{"nativeSetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeSetGLSurface},
 	{"nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface},
+	{"nativeOnKeyboardShow", "(JI)V", (void*)nativeOnKeyboardShow},
+	{"nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide},
 };
 
 static JNINativeMethod sUtilMethods[] = {

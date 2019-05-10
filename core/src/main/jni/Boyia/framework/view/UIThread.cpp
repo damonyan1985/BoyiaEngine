@@ -149,6 +149,26 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
             flush();
         }
         break;
+    case UI_ON_KEYBOARD_SHOW:
+        {
+            HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+            HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+            rootView->setYpos(rootView->getYpos() - msg->arg1);
+            
+            rootView->paint(*m_gc);
+            flush();
+        }
+        break;
+    case UI_ON_KEYBOARD_HIDE:
+        {
+            HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+            HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+            rootView->setYpos(rootView->getYpos() + msg->arg1);
+            
+            rootView->paint(*m_gc);
+            flush();
+        }
+        break;
     case UI_DESTROY:
         {
             m_context.destroyGL();
@@ -270,6 +290,24 @@ LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
     notify();
 }
 
+LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
+{
+    MiniMessage* msg = obtain();
+    msg->type = UI_ON_KEYBOARD_SHOW;
+    msg->arg0 = item;
+    msg->arg1 = keyboardHeight;
+    postMessage(msg);
+}
+
+LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
+{
+    MiniMessage* msg = obtain();
+    msg->type = UI_ON_KEYBOARD_HIDE;
+    msg->arg0 = item;
+    msg->arg1 = keyboardHeight;
+    postMessage(msg);
+}
+
 LVoid UIThread::resetContext(LVoid* win)
 {
     m_context.setWindow(win);
@@ -280,7 +318,6 @@ LVoid UIThread::resetContext(LVoid* win)
 
 LVoid UIThread::resetGL()
 {
-    //m_context.initGL(GLContext::EWindow);
     initGL();
     drawUI(UIView::getInstance()->getDocument()->getRenderTreeRoot());
 }
