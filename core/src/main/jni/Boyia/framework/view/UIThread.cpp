@@ -11,6 +11,7 @@
 #include "InputView.h"
 #include "VideoView.h"
 #include "UIOperation.h"
+#include "SalLog.h"
 
 namespace yanbo
 {
@@ -152,7 +153,17 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
     case UI_ON_KEYBOARD_SHOW:
         {
             HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+            LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
+            LInt y = topLeft.iY + view->getYpos();
+            KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
+            if (y < ShaderUtil::screenWidth() - msg->arg1)
+            {
+                return;
+            }
+
             HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+             
+                    
             rootView->setYpos(rootView->getYpos() - msg->arg1);
             
             rootView->paint(*m_gc);
@@ -163,8 +174,12 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         {
             HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
             HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+            if (rootView->getYpos() == 0)
+            {
+                return;
+            }
+
             rootView->setYpos(rootView->getYpos() + msg->arg1);
-            
             rootView->paint(*m_gc);
             flush();
         }

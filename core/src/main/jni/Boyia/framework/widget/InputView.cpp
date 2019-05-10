@@ -85,12 +85,12 @@ InputView::~InputView()
 	}
 }
 
-void InputView::setInputValue(const String& text)
+LVoid InputView::setInputValue(const String& text)
 {
     m_value = text;
 }
 
-void InputView::layout(RenderContext& rc)
+LVoid InputView::layout(RenderContext& rc)
 {
 	rc.addLineItem(this);
 	int maxWidth = rc.getMaxWidth();
@@ -194,14 +194,14 @@ void InputView::layout(RenderContext& rc)
 
 }
 
-void InputView::paint(LGraphicsContext& gc)
+LVoid InputView::paint(LGraphicsContext& gc)
 {
 	gc.setHtmlView(this);
 	setClipRect(gc);
 
 	LayoutPoint topLeft = getAbsoluteContainerTopLeft();
-	int x = topLeft.iX + getXpos();
-	int y = topLeft.iY + getYpos();
+	LInt x = topLeft.iX + getXpos();
+	LInt y = topLeft.iY + getYpos();
 
 	if (HIDDEN == m_type)
 	{
@@ -249,7 +249,7 @@ void InputView::paint(LGraphicsContext& gc)
     }
 }
 
-void InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
+LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
     gc.setBrushStyle(LGraphicsContext::SolidBrush);
     gc.setBrushColor(getStyle()->bgColor);
@@ -278,7 +278,7 @@ void InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
     }
 }
 
-void InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
+LVoid InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
     if (getStyle()->bgColor.m_alpha == 0)
     {
@@ -316,17 +316,17 @@ void InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
     }
 }
 
-void InputView::paintRadioButton(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
+LVoid InputView::paintRadioButton(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
 {
 	
 }
 
-void InputView::paintCheckBox(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
+LVoid InputView::paintCheckBox(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
 {
 	
 }
 
-void InputView::setSelected(const LBool selected)
+LVoid InputView::setSelected(const LBool selected)
 {
     HtmlView::setSelected(selected);
     if (selected)
@@ -344,12 +344,12 @@ void InputView::setSelected(const LBool selected)
 
 }
 
-void InputView::execute()
+LVoid InputView::execute()
 {
 	
 }
 
-int InputView::getInputType()
+LInt InputView::getInputType()
 {
     return 	m_type;
 }

@@ -23,30 +23,30 @@ public:
 	
 public:
 	// layout method inline or block child
-	void setChildrenInline(LBool isInline);
+	LVoid setChildrenInline(LBool isInline);
 	LBool isChildrenInline();
 
 	// add create anonymous or normal child
-    virtual void addChild(HtmlView* child);
-	void addChild(HtmlView* child, LBool isNotAnonymousBlock);
+    virtual LVoid addChild(HtmlView* child);
+	LVoid addChild(HtmlView* child, LBool isNotAnonymousBlock);
 
 	// layer layout
-	virtual void layout();
-	void layoutBlock(LBool relayoutChildren);
-	void layoutBlockChildren(LBool relayoutChildren);
-	void layoutInlineChildren();
+	virtual LVoid layout();
+	LVoid layoutBlock(LBool relayoutChildren);
+	LVoid layoutBlockChildren(LBool relayoutChildren);
+	LVoid layoutInlineChildren();
 	// layout block child
-	void layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
+	LVoid layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
 
-	void layoutPositionChild(HtmlView* child);
-	void makeChildrenNonInline(HtmlView* block);
+	LVoid layoutPositionChild(HtmlView* child);
+	LVoid makeChildrenNonInline(HtmlView* block);
 	BlockView* createAnonymousBlock();
 
 	virtual LBool isBlockView() const;
-	void setIsAnonymousBlock(LBool isAnonymous);
+	LVoid setIsAnonymousBlock(LBool isAnonymous);
 	virtual LBool isAnonymousBlock();
 
-	void setScrollPos(LInt x, LInt y);
+	LVoid setScrollPos(LInt x, LInt y);
 	LInt getScrollXPos() const;
 	LInt getScrollYPos() const;
 	LBool canScroll() const;

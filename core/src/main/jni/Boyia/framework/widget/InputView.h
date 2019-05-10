@@ -50,19 +50,19 @@ public:
     ~InputView();
     
 public:
-	virtual void layout(RenderContext& rc);
-	virtual void paint(LGraphicsContext& dc);
-	virtual void execute();
+	virtual LVoid layout(RenderContext& rc);
+	virtual LVoid paint(LGraphicsContext& dc);
+	virtual LVoid execute();
 	
-	int getInputType();
-	virtual void setSelected(const LBool selected);
-	void setInputValue(const String& text);
+	LInt getInputType();
+	virtual LVoid setSelected(const LBool selected);
+	LVoid setInputValue(const String& text);
 
 private:
-	void paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
-	void paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-	void paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-	void paintCheckBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+	LVoid paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
+	LVoid paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+	LVoid paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+	LVoid paintCheckBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
 };
 
 }
