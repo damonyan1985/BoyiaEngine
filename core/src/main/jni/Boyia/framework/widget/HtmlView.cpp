@@ -48,12 +48,12 @@ HtmlView::~HtmlView()
 	m_children.clear();
 }
 
-void HtmlView::layout(RenderContext& rc)
+LVoid HtmlView::layout(RenderContext& rc)
 {
     layoutInline(rc);
 }
 
-void HtmlView::layoutInline(RenderContext& rc)
+LVoid HtmlView::layoutInline(RenderContext& rc)
 {
 
 	if (m_type == HtmlTags::BR)
@@ -95,7 +95,7 @@ LVoid* HtmlView::painter() const
 	return m_painter;
 }
 
-void HtmlView::handleXYPos(RenderContext& rc)
+LVoid HtmlView::handleXYPos(RenderContext& rc)
 {
     switch (getStyle()->positionType)
     {
@@ -124,7 +124,7 @@ void HtmlView::handleXYPos(RenderContext& rc)
     rc.setY(m_y);
 }
 
-void HtmlView::paint(LGraphicsContext& gc)
+LVoid HtmlView::paint(LGraphicsContext& gc)
 {
 	if (m_style.displayType == util::Style::DISPLAY_NONE)
 	{
@@ -180,7 +180,7 @@ void HtmlView::paint(LGraphicsContext& gc)
 	paintBorder(gc, m_style.border, x, y);
 }
 
-void HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)
+LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)
 {
 	if (border.topWidth > 0)
 	{
@@ -275,11 +275,11 @@ LBool HtmlView::isLink() const
 	return LFalse;	
 }
 
-void HtmlView::execute()
+LVoid HtmlView::execute()
 {
 }
 
-void HtmlView::setId(const String& id)
+LVoid HtmlView::setId(const String& id)
 {
     m_id = id;	
 }
@@ -289,7 +289,7 @@ const String& HtmlView::getId() const
 	return m_id;
 }
 
-void HtmlView::setClassName(const String& className)
+LVoid HtmlView::setClassName(const String& className)
 {
     m_className = className;	
 }
@@ -299,7 +299,7 @@ const String& HtmlView::getClassName() const
 	return m_className;
 }
 
-void HtmlView::setTagType(HtmlTags::HtmlType tagType)
+LVoid HtmlView::setTagType(HtmlTags::HtmlType tagType)
 {
 	m_type = tagType;
 }
@@ -310,7 +310,7 @@ HtmlTags::HtmlType HtmlView::getTagType() const
 }
 
 // apply style property for render tree
-void HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
+LVoid HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
 {
 	KLOG("HtmlView::setStyle");
 	BoyiaPtr<KVector<String> > classNames = util::StringUtils::split(m_className, _CS(" "));
@@ -337,7 +337,7 @@ void HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
 	KLOG("HtmlView::setStyle end");
 }
 
-void HtmlView::setSelected(const LBool selected)
+LVoid HtmlView::setSelected(const LBool selected)
 {
 	m_selected = selected;
 }
@@ -452,7 +452,7 @@ HtmlView* HtmlView::getNextItem(HtmlView* currentItem)
 	return item;
 }
 
-void HtmlView::itemCenter(RenderContext& rc)
+LVoid HtmlView::itemCenter(RenderContext& rc)
 {
 	if (getStyle()->textAlignement == util::LGraphicsContext::TextCenter)
 	{
@@ -529,7 +529,7 @@ HtmlView* HtmlView::getParent() const
 	return m_parent;
 }
 
-void HtmlView::setParent(HtmlView* o)
+LVoid HtmlView::setParent(HtmlView* o)
 {
 	m_parent = o;
 }
@@ -539,21 +539,21 @@ LBool HtmlView::isViewRoot() const
 	return m_isViewRoot;
 }
 
-void HtmlView::setIsViewRoot(LBool isViewRoot)
+LVoid HtmlView::setIsViewRoot(LBool isViewRoot)
 {
 	m_isViewRoot = isViewRoot;
 }
 
-void HtmlView::layout()
+LVoid HtmlView::layout()
 {
 }
 
-void HtmlView::addChild(HtmlView* child)
+LVoid HtmlView::addChild(HtmlView* child)
 {
 	child->m_iter = m_children.push(child);
 }
 
-void HtmlView::removeChild(HtmlView* child)
+LVoid HtmlView::removeChild(HtmlView* child)
 {
 	m_children.erase(child->m_iter);
 	delete child;
@@ -616,7 +616,7 @@ LayoutPoint HtmlView::getAbsoluteContainerTopLeft() const
 	return LayoutPoint(top, left);
 }
 
-void HtmlView::setDocument(HtmlDocument* doc)
+LVoid HtmlView::setDocument(HtmlDocument* doc)
 {
     m_doc = doc;
 }
@@ -712,7 +712,7 @@ IViewListener* HtmlView::getListener() const
 	return m_itemListener;
 }
 
-void HtmlView::relayout()
+LVoid HtmlView::relayout()
 {
     if ((!m_style.width || !m_style.height)
     		&& m_parent)

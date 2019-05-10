@@ -294,10 +294,10 @@ public:
 	static LMediaPlayer* create(LVoid* view);// instance a platform mediaplayer
 #endif
 	virtual ~LMediaPlayer() {}
-	virtual void start(const String& url) = 0;
-	virtual void seek(int progress) = 0;
-	virtual void pause() = 0;
-	virtual void stop()  = 0;
+	virtual LVoid start(const String& url) = 0;
+	virtual LVoid seek(LInt progress) = 0;
+	virtual LVoid pause() = 0;
+	virtual LVoid stop()  = 0;
 };
 
 class Editor
@@ -305,7 +305,7 @@ class Editor
 public:
 	static Editor* get(LVoid* view);
 	virtual ~Editor() {}
-	virtual void showKeyboard(const String& text) = 0;
+	virtual LVoid showKeyboard(const String& text) = 0;
 };
 }
 

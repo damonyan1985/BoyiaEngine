@@ -1,29 +1,46 @@
 package com.boyia.app.input;
 
 import com.boyia.app.common.base.BaseActivity;
+import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.BoyiaUIView;
 
+import android.app.Activity;
 import android.content.Context;
-import android.os.Message;
-import android.os.ResultReceiver;
-import android.os.Handler;
+import android.graphics.Rect;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
 public class BoyiaInputManager {
-	//private Context mContext;
+	private static final String TAG = BoyiaInputManager.class.getSimpleName();
 	private BoyiaUIView mView;
-	private ResultReceiver mReceiver = null;
 	private long mItem = 0;
-    public BoyiaInputManager(Context context, BoyiaUIView view) {
-    	//mContext = context;
+
+    public BoyiaInputManager(BoyiaUIView view) {
     	mView = view;
-    	mReceiver = new ResultReceiver(new Handler() {
-    		@Override
-    		public void handleMessage(Message msg) {
-    		
-    		}
-    	});
+		initViewListener();
     }
+
+    private void initViewListener() {
+		Activity activity = (Activity) mView.getContext();
+		final View rootView = activity.getWindow().getDecorView();
+		rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				Rect rect = new Rect();
+				rootView.getWindowVisibleDisplayFrame(rect);
+				BoyiaLog.d(
+						TAG,
+						"rect.bottom="+rect.bottom +" height="+rootView.getHeight());
+				if (rootView.getHeight() - rect.bottom > 200) {
+					// 软键盘弹起
+					BoyiaLog.d(TAG, "BoyiaInputManager SHOW");
+				} else {
+					BoyiaLog.d(TAG, "BoyiaInputManager HIDE");
+				}
+			}
+		});
+	}
     
     public void show(final long item, final String text) {
     	//BoyiaUtils.showToast("重新弹起");
@@ -33,8 +50,7 @@ public class BoyiaInputManager {
 			public void run() {
 		    	mItem = item;
 		    	InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-		    	//imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-		    	imm.showSoftInput(mView, 0, mReceiver);
+		    	imm.showSoftInput(mView, 0, null);
 		    	mView.resetCommitText(text);
 			}
     	});

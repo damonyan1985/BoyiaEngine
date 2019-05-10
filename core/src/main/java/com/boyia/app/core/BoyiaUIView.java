@@ -47,7 +47,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		super(context);
 		nativeInitJNIContext(context);
 		init();
-		mInputManager = new BoyiaInputManager(context, this);
+		mInputManager = new BoyiaInputManager(this);
 	}
 
 	private void setBackground(int color) {
@@ -92,32 +92,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		nativeHandleKeyEvent(event.getKeyCode(), 0);
 	}
-
-	public static native void nativeInitUIView(int width, int height, boolean isDebug);
-
-	public static native void nativeOnDataReceive(byte[] data, int length, long callback);
-
-	public static native void nativeOnDataFinished(long callback);
-
-	public static native void nativeHandleKeyEvent(int keyCode, int isDown);
-	
-	public static native void nativeDistroyUIView();
-	
-	public static native void nativeImageLoaded(long item);
-	
-	public static native void nativeHandleTouchEvent(int type, int x, int y);
-
-	public static native void nativeOnLoadError(String error, long callback);
-	
-	public static native void nativeInitJNIContext(Activity context);
-	
-	public static native void nativeSetInputText(String text, long item);
-	
-	public static native void nativeVideoTextureUpdate(long item);
-	
-	public static native void nativeSetGLSurface(Surface surface);
-	
-	public static native void nativeResetGLSurface(Surface surface);
 	
 	public View getView() {
 		return this;
@@ -168,4 +142,31 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		
 	    return mInputConnect;
 	}
+
+	// Native Method Define
+    public static native void nativeInitUIView(int width, int height, boolean isDebug);
+
+    public static native void nativeOnDataReceive(byte[] data, int length, long callback);
+
+    public static native void nativeOnDataFinished(long callback);
+
+    public static native void nativeHandleKeyEvent(int keyCode, int isDown);
+
+    public static native void nativeDistroyUIView();
+
+    public static native void nativeImageLoaded(long item);
+
+    public static native void nativeHandleTouchEvent(int type, int x, int y);
+
+    public static native void nativeOnLoadError(String error, long callback);
+
+    public static native void nativeInitJNIContext(Activity context);
+
+    public static native void nativeSetInputText(String text, long item);
+
+    public static native void nativeVideoTextureUpdate(long item);
+
+    public static native void nativeSetGLSurface(Surface surface);
+
+    public static native void nativeResetGLSurface(Surface surface);
 }
