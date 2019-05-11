@@ -509,20 +509,12 @@ public class BoyiaUtils {
 	}
 
 	public static boolean isTextEmpty(String text) {
-		if (text == null || text.length() == 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return text == null || text.length() == 0;
 	}
 
 	public static boolean existSDCard() {
-		if (android.os.Environment.getExternalStorageState().equals(
-				android.os.Environment.MEDIA_MOUNTED)) {
-			return true;
-		} else {
-			return false;
-		}
+		return android.os.Environment.getExternalStorageState().equals(
+				android.os.Environment.MEDIA_MOUNTED);
 	}
 
 	public static boolean isNumeric(String str) {
