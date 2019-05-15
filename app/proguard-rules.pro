@@ -33,6 +33,8 @@
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.database.sqlite.SQLiteOpenHelper{*;}
+
+# DB Annotation
 #-keep public class * extends java.lang.annotation.Annotation {*;}
 #-keep public class com.boyia.app.common.db.BoyiaData {*;}
 #-keep @com.boyia.app.common.db.DBAnnotation class * {*;}

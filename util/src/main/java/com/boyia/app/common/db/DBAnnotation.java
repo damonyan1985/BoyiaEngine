@@ -8,6 +8,12 @@ import java.lang.annotation.Target;
 public class DBAnnotation {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
+    public @interface DBKey {
+        String name() default "##key";
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
     public @interface DBColumn {
         String name() default "##column";
     }
