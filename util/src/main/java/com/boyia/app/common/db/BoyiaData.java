@@ -1,14 +1,17 @@
 package com.boyia.app.common.db;
 
 import com.boyia.app.common.db.DBAnnotation.DBColumn;
+import com.boyia.app.common.db.DBAnnotation.DBKey;
+
 public class BoyiaData {
+    @DBKey
     @DBColumn(name = "id")
-    private int id;
-    public int getId() {
+    private Integer id;
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }

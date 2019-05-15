@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.db.DBAnnotation.DBKey;
 import com.boyia.app.common.db.DBAnnotation.DBColumn;
 import com.boyia.app.common.db.DBAnnotation.DBTable;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -70,20 +71,27 @@ public class BoyiaDAO<T> {
         try {
             if (bean != null) {
                 String columnName = getColumnName(field);
-                if (field.getType() == int.class) {
+                if (field.getType() == Integer.class) {
                     field.set(bean, cursor.getInt(cursor
                             .getColumnIndex(columnName)));
                 } else if (field.getType() == String.class) {
                     field.set(bean, cursor.getString(cursor
                             .getColumnIndex(columnName)));
-                } else if (field.getType() == float.class) {
+                } else if (field.getType() == Float.class) {
                     field.set(bean, cursor.getFloat(cursor
+                            .getColumnIndex(columnName)));
+                } else if (field.getType() == Long.class) {
+                    field.set(bean, cursor.getLong(cursor
                             .getColumnIndex(columnName)));
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private boolean isTableKey(Field field) {
+        return field.getAnnotation(DBKey.class) != null;
     }
 
     public ContentValues setDbData(T bean, Class<T> cls) {
@@ -97,14 +105,21 @@ public class BoyiaDAO<T> {
                     || Modifier.isFinal(field.getModifiers())) {
                 continue;
             }
+
+            if (isTableKey(field)) {
+                continue;
+            }
+
             try {
                 String columnName = getColumnName(field);
-                if (field.getType() == int.class) {
-                    cv.put(columnName, field.getInt(bean));
+                if (field.getType() == Integer.class) {
+                    cv.put(columnName, (Integer) field.get(bean));
                 } else if (field.getType() == String.class) {
                     cv.put(columnName, (String) field.get(bean));
-                } else if (field.getType() == float.class) {
+                } else if (field.getType() == Float.class) {
                     cv.put(columnName, field.getFloat(bean));
+                } else if (field.getType() == Long.class) {
+                    cv.put(columnName, field.getLong(bean));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
