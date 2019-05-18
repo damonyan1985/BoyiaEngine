@@ -3,11 +3,12 @@
 #include "MatrixState.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "BoyiaPainterEnv.h"
 
 namespace yanbo
 {
-GLProgram* GLPainter::s_program = NULL;
-MiniRenderer* GLPainter::s_renderer = NULL;
+// GLProgram* GLPainter::s_program = NULL;
+// MiniRenderer* GLPainter::s_renderer = NULL;
 int GLPainter::s_drawQuadIndex = 0;
 #define GL_TEXTURE_EXTERNAL_OES 0x8D65
 
@@ -132,7 +133,8 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect)
 
 void GLPainter::appendToBuffer()
 {
-	s_renderer->appendQuad(m_cmd.quad);
+	//s_renderer->appendQuad(m_cmd.quad);
+	BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
 }
 
 void GLPainter::setColor(const LRgb& color)
@@ -151,43 +153,46 @@ void GLPainter::setScale(float scale)
 void GLPainter::init()
 {
 	//MiniTextureCache::getInst()->clear();
-	if (s_program)
-	{
-        delete s_program;
-	}
+	// if (s_program)
+	// {
+ //        delete s_program;
+	// }
 
-	s_program = new GLProgram();
-	s_program->initShader();
+	// s_program = new GLProgram();
+	// s_program->initShader();
 
-	if (s_renderer)
-	{
-		delete s_renderer;
-	}
+	// if (s_renderer)
+	// {
+	// 	delete s_renderer;
+	// }
 
-	s_renderer = new MiniRenderer();
-	s_renderer->setupIndices();
-	s_renderer->createVBO();
+	// s_renderer = new MiniRenderer();
+	// s_renderer->setupIndices();
+	// s_renderer->createVBO();
+	BoyiaPainterEnv::instance()->init();
 }
 
 void GLPainter::bindVBO()
 {
-	s_renderer->bind();
+	//s_renderer->bind();
+	BoyiaPainterEnv::instance()->bindVBO();
 }
 
 void GLPainter::unbindVBO()
 {
-	s_renderer->unbind();
+	//s_renderer->unbind();
 	s_drawQuadIndex = 0;
+	BoyiaPainterEnv::instance()->unbindVBO();
 }
 
 void GLPainter::paint()
 {
 	KLOG("BaseShape::drawSelf()");
-    if (s_program && s_program->available())
+    if (BoyiaPainterEnv::instance()->available())
     {
         MatrixState::pushMatrix();
 		 // 制定使用某套shader程序
-    	s_program->use(m_cmd.type);
+    	BoyiaPainterEnv::instance()->program()->use(m_cmd.type);
 		KLOG("BaseShape::drawSelf()1");
 		 // 初始化变换矩阵
 	    KLOG("BaseShape::drawSelf()2");
@@ -204,29 +209,28 @@ void GLPainter::paint()
 		 // 将最终变换矩阵传入shader程序
 		if (m_cmd.type == EShapeVideo)
 		{
-			glUniformMatrix4fv(s_program->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
 			if (m_stMatrix)
 			{
-				glUniformMatrix4fv(s_program->videoSTMatrix(), 1, GL_FALSE, m_stMatrix);
+				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, m_stMatrix);
 			}
 		}
 		else
 		{
-			glUniformMatrix4fv(s_program->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
 		}
 		 // 传入是否为纹理
 		KLOG("BaseShape::drawSelf()6");
 		//bool hasTex = m_shapeType == EShapeImage || m_shapeType == EShapeVideo;
 		if (m_cmd.type != EShapeVideo)
 		{
-			glUniform1i(s_program->texFlag(), m_cmd.type == EShapeImage ? 1 : 0);
+			glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), m_cmd.type == EShapeImage ? 1 : 0);
 		}
 
 		KLOG("BaseShape::drawSelf()7");
-
 		if (m_cmd.type == EShapeImage)
 		{
-		    glUniform1i(s_program->sampler2D(), 0);
+		    glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
 		    //绑定纹理
 		    glActiveTexture(GL_TEXTURE0);
 		    glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
@@ -234,7 +238,7 @@ void GLPainter::paint()
 		else if (m_cmd.type == EShapeVideo)
 		{
 			//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-			glUniform1i(s_program->videoSampler2D(), 0);
+			glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
 			// 绑定纹理
 			glActiveTexture(GL_TEXTURE0);
 			// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
@@ -248,8 +252,8 @@ void GLPainter::paint()
 
 		// 绘制矩形
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
-		MatrixState::popMatrix();
-		s_drawQuadIndex += 1;
+        MatrixState::popMatrix();
+        s_drawQuadIndex += 1;
     }
 }
 
