@@ -6,7 +6,7 @@
 
 namespace yanbo
 {
-MiniTextureCache* MiniTextureCache::s_instance = NULL;
+//MiniTextureCache* MiniTextureCache::s_instance = NULL;
 
 MiniTexture::MiniTexture()
     : texId(0)
@@ -53,12 +53,14 @@ TexturePair::TexturePair()
 
 MiniTextureCache* MiniTextureCache::getInst()
 {
-	if (!s_instance)
-	{
-		s_instance = new MiniTextureCache();
-	}
+	// if (!s_instance)
+	// {
+	// 	s_instance = new MiniTextureCache();
+	// }
 
-	return s_instance;
+	// return s_instance;
+	static MiniTextureCache sCache;
+	return &sCache;
 }
 
 MiniTexture* MiniTextureCache::find(LVoid* image)

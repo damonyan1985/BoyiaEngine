@@ -44,11 +44,11 @@ struct Quad
 	Vertex bottomLeft;
 };
 
-class MiniRenderer
+class BoyiaRenderer
 {
 public:
-	MiniRenderer();
-	~MiniRenderer();
+	BoyiaRenderer();
+	~BoyiaRenderer();
     LVoid createVBO();
     LVoid appendQuad(const Quad& quad);
     LVoid bind();

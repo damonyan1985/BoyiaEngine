@@ -47,7 +47,7 @@ private:
     MiniTexture* find(HtmlView* item, LUint key);
 
     TextureMap m_texMap;
-    static MiniTextureCache* s_instance;
+    //static MiniTextureCache* s_instance;
 };
 }
 #endif

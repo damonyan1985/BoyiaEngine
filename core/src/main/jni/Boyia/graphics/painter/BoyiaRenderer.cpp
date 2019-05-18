@@ -1,4 +1,4 @@
-#include "MiniRenderer.h"
+#include "BoyiaRenderer.h"
 #include "GLProgram.h"
 #include <GLES3/gl3.h>
 
@@ -24,12 +24,12 @@ TexVec::TexVec()
 {
 }
 
-MiniRenderer::MiniRenderer()
+BoyiaRenderer::BoyiaRenderer()
     : m_quadNum(0)
 {
 }
 
-MiniRenderer::~MiniRenderer()
+BoyiaRenderer::~BoyiaRenderer()
 {
 	// 解除VAO对应的属性
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
@@ -37,7 +37,7 @@ MiniRenderer::~MiniRenderer()
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
 }
 
-LVoid MiniRenderer::bindPosition()
+LVoid BoyiaRenderer::bindPosition()
 {
     // 启动顶点索引
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
@@ -55,7 +55,7 @@ LVoid MiniRenderer::bindPosition()
 
 }
 
-LVoid MiniRenderer::createVBO()
+LVoid BoyiaRenderer::createVBO()
 {
 	// 创建VAO
 	glGenVertexArrays(1, &m_buffersVAO);
@@ -80,7 +80,7 @@ LVoid MiniRenderer::createVBO()
     glBindVertexArray(0);
 }
 
-LVoid MiniRenderer::appendQuad(const Quad& quad)
+LVoid BoyiaRenderer::appendQuad(const Quad& quad)
 {
 	if (m_quadNum < VBO_SIZE)
 	{
@@ -88,7 +88,7 @@ LVoid MiniRenderer::appendQuad(const Quad& quad)
 	}
 }
 
-LVoid MiniRenderer::bind()
+LVoid BoyiaRenderer::bind()
 {
 	// 绑定VAO
 	glBindVertexArray(m_buffersVAO);
@@ -102,7 +102,7 @@ LVoid MiniRenderer::bind()
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices[0]) * INDEX_SIZE, m_indices, GL_STATIC_DRAW);
 }
 
-LVoid MiniRenderer::unbind()
+LVoid BoyiaRenderer::unbind()
 {
 	// 解绑VAO
 	glBindVertexArray(0);
@@ -114,7 +114,7 @@ LVoid MiniRenderer::unbind()
     m_quadNum = 0;
 }
 
-LVoid MiniRenderer::setupIndices()
+LVoid BoyiaRenderer::setupIndices()
 {
     for (int i=0; i < VBO_SIZE; i++)
     {

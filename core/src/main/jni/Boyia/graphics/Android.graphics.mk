@@ -11,7 +11,8 @@ LOCAL_SRC_FILES += \
     \
     $(LOCAL_PATH)/graphics/painter/GLPainter.cpp \
     $(LOCAL_PATH)/graphics/painter/GLProgram.cpp \
-    $(LOCAL_PATH)/graphics/painter/MiniRenderer.cpp \
+    $(LOCAL_PATH)/graphics/painter/BoyiaRenderer.cpp \
+    $(LOCAL_PATH)/graphics/painter/BoyiaPainterEnv.cpp \
     $(LOCAL_PATH)/graphics/painter/MiniTextureCache.cpp \
     $(LOCAL_PATH)/graphics/painter/RenderTexture.cpp \
     \

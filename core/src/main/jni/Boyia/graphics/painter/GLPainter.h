@@ -5,8 +5,7 @@
 #include "LGdi.h"
 #include "KListMap.h"
 #include "MiniTextureCache.h"
-#include "GLProgram.h"
-#include "MiniRenderer.h"
+#include "BoyiaRenderer.h"
 #include <jni.h>
 #include <GLES3/gl3.h>
 //#include <GLES2/gl2ext.h>
@@ -75,8 +74,8 @@ public:
 protected:
 	void setTexture(MiniTexture* tex, const LRect& rect);
 
-	static GLProgram* s_program;
-	static MiniRenderer* s_renderer;
+	//static GLProgram* s_program;
+	//static MiniRenderer* s_renderer;
 
 	PaintCommand m_cmd;
     float  m_scale;
