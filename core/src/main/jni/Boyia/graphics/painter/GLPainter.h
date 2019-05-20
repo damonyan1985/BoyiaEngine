@@ -62,6 +62,7 @@ public:
 	void setRect(const LRect& rect);
 	void setLine(const LPoint& p1, const LPoint& p2);
 	void setImage(MiniTexture* tex, const LRect& rect);
+	void setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
 	void setVideo(MiniTexture* tex, const LRect& rect);
 
 	static void init();

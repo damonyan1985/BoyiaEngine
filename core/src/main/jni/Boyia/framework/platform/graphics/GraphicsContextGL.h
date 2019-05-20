@@ -55,6 +55,9 @@ public:
 	virtual LVoid reset();
 	virtual LVoid submit();
 	virtual LVoid setHtmlView(LVoid* item);
+	virtual LVoid save();
+	virtual LVoid clipRect(const LRect& rect);
+	virtual LVoid restore();
 
 private:
 	ItemPainter* currentPainter();
@@ -65,6 +68,7 @@ private:
 	LRgb   m_penColor;
 	LFont  m_font;
 	LVoid* m_item;
+	LRect* m_clipRect;
 };
 
 }

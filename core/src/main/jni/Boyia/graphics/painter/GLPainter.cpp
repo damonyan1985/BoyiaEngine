@@ -57,9 +57,21 @@ void GLPainter::setRect(const LRect& rect)
 
 void GLPainter::setImage(MiniTexture* tex, const LRect& rect)
 {
-	//m_shapeType = EShapeImage;
 	m_cmd.type = EShapeImage;
 	setTexture(tex, rect);
+}
+
+void GLPainter::setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
+{
+    m_cmd.type = EShapeImage;
+
+    LInt left = rect.iTopLeft.iX > clipRect.iTopLeft.iX ? rect.iTopLeft.iX : clipRect.iTopLeft.iX;
+    LInt top = rect.iTopLeft.iY > clipRect.iTopLeft.iY ? rect.iTopLeft.iY : clipRect.iTopLeft.iY;
+    LInt right = rect.iBottomRight.iX > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : rect.iBottomRight.iX;
+    LInt bottom = rect.iBottomRight.iY > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : rect.iBottomRight.iY;
+    LRect newRect(left, top, right - left, bottom - top);
+
+    setTexture(tex, newRect);
 }
 
 float* GLPainter::stMatrix() const
@@ -133,8 +145,7 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect)
 
 void GLPainter::appendToBuffer()
 {
-	//s_renderer->appendQuad(m_cmd.quad);
-	BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
+    BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
 }
 
 void GLPainter::setColor(const LRgb& color)
@@ -152,35 +163,16 @@ void GLPainter::setScale(float scale)
 
 void GLPainter::init()
 {
-	//MiniTextureCache::getInst()->clear();
-	// if (s_program)
-	// {
- //        delete s_program;
-	// }
-
-	// s_program = new GLProgram();
-	// s_program->initShader();
-
-	// if (s_renderer)
-	// {
-	// 	delete s_renderer;
-	// }
-
-	// s_renderer = new MiniRenderer();
-	// s_renderer->setupIndices();
-	// s_renderer->createVBO();
 	BoyiaPainterEnv::instance()->init();
 }
 
 void GLPainter::bindVBO()
 {
-	//s_renderer->bind();
 	BoyiaPainterEnv::instance()->bindVBO();
 }
 
 void GLPainter::unbindVBO()
 {
-	//s_renderer->unbind();
 	s_drawQuadIndex = 0;
 	BoyiaPainterEnv::instance()->unbindVBO();
 }
