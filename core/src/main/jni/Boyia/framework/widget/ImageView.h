@@ -25,11 +25,11 @@ public:
 public:
 	virtual LBool isImage() const;
 	const String& url() const;
-	void setUrl(const String& url);
-	void loadImage(const String& url);
+	LVoid setUrl(const String& url);
+	LVoid loadImage(const String& url);
 	
-	virtual void paint(LGraphicsContext& gc);
-	virtual void layoutInline(RenderContext& rc);
+	virtual LVoid paint(LGraphicsContext& gc);
+	virtual LVoid layoutInline(RenderContext& rc);
 	
 private:
 	LImage* m_image;

@@ -18,12 +18,27 @@ namespace util
 
 GraphicsContextGL::GraphicsContextGL()
     : m_item(NULL)
+    , m_clipRect(NULL)
 {
 }
 
 GraphicsContextGL::~GraphicsContextGL()
 {
 	//GLContext::destroyGLContext();
+}
+
+LVoid GraphicsContextGL::clipRect(const LRect& rect)
+{
+    m_clipRect = (LRect*)&rect;
+}
+
+LVoid GraphicsContextGL::save()
+{
+}
+
+LVoid GraphicsContextGL::restore()
+{
+	m_clipRect = NULL;
 }
 
 LVoid GraphicsContextGL::setHtmlView(LVoid* item)
@@ -126,7 +141,15 @@ LVoid GraphicsContextGL::drawImage(const LImage* image)
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(m_brushColor);
-    paint->setImage(tex, image->rect());
+    //paint->setImage(tex, image->rect(), *m_clipRect);
+    if (m_clipRect)
+	{
+		paint->setImage(tex, image->rect(), *m_clipRect);
+	}
+	else
+	{
+		paint->setImage(tex, image->rect());
+	}
     painter->painters.push(paint);
 
     KLOG("GraphicsContextGL::drawBitmap end");
@@ -175,7 +198,15 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 		ItemPainter* painter = currentPainter();
 		BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
 		paint->setColor(m_brushColor);
-		paint->setImage(tex, image->rect());
+		if (m_clipRect)
+		{
+			paint->setImage(tex, image->rect(), *m_clipRect);
+		}
+		else
+		{
+			paint->setImage(tex, image->rect());
+		}
+		
 		painter->painters.push(paint);
 	}
 	else

@@ -199,6 +199,8 @@ void TextView::paint(LGraphicsContext& gc)
 			gc.drawText(line->m_text, LRect(left, y, line->m_lineLength, textHeight), util::LGraphicsContext::TextLeft);
 		}
 	}
+
+	gc.restore();
 }
 
 LBool TextView::isText() const

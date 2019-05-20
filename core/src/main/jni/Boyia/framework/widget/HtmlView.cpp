@@ -661,11 +661,12 @@ LVoid HtmlView::setClipRect(util::LGraphicsContext& gc)
 				parent->getHeight()
 		);
 
-		//gc.setClipRect(m_clipRect);
+		gc.clipRect(m_clipRect);
 		m_clip = LTrue;
 	}
 	else
 	{
+		gc.restore();
 		m_clip = LFalse;
 	}
 

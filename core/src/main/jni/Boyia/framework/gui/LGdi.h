@@ -82,6 +82,9 @@ public:
 	virtual LVoid submit() = 0;
 	virtual LVoid reset() = 0;
 	virtual LVoid setHtmlView(LVoid* item) = 0;
+	virtual LVoid save() = 0;
+	virtual LVoid clipRect(const LRect& rect) = 0;
+	virtual LVoid restore() = 0;
 };
 	
 class LRgb
