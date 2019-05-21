@@ -73,7 +73,7 @@ public:
 	//Quad   m_quad; // 矩形块
 
 protected:
-	void setTexture(MiniTexture* tex, const LRect& rect);
+	void setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
 
 	//static GLProgram* s_program;
 	//static MiniRenderer* s_renderer;
