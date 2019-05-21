@@ -58,7 +58,7 @@ void GLPainter::setRect(const LRect& rect)
 void GLPainter::setImage(MiniTexture* tex, const LRect& rect)
 {
 	m_cmd.type = EShapeImage;
-	setTexture(tex, rect);
+	setTexture(tex, rect, rect);
 }
 
 void GLPainter::setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
@@ -71,7 +71,7 @@ void GLPainter::setImage(MiniTexture* tex, const LRect& rect, const LRect& clipR
     LInt bottom = rect.iBottomRight.iY > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : rect.iBottomRight.iY;
     LRect newRect(left, top, right - left, bottom - top);
 
-    setTexture(tex, newRect);
+    setTexture(tex, newRect, clipRect);
 }
 
 float* GLPainter::stMatrix() const
@@ -114,7 +114,7 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
     quad.topLeft.texCoord.v = 1.0f;
 }
 
-void GLPainter::setTexture(MiniTexture* tex, const LRect& rect)
+void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
 {
 	m_cmd.texId = tex->texId;
 	KFORMATLOG("texSize width=%d. height=%d", tex->width, tex->height);
@@ -129,18 +129,39 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect)
 
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
 
+    float texL = ((float) (rect.iTopLeft.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+    float texT = ((float) (rect.iTopLeft.iY - clipRect.iTopLeft.iY)) / clipRect.GetHeight();
+
+    float texR = ((float) (rect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+	float texB = ((float) (rect.iBottomRight.iY - clipRect.iTopLeft.iY)) / clipRect.GetWidth();
     // 纹理坐标
     quad.bottomLeft.texCoord.u = 0.0f;
     quad.bottomLeft.texCoord.v = 1.0f;
 
+
     quad.bottomRight.texCoord.u = 1.0f;
     quad.bottomRight.texCoord.v = 1.0f;
+    
 
     quad.topRight.texCoord.u = 1.0f;
     quad.topRight.texCoord.v = 0.0f;
+	
+
 
     quad.topLeft.texCoord.u = 0.0f;
     quad.topLeft.texCoord.v = 0.0f;
+
+    // quad.bottomLeft.texCoord.u = texL;
+    // quad.bottomLeft.texCoord.v = texB;
+
+    // quad.bottomRight.texCoord.u = texR;
+    // quad.bottomRight.texCoord.v = texB;
+
+    // quad.topRight.texCoord.u = texR;
+    // quad.topRight.texCoord.v = texT;
+
+    // quad.topLeft.texCoord.u = texL;
+    // quad.topLeft.texCoord.v = texT;
 }
 
 void GLPainter::appendToBuffer()

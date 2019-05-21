@@ -649,16 +649,30 @@ LVoid HtmlView::setClipRect(util::LGraphicsContext& gc)
 	if (getXpos() < 0 || getXpos() + getWidth() > parent->getWidth()
 			|| getYpos() < 0 || getYpos()  + getHeight() > parent->getHeight())
 	{
+
 		LPoint point = parent->getAbsoluteContainerTopLeft();
 		LInt parentX = point.iX + parent->getXpos();
 		LInt parentY = point.iY + parent->getYpos();
 
+		LRect rect = parent->isClipItem() ? 
+			parent->clipRect() : LRect(parentX, parentY, parent->getWidth(), parent->getHeight());
+
 		KFORMATLOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", parentX, parentY, parent->getWidth(), parent->getHeight());
+		
+		LayoutPoint topLeft = getAbsoluteContainerTopLeft();
+
+		LInt clipL = topLeft.iX < rect.iTopLeft.iX ? rect.iTopLeft.iX : topLeft.iX;
+		LInt clipT = topLeft.iY < rect.iTopLeft.iY ? rect.iTopLeft.iY : topLeft.iY;
+
+		LInt clipR = topLeft.iX + getWidth() > rect.iBottomRight.iX ? 
+			rect.iBottomRight.iX : topLeft.iX + getWidth();
+		LInt clipB = topLeft.iY + getHeight() > rect.iBottomRight.iY ? 
+			rect.iBottomRight.iY : topLeft.iY + getHeight();
 		m_clipRect = LayoutRect(
-				parentX,
-				parentY,
-				parent->getWidth(),
-				parent->getHeight()
+				clipL,
+				clipT,
+				clipR - clipL,
+				clipB - clipT
 		);
 
 		gc.clipRect(m_clipRect);
@@ -669,7 +683,6 @@ LVoid HtmlView::setClipRect(util::LGraphicsContext& gc)
 		gc.restore();
 		m_clip = LFalse;
 	}
-
 }
 
 LVoid HtmlView::relayoutZIndexChild()
