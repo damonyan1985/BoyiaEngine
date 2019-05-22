@@ -67,6 +67,9 @@ public:
 
 	static void init();
 	void paint();
+	void paintImage();
+	void paintQuad();
+	void paintVideo();
 	void setScale(float scale);
 	void appendToBuffer();
 	float* stMatrix() const;

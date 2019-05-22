@@ -198,6 +198,42 @@ void GLPainter::unbindVBO()
 	BoyiaPainterEnv::instance()->unbindVBO();
 }
 
+void GLPainter::paintImage()
+{
+	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+	glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
+
+	glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
+    //绑定纹理
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
+}
+
+void GLPainter::paintQuad()
+{
+	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+	glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+}
+
+void GLPainter::paintVideo()
+{
+	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+	if (m_stMatrix)
+	{
+		glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, m_stMatrix);
+	}
+
+	//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
+	glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
+	// 绑定纹理
+	glActiveTexture(GL_TEXTURE0);
+	// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
+	// 作者表示自己也很晕
+	// 可能出错信息会驱动GLConsumer去创建EGLImage吧
+	// 纯JAVA实现的情况会不同，蛋疼，艹
+	glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
+}
+
 void GLPainter::paint()
 {
 	KLOG("BaseShape::drawSelf()");
@@ -219,48 +255,18 @@ void GLPainter::paint()
 		MatrixState::rotate(m_cmd.rotate.rx, 1, 0, 0);
 
 		KLOG("BaseShape::drawSelf()5");
-		 // 将最终变换矩阵传入shader程序
-		if (m_cmd.type == EShapeVideo)
+		
+		switch (m_cmd.type)
 		{
-			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-			if (m_stMatrix)
-			{
-				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, m_stMatrix);
-			}
-		}
-		else
-		{
-			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-		}
-		 // 传入是否为纹理
-		KLOG("BaseShape::drawSelf()6");
-		//bool hasTex = m_shapeType == EShapeImage || m_shapeType == EShapeVideo;
-		if (m_cmd.type != EShapeVideo)
-		{
-			glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), m_cmd.type == EShapeImage ? 1 : 0);
-		}
-
-		KLOG("BaseShape::drawSelf()7");
-		if (m_cmd.type == EShapeImage)
-		{
-		    glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
-		    //绑定纹理
-		    glActiveTexture(GL_TEXTURE0);
-		    glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
-		}
-		else if (m_cmd.type == EShapeVideo)
-		{
-			//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-			glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
-			// 绑定纹理
-			glActiveTexture(GL_TEXTURE0);
-			// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
-			// 作者表示自己也很晕
-			// 可能出错信息会驱动GLConsumer去创建EGLImage吧
-			// 纯JAVA实现的情况会不同，蛋疼，艹
-			glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
-
-			KFORMATLOG("m_shapeType == EShapeVideo error=%d and texId=%d top=%d", glGetError(), m_cmd.texId, m_cmd.top);
+		case EShapeVideo:
+			paintVideo();
+			break;
+		case EShapeImage:
+			paintImage();
+			break;
+		default:
+			paintQuad();
+			break;	
 		}
 
 		// 绘制矩形

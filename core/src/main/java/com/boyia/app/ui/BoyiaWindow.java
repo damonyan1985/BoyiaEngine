@@ -9,8 +9,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class BoyiaWindow extends BaseWindow {
-	private BoyiaUIView mWebView = null;
-
+	private BoyiaUIView mUIView = null;
 	public BoyiaWindow(BaseActivity context) {
 		super(context);
 	}
@@ -18,16 +17,16 @@ public class BoyiaWindow extends BaseWindow {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mWebView = new BoyiaUIView(getActivity());
-		setContentView(mWebView.getView());
+		mUIView = new BoyiaUIView(getActivity());
+		setContentView(mUIView.getView());
 	}
 
 	public void setBackgroundColor(int color) {
-		mWebView.setBackgroundColor(color);
+		mUIView.setBackgroundColor(color);
 	}
 
 	public void quitUIView() {
-		mWebView.quitUIView();
+		mUIView.quitUIView();
 	}
 
 	@Override
@@ -38,7 +37,7 @@ public class BoyiaWindow extends BaseWindow {
 //			hide();
 //			break;
 		default:
-			mWebView.onKeyDown(event);
+			mUIView.onKeyDown(event);
 			break;
 		}
 
@@ -47,7 +46,7 @@ public class BoyiaWindow extends BaseWindow {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		mWebView.onTouchDown(event);
+		mUIView.onTouchDown(event);
 		return true;
 	}
 
