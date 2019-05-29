@@ -318,13 +318,13 @@ LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 
 	ListPainter::Iterator glIter = painter->painters.begin();
 	ListPainter::Iterator glIterEnd = painter->painters.end();
+
 	for (; glIter != glIterEnd; ++glIter)
 	{
-	    (*glIter)->appendToBuffer();
+		(*glIter)->appendToBuffer();
 	}
 
-
-    yanbo::HtmlViewList::Iterator iter    = item->m_children.begin();
+	yanbo::HtmlViewList::Iterator iter    = item->m_children.begin();
 	yanbo::HtmlViewList::Iterator iterEnd = item->m_children.end();
 
 	for (; iter != iterEnd; ++iter)
@@ -337,19 +337,18 @@ LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 LVoid GraphicsContextGL::submit()
 {
 	yanbo::HtmlView* item = yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot();
+	yanbo::GLPainter::reset();
 	fillBuffer(item);
 	yanbo::GLPainter::bindVBO();
 
-	//glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
-	submit(item);
+	//submit(item);
+	yanbo::GLPainter::paintCommand();
 
 	glDisable(GL_BLEND);
-	//glDisable(GL_TEXTURE_2D);
 
 	yanbo::GLPainter::unbindVBO();
-	//GLContext::postToScreen();
 }
 
 }

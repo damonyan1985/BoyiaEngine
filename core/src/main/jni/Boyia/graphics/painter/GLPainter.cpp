@@ -12,6 +12,8 @@ namespace yanbo
 int GLPainter::s_drawQuadIndex = 0;
 #define GL_TEXTURE_EXTERNAL_OES 0x8D65
 
+BatchCommandBuffer GLPainter::s_buffer;
+
 RotateInfo::RotateInfo()
     : rx(0), ry(0), rz(0)
 {
@@ -20,8 +22,45 @@ RotateInfo::RotateInfo()
 PaintCommand::PaintCommand()
     : texId(0)
     , type(GLPainter::EShapeNone)
+    , matrix(NULL)
 {
 }
+
+BatchCommand::BatchCommand()
+	: texId(0)
+	, type(GLPainter::EShapeNone)
+	, matrix(NULL)
+{
+}
+
+BatchCommandBuffer::BatchCommandBuffer()
+	: size(0)
+{
+}
+
+LBool BatchCommandBuffer::sameMaterial(GLuint texId)
+{
+	return size > 0 && buffer[size - 1].texId == texId;
+}
+
+LVoid BatchCommandBuffer::addBatchCommand()
+{
+	buffer[size].size++;
+}
+
+LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
+{
+	buffer[size].texId = cmd.texId;
+	buffer[size].type = cmd.type;
+	buffer[size].matrix = cmd.matrix;
+	size++;
+}
+
+LVoid BatchCommandBuffer::reset()
+{
+	size = 0;
+}
+
 
 GLPainter::GLPainter()
     : m_scale(1)
@@ -89,6 +128,7 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
 	m_cmd.top = rect.iTopLeft.iY;
 	m_cmd.type = EShapeVideo;
 	m_cmd.texId = tex->texId;
+	m_cmd.matrix = m_stMatrix;
 
 	Quad& quad = m_cmd.quad;
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
@@ -164,9 +204,96 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& cli
     // quad.topLeft.texCoord.v = texT;
 }
 
+void GLPainter::reset()
+{
+	s_buffer.reset();
+}
+
+void GLPainter::paintCommand()
+{
+	if (!BoyiaPainterEnv::instance()->available())
+	{
+		return;
+	}
+
+	for (LInt i = 0; i < s_buffer.size; i++)
+	{
+		KLOG("BaseShape::drawSelf()");
+		
+        MatrixState::pushMatrix();
+		 // 制定使用某套shader程序
+    	BoyiaPainterEnv::instance()->program()->use(s_buffer.buffer[i].type);
+		KLOG("BaseShape::drawSelf()1");
+		 // 初始化变换矩阵
+	    KLOG("BaseShape::drawSelf()2");
+		 // 设置沿Z轴正向位移1
+		//MatrixState::translate(0.0f, 0.0f, 0.0f);
+		KLOG("BaseShape::drawSelf()3");
+		 // 设置绕y轴旋转
+		MatrixState::rotate(0, 0, 1, 0);
+		KLOG("BaseShape::drawSelf()4");
+		// 设置绕z轴旋转
+		MatrixState::rotate(0, 1, 0, 0);
+
+		KLOG("BaseShape::drawSelf()5");
+		
+		switch (s_buffer.buffer[i].type)
+		{
+		case EShapeVideo:
+			{
+				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+				if (s_buffer.buffer[i].matrix)
+				{
+					glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, s_buffer.buffer[i].matrix);
+				}
+
+				//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
+				glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
+				// 绑定纹理
+				glActiveTexture(GL_TEXTURE0);
+				// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
+				// 作者表示自己也很晕
+				// 可能出错信息会驱动GLConsumer去创建EGLImage吧
+				// 纯JAVA实现的情况会不同，蛋疼，艹
+				glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+			}
+			break;
+		case EShapeImage:
+			{
+				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+				glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
+
+				glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
+			    //绑定纹理
+			    glActiveTexture(GL_TEXTURE0);
+			    glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+			}
+			break;
+		default:
+			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+			glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+			break;	
+		}
+
+		// 绘制矩形
+		glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
+		MatrixState::popMatrix();
+		s_drawQuadIndex += s_buffer.buffer[i].size;
+	}
+}
+
 void GLPainter::appendToBuffer()
 {
     BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
+    
+    if (s_buffer.sameMaterial(m_cmd.texId))
+    {
+		s_buffer.addBatchCommand();
+    }
+    else
+    {
+		s_buffer.addBatchCommand(m_cmd);
+    }
 }
 
 void GLPainter::setColor(const LRgb& color)
