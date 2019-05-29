@@ -53,6 +53,7 @@ LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
 	buffer[size].texId = cmd.texId;
 	buffer[size].type = cmd.type;
 	buffer[size].matrix = cmd.matrix;
+	buffer[size].size++;
 	size++;
 }
 
@@ -269,9 +270,11 @@ void GLPainter::paintCommand()
 			    glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
 			}
 			break;
-		default:
-			glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-			glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+		case EShapeRect:
+			{
+				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+				glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+			}
 			break;	
 		}
 
