@@ -34,6 +34,32 @@ public:
 	RotateInfo rotate;
 	GLuint     texId;
 	LInt       type;
+	float*     matrix;
+};
+
+class BatchCommand
+{
+public:
+	BatchCommand();
+
+	LInt       type;
+	GLuint     texId;
+	LInt       size;
+	float*     matrix;
+};
+
+class BatchCommandBuffer
+{
+public:
+	BatchCommandBuffer();
+
+	LBool sameMaterial(GLuint texId);
+	LVoid addBatchCommand();
+	LVoid addBatchCommand(const PaintCommand& cmd);
+	LVoid reset();
+
+	BatchCommand buffer[INDEX_SIZE];
+	LInt size;
 };
 
 class GLPainter : public BoyiaRef
@@ -66,6 +92,8 @@ public:
 	void setVideo(MiniTexture* tex, const LRect& rect);
 
 	static void init();
+	static void paintCommand();
+	static void reset();
 	void paint();
 	void paintImage();
 	void paintQuad();
@@ -73,18 +101,14 @@ public:
 	void setScale(float scale);
 	void appendToBuffer();
 	float* stMatrix() const;
-	//Quad   m_quad; // 矩形块
 
 protected:
 	void setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
 
-	//static GLProgram* s_program;
-	//static MiniRenderer* s_renderer;
-
 	PaintCommand m_cmd;
     float  m_scale;
-
     float* m_stMatrix;
+    static BatchCommandBuffer s_buffer;
     static int s_drawQuadIndex;
 };
 }
