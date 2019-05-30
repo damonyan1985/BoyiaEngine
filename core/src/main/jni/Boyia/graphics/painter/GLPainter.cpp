@@ -44,7 +44,10 @@ bool BatchCommandBuffer::sameMaterial(GLuint texId)
 
 LVoid BatchCommandBuffer::addBatchCommand()
 {
-	buffer[size].size++;
+	if (size > 0)
+	{
+		buffer[size-1].size++;
+	}
 }
 
 LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
