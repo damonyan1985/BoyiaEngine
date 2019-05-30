@@ -7,9 +7,6 @@
 
 namespace yanbo
 {
-// GLProgram* GLPainter::s_program = NULL;
-// MiniRenderer* GLPainter::s_renderer = NULL;
-int GLPainter::s_drawQuadIndex = 0;
 #define GL_TEXTURE_EXTERNAL_OES 0x8D65
 
 BatchCommandBuffer GLPainter::s_buffer;
@@ -38,9 +35,11 @@ BatchCommandBuffer::BatchCommandBuffer()
 {
 }
 
-LBool BatchCommandBuffer::sameMaterial(GLuint texId)
+bool BatchCommandBuffer::sameMaterial(GLuint texId)
 {
+	KFORMATLOG("BatchCommandBuffer::sameMaterial prevTexid=%u texId=%u", buffer[size - 1].texId, texId);
 	return size > 0 && buffer[size - 1].texId == texId;
+	//return false;
 }
 
 LVoid BatchCommandBuffer::addBatchCommand()
@@ -53,7 +52,7 @@ LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
 	buffer[size].texId = cmd.texId;
 	buffer[size].type = cmd.type;
 	buffer[size].matrix = cmd.matrix;
-	buffer[size].size++;
+	buffer[size].size = 1;
 	size++;
 }
 
@@ -217,6 +216,8 @@ void GLPainter::paintCommand()
 		return;
 	}
 
+	LInt drawQuadIndex = 0;
+
 	for (LInt i = 0; i < s_buffer.size; i++)
 	{
 		KLOG("BaseShape::drawSelf()");
@@ -268,20 +269,23 @@ void GLPainter::paintCommand()
 			    //绑定纹理
 			    glActiveTexture(GL_TEXTURE0);
 			    glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+
+			    KFORMATLOG("GLPainter::paintCommand texSize=%d", s_buffer.buffer[i].size);
 			}
 			break;
 		case EShapeRect:
 			{
 				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
 				glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+				KFORMATLOG("GLPainter::paintCommand rectSize=%d", s_buffer.buffer[i].size);
 			}
 			break;	
 		}
 
 		// 绘制矩形
-		glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
+		glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*) (drawQuadIndex * 6 * sizeof(GLushort)));
 		MatrixState::popMatrix();
-		s_drawQuadIndex += s_buffer.buffer[i].size;
+		drawQuadIndex += s_buffer.buffer[i].size;
 	}
 }
 
@@ -324,86 +328,7 @@ void GLPainter::bindVBO()
 
 void GLPainter::unbindVBO()
 {
-	s_drawQuadIndex = 0;
 	BoyiaPainterEnv::instance()->unbindVBO();
-}
-
-void GLPainter::paintImage()
-{
-	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-	glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
-
-	glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
-    //绑定纹理
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
-}
-
-void GLPainter::paintQuad()
-{
-	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-	glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
-}
-
-void GLPainter::paintVideo()
-{
-	glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-	if (m_stMatrix)
-	{
-		glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, m_stMatrix);
-	}
-
-	//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-	glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
-	// 绑定纹理
-	glActiveTexture(GL_TEXTURE0);
-	// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
-	// 作者表示自己也很晕
-	// 可能出错信息会驱动GLConsumer去创建EGLImage吧
-	// 纯JAVA实现的情况会不同，蛋疼，艹
-	glBindTexture(GL_TEXTURE_2D, m_cmd.texId);
-}
-
-void GLPainter::paint()
-{
-	KLOG("BaseShape::drawSelf()");
-    if (BoyiaPainterEnv::instance()->available())
-    {
-        MatrixState::pushMatrix();
-		 // 制定使用某套shader程序
-    	BoyiaPainterEnv::instance()->program()->use(m_cmd.type);
-		KLOG("BaseShape::drawSelf()1");
-		 // 初始化变换矩阵
-	    KLOG("BaseShape::drawSelf()2");
-		 // 设置沿Z轴正向位移1
-		//MatrixState::translate(0.0f, 0.0f, 0.0f);
-		KLOG("BaseShape::drawSelf()3");
-		 // 设置绕y轴旋转
-		MatrixState::rotate(m_cmd.rotate.ry, 0, 1, 0);
-		KLOG("BaseShape::drawSelf()4");
-		// 设置绕z轴旋转
-		MatrixState::rotate(m_cmd.rotate.rx, 1, 0, 0);
-
-		KLOG("BaseShape::drawSelf()5");
-		
-		switch (m_cmd.type)
-		{
-		case EShapeVideo:
-			paintVideo();
-			break;
-		case EShapeImage:
-			paintImage();
-			break;
-		default:
-			paintQuad();
-			break;	
-		}
-
-		// 绘制矩形
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*) (s_drawQuadIndex * 6 * sizeof(GLushort)));
-        MatrixState::popMatrix();
-        s_drawQuadIndex += 1;
-    }
 }
 
 }

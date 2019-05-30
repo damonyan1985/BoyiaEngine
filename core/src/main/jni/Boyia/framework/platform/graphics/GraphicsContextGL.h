@@ -61,7 +61,6 @@ public:
 
 private:
 	ItemPainter* currentPainter();
-	LVoid submit(LVoid* ptr);
 	LVoid fillBuffer(LVoid* ptr);
 
 	LRgb   m_brushColor;
