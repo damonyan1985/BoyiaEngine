@@ -53,7 +53,7 @@ class BatchCommandBuffer
 public:
 	BatchCommandBuffer();
 
-	LBool sameMaterial(GLuint texId);
+	bool sameMaterial(GLuint texId);
 	LVoid addBatchCommand();
 	LVoid addBatchCommand(const PaintCommand& cmd);
 	LVoid reset();
@@ -94,10 +94,7 @@ public:
 	static void init();
 	static void paintCommand();
 	static void reset();
-	void paint();
-	void paintImage();
-	void paintQuad();
-	void paintVideo();
+
 	void setScale(float scale);
 	void appendToBuffer();
 	float* stMatrix() const;
@@ -109,7 +106,6 @@ protected:
     float  m_scale;
     float* m_stMatrix;
     static BatchCommandBuffer s_buffer;
-    static int s_drawQuadIndex;
 };
 }
 #endif

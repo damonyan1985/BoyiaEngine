@@ -242,69 +242,6 @@ LVoid GraphicsContextGL::setFont(const LFont& font)
 
 LVoid GraphicsContextGL::reset()
 {
-//    KList<ItemPainter*>::Iterator iter = m_painters.begin();
-//    KList<ItemPainter*>::Iterator iterEnd = m_painters.end();
-//    for (; iter != iterEnd; ++iter)
-//    {
-//        ItemPainter* painter = (*iter);
-//        yanbo::HtmlView* item = (yanbo::HtmlView*)painter->item;
-//        item->setPainter(NULL);
-//        delete painter;
-//    }
-//
-//	m_painters.clear();
-	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-LVoid GraphicsContextGL::submit(LVoid* ptr)
-{
-	yanbo::HtmlView* item = (yanbo::HtmlView*) ptr;
-	ItemPainter* painter = (ItemPainter*)item->painter();
-	if (!painter)
-	{
-		return;
-	}
-
-    // if (item->isClipItem())
-    // {
-    //     KLOG("GraphicsContextGL::submit clip");
-    //     glEnable(GL_SCISSOR_TEST);
-    //     LRect rect = item->clipRect();
-    //     int x = 0;
-    //     int y = 0;
-    //     yanbo::ShaderUtil::screenToGlPixel(
-    //             rect.iTopLeft.iX,
-    //             rect.iBottomRight.iY,
-    //             &x,&y
-    //     );
-    //     glScissor(
-    //             x,
-    //             y,
-    //             rect.GetWidth(),
-    //             rect.GetHeight()
-    //     );
-    // }
-
-    ListPainter::Iterator glIter = painter->painters.begin();
-    ListPainter::Iterator glIterEnd = painter->painters.end();
-    for (; glIter != glIterEnd; ++glIter)
-    {
-        (*glIter)->paint();
-    }
-
-    // if (item->isClipItem())
-    // {
-    //     glDisable(GL_SCISSOR_TEST);//禁用剪裁测试
-    // }
-
-	yanbo::HtmlViewList::Iterator iter    = item->m_children.begin();
-	yanbo::HtmlViewList::Iterator iterEnd = item->m_children.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-        yanbo::HtmlView* childItem = *iter;
-        submit(childItem);
-	}
 }
 
 LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
