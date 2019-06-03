@@ -84,10 +84,13 @@ LVoid InputView::initView()
     switch (m_type)
     {
     case TEXT:
+    case PASSWORD:
+    case FILE:
         m_style.bgColor.m_alpha = 0;
         break;
-    case BUTTON:
     case SUBMIT:
+    case BUTTON:
+    case RESET:
         m_style.bgColor = util::LColor::parseArgbInt(COLOR_LIGHTGRAY);
         break;
     }
