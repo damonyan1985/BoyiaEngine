@@ -24,7 +24,6 @@ InputView::InputView(
     : FormView(id, name, value, title)
     , m_newFont(NULL)
 {
-    initView();
     m_type = TEXT;
     m_value = value;
     m_title = title;
@@ -76,11 +75,22 @@ InputView::InputView(
             m_type = NOTSUPPORTED;
         }
     }
+
+    initView();
 }
 
 LVoid InputView::initView()
 {
-    
+    switch (m_type)
+    {
+    case TEXT:
+        m_style.bgColor.m_alpha = 0;
+        break;
+    case BUTTON:
+    case SUBMIT:
+        m_style.bgColor = util::LColor::parseArgbInt(COLOR_LIGHTGRAY);
+        break;
+    }
     m_style.border.topColor    = COLOR_BLACK;
     m_style.border.leftColor   = COLOR_BLACK;
     m_style.border.rightColor  = COLOR_BLACK;
@@ -257,42 +267,37 @@ LVoid InputView::paint(LGraphicsContext& gc)
     	}
     	break;
 	}
-	
-    if (m_selected)
-    {
-		gc.setBrushStyle(LGraphicsContext::NullBrush);
-        gc.setPenColor(util::LColor::parseRgbInt(COLOR_RED));
-        
-        gc.drawHollowRect(x + m_leftPadding, y, m_width, m_height);
-    }
 }
 
 LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
-    gc.setBrushStyle(LGraphicsContext::SolidBrush);
-    gc.setBrushColor(getStyle()->bgColor);
-
-    //gc.setBrushColor(util::LRgb(200, 10, 0));
-   
-    gc.setPenStyle(LGraphicsContext::NullPen);
-    gc.drawRect(x + m_leftPadding, y, m_width, m_height);
+    if (m_style.bgColor.m_alpha)
+    {
+        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushColor(getStyle()->bgColor);
+       
+        gc.setPenStyle(LGraphicsContext::NullPen);
+        gc.drawRect(x + m_leftPadding, y, m_width, m_height);
+    }
     
     paintBorder(gc, getStyle()->border, x + m_leftPadding, y);
-	
-    if (m_value.GetLength() > 0)
+
+    if (m_value.GetLength() == 0)
     {
-        if (m_type == PASSWORD)
-        {
-            gc.drawText(
-                String('*', m_value.GetLength()), 
-                LRect(x + m_leftPadding, y + 6, 
-                    m_width-m_leftPadding, m_height-6), 
-                util::LGraphicsContext::TextLeft);
-        }
-        else
-        {
-            gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width-m_leftPadding, m_height-6), util::LGraphicsContext::TextLeft);
-        }
+        return;
+    }
+	
+    if (m_type == PASSWORD)
+    {
+        gc.drawText(
+            String('*', m_value.GetLength()), 
+            LRect(x + m_leftPadding, y + 6, 
+                m_width-m_leftPadding, m_height-6), 
+            util::LGraphicsContext::TextLeft);
+    }
+    else
+    {
+        gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width-m_leftPadding, m_height-6), util::LGraphicsContext::TextLeft);
     }
 }
 
@@ -316,8 +321,9 @@ LVoid InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
         
         gc.setPenStyle(LGraphicsContext::SolidPen);
-        paintBorder(gc, getStyle()->border, x, y);
     }
+
+    paintBorder(gc, getStyle()->border, x, y);
 	
     if (m_value.GetLength() > 0) {
         gc.setPenStyle(LGraphicsContext::SolidPen);
