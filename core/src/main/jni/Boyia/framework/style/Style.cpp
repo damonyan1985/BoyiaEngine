@@ -32,7 +32,7 @@ Border::~Border()
 {
 }
 
-void Border::init()
+LVoid Border::init()
 {
 	topColor    = 0;
     leftColor   = 0;

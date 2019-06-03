@@ -24,6 +24,7 @@ InputView::InputView(
     : FormView(id, name, value, title)
     , m_newFont(NULL)
 {
+    initView();
     m_type = TEXT;
     m_value = value;
     m_title = title;
@@ -75,6 +76,23 @@ InputView::InputView(
             m_type = NOTSUPPORTED;
         }
     }
+}
+
+LVoid InputView::initView()
+{
+    
+    m_style.border.topColor    = COLOR_BLACK;
+    m_style.border.leftColor   = COLOR_BLACK;
+    m_style.border.rightColor  = COLOR_BLACK;
+    m_style.border.bottomColor = COLOR_BLACK;
+    m_style.border.topWidth    = 1;
+    m_style.border.leftWidth   = 1;
+    m_style.border.rightWidth  = 1;
+    m_style.border.bottomWidth = 1;
+    m_style.border.topStyle    = LGraphicsContext::SolidPen;
+    m_style.border.leftStyle   = LGraphicsContext::SolidPen;
+    m_style.border.rightStyle  = LGraphicsContext::SolidPen;
+    m_style.border.bottomStyle = LGraphicsContext::SolidPen;
 }
 
 InputView::~InputView()

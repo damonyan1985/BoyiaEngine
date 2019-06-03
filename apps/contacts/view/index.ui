@@ -25,7 +25,7 @@
 <script src="boyiasdk://sdk/View.boyia" />
 <script src="boyiasdk://sdk/ViewDoc.boyia" />
 <script src="boyiasdk://sdk/InputView.boyia" />
-<script src="boyiasdk://sdk/ImageView.boyia" />
+<script src=" a://sdk/ImageView.boyia" />
 <script src="boyiasdk://sdk/AppStack.boyia" />
 <script src="boyiasdk://sdk/App.boyia" />
 <script src="boyiasdk://sdk/Activity.boyia" />

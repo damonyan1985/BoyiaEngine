@@ -20,7 +20,7 @@ public:
 	Border(const Border& border);
 	~Border();
 	const Border& operator=(const Border& border);
-	void init();
+	LVoid init();
 
 public:
 	LInt                          topColor;
