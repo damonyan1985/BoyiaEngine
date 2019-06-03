@@ -91,19 +91,6 @@ LVoid GraphicsContextGL::drawRect(LInt x, LInt y, LInt w, LInt h)
 	drawRect(LRect(x, y, w, h));
 }
 
-LVoid GraphicsContextGL::drawHollowRect(const LRect& rect)
-{
-
-}
-
-LVoid GraphicsContextGL::drawHollowRect(LInt x, LInt y, LInt w, LInt h)
-{
-	drawLine(x, y, x+w, y);
-	drawLine(x, y, x, y+h);
-	drawLine(x+w, y, x+w, y+h);
-	drawLine(x, y+h, x+w, y+h);
-}
-
 LVoid GraphicsContextGL::drawEllipse(const LRect& aRect)
 {
 

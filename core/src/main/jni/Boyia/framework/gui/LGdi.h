@@ -54,10 +54,8 @@ public:
 	virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1) = 0;
 	virtual LVoid drawRect(const LRect& rect) = 0;
 	virtual LVoid drawRect(LInt x, LInt y, LInt w, LInt h) = 0;
-	virtual LVoid drawHollowRect(const LRect& rect) = 0;
-	virtual LVoid drawHollowRect(LInt x, LInt y, LInt w, LInt h) = 0;
 
-	virtual LVoid drawEllipse(const LRect& rect)=0;
+	virtual LVoid drawEllipse(const LRect& rect) = 0;
 
 	// 弧形角的方框
 	virtual LVoid drawRoundRect(const LRect& rect, const LSize& cornerSize) = 0;

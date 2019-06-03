@@ -29,8 +29,6 @@ public:
 	virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1);
 	virtual LVoid drawRect(const LRect& aRect);
 	virtual LVoid drawRect(LInt x, LInt y, LInt w, LInt h);
-	virtual LVoid drawHollowRect(const LRect& rect);
-	virtual LVoid drawHollowRect(LInt x, LInt y, LInt w, LInt h);
 
 	virtual LVoid drawEllipse(const LRect& aRect);
 
