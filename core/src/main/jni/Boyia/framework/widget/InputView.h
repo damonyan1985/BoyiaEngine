@@ -59,6 +59,7 @@ public:
 	LVoid setInputValue(const String& text);
 
 private:
+    LVoid initView();
 	LVoid paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
 	LVoid paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
 	LVoid paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
@@ -66,4 +67,4 @@ private:
 };
 
 }
-#endif /* InputView_H_ */
+#endif /* InputView_h */

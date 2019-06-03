@@ -190,18 +190,6 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
 	    gc.setBrushColor(util::LColor::parseArgbInt(border.topColor));
 		gc.drawRect(x, y, m_width, border.topWidth);
 	}
-	else 
-	{
-		if (m_type == HtmlTags::INPUT)
-		{
-		    gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
-		    gc.setPenColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.setBrushStyle(LGraphicsContext::SolidBrush);
-	        gc.setBrushColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-		    gc.drawRect(x, y, m_width, kDefaultInputBorderWidth);
-		}
-
-	}
 	
 	if (border.leftWidth > 0)
 	{
@@ -210,17 +198,6 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
 		gc.setBrushStyle(LGraphicsContext::SolidBrush);
 	    gc.setBrushColor(util::LColor::parseArgbInt(border.leftColor));
 	    gc.drawRect(x, y, border.leftWidth, m_height);
-	}
-	else
-	{
-		if (m_type == HtmlTags::INPUT)
-		{
-			gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
-			gc.setPenColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.setBrushStyle(LGraphicsContext::SolidBrush);
-	        gc.setBrushColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.drawRect(x, y, kDefaultInputBorderWidth, m_height);
-		}
 	}
 	
 	if (border.bottomWidth > 0)
@@ -231,17 +208,6 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
 	    gc.setBrushColor(util::LColor::parseArgbInt(border.bottomColor));
 	    gc.drawRect(x, y + m_height - border.bottomWidth, m_width, border.bottomWidth);
 	}
-	else
-	{
-		if (m_type == HtmlTags::INPUT)
-		{
-			gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
-			gc.setPenColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.setBrushStyle(LGraphicsContext::SolidBrush);
-	        gc.setBrushColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.drawRect(x, y + m_height - border.bottomWidth, m_width, kDefaultInputBorderWidth);
-		}
-	}
 	
 	if (border.rightWidth > 0)
 	{
@@ -251,18 +217,6 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
 	    gc.setBrushColor(util::LColor::parseArgbInt(border.rightColor));
 	    gc.drawRect(x + m_width - border.rightWidth, y, border.rightWidth, m_height);
 	}
-	else
-	{
-		if (m_type == HtmlTags::INPUT)
-		{
-			gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
-			gc.setPenColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.setBrushStyle(LGraphicsContext::SolidBrush);
-	        gc.setBrushColor(util::LColor::parseRgbInt(COLOR_DARKGRAY));
-			gc.drawRect(x + m_width - border.rightWidth, y, kDefaultInputBorderWidth, m_height);
-		}
-	}
-	
 }
 
 LBool HtmlView::isText() const
