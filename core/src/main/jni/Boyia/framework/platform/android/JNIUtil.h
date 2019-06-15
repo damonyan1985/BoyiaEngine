@@ -39,7 +39,6 @@ public:
 			...);
 
 	static void loadHTML(const String& url, String& stream);
-	static void unzip(const String& zipFile, const String& dir);
 
 	static void setJavaVM(JavaVM *javaVM);
 	static JavaVM* getJavaVM();
