@@ -46,4 +46,5 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/platform/graphics/GraphicsContextGL.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/GLContext.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/Animation.cpp \
-    $(LOCAL_PATH)/framework/platform/arm/ArmFunction.cpp
+    $(LOCAL_PATH)/framework/platform/arm/ArmFunction.cpp \
+    $(LOCAL_PATH)/framework/platform/PlatformBridge.cpp

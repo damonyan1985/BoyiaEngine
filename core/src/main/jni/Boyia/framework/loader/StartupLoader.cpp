@@ -4,6 +4,7 @@
 #include "AutoObject.h"
 #include "BoyiaThread.h"
 #include "JSONParser.h"
+#include "PlatformBridge.h"
 #include <fcntl.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -13,8 +14,8 @@
 
 #define MAX_APPS_SIZE 20
 #define APP_LOAD_URL "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/boyia.json"
-#define APPS_JSON_PATH "/data/data/com.boyia.app/files/apps/boyia.json"
-#define APPS_PATH "/data/data/com.boyia.app/files/apps/"
+//#define APPS_JSON_PATH "/data/data/com.boyia.app/files/apps/boyia.json"
+//#define APPS_PATH "/data/data/com.boyia.app/files/apps/"
 #define APP_JSON "/app.json"
 
 namespace yanbo
@@ -90,7 +91,7 @@ public:
 	AppHandler(const String& name, LBool launchable)
 		: m_launchable(launchable)
 	{
-		m_appDir = _CS(APPS_PATH) + name;
+		m_appDir = _CS(PlatformBridge::getAppPath()) + name;
 		m_appFilePath = m_appDir + _CS("_tmp.zip");
 
 		KFORMATLOG("boyia app AppHandler name=%s", GET_STR(m_appFilePath));
@@ -123,7 +124,7 @@ public:
 		// 解压到应用程序目录
 		if (m_launchable)
 		{
-			JNIUtil::unzip(m_appFilePath, m_appDir);
+			PlatformBridge::unzip(m_appFilePath, m_appDir);
 			FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
 
 			String appJsonPath = m_appDir + _CS(APP_JSON);
@@ -156,12 +157,12 @@ StartupLoader::StartupLoader()
 
 LVoid StartupLoader::startLoad()
 {
-	if (!FileUtil::isExist(APPS_PATH))
+	if (!FileUtil::isExist(PlatformBridge::getAppPath()))
 	{
-		mkdir(APPS_PATH, S_IRWXU);
+		mkdir(PlatformBridge::getAppPath(), S_IRWXU);
 	}
 
-    m_file = fopen(APPS_JSON_PATH, "wb+");
+    m_file = fopen(PlatformBridge::getAppJsonPath(), "wb+");
 
     //String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
     
@@ -172,7 +173,7 @@ LVoid StartupLoader::startLoad()
 
 LVoid StartupLoader::loadApp()
 {
-	if (!FileUtil::isExist(APPS_JSON_PATH))
+	if (!FileUtil::isExist(PlatformBridge::getAppJsonPath()))
 	{
 		return;
 	}
@@ -226,7 +227,7 @@ LVoid StartupLoader::parseConfig()
 {
 	String content;
 
-	String path(_CS(APPS_JSON_PATH), LFalse, LStrlen((LUint8*)APPS_JSON_PATH));
+	String path(_CS(PlatformBridge::getAppJsonPath()), LFalse, LStrlen((LUint8*)PlatformBridge::getAppJsonPath()));
 	util::FileUtil::readFile(path, content);
 	KFORMATLOG("boyia app content=%s", GET_STR(content));
 
@@ -257,14 +258,14 @@ LVoid StartupLoader::parseConfig()
 
 LVoid StartupLoader::upgradeApp(const String& name)
 {
-	String appDir = _CS(APPS_PATH) + name;
+	String appDir = _CS(PlatformBridge::getAppPath()) + name;
 	String appFilePath = appDir + _CS("_tmp.zip");
 	if (FileUtil::isExist(GET_STR(appFilePath)))
 	{
 		// 删除APP目录
 		FileUtil::deleteFile(GET_STR(appDir));
 		// 解压到当前目录
-		JNIUtil::unzip(appFilePath, appDir);
+		PlatformBridge::unzip(appFilePath, appDir);
 		// 删除下载的文件
 		FileUtil::deleteFile(GET_STR(appFilePath));
 	}
@@ -277,7 +278,7 @@ LVoid StartupLoader::startLoadApp()
 	{
 		// 升级App
 		upgradeApp(m_appInfos[id]->name);
-		String appDir = _CS(APPS_PATH) + m_appInfos[id]->name;
+		String appDir = _CS(PlatformBridge::getAppPath()) + m_appInfos[id]->name;
 		
 		LInt versionCode = 0;
 		LBool hasApp = FileUtil::isExist(GET_STR(appDir));

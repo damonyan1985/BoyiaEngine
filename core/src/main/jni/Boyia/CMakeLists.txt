@@ -28,6 +28,7 @@ file(
     "framework/dom/*.cpp"
     "framework/gui/*.cpp"
     "framework/loader/*.cpp"
+    "framework/platform/*.cpp"
     "framework/platform/android/*.cpp"
     "framework/platform/arm/*.cpp"
     "framework/platform/graphics/*.cpp"
