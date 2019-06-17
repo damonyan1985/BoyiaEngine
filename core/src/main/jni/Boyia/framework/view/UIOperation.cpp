@@ -88,8 +88,7 @@ LVoid UIOperation::opApplyDomStyle(LVoid* view)
 	m_msgs->addElement(msg);
 }
 
-// 交换buffer，m_swapMsgs指针作为绘制时使用
-LVoid UIOperation::swapBuffer()
+LVoid UIOperation::swapBufferImpl()
 {
     AutoLock lock(&m_uiMutex);
 		
@@ -97,7 +96,13 @@ LVoid UIOperation::swapBuffer()
     m_msgs = m_swapMsgs;
     m_swapMsgs = buffer;
     m_msgs->clear();
+}
 
+// 交换buffer，m_swapMsgs指针作为绘制时使用
+LVoid UIOperation::swapBuffer()
+{
+    
+	swapBufferImpl();
     UIThread::instance()->uiExecute();
 }
 
