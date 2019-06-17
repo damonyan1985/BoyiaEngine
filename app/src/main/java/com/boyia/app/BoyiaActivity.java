@@ -9,6 +9,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.common.utils.JSONUtil;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.BoyiaApplication;
+import com.squareup.leakcanary.LeakCanary;
 
 import android.content.Context;
 import android.content.Intent;

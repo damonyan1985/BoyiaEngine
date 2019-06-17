@@ -46,6 +46,9 @@ private:
 	LVoid viewSetText(MiniMessage* msg);
 	LVoid viewDraw(MiniMessage* msg);
 
+
+	LVoid swapBufferImpl();
+
 	KVector<MiniMessage*>* m_msgs;
 	KVector<MiniMessage*>* m_swapMsgs;
 	MiniMutex              m_uiMutex;
