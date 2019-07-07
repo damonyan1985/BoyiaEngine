@@ -1,15 +1,14 @@
 #include "FontAndroid.h"
 #include "AutoObject.h"
+#include "JNIUtil.h"
+#include "LGdi.h"
 #include "SalLog.h"
 #include "StringUtils.h"
-#include "LGdi.h"
-#include "JNIUtil.h"
 
-namespace util
-{
-struct JFontAndroid
-{
-	jweak     m_obj;
+namespace util {
+
+struct JFontAndroid {
+    jweak m_obj;
     jmethodID m_getFontWidth;
     jmethodID m_getFontHeight;
     jmethodID m_getTextWidth;
@@ -17,7 +16,8 @@ struct JFontAndroid
     jmethodID m_getLineWidth;
     jmethodID m_getLineText;
     jmethodID m_calcTextLine;
-    AutoJObject object(JNIEnv* env) {
+    AutoJObject object(JNIEnv* env)
+    {
         return getRealObject(env, m_obj);
     }
 };
@@ -25,30 +25,29 @@ struct JFontAndroid
 FontAndroid::FontAndroid()
     : m_privateFont(NULL)
 {
-	KLOG("FontAndroid::FontAndroid()");
-	//JNIEnv* env = getJNIEnv();
-	JNIEnv* env = yanbo::JNIUtil::getEnv();
+    KLOG("FontAndroid::FontAndroid()");
+    //JNIEnv* env = getJNIEnv();
+    JNIEnv* env = yanbo::JNIUtil::getEnv();
 
-	jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaFont");
+    jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaFont");
     jmethodID constructMethod = env->GetMethodID(clazz, "<init>",
-                                           "()V");
+        "()V");
     jobject obj = env->NewObject(clazz, constructMethod);
-    init(env, clazz,  obj);
+    init(env, clazz, obj);
 }
 
 void FontAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
 {
-	KLOG("FontAndroid::init");
-    if (!m_privateFont)
-    {
-    	m_privateFont = new JFontAndroid;
+    KLOG("FontAndroid::init");
+    if (!m_privateFont) {
+        m_privateFont = new JFontAndroid;
     }
-	KLOG("FontAndroid::init3");
-	m_privateFont->m_obj = env->NewGlobalRef(obj);
-	KLOG("FontAndroid::init4");
-	m_privateFont->m_getFontWidth = GetJMethod(env, clazz, "getFontWidth", "(Ljava/lang/String;I)I");
-	m_privateFont->m_getFontHeight = GetJMethod(env, clazz, "getFontHeight", "(I)I");
-	m_privateFont->m_getTextWidth = GetJMethod(env, clazz, "getTextWidth", "(Ljava/lang/String;I)I");
+    KLOG("FontAndroid::init3");
+    m_privateFont->m_obj = env->NewGlobalRef(obj);
+    KLOG("FontAndroid::init4");
+    m_privateFont->m_getFontWidth = GetJMethod(env, clazz, "getFontWidth", "(Ljava/lang/String;I)I");
+    m_privateFont->m_getFontHeight = GetJMethod(env, clazz, "getFontHeight", "(I)I");
+    m_privateFont->m_getTextWidth = GetJMethod(env, clazz, "getTextWidth", "(Ljava/lang/String;I)I");
     m_privateFont->m_getLineSize = GetJMethod(env, clazz, "getLineSize", "()I");
     m_privateFont->m_getLineWidth = GetJMethod(env, clazz, "getLineWidth", "(I)I");
     m_privateFont->m_getLineText = GetJMethod(env, clazz, "getLineText", "(I)Ljava/lang/String;");
@@ -60,19 +59,19 @@ void FontAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
 
 FontAndroid::~FontAndroid()
 {
-	if (m_privateFont != NULL)
-	{
-		JNIEnv* env = yanbo::JNIUtil::getEnv();
+    if (m_privateFont != NULL) {
+        JNIEnv* env = yanbo::JNIUtil::getEnv();
         env->DeleteGlobalRef(m_privateFont->m_obj);
-		delete m_privateFont;
-	}
+        delete m_privateFont;
+    }
 
-	m_privateFont = NULL;
+    m_privateFont = NULL;
 }
 
 LInt FontAndroid::getFontWidth(LUint8 ch, LInt size) const
 {
-	KLOG("FontAndroid::getFontWidth");;
+    KLOG("FontAndroid::getFontWidth");
+    ;
     //StringW strW = chW;
     String astr = ch;
     //util::StringUtils::strWtoStr(chW, astr);
@@ -85,14 +84,14 @@ LInt FontAndroid::getFontWidth(LUint8 ch, LInt size) const
 
     jstring strText = strToJstring(env, (const char*)astr.GetBuffer());
     LInt width = env->CallIntMethod(javaObject.get(), m_privateFont->m_getFontWidth,
-    		strText, size);
+        strText, size);
     env->DeleteLocalRef(strText);
     return width;
 }
 
 LInt FontAndroid::getTextWidth(const String& text, LInt size) const
 {
-	KLOG("FontAndroid::getTextWidth");
+    KLOG("FontAndroid::getTextWidth");
     //String astr;
     //util::StringUtils::strWtoStr(text, astr);
     KLOG("FontAndroid::getTextWidth1");
@@ -101,28 +100,27 @@ LInt FontAndroid::getTextWidth(const String& text, LInt size) const
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     AutoJObject javaObject = m_privateFont->object(env);
     if (!javaObject.get())
-    	return 0;
+        return 0;
 
     KLOG("FontAndroid::getTextWidth2");
     jstring strText = strToJstring(env, (const char*)text.GetBuffer());
     LInt width = env->CallIntMethod(javaObject.get(), m_privateFont->m_getTextWidth,
-    		strText, size);
+        strText, size);
     env->DeleteLocalRef(strText);
     return width;
 }
 
 LInt FontAndroid::getFontHeight(LInt size) const
 {
-	KLOG("FontAndroid::getFontHeight");
+    KLOG("FontAndroid::getFontHeight");
 
-	if (m_privateFont == NULL)
-	{
-		KLOG("FontAndroid::getFontHeight0");
+    if (m_privateFont == NULL) {
+        KLOG("FontAndroid::getFontHeight0");
         return 0;
-	}
+    }
     //JNIEnv* env = m_privateFont->m_env;
 
-	JNIEnv* env = yanbo::JNIUtil::getEnv();
+    JNIEnv* env = yanbo::JNIUtil::getEnv();
     KLOG("FontAndroid::getFontHeight1");
     AutoJObject javaObject = m_privateFont->object(env);
     KLOG("FontAndroid::getFontHeight2");
@@ -135,8 +133,7 @@ LInt FontAndroid::getFontHeight(LInt size) const
 
 LInt FontAndroid::getLineSize() const
 {
-    if (m_privateFont == NULL)
-    {
+    if (m_privateFont == NULL) {
         KLOG("FontAndroid::getFontHeight0");
         return 0;
     }
@@ -154,8 +151,7 @@ LInt FontAndroid::getLineSize() const
 
 LInt FontAndroid::getLineWidth(LInt index) const
 {
-    if (m_privateFont == NULL)
-    {
+    if (m_privateFont == NULL) {
         KLOG("FontAndroid::getFontHeight0");
         return 0;
     }
@@ -173,8 +169,7 @@ LInt FontAndroid::getLineWidth(LInt index) const
 
 LVoid FontAndroid::getLineText(LInt index, String& text)
 {
-    if (m_privateFont == NULL)
-    {
+    if (m_privateFont == NULL) {
         KLOG("FontAndroid::getFontHeight0");
         return;
     }
@@ -188,15 +183,14 @@ LVoid FontAndroid::getLineText(LInt index, String& text)
         return;
 
     KLOG("FontAndroid::getFontHeight1");
-    jstring jstr = (jstring) env->CallObjectMethod(javaObject.get(), m_privateFont->m_getLineText, index);
+    jstring jstr = (jstring)env->CallObjectMethod(javaObject.get(), m_privateFont->m_getLineText, index);
     jstringTostr(env, jstr, text);
     env->DeleteLocalRef(jstr);
 }
 
 LInt FontAndroid::calcTextLine(const String& text, LInt maxWidth, LInt fontSize) const
 {
-    if (m_privateFont == NULL)
-    {
+    if (m_privateFont == NULL) {
         KLOG("FontAndroid::calcTextLine0");
         return 0;
     }
@@ -213,20 +207,18 @@ LInt FontAndroid::calcTextLine(const String& text, LInt maxWidth, LInt fontSize)
 
     jstring strText = strToJstring(env, (const char*)text.GetBuffer());
     LInt longestWidth = env->CallIntMethod(
-            javaObject.get(),
-            m_privateFont->m_calcTextLine,
-            strText,
-            maxWidth,
-            fontSize
-    );
+        javaObject.get(),
+        m_privateFont->m_calcTextLine,
+        strText,
+        maxWidth,
+        fontSize);
 
     env->DeleteLocalRef(strText);
 
     return longestWidth;
 }
 
-class AndroidFont : public LFont
-{
+class AndroidFont : public LFont {
 public:
     AndroidFont(const LFont& font);
     virtual ~AndroidFont();
@@ -251,7 +243,7 @@ AndroidFont::AndroidFont(const LFont& font)
 
 AndroidFont::~AndroidFont()
 {
-	delete m_fontPort;
+    delete m_fontPort;
 }
 
 LInt AndroidFont::getFontHeight() const
@@ -281,7 +273,7 @@ LInt AndroidFont::getLineWidth(LInt index) const
 
 LVoid AndroidFont::getLineText(LInt index, String& text)
 {
-	m_fontPort->getLineText(index, text);
+    m_fontPort->getLineText(index, text);
 }
 
 LInt AndroidFont::calcTextLine(const String& text, LInt maxWidth) const
@@ -293,5 +285,4 @@ LFont* LFont::create(const LFont& font)
 {
     return new AndroidFont(font);
 }
-
 }

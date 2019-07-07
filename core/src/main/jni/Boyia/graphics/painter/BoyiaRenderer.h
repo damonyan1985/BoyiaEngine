@@ -8,47 +8,41 @@
 #define VBO_SIZE 1024
 #define INDEX_SIZE (VBO_SIZE * 6)
 
-namespace yanbo
-{
-class Vec3D
-{
+namespace yanbo {
+class Vec3D {
 public:
-	Vec3D();
+    Vec3D();
 
     float x;
     float y;
     float z;
 };
 
-class TexVec
-{
+class TexVec {
 public:
-	TexVec();
+    TexVec();
 
-	float u;
-	float v;
+    float u;
+    float v;
 };
 
-struct Vertex
-{
-	Vec3D       vec3D;
-	LRgb        color;
-	TexVec      texCoord;
+struct Vertex {
+    Vec3D vec3D;
+    LRgb color;
+    TexVec texCoord;
 };
 
-struct Quad
-{
-	Vertex topLeft;
-	Vertex topRight;
-	Vertex bottomRight;
-	Vertex bottomLeft;
+struct Quad {
+    Vertex topLeft;
+    Vertex topRight;
+    Vertex bottomRight;
+    Vertex bottomLeft;
 };
 
-class BoyiaRenderer
-{
+class BoyiaRenderer {
 public:
-	BoyiaRenderer();
-	~BoyiaRenderer();
+    BoyiaRenderer();
+    ~BoyiaRenderer();
     LVoid createVBO();
     LVoid appendQuad(const Quad& quad);
     LVoid bind();
@@ -56,15 +50,15 @@ public:
     LVoid setupIndices();
 
 private:
-	LVoid bindPosition();
+    LVoid bindPosition();
 
-    Quad     m_quads[VBO_SIZE];
-	LUint16  m_indices[INDEX_SIZE];
-	// 顶点和索引两个缓冲区
-	LUint32   m_buffersVBO[2];
-	LUint32   m_buffersVAO;
+    Quad m_quads[VBO_SIZE];
+    LUint16 m_indices[INDEX_SIZE];
+    // 顶点和索引两个缓冲区
+    LUint32 m_buffersVBO[2];
+    LUint32 m_buffersVAO;
     // 缓冲区矩形个数
-	LInt      m_quadNum;
+    LInt m_quadNum;
 };
-}
+} // namespace yanbo
 #endif

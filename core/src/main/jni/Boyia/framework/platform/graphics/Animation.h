@@ -1,81 +1,74 @@
 #ifndef Animation_h
 #define Animation_h
 
-#include "HtmlView.h"
-#include "MiniThread.h"
-#include "KList.h"
 #include "BoyiaPtr.h"
+#include "HtmlView.h"
+#include "KList.h"
 #include "LGraphic.h"
+#include "MiniThread.h"
 
-namespace yanbo
-{
-class Animation : public BoyiaRef
-{
+namespace yanbo {
+
+class Animation : public BoyiaRef {
 public:
-	enum AnimType
-	{
-		ENone,
-		EScale,
+    enum AnimType {
+        ENone,
+        EScale,
         EOpacity,
         ETranslate,
-	};
-	Animation(HtmlView* item);
-	virtual ~Animation();
+    };
+    Animation(HtmlView* item);
+    virtual ~Animation();
 
-	LVoid setDuration(float duration);
-	virtual LBool isFinish();
-	virtual LVoid     step();
-	virtual LInt      type();
+    LVoid setDuration(float duration);
+    virtual LBool isFinish();
+    virtual LVoid step();
+    virtual LInt type();
 
 protected:
-	HtmlView* m_item;
-	LInt   m_count;
-	float  m_duration;
+    HtmlView* m_item;
+    LInt m_count;
+    float m_duration;
 };
 
-class ScaleAnimation : public Animation
-{
+class ScaleAnimation : public Animation {
 public:
-	ScaleAnimation(HtmlView* item);
+    ScaleAnimation(HtmlView* item);
     virtual ~ScaleAnimation();
     LVoid setScale(float scale);
-	virtual LVoid step();
+    virtual LVoid step();
 
 private:
-	static LVoid setDeltaScale(HtmlView* item, float dt);
+    static LVoid setDeltaScale(HtmlView* item, float dt);
 
-	float m_deltaScale;
-	float m_scale;
+    float m_deltaScale;
+    float m_scale;
 };
 
-class OpacityAnimation : public Animation
-{
+class OpacityAnimation : public Animation {
 public:
-	OpacityAnimation(HtmlView* item);
-	virtual LVoid step();
-	void setOpacity(LInt opacity);
+    OpacityAnimation(HtmlView* item);
+    virtual LVoid step();
+    void setOpacity(LInt opacity);
 
 private:
-	static LVoid updateChildOpacity(HtmlView* item, LUint8 parentOpacity);
-	LUint8 m_opacity;
+    static LVoid updateChildOpacity(HtmlView* item, LUint8 parentOpacity);
+    LUint8 m_opacity;
 };
 
-class TranslateAnimation : public Animation
-{
+class TranslateAnimation : public Animation {
 public:
-	TranslateAnimation(HtmlView* item);
-	virtual LVoid step();
-	void setPosition(const LPoint& point);
+    TranslateAnimation(HtmlView* item);
+    virtual LVoid step();
+    void setPosition(const LPoint& point);
 
 private:
-	LPoint m_point;
-	LPoint m_deltaPoint;
+    LPoint m_point;
+    LPoint m_deltaPoint;
 };
 
-
-typedef KList<BoyiaPtr<Animation> > AnimList;
-class AnimationTask : public BoyiaRef
-{
+typedef KList<BoyiaPtr<Animation>> AnimList;
+class AnimationTask : public BoyiaRef {
 public:
     virtual ~AnimationTask();
     LVoid addAnimation(Animation* anim);
@@ -86,23 +79,22 @@ private:
     AnimList m_animList;
 };
 
-typedef KList<BoyiaPtr<AnimationTask> > AnimTaskList;
-class AnimationThread : public MiniThread
-{
+typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
+class AnimationThread : public MiniThread {
 public:
-	static AnimationThread* instance();
-	virtual ~AnimationThread();
+    static AnimationThread* instance();
+    virtual ~AnimationThread();
 
-	LVoid runTask(AnimationTask* task);
-	virtual LVoid run();
-	LVoid runTasks();
+    LVoid runTask(AnimationTask* task);
+    virtual LVoid run();
+    LVoid runTasks();
 
 private:
-	AnimationThread();
-	LVoid addTask(AnimationTask* task);
+    AnimationThread();
+    LVoid addTask(AnimationTask* task);
 
-	AnimTaskList         m_taskList;
-    LBool                m_continue;
+    AnimTaskList m_taskList;
+    LBool m_continue;
     static AnimationThread* s_inst;
 };
 }

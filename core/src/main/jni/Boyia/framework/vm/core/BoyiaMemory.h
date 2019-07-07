@@ -4,8 +4,8 @@
 #include "PlatformLib.h"
 
 #define FAST_NEW(type) (type*)FastMalloc(sizeof(type))
-#define FAST_NEW_ARRAY(type, n) (type*)FastMalloc(n*sizeof(type))
-#define FAST_DELETE(p)  FastFree(p)
+#define FAST_NEW_ARRAY(type, n) (type*)FastMalloc(n * sizeof(type))
+#define FAST_DELETE(p) FastFree(p)
 
 LVoid* FastMalloc(LInt size);
 LVoid FastFree(LVoid* data);

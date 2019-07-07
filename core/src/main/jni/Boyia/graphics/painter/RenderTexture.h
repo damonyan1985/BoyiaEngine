@@ -4,14 +4,12 @@
 #include "MiniTextureCache.h"
 #include <GLES3/gl3.h>
 
-namespace yanbo
-{
+namespace yanbo {
 // 利用FBO做离屏渲染
-class RenderTexture
-{
+class RenderTexture {
 public:
-	RenderTexture();
-	~RenderTexture();
+    RenderTexture();
+    ~RenderTexture();
 
     LVoid initFBO(LInt width, LInt height);
     LVoid bind();
@@ -19,8 +17,8 @@ public:
 
 private:
     MiniTexture* m_tex;
-	GLuint       m_fbo;
-	GLuint       m_rbo;
+    GLuint m_fbo;
+    GLuint m_rbo;
 };
-}
+} // namespace yanbo
 #endif

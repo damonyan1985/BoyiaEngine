@@ -10,62 +10,59 @@
 #define BlockView_h
 
 #include "HtmlView.h"
-namespace yanbo
-{
+namespace yanbo {
 
 // block item
-class BlockView : public HtmlView
-{
+class BlockView : public HtmlView {
 public:
-	BlockView(const String& id, LBool selectable);
-	
-	virtual ~BlockView();
-	
-public:
-	// layout method inline or block child
-	LVoid setChildrenInline(LBool isInline);
-	LBool isChildrenInline();
+    BlockView(const String& id, LBool selectable);
 
-	// add create anonymous or normal child
+    virtual ~BlockView();
+
+public:
+    // layout method inline or block child
+    LVoid setChildrenInline(LBool isInline);
+    LBool isChildrenInline();
+
+    // add create anonymous or normal child
     virtual LVoid addChild(HtmlView* child);
-	LVoid addChild(HtmlView* child, LBool isNotAnonymousBlock);
+    LVoid addChild(HtmlView* child, LBool isNotAnonymousBlock);
 
-	// layer layout
-	virtual LVoid layout();
-	LVoid layoutBlock(LBool relayoutChildren);
-	LVoid layoutBlockChildren(LBool relayoutChildren);
-	LVoid layoutInlineChildren();
-	// layout block child
-	LVoid layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
+    // layer layout
+    virtual LVoid layout();
+    LVoid layoutBlock(LBool relayoutChildren);
+    LVoid layoutBlockChildren(LBool relayoutChildren);
+    LVoid layoutInlineChildren();
+    // layout block child
+    LVoid layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight);
 
-	LVoid layoutPositionChild(HtmlView* child);
-	LVoid makeChildrenNonInline(HtmlView* block);
-	BlockView* createAnonymousBlock();
+    LVoid layoutPositionChild(HtmlView* child);
+    LVoid makeChildrenNonInline(HtmlView* block);
+    BlockView* createAnonymousBlock();
 
-	virtual LBool isBlockView() const;
-	LVoid setIsAnonymousBlock(LBool isAnonymous);
-	virtual LBool isAnonymousBlock();
+    virtual LBool isBlockView() const;
+    LVoid setIsAnonymousBlock(LBool isAnonymous);
+    virtual LBool isAnonymousBlock();
 
-	LVoid setScrollPos(LInt x, LInt y);
-	LInt getScrollXPos() const;
-	LInt getScrollYPos() const;
-	LBool canScroll() const;
+    LVoid setScrollPos(LInt x, LInt y);
+    LInt getScrollXPos() const;
+    LInt getScrollYPos() const;
+    LBool canScroll() const;
 
-	virtual LInt getHeight() const;
-	// Can scroll max height
-	LInt scrollHeight() const;
+    virtual LInt getHeight() const;
+    // Can scroll max height
+    LInt scrollHeight() const;
 
-	LVoid insertChild(HtmlViewList::Iterator& iter, HtmlView* child);
+    LVoid insertChild(HtmlViewList::Iterator& iter, HtmlView* child);
 
 private:
-	LBool           m_isChildrenInline;
-	LBool           m_isAnonymous;
-	/** The vertical scroll position of this item. */
-	LInt            m_scrollY;
+    LBool m_isChildrenInline;
+    LBool m_isAnonymous;
+    /** The vertical scroll position of this item. */
+    LInt m_scrollY;
 
-	/** The horisontal scroll position of this item */
-	LInt            m_scrollX;
+    /** The horisontal scroll position of this item */
+    LInt m_scrollX;
 };
-
 }
 #endif /* BlockView_H_ */

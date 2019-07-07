@@ -13,12 +13,12 @@ class MiniTexture : public BoyiaRef
 {
 public:
 	MiniTexture();
-	LVoid initWithData(LVoid* data, LUint key, LInt width, LInt height);
+	LVoid initWithData(LVoid *data, LUint key, LInt width, LInt height);
 
 	virtual ~MiniTexture();
 
 	GLuint texId;
-	LUint  texKey;
+	LUint texKey;
 	LInt width;
 	LInt height;
 };
@@ -28,26 +28,26 @@ class TexturePair : public BoyiaRef
 public:
 	TexturePair();
 
-	HtmlView* item;
+	HtmlView *item;
 	BoyiaPtr<MiniTexture> tex;
 };
 
-typedef KList<BoyiaPtr<TexturePair> > TextureMap;
+typedef KList<BoyiaPtr<TexturePair>> TextureMap;
 class MiniTextureCache
 {
 public:
-	static MiniTextureCache* getInst();
+	static MiniTextureCache *getInst();
 	LVoid clear();
-	MiniTexture* put(const LImage* image);
-	MiniTexture* find(LVoid* image);
-    MiniTexture* updateTexture(const LImage* image);
+	MiniTexture *put(const LImage *image);
+	MiniTexture *find(LVoid *image);
+	MiniTexture *updateTexture(const LImage *image);
 
 private:
-    MiniTexture* fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key);
-    MiniTexture* find(HtmlView* item, LUint key);
+	MiniTexture *fetchTexture(HtmlView *item, const LRect &rect, const LImage *image, LUint key);
+	MiniTexture *find(HtmlView *item, LUint key);
 
-    TextureMap m_texMap;
-    //static MiniTextureCache* s_instance;
+	TextureMap m_texMap;
+	//static MiniTextureCache* s_instance;
 };
-}
+} // namespace yanbo
 #endif

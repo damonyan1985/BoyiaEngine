@@ -6,17 +6,16 @@
 #include <ft2build.h>
 #include <freetype/freetype.h>
 
-namespace yanbo
-{
-class FontFreeType
-{
+namespace yanbo {
+
+class FontFreeType {
 public:
-	FontFreeType();
-	LVoid initFont(const String& buffer);
+    FontFreeType();
+    LVoid initFont(const String& buffer);
 
 private:
-	FT_Library m_ftLibrary;
-	FT_Face    m_face;
+    FT_Library m_ftLibrary;
+    FT_Face m_face;
 };
 }
 

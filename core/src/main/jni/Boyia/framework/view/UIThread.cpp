@@ -1,20 +1,19 @@
 #include "UIThread.h"
-#include "GraphicsContextGL.h"
-#include "KList.h"
 #include "AutoLock.h"
-#include "MiniMutex.h"
 #include "GLContext.h"
+#include "GraphicsContextGL.h"
 #include "HtmlView.h"
-#include "UIView.h"
-#include "ShaderUtil.h"
-#include "MatrixState.h"
 #include "InputView.h"
-#include "VideoView.h"
-#include "UIOperation.h"
+#include "KList.h"
+#include "MatrixState.h"
+#include "MiniMutex.h"
 #include "SalLog.h"
+#include "ShaderUtil.h"
+#include "UIOperation.h"
+#include "UIView.h"
+#include "VideoView.h"
 
-namespace yanbo
-{
+namespace yanbo {
 UIThread::UIThread()
     : m_gc(NULL)
 {
@@ -67,137 +66,104 @@ LVoid UIThread::submit()
 
 LVoid UIThread::destroy()
 {
-	MiniMessage* msg = obtain();
-	msg->type = UI_DESTROY;
-	postMessage(msg);
+    MiniMessage* msg = obtain();
+    msg->type = UI_DESTROY;
+    postMessage(msg);
 }
 
 LVoid UIThread::initContext(LVoid* win)
 {
-	m_context.setWindow(win);
-	MiniMessage* msg = obtain();
-	msg->type = UI_INIT;
-	postMessage(msg);
+    m_context.setWindow(win);
+    MiniMessage* msg = obtain();
+    msg->type = UI_INIT;
+    postMessage(msg);
 }
 
 LVoid UIThread::handleMessage(MiniMessage* msg)
 {
-    switch (msg->type)
-    {
-    case UI_INIT:
-         {
-             initGL();
-         }
-         break;
-    case UI_DRAW:
-         {
-             drawUI(msg->obj);
-         }
-         break;
-    case UI_DRAWONLY:
-        {
-            yanbo::HtmlView* item = static_cast<yanbo::HtmlView*>(msg->obj);
-            if (item)
-            {
-                item->paint(*m_gc);
-            }
+    switch (msg->type) {
+    case UI_INIT: {
+        initGL();
+    } break;
+    case UI_DRAW: {
+        drawUI(msg->obj);
+    } break;
+    case UI_DRAWONLY: {
+        yanbo::HtmlView* item = static_cast<yanbo::HtmlView*>(msg->obj);
+        if (item) {
+            item->paint(*m_gc);
         }
-        break;
-    case UI_TOUCH_EVENT:
-        {
-            LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
-            UIView::getInstance()->handleTouchEvent(*evt);
-            delete evt;
-            //submit();
-            flush();
+    } break;
+    case UI_TOUCH_EVENT: {
+        LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
+        UIView::getInstance()->handleTouchEvent(*evt);
+        delete evt;
+        //submit();
+        flush();
+    } break;
+    case UI_KEY_EVENT: {
+        LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
+        UIView::getInstance()->handleKeyEvent(*evt);
+        delete evt;
+    } break;
+    case UI_SETINPUT: {
+        String text(_CS(msg->obj), LTrue, msg->arg0);
+        InputView* view = (InputView*)msg->arg1;
+        view->setInputValue(text);
+        drawUI(view);
+    } break;
+    case UI_VIDEO_UPDATE: {
+        drawUI((LVoid*)msg->arg0);
+    } break;
+    case UI_IMAGE_LOADED: {
+        if (!msg->arg0)
+            return;
+        reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
+    } break;
+    case UI_OP_EXEC: {
+        UIOperation::instance()->execute();
+        flush();
+        //submit();
+    } break;
+    case UI_SUBMIT: {
+        flush();
+    } break;
+    case UI_ON_KEYBOARD_SHOW: {
+        HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+        LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
+        LInt y = topLeft.iY + view->getYpos();
+        KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
+        if (y < ShaderUtil::screenWidth() - msg->arg1) {
+            return;
         }
-        break;
-   case UI_KEY_EVENT:
-        {
-            LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
-            UIView::getInstance()->handleKeyEvent(*evt);
-            delete evt;
-        }
-		break;    
-    case UI_SETINPUT:
-        {
-            String text(_CS(msg->obj), LTrue, msg->arg0);
-            InputView* view = (InputView*) msg->arg1;
-            view->setInputValue(text);
-            drawUI(view);
-        }
-        break;
-    case UI_VIDEO_UPDATE:
-        {
-            drawUI((LVoid*)msg->arg0);
-        }
-        break;
-    case UI_IMAGE_LOADED:
-        {
-            if (!msg->arg0) return;
-            reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
-        }
-		break;    
-    case UI_OP_EXEC:
-        {
-            UIOperation::instance()->execute();
-            flush();
-            //submit(); 
-        }
-        break;
-    case UI_SUBMIT:
-        {
-            flush();
-        }
-        break;
-    case UI_ON_KEYBOARD_SHOW:
-        {
-            HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
-            LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
-            LInt y = topLeft.iY + view->getYpos();
-            KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
-            if (y < ShaderUtil::screenWidth() - msg->arg1)
-            {
-                return;
-            }
 
-            HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
-             
-                    
-            rootView->setYpos(rootView->getYpos() - msg->arg1);
-            
-            rootView->paint(*m_gc);
-            flush();
-        }
-        break;
-    case UI_ON_KEYBOARD_HIDE:
-        {
-            HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
-            HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
-            if (rootView->getYpos() == 0)
-            {
-                return;
-            }
+        HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
 
-            rootView->setYpos(rootView->getYpos() + msg->arg1);
-            rootView->paint(*m_gc);
-            flush();
+        rootView->setYpos(rootView->getYpos() - msg->arg1);
+
+        rootView->paint(*m_gc);
+        flush();
+    } break;
+    case UI_ON_KEYBOARD_HIDE: {
+        HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+        HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+        if (rootView->getYpos() == 0) {
+            return;
         }
-        break;
-    case UI_DESTROY:
-        {
-            m_context.destroyGL();
-            m_continue = LFalse;
-        }
-    case UI_RESET:
-        {
-            resetGL();
-        }
-        break;
+
+        rootView->setYpos(rootView->getYpos() + msg->arg1);
+        rootView->paint(*m_gc);
+        flush();
+    } break;
+    case UI_DESTROY: {
+        m_context.destroyGL();
+        m_continue = LFalse;
+    }
+    case UI_RESET: {
+        resetGL();
+    } break;
     }
 }
-
-
 
 LVoid UIThread::initGL()
 {
@@ -219,7 +185,7 @@ LVoid UIThread::initGL()
     MatrixState::setProjectFrustum(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, 1.0f, 50);
     //yanbo::MatrixState::setProjectOrtho(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, -1.0f, 1.0f);
 
-    MatrixState::setCamera(0,0,1,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    MatrixState::setCamera(0, 0, 1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     MatrixState::copyMVMatrix();
 
     MatrixState::setInitStack();
@@ -266,9 +232,8 @@ LVoid UIThread::imageLoaded(LIntPtr item)
 
 LVoid UIThread::drawUI(LVoid* view)
 {
-    HtmlView* item = (HtmlView*) view;
-    if (item)
-    {
+    HtmlView* item = (HtmlView*)view;
+    if (item) {
         item->paint(*m_gc);
     }
 

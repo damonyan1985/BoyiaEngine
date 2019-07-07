@@ -10,35 +10,33 @@
 #include "MiniMutex.h"
 #include <pthread.h>
 
-namespace yanbo
-{
+namespace yanbo {
 
-class MiniThread
-{
+class MiniThread {
 public:
-	MiniThread();
-	virtual ~MiniThread();
+    MiniThread();
+    virtual ~MiniThread();
 
-	void						start();
+    void start();
 
-    int				            wait();
-    void 			            waitOnNotify();
-    void				        notify();
-    void                        waitTimeOut(long time);
-    int                         getId();
+    int wait();
+    void waitOnNotify();
+    void notify();
+    void waitTimeOut(long time);
+    int getId();
 
-    static  void                sleepMS(long time);
-    virtual void				stop();
-
-protected:
-    virtual void                run() = 0;
-    static void*                startThread(void* ptr);
+    static void sleepMS(long time);
+    virtual void stop();
 
 protected:
-    pthread_t                   m_thread;
-    pthread_cond_t		        m_condition;
-    MiniMutex     	            m_lock;
-    bool                        m_running;
+    virtual void run() = 0;
+    static void* startThread(void* ptr);
+
+protected:
+    pthread_t m_thread;
+    pthread_cond_t m_condition;
+    MiniMutex m_lock;
+    bool m_running;
 };
 }
 #endif

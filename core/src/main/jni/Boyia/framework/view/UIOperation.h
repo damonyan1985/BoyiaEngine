@@ -5,16 +5,13 @@
 #include "MiniMessageQueue.h"
 #include "UtilString.h"
 
-namespace yanbo
-{
+namespace yanbo {
 // UI线程一切操作【现有】Widget DOM必须走UIOperation
 // 最后将由PaintThread来执行UIOperation::execute()
 // 来完成绘制工作
-class UIOperation : public MiniMessageCache
-{
+class UIOperation : public MiniMessageCache {
 public:
-	enum UIOpType
-	{
+    enum UIOpType {
         UIOP_ADDCHILD,
         UIOP_SETINPUT,
         UIOP_SETIMAGE_URL,
@@ -22,18 +19,18 @@ public:
         UIOP_SETTEXT,
         UIOP_DRAW,
         UIOP_APPLY_DOM_STYLE,
-	};
+    };
 
-	static UIOperation* instance();
+    static UIOperation* instance();
 
-	UIOperation();
-	~UIOperation();
+    UIOperation();
+    ~UIOperation();
 
-	LVoid execute();
-	virtual MiniMessage* obtain();
-	LVoid swapBuffer();
+    LVoid execute();
+    virtual MiniMessage* obtain();
+    LVoid swapBuffer();
 
-	// operation
+    // operation
     LVoid opSetText(LVoid* view, const String& text);
     LVoid opAddChild(LVoid* view, LVoid* child);
     LVoid opSetImageUrl(LVoid* view, const String& url);
@@ -42,16 +39,15 @@ public:
     LVoid opApplyDomStyle(LVoid* view);
 
 private:
-	LVoid viewAddChild(MiniMessage* msg);
-	LVoid viewSetText(MiniMessage* msg);
-	LVoid viewDraw(MiniMessage* msg);
+    LVoid viewAddChild(MiniMessage* msg);
+    LVoid viewSetText(MiniMessage* msg);
+    LVoid viewDraw(MiniMessage* msg);
 
+    LVoid swapBufferImpl();
 
-	LVoid swapBufferImpl();
-
-	KVector<MiniMessage*>* m_msgs;
-	KVector<MiniMessage*>* m_swapMsgs;
-	MiniMutex              m_uiMutex;
+    KVector<MiniMessage*>* m_msgs;
+    KVector<MiniMessage*>* m_swapMsgs;
+    MiniMutex m_uiMutex;
 };
 }
 #endif

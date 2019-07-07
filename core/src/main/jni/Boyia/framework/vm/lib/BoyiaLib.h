@@ -3,14 +3,13 @@
 
 #include "BoyiaCore.h"
 
-enum BYValueType
-{
-	BY_CHAR = 2,
-	BY_INT,
-	BY_STRING,
-	BY_FUN,
-	BY_NAVCLASS,
-	BY_CLASS,
+enum BYValueType {
+    BY_CHAR = 2,
+    BY_INT,
+    BY_STRING,
+    BY_FUN,
+    BY_NAVCLASS,
+    BY_CLASS,
 };
 
 char* convertMStr2Str(BoyiaStr* str);
@@ -92,4 +91,3 @@ LInt setImageUrl();
 LInt viewCommit();
 
 #endif // !BoyiaLib_h
-

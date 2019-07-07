@@ -1,111 +1,104 @@
 #ifndef GLPainter_h
 #define GLPainter_h
 
+#include "BoyiaRenderer.h"
+#include "KListMap.h"
 #include "KVector.h"
 #include "LGdi.h"
-#include "KListMap.h"
 #include "MiniTextureCache.h"
-#include "BoyiaRenderer.h"
-#include <jni.h>
 #include <GLES3/gl3.h>
+#include <jni.h>
 //#include <GLES2/gl2ext.h>
 
 using namespace util;
 
-namespace yanbo
-{
-class RotateInfo
-{
+namespace yanbo {
+class RotateInfo {
 public:
-	RotateInfo();
+    RotateInfo();
 
-	float rx;
-	float ry;
-	float rz;
+    float rx;
+    float ry;
+    float rz;
 };
-class PaintCommand
-{
+class PaintCommand {
 public:
-	PaintCommand();
+    PaintCommand();
 
-	LInt       top;
+    LInt top;
 
-	Quad       quad;
-	RotateInfo rotate;
-	GLuint     texId;
-	LInt       type;
-	float*     matrix;
+    Quad quad;
+    RotateInfo rotate;
+    GLuint texId;
+    LInt type;
+    float* matrix;
 };
 
-class BatchCommand
-{
+class BatchCommand {
 public:
-	BatchCommand();
+    BatchCommand();
 
-	LInt       type;
-	GLuint     texId;
-	LInt       size;
-	float*     matrix;
+    LInt type;
+    GLuint texId;
+    LInt size;
+    float* matrix;
 };
 
-class BatchCommandBuffer
-{
+class BatchCommandBuffer {
 public:
-	BatchCommandBuffer();
+    BatchCommandBuffer();
 
-	bool sameMaterial(GLuint texId);
-	LVoid addBatchCommand();
-	LVoid addBatchCommand(const PaintCommand& cmd);
-	LVoid reset();
+    bool sameMaterial(GLuint texId);
+    LVoid addBatchCommand();
+    LVoid addBatchCommand(const PaintCommand& cmd);
+    LVoid reset();
 
-	BatchCommand buffer[INDEX_SIZE];
-	LInt size;
+    BatchCommand buffer[INDEX_SIZE];
+    LInt size;
 };
 
-class GLPainter : public BoyiaRef
-{
+class GLPainter : public BoyiaRef {
 public:
-	enum ShapeType
-	{
-		EShapeNone = 0,
-		EShapeLine,
-		EShapeRect,
-		EShapeString,
-		EShapeImage,
-		EShapeVideo,
-	};
+    enum ShapeType {
+        EShapeNone = 0,
+        EShapeLine,
+        EShapeRect,
+        EShapeString,
+        EShapeImage,
+        EShapeVideo,
+    };
 
 public:
-	GLPainter();
-	virtual ~GLPainter();
+    GLPainter();
+    virtual ~GLPainter();
 
-	static void bindVBO();
-	static void unbindVBO();
+    static void bindVBO();
+    static void unbindVBO();
 
 public:
-	void setColor(const LRgb& color);
+    void setColor(const LRgb& color);
 
-	void setRect(const LRect& rect);
-	void setLine(const LPoint& p1, const LPoint& p2);
-	void setImage(MiniTexture* tex, const LRect& rect);
-	void setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
-	void setVideo(MiniTexture* tex, const LRect& rect);
+    void setRect(const LRect& rect);
+    void setLine(const LPoint& p1, const LPoint& p2);
+    void setImage(MiniTexture* tex, const LRect& rect);
+    void setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
+    void setVideo(MiniTexture* tex, const LRect& rect);
 
-	static void init();
-	static void paintCommand();
-	static void reset();
+    static void init();
+    static void paintCommand();
+    static void reset();
 
-	void setScale(float scale);
-	void appendToBuffer();
-	float* stMatrix() const;
+    void setScale(float scale);
+    void appendToBuffer();
+    float* stMatrix() const;
 
 protected:
-	void setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
+    void setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
 
-	PaintCommand m_cmd;
-    float  m_scale;
+    PaintCommand m_cmd;
+    float m_scale;
     float* m_stMatrix;
     static BatchCommandBuffer s_buffer;
 };
-}
+} // namespace yanbo
 #endif

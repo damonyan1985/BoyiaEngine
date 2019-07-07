@@ -10,24 +10,21 @@
 
 #include "HtmlView.h"
 
-namespace yanbo
-{
+namespace yanbo {
 
-class InlineView : public HtmlView
-{
+class InlineView : public HtmlView {
 public:
-	InlineView(const String& id, LBool selectable);
-	virtual ~InlineView();
+    InlineView(const String& id, LBool selectable);
+    virtual ~InlineView();
 
-	virtual void addChild(HtmlView* child);
+    virtual void addChild(HtmlView* child);
 
 public:
-	virtual LBool isInline() const;
+    virtual LBool isInline() const;
 
 private:
-	void addChildToContinuation(HtmlView* child);
-	void addChildIgnoringContinuation(HtmlView* child);
+    void addChildToContinuation(HtmlView* child);
+    void addChildIgnoringContinuation(HtmlView* child);
 };
-
 }
 #endif

@@ -7,45 +7,44 @@
 #include "MiniBlockQueue.h"
 #include "AutoLock.h"
 
-namespace yanbo
-{
+namespace yanbo {
+
 MiniBlockQueue::MiniBlockQueue()
 {
 }
 
 MiniBlockQueue::~MiniBlockQueue()
 {
-	clear();
+    clear();
 }
 
 void MiniBlockQueue::addTask(MiniTaskBase* task)
 {
-	AutoLock lock(&m_queueMutex);
-	m_list.push(task);
+    AutoLock lock(&m_queueMutex);
+    m_list.push(task);
 }
 
 BoyiaPtr<MiniTaskBase> MiniBlockQueue::pollTask()
 {
-	AutoLock lock(&m_queueMutex);
-	BoyiaPtr<MiniTaskBase> task = NULL;
-	if (!m_list.empty())
-	{
-		KList<BoyiaPtr<MiniTaskBase> >::Iterator iter = m_list.begin();
-		task = *iter;
-		m_list.erase(iter);
-	}
+    AutoLock lock(&m_queueMutex);
+    BoyiaPtr<MiniTaskBase> task = NULL;
+    if (!m_list.empty()) {
+        KList<BoyiaPtr<MiniTaskBase>>::Iterator iter = m_list.begin();
+        task = *iter;
+        m_list.erase(iter);
+    }
 
-	return task;
+    return task;
 }
 
 void MiniBlockQueue::clear()
 {
-	AutoLock lock(&m_queueMutex);
-	m_list.clear();
+    AutoLock lock(&m_queueMutex);
+    m_list.clear();
 }
 
 int MiniBlockQueue::size()
 {
-	return m_list.count();
+    return m_list.count();
 }
 }

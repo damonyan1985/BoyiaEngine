@@ -3,31 +3,30 @@
 
 #include "LGdi.h"
 
-namespace util
-{
+namespace util {
+
 struct JMediaPlayer;
-class MediaPlayerAndroid : public LMediaPlayer
-{
+class MediaPlayerAndroid : public LMediaPlayer {
 public:
-	MediaPlayerAndroid(LVoid* view);
-	~MediaPlayerAndroid();
+    MediaPlayerAndroid(LVoid* view);
+    ~MediaPlayerAndroid();
 
 public:
-	virtual void start(const String& url);
-	virtual void pause();
-	virtual void stop();
-	virtual void seek(int progress);
-	virtual void updateTexture(float* matrix);
+    virtual void start(const String& url);
+    virtual void pause();
+    virtual void stop();
+    virtual void seek(int progress);
+    virtual void updateTexture(float* matrix);
 
-	bool canDraw();
-	int texId();
+    bool canDraw();
+    int texId();
 
 private:
-	void createTextureId();
+    void createTextureId();
 
-	struct JMediaPlayer* m_player;
-	LUint32 m_texID;
-	LVoid*  m_view;
+    struct JMediaPlayer* m_player;
+    LUint32 m_texID;
+    LVoid* m_view;
 };
 }
 

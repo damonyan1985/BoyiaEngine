@@ -8,8 +8,7 @@
 #include "StringUtils.h"
 #include "UIView.h"
 
-namespace yanbo
-{
+namespace yanbo {
 
 HtmlDocument::HtmlDocument()
     : m_title(_CS("yanbo"))
@@ -21,7 +20,7 @@ HtmlDocument::HtmlDocument()
 }
 
 HtmlDocument::~HtmlDocument()
-{	
+{
 }
 
 void HtmlDocument::setRenderTreeRoot(HtmlView* root)
@@ -31,57 +30,55 @@ void HtmlDocument::setRenderTreeRoot(HtmlView* root)
 
 HtmlView* HtmlDocument::getRenderTreeRoot() const
 {
-	return m_root;
+    return m_root;
 }
 
 void HtmlDocument::setPageTitle(const String& titleText)
 {
-	m_title = titleText;
+    m_title = titleText;
 }
 
 const String& HtmlDocument::getPageTitle() const
 {
-	return m_title;
+    return m_title;
 }
 
 void HtmlDocument::setPageUrl(const String& url)
 {
-    m_url = url;	
+    m_url = url;
 }
 
 const String& HtmlDocument::getPageUrl() const
 {
-	return m_url;
+    return m_url;
 }
 
 // use linear structure to deal with the up, down event draw can enhance efficiency
 HtmlView* HtmlDocument::getPreItem()
 {
-	HtmlViewList::Iterator iter = m_currentItemIter;
-	
-	if (--m_currentItemIter == m_itemList.end())
-	{
-	    m_currentItemIter = iter;
-	}
-	
-	return *m_currentItemIter;
+    HtmlViewList::Iterator iter = m_currentItemIter;
+
+    if (--m_currentItemIter == m_itemList.end()) {
+        m_currentItemIter = iter;
+    }
+
+    return *m_currentItemIter;
 }
 
 HtmlView* HtmlDocument::getNextItem()
 {
-	HtmlViewList::Iterator iter = m_currentItemIter;
-	
-	if (++m_currentItemIter == m_itemList.end())
-	{
-	    m_currentItemIter = iter;
-	}
-	
-	return *m_currentItemIter;
+    HtmlViewList::Iterator iter = m_currentItemIter;
+
+    if (++m_currentItemIter == m_itemList.end()) {
+        m_currentItemIter = iter;
+    }
+
+    return *m_currentItemIter;
 }
 
 void HtmlDocument::addForm(HtmlForm* form)
 {
-	m_formList.push(form);
+    m_formList.push(form);
 }
 
 HtmlView* HtmlDocument::getCurrentItem()
@@ -91,36 +88,36 @@ HtmlView* HtmlDocument::getCurrentItem()
 
 void HtmlDocument::addHtmlView(HtmlView* item)
 {
-	m_itemList.push(item);
+    m_itemList.push(item);
 }
 
 void HtmlDocument::resetHtmlFocus()
 {
-	m_currentItemIter = m_itemList.begin();
+    m_currentItemIter = m_itemList.begin();
 }
 void HtmlDocument::clearHtmlList()
 {
-	m_itemList.clear();
+    m_itemList.clear();
 }
 
 void HtmlDocument::setViewPort(const LayoutRect& viewRect)
 {
-	m_viewRect = viewRect;
+    m_viewRect = viewRect;
 }
 
 const LayoutRect& HtmlDocument::getViewPort() const
 {
-	return m_viewRect;
+    return m_viewRect;
 }
 
 void HtmlDocument::putItemID(String& id, HtmlView* item)
 {
-	m_idMap.put(id, (LIntPtr) item);
+    m_idMap.put(id, (LIntPtr)item);
 }
 
 HtmlView* HtmlDocument::getItemByID(const String& id)
 {
-	return (HtmlView*) m_idMap.get(id);
+    return (HtmlView*)m_idMap.get(id);
 }
 
 void HtmlDocument::setView(UIView* view)
@@ -135,8 +132,6 @@ UIView* HtmlDocument::getView() const
 
 void HtmlDocument::sortIds()
 {
-	m_idMap.sort();
+    m_idMap.sort();
 }
-
 }
-

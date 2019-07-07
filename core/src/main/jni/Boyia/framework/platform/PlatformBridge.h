@@ -3,10 +3,9 @@
 
 #include "UtilString.h"
 
-namespace yanbo
-{
-class PlatformBridge
-{
+namespace yanbo {
+
+class PlatformBridge {
 public:
     static LVoid unzip(const String& zipFile, const String& dir);
     static const char* getAppPath();

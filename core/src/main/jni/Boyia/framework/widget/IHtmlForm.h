@@ -10,26 +10,23 @@
 
 #include "UtilString.h"
 
-namespace yanbo
-{
+namespace yanbo {
 
-class IHtmlForm
-{
+class IHtmlForm {
 public:
-	virtual String getAction() = 0;
-	
-	virtual String getMethod() = 0;
-	
-	virtual String encodeFormViews() = 0;
-	
-	virtual String getEncoding() = 0;
-	
-	virtual String getItemValue(const String& itemName) = 0;
-	virtual String getItemMimeType(const String& itemName) = 0;
-	virtual void setItemValue(const String& name, const String& value) = 0;
-	virtual LBool hasPassword() = 0;
-	virtual void postForm(String& outstream) = 0;
-};
+    virtual String getAction() = 0;
 
+    virtual String getMethod() = 0;
+
+    virtual String encodeFormViews() = 0;
+
+    virtual String getEncoding() = 0;
+
+    virtual String getItemValue(const String& itemName) = 0;
+    virtual String getItemMimeType(const String& itemName) = 0;
+    virtual void setItemValue(const String& name, const String& value) = 0;
+    virtual LBool hasPassword() = 0;
+    virtual void postForm(String& outstream) = 0;
+};
 }
 #endif /* IHtmlForm_h */

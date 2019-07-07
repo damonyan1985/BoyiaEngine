@@ -25,15 +25,15 @@ extern LVoid jsLog(const char* format, ...);
 #endif
 
 /* Type Define Begin */
-#define NUM_FUNC         ((LInt)1024)
-#define NUM_FUNC_PARAMS  ((LInt)32)
-#define NUM_GLOBAL_VARS  ((LInt)512)
-#define NUM_LOCAL_VARS   ((LInt)512)
-#define NUM_RESULT       ((LInt)128)
-#define FUNC_CALLS       ((LInt)32)
-#define NUM_PARAMS       ((LInt)32)
-#define LOOP_NEST        ((LInt)32)
-#define MEMORY_SIZE      ((LInt)1024*1024*6)
+#define NUM_FUNC ((LInt)1024)
+#define NUM_FUNC_PARAMS ((LInt)32)
+#define NUM_GLOBAL_VARS ((LInt)512)
+#define NUM_LOCAL_VARS ((LInt)512)
+#define NUM_RESULT ((LInt)128)
+#define FUNC_CALLS ((LInt)32)
+#define NUM_PARAMS ((LInt)32)
+#define LOOP_NEST ((LInt)32)
+#define MEMORY_SIZE ((LInt)1024 * 1024 * 6)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -50,20 +50,64 @@ enum TokenType {
     STRING_VALUE,
 };
 
-enum LogicValue { AND = END + 1, OR, NOT, LT, LE, GT, GE, EQ, NE }; // 26
+enum LogicValue { AND = END + 1,
+    OR,
+    NOT,
+    LT,
+    LE,
+    GT,
+    GE,
+    EQ,
+    NE }; // 26
 
-enum MathValue { ADD = NE + 1, SUB, MUL, DIV, MOD, POW, ASSIGN }; // 33
+enum MathValue { ADD = NE + 1,
+    SUB,
+    MUL,
+    DIV,
+    MOD,
+    POW,
+    ASSIGN }; // 33
 // 标点符号
-enum DelimiValue { SEMI = ASSIGN + 1, COMMA, QUOTE, DOT }; // 37
+enum DelimiValue { SEMI = ASSIGN + 1,
+    COMMA,
+    QUOTE,
+    DOT }; // 37
 // 小括号，中括号，大括号
-enum BracketValue { LPTR = DOT + 1, RPTR, ARRAY_BEGIN, ARRAY_END, BLOCK_START, BLOCK_END };
+enum BracketValue { LPTR = DOT + 1,
+    RPTR,
+    ARRAY_BEGIN,
+    ARRAY_END,
+    BLOCK_START,
+    BLOCK_END };
 // JMP_TRUE,表示 if true,则跳转
 enum OpCodeType {
-    ASSIGN_VAR = BLOCK_END + 1, PUSH, POP, CALL, LOOP, LOOP_TRUE,
-    JMP, JMP_TRUE, ELIF, IF_END, DECL_LOCAL, DECL_GLOBAL,
-    PUSH_ARG, PUSH_PARAMS, GET_PROP, TMP_LOCAL, PUSH_SCENE, POP_SCENE,
-    CLASS_CREATE, FUN_CREATE, EXE_CREATE, PARAM_CREATE, PROP_CREATE,
-    HANDLE_EXTEND, PUSH_OBJ, HANDLE_CONST_STR, PROPS_SORT,
+    ASSIGN_VAR = BLOCK_END + 1,
+    PUSH,
+    POP,
+    CALL,
+    LOOP,
+    LOOP_TRUE,
+    JMP,
+    JMP_TRUE,
+    ELIF,
+    IF_END,
+    DECL_LOCAL,
+    DECL_GLOBAL,
+    PUSH_ARG,
+    PUSH_PARAMS,
+    GET_PROP,
+    TMP_LOCAL,
+    PUSH_SCENE,
+    POP_SCENE,
+    CLASS_CREATE,
+    FUN_CREATE,
+    EXE_CREATE,
+    PARAM_CREATE,
+    PROP_CREATE,
+    HANDLE_EXTEND,
+    PUSH_OBJ,
+    HANDLE_CONST_STR,
+    PROPS_SORT,
 };
 
 typedef LInt (*OPHandler)(LVoid* instruction);
@@ -78,8 +122,8 @@ enum OpType {
 };
 
 typedef struct {
-    LUint8    mType;
-    LIntPtr   mValue;
+    LUint8 mType;
+    LIntPtr mValue;
 } OpCommand;
 
 static OpCommand COMMAND_R0 = { OP_REG0, 0 };
@@ -91,36 +135,37 @@ enum OpInstType {
 };
 
 typedef struct Instruction {
-    LUint8         mOPCode;
-    LInt           mCodeLine;
-    OpCommand      mOPLeft;
-    OpCommand      mOPRight;
-    OPHandler      mHandler;
-    Instruction*   mNext;
+    LUint8 mOPCode;
+    LInt mCodeLine;
+    OpCommand mOPLeft;
+    OpCommand mOPRight;
+    OPHandler mHandler;
+    Instruction* mNext;
 } Instruction;
 
 typedef struct {
-    Instruction*   mBegin;
-    Instruction*   mEnd;
+    Instruction* mBegin;
+    Instruction* mEnd;
 } CommandTable;
 
 struct KeywordPair {
-    BoyiaStr  mName; /* keyword lookup table */
-    LUint8    mType;
-} gKeywordTable[] = {  /* Commands must be entered lowercase */
-    {D_STR("if", 2),       IF},  /* in this table. */
-    {D_STR("elif", 4),     ELIF},
-    {D_STR("else", 4),     ELSE},
-    {D_STR("do", 2),       DO},
-    {D_STR("while", 5),    WHILE},
-    {D_STR("break", 5),    BREAK},
-    {D_STR("fun", 3),      FUNC},
-    {D_STR("class", 5),    CLASS},
-    {D_STR("extends", 7),  EXTEND},
-    {D_STR("prop", 4),     PROP},
-    {D_STR("var", 3),      VAR},
-    {D_STR("return", 6),   RETURN},
-    {D_STR("", 0),         0}  /* mark end of table */
+    BoyiaStr mName; /* keyword lookup table */
+    LUint8 mType;
+} gKeywordTable[] = {
+    /* Commands must be entered lowercase */
+    { D_STR("if", 2), IF }, /* in this table. */
+    { D_STR("elif", 4), ELIF },
+    { D_STR("else", 4), ELSE },
+    { D_STR("do", 2), DO },
+    { D_STR("while", 5), WHILE },
+    { D_STR("break", 5), BREAK },
+    { D_STR("fun", 3), FUNC },
+    { D_STR("class", 5), CLASS },
+    { D_STR("extends", 7), EXTEND },
+    { D_STR("prop", 4), PROP },
+    { D_STR("var", 3), VAR },
+    { D_STR("return", 6), RETURN },
+    { D_STR("", 0), 0 } /* mark end of table */
 };
 
 /* ----------------------------------------------------------- */
@@ -132,40 +177,40 @@ struct KeywordPair {
 /* ------------------------------------------------------------ */
 typedef struct {
     BoyiaStr mTokenName;
-    LUint8   mTokenType; /* contains type of token*/
-    LUint8   mTokenValue; /* internal representation of token */
+    LUint8 mTokenType; /* contains type of token*/
+    LUint8 mTokenValue; /* internal representation of token */
 } BoyiaToken;
 
 typedef struct {
-    LInt8*           mProg;
-    LInt             mLineNum;/* program string position */
-    LInt             mLoopSize;
-    LInt             mFunctos;
-    LInt             mFunSize;  /* index to top of function call stack */
-    LInt             mGValSize; /* count of function table */
-    LInt             mTmpLValSize;
-    LInt             mLValSize; /* count of global variable stack */
-    LInt             mResultNum;
-    BoyiaValue*      mClass;
-    CommandTable*    mContext;
-    Instruction*     mPC;       // pc , 指令计数器
+    LInt8* mProg;
+    LInt mLineNum; /* program string position */
+    LInt mLoopSize;
+    LInt mFunctos;
+    LInt mFunSize; /* index to top of function call stack */
+    LInt mGValSize; /* count of function table */
+    LInt mTmpLValSize;
+    LInt mLValSize; /* count of global variable stack */
+    LInt mResultNum;
+    BoyiaValue* mClass;
+    CommandTable* mContext;
+    Instruction* mPC; // pc , 指令计数器
 } ExecState;
 
 typedef struct {
-    Instruction*     mPC;
-    LInt             mLValSize;
-    LInt             mTmpLValSize;
-    LInt             mLoopSize;
-    CommandTable*    mContext;
-    BoyiaValue*      mClass;
+    Instruction* mPC;
+    LInt mLValSize;
+    LInt mTmpLValSize;
+    LInt mLoopSize;
+    CommandTable* mContext;
+    BoyiaValue* mClass;
 } ExecScene;
 
 // 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
 // Reg的mNameKey没有任何意义，
 // 但是在处理变量时变得有意义，即指向变量地址，
 typedef struct {
-    BoyiaValue     mReg0;    // result register, 结果寄存器
-    BoyiaValue     mReg1;    // help register, 辅助运算寄存器
+    BoyiaValue mReg0; // result register, 结果寄存器
+    BoyiaValue mReg1; // help register, 辅助运算寄存器
 } VMCpu;
 
 /* Boyia VM Define
@@ -175,20 +220,20 @@ typedef struct {
  * 3, gBoyiaVM->mGlobals
  */
 typedef struct {
-    LVoid*            mPool;
-    BoyiaFunction*    mFunTable;
-    BoyiaValue*       mGlobals;
-    BoyiaValue*       mLocals;
-    VMCpu*            mCpu;
-    ExecState*        mEState;
-    ExecScene*        mExecStack;
-    LInt*             mLoopStack;
-    BoyiaValue*       mOpStack;
+    LVoid* mPool;
+    BoyiaFunction* mFunTable;
+    BoyiaValue* mGlobals;
+    BoyiaValue* mLocals;
+    VMCpu* mCpu;
+    ExecState* mEState;
+    ExecScene* mExecStack;
+    LInt* mLoopStack;
+    BoyiaValue* mOpStack;
 } BoyiaVM;
 
-static NativeFunction*  gNativeFunTable = NULL;
-static BoyiaToken       gToken;
-static BoyiaVM*         gBoyiaVM = NULL;
+static NativeFunction* gNativeFunTable = NULL;
+static BoyiaToken gToken;
+static BoyiaVM* gBoyiaVM = NULL;
 
 static LUintPtr gThis = GenIdentByStr("this", 4);
 static LUintPtr gSuper = GenIdentByStr("super", 5);
@@ -219,7 +264,8 @@ static LInt HandleAssignment(LVoid* ins);
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal);
 
-LVoid* InitVM() {
+LVoid* InitVM()
+{
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mPool = InitMemoryPool(MEMORY_SIZE);
     ChangeMemory(vm->mPool);
@@ -241,14 +287,16 @@ LVoid* InitVM() {
     return vm;
 }
 
-LVoid DestroyVM(LVoid* vm) {
-    BoyiaVM* vmPtr = (BoyiaVM*) vm;
+LVoid DestroyVM(LVoid* vm)
+{
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
     FreeMemoryPool(vmPtr->mPool);
     FAST_DELETE(vmPtr);
 }
 
-LVoid ChangeVM(LVoid* vm) {
-    gBoyiaVM = (BoyiaVM*) vm;
+LVoid ChangeVM(LVoid* vm)
+{
+    gBoyiaVM = (BoyiaVM*)vm;
     ChangeMemory(gBoyiaVM->mPool);
 }
 
@@ -256,7 +304,8 @@ static Instruction* PutInstruction(
     OpCommand* left,
     OpCommand* right,
     LUint8 op,
-    OPHandler handler) {
+    OPHandler handler)
+{
     Instruction* newIns = NEW(Instruction);
     if (left) {
         newIns->mOPLeft.mType = left->mType;
@@ -283,7 +332,8 @@ static Instruction* PutInstruction(
     return newIns;
 }
 
-static LInt HandlePopScene(LVoid* ins) {
+static LInt HandlePopScene(LVoid* ins)
+{
     if (gBoyiaVM->mEState->mFunctos > 0) {
         gBoyiaVM->mEState->mLValSize = gBoyiaVM->mExecStack[--gBoyiaVM->mEState->mFunctos].mLValSize;
         gBoyiaVM->mEState->mPC = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC;
@@ -296,7 +346,8 @@ static LInt HandlePopScene(LVoid* ins) {
     return 1;
 }
 
-static LVoid ExecPopFunction() {
+static LVoid ExecPopFunction()
+{
     // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
     if (!gBoyiaVM->mEState->mPC && gBoyiaVM->mEState->mFunctos > 0) {
         HandlePopScene(NULL);
@@ -307,12 +358,13 @@ static LVoid ExecPopFunction() {
     }
 }
 
-static LVoid ExecInstruction() {
+static LVoid ExecInstruction()
+{
     // 通过指令寄存器进行计算
     while (gBoyiaVM->mEState->mPC) {
         if (gBoyiaVM->mEState->mPC->mHandler) {
             LInt result = gBoyiaVM->mEState->mPC->mHandler(gBoyiaVM->mEState->mPC);
-            if (result == 0) {        // 指令运行出错跳出循环
+            if (result == 0) { // 指令运行出错跳出循环
                 break;
             } else if (gBoyiaVM->mEState->mPC && result == 2) { // 函数跳转
                 continue;
@@ -327,11 +379,13 @@ static LVoid ExecInstruction() {
     }
 }
 
-static LVoid Putback() {
+static LVoid Putback()
+{
     gBoyiaVM->mEState->mProg -= gToken.mTokenName.mLen;
 }
 
-static LUint8 LookUp(BoyiaStr* name) {
+static LUint8 LookUp(BoyiaStr* name)
+{
     register LInt i = 0;
     for (; gKeywordTable[i].mName.mLen; ++i) {
         if (MStrcmp(&gKeywordTable[i].mName, name))
@@ -341,7 +395,8 @@ static LUint8 LookUp(BoyiaStr* name) {
     return 0;
 }
 
-static LInt FindNativeFunc(LUintPtr key) {
+static LInt FindNativeFunc(LUintPtr key)
+{
     LInt idx = -1;
     while (gNativeFunTable[++idx].mAddr) {
         if (gNativeFunTable[idx].mNameKey == key)
@@ -351,12 +406,13 @@ static LInt FindNativeFunc(LUintPtr key) {
     return -1;
 }
 
-static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count) {
+static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count)
+{
     BoyiaFunction* newFunc = NEW(BoyiaFunction);
     // copy function
     EngineLog("HandleCallInternal CreateObject %d", 5);
 
-    BoyiaFunction* func = (BoyiaFunction*) clsVal->mValue.mObj.mPtr;
+    BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
     EngineLog("HandleCallInternal CreateObject %d", 6);
     newFunc->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS);
     //EngineLog("HandleCallInternal CreateObject %d", 7);
@@ -367,23 +423,24 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count) {
     //EngineLog("HandleCallInternal CreateObject mParams mAddr %d",  (int)newFunc->mParams);
 
     while (clsVal) {
-        BoyiaFunction* func = (BoyiaFunction*) clsVal->mValue.mObj.mPtr;
+        BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
         LInt idx = func->mParamSize;
         while (idx--) {
             if (func->mParams[idx].mValueType != FUNC) {
-                ValueCopy(newFunc->mParams+newFunc->mParamSize++, func->mParams+idx);
+                ValueCopy(newFunc->mParams + newFunc->mParamSize++, func->mParams + idx);
             }
         }
 
-        clsVal = (BoyiaValue*) clsVal->mValue.mObj.mSuper;
+        clsVal = (BoyiaValue*)clsVal->mValue.mObj.mSuper;
     }
 
     return newFunc;
 }
 
-LInt CreateObject() {
+LInt CreateObject()
+{
     EngineLog("HandleCallInternal CreateObject %d", 1);
-    BoyiaValue* value = (BoyiaValue*) GetLocalValue(0);
+    BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
     if (!value || value->mValueType != CLASS) {
         return 0;
     }
@@ -397,7 +454,7 @@ LInt CreateObject() {
     ValueCopy(result, value);
     // 拷贝出新的内部实现
     BoyiaFunction* newFunc = CopyFunction(value, NUM_FUNC_PARAMS);
-    result->mValue.mObj.mPtr = (LIntPtr) newFunc;
+    result->mValue.mObj.mPtr = (LIntPtr)newFunc;
     result->mValue.mObj.mSuper = value->mValue.mObj.mSuper;
     EngineLog("HandleCallInternal CreateObject %d", 4);
 
@@ -405,7 +462,8 @@ LInt CreateObject() {
     return 1;
 }
 
-LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
+LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
+{
     dest->mValueType = src->mValueType;
     switch (src->mValueType) {
     case INT:
@@ -417,10 +475,9 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         break;
     case CLASS: {
-            dest->mValue.mIntVal = src->mValue.mIntVal;
-            dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
-        }
-        break;
+        dest->mValue.mIntVal = src->mValue.mIntVal;
+        dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
+    } break;
     case STRING:
         MStrcpy(&dest->mValue.mStrVal, &src->mValue.mStrVal);
         break;
@@ -430,35 +487,40 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
     }
 }
 
-LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src) {
+LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src)
+{
     dest->mNameKey = src->mNameKey;
     ValueCopyNoName(dest, src);
 }
 
-static LInt HandleBreak(LVoid* ins) {
+static LInt HandleBreak(LVoid* ins)
+{
     EngineLog("HandleBreak mLoopSize=%d \n", gBoyiaVM->mEState->mLoopSize);
-    gBoyiaVM->mEState->mPC = (Instruction*) gBoyiaVM->mLoopStack[--gBoyiaVM->mEState->mLoopSize];
+    gBoyiaVM->mEState->mPC = (Instruction*)gBoyiaVM->mLoopStack[--gBoyiaVM->mEState->mLoopSize];
     //EngineLog("HandleBreak end=%d \n", gBoyiaVM->mEState->mPC->mNext->mOPCode);
     return 1;
 }
 
-static LVoid BreakStatement() {
+static LVoid BreakStatement()
+{
     EngineLog("BreakStatement inst code=%d \n", 1);
     PutInstruction(NULL, NULL, BREAK, HandleBreak);
 }
 
-static LInt HandleCreateProp(LVoid* ins) {
+static LInt HandleCreateProp(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     BoyiaFunction* func = (BoyiaFunction*)gBoyiaVM->mEState->mClass->mValue.mObj.mPtr;
     func->mParams[func->mParamSize++].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
     return 1;
 }
 
-static LVoid PropStatement() {
+static LVoid PropStatement()
+{
     NextToken();
     //EngineStrLog("PropStatement name=%s", gToken.mTokenName);
     if (gToken.mTokenType == IDENTIFIER) {
-        OpCommand cmd = {OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
         PutInstruction(&cmd, NULL, PROP_CREATE, HandleCreateProp);
         Putback();
         EvalExpression();
@@ -471,7 +533,8 @@ static LVoid PropStatement() {
     }
 }
 
-LVoid LocalPush(BoyiaValue* value) {
+LVoid LocalPush(BoyiaValue* value)
+{
     if (gBoyiaVM->mEState->mLValSize > NUM_LOCAL_VARS) {
         SntxError(TOO_MANY_LVARS, gBoyiaVM->mEState->mPC->mCodeLine);
     }
@@ -479,7 +542,8 @@ LVoid LocalPush(BoyiaValue* value) {
     ValueCopy(gBoyiaVM->mLocals + (gBoyiaVM->mEState->mLValSize++), value);
 }
 
-static BoyiaValue* FindGlobal(LUintPtr key) {
+static BoyiaValue* FindGlobal(LUintPtr key)
+{
     for (LInt idx = 0; idx < gBoyiaVM->mEState->mGValSize; ++idx) {
         if (gBoyiaVM->mGlobals[idx].mNameKey == key)
             return &gBoyiaVM->mGlobals[idx];
@@ -489,7 +553,8 @@ static BoyiaValue* FindGlobal(LUintPtr key) {
 }
 
 /* Find the value of a variable. */
-static BoyiaValue* GetVal(LUintPtr key) {
+static BoyiaValue* GetVal(LUintPtr key)
+{
     /* First, see if has obj scope */
     if (key == gThis) {
         return gBoyiaVM->mEState->mClass;
@@ -510,12 +575,15 @@ static BoyiaValue* GetVal(LUintPtr key) {
 
     /* otherwise, try global vars */
     BoyiaValue* val = FindGlobal(key);
-    if (val) { return val; }
+    if (val) {
+        return val;
+    }
 
     return FindObjProp(gBoyiaVM->mEState->mClass, key);
 }
 
-static BoyiaValue* FindVal(LUintPtr key) {
+static BoyiaValue* FindVal(LUintPtr key)
+{
     BoyiaValue* value = GetVal(key);
     if (!value) {
         SntxError(NOT_VAR, gBoyiaVM->mEState->mPC->mCodeLine);
@@ -524,7 +592,8 @@ static BoyiaValue* FindVal(LUintPtr key) {
     return value;
 }
 
-static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type) {
+static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type)
+{
     BoyiaValue* val = NULL;
     OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
     switch (op->mType) { // 赋值左值不可能是常量
@@ -542,7 +611,8 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type) {
     return val;
 }
 
-static LInt HandleCallInternal(LVoid* ins) {
+static LInt HandleCallInternal(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
 
     LInt idx = inst->mOPLeft.mValue;
@@ -550,13 +620,15 @@ static LInt HandleCallInternal(LVoid* ins) {
     return (*gNativeFunTable[idx].mAddr)();
 }
 
-static LInt HandleTempLocalSize(LVoid* ins) {
+static LInt HandleTempLocalSize(LVoid* ins)
+{
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mTmpLValSize = gBoyiaVM->mEState->mTmpLValSize;
     gBoyiaVM->mEState->mTmpLValSize = gBoyiaVM->mEState->mLValSize;
     return 1;
 }
 
-static LInt HandlePushScene(LVoid* ins) {
+static LInt HandlePushScene(LVoid* ins)
+{
     if (gBoyiaVM->mEState->mFunctos >= FUNC_CALLS) {
         SntxError(NEST_FUNC, gBoyiaVM->mEState->mPC->mCodeLine);
         return 0;
@@ -571,7 +643,8 @@ static LInt HandlePushScene(LVoid* ins) {
     return 1;
 }
 
-static LInt HandlePushArg(LVoid* ins) {
+static LInt HandlePushArg(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = GetOpValue(inst, OpLeft);
     if (value) {
@@ -583,12 +656,13 @@ static LInt HandlePushArg(LVoid* ins) {
     return 1;
 }
 
-static LInt HandlePushObj(LVoid* ins) {
+static LInt HandlePushObj(LVoid* ins)
+{
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mClass = gBoyiaVM->mEState->mClass;
     Instruction* inst = (Instruction*)ins;
 
     if (inst->mOPLeft.mType == OP_VAR) {
-        LUintPtr objKey = (LUintPtr) inst->mOPLeft.mValue;
+        LUintPtr objKey = (LUintPtr)inst->mOPLeft.mValue;
         if (objKey != gSuper) {
             gBoyiaVM->mEState->mClass = (BoyiaValue*)gBoyiaVM->mCpu->mReg0.mNameKey;
         }
@@ -599,25 +673,29 @@ static LInt HandlePushObj(LVoid* ins) {
     return 1;
 }
 
-static LVoid ElseStatement() {
+static LVoid ElseStatement()
+{
     Instruction* logicInst = PutInstruction(NULL, NULL, ELSE, NULL);
     BlockStatement();
     Instruction* endInst = PutInstruction(NULL, NULL, IF_END, NULL);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
 }
 
-static LInt HandleReturn(LVoid* ins) {
+static LInt HandleReturn(LVoid* ins)
+{
     gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mContext->mEnd;
     return 1;
 }
 
-static LVoid ReturnStatement() {
+static LVoid ReturnStatement()
+{
     EvalExpression(); // => R0
     PutInstruction(NULL, NULL, RETURN, HandleReturn);
 }
 
-static LVoid BlockStatement() {
+static LVoid BlockStatement()
+{
     LBool block = LFalse;
     do {
         NextToken();
@@ -626,7 +704,7 @@ static LVoid BlockStatement() {
         /* see what kind of token is up */
         if (gToken.mTokenType == IDENTIFIER) {
             /* Not a keyword, so process expression. */
-            Putback();   /* restore token to input stream for further processing by EvalExpression() */
+            Putback(); /* restore token to input stream for further processing by EvalExpression() */
             //EngineStrLog("token name=%s", gToken.mTokenName);
             EvalExpression(); /* process the expression */
 
@@ -638,43 +716,44 @@ static LVoid BlockStatement() {
         } else if (gToken.mTokenValue == BLOCK_END) {
             block = LFalse;
             return; /* is a }, so return */
-        } else if (gToken.mTokenType == KEYWORD) {/* is keyword */
+        } else if (gToken.mTokenType == KEYWORD) { /* is keyword */
             switch (gToken.mTokenValue) {
-                case VAR:
-                    LocalStatement();
-                    break;
-                case FUNC:
-                    FunStatement();
-                    break;
-                case PROP:
-                    PropStatement();
-                    break;
-                case RETURN:         /* return from function call */
-                    ReturnStatement();
-                    break;
-                case IF:             /* process an if statement */
-                case ELIF:
-                    IfStatement();
-                    break;
-                case ELSE:           /* process an else statement */
-                    ElseStatement();
-                    break;
-                case WHILE:          /* process a while loop */
-                    WhileStatement();
-                    break;
-                case DO:             /* process a do-while loop */
-                    DoStatement();
-                    break;
-                case BREAK:
-                    EngineLog("BREAK BreakStatement %d \n", 1);
-                    BreakStatement();
-                    break;
+            case VAR:
+                LocalStatement();
+                break;
+            case FUNC:
+                FunStatement();
+                break;
+            case PROP:
+                PropStatement();
+                break;
+            case RETURN: /* return from function call */
+                ReturnStatement();
+                break;
+            case IF: /* process an if statement */
+            case ELIF:
+                IfStatement();
+                break;
+            case ELSE: /* process an else statement */
+                ElseStatement();
+                break;
+            case WHILE: /* process a while loop */
+                WhileStatement();
+                break;
+            case DO: /* process a do-while loop */
+                DoStatement();
+                break;
+            case BREAK:
+                EngineLog("BREAK BreakStatement %d \n", 1);
+                BreakStatement();
+                break;
             }
         }
     } while (gToken.mTokenValue != END && block);
 }
 
-static LVoid SkipComment() {
+static LVoid SkipComment()
+{
     if (*gBoyiaVM->mEState->mProg == '/') {
         if (*(gBoyiaVM->mEState->mProg + 1) == '*') { // 多行注释
             gBoyiaVM->mEState->mProg += 2;
@@ -689,7 +768,7 @@ static LVoid SkipComment() {
             } while (*gBoyiaVM->mEState->mProg != '/');
             ++gBoyiaVM->mEState->mProg;
             SkipComment();
-        } else if (*(gBoyiaVM->mEState->mProg + 1) == '/') {  //单行注释
+        } else if (*(gBoyiaVM->mEState->mProg + 1) == '/') { //单行注释
             while (*gBoyiaVM->mEState->mProg && *gBoyiaVM->mEState->mProg != '\n') {
                 ++gBoyiaVM->mEState->mProg;
             }
@@ -703,65 +782,66 @@ static LVoid SkipComment() {
     }
 }
 
-static LInt GetLogicValue() {
+static LInt GetLogicValue()
+{
     if (MStrchr("&|!<>=", *gBoyiaVM->mEState->mProg)) {
         LInt len = 0;
         gToken.mTokenName.mPtr = gBoyiaVM->mEState->mProg;
         switch (*gBoyiaVM->mEState->mProg) {
-            case '=':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = EQ;
-                }
-                break;
-            case '!':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = NE;
-                } else {
-                    ++gBoyiaVM->mEState->mProg;
-                    len = 1;
-                    gToken.mTokenValue = NOT;
-                }
-                break;
-            case '<':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = LE;
-                } else {
-                    ++gBoyiaVM->mEState->mProg;
-                    len = 1;
-                    gToken.mTokenValue = LT;
-                }
-                break;
-            case '>':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = GE;
-                } else {
-                    gBoyiaVM->mEState->mProg++;
-                    len = 1;
-                    gToken.mTokenValue = GT;
-                }
-                break;
-            case '&':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '&') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = AND;
-                }
-                break;
-            case '|':
-                if (*(gBoyiaVM->mEState->mProg + 1) == '|') {
-                    gBoyiaVM->mEState->mProg += 2;
-                    len += 2;
-                    gToken.mTokenValue = OR;
-                }
-                break;
+        case '=':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = EQ;
+            }
+            break;
+        case '!':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = NE;
+            } else {
+                ++gBoyiaVM->mEState->mProg;
+                len = 1;
+                gToken.mTokenValue = NOT;
+            }
+            break;
+        case '<':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = LE;
+            } else {
+                ++gBoyiaVM->mEState->mProg;
+                len = 1;
+                gToken.mTokenValue = LT;
+            }
+            break;
+        case '>':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '=') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = GE;
+            } else {
+                gBoyiaVM->mEState->mProg++;
+                len = 1;
+                gToken.mTokenValue = GT;
+            }
+            break;
+        case '&':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '&') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = AND;
+            }
+            break;
+        case '|':
+            if (*(gBoyiaVM->mEState->mProg + 1) == '|') {
+                gBoyiaVM->mEState->mProg += 2;
+                len += 2;
+                gToken.mTokenValue = OR;
+            }
+            break;
         }
 
         if (len) {
@@ -773,7 +853,8 @@ static LInt GetLogicValue() {
     return 0;
 }
 
-static LInt GetDelimiter() {
+static LInt GetDelimiter()
+{
     const char* delimiConst = "+-*/%^=;,'.()[]{}";
     LInt op = ADD;
     do {
@@ -791,14 +872,14 @@ static LInt GetDelimiter() {
     return 0;
 }
 
-static LInt GetIdentifer() {
+static LInt GetIdentifer()
+{
     LInt len = 0;
     if (LIsAlpha(*gBoyiaVM->mEState->mProg)) {
         gToken.mTokenName.mPtr = gBoyiaVM->mEState->mProg;
-        while (*gBoyiaVM->mEState->mProg == '_' ||
-               LIsAlpha(*gBoyiaVM->mEState->mProg) ||
-               LIsDigit(*gBoyiaVM->mEState->mProg)) {
-            ++gBoyiaVM->mEState->mProg;++len;
+        while (*gBoyiaVM->mEState->mProg == '_' || LIsAlpha(*gBoyiaVM->mEState->mProg) || LIsDigit(*gBoyiaVM->mEState->mProg)) {
+            ++gBoyiaVM->mEState->mProg;
+            ++len;
         }
 
         gToken.mTokenName.mLen = len;
@@ -818,14 +899,16 @@ static LInt GetIdentifer() {
     return gToken.mTokenType;
 }
 
-static LInt GetStringValue() {
+static LInt GetStringValue()
+{
     // string
     LInt len = 0;
     if (*gBoyiaVM->mEState->mProg == '"') {
         ++gBoyiaVM->mEState->mProg;
         gToken.mTokenName.mPtr = gBoyiaVM->mEState->mProg;
         while (*gBoyiaVM->mEState->mProg != '"' && *gBoyiaVM->mEState->mProg != '\r') {
-            ++gBoyiaVM->mEState->mProg;++len;
+            ++gBoyiaVM->mEState->mProg;
+            ++len;
         }
 
         if (*gBoyiaVM->mEState->mProg == '\r') {
@@ -833,20 +916,22 @@ static LInt GetStringValue() {
         }
         ++gBoyiaVM->mEState->mProg;
         // +2 for putback just in case
-        gToken.mTokenName.mLen = len+2;
+        gToken.mTokenName.mLen = len + 2;
         return (gToken.mTokenType = STRING_VALUE);
     }
 
     return 0;
 }
 
-static LInt GetNumberValue() {
+static LInt GetNumberValue()
+{
     LInt len = 0;
     if (LIsDigit(*gBoyiaVM->mEState->mProg)) {
         gToken.mTokenName.mPtr = gBoyiaVM->mEState->mProg;
 
         while (LIsDigit(*gBoyiaVM->mEState->mProg)) {
-            ++gBoyiaVM->mEState->mProg;++len;
+            ++gBoyiaVM->mEState->mProg;
+            ++len;
         }
         gToken.mTokenName.mLen = len;
         return (gToken.mTokenType = NUMBER);
@@ -855,7 +940,8 @@ static LInt GetNumberValue() {
     return 0;
 }
 
-static LInt NextToken() {
+static LInt NextToken()
+{
     gToken.mTokenType = 0;
     gToken.mTokenValue = 0;
     InitStr(&gToken.mTokenName, NULL);
@@ -884,21 +970,23 @@ static LInt NextToken() {
     return 0;
 }
 
-static LInt HandleCreateParam(LVoid* ins) {
+static LInt HandleCreateParam(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
-    BoyiaFunction* function = &gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize-1];
+    BoyiaFunction* function = &gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize - 1];
     BoyiaValue* value = &function->mParams[function->mParamSize++];
     value->mNameKey = hashKey;
     return 1;
 }
 
-static LVoid InitParams() {
+static LVoid InitParams()
+{
     do {
         NextToken(); // 得到属性名
         if (gToken.mTokenValue != RPTR) {
-            OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
+            OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
             PutInstruction(&cmd, NULL, PARAM_CREATE, HandleCreateParam);
             NextToken(); // 获取逗号分隔符','
         } else
@@ -908,48 +996,53 @@ static LVoid InitParams() {
         SntxErrorBuild(PAREN_EXPECTED);
 }
 
-static CommandTable* CreateExecutor() {
+static CommandTable* CreateExecutor()
+{
     CommandTable* newTable = NEW(CommandTable);
     newTable->mBegin = NULL;
     newTable->mEnd = NULL;
     return newTable;
 }
 
-static LVoid InitFunction(BoyiaFunction* fun) {
+static LVoid InitFunction(BoyiaFunction* fun)
+{
     fun->mParamSize = 0;
     fun->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS);
     fun->mParamCount = NUM_FUNC_PARAMS;
     ++gBoyiaVM->mEState->mFunSize;
 }
 
-static BoyiaValue* CreateFunVal(LUintPtr hashKey, LUint8 type) {
+static BoyiaValue* CreateFunVal(LUintPtr hashKey, LUint8 type)
+{
     // 初始化class类或函数变量
     BoyiaValue* val = &gBoyiaVM->mGlobals[gBoyiaVM->mEState->mGValSize++];
     BoyiaFunction* fun = &gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize];
     val->mValueType = type;
     val->mNameKey = hashKey;
-    val->mValue.mObj.mPtr = (LIntPtr) fun;
+    val->mValue.mObj.mPtr = (LIntPtr)fun;
     val->mValue.mObj.mSuper = 0;
     if (type == CLASS) {
-        fun->mFuncBody = (LIntPtr) val;
+        fun->mFuncBody = (LIntPtr)val;
     }
     // 初始化类属性成员列表
     InitFunction(fun);
     return val;
 }
 
-static LInt HandleCreateExecutor(LVoid* ins) {
+static LInt HandleCreateExecutor(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
-    gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize-1].mFuncBody = inst->mOPLeft.mValue;
+    gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize - 1].mFuncBody = inst->mOPLeft.mValue;
     return 1;
 }
 
-static LVoid BodyStatement(LInt type) {
+static LVoid BodyStatement(LInt type)
+{
     CommandTable* cmds = gBoyiaVM->mEState->mContext;
     if (FUN_CREATE == type) {
-    	// 类成员的创建在主体上下中进行
+        // 类成员的创建在主体上下中进行
         CommandTable* funCmds = CreateExecutor();
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) funCmds };
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
         PutInstruction(&cmd, NULL, EXE_CREATE, HandleCreateExecutor);
 
         gBoyiaVM->mEState->mContext = funCmds;
@@ -959,7 +1052,8 @@ static LVoid BodyStatement(LInt type) {
     gBoyiaVM->mEState->mContext = cmds;
 }
 
-static LInt HandleCreateClass(LVoid* ins) {
+static LInt HandleCreateClass(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_NONE) {
         gBoyiaVM->mEState->mClass = NULL;
@@ -970,20 +1064,22 @@ static LInt HandleCreateClass(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleExtend(LVoid* ins) {
+static LInt HandleExtend(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* classVal = FindGlobal((LUintPtr)inst->mOPLeft.mValue);
     BoyiaValue* extendVal = FindGlobal((LUintPtr)inst->mOPRight.mValue);
 
     // 设置super指针
-    classVal->mValue.mObj.mSuper = (LIntPtr) extendVal;
+    classVal->mValue.mObj.mSuper = (LIntPtr)extendVal;
     return 1;
 }
 
-static LVoid ClassStatement() {
+static LVoid ClassStatement()
+{
     NextToken();
     LUintPtr classKey = GenIdentifier(&gToken.mTokenName);
-    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr) classKey };
+    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)classKey };
     PutInstruction(&cmd, NULL, CLASS_CREATE, HandleCreateClass);
     // 判断继承关系
     NextToken();
@@ -998,7 +1094,7 @@ static LVoid ClassStatement() {
     BodyStatement(CLASS_CREATE);
     // 设置继承成员
     if (extendKey != 0) {
-        OpCommand extendCmd = { OP_CONST_NUMBER, (LIntPtr) extendKey };
+        OpCommand extendCmd = { OP_CONST_NUMBER, (LIntPtr)extendKey };
         PutInstruction(&cmd, &extendCmd, HANDLE_EXTEND, HandleExtend);
     }
 
@@ -1007,7 +1103,8 @@ static LVoid ClassStatement() {
     PutInstruction(&cmdEnd, NULL, CLASS_CREATE, HandleCreateClass);
 }
 
-static LInt HandleFunCreate(LVoid* ins) {
+static LInt HandleFunCreate(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
@@ -1015,17 +1112,18 @@ static LInt HandleFunCreate(LVoid* ins) {
         BoyiaFunction* func = (BoyiaFunction*)gBoyiaVM->mEState->mClass->mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = FUNC;
-        func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr) &gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize];
+        func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr)&gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize];
         // 初始化函数参数列表
         InitFunction(&gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize]);
     } else {
-    	CreateFunVal(hashKey, FUNC);
+        CreateFunVal(hashKey, FUNC);
     }
 
     return 1;
 }
 
-static LVoid FunStatement() {
+static LVoid FunStatement()
+{
     NextToken();
     //EngineStrLog("HandlePushParams FunStatement name %s", gToken.mTokenName);
     // 第一步，Function变量
@@ -1039,7 +1137,8 @@ static LVoid FunStatement() {
     BodyStatement(FUN_CREATE);
 }
 
-static LVoid DeleteExecutor(CommandTable* table) {
+static LVoid DeleteExecutor(CommandTable* table)
+{
     Instruction* pc = table->mBegin;
     while (pc != table->mEnd) {
         Instruction* next = pc->mNext;
@@ -1051,9 +1150,10 @@ static LVoid DeleteExecutor(CommandTable* table) {
 }
 
 // 重置现场
-static LVoid ResetScene() {
-    gBoyiaVM->mEState->mLValSize = 0;    /* initialize local variable stack index */
-    gBoyiaVM->mEState->mFunctos = 0;    /* initialize the CALL stack index */
+static LVoid ResetScene()
+{
+    gBoyiaVM->mEState->mLValSize = 0; /* initialize local variable stack index */
+    gBoyiaVM->mEState->mFunctos = 0; /* initialize the CALL stack index */
     gBoyiaVM->mEState->mLoopSize = 0;
     gBoyiaVM->mEState->mResultNum = 0;
     gBoyiaVM->mEState->mTmpLValSize = 0;
@@ -1061,7 +1161,8 @@ static LVoid ResetScene() {
 }
 
 // 执行全局的调用
-static LVoid ExecuteCode(CommandTable* cmds) {
+static LVoid ExecuteCode(CommandTable* cmds)
+{
     gBoyiaVM->mEState->mContext = cmds;
     gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mContext->mBegin;
     ExecInstruction();
@@ -1070,21 +1171,23 @@ static LVoid ExecuteCode(CommandTable* cmds) {
     ResetScene();
 }
 
-static LInt HandleDeclGlobal(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleDeclGlobal(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue val;
     val.mValueType = inst->mOPLeft.mValue;
-    val.mNameKey = (LUintPtr) inst->mOPRight.mValue;
+    val.mNameKey = (LUintPtr)inst->mOPRight.mValue;
     ValueCopy(gBoyiaVM->mGlobals + gBoyiaVM->mEState->mGValSize++, &val);
     return 1;
 }
 
-static LVoid GlobalStatement() {
+static LVoid GlobalStatement()
+{
     LInt type = gToken.mTokenValue;
     do {
         NextToken(); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
 
         PutInstruction(&cmdLeft, &cmdRight, DECL_GLOBAL, HandleDeclGlobal);
         Putback();
@@ -1097,8 +1200,9 @@ static LVoid GlobalStatement() {
 }
 
 // 该函数记录全局变量以及函数接口
-static LVoid ParseStatement() {
-    LInt brace = 0;   // ‘{’的个数
+static LVoid ParseStatement()
+{
+    LInt brace = 0; // ‘{’的个数
     gBoyiaVM->mEState->mContext = CreateExecutor();
     do {
         while (brace) {
@@ -1135,22 +1239,24 @@ static LVoid ParseStatement() {
     ExecuteCode(gBoyiaVM->mEState->mContext);
 }
 
-static LInt HandleDeclLocal(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleDeclLocal(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue local;
     local.mValueType = inst->mOPLeft.mValue;
-    local.mNameKey = (LUintPtr) inst->mOPRight.mValue;
-    LocalPush(&local);                              // 塞入本地符号表
+    local.mNameKey = (LUintPtr)inst->mOPRight.mValue;
+    LocalPush(&local); // 塞入本地符号表
     return 1;
 }
 
 /* Declare a local variable. */
-static LVoid LocalStatement() {
+static LVoid LocalStatement()
+{
     LInt type = gToken.mTokenValue;
     do {
         NextToken(); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr) GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
         //EngineStrLog("value Name=%s", gToken.mTokenName);
         PutInstruction(&cmdLeft, &cmdRight, DECL_LOCAL, HandleDeclLocal);
         Putback();
@@ -1162,25 +1268,27 @@ static LVoid LocalStatement() {
     }
 }
 
-static LInt HandleCallFunction(LVoid* ins) {
+static LInt HandleCallFunction(LVoid* ins)
+{
     //EngineLog("HandleFunction begin %d \n", 1);
-	// localstack第一个值为函数指针
+    // localstack第一个值为函数指针
     LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &gBoyiaVM->mLocals[start];
-    BoyiaFunction* func = (BoyiaFunction*) value->mValue.mObj.mPtr;
+    BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
 
-    gBoyiaVM->mEState->mContext = (CommandTable*) func->mFuncBody;
+    gBoyiaVM->mEState->mContext = (CommandTable*)func->mFuncBody;
     gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mContext->mBegin;
     return 2;
 }
 
-static LInt HandlePushParams(LVoid* ins) {
+static LInt HandlePushParams(LVoid* ins)
+{
     // 第一个参数为调用该函数的函数指针
     LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &gBoyiaVM->mLocals[start];
     EngineLog("HandlePushParams functionName=%u \n", value->mValueType);
     if (value->mValueType == FUNC) {
-        BoyiaFunction* func = (BoyiaFunction*) value->mValue.mObj.mPtr;
+        BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
             return 1;
         }
@@ -1196,8 +1304,9 @@ static LInt HandlePushParams(LVoid* ins) {
     return 1;
 }
 
-static LInt HandlePop(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandlePop(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType != OP_REG0 && inst->mOPLeft.mType != OP_REG1) {
         --gBoyiaVM->mEState->mResultNum;
         return 1;
@@ -1208,7 +1317,8 @@ static LInt HandlePop(LVoid* ins) {
 }
 
 /* Call a function. */
-static void CallStatement(OpCommand* objCmd) {
+static void CallStatement(OpCommand* objCmd)
+{
     PutInstruction(NULL, NULL, TMP_LOCAL, HandleTempLocalSize);
     // 设置参数
     PushArgStatement();
@@ -1226,14 +1336,15 @@ static void CallStatement(OpCommand* objCmd) {
     Instruction* funInst = PutInstruction(NULL, NULL, CALL, HandleCallFunction);
     //EngineLog("CallStatement=>%d HandleFunction", 1);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LIntPtr) funInst;
+    pushInst->mOPLeft.mValue = (LIntPtr)funInst;
 }
 
 /* Push the arguments to a function onto the local variable stack. */
-static LVoid PushArgStatement() {
+static LVoid PushArgStatement()
+{
     // push函数指针
     PutInstruction(&COMMAND_R0, NULL, PUSH_ARG, HandlePushArg);
-    NextToken();// if token == ')' exit
+    NextToken(); // if token == ')' exit
     if (gToken.mTokenValue == RPTR) {
         return;
     } else {
@@ -1250,40 +1361,37 @@ static LVoid PushArgStatement() {
 }
 
 /* Assign a value to a Register 0 or 1. */
-static LInt HandleAssignment(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleAssignment(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
-    if (!left) return 0;
+    if (!left)
+        return 0;
 
     switch (inst->mOPRight.mType) {
-        case OP_CONST_STRING: { // 字符串是存在全局表中
-            BoyiaValue* val = (BoyiaValue*) inst->mOPRight.mValue;
+    case OP_CONST_STRING: { // 字符串是存在全局表中
+        BoyiaValue* val = (BoyiaValue*)inst->mOPRight.mValue;
+        ValueCopyNoName(left, val);
+    } break;
+    case OP_CONST_NUMBER: {
+        left->mValueType = INT;
+        left->mValue.mIntVal = inst->mOPRight.mValue;
+    } break;
+    case OP_VAR: {
+        BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue);
+        if (val) {
             ValueCopyNoName(left, val);
+            left->mNameKey = (LUintPtr)val;
+        } else {
+            return 0;
         }
-            break;
-        case OP_CONST_NUMBER: {
-            left->mValueType = INT;
-            left->mValue.mIntVal = inst->mOPRight.mValue;
-        }
-            break;
-        case OP_VAR: {
-            BoyiaValue *val = FindVal((LUintPtr) inst->mOPRight.mValue);
-            if (val) {
-                ValueCopyNoName(left, val);
-                left->mNameKey = (LUintPtr) val;
-            } else {
-                return 0;
-            }
-        }
-            break;
-        case OP_REG0: {
-            ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg0);
-        }
-            break;
-        case OP_REG1: {
-            ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg1);
-        }
-            break;
+    } break;
+    case OP_REG0: {
+        ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg0);
+    } break;
+    case OP_REG1: {
+        ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg1);
+    } break;
     }
 
     return 1;
@@ -1291,105 +1399,114 @@ static LInt HandleAssignment(LVoid* ins) {
 
 // 执行到ifend证明整个if elseif, else执行完毕，
 // 无需检索是否还有elseif，或者else的逻辑判断和内部block
-static LInt HandleIfEnd(LVoid* ins) {
+static LInt HandleIfEnd(LVoid* ins)
+{
     Instruction* inst = gBoyiaVM->mEState->mPC;
     Instruction* tmpInst = inst->mNext;
     // 查看下一个是否是elseif
     EngineLog("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == ELIF || tmpInst->mOPCode == ELSE)) {
-        inst = (Instruction*) tmpInst->mOPRight.mValue; // 跳转到elif对应的IFEND
+        inst = (Instruction*)tmpInst->mOPRight.mValue; // 跳转到elif对应的IFEND
         tmpInst = inst->mNext;
     }
     EngineLog("HandleIfEnd END R0=>%d \n", 1);
-    if (inst) gBoyiaVM->mEState->mPC = inst;
+    if (inst)
+        gBoyiaVM->mEState->mPC = inst;
     return 1;
 }
 
-static LInt HandleJumpToIfTrue(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleJumpToIfTrue(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     if (!value->mValue.mIntVal) {
-        gBoyiaVM->mEState->mPC = (Instruction*) inst->mOPRight.mValue;
+        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPRight.mValue;
     }
 
     return 1;
 }
 
 /* Execute an if statement. */
-static LVoid IfStatement() {
+static LVoid IfStatement()
+{
     NextToken();
     // token = (
-    EvalExpression();  /* check the conditional expression => R0 */
+    EvalExpression(); /* check the conditional expression => R0 */
     Instruction* logicInst = PutInstruction(&COMMAND_R0, NULL, JMP_TRUE, HandleJumpToIfTrue);
     //EngineStrLog("endif last inst name=%s", gToken.mTokenName);
-    BlockStatement();  /* if true, interpret */
+    BlockStatement(); /* if true, interpret */
     Instruction* endInst = PutInstruction(NULL, NULL, IF_END, HandleIfEnd);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue= (LIntPtr) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
 }
 
-static LInt HandleLoopBegin(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleLoopBegin(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     // push left => loop stack
     gBoyiaVM->mLoopStack[gBoyiaVM->mEState->mLoopSize++] = inst->mOPLeft.mValue;
     return 1;
 }
 
-static LInt HandleLoopIfTrue(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleLoopIfTrue(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     //EngineLog("HandleLoopIfTrue value=%d", value->mValue.mIntVal);
     if (!value->mValue.mIntVal) {
-        gBoyiaVM->mEState->mPC = (Instruction*) inst->mOPRight.mValue;
+        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPRight.mValue;
         gBoyiaVM->mEState->mLoopSize--;
     }
 
     return 1;
 }
 
-static LInt HandleJumpTo(LVoid* ins) {
+static LInt HandleJumpTo(LVoid* ins)
+{
     //EngineLog("HandleJumpTo %d", 1);
-    Instruction* inst = (Instruction*) ins;
+    Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_CONST_NUMBER) {
-        gBoyiaVM->mEState->mPC = (Instruction*) inst->mOPLeft.mValue;
+        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPLeft.mValue;
     }
     //EngineLog("HandleJumpTo %d", 2);
     return 1;
 }
 
 /* Execute a while loop. */
-static LVoid WhileStatement() {
+static LVoid WhileStatement()
+{
     //EngineLog("WhileStatement %d", 0);
     Instruction* beginInst = PutInstruction(NULL, NULL, LOOP, HandleLoopBegin);
     NextToken(); // '('
     if (gToken.mTokenValue != LPTR) {
         SntxErrorBuild(LPTR_EXPECTED);
     }
-    EvalExpression();  /* check the conditional expression => R0 */
+    EvalExpression(); /* check the conditional expression => R0 */
     if (gToken.mTokenValue != RPTR) {
         SntxErrorBuild(RPTR_EXPECTED);
     }
     //EngineStrLog("WhileStatement last inst name=%s", gToken.mTokenName);
     Instruction* logicInst = PutInstruction(&COMMAND_R0, NULL, LOOP_TRUE, HandleLoopIfTrue);
-    BlockStatement();  /* if true, interpret */
+    BlockStatement(); /* if true, interpret */
     Instruction* endInst = PutInstruction(NULL, NULL, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LIntPtr) endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LIntPtr) beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
 }
 
 /* Execute a do loop. */
-static LVoid DoStatement() {
+static LVoid DoStatement()
+{
     Instruction* beginInst = PutInstruction(NULL, NULL, LOOP, HandleLoopBegin);
     BlockStatement(); /* interpret loop */
     NextToken();
     if (gToken.mTokenValue != WHILE) {
         SntxErrorBuild(WHILE_EXPECTED);
     }
-    EvalExpression();  /* check the loop condition */
+    EvalExpression(); /* check the loop condition */
 
     if (gToken.mTokenValue != SEMI) {
         SntxErrorBuild(SEMI_EXPECTED);
@@ -1397,15 +1514,16 @@ static LVoid DoStatement() {
     Instruction* logicInst = PutInstruction(&COMMAND_R0, NULL, LOOP_TRUE, HandleLoopIfTrue);
     Instruction* endInst = PutInstruction(NULL, NULL, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LIntPtr) endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr) endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LIntPtr) beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
 }
 
-static LInt HandleAdd(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleAdd(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
     if (!left || !right) {
@@ -1428,8 +1546,9 @@ static LInt HandleAdd(LVoid* ins) {
     return 0;
 }
 
-static LInt HandleSub(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleSub(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
     if (!left || !right) {
@@ -1444,8 +1563,9 @@ static LInt HandleSub(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleMul(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleMul(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
 
@@ -1463,8 +1583,9 @@ static LInt HandleMul(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleDiv(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleDiv(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
 
@@ -1482,8 +1603,9 @@ static LInt HandleDiv(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleMod(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleMod(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
 
@@ -1501,8 +1623,9 @@ static LInt HandleMod(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleRelational(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleRelational(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
 
@@ -1515,27 +1638,27 @@ static LInt HandleRelational(LVoid* ins) {
 
     LInt result = 0;
     switch (inst->mOPCode) {
-        case NOT:
-            result = right->mValue.mIntVal ? 0 : 1;
-            break;
-        case LT:
-            result = left->mValue.mIntVal < right->mValue.mIntVal ? 1 : 0;
-            break;
-        case LE:
-            result = left->mValue.mIntVal <= right->mValue.mIntVal ? 1 : 0;
-            break;
-        case GT:
-            result = left->mValue.mIntVal > right->mValue.mIntVal ? 1 : 0;
-            break;
-        case GE:
-            result = left->mValue.mIntVal >= right->mValue.mIntVal ? 1 : 0;
-            break;
-        case EQ:
-            result = left->mValue.mIntVal == right->mValue.mIntVal ? 1 : 0;
-            break;
-        case NE:
-            result = left->mValue.mIntVal != right->mValue.mIntVal ? 1 : 0;
-            break;
+    case NOT:
+        result = right->mValue.mIntVal ? 0 : 1;
+        break;
+    case LT:
+        result = left->mValue.mIntVal < right->mValue.mIntVal ? 1 : 0;
+        break;
+    case LE:
+        result = left->mValue.mIntVal <= right->mValue.mIntVal ? 1 : 0;
+        break;
+    case GT:
+        result = left->mValue.mIntVal > right->mValue.mIntVal ? 1 : 0;
+        break;
+    case GE:
+        result = left->mValue.mIntVal >= right->mValue.mIntVal ? 1 : 0;
+        break;
+    case EQ:
+        result = left->mValue.mIntVal == right->mValue.mIntVal ? 1 : 0;
+        break;
+    case NE:
+        result = left->mValue.mIntVal != right->mValue.mIntVal ? 1 : 0;
+        break;
     }
 
     right->mValueType = INT;
@@ -1543,8 +1666,9 @@ static LInt HandleRelational(LVoid* ins) {
     return 1;
 }
 
-static LInt HandleLogic(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleLogic(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* right = GetOpValue(inst, OpRight);
 
@@ -1554,12 +1678,12 @@ static LInt HandleLogic(LVoid* ins) {
 
     LInt result = 0;
     switch (inst->mOPCode) {
-        case AND:
-            result = left->mValue.mIntVal && right->mValue.mIntVal ? 1 : 0;
-            break;
-        case OR:
-            result = left->mValue.mIntVal || right->mValue.mIntVal ? 1 : 0;
-            break;
+    case AND:
+        result = left->mValue.mIntVal && right->mValue.mIntVal ? 1 : 0;
+        break;
+    case OR:
+        result = left->mValue.mIntVal || right->mValue.mIntVal ? 1 : 0;
+        break;
     }
 
     right->mValueType = INT;
@@ -1568,10 +1692,11 @@ static LInt HandleLogic(LVoid* ins) {
 }
 
 /* parser lib define */
-static LVoid EvalExpression() {
+static LVoid EvalExpression()
+{
     NextToken();
     if (!gToken.mTokenName.mLen) {
-    	SntxErrorBuild(NO_EXP);
+        SntxErrorBuild(NO_EXP);
         return;
     }
 
@@ -1582,30 +1707,33 @@ static LVoid EvalExpression() {
     EvalAssignment();
 }
 
-static LInt HandlePush(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandlePush(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &gBoyiaVM->mCpu->mReg0 : &gBoyiaVM->mCpu->mReg1;
     ValueCopy(gBoyiaVM->mOpStack + (gBoyiaVM->mEState->mResultNum++), value);
     return 1;
 }
 
-static LInt HandleAssignVar(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleAssignVar(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft);
     BoyiaValue* result = GetOpValue(inst, OpRight);
     if (!left || !result) {
         return 0;
     }
-    BoyiaValue* value = (BoyiaValue*) left->mNameKey;
+    BoyiaValue* value = (BoyiaValue*)left->mNameKey;
     ValueCopyNoName(value, result);
     ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
     return 1;
 }
 
-static LVoid CallNativeStatement(LInt idx) {
+static LVoid CallNativeStatement(LInt idx)
+{
     NextToken();
     if (gToken.mTokenValue != LPTR) // '('
-    	SntxErrorBuild(PAREN_EXPECTED);
+        SntxErrorBuild(PAREN_EXPECTED);
 
     PutInstruction(NULL, NULL, TMP_LOCAL, HandleTempLocalSize);
     do {
@@ -1616,19 +1744,20 @@ static LVoid CallNativeStatement(LInt idx) {
         // if token == ')' exit
     } while (gToken.mTokenValue == COMMA);
 
-	// 保存obj现场是必不可少的一步
-	OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
-	PutInstruction(&cmdSet, NULL, PUSH_OBJ, HandlePushObj);
+    // 保存obj现场是必不可少的一步
+    OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
+    PutInstruction(&cmdSet, NULL, PUSH_OBJ, HandlePushObj);
 
     Instruction* pushInst = PutInstruction(NULL, NULL, PUSH_SCENE, HandlePushScene);
     OpCommand cmd = { OP_CONST_NUMBER, idx };
     PutInstruction(&cmd, NULL, CALL, HandleCallInternal);
     Instruction* popInst = PutInstruction(NULL, NULL, POP_SCENE, HandlePopScene);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LIntPtr) popInst;
+    pushInst->mOPLeft.mValue = (LIntPtr)popInst;
 }
 
-static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal) {
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal)
+{
     if (!lVal || lVal->mValueType != CLASS) {
         return NULL;
     }
@@ -1643,7 +1772,7 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal) {
     }
 
     // find function, such as obj.func1
-    BoyiaValue* cls = (BoyiaValue*) fun->mFuncBody;
+    BoyiaValue* cls = (BoyiaValue*)fun->mFuncBody;
     while (cls && cls->mValueType == CLASS) {
         BoyiaFunction* clsMap = (BoyiaFunction*)cls->mValue.mObj.mPtr;
         LInt funIdx = 0;
@@ -1653,13 +1782,14 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal) {
             }
         }
 
-        cls = (BoyiaValue*) cls->mValue.mObj.mSuper;
+        cls = (BoyiaValue*)cls->mValue.mObj.mSuper;
     }
 
     return NULL;
 }
 
-static LInt FindProp(BoyiaValue* lVal, LUintPtr rVal) {
+static LInt FindProp(BoyiaValue* lVal, LUintPtr rVal)
+{
     BoyiaValue* propVal = FindObjProp(lVal, rVal);
     // 找到
     if (propVal) {
@@ -1671,8 +1801,9 @@ static LInt FindProp(BoyiaValue* lVal, LUintPtr rVal) {
     return 0;
 }
 
-static LInt HandleGetProp(LVoid* ins) {
-    Instruction* inst = (Instruction*) ins;
+static LInt HandleGetProp(LVoid* ins)
+{
+    Instruction* inst = (Instruction*)ins;
     // r0 -> lVal
     BoyiaValue* lVal = GetOpValue(inst, OpLeft);
     if (!lVal) {
@@ -1683,7 +1814,8 @@ static LInt HandleGetProp(LVoid* ins) {
 }
 
 // According to reg0, get reg0 obj's prop
-static LVoid EvalGetProp() {
+static LVoid EvalGetProp()
+{
     NextToken();
     if (gToken.mTokenType != IDENTIFIER) {
         return;
@@ -1692,7 +1824,7 @@ static LVoid EvalGetProp() {
     // Push class context for callstatement
     PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
     LUintPtr propKey = GenIdentifier(&gToken.mTokenName);
-    OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr) propKey };
+    OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr)propKey };
     PutInstruction(&COMMAND_R0, &cmdR, GET_PROP, HandleGetProp);
 
     // Last must next
@@ -1715,80 +1847,86 @@ static LVoid EvalGetProp() {
     }
 }
 
-static LVoid EvalGetValue(LUintPtr objKey) {
-    OpCommand cmdR = { OP_VAR, (LIntPtr) objKey };
+static LVoid EvalGetValue(LUintPtr objKey)
+{
+    OpCommand cmdR = { OP_VAR, (LIntPtr)objKey };
     PutInstruction(&COMMAND_R0, &cmdR, ASSIGN, HandleAssignment);
     if (gToken.mTokenValue == DOT) {
         EvalGetProp();
     }
 }
 
-static LVoid CopyStringFromToken(BoyiaStr* str) {
+static LVoid CopyStringFromToken(BoyiaStr* str)
+{
     str->mLen = gToken.mTokenName.mLen - 2;
     str->mPtr = NEW_ARRAY(LInt8, str->mLen);
     LMemcpy(str->mPtr, gToken.mTokenName.mPtr, str->mLen * sizeof(LInt8));
 }
 
-static LInt HandleConstString(LVoid* ins) {
+static LInt HandleConstString(LVoid* ins)
+{
     Instruction* inst = (Instruction*)ins;
     gBoyiaVM->mCpu->mReg0.mValueType = STRING;
-    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mPtr = (LInt8*) inst->mOPLeft.mValue;
+    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mPtr = (LInt8*)inst->mOPLeft.mValue;
     gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mLen = inst->mOPRight.mValue;
     return 1;
 }
 
-static LVoid Atom() {
+static LVoid Atom()
+{
     switch (gToken.mTokenType) {
-        case IDENTIFIER: {
-            LInt idx = FindNativeFunc(GenIdentifier(&gToken.mTokenName));
-            if (idx != -1) {
-                CallNativeStatement(idx);
+    case IDENTIFIER: {
+        LInt idx = FindNativeFunc(GenIdentifier(&gToken.mTokenName));
+        if (idx != -1) {
+            CallNativeStatement(idx);
+            NextToken();
+        } else {
+            LUintPtr key = GenIdentifier(&gToken.mTokenName);
+            NextToken();
+            if (gToken.mTokenValue == LPTR) {
+                OpCommand cmd = { OP_VAR, (LIntPtr)key };
+                PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
+                OpCommand objCmd = { OP_CONST_NUMBER, 0 };
+                CallStatement(&objCmd);
                 NextToken();
-            } else {
-                LUintPtr key = GenIdentifier(&gToken.mTokenName);
-                NextToken();
-                if (gToken.mTokenValue == LPTR) {
-                    OpCommand cmd = { OP_VAR, (LIntPtr) key };
-                    PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
-                    OpCommand objCmd = {OP_CONST_NUMBER, 0};
-                    CallStatement(&objCmd);
-                    NextToken();
-                    if (gToken.mTokenValue == DOT) {
-                        EvalGetProp();
-                    }
-                } else {
-                    //EngineLog("Atom var name %u \n", key);
-                    EvalGetValue(key);
+                if (gToken.mTokenValue == DOT) {
+                    EvalGetProp();
                 }
+            } else {
+                //EngineLog("Atom var name %u \n", key);
+                EvalGetValue(key);
             }
         }
+    }
+        return;
+    case NUMBER: {
+        OpCommand cmd = { OP_CONST_NUMBER, STR2_INT(gToken.mTokenName) };
+        //EngineLog("Atom NUMBER=%d \n", cmd.mValue);
+        PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
+        NextToken();
+    }
+        return;
+    case STRING_VALUE: {
+        // 设置常量字符串， 所有常量hash值为0
+        BoyiaStr constStr;
+        CopyStringFromToken(&constStr);
+        OpCommand lCmd = { OP_CONST_NUMBER, (LIntPtr)constStr.mPtr };
+        OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
+        PutInstruction(&lCmd, &rCmd, HANDLE_CONST_STR, HandleConstString);
+        NextToken();
+    }
+        return;
+    default: {
+        if (gToken.mTokenValue == RPTR)
             return;
-        case NUMBER: {
-            OpCommand cmd = { OP_CONST_NUMBER, STR2_INT(gToken.mTokenName) };
-            //EngineLog("Atom NUMBER=%d \n", cmd.mValue);
-            PutInstruction(&COMMAND_R0, &cmd, ASSIGN, HandleAssignment);
-            NextToken();
-        }
-            return;
-        case STRING_VALUE: {
-            // 设置常量字符串， 所有常量hash值为0
-            BoyiaStr constStr;
-            CopyStringFromToken(&constStr);
-            OpCommand lCmd = { OP_CONST_NUMBER, (LIntPtr) constStr.mPtr };
-            OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
-            PutInstruction(&lCmd, &rCmd, HANDLE_CONST_STR, HandleConstString);
-            NextToken();
-        }
-            return;
-        default: {
-            if (gToken.mTokenValue == RPTR) return;
-            else SntxErrorBuild(SYNTAX);
-        }
-            break;
+        else
+            SntxErrorBuild(SYNTAX);
+    } break;
     }
 }
 
-static LVoid EvalSubexpr() {
+static LVoid EvalSubexpr()
+{
     if (gToken.mTokenValue == LPTR) {
         NextToken();
         //EngineStrLog("EvalSubexpr %s", gToken.mTokenName);
@@ -1804,7 +1942,8 @@ static LVoid EvalSubexpr() {
 }
 
 // 正负数,+1,-1
-static LVoid EvalMinus() {
+static LVoid EvalMinus()
+{
     LInt8 op = 0;
     if (gToken.mTokenValue == ADD || gToken.mTokenValue == SUB) {
         op = gToken.mTokenValue;
@@ -1819,7 +1958,8 @@ static LVoid EvalMinus() {
 }
 
 // 乘除, *,/,%
-static LVoid EvalArith() {
+static LVoid EvalArith()
+{
     LInt8 op = 0;
     EvalMinus();
 
@@ -1845,7 +1985,8 @@ static LVoid EvalArith() {
 }
 
 // 加减,+,-
-static LVoid EvalAddSub() {
+static LVoid EvalAddSub()
+{
     LInt8 op = 0;
     EvalArith(); // => R0
     while ((op = gToken.mTokenValue) == ADD || op == SUB) {
@@ -1863,7 +2004,8 @@ static LVoid EvalAddSub() {
 }
 
 // 关系比较判断,>,<,==,!=
-static LVoid EvalRelational() {
+static LVoid EvalRelational()
+{
     static LInt8 relops[8] = {
         NOT, LT, LE, GT, GE, EQ, NE, 0
     };
@@ -1894,7 +2036,8 @@ static LVoid EvalRelational() {
     }
 }
 
-static LVoid EvalLogic() {
+static LVoid EvalLogic()
+{
     static LInt8 logicops[3] = {
         AND, OR, 0
     };
@@ -1917,78 +2060,90 @@ static LVoid EvalLogic() {
 }
 
 // 赋值,=
-static LVoid EvalAssignment() {
+static LVoid EvalAssignment()
+{
     EvalLogic(); // =>R0
     if (gToken.mTokenValue == ASSIGN) { // '='
         // R0存入栈
         PutInstruction(&COMMAND_R0, NULL, PUSH, HandlePush);
         NextToken();
         EvalLogic(); // =>R0
-                     // 从栈中吐出数据到R1
+            // 从栈中吐出数据到R1
         PutInstruction(&COMMAND_R1, NULL, POP, HandlePop);
         PutInstruction(&COMMAND_R1, &COMMAND_R0, ASSIGN_VAR, HandleAssignVar);
     }
 }
 
 // init global data such as gBoyiaVM->mGlobals, gBoyiaVM->mLocals, gBoyiaVM->mFunTable
-static LVoid InitGlobalData() {
+static LVoid InitGlobalData()
+{
     if (!gBoyiaVM) {
-        gBoyiaVM = (BoyiaVM*) InitVM();
+        gBoyiaVM = (BoyiaVM*)InitVM();
     }
 }
 
-LVoid InitNativeFun(NativeFunction* funs) {
+LVoid InitNativeFun(NativeFunction* funs)
+{
     if (!gNativeFunTable) {
         gNativeFunTable = funs;
     }
 }
 
-LVoid SetNativeResult(LVoid* result) {
+LVoid SetNativeResult(LVoid* result)
+{
     BoyiaValue* value = (BoyiaValue*)result;
     ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
 }
 
-LVoid* CopyObject(LUintPtr hashKey, LInt size) {
+LVoid* CopyObject(LUintPtr hashKey, LInt size)
+{
     return CopyFunction(FindGlobal(hashKey), size);
 }
 
-LVoid* GetNativeResult() {
+LVoid* GetNativeResult()
+{
     return &gBoyiaVM->mCpu->mReg0;
 }
 
-LVoid GetLocalStack(LInt* stack, LInt* size) {
-    *stack = (LIntPtr) gBoyiaVM->mLocals;
+LVoid GetLocalStack(LInt* stack, LInt* size)
+{
+    *stack = (LIntPtr)gBoyiaVM->mLocals;
     *size = gBoyiaVM->mEState->mLValSize;
 }
 
-LVoid GetGlobalTable(LInt* table, LInt* size) {
-    *table = (LIntPtr) gBoyiaVM->mGlobals;
+LVoid GetGlobalTable(LInt* table, LInt* size)
+{
+    *table = (LIntPtr)gBoyiaVM->mGlobals;
     *size = gBoyiaVM->mEState->mGValSize;
 }
 
 /*  output function */
-LVoid CompileCode(LInt8* code) {
+LVoid CompileCode(LInt8* code)
+{
     InitGlobalData();
-    gBoyiaVM->mEState->mProg        = code;
-    gBoyiaVM->mEState->mLineNum     = 0;
+    gBoyiaVM->mEState->mProg = code;
+    gBoyiaVM->mEState->mLineNum = 0;
     gBoyiaVM->mEState->mTmpLValSize = 0;
-    gBoyiaVM->mEState->mResultNum   = 0;
-    gBoyiaVM->mEState->mLoopSize    = 0;
-    gBoyiaVM->mEState->mClass       = NULL;
+    gBoyiaVM->mEState->mResultNum = 0;
+    gBoyiaVM->mEState->mLoopSize = 0;
+    gBoyiaVM->mEState->mClass = NULL;
     ParseStatement(); // 该函数记录全局变量以及函数接口
     ResetScene();
 }
 
-LVoid* GetLocalValue(LInt idx) {
+LVoid* GetLocalValue(LInt idx)
+{
     LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
     return &gBoyiaVM->mLocals[start + idx];
 }
 
-LInt GetLocalSize() {
+LInt GetLocalSize()
+{
     return gBoyiaVM->mEState->mLValSize - gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
 }
 
-LVoid CallFunction(LInt8* fun, LVoid* ret) {
+LVoid CallFunction(LInt8* fun, LVoid* ret)
+{
     EngineLog("callFunction=>%d \n", 1);
     gBoyiaVM->mEState->mProg = fun;
     CommandTable* cmds = CreateExecutor();
@@ -2002,11 +2157,13 @@ LVoid CallFunction(LInt8* fun, LVoid* ret) {
     }
 }
 
-LVoid SaveLocalSize() {
+LVoid SaveLocalSize()
+{
     HandleTempLocalSize(NULL);
 }
 
-LVoid NativeCall(BoyiaValue* obj) {
+LVoid NativeCall(BoyiaValue* obj)
+{
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mClass = gBoyiaVM->mEState->mClass;
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mLValSize = gBoyiaVM->mEState->mTmpLValSize;
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC = gBoyiaVM->mEState->mPC;

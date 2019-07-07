@@ -24,36 +24,39 @@ enum KeyWord {
 };
 
 typedef struct {
-	LInt8*     mPtr;
-	LInt       mLen;
+    LInt8* mPtr;
+    LInt mLen;
 } BoyiaStr;
 
 typedef struct {
-	LIntPtr mPtr;
-	LIntPtr mSuper;
+    LIntPtr mPtr;
+    LIntPtr mSuper;
 } BoyiaClass;
 
 typedef struct {
-    LUintPtr   mNameKey; // HASH KEY 用来加快查找速度
-    LUint8     mValueType;
+    LUintPtr mNameKey; // HASH KEY 用来加快查找速度
+    LUint8 mValueType;
     union RealValue {
-        LIntPtr     mIntVal;
-        BoyiaClass  mObj; // 类应该存储于方法区
-        BoyiaStr    mStrVal;
+        LIntPtr mIntVal;
+        BoyiaClass mObj; // 类应该存储于方法区
+        BoyiaStr mStrVal;
     } mValue;
 } BoyiaValue;
 
 typedef struct {
-    LIntPtr          mFuncBody;
-    BoyiaValue*      mParams;
-    LInt             mParamSize;
-    LInt             mParamCount;
+    LIntPtr mFuncBody;
+    BoyiaValue* mParams;
+    LInt mParamSize;
+    LInt mParamCount;
 } BoyiaFunction;
 
 #define NEW(type) (type*)BoyiaNew(sizeof(type))
-#define NEW_ARRAY(type, n) (type*)BoyiaNew(n*sizeof(type))
+#define NEW_ARRAY(type, n) (type*)BoyiaNew(n * sizeof(type))
 #define DELETE(ptr) BoyiaDelete(ptr);
-#define D_STR(str, len) {(LInt8*)str, len}
+#define D_STR(str, len)  \
+    {                    \
+        (LInt8*)str, len \
+    }
 
 LVoid* BoyiaNew(LInt size);
 LVoid BoyiaDelete(LVoid* data);

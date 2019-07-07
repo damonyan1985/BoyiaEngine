@@ -14,124 +14,156 @@
 #include "PlatformLib.h"
 
 //
-namespace util
-{
-	template <class T> class LPoint_t;
-	template <class T> class LSize_t;
-	template <class T> class LRect_t;
+namespace util {
 
-	template <class T>
-	class LPoint_t
-	{
-	public:
-		T iX;
-		T iY;
+template <class T>
+class LPoint_t;
+template <class T>
+class LSize_t;
+template <class T>
+class LRect_t;
 
-	public:
-		LPoint_t(){}
-		LPoint_t(const LPoint_t<T>& point){ iX = point.iX; iY = point.iY; }
-	    LPoint_t(T aX, T aY) { iX = aX; iY = aY; }
+template <class T>
+class LPoint_t {
+public:
+    T iX;
+    T iY;
 
-	public:
-		LVoid Set(T aX, T aY) { iX = aX; iY = aY; }
-		const LPoint_t<T>& operator = (const LPoint_t<T>& aPoint)
-		{
-			iX = aPoint.iX;
-			iY = aPoint.iY;
-			return *this;
-		}
+public:
+    LPoint_t() {}
+    LPoint_t(const LPoint_t<T>& point)
+    {
+        iX = point.iX;
+        iY = point.iY;
+    }
+    LPoint_t(T aX, T aY)
+    {
+        iX = aX;
+        iY = aY;
+    }
 
-		LBool operator == (const LPoint_t<T>& aPoint)
-		{
-            return iX == aPoint.iX && iY == aPoint.iY;
-		}
-	};
+public:
+    LVoid Set(T aX, T aY)
+    {
+        iX = aX;
+        iY = aY;
+    }
+    const LPoint_t<T>& operator=(const LPoint_t<T>& aPoint)
+    {
+        iX = aPoint.iX;
+        iY = aPoint.iY;
+        return *this;
+    }
 
-	template <class T>
-	class LSize_t
-	{
-	public:
-		T iWidth;
-		T iHeight;
+    LBool operator==(const LPoint_t<T>& aPoint)
+    {
+        return iX == aPoint.iX && iY == aPoint.iY;
+    }
+};
 
-	public:
-		LSize_t() {}
-		LSize_t(const LSize_t<T>& size) { iWidth = size.iWidth; iWidth = size.iHeight; }
-		LSize_t(T aWidth, T aHeight) { iWidth = aWidth; iHeight = aHeight; }
+template <class T>
+class LSize_t {
+public:
+    T iWidth;
+    T iHeight;
 
-	public:
-		LVoid Set(T aWidth, T aHeight) { iWidth = aWidth; iHeight = aHeight; }
-		const LSize_t<T>& operator = (const LSize_t<T>& aPoint)
-		{
-			iHeight = aPoint.iHeight;
-			iWidth = aPoint.iWidth;
-			return *this;
-		}
-	};
+public:
+    LSize_t() {}
+    LSize_t(const LSize_t<T>& size)
+    {
+        iWidth = size.iWidth;
+        iWidth = size.iHeight;
+    }
+    LSize_t(T aWidth, T aHeight)
+    {
+        iWidth = aWidth;
+        iHeight = aHeight;
+    }
 
-	template <class T>
-	class LRect_t
-	{
-	public:
-		LPoint_t<T> iTopLeft;
-		LPoint_t<T> iBottomRight;
+public:
+    LVoid Set(T aWidth, T aHeight)
+    {
+        iWidth = aWidth;
+        iHeight = aHeight;
+    }
+    const LSize_t<T>& operator=(const LSize_t<T>& aPoint)
+    {
+        iHeight = aPoint.iHeight;
+        iWidth = aPoint.iWidth;
+        return *this;
+    }
+};
 
-	public:
-		LRect_t(){}
-		LRect_t(const LRect_t<T>& rect) { iTopLeft = rect.iTopLeft; iBottomRight = rect.iBottomRight; }
-		LRect_t(LPoint_t<T>& aTopLeft, LPoint_t<T>& aBottomRight)
-		{
-            iTopLeft = aTopLeft;
-			iBottomRight = aBottomRight;
-		}
+template <class T>
+class LRect_t {
+public:
+    LPoint_t<T> iTopLeft;
+    LPoint_t<T> iBottomRight;
 
-		LRect_t(T x, T y, T w, T h) { iTopLeft = LPoint_t<T>(x, y);  iBottomRight = LPoint_t<T>(x+w, y+h); }
+public:
+    LRect_t() {}
+    LRect_t(const LRect_t<T>& rect)
+    {
+        iTopLeft = rect.iTopLeft;
+        iBottomRight = rect.iBottomRight;
+    }
+    LRect_t(LPoint_t<T>& aTopLeft, LPoint_t<T>& aBottomRight)
+    {
+        iTopLeft = aTopLeft;
+        iBottomRight = aBottomRight;
+    }
 
-		LRect_t(const LPoint_t<T>& aTopLeft, const LSize_t<T>& aSize)
-		{
-            iTopLeft.Set(aTopLeft.iX, aTopLeft.iY);
-            //iTopLeft.iX = aTopLeft.iX;
-            //iTopLeft.iY = aTopLeft.iY;
-			//iTopLeft = aTopLeft;
+    LRect_t(T x, T y, T w, T h)
+    {
+        iTopLeft = LPoint_t<T>(x, y);
+        iBottomRight = LPoint_t<T>(x + w, y + h);
+    }
 
-            iBottomRight.iX = aTopLeft.iX + aSize.iWidth;
-            iBottomRight.iY = aTopLeft.iY + aSize.iHeight;
-		}
+    LRect_t(const LPoint_t<T>& aTopLeft, const LSize_t<T>& aSize)
+    {
+        iTopLeft.Set(aTopLeft.iX, aTopLeft.iY);
+        //iTopLeft.iX = aTopLeft.iX;
+        //iTopLeft.iY = aTopLeft.iY;
+        //iTopLeft = aTopLeft;
 
-	public:
-		LVoid Set(const LPoint_t<T>& aTopLeft, const LPoint_t<T>& aBottomRight)
-		{
-			iTopLeft = aTopLeft;
-			iBottomRight = aBottomRight;
-		}
+        iBottomRight.iX = aTopLeft.iX + aSize.iWidth;
+        iBottomRight.iY = aTopLeft.iY + aSize.iHeight;
+    }
 
-		LVoid Set(const LPoint_t<T>& aTopLeft, const LSize_t<T>& aSize)
-		{
-			iTopLeft = aTopLeft;
-            iBottomRight.iX = aTopLeft.iX + aSize.iWidth;
-            iBottomRight.iX = aTopLeft.iY + aSize.iHeight;
-		}
+public:
+    LVoid Set(const LPoint_t<T>& aTopLeft, const LPoint_t<T>& aBottomRight)
+    {
+        iTopLeft = aTopLeft;
+        iBottomRight = aBottomRight;
+    }
 
-		const LRect_t<T>& operator = ( const LRect_t<T>& aRect )
-		{
-			iTopLeft = aRect.iTopLeft;
-			iBottomRight = aRect.iBottomRight;
-			return *this;
-		}
+    LVoid Set(const LPoint_t<T>& aTopLeft, const LSize_t<T>& aSize)
+    {
+        iTopLeft = aTopLeft;
+        iBottomRight.iX = aTopLeft.iX + aSize.iWidth;
+        iBottomRight.iX = aTopLeft.iY + aSize.iHeight;
+    }
 
-		T GetHeight() const { return iBottomRight.iY - iTopLeft.iY; }
-		T GetWidth() const  { return iBottomRight.iX - iTopLeft.iX; }
-		LSize_t<T> GetSize() const { return LSize_t<T>(iBottomRight.iY - iTopLeft.iY,iBottomRight.iX - iTopLeft.iX); }
-	};
+    const LRect_t<T>& operator=(const LRect_t<T>& aRect)
+    {
+        iTopLeft = aRect.iTopLeft;
+        iBottomRight = aRect.iBottomRight;
+        return *this;
+    }
 
-	typedef LPoint_t<LInt> LPoint;
-	typedef LSize_t<LInt> LSize;
-	typedef LRect_t<LInt> LRect;
+    T GetHeight() const { return iBottomRight.iY - iTopLeft.iY; }
+    T GetWidth() const { return iBottomRight.iX - iTopLeft.iX; }
+    LSize_t<T> GetSize() const { return LSize_t<T>(iBottomRight.iY - iTopLeft.iY, iBottomRight.iX - iTopLeft.iX); }
+};
+
+typedef LPoint_t<LInt> LPoint;
+typedef LSize_t<LInt> LSize;
+typedef LRect_t<LInt> LRect;
 }
 
+using util::LPoint;
 using util::LRect;
 using util::LSize;
-using util::LPoint;
 
 #endif // LGRAPHIC_H
 

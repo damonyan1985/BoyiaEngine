@@ -6,8 +6,8 @@
 namespace boyia {
 class BoyiaInputView : public BoyiaView {
 public:
-	BoyiaInputView(yanbo::HtmlView* item);
-	void setText(const String& text);
+    BoyiaInputView(yanbo::HtmlView* item);
+    void setText(const String& text);
 };
 }
 #endif

@@ -7,19 +7,17 @@
 // 如果要开发操作系统或者无依赖框架
 // 可以作为替换ImageAndroid和ImageIOS
 // 的首选
-namespace yanbo
-{
-class NetImage : public LImage
-{
+namespace yanbo {
+
+class NetImage : public LImage {
 public:
-	enum ImageType
-	{
-		ENETIMAGE_NONE,
-		ENETIMAGE_JPEG,
-		ENETIMAGE_PNG,
-		ENETIMAGE_GIF
-	};
-	NetImage();
+    enum ImageType {
+        ENETIMAGE_NONE,
+        ENETIMAGE_JPEG,
+        ENETIMAGE_PNG,
+        ENETIMAGE_GIF
+    };
+    NetImage();
 
     LInt getType(const char* data);
     LVoid readJPEG(const LByte* data, size_t size);

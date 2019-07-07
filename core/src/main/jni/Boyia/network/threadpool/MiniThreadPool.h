@@ -5,22 +5,21 @@
 #include "MiniTaskBase.h"
 #include "MiniTaskThread.h"
 
-namespace yanbo
-{
-class MiniThreadPool
-{
-public:
-	static MiniThreadPool* getInstance();
-	static void destroy();
+namespace yanbo {
 
-	void sendMiniTask(MiniTaskBase* task);
+class MiniThreadPool {
+public:
+    static MiniThreadPool* getInstance();
+    static void destroy();
+
+    void sendMiniTask(MiniTaskBase* task);
 
 private:
-	~MiniThreadPool();
-	MiniThreadPool();
+    ~MiniThreadPool();
+    MiniThreadPool();
 
-	KList<BoyiaPtr<MiniTaskThread> > m_threadList;
-	BoyiaPtr<MiniBlockQueue> m_queue;
+    KList<BoyiaPtr<MiniTaskThread>> m_threadList;
+    BoyiaPtr<MiniBlockQueue> m_queue;
 };
 }
 

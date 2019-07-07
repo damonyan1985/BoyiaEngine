@@ -8,8 +8,8 @@
 #include "LBaseView.h"
 #include "SalLog.h"
 
-namespace util
-{
+namespace util {
+
 LBaseView::LBaseView()
     : m_visible(LTrue)
     , m_x(0)
@@ -27,17 +27,17 @@ LBaseView::~LBaseView()
 
 void LBaseView::setTransparent(LBool transparent)
 {
-	m_style.transparent = transparent;
+    m_style.transparent = transparent;
 }
 
 LBool LBaseView::getTransparency()
 {
-	return m_style.transparent;
+    return m_style.transparent;
 }
 
 void LBaseView::setFont(LFont font)
 {
-	m_style.font = font;
+    m_style.font = font;
 }
 
 const LFont& LBaseView::getFont() const
@@ -47,78 +47,76 @@ const LFont& LBaseView::getFont() const
 
 void LBaseView::setPos(LInt x, LInt y)
 {
-	m_x = x;
-	m_y = y;
+    m_x = x;
+    m_y = y;
 }
 
 void LBaseView::setSize(LInt width, LInt height)
 {
-	m_width = width;
-	m_height = height;
+    m_width = width;
+    m_height = height;
 }
 
 void LBaseView::translate(LInt x, LInt y)
 {
-	m_x += x;
-	m_y += y;
+    m_x += x;
+    m_y += y;
 }
-
-
 
 LInt LBaseView::getXpos() const
 {
-	return m_x;
+    return m_x;
 }
 
 LInt LBaseView::getYpos() const
 {
-	return m_y;
+    return m_y;
 }
 
 LInt LBaseView::getWidth() const
 {
-    return m_width;	
+    return m_width;
 }
 
 LInt LBaseView::getHeight() const
 {
-    return m_height;	
+    return m_height;
 }
 
 void LBaseView::setWidth(LInt width)
 {
-	m_width = width;
+    m_width = width;
 }
 
 void LBaseView::setHeight(LInt height)
 {
-	m_height = height;
+    m_height = height;
 }
 
 void LBaseView::setPadding(LInt leftPadding, LInt topPadding)
 {
-	m_leftPadding = leftPadding;
-	m_topPadding = topPadding;
+    m_leftPadding = leftPadding;
+    m_topPadding = topPadding;
 }
 
 void LBaseView::setVisible(LBool visible)
 {
-    m_visible = visible;	
+    m_visible = visible;
 }
 
 int LBaseView::getEndX()
 {
-    return m_x + m_width;	
+    return m_x + m_width;
 }
 
 int LBaseView::getBottomY()
 {
-	return m_y + m_height;
+    return m_y + m_height;
 }
 
 void LBaseView::setXpos(LInt x)
 {
-	m_x = x;
+    m_x = x;
 }
 
 void LBaseView::setYpos(LInt y)
@@ -133,6 +131,6 @@ void LBaseView::setTagName(const String& tagName)
 
 const String& LBaseView::getTagName() const
 {
-	return m_tagName;
+    return m_tagName;
 }
 }

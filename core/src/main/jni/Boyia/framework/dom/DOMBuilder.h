@@ -1,33 +1,32 @@
 #ifndef Tiny2Dom_h
 #define Tiny2Dom_h
 
-#include "TinyXml2.h"
-#include "HtmlView.h"
 #include "CssParser.h"
+#include "HtmlView.h"
+#include "TinyXml2.h"
 
 using namespace tinyxml2;
 
-namespace yanbo
-{
-class DOMBuilder
-{
+namespace yanbo {
+
+class DOMBuilder {
 public:
-	DOMBuilder();
-	~DOMBuilder();
+    DOMBuilder();
+    ~DOMBuilder();
 
-	DOMBuilder& add(HtmlDocument* doc);
-	DOMBuilder& add(util::CssParser* cssParser);
+    DOMBuilder& add(HtmlDocument* doc);
+    DOMBuilder& add(util::CssParser* cssParser);
 
-	virtual LVoid build(const String& buffer);
-
-private:
-	HtmlView* createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent);
-	void createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* parent);
+    virtual LVoid build(const String& buffer);
 
 private:
-	HtmlDocument*      m_htmlDoc;
-	util::CssParser*   m_cssParser;
-	XMLDocument*       m_xmlDoc;
+    HtmlView* createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent);
+    void createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* parent);
+
+private:
+    HtmlDocument* m_htmlDoc;
+    util::CssParser* m_cssParser;
+    XMLDocument* m_xmlDoc;
 };
 }
 

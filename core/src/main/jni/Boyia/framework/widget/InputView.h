@@ -11,60 +11,56 @@
 #include "FormView.h"
 #include "LGdi.h"
 
-namespace yanbo
-{
+namespace yanbo {
 
-class InputView : public FormView
-{
+class InputView : public FormView {
 public:
-    enum InputType
-    {
-    	NOTSUPPORTED,
-    	TEXT,
-    	PASSWORD,
-    	CHECKBOX,
-    	RADIO,
-    	SUBMIT,
-    	RESET,
-    	FILE,
-    	HIDDEN,
-    	IMAGE,
-    	BUTTON
+    enum InputType {
+        NOTSUPPORTED,
+        TEXT,
+        PASSWORD,
+        CHECKBOX,
+        RADIO,
+        SUBMIT,
+        RESET,
+        FILE,
+        HIDDEN,
+        IMAGE,
+        BUTTON
     };
-    
+
 private:
-    LInt                 m_type;
-    LBool                m_checked;
-    LBool                m_activated;
-    LFont*               m_newFont;
-    
+    LInt m_type;
+    LBool m_checked;
+    LBool m_activated;
+    LFont* m_newFont;
+
 public:
     InputView(
-			const String& id,
-			const String& name,
-			const String& value,
-			const String& title,
-			const String& inputType,
-			const String& imageUrl);
-    
+        const String& id,
+        const String& name,
+        const String& value,
+        const String& title,
+        const String& inputType,
+        const String& imageUrl);
+
     ~InputView();
-    
+
 public:
-	virtual LVoid layout(RenderContext& rc);
-	virtual LVoid paint(LGraphicsContext& dc);
-	virtual LVoid execute();
-	
-	LInt getInputType();
-	virtual LVoid setSelected(const LBool selected);
-	LVoid setInputValue(const String& text);
+    virtual LVoid layout(RenderContext& rc);
+    virtual LVoid paint(LGraphicsContext& dc);
+    virtual LVoid execute();
+
+    LInt getInputType();
+    virtual LVoid setSelected(const LBool selected);
+    LVoid setInputValue(const String& text);
 
 private:
     LVoid initView();
-	LVoid paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
-	LVoid paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-	LVoid paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-	LVoid paintCheckBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+    LVoid paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
+    LVoid paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+    LVoid paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+    LVoid paintCheckBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
 };
-
 }
 #endif /* InputView_h */

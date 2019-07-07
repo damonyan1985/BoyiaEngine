@@ -1,32 +1,30 @@
 #ifndef ImageAndroid_h
 #define ImageAndroid_h
 
-#include "LGdi.h"
 #include "AutoObject.h"
 #include "HtmlView.h"
+#include "LGdi.h"
 
-namespace util
-{
+namespace util {
 
 struct JBitmapAndroid;
-class ImageAndroid : public LImage
-{
+class ImageAndroid : public LImage {
 public:
-	ImageAndroid();
-	virtual ~ImageAndroid();
+    ImageAndroid();
+    virtual ~ImageAndroid();
 
 public:
-	void init(JNIEnv* env, jclass clzz, jobject obj);
-	virtual LVoid load(const String& aPath, LVoid* image);
-	virtual const String& url() const;
+    void init(JNIEnv* env, jclass clzz, jobject obj);
+    virtual LVoid load(const String& aPath, LVoid* image);
+    virtual const String& url() const;
     virtual LVoid setLoaded(LBool loaded);
     void drawText(
-    		const String& text,
-    		const LRect& rect,
-    		LGraphicsContext::TextAlign align,
-    		const LFont& font,
-    		const LRgb& penColor,
-    		const LRgb& brushColor);
+        const String& text,
+        const LRect& rect,
+        LGraphicsContext::TextAlign align,
+        const LFont& font,
+        const LRgb& penColor,
+        const LRgb& brushColor);
 
     AutoJObject getJavaBitmap() const;
     AutoJObject getBitmapObject() const;

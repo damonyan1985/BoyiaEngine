@@ -1,18 +1,19 @@
 #include "GLPainter.h"
-#include "ShaderUtil.h"
+#include "BoyiaPainterEnv.h"
 #include "MatrixState.h"
 #include "SalLog.h"
+#include "ShaderUtil.h"
 #include "StringUtils.h"
-#include "BoyiaPainterEnv.h"
 
-namespace yanbo
-{
+namespace yanbo {
 #define GL_TEXTURE_EXTERNAL_OES 0x8D65
 
 BatchCommandBuffer GLPainter::s_buffer;
 
 RotateInfo::RotateInfo()
-    : rx(0), ry(0), rz(0)
+    : rx(0)
+    , ry(0)
+    , rz(0)
 {
 }
 
@@ -24,60 +25,57 @@ PaintCommand::PaintCommand()
 }
 
 BatchCommand::BatchCommand()
-	: texId(0)
-	, type(GLPainter::EShapeNone)
-	, matrix(NULL)
+    : texId(0)
+    , type(GLPainter::EShapeNone)
+    , matrix(NULL)
 {
 }
 
 BatchCommandBuffer::BatchCommandBuffer()
-	: size(0)
+    : size(0)
 {
 }
 
 bool BatchCommandBuffer::sameMaterial(GLuint texId)
 {
-	KFORMATLOG("BatchCommandBuffer::sameMaterial prevTexid=%u texId=%u", buffer[size - 1].texId, texId);
-	return size > 0 && buffer[size - 1].texId == texId;
-	//return false;
+    KFORMATLOG("BatchCommandBuffer::sameMaterial prevTexid=%u texId=%u", buffer[size - 1].texId, texId);
+    return size > 0 && buffer[size - 1].texId == texId;
+    //return false;
 }
 
 LVoid BatchCommandBuffer::addBatchCommand()
 {
-	if (size > 0)
-	{
-		buffer[size-1].size++;
-	}
+    if (size > 0) {
+        buffer[size - 1].size++;
+    }
 }
 
 LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
 {
-	buffer[size].texId = cmd.texId;
-	buffer[size].type = cmd.type;
-	buffer[size].matrix = cmd.matrix;
-	buffer[size].size = 1;
-	size++;
+    buffer[size].texId = cmd.texId;
+    buffer[size].type = cmd.type;
+    buffer[size].matrix = cmd.matrix;
+    buffer[size].size = 1;
+    size++;
 }
 
 LVoid BatchCommandBuffer::reset()
 {
-	size = 0;
+    size = 0;
 }
-
 
 GLPainter::GLPainter()
     : m_scale(1)
     , m_stMatrix(NULL)
 {
-	init();
+    init();
 }
 
 GLPainter::~GLPainter()
 {
-	if (m_stMatrix)
-	{
-		delete m_stMatrix;
-	}
+    if (m_stMatrix) {
+        delete m_stMatrix;
+    }
 }
 
 void GLPainter::setLine(const LPoint& p1, const LPoint& p2)
@@ -86,8 +84,8 @@ void GLPainter::setLine(const LPoint& p1, const LPoint& p2)
 
 void GLPainter::setRect(const LRect& rect)
 {
-	m_cmd.type = EShapeRect;
-	Quad& quad = m_cmd.quad;
+    m_cmd.type = EShapeRect;
+    Quad& quad = m_cmd.quad;
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
 
     ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
@@ -99,8 +97,8 @@ void GLPainter::setRect(const LRect& rect)
 
 void GLPainter::setImage(MiniTexture* tex, const LRect& rect)
 {
-	m_cmd.type = EShapeImage;
-	setTexture(tex, rect, rect);
+    m_cmd.type = EShapeImage;
+    setTexture(tex, rect, rect);
 }
 
 void GLPainter::setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
@@ -123,17 +121,16 @@ float* GLPainter::stMatrix() const
 
 void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
 {
-	if (!m_stMatrix)
-	{
-		m_stMatrix = new float[16];
-	}
+    if (!m_stMatrix) {
+        m_stMatrix = new float[16];
+    }
 
-	m_cmd.top = rect.iTopLeft.iY;
-	m_cmd.type = EShapeVideo;
-	m_cmd.texId = tex->texId;
-	m_cmd.matrix = m_stMatrix;
+    m_cmd.top = rect.iTopLeft.iY;
+    m_cmd.type = EShapeVideo;
+    m_cmd.texId = tex->texId;
+    m_cmd.matrix = m_stMatrix;
 
-	Quad& quad = m_cmd.quad;
+    Quad& quad = m_cmd.quad;
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
 
     ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
@@ -141,7 +138,6 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
     ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
 
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
-
 
     // 纹理坐标
     quad.bottomLeft.texCoord.u = 0.0f;
@@ -159,11 +155,11 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
 
 void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
 {
-	m_cmd.texId = tex->texId;
-	KFORMATLOG("texSize width=%d. height=%d", tex->width, tex->height);
-	KFORMATLOG("LRect width=%d. height=%d", rect.GetWidth(), rect.GetHeight());
+    m_cmd.texId = tex->texId;
+    KFORMATLOG("texSize width=%d. height=%d", tex->width, tex->height);
+    KFORMATLOG("LRect width=%d. height=%d", rect.GetWidth(), rect.GetHeight());
 
-	Quad& quad = m_cmd.quad;
+    Quad& quad = m_cmd.quad;
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
 
     ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
@@ -172,24 +168,20 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& cli
 
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
 
-    float texL = ((float) (rect.iTopLeft.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
-    float texT = ((float) (rect.iTopLeft.iY - clipRect.iTopLeft.iY)) / clipRect.GetHeight();
+    float texL = ((float)(rect.iTopLeft.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+    float texT = ((float)(rect.iTopLeft.iY - clipRect.iTopLeft.iY)) / clipRect.GetHeight();
 
-    float texR = ((float) (rect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
-	float texB = ((float) (rect.iBottomRight.iY - clipRect.iTopLeft.iY)) / clipRect.GetWidth();
+    float texR = ((float)(rect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+    float texB = ((float)(rect.iBottomRight.iY - clipRect.iTopLeft.iY)) / clipRect.GetWidth();
     // 纹理坐标
     quad.bottomLeft.texCoord.u = 0.0f;
     quad.bottomLeft.texCoord.v = 1.0f;
 
-
     quad.bottomRight.texCoord.u = 1.0f;
     quad.bottomRight.texCoord.v = 1.0f;
-    
 
     quad.topRight.texCoord.u = 1.0f;
     quad.topRight.texCoord.v = 0.0f;
-	
-
 
     quad.topLeft.texCoord.u = 0.0f;
     quad.topLeft.texCoord.v = 0.0f;
@@ -209,109 +201,96 @@ void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& cli
 
 void GLPainter::reset()
 {
-	s_buffer.reset();
+    s_buffer.reset();
 }
 
 void GLPainter::paintCommand()
 {
-	if (!BoyiaPainterEnv::instance()->available())
-	{
-		return;
-	}
+    if (!BoyiaPainterEnv::instance()->available()) {
+        return;
+    }
 
-	LInt drawQuadIndex = 0;
+    LInt drawQuadIndex = 0;
 
-	for (LInt i = 0; i < s_buffer.size; i++)
-	{
-		KLOG("BaseShape::drawSelf()");
-		
+    for (LInt i = 0; i < s_buffer.size; i++) {
+        KLOG("BaseShape::drawSelf()");
+
         MatrixState::pushMatrix();
-		 // 制定使用某套shader程序
-    	BoyiaPainterEnv::instance()->program()->use(s_buffer.buffer[i].type);
-		KLOG("BaseShape::drawSelf()1");
-		 // 初始化变换矩阵
-	    KLOG("BaseShape::drawSelf()2");
-		 // 设置沿Z轴正向位移1
-		//MatrixState::translate(0.0f, 0.0f, 0.0f);
-		KLOG("BaseShape::drawSelf()3");
-		 // 设置绕y轴旋转
-		MatrixState::rotate(0, 0, 1, 0);
-		KLOG("BaseShape::drawSelf()4");
-		// 设置绕z轴旋转
-		MatrixState::rotate(0, 1, 0, 0);
+        // 制定使用某套shader程序
+        BoyiaPainterEnv::instance()->program()->use(s_buffer.buffer[i].type);
+        KLOG("BaseShape::drawSelf()1");
+        // 初始化变换矩阵
+        KLOG("BaseShape::drawSelf()2");
+        // 设置沿Z轴正向位移1
+        //MatrixState::translate(0.0f, 0.0f, 0.0f);
+        KLOG("BaseShape::drawSelf()3");
+        // 设置绕y轴旋转
+        MatrixState::rotate(0, 0, 1, 0);
+        KLOG("BaseShape::drawSelf()4");
+        // 设置绕z轴旋转
+        MatrixState::rotate(0, 1, 0, 0);
 
-		KLOG("BaseShape::drawSelf()5");
-		
-		switch (s_buffer.buffer[i].type)
-		{
-		case EShapeVideo:
-			{
-				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-				if (s_buffer.buffer[i].matrix)
-				{
-					glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, s_buffer.buffer[i].matrix);
-				}
+        KLOG("BaseShape::drawSelf()5");
 
-				//KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-				glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
-				// 绑定纹理
-				glActiveTexture(GL_TEXTURE0);
-				// 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
-				// 作者表示自己也很晕
-				// 可能出错信息会驱动GLConsumer去创建EGLImage吧
-				// 纯JAVA实现的情况会不同，蛋疼，艹
-				glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
-			}
-			break;
-		case EShapeImage:
-			{
-				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-				glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
+        switch (s_buffer.buffer[i].type) {
+        case EShapeVideo: {
+            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            if (s_buffer.buffer[i].matrix) {
+                glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, s_buffer.buffer[i].matrix);
+            }
 
-				glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
-			    //绑定纹理
-			    glActiveTexture(GL_TEXTURE0);
-			    glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+            //KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
+            glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
+            // 绑定纹理
+            glActiveTexture(GL_TEXTURE0);
+            // 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
+            // 作者表示自己也很晕
+            // 可能出错信息会驱动GLConsumer去创建EGLImage吧
+            // 纯JAVA实现的情况会不同，蛋疼，艹
+            glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+        } break;
+        case EShapeImage: {
+            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
 
-			    KFORMATLOG("GLPainter::paintCommand texSize=%d", s_buffer.buffer[i].size);
-			}
-			break;
-		case EShapeRect:
-			{
-				glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-				glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
-				KFORMATLOG("GLPainter::paintCommand rectSize=%d", s_buffer.buffer[i].size);
-			}
-			break;	
-		}
+            glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
+            //绑定纹理
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
 
-		// 绘制矩形
-		glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*) (drawQuadIndex * 6 * sizeof(GLushort)));
-		MatrixState::popMatrix();
-		drawQuadIndex += s_buffer.buffer[i].size;
-	}
+            KFORMATLOG("GLPainter::paintCommand texSize=%d", s_buffer.buffer[i].size);
+        } break;
+        case EShapeRect: {
+            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
+            KFORMATLOG("GLPainter::paintCommand rectSize=%d", s_buffer.buffer[i].size);
+        } break;
+        }
+
+        // 绘制矩形
+        glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*)(drawQuadIndex * 6 * sizeof(GLushort)));
+        MatrixState::popMatrix();
+        drawQuadIndex += s_buffer.buffer[i].size;
+    }
 }
 
 void GLPainter::appendToBuffer()
 {
     BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
-    
-    if (s_buffer.sameMaterial(m_cmd.texId))
-    {
-		s_buffer.addBatchCommand();
-    }
-    else
-    {
-		s_buffer.addBatchCommand(m_cmd);
+
+    if (s_buffer.sameMaterial(m_cmd.texId)) {
+        s_buffer.addBatchCommand();
+    } else {
+        s_buffer.addBatchCommand(m_cmd);
     }
 }
 
 void GLPainter::setColor(const LRgb& color)
 {
-	m_cmd.quad.topLeft.color.set(color);
-	m_cmd.quad.topRight.color.set(color);
-	m_cmd.quad.bottomRight.color.set(color);
-	m_cmd.quad.bottomLeft.color.set(color);
+    m_cmd.quad.topLeft.color.set(color);
+    m_cmd.quad.topRight.color.set(color);
+    m_cmd.quad.bottomRight.color.set(color);
+    m_cmd.quad.bottomLeft.color.set(color);
 }
 
 void GLPainter::setScale(float scale)
@@ -321,17 +300,17 @@ void GLPainter::setScale(float scale)
 
 void GLPainter::init()
 {
-	BoyiaPainterEnv::instance()->init();
+    BoyiaPainterEnv::instance()->init();
 }
 
 void GLPainter::bindVBO()
 {
-	BoyiaPainterEnv::instance()->bindVBO();
+    BoyiaPainterEnv::instance()->bindVBO();
 }
 
 void GLPainter::unbindVBO()
 {
-	BoyiaPainterEnv::instance()->unbindVBO();
+    BoyiaPainterEnv::instance()->unbindVBO();
 }
 
-}
+} // namespace yanbo
