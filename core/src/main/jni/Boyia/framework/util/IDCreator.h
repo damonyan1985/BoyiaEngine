@@ -10,33 +10,31 @@
 #ifndef IDCreator_h
 #define IDCreator_h
 
-#include "UtilString.h"
 #include "BoyiaValue.h"
+#include "UtilString.h"
 
-namespace util
-{
+namespace util {
 typedef struct BoyiaId {
-	BoyiaStr  mStr;
-	LUint     mID;
-	BoyiaId*  mNext;
+    BoyiaStr mStr;
+    LUint mID;
+    BoyiaId* mNext;
 } BoyiaId;
 
 typedef struct {
-	BoyiaId* mBegin;
-	BoyiaId* mEnd;
+    BoyiaId* mBegin;
+    BoyiaId* mEnd;
 } IdLink;
 
-class IDCreator
-{
+class IDCreator {
 public:
-	IDCreator();
-	LUint genIdentify(const String& str);
-	LUint genIdentByStr(const LInt8* str, LInt len);
-	LUint genIdentifier(BoyiaStr* str);
+    IDCreator();
+    LUint genIdentify(const String& str);
+    LUint genIdentByStr(const LInt8* str, LInt len);
+    LUint genIdentifier(BoyiaStr* str);
 
 private:
-	LUint   m_idCount;
-	IdLink* m_idLink;
+    LUint m_idCount;
+    IdLink* m_idLink;
 };
 }
 

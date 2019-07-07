@@ -8,17 +8,15 @@
 #define MiniTaskBase_h
 #include "BoyiaRef.h"
 
-namespace yanbo
-{
-class MiniTaskBase : public BoyiaRef
-{
+namespace yanbo {
+
+class MiniTaskBase : public BoyiaRef {
 public:
-	virtual ~MiniTaskBase();
+    virtual ~MiniTaskBase();
 
 public:
-	virtual void execute() = 0;
+    virtual void execute() = 0;
 };
-
 }
 
 #endif

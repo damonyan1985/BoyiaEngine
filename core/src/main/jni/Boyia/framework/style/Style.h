@@ -10,65 +10,58 @@
 
 #include "LGdi.h"
 
-namespace util
-{
+namespace util {
 
-class Border
-{
+class Border {
 public:
-	Border();
-	Border(const Border& border);
-	~Border();
-	const Border& operator=(const Border& border);
-	LVoid init();
+    Border();
+    Border(const Border& border);
+    ~Border();
+    const Border& operator=(const Border& border);
+    LVoid init();
 
 public:
-	LInt                          topColor;
-	LInt                          leftColor;
-	LInt                          rightColor;
-	LInt                          bottomColor;
-	LInt                          topWidth;
-	LInt                          leftWidth;
-	LInt                          rightWidth;
-	LInt                          bottomWidth;
-	LInt                          topStyle;
-	LInt                          leftStyle;
-	LInt                          rightStyle;
-	LInt                          bottomStyle;
+    LInt topColor;
+    LInt leftColor;
+    LInt rightColor;
+    LInt bottomColor;
+    LInt topWidth;
+    LInt leftWidth;
+    LInt rightWidth;
+    LInt bottomWidth;
+    LInt topStyle;
+    LInt leftStyle;
+    LInt rightStyle;
+    LInt bottomStyle;
 };
 
-class Style
-{
+class Style {
 public:
-	// must be used with absolute or fixed
-	typedef enum AlignType
-	{
-		ALIGN_NONE,
-		ALIGN_TOP,
-		ALIGN_LEFT,
-		ALIGN_RIGHT,
-		ALIGN_BOTTOM,
-		ALIGN_CENTER
-	} AlignType;
+    // must be used with absolute or fixed
+    typedef enum AlignType {
+        ALIGN_NONE,
+        ALIGN_TOP,
+        ALIGN_LEFT,
+        ALIGN_RIGHT,
+        ALIGN_BOTTOM,
+        ALIGN_CENTER
+    } AlignType;
 
-    typedef enum PositionType
-    {
+    typedef enum PositionType {
         ABSOLUTEPOSITION,
         FIXEDPOSITION,
         STATICPOSITION,
         RELATIVEPOSITION
     } PositionType;
-	
-    typedef enum DisplayType
-    {
+
+    typedef enum DisplayType {
         DISPLAY_NONE,
         DISPLAY_BLOCK,
         DISPLAY_INLINE,
         DISPLAY_ANY
-	} DisplayType;
+    } DisplayType;
 
-    typedef enum FlexDirection
-    {
+    typedef enum FlexDirection {
         FLEX_NONE,
         FLEX_ROW,
         FLEX_COLUMN,
@@ -77,46 +70,46 @@ public:
     } FlexDirection;
 
 public:
-	Style();
-	Style(LFont::FontStyle font);
-	Style(const Style& style);
-	const Style& operator = (const Style& style);
-	void init();
-	void copyStyle(Style* style);
-	
-public:
-	void setBorder(const Border& border);
-	const Border& getBorder() const;
+    Style();
+    Style(LFont::FontStyle font);
+    Style(const Style& style);
+    const Style& operator=(const Style& style);
+    void init();
+    void copyStyle(Style* style);
 
 public:
-	LRgb                          color; // foreground color
-	LRgb                          bgColor; // background color
-	String                        bgImageUrl;
-	LFont                         font;
-	LBool                         transparent; // if transparent
-	LInt                          positionType;
-	LInt                          displayType;
-	LInt                          left;
-	LInt                          top;
-	LInt                          width;
-	LInt                          height;
-	LInt                          leftMargin;
-	LInt                          rightMargin;
-	LInt                          topMargin;
-	LInt                          bottomMargin;
-	LInt                          textAlignement;
-	LInt                          topPadding;
-	LInt                          bottomPadding;
-	LInt                          leftPadding;
-	LInt                          rightPadding;
-	LReal                         scale;
-	LInt                          zindex;
-	LUint8                        opacity;
-	LUint8                        drawOpacity;
-	Border                        border;
-	LBool                         focusable;
-	LInt                          flexDirection;
-	LInt                          align;
+    void setBorder(const Border& border);
+    const Border& getBorder() const;
+
+public:
+    LRgb color; // foreground color
+    LRgb bgColor; // background color
+    String bgImageUrl;
+    LFont font;
+    LBool transparent; // if transparent
+    LInt positionType;
+    LInt displayType;
+    LInt left;
+    LInt top;
+    LInt width;
+    LInt height;
+    LInt leftMargin;
+    LInt rightMargin;
+    LInt topMargin;
+    LInt bottomMargin;
+    LInt textAlignement;
+    LInt topPadding;
+    LInt bottomPadding;
+    LInt leftPadding;
+    LInt rightPadding;
+    LReal scale;
+    LInt zindex;
+    LUint8 opacity;
+    LUint8 drawOpacity;
+    Border border;
+    LBool focusable;
+    LInt flexDirection;
+    LInt align;
 };
 }
 #endif

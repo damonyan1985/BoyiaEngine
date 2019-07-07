@@ -6,14 +6,13 @@
 namespace yanbo {
 class BoyiaProcess {
 public:
-	BoyiaProcess();
-	void init();
-	void procExec();
+    BoyiaProcess();
+    void init();
+    void procExec();
 
 private:
     LInt m_pid;
 };
-
 }
 
 #endif

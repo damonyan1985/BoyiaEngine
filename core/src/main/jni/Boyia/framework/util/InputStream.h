@@ -10,27 +10,24 @@
 
 #include "UtilString.h"
 
-namespace util
-{
+namespace util {
 
-class InputStream
-{
+class InputStream {
 public:
-	InputStream();
-	InputStream(const InputStream& is);
-	InputStream(const String& stream);
-	virtual ~InputStream();
-	
+    InputStream();
+    InputStream(const InputStream& is);
+    InputStream(const String& stream);
+    virtual ~InputStream();
+
 public:
-	LInt  read();
-	LBool isEnd();
-	
+    LInt read();
+    LBool isEnd();
+
 protected:
-	String   m_stream;
-	LInt     m_readCount;
-	LInt     m_len;
+    String m_stream;
+    LInt m_readCount;
+    LInt m_len;
 };
-
 }
 
 #endif /* INPUTSTREAM_H_ */

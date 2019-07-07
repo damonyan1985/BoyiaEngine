@@ -16,19 +16,22 @@
 
 namespace boyia {
 struct BoyiaRegister {
-	// 主要寄存器有16个
-	static const int kNumBoyiaRegisters = 16;
-	// Unfortunately we can't make this private in a struct.
-	bool is_valid() const {
-		return 0 <= code_ && code_ < kNumBoyiaRegisters;
-	}
-	bool is(BoyiaRegister reg) const {
-		return code_ == reg.code_;
-	}
-	int code() const {
-		return code_;
-	}
-	int code_;
+    // 主要寄存器有16个
+    static const int kNumBoyiaRegisters = 16;
+    // Unfortunately we can't make this private in a struct.
+    bool is_valid() const
+    {
+        return 0 <= code_ && code_ < kNumBoyiaRegisters;
+    }
+    bool is(BoyiaRegister reg) const
+    {
+        return code_ == reg.code_;
+    }
+    int code() const
+    {
+        return code_;
+    }
+    int code_;
 };
 
 // These constants are used in several locations, including static initializers
@@ -66,146 +69,163 @@ const BoyiaRegister r8 = { kBoyiaRegister_r8_Code };
 const BoyiaRegister r9 = { kBoyiaRegister_r9_Code };
 // Used as roots BoyiaRegister.
 const BoyiaRegister r10 = { kBoyiaRegister_r10_Code };
-const BoyiaRegister fp  = { kBoyiaRegister_fp_Code };
-const BoyiaRegister ip  = { kBoyiaRegister_ip_Code };
-const BoyiaRegister sp  = { kBoyiaRegister_sp_Code };
-const BoyiaRegister lr  = { kBoyiaRegister_lr_Code };
-const BoyiaRegister pc  = { kBoyiaRegister_pc_Code };
+const BoyiaRegister fp = { kBoyiaRegister_fp_Code };
+const BoyiaRegister ip = { kBoyiaRegister_ip_Code };
+const BoyiaRegister sp = { kBoyiaRegister_sp_Code };
+const BoyiaRegister lr = { kBoyiaRegister_lr_Code };
+const BoyiaRegister pc = { kBoyiaRegister_pc_Code };
 
 class BoyiaOperand {
 public:
-	BoyiaOperand(LInt32 immediate, int mode);
-	BoyiaOperand(int value);
-	BoyiaOperand(BoyiaRegister rm);
-	// rm <shift_op> shift_imm
-	BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, int shift_imm);
+    BoyiaOperand(LInt32 immediate, int mode);
+    BoyiaOperand(int value);
+    BoyiaOperand(BoyiaRegister rm);
+    // rm <shift_op> shift_imm
+    BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, int shift_imm);
 
-	// rm <shift_op> rs
-	BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, BoyiaRegister rs);
+    // rm <shift_op> rs
+    BoyiaOperand(BoyiaRegister rm, ShiftOp shift_op, BoyiaRegister rs);
 
-	bool is_reg() const;
+    bool is_reg() const;
 
-	LInt32 immediate() const {
-		return imm32_;
-	}
-	BoyiaRegister rm() const {
-		return rm_;
-	}
-	BoyiaRegister rs() const {
-		return rs_;
-	}
+    LInt32 immediate() const
+    {
+        return imm32_;
+    }
+    BoyiaRegister rm() const
+    {
+        return rm_;
+    }
+    BoyiaRegister rs() const
+    {
+        return rs_;
+    }
 
-	ShiftOp shiftOp() const {
-		return shift_op_;
-	}
+    ShiftOp shiftOp() const
+    {
+        return shift_op_;
+    }
 
-	int shiftImm() const {
-		return shift_imm_;
-	}
+    int shiftImm() const
+    {
+        return shift_imm_;
+    }
 
 private:
-	BoyiaRegister rm_;
-	BoyiaRegister rs_;
-	ShiftOp shift_op_;
-	int shift_imm_; // valid if rm_ != no_reg && rs_ == no_reg
-	LInt32 imm32_; // valid if rm_ == no_reg
-	int rmode_;
+    BoyiaRegister rm_;
+    BoyiaRegister rs_;
+    ShiftOp shift_op_;
+    int shift_imm_; // valid if rm_ != no_reg && rs_ == no_reg
+    LInt32 imm32_; // valid if rm_ == no_reg
+    int rmode_;
 };
 
 class MemOperand {
 public:
-	// [rn +/- offset]      Offset/NegOffset
-	// [rn +/- offset]!     PreIndex/NegPreIndex
-	// [rn], +/- offset     PostIndex/NegPostIndex
-	// offset is any signed 32-bit value; offset is first loaded to BoyiaRegister ip if
-	// it does not fit the addressing mode (12-bit unsigned and sign bit)
-	MemOperand(BoyiaRegister rn, LInt32 offset = 0, AddrMode am = Offset);
+    // [rn +/- offset]      Offset/NegOffset
+    // [rn +/- offset]!     PreIndex/NegPreIndex
+    // [rn], +/- offset     PostIndex/NegPostIndex
+    // offset is any signed 32-bit value; offset is first loaded to BoyiaRegister ip if
+    // it does not fit the addressing mode (12-bit unsigned and sign bit)
+    MemOperand(BoyiaRegister rn, LInt32 offset = 0, AddrMode am = Offset);
 
-	// [rn +/- rm]          Offset/NegOffset
-	// [rn +/- rm]!         PreIndex/NegPreIndex
-	// [rn], +/- rm         PostIndex/NegPostIndex
-	MemOperand(BoyiaRegister rn, BoyiaRegister rm, AddrMode am = Offset);
+    // [rn +/- rm]          Offset/NegOffset
+    // [rn +/- rm]!         PreIndex/NegPreIndex
+    // [rn], +/- rm         PostIndex/NegPostIndex
+    MemOperand(BoyiaRegister rn, BoyiaRegister rm, AddrMode am = Offset);
 
-	// [rn +/- rm <shift_op> shift_imm]      Offset/NegOffset
-	// [rn +/- rm <shift_op> shift_imm]!     PreIndex/NegPreIndex
-	// [rn], +/- rm <shift_op> shift_imm     PostIndex/NegPostIndex
-	MemOperand(BoyiaRegister rn, BoyiaRegister rm, ShiftOp shift_op,
-			int shift_imm, AddrMode am = Offset);
+    // [rn +/- rm <shift_op> shift_imm]      Offset/NegOffset
+    // [rn +/- rm <shift_op> shift_imm]!     PreIndex/NegPreIndex
+    // [rn], +/- rm <shift_op> shift_imm     PostIndex/NegPostIndex
+    MemOperand(BoyiaRegister rn, BoyiaRegister rm, ShiftOp shift_op,
+        int shift_imm, AddrMode am = Offset);
 
-	void set_offset(LInt32 offset) {
-		offset_ = offset;
-	}
+    void set_offset(LInt32 offset)
+    {
+        offset_ = offset;
+    }
 
-	LInt32 offset() const {
-		return offset_;
-	}
+    LInt32 offset() const
+    {
+        return offset_;
+    }
 
-	BoyiaRegister rn() const {
-		return rn_;
-	}
-	BoyiaRegister rm() const {
-		return rm_;
-	}
-	AddrMode am() const {
-		return am_;
-	}
+    BoyiaRegister rn() const
+    {
+        return rn_;
+    }
+    BoyiaRegister rm() const
+    {
+        return rm_;
+    }
+    AddrMode am() const
+    {
+        return am_;
+    }
 
-	ShiftOp shiftOp() const {
-		return shift_op_;
-	}
+    ShiftOp shiftOp() const
+    {
+        return shift_op_;
+    }
 
-	int shiftImm() const {
-		return shift_imm_;
-	}
+    int shiftImm() const
+    {
+        return shift_imm_;
+    }
 
 private:
-	BoyiaRegister rn_; // base
-	BoyiaRegister rm_; // BoyiaRegister offset
-	LInt32 offset_; // valid if rm_ == no_reg
-	ShiftOp shift_op_;
-	int shift_imm_; // valid if rm_ != no_reg && rs_ == no_reg
-	AddrMode am_; // bits P, U, and W
+    BoyiaRegister rn_; // base
+    BoyiaRegister rm_; // BoyiaRegister offset
+    LInt32 offset_; // valid if rm_ == no_reg
+    ShiftOp shift_op_;
+    int shift_imm_; // valid if rm_ != no_reg && rs_ == no_reg
+    AddrMode am_; // bits P, U, and W
 };
 
 class Label {
 public:
-	enum Distance {
-		kNear, kFar
-	};
+    enum Distance {
+        kNear,
+        kFar
+    };
 
-	Label() {
-	    Unuse();
-	    UnuseNear();
-	}
+    Label()
+    {
+        Unuse();
+        UnuseNear();
+    }
 
-	inline void Unuse() { pos_ = 0; }
-	inline void UnuseNear() {near_link_pos_ = 0;}
+    inline void Unuse() { pos_ = 0; }
+    inline void UnuseNear() { near_link_pos_ = 0; }
 
-	inline bool is_bound() const {return pos_ < 0;}
-	inline bool is_unused() const {return pos_ == 0 && near_link_pos_ == 0;}
-	inline bool is_linked() const {return pos_ > 0;}
-    inline bool is_near_linked() const {return near_link_pos_ > 0;}
+    inline bool is_bound() const { return pos_ < 0; }
+    inline bool is_unused() const { return pos_ == 0 && near_link_pos_ == 0; }
+    inline bool is_linked() const { return pos_ > 0; }
+    inline bool is_near_linked() const { return near_link_pos_ > 0; }
 
-	void bind_to(int pos) {
-		pos_ = -pos - 1;
-	}
+    void bind_to(int pos)
+    {
+        pos_ = -pos - 1;
+    }
 
-	void link_to(int pos, Distance distance = kFar) {
-		if (distance == kNear) {
-			near_link_pos_ = pos + 1;
-		} else {
-			pos_ = pos + 1;
-		}
-	}
+    void link_to(int pos, Distance distance = kFar)
+    {
+        if (distance == kNear) {
+            near_link_pos_ = pos + 1;
+        } else {
+            pos_ = pos + 1;
+        }
+    }
 
-	int pos() const;
-	int near_link_pos() const {
-		return near_link_pos_ - 1;
-	}
+    int pos() const;
+    int near_link_pos() const
+    {
+        return near_link_pos_ - 1;
+    }
 
 private:
-	int pos_;
-	int near_link_pos_;
+    int pos_;
+    int near_link_pos_;
 };
 }
 

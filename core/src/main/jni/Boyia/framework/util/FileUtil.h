@@ -14,10 +14,8 @@
 
 #include "UtilString.h"
 
-namespace util
-{
-class FileUtil
-{
+namespace util {
+class FileUtil {
 public:
     static LVoid readFile(const String& fileName, String& content);
     static bool isExist(const char* path);

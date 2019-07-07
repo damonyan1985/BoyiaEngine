@@ -1,7 +1,6 @@
 #include "BoyiaPainterEnv.h"
 
-namespace yanbo
-{
+namespace yanbo {
 BoyiaPainterEnv* BoyiaPainterEnv::instance()
 {
     static BoyiaPainterEnv sEnv;
@@ -17,16 +16,14 @@ BoyiaPainterEnv::BoyiaPainterEnv()
 
 LVoid BoyiaPainterEnv::init()
 {
-    if (m_program)
-    {
+    if (m_program) {
         delete m_program;
     }
 
     m_program = new GLProgram();
     m_program->initShader();
 
-    if (m_renderer)
-    {
+    if (m_renderer) {
         delete m_renderer;
     }
 
@@ -48,12 +45,12 @@ LVoid BoyiaPainterEnv::unbindVBO()
 
 LVoid BoyiaPainterEnv::appendQuad(const Quad& quad)
 {
-	m_renderer->appendQuad(quad);
+    m_renderer->appendQuad(quad);
 }
 
 bool BoyiaPainterEnv::available()
 {
-	return m_program && m_program->available();
+    return m_program && m_program->available();
 }
 
 // LVoid BoyiaPainterEnv::use(int type)
@@ -63,6 +60,6 @@ bool BoyiaPainterEnv::available()
 
 GLProgram* BoyiaPainterEnv::program()
 {
-	return m_program;
+    return m_program;
 }
-}
+} // namespace yanbo

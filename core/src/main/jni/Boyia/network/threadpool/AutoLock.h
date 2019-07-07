@@ -9,25 +9,23 @@
 
 #include "MiniMutex.h"
 
-namespace yanbo
-{
-class AutoLock
-{
+namespace yanbo {
+
+class AutoLock {
 public:
-	AutoLock(MiniMutex* lock)
-	    : m_lock(lock)
-	{
-		m_lock->lock();
-	}
+    AutoLock(MiniMutex* lock)
+        : m_lock(lock)
+    {
+        m_lock->lock();
+    }
     ~AutoLock()
     {
-    	m_lock->unlock();
+        m_lock->unlock();
     }
 
 private:
     MiniMutex* m_lock;
 };
-
 }
 
 #endif

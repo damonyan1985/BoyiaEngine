@@ -4,13 +4,13 @@
 namespace boyia {
 class NativeCode {
 public:
-	NativeCode();
-	~NativeCode();
-	LByte* codeStart();
+    NativeCode();
+    ~NativeCode();
+    LByte* codeStart();
     LVoid copyCode(LByte* buffer, LInt len);
 
 private:
-	LByte* m_codeSegment;
+    LByte* m_codeSegment;
     LInt m_codeSize;
 };
 class BoyiaExecution {

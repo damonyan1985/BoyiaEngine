@@ -3,13 +3,11 @@
 
 #include "HtmlView.h"
 
-namespace yanbo
-{
-class FlexLayout
-{
+namespace yanbo {
+class FlexLayout {
 public:
-	static LVoid flexRowLayout(HtmlView* view);
-	static LVoid flexRowReverse(HtmlView* view);
+    static LVoid flexRowLayout(HtmlView* view);
+    static LVoid flexRowReverse(HtmlView* view);
 };
 }
 

@@ -8,46 +8,45 @@
 #include "CssTags.h"
 #include "StringUtils.h"
 
-namespace util
-{
+namespace util {
+
 CssTags* CssTags::s_cssTags = NULL;
 
 CssTags::CssTags()
     : m_map(CssTags::TAGEND)
-{	
+{
 }
 
 CssTags::~CssTags()
-{	
+{
 }
 
 CssTags* CssTags::getInstance()
 {
-	if (s_cssTags == NULL)
-	{
-		s_cssTags = new CssTags();
+    if (s_cssTags == NULL) {
+        s_cssTags = new CssTags();
         /*
          * Initializing Css tokens.
          */
         s_cssTags->defineInitialSymbol(_CS("align"), ALIGN);
-		s_cssTags->defineInitialSymbol(_CS("margin-top"), MARGIN_TOP);
-		s_cssTags->defineInitialSymbol(_CS("margin-left"), MARGIN_LEFT);
-		s_cssTags->defineInitialSymbol(_CS("border-style"), BORDER_STYLE);
-		s_cssTags->defineInitialSymbol(_CS("border-color"), BORDER_COLOR);
-		s_cssTags->defineInitialSymbol(_CS("border-top-color"), BORDER_TOP_COLOR);
-		s_cssTags->defineInitialSymbol(_CS("border-top-style"), BORDER_LEFT_STYLE);
-		s_cssTags->defineInitialSymbol(_CS("border-left-color"), BORDER_LEFT_COLOR );
-		s_cssTags->defineInitialSymbol(_CS("border-left-style"), BORDER_LEFT_STYLE);
-		s_cssTags->defineInitialSymbol(_CS("border-right-color"), BORDER_RIGHT_COLOR);
-		s_cssTags->defineInitialSymbol(_CS("border-right-style"), BORDER_RIGHT_STYLE);
-		s_cssTags->defineInitialSymbol(_CS("border-bottom-color"), BORDER_BOTTOM_COLOR);
-		s_cssTags->defineInitialSymbol(_CS("border-bottom-style"), BORDER_BOTTOM_STYLE);
-		s_cssTags->defineInitialSymbol(_CS("position"), POSITION);
-		s_cssTags->defineInitialSymbol(_CS("left"), LEFT);
-		s_cssTags->defineInitialSymbol(_CS("top"), TOP);
-		s_cssTags->defineInitialSymbol(_CS("background"), BACKGROUND);
-		s_cssTags->defineInitialSymbol(_CS("background-color"), BACKGROUND_COLOR);
-		s_cssTags->defineInitialSymbol(_CS("color"), COLOR);
+        s_cssTags->defineInitialSymbol(_CS("margin-top"), MARGIN_TOP);
+        s_cssTags->defineInitialSymbol(_CS("margin-left"), MARGIN_LEFT);
+        s_cssTags->defineInitialSymbol(_CS("border-style"), BORDER_STYLE);
+        s_cssTags->defineInitialSymbol(_CS("border-color"), BORDER_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("border-top-color"), BORDER_TOP_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("border-top-style"), BORDER_LEFT_STYLE);
+        s_cssTags->defineInitialSymbol(_CS("border-left-color"), BORDER_LEFT_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("border-left-style"), BORDER_LEFT_STYLE);
+        s_cssTags->defineInitialSymbol(_CS("border-right-color"), BORDER_RIGHT_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("border-right-style"), BORDER_RIGHT_STYLE);
+        s_cssTags->defineInitialSymbol(_CS("border-bottom-color"), BORDER_BOTTOM_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("border-bottom-style"), BORDER_BOTTOM_STYLE);
+        s_cssTags->defineInitialSymbol(_CS("position"), POSITION);
+        s_cssTags->defineInitialSymbol(_CS("left"), LEFT);
+        s_cssTags->defineInitialSymbol(_CS("top"), TOP);
+        s_cssTags->defineInitialSymbol(_CS("background"), BACKGROUND);
+        s_cssTags->defineInitialSymbol(_CS("background-color"), BACKGROUND_COLOR);
+        s_cssTags->defineInitialSymbol(_CS("color"), COLOR);
         s_cssTags->defineInitialSymbol(_CS("margin"), MARGIN);
         s_cssTags->defineInitialSymbol(_CS("font-size"), FONT_SIZE);
         s_cssTags->defineInitialSymbol(_CS("font-style"), FONT_STYLE);
@@ -74,38 +73,37 @@ CssTags* CssTags::getInstance()
         s_cssTags->defineInitialSymbol(_CS("flex-direction"), FLEX_DIRECTION);
 
         s_cssTags->m_map.sort();
-	}
-	
-	return s_cssTags;
+    }
+
+    return s_cssTags;
 }
 
 void CssTags::defineInitialSymbol(const String& cssText, LInt cssType)
 {
-	// Use Tagmap accelerate search speed
-	m_map.put(cssText, cssType);
+    // Use Tagmap accelerate search speed
+    m_map.put(cssText, cssType);
 }
 
 void CssTags::clear()
 {
-    m_map.clear();	
+    m_map.clear();
 }
 
 void CssTags::destroyInstance()
 {
-	if (s_cssTags != NULL)
-	{
-	    delete s_cssTags;
-	    s_cssTags = NULL;
-	}
+    if (s_cssTags != NULL) {
+        delete s_cssTags;
+        s_cssTags = NULL;
+    }
 }
 
 LInt CssTags::symbolAsInt(LUint hash)
 {
-	return m_map.get(hash);
+    return m_map.get(hash);
 }
 
 LUint CssTags::genIdentify(const String& key)
 {
-	return m_map.genKey(key);
+    return m_map.genKey(key);
 }
 }

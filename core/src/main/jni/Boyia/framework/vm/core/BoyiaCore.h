@@ -16,12 +16,12 @@
 
 typedef struct {
     LUintPtr mNameKey;
-    LInt     (*mAddr)();
+    LInt (*mAddr)();
 } NativeFunction;
 
 typedef struct {
-	NativeFunction* mFun;
-	LInt mSize;
+    NativeFunction* mFun;
+    LInt mSize;
 } NativeFunMap;
 
 LVoid CompileCode(char* code);
@@ -37,7 +37,7 @@ LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 //LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid GetGlobalTable(LInt* table, LInt* size);
 LVoid NativeCall(BoyiaValue* obj);
-LVoid LocalPush(BoyiaValue *value);
+LVoid LocalPush(BoyiaValue* value);
 LVoid SaveLocalSize();
 LVoid* InitVM();
 LVoid DestroyVM(LVoid* vm);

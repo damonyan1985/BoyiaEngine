@@ -6,11 +6,11 @@
  */
 #include "MiniMutex.h"
 
-namespace yanbo
-{
+namespace yanbo {
+
 MiniMutex::MiniMutex()
 {
-	pthread_mutex_init(&m_lock, NULL);
+    pthread_mutex_init(&m_lock, NULL);
 }
 
 MiniMutex::~MiniMutex()
@@ -35,7 +35,6 @@ void MiniMutex::tryLock()
 
 pthread_mutex_t* MiniMutex::getMutex()
 {
-	return &m_lock;
+    return &m_lock;
 }
-
 }

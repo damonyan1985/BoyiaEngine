@@ -8,37 +8,34 @@
 #ifndef CssManager_h
 #define CssManager_h
 
-#include "KList.h"
 #include "CssRule.h"
-#include "Stack.h"
 #include "DoctreeNode.h"
+#include "KList.h"
+#include "Stack.h"
 
-namespace util
-{
+namespace util {
 
-typedef KList<CssRule*>             RuleList;
-typedef Stack<DoctreeNode*>         Doctree;
-class CssManager
-{
+typedef KList<CssRule*> RuleList;
+typedef Stack<DoctreeNode*> Doctree;
+class CssManager {
 public:
-	CssManager();
-	~CssManager();
-	
+    CssManager();
+    ~CssManager();
+
 public:
-	void addCssRule(CssRule* rule);
-	CssRule* getCssRule();
-	CssRule* matchRule(CssRule* rule);
-	LBool matchPrepare(Selector* selector);
-	CssRule* createNewCssRule(const CssRule* parentRule, CssRule* childRule);
-	
-	void pushDoctreeNode(DoctreeNode* node);
-	void pushDoctreeNode(const String& tagId, const ClassArray& tagClass, const String& tagName);
-	void popDoctreeNode();
-	
+    void addCssRule(CssRule* rule);
+    CssRule* getCssRule();
+    CssRule* matchRule(CssRule* rule);
+    LBool matchPrepare(Selector* selector);
+    CssRule* createNewCssRule(const CssRule* parentRule, CssRule* childRule);
+
+    void pushDoctreeNode(DoctreeNode* node);
+    void pushDoctreeNode(const String& tagId, const ClassArray& tagClass, const String& tagName);
+    void popDoctreeNode();
+
 protected:
-	RuleList m_ruleList;
-	Doctree* m_doctree;
+    RuleList m_ruleList;
+    Doctree* m_doctree;
 };
-
 }
 #endif /* CssManager_h */

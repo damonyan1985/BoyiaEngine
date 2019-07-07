@@ -7,21 +7,20 @@
 
 #include "InputStream.h"
 
-namespace util
-{
+namespace util {
 
 InputStream::InputStream()
     : m_readCount(0)
     , m_len(0)
-    , m_stream(_CS("")) 
-{	
+    , m_stream(_CS(""))
+{
 }
 
 InputStream::InputStream(const InputStream& is)
 {
-	m_stream    = is.m_stream;
-	m_readCount = is.m_readCount;
-	m_len       = m_stream.GetLength();
+    m_stream = is.m_stream;
+    m_readCount = is.m_readCount;
+    m_len = m_stream.GetLength();
 }
 
 InputStream::InputStream(const String& stream)
@@ -33,27 +32,25 @@ InputStream::InputStream(const String& stream)
 
 InputStream::~InputStream()
 {
-	m_readCount = 0;
+    m_readCount = 0;
 }
 
 LInt InputStream::read()
 {
-	LUint8* p = m_stream.GetBuffer();
-	LInt i = (LInt)(*(p+m_readCount));
-	m_readCount++;
-	
-	return i;
+    LUint8* p = m_stream.GetBuffer();
+    LInt i = (LInt)(*(p + m_readCount));
+    m_readCount++;
+
+    return i;
 }
 
 LBool InputStream::isEnd()
 {
-	LBool ret = LFalse;
-	if (m_readCount >= m_len + 1)
-    {
-	    ret = LTrue;
+    LBool ret = LFalse;
+    if (m_readCount >= m_len + 1) {
+        ret = LTrue;
     }
-	
-	return ret;
-}
 
+    return ret;
+}
 }

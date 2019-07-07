@@ -4,25 +4,23 @@
 #include "PlatformLib.h"
 #include <stdlib.h>
 
-namespace util
-{
-class BoyiaRef
-{
+namespace util {
+class BoyiaRef {
 public:
-	virtual ~BoyiaRef();
+    virtual ~BoyiaRef();
 
-	void ref();
-	void deref();
-	LInt count();
+    void ref();
+    void deref();
+    LInt count();
 
-	void* operator new(size_t sz);
-	void operator delete(void *p);
-
-protected:
-	BoyiaRef();
+    void* operator new(size_t sz);
+    void operator delete(void* p);
 
 protected:
-	LInt m_refCount;
+    BoyiaRef();
+
+protected:
+    LInt m_refCount;
 };
 }
 

@@ -1,7 +1,7 @@
 #include "MiniTaskBase.h"
 
-namespace yanbo
-{
+namespace yanbo {
+
 MiniTaskBase::~MiniTaskBase()
 {
 }

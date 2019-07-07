@@ -12,28 +12,29 @@
 
 #define MAX_NATIVE_FUN_SIZE 40
 static NativeFunction* sFunTable = NULL;
-static LVoid InitLib() {
-    sFunTable = new NativeFunction[MAX_NATIVE_FUN_SIZE] {
-        { GenIdentByStr("new", 3) , CreateObject },
-        { GenIdentByStr("BY_Content", 10) , getFileContent },
+static LVoid InitLib()
+{
+    sFunTable = new NativeFunction[MAX_NATIVE_FUN_SIZE]{
+        { GenIdentByStr("new", 3), CreateObject },
+        { GenIdentByStr("BY_Content", 10), getFileContent },
         // Array Api Begin
-        { GenIdentByStr("BY_GetFromArray", 15),   getElementFromVector },
-        { GenIdentByStr("BY_AddInArray", 13),  addElementToVector },
+        { GenIdentByStr("BY_GetFromArray", 15), getElementFromVector },
+        { GenIdentByStr("BY_AddInArray", 13), addElementToVector },
         { GenIdentByStr("BY_GetArraySize", 15), getVectorSize },
         { GenIdentByStr("BY_ClearArray", 13), clearVector },
         { GenIdentByStr("BY_RemoveWidthIndex", 19), removeElementWidthIndex },
         { GenIdentByStr("BY_RemoveFromArray", 18), removeElementFromVector },
         // Array Api End
-        { GenIdentByStr("BY_Log", 6),  logPrint },
-        { GenIdentByStr("BY_Json", 7),  jsonParseWithCJSON },
+        { GenIdentByStr("BY_Log", 6), logPrint },
+        { GenIdentByStr("BY_Json", 7), jsonParseWithCJSON },
         { GenIdentByStr("BY_CreateDocument", 17), createJSDocument },
         { GenIdentByStr("BY_AppendView", 13), appendView },
         { GenIdentByStr("BY_GetRootDocument", 18), getRootDocument },
         { GenIdentByStr("BY_SetDocument", 14), setDocument },
         { GenIdentByStr("BY_RemoveDocument", 17), removeDocument },
-        { GenIdentByStr("BY_SetXpos", 10), setViewXpos},
-        { GenIdentByStr("BY_SetYpos", 10), setViewYpos},
-        { GenIdentByStr("BY_DrawView", 11), drawView},
+        { GenIdentByStr("BY_SetXpos", 10), setViewXpos },
+        { GenIdentByStr("BY_SetYpos", 10), setViewYpos },
+        { GenIdentByStr("BY_DrawView", 11), drawView },
         { GenIdentByStr("BY_GetViewXpos", 14), getViewXpos },
         { GenIdentByStr("BY_GetViewYpos", 14), getViewYpos },
         { GenIdentByStr("BY_GetViewWidth", 15), getViewWidth },
@@ -52,17 +53,18 @@ static LVoid InitLib() {
         { GenIdentByStr("BY_AddEventListener", 19), addEventListener },
         { GenIdentByStr("BY_SetToNativeView", 18), setToNativeView },
         { GenIdentByStr("BY_InstanceOfClass", 18), instanceOfClass },
-        { GenIdentByStr("BY_CreateViewGroup", 18), createViewGroup},
-        { GenIdentByStr("BY_SetImageUrl", 14), setImageUrl},
-        { GenIdentByStr("BY_ViewCommit", 13), viewCommit},
+        { GenIdentByStr("BY_CreateViewGroup", 18), createViewGroup },
+        { GenIdentByStr("BY_SetImageUrl", 14), setImageUrl },
+        { GenIdentByStr("BY_ViewCommit", 13), viewCommit },
         // End
-        { 0,  NULL }
+        { 0, NULL }
     };
 
     InitNativeFun(sFunTable);
 }
 
-extern void CompileScript(char* code) {
+extern void CompileScript(char* code)
+{
     if (!sFunTable) {
         InitLib();
     }

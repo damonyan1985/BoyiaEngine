@@ -4,22 +4,21 @@
 #include "MiniMessageQueue.h"
 #include "MiniThread.h"
 
-namespace yanbo
-{
-class MiniMessageThread : public MiniThread
-{
-public:
-	MiniMessageThread();
-	virtual ~MiniMessageThread();
+namespace yanbo {
 
-	virtual void handleMessage(MiniMessage* msg) = 0;
-	void postMessage(MiniMessage* msg);
-	MiniMessage* obtain();
+class MiniMessageThread : public MiniThread {
+public:
+    MiniMessageThread();
+    virtual ~MiniMessageThread();
+
+    virtual void handleMessage(MiniMessage* msg) = 0;
+    void postMessage(MiniMessage* msg);
+    MiniMessage* obtain();
 
 protected:
-	virtual void run();
-	MiniMessageQueue*  m_queue;
-	LBool              m_continue;
+    virtual void run();
+    MiniMessageQueue* m_queue;
+    LBool m_continue;
 };
 }
 

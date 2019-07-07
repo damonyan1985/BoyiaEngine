@@ -10,28 +10,25 @@
 
 #include "InlineView.h"
 
-namespace yanbo
-{
+namespace yanbo {
 
-class LinkView : public InlineView
-{
+class LinkView : public InlineView {
 public:
     LinkView(
-			const String& id,
-			const String& url);
-    
+        const String& id,
+        const String& url);
+
     ~LinkView();
-    
+
 public:
     virtual LBool isLink() const;
-    
-	virtual void execute();
-	void setLinkFocus(HtmlView* item, const LBool selected);
-	
-private:
-	String m_url;
-};
 
+    virtual void execute();
+    void setLinkFocus(HtmlView* item, const LBool selected);
+
+private:
+    String m_url;
+};
 }
 
 #endif /* LinkView_H_ */

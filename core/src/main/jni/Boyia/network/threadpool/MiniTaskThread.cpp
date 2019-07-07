@@ -8,8 +8,8 @@
 #include "AutoLock.h"
 #include "SalLog.h"
 
-namespace yanbo
-{
+namespace yanbo {
+
 MiniTaskThread::MiniTaskThread(MiniBlockQueue* queue)
     : m_queue(queue)
     , m_continue(LTrue)
@@ -23,40 +23,33 @@ MiniTaskThread::~MiniTaskThread()
 
 LBool MiniTaskThread::working()
 {
-	return m_working;
+    return m_working;
 }
 
 void MiniTaskThread::run()
 {
-    while (m_continue)
-    {
-    	if (m_queue == NULL)
-    	{
-    		return;
-    	}
-
-
-    	BoyiaPtr<MiniTaskBase> task = m_queue->pollTask();
-        if (task.get() != NULL)
-        {
-        	m_working = LTrue;
-        	KFORMATLOG("MiniTaskThread::run listsize=%d", m_queue->size());
-
-        	// 智能指针会自动释放内存
-        	task->execute();
-        	KFORMATLOG("MiniTaskThread::run listsize=%d end", m_queue->size());
+    while (m_continue) {
+        if (m_queue == NULL) {
+            return;
         }
-        else
-        {
-        	m_working = LFalse;
-        	MiniThread::waitOnNotify();
+
+        BoyiaPtr<MiniTaskBase> task = m_queue->pollTask();
+        if (task.get() != NULL) {
+            m_working = LTrue;
+            KFORMATLOG("MiniTaskThread::run listsize=%d", m_queue->size());
+
+            // 智能指针会自动释放内存
+            task->execute();
+            KFORMATLOG("MiniTaskThread::run listsize=%d end", m_queue->size());
+        } else {
+            m_working = LFalse;
+            MiniThread::waitOnNotify();
         }
     }
 }
 
 void MiniTaskThread::stop()
 {
-	m_continue = LFalse;
+    m_continue = LFalse;
 }
-
 }

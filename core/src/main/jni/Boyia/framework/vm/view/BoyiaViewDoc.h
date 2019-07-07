@@ -11,30 +11,28 @@
 #ifndef BoyiaViewDoc_h
 #define BoyiaViewDoc_h
 
-#include "HtmlDocument.h"
 #include "BoyiaView.h"
+#include "HtmlDocument.h"
 
-namespace boyia
-{
-class BoyiaViewDoc : public BoyiaView
-{
+namespace boyia {
+class BoyiaViewDoc : public BoyiaView {
 public:
-	BoyiaViewDoc();
-	virtual ~BoyiaViewDoc();
+    BoyiaViewDoc();
+    virtual ~BoyiaViewDoc();
 
-	void loadHTML(const String& url);
-	void setDocument(yanbo::HtmlDocument* doc);
-	void removeDocument(String& id, BoyiaViewDoc* doc);
+    void loadHTML(const String& url);
+    void setDocument(yanbo::HtmlDocument* doc);
+    void removeDocument(String& id, BoyiaViewDoc* doc);
 
-	yanbo::HtmlDocument* getDocument() const;
+    yanbo::HtmlDocument* getDocument() const;
 
-	BoyiaView* getItemByID(const String& id) const;
+    BoyiaView* getItemByID(const String& id) const;
 
 private:
-	void fetchStream(const String& url, String& stream);
+    void fetchStream(const String& url, String& stream);
 
-	static IdentityMap m_domMap;
-	yanbo::HtmlDocument* m_doc;
+    static IdentityMap m_domMap;
+    yanbo::HtmlDocument* m_doc;
 };
 }
 

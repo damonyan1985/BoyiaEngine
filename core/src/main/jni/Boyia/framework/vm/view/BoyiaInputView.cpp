@@ -2,13 +2,15 @@
 #include "InputView.h"
 
 namespace boyia {
-BoyiaInputView::BoyiaInputView(yanbo::HtmlView* item) {
-	m_item = item;
-	//m_item->setListener(this);
+BoyiaInputView::BoyiaInputView(yanbo::HtmlView* item)
+{
+    m_item = item;
+    //m_item->setListener(this);
 }
 
-void BoyiaInputView::setText(const String& text) {
-	yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
-	item->setInputValue(text);
+void BoyiaInputView::setText(const String& text)
+{
+    yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
+    item->setInputValue(text);
 }
 }

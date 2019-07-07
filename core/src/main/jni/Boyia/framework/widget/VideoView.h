@@ -3,28 +3,26 @@
 
 #include "BlockView.h"
 
-namespace yanbo
-{
-class VideoView: public BlockView
-{
+namespace yanbo {
+class VideoView : public BlockView {
 public:
-	VideoView(
-			const String& id,
-			LBool selectable,
-			const String& src);
+    VideoView(
+        const String& id,
+        LBool selectable,
+        const String& src);
 
-	~VideoView();
+    ~VideoView();
 
-	virtual void layout();
-	virtual void paint(LGraphicsContext& gc);
-
-private:
-	void loadVideo();
+    virtual void layout();
+    virtual void paint(LGraphicsContext& gc);
 
 private:
-	String m_src;
-	LMediaPlayer* m_mediaPlayer;
-	bool m_playing;
+    void loadVideo();
+
+private:
+    String m_src;
+    LMediaPlayer* m_mediaPlayer;
+    bool m_playing;
 };
 }
 #endif

@@ -1,7 +1,6 @@
 #include "FlexLayout.h"
 
-namespace yanbo
-{
+namespace yanbo {
 LVoid FlexLayout::flexRowLayout(HtmlView* view)
 {
     const HtmlViewList& list = view->getChildren();
@@ -10,16 +9,14 @@ LVoid FlexLayout::flexRowLayout(HtmlView* view)
     LInt x = view->getStyle()->leftPadding;
     LInt y = view->getStyle()->topPadding;
     KFORMATLOG("layoutInlineBlock, child size=%d", list.count());
-    for (; iter != iterEnd; ++iter)
-    {
+    for (; iter != iterEnd; ++iter) {
         x += (*iter)->getStyle()->leftMargin;
         (*iter)->setPos(x, y);
         KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
         (*iter)->layout();
         x += (*iter)->getWidth();
-        if (view->getHeight() < (*iter)->getHeight())
-        {
-        	view->setHeight((*iter)->getHeight());
+        if (view->getHeight() < (*iter)->getHeight()) {
+            view->setHeight((*iter)->getHeight());
         }
     }
 }
@@ -32,15 +29,13 @@ LVoid FlexLayout::flexRowReverse(HtmlView* view)
     LInt x = view->getWidth() - view->getStyle()->rightPadding;
     LInt y = view->getStyle()->topPadding;
     KFORMATLOG("layoutInlineBlock, child size=%d", list.count());
-    for (; iter != iterEnd; ++iter)
-    {
+    for (; iter != iterEnd; ++iter) {
         x -= (*iter)->getStyle()->rightMargin;
         (*iter)->setPos(x, y);
         KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
         (*iter)->layout();
         x -= (*iter)->getWidth();
-        if (view->getHeight() < (*iter)->getHeight())
-        {
+        if (view->getHeight() < (*iter)->getHeight()) {
             view->setHeight((*iter)->getHeight());
         }
     }

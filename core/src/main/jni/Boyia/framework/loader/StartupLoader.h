@@ -12,14 +12,13 @@
 #include "KVector.h"
 #include <stdio.h>
 
-namespace yanbo
-{
+namespace yanbo {
+
 class AppInfo;
-class StartupLoader : public NetworkClient
-{
+class StartupLoader : public NetworkClient {
 public:
-	StartupLoader();
-	LVoid startLoad();
+    StartupLoader();
+    LVoid startLoad();
 
     virtual LVoid onDataReceived(const LByte* data, LInt size);
     virtual LVoid onStatusCode(LInt statusCode);
@@ -34,8 +33,8 @@ private:
     LVoid startLoadApp();
     LVoid upgradeApp(const String& name);
 
-	BoyiaLoader m_loader;
-	FILE* m_file;
+    BoyiaLoader m_loader;
+    FILE* m_file;
     KVector<AppInfo*> m_appInfos;
 };
 }

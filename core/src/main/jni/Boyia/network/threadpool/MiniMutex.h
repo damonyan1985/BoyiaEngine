@@ -9,22 +9,21 @@
 
 #include <pthread.h>
 
-namespace yanbo
-{
-class MiniMutex
-{
+namespace yanbo {
+
+class MiniMutex {
 public:
-	MiniMutex();
-	~MiniMutex();
+    MiniMutex();
+    ~MiniMutex();
 
-	void lock();
-	void unlock();
-	void tryLock();
+    void lock();
+    void unlock();
+    void tryLock();
 
-	pthread_mutex_t* getMutex();
+    pthread_mutex_t* getMutex();
 
 private:
-	pthread_mutex_t     	m_lock;
+    pthread_mutex_t m_lock;
 };
 }
 

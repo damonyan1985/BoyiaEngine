@@ -8,11 +8,9 @@
 #ifndef IViewListener_h
 #define IViewListener_h
 
-namespace yanbo
-{
+namespace yanbo {
 
-class IViewListener
-{
+class IViewListener {
 public:
     virtual void onPressDown(void* view) = 0;
     virtual void onPressMove(void* view) = 0;
@@ -20,6 +18,5 @@ public:
     virtual void onKeyDown(int keyCode, void* view) = 0;
     virtual void onKeyUp(int keyCode, void* view) = 0;
 };
-
 }
 #endif /* IITEMLISTENER_H_ */

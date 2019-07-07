@@ -9,17 +9,17 @@
 #include <stdlib.h>
 
 typedef struct MemoryBlockHeader {
-    LInt               mSize;
-    LByte*             mAddress;
+    LInt mSize;
+    LByte* mAddress;
     MemoryBlockHeader* mNext;
     MemoryBlockHeader* mPrevious;
 } MemoryBlockHeader;
 
 typedef struct BoyiaMemoryPool {
-    LInt               mSize;
-    LInt               mUsed;
-    LByte*             mAddress;
-    BoyiaMemoryPool*   mNext;
+    LInt mSize;
+    LInt mUsed;
+    LByte* mAddress;
+    BoyiaMemoryPool* mNext;
     MemoryBlockHeader* mFirstBlock;
 } BoyiaMemoryPool;
 
@@ -29,22 +29,26 @@ const LInt constAlignNum = sizeof(LIntPtr);
 // 数据块尾部地址值
 #define DATA_TAIL(data) ((LIntPtr)data + data->mSize + constHeaderLen)
 // 字节对齐后的地址值
-#define ADDR_ALIGN(addr) (addr%constAlignNum == 0 ? addr : (addr + (constAlignNum - addr%constAlignNum)))
+#define ADDR_ALIGN(addr) (addr % constAlignNum == 0 ? addr : (addr + (constAlignNum - addr % constAlignNum)))
 
-LVoid* FastMalloc(LInt size) {
+LVoid* FastMalloc(LInt size)
+{
     return malloc(size);
 }
 
-LVoid FastFree(LVoid* data) {
+LVoid FastFree(LVoid* data)
+{
     free(data);
 }
 
-LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool) {
-    LIntPtr iAddr = (LIntPtr) addr;
-    return iAddr >= (LIntPtr) pool->mAddress && iAddr < ((LIntPtr)pool->mAddress + pool->mSize);
+LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool)
+{
+    LIntPtr iAddr = (LIntPtr)addr;
+    return iAddr >= (LIntPtr)pool->mAddress && iAddr < ((LIntPtr)pool->mAddress + pool->mSize);
 }
 
-LVoid* InitMemoryPool(LInt size) {
+LVoid* InitMemoryPool(LInt size)
+{
     BoyiaMemoryPool* pool = FAST_NEW(BoyiaMemoryPool);
     pool->mAddress = FAST_NEW_ARRAY(LByte, size);
     pool->mSize = size;
@@ -54,8 +58,9 @@ LVoid* InitMemoryPool(LInt size) {
     return pool;
 }
 
-LVoid FreeMemoryPool(LVoid* mempool) {
-	BoyiaMemoryPool* pool = (BoyiaMemoryPool*) mempool;
+LVoid FreeMemoryPool(LVoid* mempool)
+{
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     while (pool) {
         BoyiaMemoryPool* poolNext = pool->mNext;
         FAST_DELETE(pool->mAddress);
@@ -64,8 +69,9 @@ LVoid FreeMemoryPool(LVoid* mempool) {
     }
 }
 
-LVoid* NewData(LInt size, LVoid* mempool) {
-	BoyiaMemoryPool* pool = (BoyiaMemoryPool*) mempool;
+LVoid* NewData(LInt size, LVoid* mempool)
+{
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     MemoryBlockHeader* pHeader = NULL;
 
     LInt mallocSize = size + constHeaderLen;
@@ -97,10 +103,10 @@ LVoid* NewData(LInt size, LVoid* mempool) {
                 return pHeader->mAddress;
             }
         }
-		
+
         while (current) {
             if (!current->mNext) {
-            	if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
+                if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
                     LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
                     if (((LIntPtr)pool->mAddress + pool->mSize) - newAddr >= mallocSize) {
                         pHeader = (MemoryBlockHeader*)newAddr;
@@ -139,8 +145,9 @@ LVoid* NewData(LInt size, LVoid* mempool) {
     return pHeader ? pHeader->mAddress : NULL;
 }
 
-LVoid DeleteData(LVoid* data, LVoid* mempool) {
-	BoyiaMemoryPool* pool = (BoyiaMemoryPool*) mempool;
+LVoid DeleteData(LVoid* data, LVoid* mempool)
+{
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LIntPtr)data - constHeaderLen);
     // If error pointer, then return.
     if ((LIntPtr)pHeader < (LIntPtr)pool->mAddress) {
@@ -163,12 +170,14 @@ LVoid DeleteData(LVoid* data, LVoid* mempool) {
     pool->mUsed -= constHeaderLen + pHeader->mSize;
 }
 
-LInt GetUsedMemory(LVoid* mempool) {
-	BoyiaMemoryPool* pool = (BoyiaMemoryPool*) mempool;
-	return pool->mUsed;
+LInt GetUsedMemory(LVoid* mempool)
+{
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
+    return pool->mUsed;
 }
 
-LVoid PrintPoolSize(LVoid* mempool) {
-	BoyiaMemoryPool* pool = (BoyiaMemoryPool*) mempool;
+LVoid PrintPoolSize(LVoid* mempool)
+{
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
 }

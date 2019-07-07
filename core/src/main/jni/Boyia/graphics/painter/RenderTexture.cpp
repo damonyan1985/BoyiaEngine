@@ -1,7 +1,6 @@
 #include "RenderTexture.h"
 
-namespace yanbo
-{
+namespace yanbo {
 RenderTexture::RenderTexture()
     : m_fbo(0)
     , m_rbo(0)
@@ -11,13 +10,13 @@ RenderTexture::RenderTexture()
 
 RenderTexture::~RenderTexture()
 {
-	glDeleteFramebuffers(1, &m_fbo);
-	glDeleteRenderbuffers(1, &m_rbo);
+    glDeleteFramebuffers(1, &m_fbo);
+    glDeleteRenderbuffers(1, &m_rbo);
 }
 
 LVoid RenderTexture::initFBO(LInt width, LInt height)
 {
-	// Generate Texture
+    // Generate Texture
     m_tex = new MiniTexture();
     m_tex->initWithData(NULL, 0, width, height);
     // Generate FBO
@@ -38,10 +37,10 @@ LVoid RenderTexture::initFBO(LInt width, LInt height)
 
 LVoid RenderTexture::bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_tex->texId, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_tex->texId, 0);
 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 }
 
 // bind和unbind之间绘制
@@ -50,4 +49,4 @@ LVoid RenderTexture::unbind()
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-}
+} // namespace yanbo
