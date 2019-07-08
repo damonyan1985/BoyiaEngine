@@ -72,7 +72,7 @@ void CssParser::parseCss(InputStream& is)
                     addSelectorGroup(selectorGroup, declarations);
 
                     selector = new Selector();
-                    selectText = _CS(NULL);
+                    selectText.ClearBuffer();
                     selectorGroup = new SelectorGroup();
 
                     if (declarations) {
@@ -85,7 +85,7 @@ void CssParser::parseCss(InputStream& is)
                     realSelecor->setSelectorText(selectText);
                     selector->addElement(realSelecor);
                     selectorGroup->addElement(selector);
-                    selectText = _CS(NULL);
+                    selectText.ClearBuffer();
                     selector = new Selector();
                 } break;
                 case ' ': {
@@ -93,7 +93,7 @@ void CssParser::parseCss(InputStream& is)
                         SimpleSelector* realSelecor = new SimpleSelector();
                         realSelecor->setSelectorText(selectText);
                         selector->addElement(realSelecor);
-                        selectText = _CS(NULL);
+                        selectText.ClearBuffer();
                     }
                 } break;
                 case '/': {
@@ -158,8 +158,8 @@ PropertyMap* CssParser::parseDeclarations(InputStream& is)
             } break;
             case ';': {
                 addDeclaration(declarations, property, value);
-                property = _CS(NULL);
-                value = _CS(NULL);
+                property.ClearBuffer();
+                value.ClearBuffer();
                 inPropertyField = LTrue;
             } break;
             case ' ': {
