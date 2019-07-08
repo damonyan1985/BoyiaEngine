@@ -117,6 +117,7 @@ public:
     LInt GetLength() const;
     T* GetBuffer() const;
     LVoid ReleaseBuffer();
+    LVoid ClearBuffer();
 
 protected:
     // heap alloc size, m_pchDataLen is not the size of the string
@@ -780,6 +781,13 @@ LVoid LString<T>::ReleaseBuffer()
     m_size = 0;
     m_pchData = NULL;
     m_isDeep = LTrue;
+}
+
+template <class T>
+LVoid LString<T>::ClearBuffer()
+{
+    m_size = 0;
+    LMemset(m_pchData, 0, m_size * sizeof(T));
 }
 
 template <class T>
