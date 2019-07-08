@@ -200,7 +200,7 @@ LString<T>::LString(T ch, LInt nRepeat)
 {
     AllocBuffer(nRepeat);
     LMemset(m_pchData, ch, nRepeat * sizeof(T));
-    m_size = nRepeat;
+    m_size = ch == 0 ? 0 : nRepeat;
     m_isDeep = LTrue;
 }
 
@@ -356,7 +356,7 @@ LVoid LString<T>::StrPlus(const T* lpsz)
     int plusSize = CountString(lpsz);
     LInt nLen = GetLength() + plusSize;
     if (m_pchDataLen <= nLen) {
-        if (NULL == m_pchData) {
+        if (!m_pchData) {
             AllocBuffer(nLen);
             LMemcpy(m_pchData, lpsz, plusSize * sizeof(T));
         } else {

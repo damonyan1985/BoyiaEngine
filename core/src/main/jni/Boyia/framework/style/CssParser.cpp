@@ -17,6 +17,8 @@
 
 namespace util {
 
+const LInt kStringBufferLen = 30;
+
 CssParser::CssParser()
     : m_cssManager(NULL)
 {
@@ -38,7 +40,7 @@ void CssParser::parseCss(InputStream& is)
     SelectorGroup* selectorGroup = new SelectorGroup(0, 20);
     Selector* selector = new Selector(0, 20);
 
-    String selectText;
+    String selectText('\0', kStringBufferLen);
 
     LBool done = LFalse;
     LBool inComment = LFalse;
@@ -133,8 +135,8 @@ PropertyMap* CssParser::parseDeclarations(InputStream& is)
     PropertyMap* declarations = new PropertyMap();
     LBool inPropertyField = LTrue;
 
-    PropertyName property;
-    PropertyValue value;
+    PropertyName property('\0', kStringBufferLen);
+    PropertyValue value('\0', kStringBufferLen);
 
     do {
         LInt i = is.read();
