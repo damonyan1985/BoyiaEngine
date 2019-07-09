@@ -140,6 +140,7 @@ typedef struct Instruction {
     OpCommand mOPLeft;
     OpCommand mOPRight;
     OPHandler mHandler;
+    InlineCache* mCache;
     Instruction* mNext;
 } Instruction;
 
@@ -262,7 +263,7 @@ static LVoid EvalAssignment();
 
 static LInt HandleAssignment(LVoid* ins);
 
-static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal);
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
 
 LVoid* InitVM()
 {
@@ -321,6 +322,7 @@ static Instruction* PutInstruction(
     newIns->mOPCode = op;
     newIns->mHandler = handler;
     newIns->mNext = NULL;
+    newIns->mCache = NULL;
     Instruction* ins = gBoyiaVM->mEState->mContext->mEnd;
     if (!ins) {
         gBoyiaVM->mEState->mContext->mBegin = newIns;
@@ -475,7 +477,8 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         break;
     case CLASS: {
-        dest->mValue.mIntVal = src->mValue.mIntVal;
+        //dest->mValue.mIntVal = src->mValue.mIntVal;
+        dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
     } break;
     case STRING:
@@ -579,7 +582,7 @@ static BoyiaValue* GetVal(LUintPtr key)
         return val;
     }
 
-    return FindObjProp(gBoyiaVM->mEState->mClass, key);
+    return FindObjProp(gBoyiaVM->mEState->mClass, key, NULL);
 }
 
 static BoyiaValue* FindVal(LUintPtr key)
@@ -1756,7 +1759,7 @@ static LVoid CallNativeStatement(LInt idx)
     pushInst->mOPLeft.mValue = (LIntPtr)popInst;
 }
 
-static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal)
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst)
 {
     if (!lVal || lVal->mValueType != CLASS) {
         return NULL;
@@ -1778,7 +1781,12 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal)
         LInt funIdx = 0;
         for (; funIdx < clsMap->mParamSize; ++funIdx) {
             if (clsMap->mParams[funIdx].mNameKey == rVal) {
-                return clsMap->mParams + funIdx;
+                BoyiaValue* result = clsMap->mParams + funIdx;
+                if (inst) {
+                    InlineCache* cache = inst->mCache ? inst->mCache : (inst->mCache = CreateInlineCache());
+                    AddInlineCache(cache, (BoyiaValue*)fun->mFuncBody, result);
+                }
+                return result;
             }
         }
 
@@ -1788,17 +1796,10 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal)
     return NULL;
 }
 
-static LInt FindProp(BoyiaValue* lVal, LUintPtr rVal)
+static LVoid ValueCopyWithKey(BoyiaValue* dest, BoyiaValue* src)
 {
-    BoyiaValue* propVal = FindObjProp(lVal, rVal);
-    // 找到
-    if (propVal) {
-        gBoyiaVM->mCpu->mReg0.mNameKey = (LUintPtr)propVal;
-        gBoyiaVM->mCpu->mReg0.mValue = propVal->mValue;
-        gBoyiaVM->mCpu->mReg0.mValueType = propVal->mValueType; // maybe function
-        return 1;
-    }
-    return 0;
+    dest->mNameKey = (LUintPtr)src;
+    ValueCopyNoName(dest, src);
 }
 
 static LInt HandleGetProp(LVoid* ins)
@@ -1809,8 +1810,24 @@ static LInt HandleGetProp(LVoid* ins)
     if (!lVal) {
         return 0;
     }
+
+    // fetch value from inline cache
+    BoyiaValue* result = GetInlineCache(inst->mCache, lVal);
+    if (result) {
+        ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);
+        return 1;
+    }
+
     LUintPtr rVal = (LUintPtr)inst->mOPRight.mValue;
-    return FindProp(lVal, rVal);
+    result = FindObjProp(lVal, rVal, inst);
+
+    if (result) {
+        // maybe function
+        ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);
+        return 1;
+    }
+
+    return 0;
 }
 
 // According to reg0, get reg0 obj's prop
