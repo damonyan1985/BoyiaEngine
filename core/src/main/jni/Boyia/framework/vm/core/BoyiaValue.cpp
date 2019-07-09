@@ -16,6 +16,7 @@
 #define MAX_INT_LEN 20
 #define MINI_ANDROID_LOG
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
+#define MAX_INLINE_CACHE 5
 static LVoid* gMemPool = NULL;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
@@ -188,4 +189,45 @@ LUintPtr GenIdentByStr(const LInt8* str, LInt len)
 LUintPtr GenIdentifier(BoyiaStr* str)
 {
     return GetIdCreator()->genIdentifier(str);
+}
+
+InlineCache* CreateInlineCache()
+{
+    InlineCache* cache = NEW(InlineCache);
+    cache->mSize = 0;
+    cache->mItems = NEW_ARRAY(InlineCacheItem, MAX_INLINE_CACHE);
+    return cache;
+}
+
+LVoid AddInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun)
+{
+    if (!cache) {
+        return;
+    }
+
+    if (cache->mSize < MAX_INLINE_CACHE) {
+        cache->mItems[cache->mSize].mClass = klass;
+        cache->mItems[cache->mSize++].mFun = fun;
+    }
+}
+
+BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
+{
+    if (!cache) {
+        return NULL;
+    }
+
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
+
+    LInt index = 0;
+    while (index < cache->mSize) {
+        if (cache->mItems[index].mClass == klass) {
+            return cache->mItems[index].mFun;
+        }
+
+        ++index;
+    }
+
+    return NULL;
 }

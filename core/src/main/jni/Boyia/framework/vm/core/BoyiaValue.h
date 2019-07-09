@@ -50,6 +50,16 @@ typedef struct {
     LInt mParamCount;
 } BoyiaFunction;
 
+typedef struct {
+    BoyiaValue* mClass;
+    BoyiaValue* mFun;
+} InlineCacheItem;
+
+typedef struct {
+    InlineCacheItem* mItems;
+    LInt mSize;
+} InlineCache;
+
 #define NEW(type) (type*)BoyiaNew(sizeof(type))
 #define NEW_ARRAY(type, n) (type*)BoyiaNew(n * sizeof(type))
 #define DELETE(ptr) BoyiaDelete(ptr);
@@ -60,7 +70,7 @@ typedef struct {
 
 LVoid* BoyiaNew(LInt size);
 LVoid BoyiaDelete(LVoid* data);
-//LUint HashCode(BoyiaStr* str);
+
 LVoid InitStr(BoyiaStr* str, LInt8* ptr);
 LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src);
@@ -69,4 +79,9 @@ LVoid StringAdd(BoyiaValue* left, BoyiaValue* right);
 LUintPtr GenIdentifier(BoyiaStr* str);
 LUintPtr GenIdentByStr(const LInt8* str, LInt len);
 LVoid ChangeMemory(LVoid* mem);
+
+InlineCache* CreateInlineCache();
+LVoid AddInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun);
+BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* klass);
+
 #endif
