@@ -52,7 +52,8 @@ typedef struct {
 
 typedef struct {
     BoyiaValue* mClass;
-    BoyiaValue* mFun;
+    LIntPtr mIndex;
+    LInt mType;
 } InlineCacheItem;
 
 typedef struct {
@@ -81,7 +82,8 @@ LUintPtr GenIdentByStr(const LInt8* str, LInt len);
 LVoid ChangeMemory(LVoid* mem);
 
 InlineCache* CreateInlineCache();
-LVoid AddInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun);
+LVoid AddPropInlineCache(InlineCache* cache, BoyiaValue* klass, LInt index);
+LVoid AddFunInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun);
 BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* klass);
 
 #endif
