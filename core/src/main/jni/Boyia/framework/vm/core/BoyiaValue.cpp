@@ -17,6 +17,12 @@
 #define MINI_ANDROID_LOG
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
 #define MAX_INLINE_CACHE 5
+
+enum InlineCacheType {
+    CACHE_PROP = 1,
+    CACHE_METHOD
+};
+
 static LVoid* gMemPool = NULL;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
@@ -199,7 +205,7 @@ InlineCache* CreateInlineCache()
     return cache;
 }
 
-LVoid AddInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun)
+LVoid AddPropInlineCache(InlineCache* cache, BoyiaValue* klass, LInt index)
 {
     if (!cache) {
         return;
@@ -207,7 +213,21 @@ LVoid AddInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun)
 
     if (cache->mSize < MAX_INLINE_CACHE) {
         cache->mItems[cache->mSize].mClass = klass;
-        cache->mItems[cache->mSize++].mFun = fun;
+        cache->mItems[cache->mSize].mIndex = index;
+        cache->mItems[cache->mSize++].mType = CACHE_PROP;
+    }
+}
+
+LVoid AddFunInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun)
+{
+    if (!cache) {
+        return;
+    }
+
+    if (cache->mSize < MAX_INLINE_CACHE) {
+        cache->mItems[cache->mSize].mClass = klass;
+        cache->mItems[cache->mSize].mIndex = (LIntPtr)fun;
+        cache->mItems[cache->mSize++].mType = CACHE_METHOD;
     }
 }
 
@@ -223,7 +243,14 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
     LInt index = 0;
     while (index < cache->mSize) {
         if (cache->mItems[index].mClass == klass) {
-            return cache->mItems[index].mFun;
+            switch (cache->mItems[index].mType) {
+            case CACHE_PROP:
+                return fun->mParams + cache->mItems[index].mIndex;
+            case CACHE_METHOD:
+                return (BoyiaValue*)cache->mItems[index].mIndex;
+            default:
+                break;
+            }
         }
 
         ++index;

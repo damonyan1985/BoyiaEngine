@@ -1767,15 +1767,21 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* ins
 
     // find props, such as obj.prop1.
     BoyiaFunction* fun = (BoyiaFunction*)lVal->mValue.mObj.mPtr;
+    BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
+
     LInt idx = 0;
     for (; idx < fun->mParamSize; ++idx) {
         if (fun->mParams[idx].mNameKey == rVal) {
+            if (inst) {
+                InlineCache* cache = inst->mCache ? inst->mCache : (inst->mCache = CreateInlineCache());
+                AddPropInlineCache(cache, klass, idx);
+            }
             return fun->mParams + idx;
         }
     }
 
     // find function, such as obj.func1
-    BoyiaValue* cls = (BoyiaValue*)fun->mFuncBody;
+    BoyiaValue* cls = klass;
     while (cls && cls->mValueType == CLASS) {
         BoyiaFunction* clsMap = (BoyiaFunction*)cls->mValue.mObj.mPtr;
         LInt funIdx = 0;
@@ -1784,7 +1790,7 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* ins
                 BoyiaValue* result = clsMap->mParams + funIdx;
                 if (inst) {
                     InlineCache* cache = inst->mCache ? inst->mCache : (inst->mCache = CreateInlineCache());
-                    AddInlineCache(cache, (BoyiaValue*)fun->mFuncBody, result);
+                    AddFunInlineCache(cache, klass, result);
                 }
                 return result;
             }
