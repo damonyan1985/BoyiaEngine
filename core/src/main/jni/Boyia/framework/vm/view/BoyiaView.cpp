@@ -13,7 +13,7 @@ static LVoid startAnimtion(Animation* anim)
 {
     AnimationTask* task = new AnimationTask();
     task->addAnimation(anim);
-    AnimationThread::instance()->runTask(task);
+    Animator::instance()->runTask(task);
 }
 
 BoyiaView::BoyiaView()

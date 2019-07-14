@@ -9,6 +9,8 @@
 
 namespace yanbo {
 
+#define CONST_REFRESH_TIME 16 // ms
+
 class Animation : public BoyiaRef {
 public:
     enum AnimType {
@@ -80,22 +82,24 @@ private:
 };
 
 typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
-class AnimationThread : public MiniThread {
+class Animator {
 public:
-    static AnimationThread* instance();
-    virtual ~AnimationThread();
+    static Animator* instance();
+    virtual ~Animator();
+
+    LBool hasAnimation();
 
     LVoid runTask(AnimationTask* task);
-    virtual LVoid run();
     LVoid runTasks();
 
 private:
-    AnimationThread();
+    Animator();
     LVoid addTask(AnimationTask* task);
 
     AnimTaskList m_taskList;
     LBool m_continue;
-    static AnimationThread* s_inst;
+    MiniMutex m_lock;
+    static Animator* s_inst;
 };
 }
 

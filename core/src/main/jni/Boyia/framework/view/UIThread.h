@@ -26,6 +26,7 @@ public:
         UI_ON_KEYBOARD_HIDE,
         UI_OP_EXEC,
         UI_DESTROY,
+        UI_RUN_ANIM
     };
     static UIThread* instance();
 
@@ -43,6 +44,8 @@ public:
     // Video渲染
     LVoid videoUpdate(LIntPtr item);
     LVoid imageLoaded(LIntPtr item);
+    // Anim渲染
+    LVoid runAnimation();
     LVoid destroy();
     LVoid handleTouchEvent(LTouchEvent* evt);
     LVoid handleKeyEvent(LKeyEvent* evt);
