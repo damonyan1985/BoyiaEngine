@@ -7,10 +7,7 @@
 
 namespace yanbo {
 
-#define CONST_REFRESH_TIME 16 // ms
-
-AnimationThread* AnimationThread::s_inst = NULL;
-
+Animator* Animator::s_inst = NULL;
 Animation::Animation(HtmlView* item)
     : m_item(item)
     , m_duration(0)
@@ -178,39 +175,43 @@ LBool AnimationTask::isFinish()
     return m_animList.count() > 0 ? LFalse : LTrue;
 }
 
-AnimationThread::AnimationThread()
+Animator::Animator()
     : m_continue(LTrue)
 {
 }
 
-AnimationThread::~AnimationThread()
+Animator::~Animator()
 {
     m_taskList.clear();
 }
 
-AnimationThread* AnimationThread::instance()
+Animator* Animator::instance()
 {
-    if (NULL == s_inst) {
-        s_inst = new AnimationThread();
-        s_inst->start();
+    if (!s_inst) {
+        s_inst = new Animator();
     }
 
     return s_inst;
 }
 
-LVoid AnimationThread::addTask(AnimationTask* task)
+LVoid Animator::addTask(AnimationTask* task)
 {
     AutoLock lock(&m_lock);
     m_taskList.push(task);
 }
 
-LVoid AnimationThread::runTask(AnimationTask* task)
+LVoid Animator::runTask(AnimationTask* task)
 {
     addTask(task);
-    notify();
+    UIThread::instance()->runAnimation();
 }
 
-LVoid AnimationThread::runTasks()
+LBool Animator::hasAnimation()
+{
+    return m_taskList.count() > 0;
+}
+
+LVoid Animator::runTasks()
 {
     AutoLock lock(&m_lock);
     AnimTaskList::Iterator iter = m_taskList.begin();
@@ -227,18 +228,5 @@ LVoid AnimationThread::runTasks()
     }
 
     UIThread::instance()->submit();
-}
-
-LVoid AnimationThread::run()
-{
-    while (m_continue) {
-        if (m_taskList.count()) {
-            runTasks();
-            MiniThread::sleepMS(CONST_REFRESH_TIME);
-            //MiniThread::sleep(10);
-        } else {
-            waitOnNotify();
-        }
-    }
 }
 }
