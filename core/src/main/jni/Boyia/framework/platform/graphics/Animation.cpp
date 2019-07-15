@@ -1,13 +1,16 @@
 #include "Animation.h"
 #include "AutoLock.h"
 #include "LColor.h"
+#include "SystemUtil.h"
 #include "UIThread.h"
 #include "UIView.h"
+#include <functional>
 #include <math.h>
 
 namespace yanbo {
 
-Animator* Animator::s_inst = NULL;
+#define CONST_REFRESH_TIME 16 // ms
+
 Animation::Animation(HtmlView* item)
     : m_item(item)
     , m_duration(0)
@@ -187,11 +190,8 @@ Animator::~Animator()
 
 Animator* Animator::instance()
 {
-    if (!s_inst) {
-        s_inst = new Animator();
-    }
-
-    return s_inst;
+    static Animator sAnimator;
+    return &sAnimator;
 }
 
 LVoid Animator::addTask(AnimationTask* task)
@@ -203,7 +203,30 @@ LVoid Animator::addTask(AnimationTask* task)
 LVoid Animator::runTask(AnimationTask* task)
 {
     addTask(task);
-    UIThread::instance()->runAnimation();
+
+    long now = 0;
+
+    std::function<void()> animCallback;
+
+    std::function<void()> timeoutCallback = [&now, this]() -> LVoid {
+        // long delta = SystemUtil::getSystemTime() - now;
+        // if (delta && CONST_REFRESH_TIME - delta > 0) {
+        //     this->waitTimeOut(CONST_REFRESH_TIME - delta);
+        // }
+
+        // UIThread::instance()->runAnimation(animCallback);
+    };
+
+    animCallback = [&now, this]() -> LVoid {
+        // now = SystemUtil::getSystemTime();
+        // this->runTasks();
+        // MiniMessage* msg = this->obtain();
+        // msg->type = ANIM_CALLBACK;
+        // msg->obj = timeoutCallback;
+        // this->postMessage(msg);
+    };
+
+    //UIThread::instance()->runAnimation(animCallback);
 }
 
 LBool Animator::hasAnimation()
@@ -227,6 +250,17 @@ LVoid Animator::runTasks()
         }
     }
 
-    UIThread::instance()->submit();
+    //UIThread::instance()->submit();
+}
+
+LVoid Animator::handleMessage(MiniMessage* msg)
+{
+    switch (msg->type) {
+    case Animator::ANIM_CALLBACK: {
+        //static_cast<AnimationCallback>(msg->obj)();
+        //AnimationCallback callback = (AnimationCallback)msg->obj;
+        //(*callback)();
+    } break;
+    }
 }
 }

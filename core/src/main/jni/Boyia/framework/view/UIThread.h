@@ -45,7 +45,7 @@ public:
     LVoid videoUpdate(LIntPtr item);
     LVoid imageLoaded(LIntPtr item);
     // Anim渲染
-    LVoid runAnimation();
+    LVoid runAnimation(LVoid* callback);
     LVoid destroy();
     LVoid handleTouchEvent(LTouchEvent* evt);
     LVoid handleKeyEvent(LKeyEvent* evt);
