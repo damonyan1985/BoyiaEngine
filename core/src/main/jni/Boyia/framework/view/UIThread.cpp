@@ -10,7 +10,6 @@
 #include "MiniMutex.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
-#include "SystemUtil.h"
 #include "UIOperation.h"
 #include "UIView.h"
 #include "VideoView.h"
@@ -165,16 +164,8 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         resetGL();
     } break;
     case UI_RUN_ANIM: {
-        long now = SystemUtil::getSystemTime();
-        Animator::instance()->runTasks();
-        long delta = CONST_REFRESH_TIME - SystemUtil::getSystemTime() + now;
-        if (delta > 0) {
-            waitTimeOut(delta);
-        }
-
-        if (Animator::instance()->hasAnimation()) {
-            runAnimation();
-        }
+        AnimationCallback callback = (AnimationCallback)msg->obj;
+        (*callback)();
     } break;
     }
 }
@@ -316,10 +307,11 @@ LVoid UIThread::resetGL()
     drawUI(UIView::getInstance()->getDocument()->getRenderTreeRoot());
 }
 
-LVoid UIThread::runAnimation()
+LVoid UIThread::runAnimation(LVoid* callback)
 {
     MiniMessage* msg = obtain();
     msg->type = UI_RUN_ANIM;
+    msg->obj = callback;
     postMessage(msg);
 }
 }

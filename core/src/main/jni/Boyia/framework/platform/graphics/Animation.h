@@ -5,11 +5,11 @@
 #include "HtmlView.h"
 #include "KList.h"
 #include "LGraphic.h"
-#include "MiniThread.h"
+#include "MiniMessageThread.h"
 
 namespace yanbo {
 
-#define CONST_REFRESH_TIME 16 // ms
+typedef LVoid (*AnimationCallback)();
 
 class Animation : public BoyiaRef {
 public:
@@ -82,8 +82,11 @@ private:
 };
 
 typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
-class Animator {
+class Animator : public MiniMessageThread {
 public:
+    enum {
+        ANIM_CALLBACK
+    };
     static Animator* instance();
     virtual ~Animator();
 
@@ -92,6 +95,8 @@ public:
     LVoid runTask(AnimationTask* task);
     LVoid runTasks();
 
+    virtual LVoid handleMessage(MiniMessage* msg);
+
 private:
     Animator();
     LVoid addTask(AnimationTask* task);
@@ -99,7 +104,6 @@ private:
     AnimTaskList m_taskList;
     LBool m_continue;
     MiniMutex m_lock;
-    static Animator* s_inst;
 };
 }
 
