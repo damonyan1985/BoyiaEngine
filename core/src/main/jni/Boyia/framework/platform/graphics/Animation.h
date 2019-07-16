@@ -85,7 +85,7 @@ typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
 class Animator : public MiniMessageThread {
 public:
     enum {
-        ANIM_CALLBACK
+        ANIM_TIMEOUT
     };
     static Animator* instance();
     virtual ~Animator();

@@ -13,6 +13,7 @@
 #include "UIOperation.h"
 #include "UIView.h"
 #include "VideoView.h"
+#include <functional>
 
 namespace yanbo {
 UIThread::UIThread()
@@ -164,7 +165,7 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         resetGL();
     } break;
     case UI_RUN_ANIM: {
-        AnimationCallback callback = (AnimationCallback)msg->obj;
+        std::function<void()>* callback = (std::function<void()>*)msg->obj;
         (*callback)();
     } break;
     }

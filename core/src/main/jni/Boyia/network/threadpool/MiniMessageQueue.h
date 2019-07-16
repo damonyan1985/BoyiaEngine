@@ -16,6 +16,7 @@ public:
     LVoid* obj;
     LIntPtr arg0;
     LIntPtr arg1;
+    long when;
     LBool recycle;
     LBool inCache;
 };

@@ -200,33 +200,32 @@ LVoid Animator::addTask(AnimationTask* task)
     m_taskList.push(task);
 }
 
+std::function<void()> animCallback;
+std::function<void(long)> timeoutCallback;
+
 LVoid Animator::runTask(AnimationTask* task)
 {
     addTask(task);
+    timeoutCallback = [this](long now) -> LVoid {
+        long delta = SystemUtil::getSystemTime() - now;
+        if (delta && CONST_REFRESH_TIME - delta > 0) {
+            this->waitTimeOut(CONST_REFRESH_TIME - delta);
+        }
 
-    long now = 0;
-
-    std::function<void()> animCallback;
-
-    std::function<void()> timeoutCallback = [&now, this]() -> LVoid {
-        // long delta = SystemUtil::getSystemTime() - now;
-        // if (delta && CONST_REFRESH_TIME - delta > 0) {
-        //     this->waitTimeOut(CONST_REFRESH_TIME - delta);
-        // }
-
-        // UIThread::instance()->runAnimation(animCallback);
+        UIThread::instance()->runAnimation(&animCallback);
     };
 
-    animCallback = [&now, this]() -> LVoid {
-        // now = SystemUtil::getSystemTime();
-        // this->runTasks();
-        // MiniMessage* msg = this->obtain();
-        // msg->type = ANIM_CALLBACK;
-        // msg->obj = timeoutCallback;
-        // this->postMessage(msg);
+    animCallback = [this]() -> LVoid {
+        MiniMessage* msg = this->obtain();
+        msg->type = ANIM_TIMEOUT;
+        msg->obj = &timeoutCallback;
+        msg->when = SystemUtil::getSystemTime();
+
+        this->runTasks();
+        this->postMessage(msg);
     };
 
-    //UIThread::instance()->runAnimation(animCallback);
+    UIThread::instance()->runAnimation(&animCallback);
 }
 
 LBool Animator::hasAnimation()
@@ -256,10 +255,9 @@ LVoid Animator::runTasks()
 LVoid Animator::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
-    case Animator::ANIM_CALLBACK: {
-        //static_cast<AnimationCallback>(msg->obj)();
-        //AnimationCallback callback = (AnimationCallback)msg->obj;
-        //(*callback)();
+    case Animator::ANIM_TIMEOUT: {
+        std::function<void(long)>* callback = (std::function<void(long)>*)msg->obj;
+        (*callback)(msg->when);
     } break;
     }
 }
