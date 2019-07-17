@@ -200,25 +200,23 @@ LVoid Animator::addTask(AnimationTask* task)
     m_taskList.push(task);
 }
 
-std::function<void()> animCallback;
-std::function<void(long)> timeoutCallback;
-
 LVoid Animator::runTask(AnimationTask* task)
 {
     addTask(task);
-    timeoutCallback = [this](long now) -> LVoid {
+    static std::function<void(long, void*)> timeoutCallback = [this](long now, void* callback) -> LVoid {
         long delta = SystemUtil::getSystemTime() - now;
         if (delta && CONST_REFRESH_TIME - delta > 0) {
             this->waitTimeOut(CONST_REFRESH_TIME - delta);
         }
 
-        UIThread::instance()->runAnimation(&animCallback);
+        UIThread::instance()->runAnimation(callback);
     };
 
-    animCallback = [this]() -> LVoid {
+    static std::function<void()> animCallback = [this]() -> LVoid {
         MiniMessage* msg = this->obtain();
         msg->type = ANIM_TIMEOUT;
         msg->obj = &timeoutCallback;
+        msg->arg0 = (LIntPtr)&animCallback;
         msg->when = SystemUtil::getSystemTime();
 
         this->runTasks();
@@ -256,8 +254,8 @@ LVoid Animator::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case Animator::ANIM_TIMEOUT: {
-        std::function<void(long)>* callback = (std::function<void(long)>*)msg->obj;
-        (*callback)(msg->when);
+        std::function<void(long, void*)>* callback = (std::function<void(long, void*)>*)msg->obj;
+        (*callback)(msg->when, (std::function<void()>*)msg->arg0);
     } break;
     }
 }
