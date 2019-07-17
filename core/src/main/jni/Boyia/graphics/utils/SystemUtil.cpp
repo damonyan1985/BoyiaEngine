@@ -21,6 +21,14 @@ long SystemUtil::getSystemTime()
     return f;
 }
 
+long SystemUtil::getSystemMicroTime()
+{
+    struct timeval nowTimeval;
+    gettimeofday(&nowTimeval, NULL);
+    long f = nowTimeval.tv_sec * 1000 * 1000 + nowTimeval.tv_usec;
+    return f;
+}
+
 int SystemUtil::intCeil(int dividend, int divid)
 {
     return dividend % divid > 0 ? (dividend / divid + 1) : (dividend / divid);

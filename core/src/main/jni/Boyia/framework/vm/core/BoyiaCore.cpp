@@ -9,12 +9,13 @@
 #include "BoyiaCore.h"
 #include "BoyiaError.h"
 #include "BoyiaMemory.h"
+#include "SystemUtil.h"
 
 #define ENABLE_LOG
 
 #ifdef ENABLE_LOG
-extern LVoid jsLog(const char* format, ...);
-#define EngineLog(format, ...) jsLog(format, __VA_ARGS__)
+extern LVoid BoyiaLog(const char* format, ...);
+#define EngineLog(format, ...) BoyiaLog(format, __VA_ARGS__)
 #else
 #define EngineLog(format, ...)
 #endif
@@ -1818,15 +1819,23 @@ static LInt HandleGetProp(LVoid* ins)
     }
 
     // fetch value from inline cache
+    long time = yanbo::SystemUtil::getSystemMicroTime();
     BoyiaValue* result = GetInlineCache(inst->mCache, lVal);
+    long now = yanbo::SystemUtil::getSystemMicroTime();
+
+    BoyiaLog("GetInlineCache current=%ld now=%ld time=%ld", time, now, now - time);
     if (result) {
         ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);
         return 1;
     }
 
     LUintPtr rVal = (LUintPtr)inst->mOPRight.mValue;
-    result = FindObjProp(lVal, rVal, inst);
 
+    time = yanbo::SystemUtil::getSystemMicroTime();
+    result = FindObjProp(lVal, rVal, inst);
+    now = yanbo::SystemUtil::getSystemMicroTime();
+
+    BoyiaLog("FindObjProp current=%ld now=%ld time=%ld", time, now, now - time);
     if (result) {
         // maybe function
         ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);
