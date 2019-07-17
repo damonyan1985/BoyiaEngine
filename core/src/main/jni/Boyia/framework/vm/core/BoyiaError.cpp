@@ -1,7 +1,7 @@
 #include "BoyiaError.h"
 #include <stdio.h>
 
-extern void jsLog(const char* format, ...);
+extern void BoyiaLog(const char* format, ...);
 // error
 LVoid SntxError(LInt error, LInt lineNum)
 {
@@ -33,5 +33,5 @@ LVoid SntxError(LInt error, LInt lineNum)
 
     char info[50];
     sprintf(info, "Error=%s in line %d\n", errorMap[error], lineNum);
-    jsLog("BoyiaVM Error=%s \n", info);
+    BoyiaLog("BoyiaVM Error=%s \n", info);
 }

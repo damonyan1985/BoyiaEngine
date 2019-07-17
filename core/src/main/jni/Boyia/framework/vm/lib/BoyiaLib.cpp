@@ -13,7 +13,7 @@
 #include <android/log.h>
 #include <stdio.h>
 
-extern void jsLog(const char* format, ...);
+extern void BoyiaLog(const char* format, ...);
 //extern LVoid MiniSort(BoyiaValue* vT, LInt len);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 
@@ -59,7 +59,7 @@ LInt getFileContent()
 
 LInt addElementToVector()
 {
-    jsLog("addElementToVector %d", 1);
+    BoyiaLog("addElementToVector %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* element = (BoyiaValue*)GetLocalValue(1);
 
@@ -72,7 +72,7 @@ LInt addElementToVector()
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
         DELETE(value);
     }
-    jsLog("addElementToVector %d", 2);
+    BoyiaLog("addElementToVector %d", 2);
     //fun->mParams[fun->mParamSize++] = *element;
     ValueCopy(fun->mParams + fun->mParamSize++, element);
 
