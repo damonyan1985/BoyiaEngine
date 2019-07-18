@@ -9,6 +9,7 @@
 #include "MiniMutex.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
+#include "SystemUtil.h"
 #include <android/log.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -233,6 +234,7 @@ LVoid AddFunInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun)
 
 BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 {
+    yanbo::TimeAnalysis analysis("GetInlineCache");
     if (!cache) {
         return NULL;
     }
