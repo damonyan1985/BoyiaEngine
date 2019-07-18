@@ -74,6 +74,6 @@ TimeAnalysis::TimeAnalysis(const char* tag)
 TimeAnalysis::~TimeAnalysis()
 {
     long now = SystemUtil::getSystemMicroTime();
-    __android_log_print(ANDROID_LOG_INFO, mTag, "GetInlineCache current=%ld now=%ld time=%ld", mTime, now, now - mTime);
+    __android_log_print(ANDROID_LOG_INFO, mTag, "TimeAnalysis current=%ld now=%ld time=%ld", mTime, now, now - mTime);
 }
 }
