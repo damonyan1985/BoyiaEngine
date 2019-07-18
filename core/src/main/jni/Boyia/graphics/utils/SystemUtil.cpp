@@ -1,5 +1,8 @@
 #include "SystemUtil.h"
+#include <android/log.h>
 #include <time.h>
+
+extern LVoid BoyiaLog(const char* format, ...);
 
 namespace yanbo {
 long SystemUtil::getSystemTime()
@@ -60,5 +63,17 @@ LInt32 SystemUtil::timeDiff(LUint32 later, LUint32 earlier)
             return -static_cast<long>(earlier + (LAST - later) + 1);
         }
     }
+}
+
+TimeAnalysis::TimeAnalysis(const char* tag)
+{
+    mTag = tag;
+    mTime = SystemUtil::getSystemMicroTime();
+}
+
+TimeAnalysis::~TimeAnalysis()
+{
+    long now = SystemUtil::getSystemMicroTime();
+    __android_log_print(ANDROID_LOG_INFO, mTag, "GetInlineCache current=%ld now=%ld time=%ld", mTime, now, now - mTime);
 }
 }

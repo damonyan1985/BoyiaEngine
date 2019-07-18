@@ -1762,6 +1762,7 @@ static LVoid CallNativeStatement(LInt idx)
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst)
 {
+    yanbo::TimeAnalysis analysis("FindObjProp");
     if (!lVal || lVal->mValueType != CLASS) {
         return NULL;
     }
@@ -1819,23 +1820,14 @@ static LInt HandleGetProp(LVoid* ins)
     }
 
     // fetch value from inline cache
-    long time = yanbo::SystemUtil::getSystemMicroTime();
     BoyiaValue* result = GetInlineCache(inst->mCache, lVal);
-    long now = yanbo::SystemUtil::getSystemMicroTime();
-
-    BoyiaLog("GetInlineCache current=%ld now=%ld time=%ld", time, now, now - time);
     if (result) {
         ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);
         return 1;
     }
 
     LUintPtr rVal = (LUintPtr)inst->mOPRight.mValue;
-
-    time = yanbo::SystemUtil::getSystemMicroTime();
     result = FindObjProp(lVal, rVal, inst);
-    now = yanbo::SystemUtil::getSystemMicroTime();
-
-    BoyiaLog("FindObjProp current=%ld now=%ld time=%ld", time, now, now - time);
     if (result) {
         // maybe function
         ValueCopyWithKey(&gBoyiaVM->mCpu->mReg0, result);

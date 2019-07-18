@@ -12,5 +12,15 @@ public:
     static bool timeIsBetween(LUint32 later, LUint32 middle, LUint32 earlier);
     static LInt32 timeDiff(LUint32 later, LUint32 earlier);
 };
+
+class TimeAnalysis {
+public:
+    TimeAnalysis(const char* tag);
+    ~TimeAnalysis();
+
+private:
+    long mTime;
+    const char* mTag;
+};
 }
 #endif
