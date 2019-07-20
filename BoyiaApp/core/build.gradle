@@ -20,11 +20,11 @@ android {
     externalNativeBuild{
         if (use_cmake) {
             cmake {
-                path "src/main/jni/CMakeLists.txt"
+                path "$rootDir/../BoyiaFramework/CMakeLists.txt"
             }
         } else {
             ndkBuild {
-                path "src/main/jni/Android.mk"
+                path "$rootDir/../BoyiaFramework/Android.mk"
             }
         }
     }
@@ -43,6 +43,8 @@ android {
     }
 
 }
+
+println "$rootDir/../BoyiaFramework/CMakeLists.txt"
 
 uploadArchives {
     repositories.mavenDeployer {
