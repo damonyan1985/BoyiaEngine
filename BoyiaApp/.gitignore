@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+/common/src/main/java/com/boyia/app/common/http
+/common/src/main/java/com/boyia/app/common/job
+/common/src/main/java/com/boyia/app/common/loader
+/common/src/main/java/com/boyia/app/common/base
+/common/src/main/java/com/boyia/app/common/utils
+/task
+/loader
+/maven
+/library
+.externalNativeBuild
