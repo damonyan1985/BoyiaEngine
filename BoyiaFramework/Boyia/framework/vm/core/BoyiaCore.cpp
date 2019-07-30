@@ -229,7 +229,7 @@ typedef struct {
     VMCpu* mCpu;
     ExecState* mEState;
     ExecScene* mExecStack;
-    LInt* mLoopStack;
+    LIntPtr* mLoopStack;
     BoyiaValue* mOpStack;
 } BoyiaVM;
 
@@ -279,7 +279,7 @@ LVoid* InitVM()
     vm->mOpStack = NEW_ARRAY(BoyiaValue, NUM_RESULT);
 
     vm->mExecStack = NEW_ARRAY(ExecScene, FUNC_CALLS);
-    vm->mLoopStack = NEW_ARRAY(LInt, LOOP_NEST);
+    vm->mLoopStack = NEW_ARRAY(LIntPtr, LOOP_NEST);
     vm->mEState = NEW(ExecState);
     vm->mCpu = NEW(VMCpu);
 
