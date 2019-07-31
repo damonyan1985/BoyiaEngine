@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="thread">
+      <UniqueIdentifier>{d36c2a83-4416-426a-94d6-3cead720df48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{46953002-b1ff-4684-9047-7cac774234ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="app">
+      <UniqueIdentifier>{9c934bc5-90a1-4838-859a-d36c2818acff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphic">
+      <UniqueIdentifier>{fcf3021d-6777-4613-8396-4f00251f552f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thread\PlatformThreadWin.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\window\BaseWindow.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\window\BoyiaWindow.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\app\BoyiaAppWindow.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thread\BaseThread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphic\BoyiaDC.h">
+      <Filter>graphic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BoyiaFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thread\PlatformThreadWin.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\window\BaseWindow.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\window\BoyiaWindow.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\app\BoyiaApp.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\app\BoyiaAppWindow.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphic\BoyiaDC.cpp">
+      <Filter>graphic</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
