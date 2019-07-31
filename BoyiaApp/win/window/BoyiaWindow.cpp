@@ -2,11 +2,11 @@
 #include <string.h>
 
 BEGIN_MAP_TABLE(BoyiaWindow, BaseWindow)
-//消息映射项BEGIN
+// msg mapping item begin
 WM_CREATE_ITEN()
 WM_CLOSE_ITEM()
 WM_DESTROY_ITEM()
-//消息映射项END
+// msg mapping item end
 END_MAP_TABLE()
 
 BoyiaWindow::BoyiaWindow()

@@ -1,7 +1,7 @@
 #include "BoyiaAppWindow.h"
 
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
-//消息映射项BEGIN 
+// msg mapping item begin
 WM_CREATE_ITEN()
 WM_PAINT_ITEM()
 WM_LBUTTONDOWN_ITEM()
@@ -9,7 +9,7 @@ WM_LBUTTONUP_ITEM()
 WM_SETCURSOR_ITEM()
 WM_KEYDOWN_ITEM()
 WM_RBUTTONDOWN_ITEM()
-//消息映射项END
+// msg mapping item end
 END_MAP_TABLE()
 
 BoyiaAppWindow::BoyiaAppWindow()
