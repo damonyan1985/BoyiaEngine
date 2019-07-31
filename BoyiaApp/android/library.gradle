@@ -13,6 +13,8 @@ def initExtension() {
 initExtension()
 
 gradle.ext.library = [
+    framework_mk: "$rootDir/../../BoyiaFramework/Android.mk",
+    framework_cmake: "$rootDir/../../BoyiaFramework/CMakeLists.txt",
     boyia_core: 'com.boyia.app.core:core:1.0.0',
     boyia_common: 'com.boyia.app.common:common:1.0.0',
     okhttp_lib: 'com.squareup.okhttp3:okhttp:3.6.0',

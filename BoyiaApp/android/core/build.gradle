@@ -20,11 +20,11 @@ android {
     externalNativeBuild{
         if (use_cmake) {
             cmake {
-                path "$rootDir/../BoyiaFramework/CMakeLists.txt"
+                path gradle.library.framework_cmake
             }
         } else {
             ndkBuild {
-                path "$rootDir/../BoyiaFramework/Android.mk"
+                path gradle.library.framework_mk
             }
         }
     }
