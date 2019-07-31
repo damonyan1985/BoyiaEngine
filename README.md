@@ -1,10 +1,10 @@
-# ![Logo](https://github.com/damonyan1985/BoyiaUI/blob/master/BoyiaApp/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaUI
+# ![Logo](https://github.com/damonyan1985/BoyiaUI/blob/dev/BoyiaApp/android/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaUI
 
 BoyiaUI is a multi-platform framework for building mobile app, but now it's only implements
 android platform.
 
 **Boyia Framework Architecture**:
-![Architecture](https://github.com/damonyan1985/BoyiaUI/blob/master/BoyiaApp/doc/Architecture.png?raw=true)
+![Architecture](https://github.com/damonyan1985/BoyiaUI/blob/dev/BoyiaApp/android/doc/Architecture.png?raw=true)
 
 ## Git user attention
 
