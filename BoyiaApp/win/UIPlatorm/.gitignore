@@ -1,4 +1,6 @@
 /.vs
+/x64
 /Debug
+/project/x64
 /project/.vs
 /project/Debug
