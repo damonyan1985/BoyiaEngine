@@ -13,7 +13,7 @@
 
 #include "PlatformLib.h"
 
-#if ENABLE(ANDROID_PORTING)
+#if ENABLE(BOYIA_ANDROID)
 #include <android/log.h>
 #endif
 
@@ -30,7 +30,7 @@ extern bool JNI_LOG_ON;
 #define KFORMATLOG(format_str, ...)
 #define KSTRFORMAT(format_str, str)
 
-#elif ENABLE(ANDROID_PORTING)
+#elif ENABLE(BOYIA_ANDROID)
 #define INIT_KLOG(file_name, is_open)
 #define SHUT_KLOG()
 #define KLOG(...)   \
