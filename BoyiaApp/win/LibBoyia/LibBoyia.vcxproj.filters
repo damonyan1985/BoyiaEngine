@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Boyia">
+      <UniqueIdentifier>{9a5169da-bfc4-417c-9efc-92b4f266071d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{17182ae7-6ac2-4949-90d2-9ccd8e77622e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boyia\framework">
+      <UniqueIdentifier>{48e8fcf4-ab77-4576-84d5-d0f2c11d4ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boyia\framework\util">
+      <UniqueIdentifier>{8e22c792-7b4c-4d49-867d-8b282d7a6d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boyia\framework\vm">
+      <UniqueIdentifier>{5e0c80b6-049c-4c63-855b-7c505b8f1d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boyia\framework\vm\core">
+      <UniqueIdentifier>{0302db5b-c842-4d04-92e5-826c251baa19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,6 +39,66 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaPtr.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaRef.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\FileUtil.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\HashMap.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\IDCreator.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\IdentityMap.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\InputStream.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KList.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KListMap.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KSet.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KVector.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\PlatformLib.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\Stack.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\StringUtils.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\Utf8StreamReader.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\UtilString.h">
+      <Filter>Boyia\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaCore.h">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaError.h">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaMemory.h">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaValue.h">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -28,6 +106,45 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaRef.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\FileUtil.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\IDCreator.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\IdentityMap.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\InputStream.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\PlatformLib.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\StringUtils.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\Utf8StreamReader.cpp">
+      <Filter>Boyia\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaCore.cpp">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaError.cpp">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaGC.cpp">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaMemory.cpp">
+      <Filter>Boyia\framework\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaValue.cpp">
+      <Filter>Boyia\framework\vm\core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

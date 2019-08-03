@@ -10,12 +10,15 @@
 #include "PlatformLib.h"
 #include "SalLog.h"
 #include "SystemUtil.h"
-#include <android/log.h>
 #include <stdio.h>
 #include <stdlib.h>
+#if ENABLE(BOYIA_WINDOWS)
+#include <varargs.h>
+#elif ENABLE(BOYIA_ANDROID)
+#include <android/log.h>
+#endif
 
 #define MAX_INT_LEN 20
-#define MINI_ANDROID_LOG
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
 #define MAX_INLINE_CACHE 5
 
@@ -33,7 +36,7 @@ extern LVoid BoyiaLog(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-#ifdef MINI_ANDROID_LOG
+#if ENABLE(BOYIA_ANDROID)
     __android_log_vprint(ANDROID_LOG_INFO, "BoyiaVM", format, args);
 #else
     printf(format, args);

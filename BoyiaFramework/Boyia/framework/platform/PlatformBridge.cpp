@@ -4,7 +4,7 @@
 
 namespace yanbo {
 
-#if ENABLE(ANDROID_PORTING)
+#if ENABLE(BOYIA_ANDROID)
 LVoid PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
     JNIEnv* env = JNIUtil::getEnv();

@@ -2,7 +2,7 @@
 #define PlatformThreadWin_h
 
 #include "BaseThread.h"
-#include<windows.h>
+#include <windows.h>
 
 namespace yanbo
 {

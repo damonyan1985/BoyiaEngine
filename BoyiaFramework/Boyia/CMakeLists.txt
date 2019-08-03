@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(boyia)
 
-add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX)
+add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX -DENABLE_BOYIA_ANDROID=1)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 

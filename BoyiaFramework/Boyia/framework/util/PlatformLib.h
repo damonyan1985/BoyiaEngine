@@ -17,7 +17,7 @@
 
 namespace util {
 // feature begin
-#define ENABLE_ANDROID_PORTING 1
+// #define ENABLE_ANDROID_PORTING 1
 //#define ENABLE_BROWSER_KERNEL 1
 // feature end
 //

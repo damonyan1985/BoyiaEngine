@@ -88,9 +88,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaFramework\Boyia\framework\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,10 +156,43 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaPtr.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaRef.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\FileUtil.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\HashMap.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\IDCreator.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\IdentityMap.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\InputStream.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KList.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KListMap.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KSet.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\KVector.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\PlatformLib.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\Stack.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\StringUtils.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\Utf8StreamReader.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\UtilString.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaCore.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaError.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaMemory.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaValue.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaRef.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\FileUtil.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\IDCreator.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\IdentityMap.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\InputStream.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\PlatformLib.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\StringUtils.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\util\Utf8StreamReader.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaCore.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaError.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaGC.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaMemory.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaValue.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
