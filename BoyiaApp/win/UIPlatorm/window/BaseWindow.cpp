@@ -4,7 +4,7 @@ BaseWindow *BaseWindow::m_currWinPtr = NULL;
 HINSTANCE BaseWindow::m_hInst = NULL;
 const TCommandMessageItem BaseWindow::messageEntries[] =
 {
-	{ (WORD)NULL, 0, 0},
+	{ (INT_PTR)nullptr, 0, 0},
 	WM_CLOSE_ITEM()
 	WM_DESTROY_ITEM()
     { 0,0, 0}
@@ -12,8 +12,8 @@ const TCommandMessageItem BaseWindow::messageEntries[] =
 
 BaseWindow::BaseWindow()
 {
-	m_hWnd = NULL;
-	m_prevWinPtr = NULL;
+	m_hWnd = nullptr;
+	m_prevWinPtr = nullptr;
 }
 
 void BaseWindow::RegisterBaseWindow(WNDCLASS &wndClass)
@@ -104,12 +104,11 @@ LRESULT CALLBACK BaseWindow::TWndProc(HWND hWnd, UINT message, WPARAM wParam, LP
 		const TCommandMessageItem *msg_item = _twnd->GetMessageEntries();
 		while ((NULL != msg_item))
 		{
-			int i;
-			for (i = 1; msg_item[i]._tfunc; i++)
+			for (int i = 1; msg_item[i]._tfunc; i++)
 			{
 				if (msg_item[i].message == message)
 				{
-					if ((WM_COMMAND == message))
+					if (WM_COMMAND == message)
 					{
 						if (msg_item[i].id == LOWORD(wParam))
 						{

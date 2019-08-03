@@ -70,7 +70,7 @@ BoyiaApp* BoyiaApp::GetCurrApp()
 
 void BoyiaApp::FreeWndPtr()
 {
-	if (NULL != _ptwin)
+	if (_ptwin)
 	{
 		delete _ptwin;
 		_ptwin = NULL;

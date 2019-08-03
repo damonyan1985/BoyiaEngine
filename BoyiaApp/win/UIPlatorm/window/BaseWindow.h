@@ -15,7 +15,7 @@ typedef DWORD(BaseWindow::*BaseWndProc)(WPARAM, LPARAM);
 
 typedef struct TCommandMessageItem
 {
-	DWORD         message;
+	INT_PTR       message;
 	DWORD              id;
 	BaseWndProc    _tfunc;
 }TCommandMessageItem;

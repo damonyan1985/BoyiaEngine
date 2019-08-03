@@ -1,7 +1,7 @@
 #ifndef BoyiaAppWindow_h
 #define BoyiaAppWindow_h
 
-#include "gdi/BoyiaDC.h"
+#include "graphic/BoyiaDC.h"
 #include "window/BoyiaWindow.h"
 
 class BoyiaAppWindow : public BoyiaWindow
