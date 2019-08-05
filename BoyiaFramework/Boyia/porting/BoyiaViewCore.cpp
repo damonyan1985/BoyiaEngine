@@ -83,7 +83,7 @@ static void nativeInitUIView(
     yanbo::UIView::getInstance()->setClientRange(LRect(0, 0, w, h));
     yanbo::UIView::getInstance()->setComponents(loader, gc, NULL);
     TestLoadUrl();
-    TestThread();
+    //TestThread();
 }
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)

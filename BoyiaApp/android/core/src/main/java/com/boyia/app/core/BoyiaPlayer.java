@@ -48,6 +48,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     	public PlayerHandler(Looper looper) {
             super(looper);
         }
+
     	@Override
     	public void handleMessage(Message msg) {
     		BoyiaPlayer player = (BoyiaPlayer) msg.obj;

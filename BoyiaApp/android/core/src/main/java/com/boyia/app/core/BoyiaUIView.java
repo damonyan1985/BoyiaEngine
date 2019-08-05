@@ -4,6 +4,7 @@ package com.boyia.app.core;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -49,20 +50,13 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		init();
 		mInputManager = new BoyiaInputManager(this);
 	}
-
-	private void setBackground(int color) {
-		Canvas canvas = mHolder.lockCanvas();
-		canvas.drawColor(color);
-		mHolder.unlockCanvasAndPost(canvas);
-	}
 	
 	private void init() {
-		getHolder().addCallback(this);
-		//setBackgroundColor(Color.WHITE);
-		getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		// 叠在其他surfaceview之上
 		setZOrderOnTop(true);
-		setZOrderMediaOverlay(true);
+		//setZOrderMediaOverlay(true);
+		getHolder().addCallback(this);
+		getHolder().setFormat(PixelFormat.TRANSLUCENT);
 	}
 	
 	public void setInputText(String text) {
@@ -114,7 +108,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		if (mIsUIViewDistroy) {
 			BoyiaLog.d(TAG, " sendBoyiaUIViewTask");
 			mHolder = holder;
-			//setBackground(Color.WHITE);
+
 			nativeSetGLSurface(mHolder.getSurface());
 			initUIView();
 			mIsUIViewDistroy = false;
