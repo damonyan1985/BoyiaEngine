@@ -153,7 +153,7 @@ public:
     }
     virtual ~LImage() {}
 
-#if ENABLE(BROWSER_KERNEL)
+#if ENABLE(BOYIA_KERNEL)
     static LImage* create(LVoid* item)
     {
         return NULL;
@@ -197,7 +197,7 @@ public:
     } FontStyle;
 
 public:
-#if ENABLE(BROWSER_KERNEL)
+#if ENABLE(BOYIA_KERNEL)
     static LFont* create(const LFont& font)
     {
         return NULL;
@@ -286,7 +286,7 @@ protected:
 
 class LMediaPlayer {
 public:
-#if ENABLE(BROWSER_KERNEL)
+#if ENABLE(BOYIA_KERNEL)
     static LMediaPlayer* create(LVoid* view)
     {
         return NULL;
