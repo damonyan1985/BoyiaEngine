@@ -20,7 +20,7 @@
 #define LOG_TAG "libboyia"
 extern bool JNI_LOG_ON;
 
-#if ENABLE(BROWSER_KERNEL)
+#if ENABLE(BOYIA_KERNEL)
 #define INIT_KLOG(file_name, is_open)
 #define SHUT_KLOG()
 #define KLOG(log_str)
