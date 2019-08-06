@@ -109,14 +109,12 @@ public:
         // 下载完成
         fclose(m_appFile);
         // 解压到应用程序目录
-        if (m_launchable) {
-            PlatformBridge::unzip(m_appFilePath, m_appDir);
+        if (m_launchable && PlatformBridge::unzip(m_appFilePath, m_appDir)) {
             FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
 
             String appJsonPath = m_appDir + _CS(APP_JSON);
             boyia::JSONParser parser(appJsonPath);
 
-            //KFORMATLOG("boyia app AppHandler entry=%s", entry->valuestring);
             BoyiaThreadLoad(parser.get("entry")->valuestring);
             FileUtil::deleteFile(GET_STR(m_appFilePath));
         }

@@ -68,12 +68,9 @@ void BoyiaAssembler::mov(BoyiaRegister rd, const BoyiaOperand& src, SBit s,
             LUint32 low8 = i & 0xFF;
             LUint32 low16 = (i & 0xFF00) >> 8;
             LUint32 immHigh = (i & 0xFFFF0000) >> 16;
-            //__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS call low8=%d", low8);
 
-            //__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS call immHigh=%d", immHigh);
             if (low16) { // 8-15位数，通过(rotate=12)*2,右循环移位24
                 low16 = low16 | (12 << 8);
-                //__android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS call low16=%d", low16);
                 instr |= I | low16;
                 emit(instr);
             }

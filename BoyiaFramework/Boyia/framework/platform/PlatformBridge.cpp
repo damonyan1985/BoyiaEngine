@@ -1,6 +1,7 @@
 #include "PlatformBridge.h"
 #include "AutoObject.h"
 #include "JNIUtil.h"
+#include "SalLog.h"
 
 namespace yanbo {
 
@@ -23,6 +24,7 @@ bool PlatformBridge::unzip(const String& zipFile, const String& dir)
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jdir);
 
+    BOYIA_LOG("PlatformBridge---unzip---result=%d", (LInt)result);
     return result;
 }
 

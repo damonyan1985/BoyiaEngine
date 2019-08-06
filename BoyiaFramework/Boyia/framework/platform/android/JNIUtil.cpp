@@ -3,6 +3,7 @@
 #include "BoyiaLib.h"
 #include "BoyiaView.h"
 #include "KVector.h"
+#include "SalLog.h"
 #include <pthread.h>
 //#include <stdarg.h>
 
@@ -66,7 +67,7 @@ void JNIUtil::callStaticMethod(
             }
         }
     }
-    __android_log_print(ANDROID_LOG_INFO, "MiniJS", "JNIUtil::callStaticMethod %s and retType=%c", className, retType);
+    BOYIA_LOG("JNIUtil---callStaticMethod---className=%s and retType=%c", className, retType);
     JniMethodInfo methodInfo;
     switch (retType) {
     case 'V': {

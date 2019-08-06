@@ -7,6 +7,7 @@
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
 #include "JNIUtil.h"
+#include "SalLog.h"
 #include "StringUtils.h"
 #include "UIView.h"
 #include "cJSON.h"
@@ -181,13 +182,12 @@ LInt clearVector()
 
 LInt logPrint()
 {
-    //__android_log_print(ANDROID_LOG_INFO, "MiniJS", "logPrint execute");
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     if (val->mValueType == BY_INT) {
-        __android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS Log: %d", (int)val->mValue.mIntVal);
+        BOYIA_LOG("Boyia [info]: %d", (int)val->mValue.mIntVal);
     } else if (val->mValueType == BY_STRING) {
         char* log = convertMStr2Str(&val->mValue.mStrVal);
-        __android_log_print(ANDROID_LOG_INFO, "MiniJS", "MiniJS Log: %s", (const char*)log);
+        BOYIA_LOG("Boyia [info]: %s", (const char*)log);
         delete[] log;
     }
 
@@ -493,7 +493,7 @@ LInt callStaticMethod()
     char* strSign = convertMStr2Str(&sign->mValue.mStrVal);
     char retFlag = strSign[sign->mValue.mStrVal.mLen - 1];
 
-    __android_log_print(ANDROID_LOG_INFO, "MiniJS", "strClzz=%s strMethod=%s strSign=%s", strClzz, strMethod, strSign);
+    BOYIA_LOG("Boyia [info]: callStaticMethod---strClzz=%s strMethod=%s strSign=%s", strClzz, strMethod, strSign);
     if (retFlag == 'S') {
         strSign[method->mValue.mStrVal.mLen - 1] = 0;
     }
