@@ -34,7 +34,7 @@ JSONParser::JSONParser(const String& str, LBool isFile)
     if (isFile) {
         String content;
         FileUtil::readFile(str, content);
-        KFORMATLOG("boyia app JSONParse content=%s", GET_STR(content));
+        BOYIA_LOG("JSONParser---JSONParser() content=%s", GET_STR(content));
         m_json = cJSON_Parse(GET_STR(content));
     } else {
         m_json = cJSON_Parse(GET_STR(str));

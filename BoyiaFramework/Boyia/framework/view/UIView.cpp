@@ -144,7 +144,7 @@ void UIView::handleKeyEvent(const util::LKeyEvent& evt)
 
 void UIView::handleTouchEvent(const util::LTouchEvent& evt)
 {
-    //	m_jsHandler->handleTouch(evt);
+    //	m_jsHandlerm_jsHandler->handleTouch(evt);
 
     switch (evt.getType()) {
     case LTouchEvent::ETOUCH_DOWN:
@@ -179,12 +179,8 @@ boyia::BoyiaEventHandler* UIView::jsHandler() const
     return m_jsHandler;
 }
 
-LBool UIView::canHit() const
+bool UIView::canHit() const
 {
-    if (getDocument() && getDocument()->getRenderTreeRoot()) {
-        return LTrue;
-    }
-
-    return LFalse;
+    return getDocument() && getDocument()->getRenderTreeRoot();
 }
 }

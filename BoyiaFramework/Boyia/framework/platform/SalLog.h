@@ -17,7 +17,7 @@
 #include <android/log.h>
 #endif
 
-#define LOG_TAG "libmini"
+#define LOG_TAG "libboyia"
 extern bool JNI_LOG_ON;
 
 #if ENABLE(BROWSER_KERNEL)
@@ -50,6 +50,7 @@ extern bool JNI_LOG_ON;
 #define YanLog(format_str, ...) \
     if (JNI_LOG_ON)             \
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, format_str, __VA_ARGS__)
+#define BOYIA_LOG KFORMATLOG
 #endif
 
 #endif // KLOGINFILE_H

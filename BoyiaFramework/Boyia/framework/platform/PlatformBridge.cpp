@@ -5,7 +5,7 @@
 namespace yanbo {
 
 #if ENABLE(BOYIA_ANDROID)
-LVoid PlatformBridge::unzip(const String& zipFile, const String& dir)
+bool PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
     JNIEnv* env = JNIUtil::getEnv();
     jstring jpath = util::strToJstring(env, GET_STR(zipFile));
@@ -14,14 +14,16 @@ LVoid PlatformBridge::unzip(const String& zipFile, const String& dir)
     KFORMATLOG("boyia app AppHandler unzip path=%s", GET_STR(zipFile));
     KFORMATLOG("boyia app AppHandler unzip dir=%s", GET_STR(dir));
 
-    JNIUtil::callStaticVoidMethod(
+    bool result = JNIUtil::callStaticBooleanMethod(
         "com/boyia/app/common/utils/ZipOperation",
         "unZipFile",
-        "(Ljava/lang/String;Ljava/lang/String;)V",
+        "(Ljava/lang/String;Ljava/lang/String;)Z",
         jpath, jdir);
 
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jdir);
+
+    return result;
 }
 
 const char* PlatformBridge::getAppPath()

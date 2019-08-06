@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.view.KeyEvent;
@@ -41,6 +42,7 @@ public class BoyiaActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		//getWindow().getDecorView().setBackground(getResources().getDrawable(R.drawable.ic_launcher));
 		setContentView(new FrameLayout(this));
 		initView();
     }
