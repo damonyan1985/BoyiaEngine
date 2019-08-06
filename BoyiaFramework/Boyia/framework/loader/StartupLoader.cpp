@@ -81,7 +81,7 @@ public:
         m_appDir = _CS(PlatformBridge::getAppPath()) + name;
         m_appFilePath = m_appDir + _CS("_tmp.zip");
 
-        KFORMATLOG("boyia app AppHandler name=%s", GET_STR(m_appFilePath));
+        BOYIA_LOG("boyia app AppHandler name=%s", GET_STR(m_appFilePath));
         m_appFile = fopen(GET_STR(m_appFilePath), "wb+");
     }
 
@@ -126,7 +126,7 @@ public:
 
     virtual void onFileLen(LInt len)
     {
-        KFORMATLOG("boyia app AppHandler size=%d", len);
+        BOYIA_LOG("boyia app AppHandler size=%d", len);
     }
 
 private:
@@ -149,11 +149,8 @@ LVoid StartupLoader::startLoad()
 
     m_file = fopen(PlatformBridge::getAppJsonPath(), "wb+");
 
-    //String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
-
-    //KFORMATLOG("boyia app StartupLoader url=%s", GET_STR(url));
     m_loader.loadUrl(_CS(APP_LOAD_URL), this);
-    KFORMATLOG("boyia app StartupLoader m_file=%d", (LIntPtr)m_file);
+    BOYIA_LOG("StartupLoader---startLoad m_file=%d", (LIntPtr)m_file);
 }
 
 LVoid StartupLoader::loadApp()
@@ -207,7 +204,7 @@ LVoid StartupLoader::parseConfig()
 
     String path(_CS(PlatformBridge::getAppJsonPath()), LFalse, LStrlen((LUint8*)PlatformBridge::getAppJsonPath()));
     util::FileUtil::readFile(path, content);
-    KFORMATLOG("boyia app content=%s", GET_STR(content));
+    BOYIA_LOG("boyia app content=%s", GET_STR(content));
 
     cJSON* json = cJSON_Parse(GET_STR(content));
     if (json->type == cJSON_Object) {
@@ -250,13 +247,18 @@ LVoid StartupLoader::startLoadApp()
         // 升级App
         upgradeApp(m_appInfos[id]->name);
         String appDir = _CS(PlatformBridge::getAppPath()) + m_appInfos[id]->name;
-
         LInt versionCode = 0;
         LBool hasApp = FileUtil::isExist(GET_STR(appDir));
         if (hasApp) {
             // Get App Json Info
             String appJsonPath = appDir + _CS(APP_JSON);
-            KFORMATLOG("boyia app content=%s", GET_STR(appJsonPath));
+            // LOG AppPath
+            BOYIA_LOG("StartupLoader.cpp---startLoadApp---appJsonPath=%s", GET_STR(appJsonPath));
+
+            if (!FileUtil::isExist(GET_STR(appJsonPath))) {
+                continue;
+            }
+
             boyia::JSONParser parser(appJsonPath);
             // Get App Version
             cJSON* version = parser.get("versionCode");

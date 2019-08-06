@@ -30,6 +30,11 @@ public:
         const char* signature,
         ...);
 
+    static bool callStaticBooleanMethod(const char* className,
+        const char* method,
+        const char* signature,
+        ...);
+
     static jstring callStaticStringMethod(const char* className,
         const char* method,
         const char* signature,

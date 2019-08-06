@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class ZipOperation {
-	public static void zip(String src, String dest) {
+	public static boolean zip(String src, String dest) {
 		// 提供了一个数据项压缩成一个ZIP归档输出流
 		ZipOutputStream out = null;
 		try {
@@ -40,14 +40,19 @@ public class ZipOperation {
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
-		} finally {
-			// 关闭输出流
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+			closeZipStream(out);
+			return false;
+		}
+
+		return true;
+	}
+
+	private static void closeZipStream(ZipOutputStream out) {
+		if (out != null) {
+			try {
+				out.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -96,7 +101,7 @@ public class ZipOperation {
 		}
 	}
 	
-	public static void unZipFile(String archive, String decompressDir) {
+	public static boolean unZipFile(String archive, String decompressDir) {
 		try {
 			BufferedInputStream bi;
 			ZipFile zf = new ZipFile(archive);
@@ -133,6 +138,9 @@ public class ZipOperation {
 			zf.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			return false;
 		}
+
+		return true;
 	}
 }
