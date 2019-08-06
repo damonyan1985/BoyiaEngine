@@ -43,7 +43,6 @@ void* BoyiaRef::operator new(size_t sz)
     //
     //	void* data = NewData(sz, sDOMMemPool);
     //	//PrintPoolSize(sDOMMemPool);
-    //	//__android_log_print(ANDROID_LOG_INFO, "MiniJS", "DOMMemPool  addr=%x size=%d", (LInt)sDOMMemPool->m_address, sDOMMemPool->m_used);
     //	return data;
     return malloc(sz);
 }

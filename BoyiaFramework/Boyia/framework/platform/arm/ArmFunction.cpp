@@ -22,7 +22,6 @@ LVoid ArmMemeset(LVoid* dest, LInt val, LInt len)
 
 LVoid ArmMemcpy(LVoid* dest, const LVoid* src, LInt len)
 {
-    //__android_log_print(ANDROID_LOG_INFO, "MiniJS", "ArmMemcpy r1=%x len=%d", (int)src, len);
     // ldrb r3, [r1], #1 => [r1]->r3, r1+=1
     // strb r3, [r0], #1 => r3->[r0], r0+=1
     //	__asm__ __volatile__(
