@@ -8,13 +8,13 @@
 #ifndef AppLoader_h
 #define AppLoader_h
 
+#include "AppInfo.h"
 #include "BoyiaLoader.h"
 #include "KVector.h"
 #include <stdio.h>
 
 namespace yanbo {
 
-class AppInfo;
 class AppLoader : public NetworkClient {
 public:
     AppLoader();

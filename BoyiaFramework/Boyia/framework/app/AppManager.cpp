@@ -47,4 +47,8 @@ const LRect& AppManager::getViewport() const
 {
     return m_clientRect;
 }
+
+LVoid AppManager::launchApp()
+{
+}
 }
