@@ -15,7 +15,6 @@
 namespace yanbo {
 
 typedef BoyiaList<HtmlForm*> FormList;
-//typedef KMap<LUint, HtmlView*> IDMap;
 class UIView;
 class HtmlDocument {
 public:
@@ -44,7 +43,6 @@ public:
     void resetHtmlFocus();
     void clearHtmlList();
 
-    void setViewPort(const LayoutRect& viewRect);
     const LayoutRect& getViewPort() const;
 
     void putItemID(String& id, HtmlView* item);

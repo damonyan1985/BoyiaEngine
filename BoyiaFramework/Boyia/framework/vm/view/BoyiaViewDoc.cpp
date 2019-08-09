@@ -47,6 +47,7 @@ void BoyiaViewDoc::loadHTML(const String& url)
         KFORMATLOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
         dom = new DOMBuilder();
         m_domMap.put(key, (LIntPtr)dom);
+        m_domMap.sort();
 
         fetchStream(url, stream);
         KFORMATLOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());

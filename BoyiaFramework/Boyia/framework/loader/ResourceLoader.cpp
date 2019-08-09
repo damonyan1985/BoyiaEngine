@@ -150,7 +150,6 @@ void ResourceLoader::executeDocument(const String& data)
 
     m_render->renderHTML(m_view->getDocument(),
         data,
-        m_view->getClientRange(),
         this);
 
     if (m_cssSize) {
