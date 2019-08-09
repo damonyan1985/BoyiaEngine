@@ -12,7 +12,8 @@
 #include "UIView.h"
 #include <android/log.h>
 
-extern LVoid CompileScript(char* code);
+//extern LVoid CompileScript(char* code);
+extern LVoid* CompileScript(char* code);
 namespace yanbo {
 
 class ResourceHandle : public NetworkClient, public BoyiaEvent {

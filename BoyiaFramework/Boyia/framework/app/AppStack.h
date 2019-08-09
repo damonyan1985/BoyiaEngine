@@ -10,11 +10,11 @@ public:
     AppStack();
     ~AppStack();
 
-    Application* top() const;
+    Application* top();
 
 private:
     Stack<Application*> m_stack;
-}
+};
 }
 
 #endif

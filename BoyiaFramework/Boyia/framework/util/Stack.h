@@ -20,7 +20,7 @@ public:
 public:
     LInt size();
     T pop();
-    T& top() const;
+    T& top();
     void push(const T& obj);
     T& elementAt(LInt i);
 
@@ -71,7 +71,7 @@ T& Stack<T>::elementAt(LInt i)
 }
 
 template <class T>
-T& Stack<T>::top() const
+T& Stack<T>::top()
 {
     return m_vector.lastElement();
 }

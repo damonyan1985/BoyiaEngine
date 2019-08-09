@@ -97,6 +97,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	public void initUIView() {
+		nativeSetGLSurface(mHolder.getSurface());
 		nativeInitUIView(mHolder.getSurfaceFrame().width(),
 				mHolder.getSurfaceFrame().height(),
 				BoyiaLog.ENABLE_LOG);
@@ -108,8 +109,6 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		if (mIsUIViewDistroy) {
 			BoyiaLog.d(TAG, " sendBoyiaUIViewTask");
 			mHolder = holder;
-
-			nativeSetGLSurface(mHolder.getSurface());
 			initUIView();
 			mIsUIViewDistroy = false;
 		} else {

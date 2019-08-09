@@ -1,6 +1,7 @@
 #ifndef BoyiaViewCore_h
 #define BoyiaViewCore_h
 
+#include "AppManager.h"
 #include "ArmFunction.h"
 #include "AutoObject.h"
 #include "BoyiaExecution.h"
@@ -43,7 +44,8 @@ static void nativeSetGLSurface(
     jobject obj,
     jobject surface)
 {
-    yanbo::UIThread::instance()->initContext(surface);
+    yanbo::AppManager::instance()->uiThread()->initContext(surface);
+    //yanbo::UIThread::instance()->initContext(surface);
 }
 
 static void nativeResetGLSurface(
@@ -80,10 +82,12 @@ static void nativeInitUIView(
     yanbo::LoaderAndroid* loader = new yanbo::LoaderAndroid();
     //yanbo::BoyiaLoader* loader = new yanbo::BoyiaLoader;
     loader->initLoader();
-    yanbo::UIView::getInstance()->setClientRange(LRect(0, 0, w, h));
+    //yanbo::UIView::getInstance()->setClientRange(LRect(0, 0, w, h));
     yanbo::UIView::getInstance()->setComponents(loader, gc, NULL);
-    TestLoadUrl();
+    //TestLoadUrl();
     //TestThread();
+    yanbo::AppManager::instance()->setViewport(LRect(0, 0, w, h));
+    yanbo::AppManager::instance()->start();
 }
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)

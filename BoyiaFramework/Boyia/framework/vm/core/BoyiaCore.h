@@ -24,7 +24,7 @@ typedef struct {
     LInt mSize;
 } NativeFunMap;
 
-LVoid CompileCode(char* code);
+LVoid* CompileCode(char* code);
 LVoid CallFunction(char* funcCall, LVoid* ret);
 LInt GetLocalSize();
 LVoid* GetLocalValue(LInt idx);
@@ -32,9 +32,7 @@ LVoid SetNativeResult(LVoid* result);
 LVoid GetLocalStack(LInt* stack, LInt* size);
 LVoid* GetNativeResult();
 LVoid* CopyObject(LUintPtr hashKey, LInt size);
-//LUint HashCode(BoyiaStr* str);
 LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
-//LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid GetGlobalTable(LInt* table, LInt* size);
 LVoid NativeCall(BoyiaValue* obj);
 LVoid LocalPush(BoyiaValue* value);

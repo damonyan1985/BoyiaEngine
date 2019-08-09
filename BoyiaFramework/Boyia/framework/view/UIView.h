@@ -21,10 +21,11 @@ class UIView {
 public:
     static UIView* getInstance();
     void destroy();
+
+    UIView();
     virtual ~UIView();
 
 public:
-    void setClientRange(const LRect& clientRect); // set client rect
     const LRect& getClientRange() const;
     // setting network and graphic components int UIView
     void setComponents(NetworkBase* network,
@@ -44,9 +45,6 @@ public:
     void handleTouchEvent(const LTouchEvent& evt);
 
     bool canHit() const;
-
-private:
-    UIView();
 
 private:
     ResourceLoader* m_loader;

@@ -10,7 +10,7 @@ AppStack::~AppStack()
 {
 }
 
-Application* AppStack::top() const
+Application* AppStack::top()
 {
     return m_stack.top();
 }
