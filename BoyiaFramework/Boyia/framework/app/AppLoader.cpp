@@ -27,51 +27,51 @@ static LVoid BoyiaThreadLoad(const char* entry)
     url.ReleaseBuffer();
 }
 
-class AppInfo {
-public:
-    AppInfo()
-        : isEntry(LFalse)
-        , versionCode(0)
-    {
-    }
+// class AppInfo {
+// public:
+//     AppInfo()
+//         : isEntry(LFalse)
+//         , versionCode(0)
+//     {
+//     }
 
-    LVoid parseApps(cJSON* appsJson)
-    {
-        cJSON* appJson = appsJson->child;
-        while (appJson) {
-            cJSON* item = appJson->child;
-            while (item) {
-                if (0 == strcmp(item->string, "versionCode")) {
-                    versionCode = item->valueint;
-                    KFORMATLOG("boyia app version=%d", item->valueint);
-                } else if (0 == strcmp(item->string, "path")) {
-                    path = _CS(item->valuestring);
-                    KFORMATLOG("boyia app path=%s", item->valuestring);
-                } else if (0 == strcmp(item->string, "url")) {
-                    url = _CS(item->valuestring);
-                    KFORMATLOG("boyia app url=%s", item->valuestring);
-                } else if (0 == strcmp(item->string, "name")) {
-                    name = _CS(item->valuestring);
-                    KFORMATLOG("boyia app name=%s", item->valuestring);
-                } else if (0 == strcmp(item->string, "isEntry")) {
-                    isEntry = item->type == cJSON_True ? LTrue : LFalse;
-                    KFORMATLOG("boyia app isEntry=%d", item->type);
-                }
+//     LVoid parseApps(cJSON* appsJson)
+//     {
+//         cJSON* appJson = appsJson->child;
+//         while (appJson) {
+//             cJSON* item = appJson->child;
+//             while (item) {
+//                 if (0 == strcmp(item->string, "versionCode")) {
+//                     versionCode = item->valueint;
+//                     KFORMATLOG("boyia app version=%d", item->valueint);
+//                 } else if (0 == strcmp(item->string, "path")) {
+//                     path = _CS(item->valuestring);
+//                     KFORMATLOG("boyia app path=%s", item->valuestring);
+//                 } else if (0 == strcmp(item->string, "url")) {
+//                     url = _CS(item->valuestring);
+//                     KFORMATLOG("boyia app url=%s", item->valuestring);
+//                 } else if (0 == strcmp(item->string, "name")) {
+//                     name = _CS(item->valuestring);
+//                     KFORMATLOG("boyia app name=%s", item->valuestring);
+//                 } else if (0 == strcmp(item->string, "isEntry")) {
+//                     isEntry = item->type == cJSON_True ? LTrue : LFalse;
+//                     KFORMATLOG("boyia app isEntry=%d", item->type);
+//                 }
 
-                item = item->next;
-            }
+//                 item = item->next;
+//             }
 
-            appJson = appJson->next;
-        }
-    }
+//             appJson = appJson->next;
+//         }
+//     }
 
-public:
-    LInt versionCode; // app version code
-    String path; // download in local path
-    String name; // app name
-    String url; // download url
-    LBool isEntry;
-};
+// public:
+//     LInt versionCode; // app version code
+//     String path; // download in local path
+//     String name; // app name
+//     String url; // download url
+//     LBool isEntry;
+// };
 
 class AppHandler : public NetworkClient {
 public:
