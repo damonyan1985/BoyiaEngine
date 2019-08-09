@@ -24,15 +24,13 @@ HtmlRenderer::HtmlRenderer()
 
 HtmlRenderer::~HtmlRenderer()
 {
-    if (NULL != m_cssParser) {
+    if (m_cssParser) {
         delete m_cssParser;
-        m_cssParser = NULL;
     }
 }
 
 void HtmlRenderer::renderHTML(HtmlDocument* doc,
     const String& buffer,
-    const LayoutRect& rect,
     ResourceLoader* loader)
 {
     UIThread::instance()->setGC(loader->view()->getGraphicsContext());
@@ -40,7 +38,6 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
     m_htmlDoc = doc;
     m_htmlDoc->clearHtmlList();
     m_loader = loader;
-    m_rect = rect;
 
     if (NULL == m_cssParser) {
         m_cssParser = new util::CssParser();
@@ -66,9 +63,8 @@ util::CssParser* HtmlRenderer::getCssParser() const
 
 void HtmlRenderer::layout()
 {
-    m_htmlDoc->setViewPort(m_rect);
     util::CssManager* cssManager = m_cssParser->getCssManager();
-    if (NULL != cssManager) {
+    if (cssManager) {
         m_htmlDoc->getRenderTreeRoot()->setStyle(cssManager, NULL);
     }
 

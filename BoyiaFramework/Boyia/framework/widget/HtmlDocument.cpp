@@ -100,14 +100,9 @@ void HtmlDocument::clearHtmlList()
     m_itemList.clear();
 }
 
-void HtmlDocument::setViewPort(const LayoutRect& viewRect)
-{
-    m_viewRect = viewRect;
-}
-
 const LayoutRect& HtmlDocument::getViewPort() const
 {
-    return m_viewRect;
+    return m_view->getClientRange();
 }
 
 void HtmlDocument::putItemID(String& id, HtmlView* item)

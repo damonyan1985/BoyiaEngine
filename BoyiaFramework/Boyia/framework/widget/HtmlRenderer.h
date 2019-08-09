@@ -16,7 +16,6 @@ public:
     // layout all html items
     void renderHTML(HtmlDocument* doc,
         const String& buffer,
-        const LayoutRect& rect,
         ResourceLoader* loader);
 
     void layout();
