@@ -37,6 +37,7 @@ file(
     "framework/view/*.cpp"
     "framework/widget/*.cpp"
     "framework/widget/flex/*.cpp"
+    "framework/app/*.cpp"
     )
 
 file(
@@ -93,6 +94,7 @@ target_include_directories(
     framework/vm/jit
     framework/vm/json
     framework/vm/lib
+    framework/app
     framework/dom
     framework/gui
     framework/loader

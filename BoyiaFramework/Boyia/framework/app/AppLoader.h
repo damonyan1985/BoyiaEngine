@@ -1,5 +1,5 @@
 /**
- * StartupLoader
+ * AppLoader
  * Use For Boyia Apps Download and Load
  * Date: 2018-10-6
  * Author: yanbo
@@ -15,9 +15,9 @@
 namespace yanbo {
 
 class AppInfo;
-class StartupLoader : public NetworkClient {
+class AppLoader : public NetworkClient {
 public:
-    StartupLoader();
+    AppLoader();
     LVoid startLoad();
 
     virtual LVoid onDataReceived(const LByte* data, LInt size);

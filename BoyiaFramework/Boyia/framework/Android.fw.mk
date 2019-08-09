@@ -9,7 +9,6 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/gui/LBaseView.cpp \
     $(LOCAL_PATH)/framework/gui/LColor.cpp \
     \
-    $(LOCAL_PATH)/framework/loader/StartupLoader.cpp \
     $(LOCAL_PATH)/framework/loader/ResourceLoader.cpp \
     \
     $(LOCAL_PATH)/framework/dom/TinyXml2.cpp \
@@ -47,4 +46,10 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/platform/graphics/GLContext.cpp \
     $(LOCAL_PATH)/framework/platform/graphics/Animation.cpp \
     $(LOCAL_PATH)/framework/platform/arm/ArmFunction.cpp \
-    $(LOCAL_PATH)/framework/platform/PlatformBridge.cpp
+    $(LOCAL_PATH)/framework/platform/PlatformBridge.cpp \
+    \
+    $(LOCAL_PATH)/framework/app/Application.cpp \
+    $(LOCAL_PATH)/framework/app/AppManager.cpp \
+    $(LOCAL_PATH)/framework/app/AppStack.cpp \
+    $(LOCAL_PATH)/framework/app/AppLoader.cpp \
+    $(LOCAL_PATH)/framework/app/VirtualMachine.cpp

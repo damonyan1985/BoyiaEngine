@@ -1,4 +1,4 @@
-#include "StartupLoader.h"
+#include "AppLoader.h"
 #include "AutoObject.h"
 #include "BoyiaThread.h"
 #include "FileUtil.h"
@@ -134,12 +134,12 @@ private:
     LBool m_launchable;
 };
 
-StartupLoader::StartupLoader()
+AppLoader::AppLoader()
     : m_appInfos(0, MAX_APPS_SIZE)
 {
 }
 
-LVoid StartupLoader::startLoad()
+LVoid AppLoader::startLoad()
 {
     if (!FileUtil::isExist(PlatformBridge::getAppPath())) {
         mkdir(PlatformBridge::getAppPath(), S_IRWXU);
@@ -148,10 +148,10 @@ LVoid StartupLoader::startLoad()
     m_file = fopen(PlatformBridge::getAppJsonPath(), "wb+");
 
     m_loader.loadUrl(_CS(APP_LOAD_URL), this);
-    BOYIA_LOG("StartupLoader---startLoad m_file=%d", (LIntPtr)m_file);
+    BOYIA_LOG("AppLoader---startLoad m_file=%d", (LIntPtr)m_file);
 }
 
-LVoid StartupLoader::loadApp()
+LVoid AppLoader::loadApp()
 {
     if (!FileUtil::isExist(PlatformBridge::getAppJsonPath())) {
         return;
@@ -160,33 +160,33 @@ LVoid StartupLoader::loadApp()
     startLoadApp();
 }
 
-LVoid StartupLoader::onDataReceived(const LByte* data, LInt size)
+LVoid AppLoader::onDataReceived(const LByte* data, LInt size)
 {
     if (m_file) {
         fwrite(data, size, 1, m_file);
     }
 }
 
-LVoid StartupLoader::onStatusCode(LInt statusCode)
+LVoid AppLoader::onStatusCode(LInt statusCode)
 {
 }
 
-LVoid StartupLoader::onFileLen(LInt len)
+LVoid AppLoader::onFileLen(LInt len)
 {
 }
 
-LVoid StartupLoader::onRedirectUrl(const String& redirectUrl)
+LVoid AppLoader::onRedirectUrl(const String& redirectUrl)
 {
 }
 
-LVoid StartupLoader::onLoadError(LInt error)
+LVoid AppLoader::onLoadError(LInt error)
 {
     if (m_file) {
         fclose(m_file);
     }
 }
 
-LVoid StartupLoader::onLoadFinished()
+LVoid AppLoader::onLoadFinished()
 {
     if (!m_file) {
         return;
@@ -196,7 +196,7 @@ LVoid StartupLoader::onLoadFinished()
     loadApp();
 }
 
-LVoid StartupLoader::parseConfig()
+LVoid AppLoader::parseConfig()
 {
     String content;
 
@@ -224,7 +224,7 @@ LVoid StartupLoader::parseConfig()
     cJSON_Delete(json);
 }
 
-LVoid StartupLoader::upgradeApp(const String& name)
+LVoid AppLoader::upgradeApp(const String& name)
 {
     String appDir = _CS(PlatformBridge::getAppPath()) + name;
     String appFilePath = appDir + _CS("_tmp.zip");
@@ -238,7 +238,7 @@ LVoid StartupLoader::upgradeApp(const String& name)
     }
 }
 
-LVoid StartupLoader::startLoadApp()
+LVoid AppLoader::startLoadApp()
 {
     LInt size = m_appInfos.size();
     for (LInt id = 0; id < size; ++id) {
@@ -251,7 +251,7 @@ LVoid StartupLoader::startLoadApp()
             // Get App Json Info
             String appJsonPath = appDir + _CS(APP_JSON);
             // LOG AppPath
-            BOYIA_LOG("StartupLoader.cpp---startLoadApp---appJsonPath=%s", GET_STR(appJsonPath));
+            BOYIA_LOG("AppLoader.cpp---startLoadApp---appJsonPath=%s", GET_STR(appJsonPath));
 
             if (!FileUtil::isExist(GET_STR(appJsonPath))) {
                 continue;

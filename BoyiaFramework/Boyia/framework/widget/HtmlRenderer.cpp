@@ -33,7 +33,7 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
     const String& buffer,
     ResourceLoader* loader)
 {
-    UIThread::instance()->setGC(loader->view()->getGraphicsContext());
+    //UIThread::instance()->setGC(loader->view()->getGraphicsContext());
 
     m_htmlDoc = doc;
     m_htmlDoc->clearHtmlList();

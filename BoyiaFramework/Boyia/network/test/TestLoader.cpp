@@ -1,7 +1,7 @@
+#include "AppLoader.h"
 #include "BoyiaLoader.h"
 #include "FileUtil.h"
 #include "SalLog.h"
-#include "StartupLoader.h"
 #include "StringBuilder.h"
 #include <stdio.h>
 
@@ -79,7 +79,7 @@ private:
 
 extern LVoid TestLoadUrl()
 {
-    yanbo::StartupLoader* loader = new yanbo::StartupLoader;
+    yanbo::AppLoader* loader = new yanbo::AppLoader;
     loader->startLoad();
     new yanbo::TestLoader;
 }

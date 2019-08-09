@@ -1,7 +1,7 @@
 #include "UIThread.h"
 #include "Animation.h"
+#include "AppManager.h"
 #include "AutoLock.h"
-#include "GLContext.h"
 #include "GraphicsContextGL.h"
 #include "HtmlView.h"
 #include "InputView.h"
@@ -17,8 +17,8 @@
 
 namespace yanbo {
 UIThread::UIThread()
-    : m_gc(NULL)
 {
+    m_gc = new util::GraphicsContextGL();
     start();
 }
 
@@ -29,13 +29,9 @@ UIThread::~UIThread()
 UIThread* UIThread::instance()
 {
     // C++11单例高并发处理方法
-    static UIThread sThread;
-    return &sThread;
-}
-
-LVoid UIThread::setGC(LGraphicsContext* gc)
-{
-    m_gc = gc;
+    // static UIThread sThread;
+    // return &sThread;
+    return yanbo::AppManager::instance()->uiThread();
 }
 
 LVoid UIThread::draw(LVoid* item)

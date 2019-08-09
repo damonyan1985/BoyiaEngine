@@ -63,11 +63,11 @@ static LVoid InitLib()
     InitNativeFun(sFunTable);
 }
 
-extern void CompileScript(char* code)
+extern LVoid* CompileScript(char* code)
 {
     if (!sFunTable) {
         InitLib();
     }
 
-    CompileCode(code);
+    return CompileCode(code);
 }

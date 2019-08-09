@@ -6,6 +6,7 @@
  */
 
 #include "UIView.h"
+#include "AppManager.h"
 #include "HtmlView.h"
 
 namespace yanbo {
@@ -66,14 +67,10 @@ void UIView::destroy()
     }
 }
 
-void UIView::setClientRange(const LRect& clientRect)
-{
-    m_clientRect = clientRect;
-}
-
 const LRect& UIView::getClientRange() const
 {
-    return m_clientRect;
+    //return m_clientRect;
+    return AppManager::instance()->getViewport();
 }
 
 void UIView::setComponents(NetworkBase* network,
