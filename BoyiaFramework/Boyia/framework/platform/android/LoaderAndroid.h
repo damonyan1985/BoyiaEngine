@@ -9,6 +9,8 @@
 #define LoaderAndroid_h
 
 #include "NetworkBase.h"
+
+#if ENABLE(BOYIA_ANDROID)
 #include "UtilString.h"
 #include <jni.h>
 
@@ -37,5 +39,7 @@ private:
     NetworkMap m_params;
 };
 }
+
+#endif
 
 #endif /* INPUTSTREAM_H_ */
