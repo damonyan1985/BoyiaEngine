@@ -11,4 +11,9 @@ Application::Application(AppInfo* info)
 Application::~Application()
 {
 }
+
+UIView* Application::view() const
+{
+    return m_view;
+}
 }

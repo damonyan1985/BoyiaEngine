@@ -12,12 +12,12 @@ AppStack::~AppStack()
 
 Application* AppStack::top()
 {
-    return m_stack.top();
+    return m_stack.size() > 0 ? m_stack.top() : NULL;
 }
 
 Application* AppStack::pop()
 {
-    return m_stack.pop();
+    return m_stack.size() > 0 ? m_stack.pop() : NULL;
 }
 LVoid AppStack::push(Application* app)
 {

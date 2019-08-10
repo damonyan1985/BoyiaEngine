@@ -46,7 +46,8 @@ LoaderAndroid::~LoaderAndroid()
 LVoid LoaderAndroid::initLoader()
 {
     JNIEnv* env = JNIUtil::getEnv();
-    jclass clazz = env->FindClass("com/boyia/app/core/ResourceLoader");
+    //jclass clazz = env->FindClass("com/boyia/app/core/ResourceLoader");
+    jclass clazz = JNIUtil::getJavaClassID("com/boyia/app/core/ResourceLoader");
     jmethodID constructMethod = env->GetMethodID(clazz, "<init>",
         "()V");
     jobject obj = env->NewObject(clazz, constructMethod);

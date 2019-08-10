@@ -19,45 +19,42 @@ UIView::UIView()
     , m_network(NULL)
     , m_jsHandler(NULL)
 {
+    setComponents();
 }
 
 UIView::~UIView()
 {
     if (m_loader) {
         delete m_loader;
-        m_loader = NULL;
     }
 
     if (m_doc) {
         delete m_doc;
-        m_doc = NULL;
     }
 
     if (m_network) {
         delete m_network;
-        m_network = NULL;
     }
 
     if (m_jsHandler) {
         delete m_jsHandler;
-        m_jsHandler = NULL;
     }
 }
 
 UIView* UIView::getInstance()
 {
-    if (!s_instance) {
-        s_instance = new UIView();
-    }
+    // if (!s_instance) {
+    //     s_instance = new UIView();
+    // }
 
-    return s_instance;
+    // return s_instance;
+    return AppManager::instance()->currentApp()->view();
 }
 
 void UIView::destroy()
 {
     if (s_instance) {
         delete s_instance;
-        s_instance = NULL;
     }
 }
 
@@ -66,10 +63,10 @@ const LRect& UIView::getClientRange() const
     return AppManager::instance()->getViewport();
 }
 
-void UIView::setComponents(ResourceLoaderClient* client)
+void UIView::setComponents()
 {
     if (!m_loader) {
-        m_loader = new ResourceLoader(client);
+        m_loader = new ResourceLoader(NULL);
         m_network = NetworkBase::create();
 
         m_doc = new HtmlDocument();
