@@ -79,8 +79,6 @@ static void nativeInitUIView(
     w = 720;
     h = 1280;
     yanbo::ShaderUtil::setScreenSize(w, h);
-    yanbo::UIView::getInstance()->setComponents(NULL);
-
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, w, h));
     yanbo::AppManager::instance()->start();
 }

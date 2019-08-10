@@ -11,6 +11,8 @@ public:
     Application(AppInfo* info);
     ~Application();
 
+    UIView* view() const;
+
 private:
     UIView* m_view;
     VirtualMachine* m_vm;
