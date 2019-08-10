@@ -164,12 +164,6 @@ void ResourceLoader::executeDocument(const String& data)
         m_client->onHtmlRenderFinished();
     }
 
-    LGraphicsContext* gc = m_view->getGraphicsContext();
-    if (!gc) {
-        return;
-    }
-    gc->reset();
-
     KLOG("paint");
     m_render->paint(NULL);
 
@@ -206,17 +200,11 @@ void ResourceLoader::executeScript(const String& data)
 void ResourceLoader::repaint(HtmlView* item)
 {
     KLOG("ResourceLoader::repaint()");
-    LGraphicsContext* gc = m_view->getGraphicsContext();
-    if (!gc) {
-        return;
-    }
-
     if (item) {
         m_render->paint(item);
         return;
     }
 
-    gc->reset();
     m_render->paint(NULL);
 
     if (m_client) {

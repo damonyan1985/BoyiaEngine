@@ -28,9 +28,7 @@ public:
 public:
     const LRect& getClientRange() const;
     // setting network and graphic components int UIView
-    void setComponents(NetworkBase* network,
-        LGraphicsContext* gc,
-        ResourceLoaderClient* client);
+    void setComponents(NetworkBase* network, ResourceLoaderClient* client);
 
     void loadPage(const String& url);
     void loadString(const String& src);

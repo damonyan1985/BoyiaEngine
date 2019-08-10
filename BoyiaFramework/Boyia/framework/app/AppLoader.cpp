@@ -1,4 +1,5 @@
 #include "AppLoader.h"
+#include "AppManager.h"
 #include "AutoObject.h"
 #include "BoyiaThread.h"
 #include "FileUtil.h"
@@ -20,65 +21,13 @@
 
 namespace yanbo {
 
-static LVoid BoyiaThreadLoad(const char* entry)
-{
-    String url = _CS(entry);
-    BoyiaThread::instance()->load(url);
-    url.ReleaseBuffer();
-}
-
-// class AppInfo {
-// public:
-//     AppInfo()
-//         : isEntry(LFalse)
-//         , versionCode(0)
-//     {
-//     }
-
-//     LVoid parseApps(cJSON* appsJson)
-//     {
-//         cJSON* appJson = appsJson->child;
-//         while (appJson) {
-//             cJSON* item = appJson->child;
-//             while (item) {
-//                 if (0 == strcmp(item->string, "versionCode")) {
-//                     versionCode = item->valueint;
-//                     KFORMATLOG("boyia app version=%d", item->valueint);
-//                 } else if (0 == strcmp(item->string, "path")) {
-//                     path = _CS(item->valuestring);
-//                     KFORMATLOG("boyia app path=%s", item->valuestring);
-//                 } else if (0 == strcmp(item->string, "url")) {
-//                     url = _CS(item->valuestring);
-//                     KFORMATLOG("boyia app url=%s", item->valuestring);
-//                 } else if (0 == strcmp(item->string, "name")) {
-//                     name = _CS(item->valuestring);
-//                     KFORMATLOG("boyia app name=%s", item->valuestring);
-//                 } else if (0 == strcmp(item->string, "isEntry")) {
-//                     isEntry = item->type == cJSON_True ? LTrue : LFalse;
-//                     KFORMATLOG("boyia app isEntry=%d", item->type);
-//                 }
-
-//                 item = item->next;
-//             }
-
-//             appJson = appJson->next;
-//         }
-//     }
-
-// public:
-//     LInt versionCode; // app version code
-//     String path; // download in local path
-//     String name; // app name
-//     String url; // download url
-//     LBool isEntry;
-// };
-
 class AppHandler : public NetworkClient {
 public:
-    AppHandler(const String& name, LBool launchable)
+    AppHandler(AppInfo* info, LBool launchable)
         : m_launchable(launchable)
+        , m_info(info)
     {
-        m_appDir = _CS(PlatformBridge::getAppPath()) + name;
+        m_appDir = _CS(PlatformBridge::getAppPath()) + m_info->name;
         m_appFilePath = m_appDir + _CS("_tmp.zip");
 
         BOYIA_LOG("boyia app AppHandler name=%s", GET_STR(m_appFilePath));
@@ -115,7 +64,9 @@ public:
             String appJsonPath = m_appDir + _CS(APP_JSON);
             boyia::JSONParser parser(appJsonPath);
 
-            BoyiaThreadLoad(parser.get("entry")->valuestring);
+            //BoyiaThreadLoad(parser.get("entry")->valuestring);
+            m_info->path = _CS(parser.get("entry")->valuestring);
+            AppManager::instance()->launchApp(m_info);
             FileUtil::deleteFile(GET_STR(m_appFilePath));
         }
 
@@ -132,10 +83,12 @@ private:
     String m_appDir;
     String m_appFilePath;
     LBool m_launchable;
+    AppInfo* m_info;
 };
 
-AppLoader::AppLoader()
+AppLoader::AppLoader(AppManager* manager)
     : m_appInfos(0, MAX_APPS_SIZE)
+    , m_manager(manager)
 {
 }
 
@@ -265,14 +218,17 @@ LVoid AppLoader::startLoadApp()
             }
 
             if (m_appInfos[id]->isEntry) {
-                BoyiaThreadLoad(parser.get("entry")->valuestring);
+                //BoyiaThreadLoad(parser.get("entry")->valuestring);
+                m_appInfos[id]->path = _CS(parser.get("entry")->valuestring);
+                m_manager->launchApp(m_appInfos[id]);
             }
         }
 
         // If the versionCode boyia.json greater than the version
         // which in local app.json
         if (m_appInfos[id]->versionCode > versionCode) {
-            m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name, !hasApp && m_appInfos[id]->isEntry));
+            m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id], !hasApp && m_appInfos[id]->isEntry));
+            //m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name, !hasApp && m_appInfos[id]->isEntry));
         }
     }
 }

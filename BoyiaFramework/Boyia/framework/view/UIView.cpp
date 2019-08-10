@@ -16,7 +16,6 @@ UIView::UIView()
     : m_loader(NULL)
     , m_doc(NULL)
     , m_controller(NULL)
-    , m_gc(NULL)
     , m_network(NULL)
     , m_jsHandler(NULL)
 {
@@ -32,11 +31,6 @@ UIView::~UIView()
     if (m_doc) {
         delete m_doc;
         m_doc = NULL;
-    }
-
-    if (m_gc) {
-        delete m_gc;
-        m_gc = NULL;
     }
 
     if (m_network) {
@@ -69,17 +63,13 @@ void UIView::destroy()
 
 const LRect& UIView::getClientRange() const
 {
-    //return m_clientRect;
     return AppManager::instance()->getViewport();
 }
 
-void UIView::setComponents(NetworkBase* network,
-    LGraphicsContext* gc,
-    ResourceLoaderClient* client)
+void UIView::setComponents(NetworkBase* network, ResourceLoaderClient* client)
 {
     if (!m_loader) {
         m_loader = new ResourceLoader(client);
-        m_gc = gc;
         m_network = network;
 
         m_doc = new HtmlDocument();
@@ -93,7 +83,7 @@ void UIView::setComponents(NetworkBase* network,
 
 LGraphicsContext* UIView::getGraphicsContext() const
 {
-    return m_gc;
+    return AppManager::instance()->uiThread()->graphics();
 }
 
 void UIView::loadPage(const String& url)

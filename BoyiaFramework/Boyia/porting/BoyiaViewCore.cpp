@@ -78,14 +78,10 @@ static void nativeInitUIView(
     w = 720;
     h = 1280;
     yanbo::ShaderUtil::setScreenSize(w, h);
-    util::GraphicsContextGL* gc = new util::GraphicsContextGL();
     yanbo::LoaderAndroid* loader = new yanbo::LoaderAndroid();
-    //yanbo::BoyiaLoader* loader = new yanbo::BoyiaLoader;
     loader->initLoader();
-    //yanbo::UIView::getInstance()->setClientRange(LRect(0, 0, w, h));
-    yanbo::UIView::getInstance()->setComponents(loader, gc, NULL);
-    //TestLoadUrl();
-    //TestThread();
+    yanbo::UIView::getInstance()->setComponents(loader, NULL);
+
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, w, h));
     yanbo::AppManager::instance()->start();
 }
