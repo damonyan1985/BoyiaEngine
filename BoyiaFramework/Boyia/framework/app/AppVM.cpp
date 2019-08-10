@@ -1,19 +1,19 @@
-#include "VirtualMachine.h"
+#include "AppVM.h"
 #include "BoyiaCore.h"
 
 extern LVoid* CompileScript(char* code);
 
 namespace yanbo {
-VirtualMachine::VirtualMachine()
+AppVM::AppVM()
     : m_vm(NULL)
 {
 }
 
-VirtualMachine::~VirtualMachine()
+AppVM::~AppVM()
 {
 }
 
-LVoid VirtualMachine::compile(const String& script)
+LVoid AppVM::compile(const String& script)
 {
     m_vm = CompileScript((char*)script.GetBuffer());
 }

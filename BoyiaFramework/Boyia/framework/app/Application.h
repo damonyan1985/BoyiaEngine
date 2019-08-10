@@ -2,8 +2,8 @@
 #define Application_h
 
 #include "AppInfo.h"
+#include "AppVM.h"
 #include "UIView.h"
-#include "VirtualMachine.h"
 
 namespace yanbo {
 class Application {
@@ -15,7 +15,7 @@ public:
 
 private:
     UIView* m_view;
-    VirtualMachine* m_vm;
+    AppVM* m_vm;
     AppInfo* m_info;
 };
 }

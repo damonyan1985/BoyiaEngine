@@ -4,10 +4,10 @@
 #include "UtilString.h"
 
 namespace yanbo {
-class VirtualMachine {
+class AppVM {
 public:
-    VirtualMachine();
-    ~VirtualMachine();
+    AppVM();
+    ~AppVM();
 
     LVoid compile(const String& script);
 

@@ -209,8 +209,6 @@ void UIViewController::onTouchMove(const LPoint& pt)
             m_targetPoint = pt;
             KFORMATLOG("onTouchMove scrollY=%d newScrollY=%d", scrollY, newScrollY);
             view->setScrollPos(0, newScrollY);
-            //UIView::getInstance()->getLoader()->repaint(view);
-            //LGraphicsContext* gc = m_view->getGraphicsContext();
             view->paint(*m_view->getGraphicsContext());
         }
 

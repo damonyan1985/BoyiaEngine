@@ -20,7 +20,6 @@ namespace yanbo {
 class UIView {
 public:
     static UIView* getInstance();
-    void destroy();
 
     UIView();
     virtual ~UIView();
