@@ -4,6 +4,7 @@
 #include "AppLoader.h"
 #include "AppStack.h"
 #include "BoyiaThread.h"
+#include "LEvent.h"
 #include "LGraphic.h"
 #include "UIThread.h"
 
@@ -18,6 +19,8 @@ public:
     UIThread* uiThread() const;
     BoyiaThread* appThread() const;
     LVoid launchApp(AppInfo* info);
+
+    LVoid handleTouchEvent(LInt type, LInt x, LInt y);
 
 private:
     AppManager();

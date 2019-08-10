@@ -109,15 +109,17 @@ static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong cal
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
 {
-    if (!yanbo::UIView::getInstance()->canHit()) {
-        return;
-    }
-    LTouchEvent* evt = new LTouchEvent;
+    // if (!yanbo::UIView::getInstance()->canHit()) {
+    //     return;
+    // }
+    // LTouchEvent* evt = new LTouchEvent;
 
-    evt->m_type = 1 << type;
-    evt->m_position.Set(yanbo::ShaderUtil::viewX(x), yanbo::ShaderUtil::viewY(y));
-    KLOG("nativeHandleTouchEvent");
-    yanbo::UIThread::instance()->handleTouchEvent(evt);
+    // evt->m_type = 1 << type;
+    // evt->m_position.Set(yanbo::ShaderUtil::viewX(x), yanbo::ShaderUtil::viewY(y));
+    // KLOG("nativeHandleTouchEvent");
+    // yanbo::UIThread::instance()->handleTouchEvent(evt);
+
+    yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
 }
 
 static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint isDown)
