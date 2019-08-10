@@ -16,9 +16,10 @@
 #include <functional>
 
 namespace yanbo {
-UIThread::UIThread()
+UIThread::UIThread(AppManager* manager)
+    : m_manager(manager)
+    , m_gc(new util::GraphicsContextGL())
 {
-    m_gc = new util::GraphicsContextGL();
     start();
 }
 
@@ -57,11 +58,6 @@ LVoid UIThread::drawOnly(LVoid* item)
 
 LVoid UIThread::submit()
 {
-    // if (m_queue->hasMessage(UI_SUBMIT))
-    // {
-    //     return;
-    // }
-
     MiniMessage* msg = obtain();
     msg->type = UI_SUBMIT;
     postMessage(msg);
@@ -99,14 +95,13 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
     } break;
     case UI_TOUCH_EVENT: {
         LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
-        UIView::getInstance()->handleTouchEvent(*evt);
+        reinterpret_cast<UIView*>(msg->arg0)->handleTouchEvent(*evt);
         delete evt;
-        //submit();
         flush();
     } break;
     case UI_KEY_EVENT: {
         LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
-        UIView::getInstance()->handleKeyEvent(*evt);
+        reinterpret_cast<UIView*>(msg->arg0)->handleKeyEvent(*evt);
         delete evt;
     } break;
     case UI_SETINPUT: {
@@ -163,7 +158,7 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         m_continue = LFalse;
     }
     case UI_RESET: {
-        resetGL();
+        resetGL(msg);
     } break;
     case UI_RUN_ANIM: {
         std::function<void()>* callback = (std::function<void()>*)msg->obj;
@@ -174,9 +169,6 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
 
 LVoid UIThread::initGL()
 {
-    //int width = yanbo::UIView::getInstance()->getClientRange().GetWidth();
-    //int height = yanbo::UIView::getInstance()->getClientRange().GetHeight();
-
     MiniTextureCache::getInst()->clear();
     //GLContext::initGLContext(GLContext::EWindow);
     m_context.initGL(GLContext::EWindow);
@@ -262,6 +254,7 @@ LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
     MiniMessage* msg = m_queue->obtain();
     msg->type = UI_TOUCH_EVENT;
     msg->obj = evt;
+    msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
     m_queue->push(msg);
     notify();
@@ -272,6 +265,7 @@ LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
     MiniMessage* msg = m_queue->obtain();
     msg->type = UI_KEY_EVENT;
     msg->obj = evt;
+    msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
     m_queue->push(msg);
     notify();
@@ -299,14 +293,16 @@ LVoid UIThread::resetContext(LVoid* win)
 {
     m_context.setWindow(win);
     MiniMessage* msg = obtain();
+    msg->obj = m_manager->currentApp()->view();
     msg->type = UI_RESET;
     postMessage(msg);
 }
 
-LVoid UIThread::resetGL()
+LVoid UIThread::resetGL(MiniMessage* msg)
 {
+    UIView* view = (UIView*)msg->obj;
     initGL();
-    drawUI(UIView::getInstance()->getDocument()->getRenderTreeRoot());
+    drawUI(view->getDocument()->getRenderTreeRoot());
 }
 
 LVoid UIThread::runAnimation(LVoid* callback)

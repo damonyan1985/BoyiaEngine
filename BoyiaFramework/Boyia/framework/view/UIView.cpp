@@ -43,19 +43,7 @@ UIView::~UIView()
 
 UIView* UIView::getInstance()
 {
-    // if (!s_instance) {
-    //     s_instance = new UIView();
-    // }
-
-    // return s_instance;
     return AppManager::instance()->currentApp()->view();
-}
-
-void UIView::destroy()
-{
-    if (s_instance) {
-        delete s_instance;
-    }
 }
 
 const LRect& UIView::getClientRange() const

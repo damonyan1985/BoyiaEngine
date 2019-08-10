@@ -32,7 +32,7 @@ LVoid BoyiaThread::handleMessage(MiniMessage* msg)
         UIView::getInstance()->loadPage(url);
     } break;
     case BOYIA_QUIT: {
-        UIView::getInstance()->destroy();
+        //UIView::getInstance()->destroy();
         m_continue = LFalse;
     } break;
     case BOYIA_SEND_EVENT: {

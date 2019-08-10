@@ -7,6 +7,7 @@
 #include "MiniMessageThread.h"
 
 namespace yanbo {
+class AppManager;
 class UIThread : public MiniMessageThread {
 public:
     enum MessageType {
@@ -29,7 +30,7 @@ public:
     };
     static UIThread* instance();
 
-    UIThread();
+    UIThread(AppManager* manager);
     virtual ~UIThread();
 
     LVoid initContext(LVoid* win);
@@ -57,12 +58,13 @@ public:
 
 private:
     LVoid initGL();
-    LVoid resetGL();
+    LVoid resetGL(MiniMessage* msg);
     LVoid flush();
 
     LVoid drawUI(LVoid* view);
     LGraphicsContext* m_gc;
     util::GLContext m_context;
+    AppManager* m_manager;
 };
 }
 #endif

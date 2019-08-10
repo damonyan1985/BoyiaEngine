@@ -5,7 +5,7 @@ Application::Application(AppInfo* info)
     : m_info(info)
 {
     m_view = new UIView();
-    m_vm = new VirtualMachine();
+    m_vm = new AppVM();
 }
 
 Application::~Application()

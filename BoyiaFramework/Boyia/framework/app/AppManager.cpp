@@ -5,7 +5,7 @@ AppManager::AppManager()
 {
     m_loader = new AppLoader(this);
     m_appThread = new BoyiaThread();
-    m_uiThread = new UIThread();
+    m_uiThread = new UIThread(this);
 }
 
 AppManager::~AppManager()
