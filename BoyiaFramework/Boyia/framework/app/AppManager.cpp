@@ -1,4 +1,6 @@
 #include "AppManager.h"
+#include "SalLog.h"
+#include "ShaderUtil.h"
 
 namespace yanbo {
 AppManager::AppManager()
@@ -52,5 +54,19 @@ LVoid AppManager::launchApp(AppInfo* info)
 {
     m_stack.push(new Application(info));
     m_appThread->load(info->path);
+}
+
+LVoid AppManager::handleTouchEvent(LInt type, LInt x, LInt y)
+{
+    if (!currentApp() || !currentApp()->view() || !currentApp()->view()->canHit()) {
+        return;
+    }
+
+    LTouchEvent* evt = new LTouchEvent;
+
+    evt->m_type = 1 << type;
+    evt->m_position.Set(ShaderUtil::viewX(x), ShaderUtil::viewY(y));
+    BOYIA_LOG("AppManager::handleTouchEvent type=%d, x=%d, y=%d", type, x, y);
+    m_uiThread->handleTouchEvent(evt);
 }
 }
