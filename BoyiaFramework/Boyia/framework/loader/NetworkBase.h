@@ -33,7 +33,18 @@ public:
         POST,
     };
 
-    NetworkBase() {}
+#if ENABLE(BOYIA_KERNEL)
+    static NetworkBase* create()
+    {
+        return NULL;
+    }
+#else
+    static NetworkBase* create(); // instance a platform NetworkBase
+#endif
+
+    NetworkBase()
+    {
+    }
     virtual ~NetworkBase() {}
 
 public:

@@ -6,6 +6,9 @@
  */
 
 #include "LoaderAndroid.h"
+
+#if ENABLE(BOYIA_ANDROID)
+
 #include "AutoObject.h"
 #include "JNIUtil.h"
 #include "SalLog.h"
@@ -28,6 +31,7 @@ struct JLoader {
 LoaderAndroid::LoaderAndroid()
     : m_privateLoader(NULL)
 {
+    initLoader();
 }
 
 LoaderAndroid::~LoaderAndroid()
@@ -130,4 +134,11 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
 LVoid LoaderAndroid::cancel()
 {
 }
+
+NetworkBase* NetworkBase::create()
+{
+    return new LoaderAndroid();
 }
+}
+
+#endif

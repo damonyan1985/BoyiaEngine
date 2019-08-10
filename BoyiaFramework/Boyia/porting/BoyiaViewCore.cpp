@@ -53,7 +53,8 @@ static void nativeResetGLSurface(
     jobject obj,
     jobject surface)
 {
-    yanbo::UIThread::instance()->resetContext(surface);
+    //yanbo::UIThread::instance()->resetContext(surface);
+    yanbo::AppManager::instance()->uiThread()->resetContext(surface);
 }
 
 extern LVoid TestLoadUrl();
@@ -78,9 +79,7 @@ static void nativeInitUIView(
     w = 720;
     h = 1280;
     yanbo::ShaderUtil::setScreenSize(w, h);
-    yanbo::LoaderAndroid* loader = new yanbo::LoaderAndroid();
-    loader->initLoader();
-    yanbo::UIView::getInstance()->setComponents(loader, NULL);
+    yanbo::UIView::getInstance()->setComponents(NULL);
 
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, w, h));
     yanbo::AppManager::instance()->start();

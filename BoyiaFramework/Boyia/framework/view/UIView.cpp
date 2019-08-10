@@ -66,11 +66,11 @@ const LRect& UIView::getClientRange() const
     return AppManager::instance()->getViewport();
 }
 
-void UIView::setComponents(NetworkBase* network, ResourceLoaderClient* client)
+void UIView::setComponents(ResourceLoaderClient* client)
 {
     if (!m_loader) {
         m_loader = new ResourceLoader(client);
-        m_network = network;
+        m_network = NetworkBase::create();
 
         m_doc = new HtmlDocument();
         m_loader->setView(this);
