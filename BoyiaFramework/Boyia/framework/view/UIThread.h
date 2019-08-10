@@ -51,6 +51,8 @@ public:
     LVoid uiExecute();
     LVoid onKeyboardShow(LIntPtr item, LInt keyboardHeight);
     LVoid onKeyboardHide(LIntPtr item, LInt keyboardHeight);
+
+    LGraphicsContext* graphics() const;
     virtual LVoid handleMessage(MiniMessage* msg);
 
 private:

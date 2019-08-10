@@ -14,4 +14,13 @@ Application* AppStack::top()
 {
     return m_stack.top();
 }
+
+Application* AppStack::pop()
+{
+    return m_stack.pop();
+}
+LVoid AppStack::push(Application* app)
+{
+    m_stack.push(app);
+}
 }

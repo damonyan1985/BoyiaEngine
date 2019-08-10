@@ -3,7 +3,7 @@
 namespace yanbo {
 AppManager::AppManager()
 {
-    m_loader = new AppLoader();
+    m_loader = new AppLoader(this);
     m_appThread = new BoyiaThread();
     m_uiThread = new UIThread();
 }
@@ -48,7 +48,9 @@ const LRect& AppManager::getViewport() const
     return m_clientRect;
 }
 
-LVoid AppManager::launchApp()
+LVoid AppManager::launchApp(AppInfo* info)
 {
+    m_stack.push(new Application(info));
+    m_appThread->load(info->path);
 }
 }

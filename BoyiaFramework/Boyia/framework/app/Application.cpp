@@ -1,7 +1,8 @@
 #include "Application.h"
 
 namespace yanbo {
-Application::Application()
+Application::Application(AppInfo* info)
+    : m_info(info)
 {
     m_view = new UIView();
     m_vm = new VirtualMachine();

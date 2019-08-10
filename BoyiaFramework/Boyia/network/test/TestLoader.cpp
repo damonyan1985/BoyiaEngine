@@ -79,7 +79,7 @@ private:
 
 extern LVoid TestLoadUrl()
 {
-    yanbo::AppLoader* loader = new yanbo::AppLoader;
-    loader->startLoad();
-    new yanbo::TestLoader;
+    // yanbo::AppLoader* loader = new yanbo::AppLoader;
+    // loader->startLoad();
+    // new yanbo::TestLoader;
 }

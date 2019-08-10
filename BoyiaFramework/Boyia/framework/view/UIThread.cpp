@@ -34,6 +34,11 @@ UIThread* UIThread::instance()
     return yanbo::AppManager::instance()->uiThread();
 }
 
+LGraphicsContext* UIThread::graphics() const
+{
+    return m_gc;
+}
+
 LVoid UIThread::draw(LVoid* item)
 {
     MiniMessage* msg = obtain();

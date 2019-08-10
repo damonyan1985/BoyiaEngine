@@ -10,6 +10,8 @@ public:
     AppStack();
     ~AppStack();
 
+    Application* pop();
+    LVoid push(Application* app);
     Application* top();
 
 private:

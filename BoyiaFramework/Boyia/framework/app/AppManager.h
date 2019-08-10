@@ -17,7 +17,7 @@ public:
     Application* currentApp();
     UIThread* uiThread() const;
     BoyiaThread* appThread() const;
-    LVoid launchApp();
+    LVoid launchApp(AppInfo* info);
 
 private:
     AppManager();
