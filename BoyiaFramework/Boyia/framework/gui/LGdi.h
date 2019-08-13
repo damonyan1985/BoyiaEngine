@@ -42,7 +42,17 @@ public:
     };
 
 public:
-    virtual ~LGraphicsContext() {}
+#if ENABLE(BOYIA_KERNEL)
+    static LGraphicsContext* create()
+    {
+        return NULL;
+    }
+#else
+    static LGraphicsContext* create();
+#endif
+    virtual ~LGraphicsContext()
+    {
+    }
 
 public:
     virtual LVoid drawLine(const LPoint& p1, const LPoint& p2) = 0;

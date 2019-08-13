@@ -100,7 +100,6 @@ LVoid UIOperation::swapBufferImpl()
 // 交换buffer，m_swapMsgs指针作为绘制时使用
 LVoid UIOperation::swapBuffer()
 {
-
     swapBufferImpl();
     UIThread::instance()->uiExecute();
 }
