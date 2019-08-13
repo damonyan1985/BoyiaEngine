@@ -1,4 +1,6 @@
 #include "GraphicsContextGL.h"
+
+#if ENABLE(BOYIA_ANDROID)
 #include "GLContext.h"
 #include "HtmlView.h"
 #include "ImageAndroid.h"
@@ -19,11 +21,18 @@ GraphicsContextGL::GraphicsContextGL()
     : m_item(NULL)
     , m_clipRect(NULL)
 {
+    //reset();
 }
 
 GraphicsContextGL::~GraphicsContextGL()
 {
     //GLContext::destroyGLContext();
+    m_context.destroyGL();
+}
+
+LVoid GraphicsContextGL::setContextWin(LVoid* win)
+{
+    m_context.setWindow(win);
 }
 
 LVoid GraphicsContextGL::clipRect(const LRect& rect)
@@ -210,6 +219,27 @@ LVoid GraphicsContextGL::setFont(const LFont& font)
 
 LVoid GraphicsContextGL::reset()
 {
+    yanbo::MiniTextureCache::getInst()->clear();
+    //GLContext::initGLContext(GLContext::EWindow);
+    m_context.initGL(GLContext::EWindow);
+    glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());
+    yanbo::ShaderUtil::setRealScreenSize(m_context.viewWidth(), m_context.viewHeight());
+    yanbo::MatrixState::init();
+
+    //glViewport(0, 0, width, height);
+    //LReal32 ratio = (LReal32) width / height;
+    //LReal32 ratio = (LReal32) height / width;
+    LReal32 ratio = 1.0f;
+    // 设置透视投影
+    yanbo::MatrixState::setProjectFrustum(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, 1.0f, 50);
+    //yanbo::MatrixState::setProjectOrtho(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, -1.0f, 1.0f);
+
+    yanbo::MatrixState::setCamera(0, 0, 1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    yanbo::MatrixState::copyMVMatrix();
+
+    yanbo::MatrixState::setInitStack();
+
+    yanbo::GLPainter::init();
 }
 
 LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
@@ -238,18 +268,25 @@ LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 
 LVoid GraphicsContextGL::submit()
 {
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
     yanbo::HtmlView* item = yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot();
     yanbo::GLPainter::reset();
     fillBuffer(item);
     yanbo::GLPainter::bindVBO();
-
     glEnable(GL_BLEND);
-
-    //submit(item);
     yanbo::GLPainter::paintCommand();
-
     glDisable(GL_BLEND);
 
     yanbo::GLPainter::unbindVBO();
+
+    m_context.postBuffer();
+}
+
+LGraphicsContext* LGraphicsContext::create()
+{
+    return new GraphicsContextGL();
 }
 }
+
+#endif;

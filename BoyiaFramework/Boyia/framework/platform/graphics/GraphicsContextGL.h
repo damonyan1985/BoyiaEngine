@@ -2,6 +2,7 @@
 #define GraphicsContextGL_h
 
 #include "BoyiaPtr.h"
+#include "GLContext.h"
 #include "GLPainter.h"
 #include "KList.h"
 #include "LGdi.h"
@@ -55,6 +56,8 @@ public:
     virtual LVoid clipRect(const LRect& rect);
     virtual LVoid restore();
 
+    LVoid setContextWin(LVoid* win);
+
 private:
     ItemPainter* currentPainter();
     LVoid fillBuffer(LVoid* ptr);
@@ -64,6 +67,7 @@ private:
     LFont m_font;
     LVoid* m_item;
     LRect* m_clipRect;
+    GLContext m_context;
 };
 }
 #endif

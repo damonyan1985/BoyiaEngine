@@ -6,7 +6,7 @@
 #include "HtmlView.h"
 #include "InputView.h"
 #include "KList.h"
-#include "MatrixState.h"
+//#include "MatrixState.h"
 #include "MiniMutex.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
@@ -18,7 +18,7 @@
 namespace yanbo {
 UIThread::UIThread(AppManager* manager)
     : m_manager(manager)
-    , m_gc(new util::GraphicsContextGL())
+    , m_gc(LGraphicsContext::create())
 {
     start();
 }
@@ -72,9 +72,11 @@ LVoid UIThread::destroy()
 
 LVoid UIThread::initContext(LVoid* win)
 {
-    m_context.setWindow(win);
+    static_cast<GraphicsContextGL*>(m_gc)->setContextWin(win);
+    //m_context.setWindow(win);
     MiniMessage* msg = obtain();
     msg->type = UI_INIT;
+    msg->obj = win;
     postMessage(msg);
 }
 
@@ -82,7 +84,7 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case UI_INIT: {
-        initGL();
+        m_gc->reset();
     } break;
     case UI_DRAW: {
         drawUI(msg->obj);
@@ -154,7 +156,7 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         flush();
     } break;
     case UI_DESTROY: {
-        m_context.destroyGL();
+        //m_context.destroyGL();
         m_continue = LFalse;
     }
     case UI_RESET: {
@@ -167,36 +169,9 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
     }
 }
 
-LVoid UIThread::initGL()
-{
-    MiniTextureCache::getInst()->clear();
-    //GLContext::initGLContext(GLContext::EWindow);
-    m_context.initGL(GLContext::EWindow);
-    glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());
-    ShaderUtil::setRealScreenSize(m_context.viewWidth(), m_context.viewHeight());
-    MatrixState::init();
-
-    //glViewport(0, 0, width, height);
-    //LReal32 ratio = (LReal32) width / height;
-    //LReal32 ratio = (LReal32) height / width;
-    LReal32 ratio = 1.0f;
-    // 设置透视投影
-    MatrixState::setProjectFrustum(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, 1.0f, 50);
-    //yanbo::MatrixState::setProjectOrtho(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, -1.0f, 1.0f);
-
-    MatrixState::setCamera(0, 0, 1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-    MatrixState::copyMVMatrix();
-
-    MatrixState::setInitStack();
-
-    GLPainter::init();
-}
-
 LVoid UIThread::flush()
 {
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     m_gc->submit();
-    m_context.postBuffer();
 }
 
 LVoid UIThread::setInputText(const String& text, LIntPtr item)
@@ -237,7 +212,6 @@ LVoid UIThread::drawUI(LVoid* view)
     }
 
     flush();
-    //submit();
 }
 
 LVoid UIThread::uiExecute()
@@ -291,7 +265,7 @@ LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
 
 LVoid UIThread::resetContext(LVoid* win)
 {
-    m_context.setWindow(win);
+    static_cast<GraphicsContextGL*>(m_gc)->setContextWin(win);
     MiniMessage* msg = obtain();
     msg->obj = m_manager->currentApp()->view();
     msg->type = UI_RESET;
@@ -300,8 +274,8 @@ LVoid UIThread::resetContext(LVoid* win)
 
 LVoid UIThread::resetGL(MiniMessage* msg)
 {
+    m_gc->reset();
     UIView* view = (UIView*)msg->obj;
-    initGL();
     drawUI(view->getDocument()->getRenderTreeRoot());
 }
 

@@ -57,13 +57,11 @@ public:
     virtual LVoid handleMessage(MiniMessage* msg);
 
 private:
-    LVoid initGL();
     LVoid resetGL(MiniMessage* msg);
     LVoid flush();
 
     LVoid drawUI(LVoid* view);
     LGraphicsContext* m_gc;
-    util::GLContext m_context;
     AppManager* m_manager;
 };
 }
