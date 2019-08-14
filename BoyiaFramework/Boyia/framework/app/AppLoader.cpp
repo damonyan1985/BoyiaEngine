@@ -1,7 +1,7 @@
 #include "AppLoader.h"
 #include "AppManager.h"
+#include "AppThread.h"
 #include "AutoObject.h"
-#include "BoyiaThread.h"
 #include "FileUtil.h"
 #include "JNIUtil.h"
 #include "JSONParser.h"

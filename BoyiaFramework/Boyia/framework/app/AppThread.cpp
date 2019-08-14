@@ -1,30 +1,30 @@
-#include "BoyiaThread.h"
+#include "AppThread.h"
 #include "UIView.h"
 //#include "NetworkBase.h"
 //#include "LGdi.h"
 
 namespace yanbo {
-BoyiaEvent::~BoyiaEvent()
+AppEvent::~AppEvent()
 {
 }
-LVoid BoyiaEvent::execute()
+LVoid AppEvent::execute()
 {
     run();
     delete this;
 }
 
-BoyiaThread::BoyiaThread()
+AppThread::AppThread()
 {
     start();
 }
 
-BoyiaThread* BoyiaThread::instance()
+AppThread* AppThread::instance()
 {
-    static BoyiaThread sThread;
+    static AppThread sThread;
     return &sThread;
 }
 
-LVoid BoyiaThread::handleMessage(MiniMessage* msg)
+LVoid AppThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case BOYIA_INIT: {
@@ -38,12 +38,12 @@ LVoid BoyiaThread::handleMessage(MiniMessage* msg)
     case BOYIA_SEND_EVENT: {
         if (!msg->obj)
             return;
-        static_cast<BoyiaEvent*>(msg->obj)->execute();
+        static_cast<AppEvent*>(msg->obj)->execute();
     } break;
     }
 }
 
-LVoid BoyiaThread::destroy()
+LVoid AppThread::destroy()
 {
     MiniMessage* msg = m_queue->obtain();
     msg->type = BOYIA_QUIT;
@@ -52,7 +52,7 @@ LVoid BoyiaThread::destroy()
     notify();
 }
 
-LVoid BoyiaThread::load(const String& url)
+LVoid AppThread::load(const String& url)
 {
     MiniMessage* msg = m_queue->obtain();
     msg->type = BOYIA_INIT;
@@ -63,7 +63,7 @@ LVoid BoyiaThread::load(const String& url)
     notify();
 }
 
-LVoid BoyiaThread::sendEvent(BoyiaEvent* event)
+LVoid AppThread::sendEvent(AppEvent* event)
 {
     MiniMessage* msg = m_queue->obtain();
     msg->type = BOYIA_SEND_EVENT;

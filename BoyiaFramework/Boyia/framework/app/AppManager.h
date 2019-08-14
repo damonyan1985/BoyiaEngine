@@ -3,7 +3,7 @@
 
 #include "AppLoader.h"
 #include "AppStack.h"
-#include "BoyiaThread.h"
+#include "AppThread.h"
 #include "LEvent.h"
 #include "LGraphic.h"
 #include "UIThread.h"
@@ -17,7 +17,7 @@ public:
     const LRect& getViewport() const;
     Application* currentApp();
     UIThread* uiThread() const;
-    BoyiaThread* appThread() const;
+    AppThread* appThread() const;
     LVoid launchApp(AppInfo* info);
 
     LVoid handleTouchEvent(LInt type, LInt x, LInt y);
@@ -29,7 +29,7 @@ private:
     AppStack m_stack;
     LRect m_clientRect;
     AppLoader* m_loader;
-    BoyiaThread* m_appThread;
+    AppThread* m_appThread;
     UIThread* m_uiThread;
 };
 }

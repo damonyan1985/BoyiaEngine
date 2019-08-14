@@ -70,13 +70,10 @@ LVoid UIThread::destroy()
     postMessage(msg);
 }
 
-LVoid UIThread::initContext(LVoid* win)
+LVoid UIThread::initContext()
 {
-    static_cast<GraphicsContextGL*>(m_gc)->setContextWin(win);
-    //m_context.setWindow(win);
     MiniMessage* msg = obtain();
     msg->type = UI_INIT;
-    msg->obj = win;
     postMessage(msg);
 }
 
@@ -263,9 +260,8 @@ LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
     postMessage(msg);
 }
 
-LVoid UIThread::resetContext(LVoid* win)
+LVoid UIThread::resetContext()
 {
-    static_cast<GraphicsContextGL*>(m_gc)->setContextWin(win);
     MiniMessage* msg = obtain();
     msg->obj = m_manager->currentApp()->view();
     msg->type = UI_RESET;

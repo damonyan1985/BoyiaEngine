@@ -1,14 +1,14 @@
 #ifndef BoyiaNetwork_h
 #define BoyiaNetwork_h
 
+#include "AppThread.h"
 #include "BoyiaCore.h"
-#include "BoyiaThread.h"
 #include "NetworkBase.h"
 #include "StringBuilder.h"
 
 namespace boyia {
 // BoyiaNetwork会根据回调的情况，自动释放自己
-class BoyiaNetwork : public yanbo::NetworkClient, public yanbo::BoyiaEvent {
+class BoyiaNetwork : public yanbo::NetworkClient, public yanbo::AppEvent {
 public:
     BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj);
     virtual ~BoyiaNetwork();

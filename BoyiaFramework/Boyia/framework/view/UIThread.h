@@ -33,8 +33,8 @@ public:
     UIThread(AppManager* manager);
     virtual ~UIThread();
 
-    LVoid initContext(LVoid* win);
-    LVoid resetContext(LVoid* win);
+    LVoid initContext();
+    LVoid resetContext();
 
     LVoid draw(LVoid* item);
     LVoid drawOnly(LVoid* item);
