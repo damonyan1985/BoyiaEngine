@@ -1,5 +1,5 @@
-#ifndef UIViewThread_h
-#define UIViewThread_h
+#ifndef AppThread_h
+#define AppThread_h
 
 #include "GLContext.h"
 #include "LEvent.h"
@@ -7,19 +7,19 @@
 #include "UtilString.h"
 
 namespace yanbo {
-class BoyiaEvent {
+class AppEvent {
 public:
-    virtual ~BoyiaEvent();
+    virtual ~AppEvent();
 
 private:
     LVoid execute();
 
 protected:
     virtual LVoid run() = 0;
-    friend class BoyiaThread;
+    friend class AppThread;
 };
 
-class BoyiaThread : public MiniMessageThread {
+class AppThread : public MiniMessageThread {
 public:
     enum Operation {
         BOYIA_INIT = 1,
@@ -27,13 +27,13 @@ public:
         BOYIA_SEND_EVENT,
     };
 
-    BoyiaThread();
-    static BoyiaThread* instance();
+    AppThread();
+    static AppThread* instance();
 
     virtual LVoid handleMessage(MiniMessage* msg);
     LVoid destroy();
     LVoid load(const String& url);
-    LVoid sendEvent(BoyiaEvent* event);
+    LVoid sendEvent(AppEvent* event);
 };
 }
 

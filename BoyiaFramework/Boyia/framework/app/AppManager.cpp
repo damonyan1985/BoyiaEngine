@@ -6,7 +6,7 @@ namespace yanbo {
 AppManager::AppManager()
 {
     m_loader = new AppLoader(this);
-    m_appThread = new BoyiaThread();
+    m_appThread = new AppThread();
     m_uiThread = new UIThread(this);
 }
 
@@ -14,7 +14,7 @@ AppManager::~AppManager()
 {
 }
 
-BoyiaThread* AppManager::appThread() const
+AppThread* AppManager::appThread() const
 {
     return m_appThread;
 }

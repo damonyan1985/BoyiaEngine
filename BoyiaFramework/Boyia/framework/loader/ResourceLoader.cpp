@@ -5,7 +5,7 @@
  *      Author: yanbo
  */
 #include "ResourceLoader.h"
-#include "BoyiaThread.h"
+#include "AppThread.h"
 #include "SalLog.h"
 #include "StringBuilder.h"
 #include "StringUtils.h"
@@ -16,7 +16,7 @@
 extern LVoid* CompileScript(char* code);
 namespace yanbo {
 
-class ResourceHandle : public NetworkClient, public BoyiaEvent {
+class ResourceHandle : public NetworkClient, public AppEvent {
 public:
     ResourceHandle(ResourceLoader* loader, LInt type)
         : m_loader(loader)
@@ -42,13 +42,13 @@ public:
     {
         //m_loader->onLoadError(error);
         m_result = error;
-        BoyiaThread::instance()->sendEvent(this);
+        AppThread::instance()->sendEvent(this);
     }
 
     virtual void onLoadFinished()
     {
         m_data = m_builder.toString();
-        BoyiaThread::instance()->sendEvent(this);
+        AppThread::instance()->sendEvent(this);
     }
 
     virtual LVoid run()

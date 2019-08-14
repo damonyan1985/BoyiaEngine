@@ -2,16 +2,17 @@
 #define BoyiaViewCore_h
 
 #include "AppManager.h"
+#include "AppThread.h"
 #include "ArmFunction.h"
 #include "AutoObject.h"
 #include "BoyiaExecution.h"
 #include "BoyiaLoader.h"
-#include "BoyiaThread.h"
 #include "FileUtil.h"
 #include "GLContext.h"
 #include "GraphicsContextGL.h"
 #include "JNIUtil.h"
 #include "LEvent.h"
+#include "LGdi.h"
 #include "LoaderAndroid.h"
 #include "MiniThread.h"
 #include "MiniThreadPool.h"
@@ -44,8 +45,9 @@ static void nativeSetGLSurface(
     jobject obj,
     jobject surface)
 {
-    yanbo::AppManager::instance()->uiThread()->initContext(surface);
-    //yanbo::UIThread::instance()->initContext(surface);
+    util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
+    static_cast<util::GraphicsContextGL*>(gc)->setContextWin(surface);
+    yanbo::AppManager::instance()->uiThread()->initContext();
 }
 
 static void nativeResetGLSurface(
@@ -53,8 +55,9 @@ static void nativeResetGLSurface(
     jobject obj,
     jobject surface)
 {
-    //yanbo::UIThread::instance()->resetContext(surface);
-    yanbo::AppManager::instance()->uiThread()->resetContext(surface);
+    util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
+    static_cast<util::GraphicsContextGL*>(gc)->setContextWin(surface);
+    yanbo::AppManager::instance()->uiThread()->resetContext();
 }
 
 extern LVoid TestLoadUrl();
@@ -85,7 +88,7 @@ static void nativeInitUIView(
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)
 {
-    yanbo::BoyiaThread::instance()->destroy();
+    yanbo::AppThread::instance()->destroy();
 }
 
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)

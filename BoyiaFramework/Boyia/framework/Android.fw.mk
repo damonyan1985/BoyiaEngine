@@ -52,4 +52,5 @@ LOCAL_SRC_FILES += \
     $(LOCAL_PATH)/framework/app/AppManager.cpp \
     $(LOCAL_PATH)/framework/app/AppStack.cpp \
     $(LOCAL_PATH)/framework/app/AppLoader.cpp \
+    $(LOCAL_PATH)/framework/app/AppThread.cpp \
     $(LOCAL_PATH)/framework/app/VirtualMachine.cpp
