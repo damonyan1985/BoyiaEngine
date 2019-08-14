@@ -38,5 +38,10 @@ const char* PlatformBridge::getAppJsonPath()
     return "/data/data/com.boyia.app/files/apps/boyia.json";
 }
 
+const char* PlatformBridge::getSdkPath()
+{
+    return "/data/data/com.boyia.app/files/apps/sdk";
+}
+
 #endif
 }

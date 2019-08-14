@@ -14,17 +14,8 @@
 #include "UtilString.h"
 
 namespace util {
-typedef struct BoyiaId {
-    BoyiaStr mStr;
-    LUint mID;
-    BoyiaId* mNext;
-} BoyiaId;
 
-typedef struct {
-    BoyiaId* mBegin;
-    BoyiaId* mEnd;
-} IdLink;
-
+struct IdLink;
 class IDCreator {
 public:
     IDCreator();

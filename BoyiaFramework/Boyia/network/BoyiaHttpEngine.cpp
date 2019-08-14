@@ -28,7 +28,7 @@ size_t BoyiaHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte
     size_t len = size * membyte;
     BoyiaHttpEngine* engine = (BoyiaHttpEngine*)param;
     if (engine && engine->m_callback) {
-        engine->m_callback->onDataRecevied((const LByte*)buffer, len);
+        engine->m_callback->onDataReceived((const LByte*)buffer, len);
     }
 
     engine->m_size += len;

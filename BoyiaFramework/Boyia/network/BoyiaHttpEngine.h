@@ -10,7 +10,7 @@ class HttpCallback {
 public:
     virtual LVoid onStatusCode(LInt code) = 0;
     virtual LVoid onContentLength(LInt length) = 0;
-    virtual LVoid onDataRecevied(const LByte* buffer, LInt size) = 0;
+    virtual LVoid onDataReceived(const LByte* buffer, LInt size) = 0;
     virtual LVoid onLoadFinished() = 0;
     virtual LVoid onLoadError(LInt code) = 0;
 };

@@ -181,14 +181,10 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right)
     KLOG("StringAdd End");
 }
 
-static util::IDCreator* s_creator = NULL;
 static util::IDCreator* GetIdCreator()
 {
-    if (!s_creator) {
-        s_creator = new util::IDCreator();
-    }
-
-    return s_creator;
+    static util::IDCreator sIDCreator;
+    return &sIDCreator;
 }
 
 LUintPtr GenIdentByStr(const LInt8* str, LInt len)
