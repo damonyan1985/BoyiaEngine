@@ -1,74 +1,120 @@
 #include "BoyiaLoader.h"
+#include "BoyiaHttpEngine.h"
+#include "FileUtil.h"
+#include "MiniTaskBase.h"
 #include "MiniThreadPool.h"
+#include "PlatformBridge.h"
 
 namespace yanbo {
-LoaderTask::LoaderTask()
-    : m_method(NetworkBase::GET)
-    , m_engine(this)
-    , m_client(NULL)
-{
-}
 
-LVoid LoaderTask::setMethod(LInt method)
-{
-    m_method = method;
-}
+const String kSdkPrefix(_CS("boyiasdk"), LTrue, 8);
+const String kSourcePrefix(_CS("boyia"), LTrue, 5);
 
-LVoid LoaderTask::setUrl(const String& url)
-{
-    m_url = url;
-    KFORMATLOG("boyia app LoaderTask::setUrl url=%s", GET_STR(m_url));
-}
+class HttpTask : public MiniTaskBase,
+                 HttpCallback {
+public:
+    HttpTask()
+        : m_method(NetworkBase::GET)
+        , m_engine(this)
+        , m_client(NULL)
+    {
+    }
 
-LVoid LoaderTask::setClient(NetworkClient* client)
-{
-    m_client = client;
-}
+    virtual void execute()
+    {
+        m_engine.request(m_url, m_method);
+    }
 
-LVoid LoaderTask::setPostData(const BoyiaPtr<String>& data)
-{
-    m_engine.setPostData(data);
-}
+    LVoid setHeader(const NetworkMap& map)
+    {
+        m_engine.setHeader(map);
+    }
 
-LVoid LoaderTask::setHeader(const NetworkMap& map)
-{
-    m_engine.setHeader(map);
-}
+    LVoid setMethod(LInt method)
+    {
+        m_method = method;
+    }
 
-LVoid LoaderTask::execute()
-{
-    m_engine.request(m_url, m_method);
-}
+    LVoid setUrl(const String& url)
+    {
+        m_url = url;
+        KFORMATLOG("boyia app HttpTask::setUrl url=%s", GET_STR(m_url));
+    }
 
-LVoid LoaderTask::onStatusCode(LInt code)
-{
-    if (m_client)
-        m_client->onStatusCode(code);
-}
+    LVoid setClient(NetworkClient* client)
+    {
+        m_client = client;
+    }
 
-LVoid LoaderTask::onContentLength(LInt length)
-{
-    if (m_client)
-        m_client->onFileLen(length);
-}
+    LVoid setPostData(const BoyiaPtr<String>& data)
+    {
+        m_engine.setPostData(data);
+    }
 
-LVoid LoaderTask::onDataRecevied(const LByte* buffer, LInt size)
-{
-    if (m_client)
-        m_client->onDataReceived(buffer, size);
-}
+    virtual LVoid onStatusCode(LInt code)
+    {
+        if (m_client)
+            m_client->onStatusCode(code);
+    }
 
-LVoid LoaderTask::onLoadFinished()
-{
-    if (m_client)
-        m_client->onLoadFinished();
-}
+    virtual LVoid onContentLength(LInt length)
+    {
+        if (m_client)
+            m_client->onFileLen(length);
+    }
 
-LVoid LoaderTask::onLoadError(LInt code)
-{
-    if (m_client)
-        m_client->onLoadError(code);
-}
+    virtual LVoid onDataReceived(const LByte* buffer, LInt size)
+    {
+        if (m_client)
+            m_client->onDataReceived(buffer, size);
+    }
+
+    virtual LVoid onLoadFinished()
+    {
+        if (m_client)
+            m_client->onLoadFinished();
+    }
+
+    virtual LVoid onLoadError(LInt code)
+    {
+        if (m_client)
+            m_client->onLoadError(code);
+    }
+
+private:
+    LInt m_method;
+    String m_url;
+    BoyiaHttpEngine m_engine;
+    NetworkClient* m_client;
+};
+
+class FileTask : public MiniTaskBase {
+public:
+    FileTask(NetworkClient* client)
+        : m_client(client)
+    {
+    }
+
+    LVoid setUrl(const String& url)
+    {
+        // shallow copy
+        m_url.Copy(url.GetBuffer(), LTrue, url.GetLength());
+    }
+
+    virtual LVoid execute()
+    {
+        String content;
+        FileUtil::readFile(m_url, content);
+        if (m_client) {
+            m_client->onDataReceived(content.GetBuffer(), content.GetLength());
+            m_client->onLoadFinished();
+        }
+    }
+
+private:
+    String m_url;
+    NetworkClient* m_client;
+};
 
 BoyiaLoader::BoyiaLoader()
 {
@@ -83,11 +129,28 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
 
 LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
 {
-    LoaderTask* task = new LoaderTask();
-    // Set Task Info
-    task->setHeader(m_headers);
-    task->setUrl(url);
-    task->setClient(client);
+    MiniTaskBase* task = NULL;
+    if (url.StartWith(kSdkPrefix)) {
+        String sdkUrl = url.Mid(8);
+        String sdkPath = _CS(PlatformBridge::getSdkPath()) + sdkUrl;
+        FileTask* fileTask = new FileTask(client);
+        fileTask->setUrl(sdkPath);
+        sdkPath.ReleaseBuffer();
+    } else if (url.StartWith(kSourcePrefix)) {
+        String sourceUrl = url.Mid(5);
+        String sourcePath = _CS(PlatformBridge::getAppPath()) + sourceUrl;
+        FileTask* fileTask = new FileTask(client);
+        fileTask->setUrl(sourcePath);
+        sourcePath.ReleaseBuffer();
+    } else {
+        HttpTask* httpTask = new HttpTask();
+        // Set Task Info
+        httpTask->setHeader(m_headers);
+        httpTask->setUrl(url);
+        httpTask->setClient(client);
+
+        task = httpTask;
+    }
 
     if (isWait) {
         // SendMessage
@@ -108,7 +171,7 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client)
 
 LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, LBool isWait)
 {
-    LoaderTask* task = new LoaderTask();
+    HttpTask* task = new HttpTask();
     // Set Task Info
     task->setHeader(m_headers);
     task->setUrl(url);
@@ -137,7 +200,7 @@ LVoid BoyiaLoader::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case ELOAD_URL: {
-        LoaderTask* task = (LoaderTask*)msg->obj;
+        MiniTaskBase* task = (MiniTaskBase*)msg->obj;
         task->execute();
         delete task;
     } break;

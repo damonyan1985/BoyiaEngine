@@ -1,6 +1,17 @@
 #include "IDCreator.h"
 
 namespace util {
+typedef struct BoyiaId {
+    BoyiaStr mStr;
+    LUint mID;
+    BoyiaId* mNext;
+} BoyiaId;
+
+typedef struct IdLink {
+    BoyiaId* mBegin;
+    BoyiaId* mEnd;
+} IdLink;
+
 IDCreator::IDCreator()
     : m_idCount(0)
     , m_idLink(NULL)
