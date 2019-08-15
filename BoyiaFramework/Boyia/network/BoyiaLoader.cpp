@@ -4,6 +4,7 @@
 #include "MiniTaskBase.h"
 #include "MiniThreadPool.h"
 #include "PlatformBridge.h"
+#include "SalLog.h"
 
 namespace yanbo {
 
@@ -97,11 +98,17 @@ public:
 
     virtual LVoid execute()
     {
-        String content;
-        FileUtil::readFile(m_url, content);
+        BOYIA_LOG("FileTask---execute()---%d", 0);
         if (m_client) {
+            String content;
+            BOYIA_LOG("FileTask---execute()---%s", GET_STR(m_url));
+            FileUtil::readFile(m_url, content);
+            BOYIA_LOG("FileTask---execute()---%s", GET_STR(content));
+
             m_client->onDataReceived(content.GetBuffer(), content.GetLength());
+            BOYIA_LOG("FileTask---execute()---%d", 3);
             m_client->onLoadFinished();
+            BOYIA_LOG("FileTask---execute()---%d", 4);
         }
     }
 
@@ -118,7 +125,7 @@ BoyiaLoader::BoyiaLoader()
 
 LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
 {
-    loadUrl(url, client, true);
+    loadUrl(url, client, LTrue);
 }
 
 LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
@@ -126,22 +133,23 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWai
     MiniTaskBase* task = NULL;
     if (url.StartWith(kSdkPrefix)) {
         String sdkUrl = url.Mid(kSdkPrefix.GetLength());
-        String sdkPath = _CS(PlatformBridge::getSdkPath()) + sdkUrl;
+        String sdkPath = _CS(PlatformBridge::getAppPath()) + sdkUrl;
         FileTask* fileTask = new FileTask(client);
         fileTask->setUrl(sdkPath);
         sdkPath.ReleaseBuffer();
+        task = fileTask;
     } else if (url.StartWith(kSourcePrefix)) {
         String sourceUrl = url.Mid(kSourcePrefix.GetLength());
-        String sourcePath = _CS(PlatformBridge::getAppPath()) + sourceUrl;
+        String sourcePath = _CS(PlatformBridge::getAppRoot()) + sourceUrl;
         FileTask* fileTask = new FileTask(client);
         fileTask->setUrl(sourcePath);
         sourcePath.ReleaseBuffer();
+        task = fileTask;
     } else {
         HttpTask* httpTask = new HttpTask(client);
         // Set Task Info
         httpTask->setHeader(m_headers);
         httpTask->setUrl(url);
-        //httpTask->setClient(client);
 
         task = httpTask;
     }
@@ -194,14 +202,24 @@ LVoid BoyiaLoader::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case ELOAD_URL: {
+        BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 0);
         MiniTaskBase* task = (MiniTaskBase*)msg->obj;
+        BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 1);
+        BOYIA_LOG("BoyiaLoader---handleMessage()---task=%d", (LIntPtr)task);
         task->execute();
+        BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 2);
         delete task;
+        BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 5);
     } break;
     }
 }
 
 LVoid BoyiaLoader::cancel()
 {
+}
+
+NetworkBase* NetworkBase::create()
+{
+    return new BoyiaLoader();
 }
 }

@@ -15,12 +15,14 @@ BoyiaNetwork::~BoyiaNetwork()
 
 void BoyiaNetwork::load(const String& url)
 {
-    yanbo::UIView::getInstance()->network()->loadUrl(url, this, false);
+    yanbo::UIView::getInstance()->network()->loadUrl(url, this, LFalse);
 }
 
 void BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
 {
-    m_builder.append(data, 0, size, LFalse);
+    LByte* destData = new LByte[size];
+    util::LMemcpy(destData, data, size);
+    m_builder.append(destData, 0, size, LFalse);
 }
 
 void BoyiaNetwork::onStatusCode(LInt statusCode)

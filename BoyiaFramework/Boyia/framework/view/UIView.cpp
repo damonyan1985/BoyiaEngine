@@ -73,7 +73,7 @@ LGraphicsContext* UIView::getGraphicsContext() const
 
 void UIView::loadPage(const String& url)
 {
-    if (NULL != m_loader) {
+    if (m_loader) {
         m_loader->load(url, ResourceLoader::HTMLDOC);
     }
 }

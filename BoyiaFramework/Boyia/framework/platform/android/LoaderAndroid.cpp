@@ -135,11 +135,6 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
 LVoid LoaderAndroid::cancel()
 {
 }
-
-NetworkBase* NetworkBase::create()
-{
-    return new LoaderAndroid();
-}
 }
 
 #endif
