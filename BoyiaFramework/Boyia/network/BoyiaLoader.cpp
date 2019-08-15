@@ -7,16 +7,15 @@
 
 namespace yanbo {
 
-const String kSdkPrefix(_CS("boyiasdk"), LTrue, 8);
-const String kSourcePrefix(_CS("boyia"), LTrue, 5);
+const String kSdkPrefix(_CS("boyiasdk://"), LTrue, 11);
+const String kSourcePrefix(_CS("boyia://"), LTrue, 8);
 
-class HttpTask : public MiniTaskBase,
-                 HttpCallback {
+class HttpTask : public MiniTaskBase, HttpCallback {
 public:
-    HttpTask()
+    HttpTask(NetworkClient* client)
         : m_method(NetworkBase::GET)
         , m_engine(this)
-        , m_client(NULL)
+        , m_client(client)
     {
     }
 
@@ -39,11 +38,6 @@ public:
     {
         m_url = url;
         KFORMATLOG("boyia app HttpTask::setUrl url=%s", GET_STR(m_url));
-    }
-
-    LVoid setClient(NetworkClient* client)
-    {
-        m_client = client;
     }
 
     LVoid setPostData(const BoyiaPtr<String>& data)
@@ -131,23 +125,23 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWai
 {
     MiniTaskBase* task = NULL;
     if (url.StartWith(kSdkPrefix)) {
-        String sdkUrl = url.Mid(8);
+        String sdkUrl = url.Mid(kSdkPrefix.GetLength());
         String sdkPath = _CS(PlatformBridge::getSdkPath()) + sdkUrl;
         FileTask* fileTask = new FileTask(client);
         fileTask->setUrl(sdkPath);
         sdkPath.ReleaseBuffer();
     } else if (url.StartWith(kSourcePrefix)) {
-        String sourceUrl = url.Mid(5);
+        String sourceUrl = url.Mid(kSourcePrefix.GetLength());
         String sourcePath = _CS(PlatformBridge::getAppPath()) + sourceUrl;
         FileTask* fileTask = new FileTask(client);
         fileTask->setUrl(sourcePath);
         sourcePath.ReleaseBuffer();
     } else {
-        HttpTask* httpTask = new HttpTask();
+        HttpTask* httpTask = new HttpTask(client);
         // Set Task Info
         httpTask->setHeader(m_headers);
         httpTask->setUrl(url);
-        httpTask->setClient(client);
+        //httpTask->setClient(client);
 
         task = httpTask;
     }
@@ -171,7 +165,7 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client)
 
 LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, LBool isWait)
 {
-    HttpTask* task = new HttpTask();
+    HttpTask* task = new HttpTask(client);
     // Set Task Info
     task->setHeader(m_headers);
     task->setUrl(url);
@@ -179,7 +173,7 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, LBool isWa
     //task->setUrl(_CS("http://192.168.0.10:8011/user/login"));
     //const char* data = "name=test&pwd=test";
     task->setPostData(m_data);
-    task->setClient(client);
+    //task->setClient(client);
 
     if (isWait) {
         // SendMessage
