@@ -10,7 +10,7 @@ public:
     AppInfo();
     ~AppInfo();
 
-    LVoid parseApps(cJSON* appsJson);
+    LVoid parseApp(cJSON* appJson);
 
 public:
     LInt versionCode; // app version code

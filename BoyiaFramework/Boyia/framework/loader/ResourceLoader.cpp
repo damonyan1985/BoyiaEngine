@@ -18,16 +18,19 @@ namespace yanbo {
 
 class ResourceHandle : public NetworkClient, public AppEvent {
 public:
-    ResourceHandle(ResourceLoader* loader, LInt type)
+    ResourceHandle(ResourceLoader* loader, LInt type, const String& url)
         : m_loader(loader)
         , m_result(NetworkClient::NETWORK_SUCCESS)
         , m_resType(type)
+        , m_url(url)
     {
     }
 
     virtual void onDataReceived(const LByte* data, LInt size)
     {
-        m_builder.append(data, 0, size, LFalse);
+        LByte* destData = new LByte[size];
+        util::LMemcpy(destData, data, size);
+        m_builder.append(destData, 0, size, LFalse);
     }
 
     virtual void onStatusCode(LInt statusCode)
@@ -54,6 +57,8 @@ public:
     virtual LVoid run()
     {
         __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run");
+
+        BOYIA_LOG("ResourceHandle---run---url: %s", GET_STR(m_url));
         if (m_result == NetworkClient::NETWORK_SUCCESS) {
             //BoyiaPtr<String> sptr = m_builder.toString();
             __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run NETWORK_SUCCESS");
@@ -70,6 +75,7 @@ public:
     }
 
 private:
+    String m_url;
     ResourceLoader* m_loader;
     LInt m_resType;
     StringBuilder m_builder;
@@ -126,8 +132,8 @@ void ResourceLoader::load(const String& url, LoadType type)
     if (type == CACHECSS) {
         ++m_cssSize;
     }
-    ResourceHandle* handle = new ResourceHandle(this, type);
-    m_view->network()->loadUrl(url, handle);
+
+    m_view->network()->loadUrl(url, new ResourceHandle(this, type, url));
 }
 
 void ResourceLoader::setView(UIView* view)

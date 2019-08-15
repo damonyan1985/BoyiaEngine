@@ -230,7 +230,7 @@ LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
 template <class T>
 LVoid LString<T>::ResetBuffer()
 {
-    if (m_pchData != NULL && m_isDeep) {
+    if (m_pchData && m_isDeep) {
         delete[] m_pchData;
     }
 

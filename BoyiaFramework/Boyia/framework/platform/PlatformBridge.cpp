@@ -35,12 +35,17 @@ const char* PlatformBridge::getAppPath()
 
 const char* PlatformBridge::getAppJsonPath()
 {
-    return "/data/data/com.boyia.app/files/apps/boyia.json";
+    return "/data/data/com.boyia.app/files/boyia.json";
 }
 
 const char* PlatformBridge::getSdkPath()
 {
-    return "/data/data/com.boyia.app/files/apps/sdk";
+    return "/data/data/com.boyia.app/files/sdk/";
+}
+
+const char* PlatformBridge::getAppRoot()
+{
+    return "/data/data/com.boyia.app/files/";
 }
 
 #endif

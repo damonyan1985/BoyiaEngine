@@ -15,8 +15,6 @@
 
 #define MAX_APPS_SIZE 20
 #define APP_LOAD_URL "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/boyia.json"
-//#define APPS_JSON_PATH "/data/data/com.boyia.app/files/apps/boyia.json"
-//#define APPS_PATH "/data/data/com.boyia.app/files/apps/"
 #define APP_JSON "/app.json"
 
 namespace yanbo {
@@ -58,16 +56,18 @@ public:
         // 下载完成
         fclose(m_appFile);
         // 解压到应用程序目录
-        if (m_launchable && PlatformBridge::unzip(m_appFilePath, m_appDir)) {
+        PlatformBridge::unzip(m_appFilePath, m_appDir);
+        if (m_launchable) {
             FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
 
             String appJsonPath = m_appDir + _CS(APP_JSON);
             boyia::JSONParser parser(appJsonPath);
 
-            //BoyiaThreadLoad(parser.get("entry")->valuestring);
             m_info->path = _CS(parser.get("entry")->valuestring);
             AppManager::instance()->launchApp(m_info);
+            BOYIA_LOG("AppHandler.js---onLoadFinished %s", GET_STR(m_info->path));
             FileUtil::deleteFile(GET_STR(m_appFilePath));
+            BOYIA_LOG("AppHandler.js---onLoadFinished %d", 6);
         }
 
         delete this;
@@ -89,6 +89,7 @@ private:
 AppLoader::AppLoader(AppManager* manager)
     : m_appInfos(0, MAX_APPS_SIZE)
     , m_manager(manager)
+    , m_sdk(NULL)
 {
 }
 
@@ -104,13 +105,13 @@ LVoid AppLoader::startLoad()
     BOYIA_LOG("AppLoader---startLoad m_file=%d", (LIntPtr)m_file);
 }
 
-LVoid AppLoader::loadApp()
+LVoid AppLoader::loadApps()
 {
     if (!FileUtil::isExist(PlatformBridge::getAppJsonPath())) {
         return;
     }
     parseConfig();
-    startLoadApp();
+    startLoadApps();
 }
 
 LVoid AppLoader::onDataReceived(const LByte* data, LInt size)
@@ -146,7 +147,19 @@ LVoid AppLoader::onLoadFinished()
     }
 
     fclose(m_file);
-    loadApp();
+    loadApps();
+}
+
+static LVoid appendAppInfo(KVector<AppInfo*>& appInfos, cJSON* appsJson)
+{
+    cJSON* appJson = appsJson->child;
+    while (appJson) {
+        AppInfo* appInfo = new AppInfo;
+        appInfo->parseApp(appJson);
+
+        appInfos.addElement(appInfo);
+        appJson = appJson->next;
+    }
 }
 
 LVoid AppLoader::parseConfig()
@@ -161,13 +174,12 @@ LVoid AppLoader::parseConfig()
     if (json->type == cJSON_Object) {
         cJSON* child = json->child;
         while (child) {
-            if (child->type == cJSON_Array
-                && 0 == strcmp(child->string, "apps")) {
-                AppInfo* appInfo = new AppInfo;
-                appInfo->parseApps(child);
-                m_appInfos.addElement(appInfo);
-            } else if (child->type == cJSON_String
-                && 0 == strcmp(child->string, "retCode")) {
+            if (child->type == cJSON_Array && 0 == strcmp(child->string, "apps")) {
+                appendAppInfo(m_appInfos, child);
+            } else if (child->type == cJSON_String && 0 == strcmp(child->string, "code")) {
+            } else if (child->type == cJSON_Object && 0 == strcmp(child->string, "sdk")) {
+                m_sdk = new AppInfo;
+                m_sdk->parseApp(child);
             }
 
             child = child->next;
@@ -191,45 +203,53 @@ LVoid AppLoader::upgradeApp(const String& name)
     }
 }
 
-LVoid AppLoader::startLoadApp()
+LVoid AppLoader::loadApp(AppInfo* info)
 {
+    // 升级App
+    upgradeApp(info->name);
+    String appDir = _CS(PlatformBridge::getAppPath()) + info->name;
+    LInt versionCode = 0;
+    LBool hasApp = FileUtil::isExist(GET_STR(appDir));
+    if (hasApp) {
+        // Get App Json Info
+        String appJsonPath = appDir + _CS(APP_JSON);
+        // LOG AppPath
+        BOYIA_LOG("AppLoader.cpp---startLoadApp---appJsonPath=%s", GET_STR(appJsonPath));
+
+        if (!FileUtil::isExist(GET_STR(appJsonPath))) {
+            return;
+        }
+
+        boyia::JSONParser parser(appJsonPath);
+        // Get App Version
+        cJSON* version = parser.get("versionCode");
+        if (version) {
+            versionCode = version->valueint;
+        }
+
+        if (info->isEntry) {
+            //BoyiaThreadLoad(parser.get("entry")->valuestring);
+            info->path = _CS(parser.get("entry")->valuestring);
+            m_manager->launchApp(info);
+        }
+    }
+
+    // If the versionCode boyia.json greater than the version
+    // which in local app.json
+    if (info->versionCode > versionCode) {
+        m_loader.loadUrl(info->url, new AppHandler(info, !hasApp && info->isEntry));
+    }
+}
+
+LVoid AppLoader::startLoadApps()
+{
+    // Download BoyiaSDK
+    loadApp(m_sdk);
+
+    // Download Boyia App
     LInt size = m_appInfos.size();
     for (LInt id = 0; id < size; ++id) {
-        // 升级App
-        upgradeApp(m_appInfos[id]->name);
-        String appDir = _CS(PlatformBridge::getAppPath()) + m_appInfos[id]->name;
-        LInt versionCode = 0;
-        LBool hasApp = FileUtil::isExist(GET_STR(appDir));
-        if (hasApp) {
-            // Get App Json Info
-            String appJsonPath = appDir + _CS(APP_JSON);
-            // LOG AppPath
-            BOYIA_LOG("AppLoader.cpp---startLoadApp---appJsonPath=%s", GET_STR(appJsonPath));
-
-            if (!FileUtil::isExist(GET_STR(appJsonPath))) {
-                continue;
-            }
-
-            boyia::JSONParser parser(appJsonPath);
-            // Get App Version
-            cJSON* version = parser.get("versionCode");
-            if (version) {
-                versionCode = version->valueint;
-            }
-
-            if (m_appInfos[id]->isEntry) {
-                //BoyiaThreadLoad(parser.get("entry")->valuestring);
-                m_appInfos[id]->path = _CS(parser.get("entry")->valuestring);
-                m_manager->launchApp(m_appInfos[id]);
-            }
-        }
-
-        // If the versionCode boyia.json greater than the version
-        // which in local app.json
-        if (m_appInfos[id]->versionCode > versionCode) {
-            m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id], !hasApp && m_appInfos[id]->isEntry));
-            //m_loader.loadUrl(m_appInfos[id]->url, new AppHandler(m_appInfos[id]->name, !hasApp && m_appInfos[id]->isEntry));
-        }
+        loadApp(m_appInfos[id]);
     }
 }
 }

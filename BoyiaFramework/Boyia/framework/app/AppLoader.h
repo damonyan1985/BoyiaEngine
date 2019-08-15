@@ -29,14 +29,16 @@ public:
     virtual LVoid onLoadFinished();
 
 private:
-    LVoid loadApp();
+    LVoid loadApps();
     LVoid parseConfig();
-    LVoid startLoadApp();
+    LVoid startLoadApps();
+    LVoid loadApp(AppInfo* info);
     LVoid upgradeApp(const String& name);
 
     BoyiaLoader m_loader;
     FILE* m_file;
     KVector<AppInfo*> m_appInfos;
+    AppInfo* m_sdk;
     AppManager* m_manager;
 };
 }

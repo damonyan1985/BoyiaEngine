@@ -28,7 +28,7 @@ LVoid AppThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
     case BOYIA_INIT: {
-        String url(_CS(msg->obj), LTrue, msg->arg0);
+        String url(_CS(msg->obj), LFalse, msg->arg0);
         UIView::getInstance()->loadPage(url);
     } break;
     case BOYIA_QUIT: {

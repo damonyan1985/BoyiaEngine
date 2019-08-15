@@ -1,9 +1,16 @@
 {
-    "retCode" : 200,
-    "apps" : [{
-        "versionCode" :2,
-        "url" : "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/apps/contacts.zip",
-        "name" : "contacts",
-        "isEntry" : true
-    }]
+    "code": 200,
+    "sdk": {
+        "versionCode": 1,
+        "url": "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/out/sdk.zip",
+        "name": "sdk"
+    },
+    "apps": [
+        {
+            "versionCode": 13,
+            "url": "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/out/contacts.zip",
+            "name": "contacts",
+            "isEntry": true
+        }
+    ]
 }
