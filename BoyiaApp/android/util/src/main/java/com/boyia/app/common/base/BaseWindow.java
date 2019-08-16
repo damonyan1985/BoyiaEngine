@@ -8,7 +8,7 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 
-public class BaseWindow {
+public abstract class BaseWindow {
 	private static final String TAG = BaseWindow.class.getSimpleName();
 	protected IBaseActivity mActivity = null;
 	protected View mView = null;
@@ -50,8 +50,9 @@ public class BaseWindow {
 	public void onDestory() {
 		if (mView != null) {
 			detachView();
-			mView = null;
 		}
+
+		mView = null;
 	}
 
 	public BaseActivity getActivity() {
@@ -110,26 +111,27 @@ public class BaseWindow {
 	}
 
 	public View findViewById(int id) {
-		if (mView == null) {
+		if (null == mView) {
 			return null;
-		} else {
-			return mView.findViewById(id);
 		}
+
+		return mView.findViewById(id);
 	}
 
 	public Resources getResources() {
 		if (mActivity == null) {
 			return null;
-		} else {
-			return mView.getResources();
 		}
+
+		return mView.getResources();
 	}
 	
 	public void detachView() {
 		if (mActivity != null) {
 			mActivity.removeView(mView);
-			mView = null;
 		}
+
+		mView = null;
 	}
 	
     public void requestFocus() {

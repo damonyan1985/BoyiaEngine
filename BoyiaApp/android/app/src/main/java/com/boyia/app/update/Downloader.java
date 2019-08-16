@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import com.boyia.app.loader.BoyiaLoader;
-import com.boyia.app.loader.ILoaderCallback;
+import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 
@@ -18,7 +18,7 @@ import com.boyia.app.common.utils.BoyiaLog;
  *  Interface
  */
 
-public class Downloader implements ILoaderCallback {
+public class Downloader implements ILoadListener {
     public static final String DOWN_LOAD_DIR = BoyiaFileUtil.getFilePathRoot() + "download/";
     private BoyiaLoader mLoader;
     private DownloadData mInfo;

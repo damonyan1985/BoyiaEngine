@@ -4,7 +4,7 @@ BoyiaUI is a multi-platform framework for building mobile app, but now it's only
 android platform.
 
 **Boyia Framework Architecture**:
-![Architecture](https://github.com/damonyan1985/BoyiaUI/blob/dev/BoyiaApp/android/doc/Architecture.png?raw=true)
+![Architecture](https://github.com/damonyan1985/BoyiaUI/blob/dev/Docs/Architecture.png?raw=true)
 
 ## Git user attention
 

@@ -10,7 +10,7 @@ import com.boyia.app.common.BoyiaApplication;
 import com.boyia.app.task.JobBase;
 import com.boyia.app.task.JobScheduler;
 import com.boyia.app.loader.BoyiaLoader;
-import com.boyia.app.loader.ILoaderCallback;
+import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.FileUtil;
 import com.boyia.app.common.utils.ZipOperation;
@@ -40,7 +40,7 @@ public class UpgradeUtil {
 	}
 	
 	public static void upgradeAppFromUrl(final String url, final UpgradeListener listener) {
-		new BoyiaLoader(new ILoaderCallback() {
+		new BoyiaLoader(new ILoadListener() {
 			private FileOutputStream mOutPut = null;
 			private File mFile = null;
 			private long mSize = 0;

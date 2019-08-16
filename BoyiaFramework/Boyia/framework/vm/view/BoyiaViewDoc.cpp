@@ -1,4 +1,5 @@
 #include "BoyiaViewDoc.h"
+#include "AppManager.h"
 #include "AutoObject.h"
 #include "BoyiaImageView.h"
 #include "BoyiaInputView.h"
@@ -49,7 +50,8 @@ void BoyiaViewDoc::loadHTML(const String& url)
         m_domMap.put(key, (LIntPtr)dom);
         m_domMap.sort();
 
-        fetchStream(url, stream);
+        AppManager::instance()->network()->syncLoadUrl(url, stream);
+        //fetchStream(url, stream);
         KFORMATLOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());
     }
 

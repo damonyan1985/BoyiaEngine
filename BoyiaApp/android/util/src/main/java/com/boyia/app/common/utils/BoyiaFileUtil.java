@@ -10,12 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.Date;
-
-//import org.apache.http.util.EncodingUtils;
-
 import com.boyia.app.common.BoyiaApplication;
-import com.boyia.app.common.file.BoyiaFileInfo;
-
 import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
@@ -142,38 +137,6 @@ public class BoyiaFileUtil {
 			return filepath.substring(pos + 1);
 		}
 		return "";
-	}
-
-	public static BoyiaFileInfo getFileInfo(File f) {
-		BoyiaFileInfo lFileInfo = new BoyiaFileInfo();
-		String filePath = f.getPath();
-		File lFile = new File(filePath);
-		lFileInfo.mFileName = f.getName();
-		lFileInfo.mModifiedDate = lFile.lastModified();
-		lFileInfo.mIsDir = lFile.isDirectory();
-		lFileInfo.mFilePath = filePath;
-		if (lFileInfo.mIsDir) {
-			int lCount = 0;
-			File[] files = lFile.listFiles();
-
-			// null means we cannot access this dir
-			if (files == null) {
-				return null;
-			}
-
-			for (File child : files) {
-				if (!child.isHidden()
-						&& BoyiaFileUtil.isNormalFile(child.getAbsolutePath())) {
-					lCount++;
-				}
-			}
-			lFileInfo.mCount = lCount;
-			lFileInfo.mFileSize = getFolderSize(lFile);
-		} else {
-			lFileInfo.mFileSize = lFile.length();
-		}
-
-		return lFileInfo;
 	}
 
 	public static long getFolderSize(File f) {

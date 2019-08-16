@@ -123,6 +123,19 @@ BoyiaLoader::BoyiaLoader()
     start();
 }
 
+LVoid BoyiaLoader::syncLoadUrl(const String& url, String& content)
+{
+    if (url.StartWith(kSdkPrefix)) {
+        String sdkUrl = url.Mid(kSdkPrefix.GetLength());
+        String sdkPath = _CS(PlatformBridge::getAppPath()) + sdkUrl;
+        FileUtil::readFile(sdkPath, content);
+    } else if (url.StartWith(kSourcePrefix)) {
+        String sourceUrl = url.Mid(kSourcePrefix.GetLength());
+        String sourcePath = _CS(PlatformBridge::getAppRoot()) + sourceUrl;
+        FileUtil::readFile(sourcePath, content);
+    }
+}
+
 LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
 {
     loadUrl(url, client, LTrue);

@@ -135,6 +135,10 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
 LVoid LoaderAndroid::cancel()
 {
 }
+
+LVoid LoaderAndroid::syncLoadUrl(const String& url, String& content)
+{
+}
 }
 
 #endif

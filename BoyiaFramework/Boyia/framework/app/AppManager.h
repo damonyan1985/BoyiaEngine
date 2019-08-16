@@ -6,6 +6,7 @@
 #include "AppThread.h"
 #include "LEvent.h"
 #include "LGraphic.h"
+#include "NetworkBase.h"
 #include "UIThread.h"
 
 namespace yanbo {
@@ -19,7 +20,7 @@ public:
     UIThread* uiThread() const;
     AppThread* appThread() const;
     LVoid launchApp(AppInfo* info);
-
+    NetworkBase* network() const;
     LVoid handleTouchEvent(LInt type, LInt x, LInt y);
 
 private:
@@ -31,6 +32,7 @@ private:
     AppLoader* m_loader;
     AppThread* m_appThread;
     UIThread* m_uiThread;
+    NetworkBase* m_network;
 };
 }
 
