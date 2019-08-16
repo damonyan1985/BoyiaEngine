@@ -16,7 +16,6 @@ UIView::UIView()
     : m_loader(NULL)
     , m_doc(NULL)
     , m_controller(NULL)
-    , m_network(NULL)
     , m_jsHandler(NULL)
 {
     setComponents();
@@ -30,10 +29,6 @@ UIView::~UIView()
 
     if (m_doc) {
         delete m_doc;
-    }
-
-    if (m_network) {
-        delete m_network;
     }
 
     if (m_jsHandler) {
@@ -55,13 +50,10 @@ void UIView::setComponents()
 {
     if (!m_loader) {
         m_loader = new ResourceLoader(NULL);
-        m_network = NetworkBase::create();
-
         m_doc = new HtmlDocument();
         m_loader->setView(this);
         m_doc->setView(this);
         m_jsHandler = new boyia::BoyiaEventHandler();
-
         m_controller = new UIViewController(this);
     }
 }
@@ -138,7 +130,7 @@ ResourceLoader* UIView::getLoader() const
 
 NetworkBase* UIView::network() const
 {
-    return m_network;
+    return AppManager::instance()->network();
 }
 
 void UIView::loadString(const String& src)

@@ -38,6 +38,4 @@ uploadArchives {
 }
 
 dependencies {
-    implementation gradle.library.okhttp_lib
-    implementation gradle.library.okio_lib
 }

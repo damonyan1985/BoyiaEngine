@@ -1,7 +1,7 @@
 package com.boyia.app.core;
 
-import com.boyia.app.loader.image.ILoadImage;
-import com.boyia.app.loader.image.BoyiaImageManager;
+import com.boyia.app.loader.image.ITargetImage;
+import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.common.utils.GraphicsConst;
@@ -20,7 +20,7 @@ import android.graphics.Rect;
  * @Copyright Reserved
  * @Descrption Android 2D Bitmap Interface Implements
  */
-public class BoyiaBitmap implements ILoadImage {
+public class BoyiaBitmap implements ITargetImage {
 
     private static final String TAG = "BoyiaBitmap";
     private Bitmap mBitmap = null;
@@ -41,7 +41,7 @@ public class BoyiaBitmap implements ILoadImage {
     }
     
     public void asyncLoadImage(String url) {
-    	BoyiaImageManager.getInstance().loadImage(url, this);
+    	BoyiaImager.getInstance().loadImage(url, this);
     }
 
     // 得到图片字节流 数组大小

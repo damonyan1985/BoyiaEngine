@@ -13,6 +13,7 @@ public:
     };
     BoyiaLoader();
 
+    virtual LVoid syncLoadUrl(const String& url, String& content);
     virtual LVoid loadUrl(const String& url, NetworkClient* client);
     virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait);
 

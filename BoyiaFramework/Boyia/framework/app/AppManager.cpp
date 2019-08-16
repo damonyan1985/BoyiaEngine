@@ -5,6 +5,7 @@
 namespace yanbo {
 AppManager::AppManager()
 {
+    m_network = NetworkBase::create();
     m_loader = new AppLoader(this);
     m_appThread = new AppThread();
     m_uiThread = new UIThread(this);
@@ -12,6 +13,11 @@ AppManager::AppManager()
 
 AppManager::~AppManager()
 {
+}
+
+NetworkBase* AppManager::network() const
+{
+    return m_network;
 }
 
 AppThread* AppManager::appThread() const

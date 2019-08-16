@@ -47,7 +47,6 @@ private:
     ResourceLoader* m_loader;
     HtmlDocument* m_doc;
     LGraphicsContext* m_gc;
-    NetworkBase* m_network;
     LRect m_clientRect;
     UIViewController* m_controller;
     boyia::BoyiaEventHandler* m_jsHandler;

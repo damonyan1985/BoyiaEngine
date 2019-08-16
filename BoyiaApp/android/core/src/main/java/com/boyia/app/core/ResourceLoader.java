@@ -1,9 +1,9 @@
 package com.boyia.app.core;
 
-import com.boyia.app.loader.ILoaderCallback;
+import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.loader.BoyiaLoader;
 
-public class ResourceLoader implements ILoaderCallback {
+public class ResourceLoader implements ILoadListener {
 	private BoyiaLoader mLoader = null;
 
     public ResourceLoader() {
