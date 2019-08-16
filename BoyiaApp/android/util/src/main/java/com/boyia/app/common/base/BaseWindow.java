@@ -44,8 +44,7 @@ public abstract class BaseWindow {
 		}
 	}
 
-	protected void onCreate() {
-	}
+	protected abstract void onCreate();
 
 	public void onDestory() {
 		if (mView != null) {

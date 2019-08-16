@@ -16,7 +16,6 @@ public class BoyiaWindow extends BaseWindow {
 
 	@Override
 	public void onCreate() {
-		super.onCreate();
 		mUIView = new BoyiaUIView(getActivity());
 		setContentView(mUIView.getView());
 	}
