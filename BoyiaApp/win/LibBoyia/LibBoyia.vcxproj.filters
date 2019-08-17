@@ -31,6 +31,9 @@
     <Filter Include="Boyia\framework\vm\core">
       <UniqueIdentifier>{0302db5b-c842-4d04-92e5-826c251baa19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Boyia\framework\platform">
+      <UniqueIdentifier>{0771b620-ba39-4731-90e2-5477815d0129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -98,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\vm\core\BoyiaValue.h">
       <Filter>Boyia\framework\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\platform\SalLog.h">
+      <Filter>Boyia\framework\platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,11 @@ package com.boyia.app.core;
 
 import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.loader.BoyiaLoader;
+import com.boyia.app.loader.http.HTTPFactory;
+import com.boyia.app.loader.http.Response;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class ResourceLoader implements ILoadListener {
 	private BoyiaLoader mLoader = null;
@@ -59,6 +64,30 @@ public class ResourceLoader implements ILoadListener {
 		ResInfo info = (ResInfo) msg;
 		info.mData = error;
 		BoyiaUIView.nativeOnLoadError(info.mData, info.mCallback);
+	}
+
+	// Call By JNI
+	public static String syncLoadResource(String url) {
+		Response data = HTTPFactory.getResponse(url);
+		InputStream in = data.getStream();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		String result = "";
+		try {
+			while ((len = in.read(buffer)) != -1) {
+				outStream.write(buffer, 0, len);
+			}
+
+			result = new String(outStream.toByteArray(), HTTPFactory.HTTP_CHARSET_UTF8);
+			outStream.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 	
 	public static class ResInfo {
