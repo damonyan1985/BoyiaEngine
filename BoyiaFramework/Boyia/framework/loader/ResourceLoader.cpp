@@ -94,7 +94,6 @@ ResourceLoader::~ResourceLoader()
 {
     if (m_render) {
         delete m_render;
-        m_render = NULL;
     }
 }
 
