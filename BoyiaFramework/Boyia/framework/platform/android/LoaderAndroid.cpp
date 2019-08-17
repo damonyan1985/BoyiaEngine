@@ -138,6 +138,7 @@ LVoid LoaderAndroid::cancel()
 
 LVoid LoaderAndroid::syncLoadUrl(const String& url, String& content)
 {
+    JNIUtil::loadHTML(url, content);
 }
 }
 

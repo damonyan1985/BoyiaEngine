@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;ENABLE_BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaFramework\Boyia\framework\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>${BOYIA_FRAMEWORK_ROOT}\Boyia\framework\util;${BOYIA_FRAMEWORK_ROOT}\Boyia\framework\platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +156,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\platform\SalLog.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaPtr.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\BoyiaRef.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\Boyia\framework\util\FileUtil.h" />
