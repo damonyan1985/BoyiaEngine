@@ -47,9 +47,16 @@ extern bool JNI_LOG_ON;
 #define KSTRFORMAT(format_str, str) \
     if (JNI_LOG_ON)                 \
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, format_str, (const char*)str.GetBuffer())
-#define YanLog(format_str, ...) \
-    if (JNI_LOG_ON)             \
-    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, format_str, __VA_ARGS__)
+#define BOYIA_LOG KFORMATLOG
+#elif ENABLE(BOYIA_WINDOWS)
+#define INIT_KLOG(file_name, is_open)
+#define SHUT_KLOG()
+#define KLOG(log_str)
+#define KDESLOG(log_str)
+#define KSTRLOG(log_str)
+#define KSTRLOG8(log_str)
+#define KFORMATLOG(format_str, ...)
+#define KSTRFORMAT(format_str, str)
 #define BOYIA_LOG KFORMATLOG
 #endif
 

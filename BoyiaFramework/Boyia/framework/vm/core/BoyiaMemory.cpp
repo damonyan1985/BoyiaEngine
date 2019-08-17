@@ -5,7 +5,8 @@
 * Copyright (c) reserved
 */
 #include "BoyiaMemory.h"
-#include <android/log.h>
+//#include <android/log.h>
+#include "SalLog.h"
 #include <stdlib.h>
 
 typedef struct MemoryBlockHeader {
@@ -179,5 +180,5 @@ LInt GetUsedMemory(LVoid* mempool)
 LVoid PrintPoolSize(LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
+    BOYIA_LOG("BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
 }

@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;ENABLE_BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>${BOYIA_FRAMEWORK_ROOT}\Boyia\framework\util;${BOYIA_FRAMEWORK_ROOT}\Boyia\framework\platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\Boyia\framework\util;$(BOYIA_FRAMEWORK_ROOT)\Boyia\framework\platform;$(BOYIA_FRAMEWORK_ROOT)\Boyia\framework\vm\core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

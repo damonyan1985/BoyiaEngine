@@ -102,7 +102,7 @@ void ResourceLoader::onFileLen(LInt len)
 {
     KLOG("ResourceLoader::onFileLen");
     KDESLOG(len);
-    YanLog("dataLen=%d", len);
+    BOYIA_LOG("dataLen=%d", len);
 }
 
 void ResourceLoader::onLoadError(LInt error)
