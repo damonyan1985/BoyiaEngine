@@ -1,11 +1,13 @@
 #include "FileUtil.h"
 #include "SalLog.h"
 #include "UtilString.h"
+#if ENABLE(BOYIA_ANDROID)
 #include <dirent.h>
+#include <unistd.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 namespace util {
 LVoid FileUtil::readFile(const String& fileName, String& content)
@@ -28,11 +30,14 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
 
 bool FileUtil::isExist(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     return access(path, F_OK) == 0;
+#endif
 }
 
 bool FileUtil::isDir(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) // lstat返回文件的信息，文件信息存放在stat结构中
     {
@@ -40,16 +45,19 @@ bool FileUtil::isDir(const char* path)
     }
 
     return false;
+#endif
 }
 
 bool FileUtil::isFile(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) {
         return S_ISREG(statbuf.st_mode) != 0; //判断文件是否为常规文件
     }
 
     return false;
+#endif
 }
 
 bool FileUtil::isSpecialDir(const char* path)
@@ -59,6 +67,7 @@ bool FileUtil::isSpecialDir(const char* path)
 
 LVoid FileUtil::deleteFile(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     DIR* dir;
     dirent* dirInfo;
     if (isFile(path)) {
@@ -88,6 +97,7 @@ LVoid FileUtil::deleteFile(const char* path)
             rmdir(GET_STR(filePath));
         }
     }
+#endif
 }
 
 LInt FileUtil::createDirs(const char* path)
@@ -117,7 +127,8 @@ LInt FileUtil::createDirs(const char* path)
 
 LVoid FileUtil::printAllFiles(const char* path)
 {
-    KFORMATLOG("FileUtil::printAllFiles filePath=%s", path);
+    BOYIA_LOG("FileUtil::printAllFiles filePath=%s", path);
+#if ENABLE(BOYIA_ANDROID)
     DIR* d;
     struct dirent* file;
     struct stat sb;
@@ -148,5 +159,6 @@ LVoid FileUtil::printAllFiles(const char* path)
     }
 
     closedir(d);
+#endif
 }
 }

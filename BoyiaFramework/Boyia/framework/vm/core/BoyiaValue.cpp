@@ -6,7 +6,6 @@
 #include "BoyiaBase.h"
 #include "BoyiaMemory.h"
 #include "IDCreator.h"
-#include "MiniMutex.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
 #include "SystemUtil.h"
