@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(zlib)
 
+add_definitions(-DENABLE_BOYIA_ANDROID=1)
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
 
 file(
