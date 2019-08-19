@@ -141,7 +141,7 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
     loadUrl(url, client, LTrue);
 }
 
-LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
+static MiniTaskBase* loadBoyiaUrl(const String& url, NetworkClient* client)
 {
     MiniTaskBase* task = NULL;
     if (url.StartWith(kSdkPrefix)) {
@@ -158,12 +158,19 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWai
         fileTask->setUrl(sourcePath);
         sourcePath.ReleaseBuffer();
         task = fileTask;
-    } else {
+    }
+
+    return task;
+}
+
+LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
+{
+    MiniTaskBase* task = loadBoyiaUrl(url, client);
+    if (!task) {
         HttpTask* httpTask = new HttpTask(client);
         // Set Task Info
         httpTask->setHeader(m_headers);
         httpTask->setUrl(url);
-
         task = httpTask;
     }
 
