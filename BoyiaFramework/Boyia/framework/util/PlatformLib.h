@@ -207,6 +207,7 @@ using util::LTrue;
 using util::LUint;
 using util::LUint16;
 using util::LUint32;
+using util::LUint64;
 using util::LUint8;
 using util::LUintPtr;
 using util::LVoid;

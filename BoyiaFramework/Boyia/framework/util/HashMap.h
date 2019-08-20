@@ -1,11 +1,12 @@
-#ifndef HashMap_h
-#define HashMap_h
-
 //
 // Author: Yanbo
 // Create: 2019-3-9
 // All Copyright reserved
 //
+
+#ifndef HashMap_h
+#define HashMap_h
+
 #include "PlatformLib.h"
 
 namespace util {
@@ -68,7 +69,7 @@ public:
         }
     }
 
-    V get(K ket)
+    V get(K key)
     {
         HashMapEntryPtr entry = m_table[indexHash(key)];
         for (; entry; entry->next) {
@@ -127,7 +128,7 @@ private:
         }
     }
 
-    LVoid addEntry(LInt index, T key, V value)
+    LVoid addEntry(LInt index, K key, V value)
     {
         addEntry(index, new HashMapEntry(key, value));
     }
