@@ -2,14 +2,16 @@
 
 buildscript {
     ext.kotlin_version = '1.2.30'
+    System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+        //classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.9'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -17,8 +19,11 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "http://maven.oschina.net/content/groups/public/" }
         maven { url uri("$rootDir/library") }
         maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaMaven/master/" }
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/maven/" }
