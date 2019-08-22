@@ -1,27 +1,18 @@
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply from: "$rootDir/library.gradle"
 
 def getCurrentTime() {
-    //DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss")
-    //return df.format(Calendar.getInstance(Locale.CHINA).getTime())
     Date date = new Date(System.currentTimeMillis())
     return date.format("yyyyMMddhhmmss")
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
-
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.boyia.app"
         minSdkVersion 23
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         flavorDimensions "default"
@@ -135,20 +126,4 @@ dependencies {
     //implementation 'com.boyia.app.utils:utils:1.0.0'
     debugImplementation gradle.library.leakcanary_debug
     releaseImplementation gradle.library.leakcanary_release
-}
-
-task boyiaUITask << {
-    println "boyiaUITask Run"
-}
-
-task boyiaTask << {
-    println "boyiaTask Run"
-}
-
-tasks.whenTaskAdded {
-    task ->
-        if (task.name.equals("assembleRelease")) {
-            boyiaTask.dependsOn boyiaUITask
-            boyiaTask.dependsOn assembleRelease
-        }
 }
