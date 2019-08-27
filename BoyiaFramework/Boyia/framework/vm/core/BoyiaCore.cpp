@@ -2142,7 +2142,7 @@ LVoid GetGlobalTable(LInt* table, LInt* size)
 }
 
 /*  output function */
-LVoid* CompileCode(LInt8* code)
+LVoid CompileCode(LInt8* code)
 {
     InitGlobalData();
     gBoyiaVM->mEState->mProg = code;
@@ -2153,7 +2153,6 @@ LVoid* CompileCode(LInt8* code)
     gBoyiaVM->mEState->mClass = NULL;
     ParseStatement(); // 该函数记录全局变量以及函数接口
     ResetScene();
-    return gBoyiaVM;
 }
 
 LVoid* GetLocalValue(LInt idx)

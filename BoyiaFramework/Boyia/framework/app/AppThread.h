@@ -7,6 +7,7 @@
 #include "UtilString.h"
 
 namespace yanbo {
+class AppManager;
 class AppEvent {
 public:
     virtual ~AppEvent();
@@ -22,18 +23,21 @@ protected:
 class AppThread : public MiniMessageThread {
 public:
     enum Operation {
-        BOYIA_INIT = 1,
-        BOYIA_QUIT,
-        BOYIA_SEND_EVENT,
+        kAppInit = 1,
+        kAppQuit,
+        kAppEvent,
     };
 
-    AppThread();
+    AppThread(AppManager* manager);
     static AppThread* instance();
 
     virtual LVoid handleMessage(MiniMessage* msg);
     LVoid destroy();
     LVoid load(const String& url);
     LVoid sendEvent(AppEvent* event);
+
+private:
+    AppManager* m_manager;
 };
 }
 

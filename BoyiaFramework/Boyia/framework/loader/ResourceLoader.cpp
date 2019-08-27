@@ -12,8 +12,7 @@
 #include "UIView.h"
 #include <android/log.h>
 
-//extern LVoid CompileScript(char* code);
-extern LVoid* CompileScript(char* code);
+extern LVoid CompileScript(char* code);
 namespace yanbo {
 
 class ResourceHandle : public NetworkClient, public AppEvent {
@@ -26,29 +25,29 @@ public:
     {
     }
 
-    virtual void onDataReceived(const LByte* data, LInt size)
+    virtual LVoid onDataReceived(const LByte* data, LInt size)
     {
         LByte* destData = new LByte[size];
         util::LMemcpy(destData, data, size);
         m_builder.append(destData, 0, size, LFalse);
     }
 
-    virtual void onStatusCode(LInt statusCode)
+    virtual LVoid onStatusCode(LInt statusCode)
     {
     }
 
-    virtual void onRedirectUrl(const String& redirectUrl)
+    virtual LVoid onRedirectUrl(const String& redirectUrl)
     {
     }
 
-    virtual void onLoadError(LInt error)
+    virtual LVoid onLoadError(LInt error)
     {
         //m_loader->onLoadError(error);
         m_result = error;
         AppThread::instance()->sendEvent(this);
     }
 
-    virtual void onLoadFinished()
+    virtual LVoid onLoadFinished()
     {
         m_data = m_builder.toString();
         AppThread::instance()->sendEvent(this);
@@ -69,7 +68,7 @@ public:
         }
     }
 
-    virtual void onFileLen(LInt len)
+    virtual LVoid onFileLen(LInt len)
     {
         //m_loader->onFileLen(len);
     }
@@ -97,18 +96,18 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
-void ResourceLoader::onFileLen(LInt len)
+LVoid ResourceLoader::onFileLen(LInt len)
 {
     KLOG("ResourceLoader::onFileLen");
     KDESLOG(len);
     BOYIA_LOG("dataLen=%d", len);
 }
 
-void ResourceLoader::onLoadError(LInt error)
+LVoid ResourceLoader::onLoadError(LInt error)
 {
 }
 
-void ResourceLoader::onLoadFinished(const String& data, LInt resType)
+LVoid ResourceLoader::onLoadFinished(const String& data, LInt resType)
 {
     KLOG("ResourceLoader::onLoadFinished()");
     switch (resType) {
@@ -126,7 +125,7 @@ void ResourceLoader::onLoadFinished(const String& data, LInt resType)
     }
 }
 
-void ResourceLoader::load(const String& url, LoadType type)
+LVoid ResourceLoader::load(const String& url, LoadType type)
 {
     if (type == CACHECSS) {
         ++m_cssSize;
@@ -135,7 +134,7 @@ void ResourceLoader::load(const String& url, LoadType type)
     m_view->network()->loadUrl(url, new ResourceHandle(this, type, url));
 }
 
-void ResourceLoader::setView(UIView* view)
+LVoid ResourceLoader::setView(UIView* view)
 {
     m_view = view;
 }
@@ -145,7 +144,7 @@ UIView* ResourceLoader::view() const
     return m_view;
 }
 
-void ResourceLoader::executeDocument(const String& data)
+LVoid ResourceLoader::executeDocument(const String& data)
 {
     KLOG("ResourceLoader::executeDocument()");
     KLOG((const char*)data.GetBuffer());
@@ -184,7 +183,7 @@ HtmlRenderer* ResourceLoader::render() const
 }
 
 // Execute external css
-void ResourceLoader::executeCss(const String& data)
+LVoid ResourceLoader::executeCss(const String& data)
 {
     KFORMATLOG("ResourceLoader::executeCss data=%s", GET_STR(data));
     util::InputStream is(data);
@@ -197,12 +196,12 @@ void ResourceLoader::executeCss(const String& data)
 }
 
 // Execute external script
-void ResourceLoader::executeScript(const String& data)
+LVoid ResourceLoader::executeScript(const String& data)
 {
     CompileScript((char*)data.GetBuffer());
 }
 
-void ResourceLoader::repaint(HtmlView* item)
+LVoid ResourceLoader::repaint(HtmlView* item)
 {
     KLOG("ResourceLoader::repaint()");
     if (item) {
@@ -217,7 +216,7 @@ void ResourceLoader::repaint(HtmlView* item)
     }
 }
 
-void ResourceLoader::loadString(const String& src)
+LVoid ResourceLoader::loadString(const String& src)
 {
     onLoadFinished(src, HTMLDOC);
 }
