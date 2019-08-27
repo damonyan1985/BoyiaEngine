@@ -28,20 +28,20 @@ public:
     virtual ~ResourceLoader();
 
 public:
-    void onLoadError(LInt error);
-    void onLoadFinished(const String& data, LInt resType);
-    void onFileLen(LInt len);
+    LVoid onLoadError(LInt error);
+    LVoid onLoadFinished(const String& data, LInt resType);
+    LVoid onFileLen(LInt len);
 
 public:
-    void load(const String& url, LoadType type);
-    void loadString(const String& src);
-    void setView(UIView* view);
+    LVoid load(const String& url, LoadType type);
+    LVoid loadString(const String& src);
+    LVoid setView(UIView* view);
 
-    void repaint(HtmlView* item = NULL);
+    LVoid repaint(HtmlView* item = NULL);
 
-    void executeDocument(const String& data);
-    void executeCss(const String& data);
-    void executeScript(const String& data);
+    LVoid executeDocument(const String& data);
+    LVoid executeCss(const String& data);
+    LVoid executeScript(const String& data);
     HtmlRenderer* render() const;
     UIView* view() const;
 

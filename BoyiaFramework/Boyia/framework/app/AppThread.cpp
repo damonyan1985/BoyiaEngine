@@ -1,7 +1,6 @@
 #include "AppThread.h"
+#include "AppManager.h"
 #include "UIView.h"
-//#include "NetworkBase.h"
-//#include "LGdi.h"
 
 namespace yanbo {
 AppEvent::~AppEvent()
@@ -13,29 +12,31 @@ LVoid AppEvent::execute()
     delete this;
 }
 
-AppThread::AppThread()
+AppThread::AppThread(AppManager* manager)
+    : m_manager(manager)
 {
     start();
 }
 
 AppThread* AppThread::instance()
 {
-    static AppThread sThread;
-    return &sThread;
+    // static AppThread sThread;
+    // return &sThread;
+    return AppManager::instance()->appThread();
 }
 
 LVoid AppThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
-    case BOYIA_INIT: {
+    case kAppInit: {
         String url(_CS(msg->obj), LFalse, msg->arg0);
-        UIView::getInstance()->loadPage(url);
+        //UIView::getInstance()->loadPage(url);
+        m_manager->currentApp()->view()->loadPage(url);
     } break;
-    case BOYIA_QUIT: {
-        //UIView::getInstance()->destroy();
+    case kAppQuit: {
         m_continue = LFalse;
     } break;
-    case BOYIA_SEND_EVENT: {
+    case kAppEvent: {
         if (!msg->obj)
             return;
         static_cast<AppEvent*>(msg->obj)->execute();
@@ -46,7 +47,7 @@ LVoid AppThread::handleMessage(MiniMessage* msg)
 LVoid AppThread::destroy()
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = BOYIA_QUIT;
+    msg->type = kAppQuit;
 
     m_queue->push(msg);
     notify();
@@ -55,7 +56,7 @@ LVoid AppThread::destroy()
 LVoid AppThread::load(const String& url)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = BOYIA_INIT;
+    msg->type = kAppInit;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
 
@@ -66,7 +67,7 @@ LVoid AppThread::load(const String& url)
 LVoid AppThread::sendEvent(AppEvent* event)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = BOYIA_SEND_EVENT;
+    msg->type = kAppEvent;
     msg->obj = event;
     m_queue->push(msg);
     notify();
