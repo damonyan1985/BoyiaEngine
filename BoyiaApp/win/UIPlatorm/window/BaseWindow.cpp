@@ -1,5 +1,7 @@
 #include "BaseWindow.h"
 
+namespace yanbo {
+
 BaseWindow* BaseWindow::m_currWinPtr = NULL;
 HINSTANCE BaseWindow::m_hInst = NULL;
 const TCommandMessageItem BaseWindow::messageEntries[] = {
@@ -206,4 +208,6 @@ BOOL BaseWindow::Invalidate(CONST RECT* lpRect, BOOL bErase)
 
 void BaseWindow::ProcessTick()
 {
+}
+
 }

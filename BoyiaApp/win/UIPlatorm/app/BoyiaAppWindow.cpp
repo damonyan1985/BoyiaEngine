@@ -1,5 +1,7 @@
 #include "BoyiaAppWindow.h"
 
+namespace yanbo {
+
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
 // msg mapping item begin
 WM_CREATE_ITEN()
@@ -188,4 +190,6 @@ BOOL BoyiaAppImpl::InitInstance(HINSTANCE hIns, int nCmdShow)
 	_ptwin->ShowTW(nCmdShow);
 	_ptwin->UpdateTW();
 	return TRUE;
+}
+
 }

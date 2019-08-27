@@ -4,6 +4,8 @@
 #include "graphic/BoyiaDC.h"
 #include "window/BoyiaWindow.h"
 
+namespace yanbo {
+
 class BoyiaAppWindow : public BoyiaWindow
 {
 public:
@@ -45,4 +47,6 @@ public:
 	BoyiaAppImpl();
 	~BoyiaAppImpl();
 };
+
+}
 #endif
