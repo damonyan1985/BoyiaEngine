@@ -6,6 +6,7 @@
 
 using namespace std;
 
+namespace yanbo {
 class BaseWindow;
 
 #define BoyiaWinMain wWinMain
@@ -95,5 +96,7 @@ protected:
 	//消息响应函数END
 	MESSAGE_MAP_TABLE()
 };
+
+}
 
 #endif

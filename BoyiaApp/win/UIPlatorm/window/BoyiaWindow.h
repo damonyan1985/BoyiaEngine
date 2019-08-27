@@ -3,6 +3,8 @@
 
 #include "BaseWindow.h"
 
+namespace yanbo {
+
 class BoyiaWindow : public BaseWindow
 {
 public:
@@ -31,5 +33,7 @@ public:
 	virtual BOOL run();
 	static BoyiaApp* GetCurrApp();
 };
+
+}
 
 #endif

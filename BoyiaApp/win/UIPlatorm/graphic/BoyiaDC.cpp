@@ -1,5 +1,7 @@
 #include "BoyiaDC.h"
 
+namespace yanbo {
+
 BoyiaDC::BoyiaDC()
 {
 	m_hDC = NULL;
@@ -118,4 +120,6 @@ BoyiaWindowDC::BoyiaWindowDC(BoyiaWindow *ptwnd)
 BoyiaWindowDC::~BoyiaWindowDC()
 {
 	::ReleaseDC(m_ptWnd->GetWndHandle(), m_hDC);
+}
+
 }

@@ -1,6 +1,8 @@
 #include "BoyiaWindow.h"
 #include <string.h>
 
+namespace yanbo {
+
 BEGIN_MAP_TABLE(BoyiaWindow, BaseWindow)
 // msg mapping item begin
 WM_CREATE_ITEN()
@@ -77,8 +79,10 @@ void BoyiaApp::FreeWndPtr()
 	}
 }
 
-extern BoyiaApp *tfxGetApp()
+}
+
+extern yanbo::BoyiaApp* tfxGetApp()
 {
-	return BoyiaApp::GetCurrApp();
+	return yanbo::BoyiaApp::GetCurrApp();
 }
 

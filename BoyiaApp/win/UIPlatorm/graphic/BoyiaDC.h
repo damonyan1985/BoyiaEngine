@@ -3,6 +3,8 @@
 
 #include "window/BoyiaWindow.h"
 
+namespace yanbo {
+
 class BoyiaDC
 {
 public:
@@ -53,5 +55,7 @@ public:
 	BoyiaWindowDC(BoyiaWindow *ptwnd);
 	~BoyiaWindowDC();
 };
+
+}
 
 #endif
