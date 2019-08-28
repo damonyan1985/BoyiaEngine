@@ -22,15 +22,26 @@ typedef struct BoyiaGC {
 static BoyiaGC* sGc = NULL;
 
 extern LVoid NativeDelete(LVoid* data);
-static LBool checkValue(BoyiaValue* val, BoyiaRef* ref);
+static LBool CheckValue(BoyiaValue* val, BoyiaRef* ref);
+
+extern LVoid* CreateGC()
+{
+    BoyiaGC* gc = FAST_NEW(BoyiaGC);
+    gc->mBegin = NULL;
+    gc->mEnd = NULL;
+    gc->mSize = 0;
+    return gc;
+}
+
+extern LVoid ChangeGC(LVoid* gc)
+{
+    sGc = (BoyiaGC*)gc;
+}
 
 static LVoid GCInit()
 {
-    if (sGc == NULL) {
-        sGc = FAST_NEW(BoyiaGC);
-        sGc->mBegin = NULL;
-        sGc->mEnd = NULL;
-        sGc->mSize = 0;
+    if (!sGc) {
+        sGc = (BoyiaGC*)CreateGC();
     }
 }
 
@@ -43,7 +54,7 @@ static LBool GCCheckObject(BoyiaValue* value, BoyiaRef* ref)
     BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mIntVal;
     LInt idx = 0;
     for (; idx < fun->mParamSize; ++idx) {
-        if (checkValue(&fun->mParams[idx], ref)) {
+        if (CheckValue(&fun->mParams[idx], ref)) {
             return LTrue;
         }
     }
@@ -51,7 +62,7 @@ static LBool GCCheckObject(BoyiaValue* value, BoyiaRef* ref)
     return LFalse;
 }
 
-static LBool checkValue(BoyiaValue* value, BoyiaRef* ref)
+static LBool CheckValue(BoyiaValue* value, BoyiaRef* ref)
 {
     if (value->mValueType == BY_NAVCLASS
         && value->mValue.mIntVal == (LIntPtr)ref->mAddress) {
@@ -89,13 +100,13 @@ static LVoid deleteRef(BoyiaRef* ref)
     ref->mAddress = NULL;
 }
 
-static LBool checkValueTable(BoyiaRef* ref, BoyiaValue* table, LInt size)
+static LBool CheckValueTable(BoyiaRef* ref, BoyiaValue* table, LInt size)
 {
     // 正式开始检查是否引用过期
     LInt idx = 0;
     for (; idx < size; idx++) {
         BoyiaValue* value = table + idx;
-        if (checkValue(value, ref)) {
+        if (CheckValue(value, ref)) {
             // 查出引用未过期，跳出循环
             return LTrue;
         }
@@ -110,18 +121,18 @@ static LVoid GCheckNoneRef(BoyiaRef* ref)
     LInt stackAddr, size;
     GetLocalStack(&stackAddr, &size);
     BoyiaValue* stack = (BoyiaValue*)stackAddr;
-    if (checkValueTable(ref, stack, size)) {
+    if (CheckValueTable(ref, stack, size)) {
         return;
     }
 
     GetGlobalTable(&stackAddr, &size);
     stack = (BoyiaValue*)stackAddr;
-    if (checkValueTable(ref, stack, size)) {
+    if (CheckValueTable(ref, stack, size)) {
         return;
     }
     // 查找结果寄存器，是否有引用过期
     BoyiaValue* val = (BoyiaValue*)GetNativeResult();
-    if (checkValue(val, ref)) {
+    if (CheckValue(val, ref)) {
         return;
     }
 

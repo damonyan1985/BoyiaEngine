@@ -10,10 +10,11 @@ public:
     ~AppVM();
 
     LVoid compile(const String& script);
-    LVoid* useVM();
+    LVoid useVM();
 
 private:
     LVoid* m_vm;
+    LVoid* m_gc;
 };
 }
 

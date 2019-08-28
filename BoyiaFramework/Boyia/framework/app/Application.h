@@ -12,6 +12,7 @@ public:
     ~Application();
 
     UIView* view() const;
+    AppVM* vm() const;
 
 private:
     UIView* m_view;
