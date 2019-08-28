@@ -91,7 +91,7 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
         case HtmlTags::LINK: {
             String src = _CS(elem->Attribute("href"));
             if (src.GetLength() > 0 && m_htmlDoc) {
-                m_htmlDoc->getView()->getLoader()->load(src, ResourceLoader::CACHECSS);
+                m_htmlDoc->getView()->getLoader()->load(src, ResourceLoader::kCacheStyleSheet);
             }
         } break;
         case HtmlTags::META: {
@@ -104,7 +104,7 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
         case HtmlTags::SCRIPT: {
             String src = _CS(elem->Attribute("src"));
             if (src.GetLength() > 0 && m_htmlDoc) {
-                m_htmlDoc->getView()->getLoader()->load(src, ResourceLoader::CACHEJS);
+                m_htmlDoc->getView()->getLoader()->load(src, ResourceLoader::kCacheScript);
             }
 
         } break;

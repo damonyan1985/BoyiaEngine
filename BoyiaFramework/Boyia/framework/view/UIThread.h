@@ -11,22 +11,22 @@ class AppManager;
 class UIThread : public MiniMessageThread {
 public:
     enum MessageType {
-        UI_INIT = 1,
-        UI_RESET,
-        UI_DRAW,
-        UI_DRAWONLY,
-        UI_CREATE_TEX,
-        UI_SUBMIT,
-        UI_TOUCH_EVENT,
-        UI_KEY_EVENT,
-        UI_SETINPUT,
-        UI_VIDEO_UPDATE,
-        UI_IMAGE_LOADED,
-        UI_ON_KEYBOARD_SHOW,
-        UI_ON_KEYBOARD_HIDE,
-        UI_OP_EXEC,
-        UI_DESTROY,
-        UI_RUN_ANIM
+        kUiInit = 1,
+        kUiReset,
+        kUiDraw,
+        kUiDrawOnly,
+        kUiCreateTexture,
+        kUiSubmit,
+        kUiTouchEvent,
+        kUiKeyEvent,
+        kUiSetInput,
+        kUiVideoUpdate,
+        kUiImageLoaded,
+        kUiOnKeyboardShow,
+        kUiOnKeyboardHide,
+        kUiOperationExec,
+        kUiDestory,
+        kUiRunAnimation
     };
     static UIThread* instance();
 

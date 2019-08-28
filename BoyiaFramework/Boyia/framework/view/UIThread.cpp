@@ -30,8 +30,6 @@ UIThread::~UIThread()
 UIThread* UIThread::instance()
 {
     // C++11单例高并发处理方法
-    // static UIThread sThread;
-    // return &sThread;
     return yanbo::AppManager::instance()->uiThread();
 }
 
@@ -43,7 +41,7 @@ LGraphicsContext* UIThread::graphics() const
 LVoid UIThread::draw(LVoid* item)
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_DRAW;
+    msg->type = kUiDraw;
     msg->obj = item;
     postMessage(msg);
 }
@@ -51,7 +49,7 @@ LVoid UIThread::draw(LVoid* item)
 LVoid UIThread::drawOnly(LVoid* item)
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_DRAWONLY;
+    msg->type = kUiDrawOnly;
     msg->obj = item;
     postMessage(msg);
 }
@@ -59,73 +57,73 @@ LVoid UIThread::drawOnly(LVoid* item)
 LVoid UIThread::submit()
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_SUBMIT;
+    msg->type = kUiSubmit;
     postMessage(msg);
 }
 
 LVoid UIThread::destroy()
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_DESTROY;
+    msg->type = kUiDestory;
     postMessage(msg);
 }
 
 LVoid UIThread::initContext()
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_INIT;
+    msg->type = kUiInit;
     postMessage(msg);
 }
 
 LVoid UIThread::handleMessage(MiniMessage* msg)
 {
     switch (msg->type) {
-    case UI_INIT: {
+    case kUiInit: {
         m_gc->reset();
     } break;
-    case UI_DRAW: {
+    case kUiDraw: {
         drawUI(msg->obj);
     } break;
-    case UI_DRAWONLY: {
+    case kUiDrawOnly: {
         yanbo::HtmlView* item = static_cast<yanbo::HtmlView*>(msg->obj);
         if (item) {
             item->paint(*m_gc);
         }
     } break;
-    case UI_TOUCH_EVENT: {
+    case kUiTouchEvent: {
         LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
         reinterpret_cast<UIView*>(msg->arg0)->handleTouchEvent(*evt);
         delete evt;
         flush();
     } break;
-    case UI_KEY_EVENT: {
+    case kUiKeyEvent: {
         LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
         reinterpret_cast<UIView*>(msg->arg0)->handleKeyEvent(*evt);
         delete evt;
     } break;
-    case UI_SETINPUT: {
+    case kUiSetInput: {
         String text(_CS(msg->obj), LTrue, msg->arg0);
         InputView* view = (InputView*)msg->arg1;
         view->setInputValue(text);
         drawUI(view);
     } break;
-    case UI_VIDEO_UPDATE: {
+    case kUiVideoUpdate: {
         drawUI((LVoid*)msg->arg0);
     } break;
-    case UI_IMAGE_LOADED: {
+    case kUiImageLoaded: {
         if (!msg->arg0)
             return;
         reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
     } break;
-    case UI_OP_EXEC: {
+    case kUiOperationExec: {
         UIOperation::instance()->execute();
         flush();
         //submit();
     } break;
-    case UI_SUBMIT: {
+    case kUiSubmit: {
         flush();
     } break;
-    case UI_ON_KEYBOARD_SHOW: {
+    case kUiOnKeyboardShow: {
         HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
         LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
         LInt y = topLeft.iY + view->getYpos();
@@ -141,7 +139,7 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         rootView->paint(*m_gc);
         flush();
     } break;
-    case UI_ON_KEYBOARD_HIDE: {
+    case kUiOnKeyboardHide: {
         HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
         HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
         if (rootView->getYpos() == 0) {
@@ -152,14 +150,14 @@ LVoid UIThread::handleMessage(MiniMessage* msg)
         rootView->paint(*m_gc);
         flush();
     } break;
-    case UI_DESTROY: {
+    case kUiDestory: {
         //m_context.destroyGL();
         m_continue = LFalse;
     }
-    case UI_RESET: {
+    case kUiReset: {
         resetGL(msg);
     } break;
-    case UI_RUN_ANIM: {
+    case kUiRunAnimation: {
         std::function<void()>* callback = (std::function<void()>*)msg->obj;
         (*callback)();
     } break;
@@ -174,7 +172,7 @@ LVoid UIThread::flush()
 LVoid UIThread::setInputText(const String& text, LIntPtr item)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_SETINPUT;
+    msg->type = kUiSetInput;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
     msg->arg1 = item;
@@ -185,7 +183,7 @@ LVoid UIThread::setInputText(const String& text, LIntPtr item)
 void UIThread::videoUpdate(LIntPtr item)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_VIDEO_UPDATE;
+    msg->type = kUiVideoUpdate;
     msg->arg0 = item;
     m_queue->push(msg);
     notify();
@@ -194,7 +192,7 @@ void UIThread::videoUpdate(LIntPtr item)
 LVoid UIThread::imageLoaded(LIntPtr item)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_IMAGE_LOADED;
+    msg->type = kUiImageLoaded;
     msg->arg0 = item;
 
     m_queue->push(msg);
@@ -214,16 +212,16 @@ LVoid UIThread::drawUI(LVoid* view)
 LVoid UIThread::uiExecute()
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_OP_EXEC;
+    msg->type = kUiOperationExec;
     m_queue->push(msg);
     notify();
 }
 
 LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 {
-    m_queue->removeMessage(UI_TOUCH_EVENT);
+    m_queue->removeMessage(kUiTouchEvent);
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_TOUCH_EVENT;
+    msg->type = kUiTouchEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
@@ -234,7 +232,7 @@ LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 {
     MiniMessage* msg = m_queue->obtain();
-    msg->type = UI_KEY_EVENT;
+    msg->type = kUiKeyEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
@@ -245,7 +243,7 @@ LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_ON_KEYBOARD_SHOW;
+    msg->type = kUiOnKeyboardShow;
     msg->arg0 = item;
     msg->arg1 = keyboardHeight;
     postMessage(msg);
@@ -254,7 +252,7 @@ LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
 LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_ON_KEYBOARD_HIDE;
+    msg->type = kUiOnKeyboardHide;
     msg->arg0 = item;
     msg->arg1 = keyboardHeight;
     postMessage(msg);
@@ -264,7 +262,7 @@ LVoid UIThread::resetContext()
 {
     MiniMessage* msg = obtain();
     msg->obj = m_manager->currentApp()->view();
-    msg->type = UI_RESET;
+    msg->type = kUiReset;
     postMessage(msg);
 }
 
@@ -278,7 +276,7 @@ LVoid UIThread::resetGL(MiniMessage* msg)
 LVoid UIThread::runAnimation(LVoid* callback)
 {
     MiniMessage* msg = obtain();
-    msg->type = UI_RUN_ANIM;
+    msg->type = kUiRunAnimation;
     msg->obj = callback;
     postMessage(msg);
 }

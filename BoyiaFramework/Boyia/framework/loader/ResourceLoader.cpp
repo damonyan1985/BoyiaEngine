@@ -111,14 +111,14 @@ LVoid ResourceLoader::onLoadFinished(const String& data, LInt resType)
 {
     KLOG("ResourceLoader::onLoadFinished()");
     switch (resType) {
-    case HTMLDOC: {
+    case kHtmlDoc: {
         executeDocument(data);
     } break;
-    case CACHEJS: {
+    case kCacheScript: {
         executeScript(data);
     } break;
-    case CACHECSS: {
-        executeCss(data);
+    case kCacheStyleSheet: {
+        executeStyleSheet(data);
     } break;
     default:
         break;
@@ -127,7 +127,7 @@ LVoid ResourceLoader::onLoadFinished(const String& data, LInt resType)
 
 LVoid ResourceLoader::load(const String& url, LoadType type)
 {
-    if (type == CACHECSS) {
+    if (type == kCacheStyleSheet) {
         ++m_cssSize;
     }
 
@@ -183,7 +183,7 @@ HtmlRenderer* ResourceLoader::render() const
 }
 
 // Execute external css
-LVoid ResourceLoader::executeCss(const String& data)
+LVoid ResourceLoader::executeStyleSheet(const String& data)
 {
     KFORMATLOG("ResourceLoader::executeCss data=%s", GET_STR(data));
     util::InputStream is(data);
@@ -218,6 +218,6 @@ LVoid ResourceLoader::repaint(HtmlView* item)
 
 LVoid ResourceLoader::loadString(const String& src)
 {
-    onLoadFinished(src, HTMLDOC);
+    onLoadFinished(src, kHtmlDoc);
 }
 }

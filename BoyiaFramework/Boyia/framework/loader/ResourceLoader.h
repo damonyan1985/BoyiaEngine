@@ -18,9 +18,9 @@ class UIView;
 class ResourceLoader {
 public:
     enum LoadType {
-        HTMLDOC = 0,
-        CACHEJS,
-        CACHECSS,
+        kHtmlDoc = 0,
+        kCacheStyleSheet,
+        kCacheScript
     };
 
 public:
@@ -40,7 +40,7 @@ public:
     LVoid repaint(HtmlView* item = NULL);
 
     LVoid executeDocument(const String& data);
-    LVoid executeCss(const String& data);
+    LVoid executeStyleSheet(const String& data);
     LVoid executeScript(const String& data);
     HtmlRenderer* render() const;
     UIView* view() const;

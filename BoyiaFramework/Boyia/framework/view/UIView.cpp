@@ -18,7 +18,7 @@ UIView::UIView()
     , m_controller(NULL)
     , m_jsHandler(NULL)
 {
-    setComponents();
+    initComponents();
 }
 
 UIView::~UIView()
@@ -46,7 +46,7 @@ const LRect& UIView::getClientRange() const
     return AppManager::instance()->getViewport();
 }
 
-void UIView::setComponents()
+void UIView::initComponents()
 {
     if (!m_loader) {
         m_loader = new ResourceLoader(NULL);
@@ -66,7 +66,7 @@ LGraphicsContext* UIView::getGraphicsContext() const
 void UIView::loadPage(const String& url)
 {
     if (m_loader) {
-        m_loader->load(url, ResourceLoader::HTMLDOC);
+        m_loader->load(url, ResourceLoader::kHtmlDoc);
     }
 }
 

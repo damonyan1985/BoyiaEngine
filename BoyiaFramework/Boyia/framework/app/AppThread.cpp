@@ -1,5 +1,6 @@
 #include "AppThread.h"
 #include "AppManager.h"
+#include "SalLog.h"
 #include "UIView.h"
 
 namespace yanbo {
@@ -20,8 +21,6 @@ AppThread::AppThread(AppManager* manager)
 
 AppThread* AppThread::instance()
 {
-    // static AppThread sThread;
-    // return &sThread;
     return AppManager::instance()->appThread();
 }
 
@@ -30,7 +29,7 @@ LVoid AppThread::handleMessage(MiniMessage* msg)
     switch (msg->type) {
     case kAppInit: {
         String url(_CS(msg->obj), LFalse, msg->arg0);
-        //UIView::getInstance()->loadPage(url);
+        m_manager->currentApp()->vm()->useVM();
         m_manager->currentApp()->view()->loadPage(url);
     } break;
     case kAppQuit: {
