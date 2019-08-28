@@ -2,7 +2,7 @@
  * HtmlForm.cpp
  *
  *  Created on: 2011-7-26
- *      Author: Administrator
+ *      Author: yanbo
  */
 
 #include "HtmlForm.h"
@@ -78,47 +78,47 @@ LBool HtmlForm::hasPassword()
         if (fItem->getTagType() == HtmlTags::INPUT) {
             InputView* inpItem = (InputView*)fItem;
             if (inpItem->getInputType() == InputView::PASSWORD) {
-                return util::LTrue;
+                return LTrue;
             }
         }
     }
 
-    return util::LFalse;
+    return LFalse;
 }
 
 String HtmlForm::getEncoding()
 {
     if (m_boundaryString.GetLength() == 0) {
         return m_encoding;
-    } else {
-        return m_encoding + _CS("; boundary=") + m_boundaryString;
     }
+
+    return m_encoding + _CS("; boundary=") + m_boundaryString;
 }
 
 String HtmlForm::getItemValue(const String& itemName)
 {
     FormView* fItem = getFormView(itemName);
-    if (NULL != fItem) {
+    if (fItem) {
         return fItem->getValue();
-    } else {
-        return _CS("");
     }
+
+    return _CS("");
 }
 
 String HtmlForm::getItemMimeType(const String& itemName)
 {
     FormView* fItem = getFormView(itemName);
-    if (NULL != fItem) {
+    if (fItem) {
         return fItem->getMimeType();
-    } else {
-        return _CS("");
     }
+
+    return _CS("");
 }
 
 void HtmlForm::setItemValue(const String& name, const String& value)
 {
     FormView* fItem = getFormView(name);
-    if (NULL != fItem) {
+    if (fItem) {
         return fItem->setValue(value);
     }
 }
@@ -137,7 +137,7 @@ FormView* HtmlForm::getFormView(const String& itemName)
     return NULL;
 }
 
-void HtmlForm::UnCheckRadioButtons(const String& name)
+void HtmlForm::unCheckRadioButtons(const String& name)
 {
     FormViewList::Iterator iter = m_formList.begin();
     FormViewList::Iterator iterEnd = m_formList.end();
@@ -158,7 +158,7 @@ LInt HtmlForm::getLastSubmitTime()
 void HtmlForm::postForm(String& outstream)
 {
     LBool isMultiPart = m_encoding.CompareNoCase(_CS("multipart/form-data"));
-    LBool firstParam = util::LTrue;
+    LBool firstParam = LTrue;
 }
 
 String HtmlForm::encodeFormViews()
