@@ -3,12 +3,9 @@ package com.boyia.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Window;
+import android.app.Activity;
 
-import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.proto.Server;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -19,7 +16,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);

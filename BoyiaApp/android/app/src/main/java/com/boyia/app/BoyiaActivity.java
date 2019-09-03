@@ -1,40 +1,28 @@
 package com.boyia.app;
 
-import com.boyia.app.common.base.BaseActivity;
-import com.boyia.app.task.JobScheduler;
-import com.boyia.app.ui.BoyiaWindow;
+import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaUIView;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.widget.FrameLayout;
+import android.app.Activity;
 import android.os.Process;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 
-public class BoyiaActivity extends BaseActivity {
+public class BoyiaActivity extends Activity {
 	private static final String TAG = BoyiaActivity.class.getSimpleName();
-	private BoyiaWindow mWindow = null;
 	private boolean mNeedExit = false;
 
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		//getWindow().setBackground(getResources().getDrawable(R.drawable.ic_launcher));
-		setContentView(new FrameLayout(this));
-		initView();
-    }
-
-	private void initBoyiaWindow() {
-		mWindow = new BoyiaWindow(this);
-		mWindow.show();
-		mWindow.requestFocus();
-	}
-
-	private void initView() {
-		BoyiaLog.d("yanbo", "BoyiaAppActivity onCreate");
 		BoyiaUtils.loadLib();
-		initBoyiaWindow();
-	}
+		setContentView(R.layout.main);
+    }
 
 	@Override
 	protected void onPause() {
@@ -48,11 +36,6 @@ public class BoyiaActivity extends BaseActivity {
 
 	@Override
 	public void onDestroy() {
-		if (mWindow != null && mWindow.isVisible()) {
-			mWindow.quitUIView();
-		}
-
-		JobScheduler.getInstance().stopAllThread();
 		super.onDestroy();
 	}
 
@@ -83,7 +66,7 @@ public class BoyiaActivity extends BaseActivity {
 	public void backExit() {
 		mNeedExit = true;
 		BoyiaUtils.showToast("再按一次退出程序");
-		getUIHandler().postDelayed(new Runnable() {
+		BaseApplication.getInstance().getAppHandler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				mNeedExit = false;
@@ -101,14 +84,8 @@ public class BoyiaActivity extends BaseActivity {
 		super.onWindowFocusChanged(hasFocus);
 	}
 
-	
 	@Override
 	public void onNewIntent(Intent intent) {
 		BoyiaUtils.showToast(intent.getAction());
-	}
-	
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		return super.dispatchKeyEvent(event);
 	}
 }

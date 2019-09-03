@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.Date;
-import com.boyia.app.common.BoyiaApplication;
+import com.boyia.app.common.BaseApplication;
 import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
@@ -20,9 +20,9 @@ import android.widget.TextView;
 public class BoyiaFileUtil {
 	private static final String ANDROID_SECURE = "/mnt/sdcard/.android_secure";
 	private static String sBoyiaRootPath = null;
-	public static final String PRIVATE_FILE_PATH = BoyiaApplication.getCurrenContext().getFilesDir()
+	public static final String PRIVATE_FILE_PATH = BaseApplication.getInstance().getFilesDir()
 			.getAbsolutePath();
-	public static final String PRIVATE_CACHE_PATH = BoyiaApplication.getCurrenContext().getCacheDir()
+	public static final String PRIVATE_CACHE_PATH = BaseApplication.getInstance().getCacheDir()
 			.getAbsolutePath();
 
 	public static String getFilePathRoot() {
@@ -30,17 +30,17 @@ public class BoyiaFileUtil {
 			return sBoyiaRootPath;
 		}
 		
-		if (BoyiaApplication.getCurrenContext() == null) {
+		if (BaseApplication.getInstance() == null) {
 			return null;
 		}
 
 		if (BoyiaUtils.existSDCard()) {
-			File cacheDir = BoyiaApplication.getCurrenContext().getExternalCacheDir();
+			File cacheDir = BaseApplication.getInstance().getExternalCacheDir();
             if (cacheDir == null ||
                     !cacheDir.exists() ||
                     !cacheDir.isDirectory()) {
             	sBoyiaRootPath = Environment.getExternalStorageDirectory().getPath()
-    					+ "/mini/";
+    					+ "/boyia/";
 				BoyiaFileUtil.createDirectory(sBoyiaRootPath);
             } else {
             	sBoyiaRootPath = cacheDir.getAbsolutePath() + "/";
@@ -56,7 +56,7 @@ public class BoyiaFileUtil {
 		FileOutputStream output = null;
 		if (BoyiaUtils.existSDCard()) {
 			try {
-				output = BoyiaApplication.getCurrenContext().openFileOutput(
+				output = BaseApplication.getInstance().openFileOutput(
 						sBoyiaRootPath + fileName, Context.MODE_WORLD_READABLE);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

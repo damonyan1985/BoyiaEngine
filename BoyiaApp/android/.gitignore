@@ -5,11 +5,6 @@
 .DS_Store
 /build
 /captures
-/util/src/main/java/com/boyia/app/common/http
-/util/src/main/java/com/boyia/app/common/job
-/util/src/main/java/com/boyia/app/common/loader
-/util/src/main/java/com/boyia/app/common/base
-/util/src/main/java/com/boyia/app/common/utils
 /task
 /loader
 /maven

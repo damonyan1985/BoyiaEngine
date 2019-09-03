@@ -2,7 +2,7 @@ package com.boyia.app.core;
 
 import java.io.IOException;
 
-import com.boyia.app.common.BoyiaApplication;
+import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 
 import android.graphics.SurfaceTexture;
@@ -131,7 +131,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 		initListener();
 
 		try {
-			mPlayer.setDataSource(BoyiaApplication.getCurrenContext(),
+			mPlayer.setDataSource(BaseApplication.getInstance(),
 					mPlayerUri);
 			mPlayer.setScreenOnWhilePlaying(true);
 			mPlayer.prepareAsync();
