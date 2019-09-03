@@ -17,7 +17,6 @@
 
 namespace yanbo {
 
-#define kDefaultInputBorderWidth 2
 HtmlView::HtmlView(
     const String& id,
     LBool selectable)
