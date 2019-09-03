@@ -1,8 +1,7 @@
 package com.boyia.app.update;
 
-import com.boyia.app.BoyiaMultiApplication;
 import com.boyia.app.AppDB;
-import com.boyia.app.common.BoyiaApplication;
+import com.boyia.app.common.BaseApplication;
 
 import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
@@ -13,7 +12,7 @@ public class DownloadUtil {
         AppDB dbHelper = null;
         try {
             if (null == dbHelper) {
-                dbHelper = new AppDB(BoyiaApplication.getCurrenContext());
+                dbHelper = new AppDB(BaseApplication.getInstance());
             }
             db = dbHelper.getWritableDatabase();
         } catch (Exception e) {

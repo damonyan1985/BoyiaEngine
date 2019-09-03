@@ -16,6 +16,7 @@
 #include "LoaderAndroid.h"
 #include "MiniThread.h"
 #include "MiniThreadPool.h"
+#include "PlatformBridge.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "StringUtils.h"
@@ -77,7 +78,10 @@ static void nativeInitUIView(
 
     JNI_LOG_ON = isDebug;
     //ArmMemeset(NULL, 0, 0);
-    FileUtil::printAllFiles("/data/data/com.boyia.app/files/");
+    if (!FileUtil::isExist(yanbo::PlatformBridge::getAppRoot())) {
+        FileUtil::createDirs(yanbo::PlatformBridge::getAppRoot());
+    }
+    FileUtil::printAllFiles(yanbo::PlatformBridge::getAppRoot());
     KLOG("MiniTaskThread::run nativeInitUIView");
     w = 720;
     h = 1280;

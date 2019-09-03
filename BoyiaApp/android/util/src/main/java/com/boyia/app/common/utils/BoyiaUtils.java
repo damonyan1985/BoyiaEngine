@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import com.boyia.app.common.BoyiaApplication;
+import com.boyia.app.common.BaseApplication;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -44,10 +44,10 @@ public class BoyiaUtils {
 	// Sub Thread exec Toast needs Looper
 	public static void showToast(final String info) {
 		BoyiaLog.d("engine", "toast="+info);
-		BoyiaApplication.getInstance().getAppHandler().post(new Runnable() {
+		BaseApplication.getInstance().getAppHandler().post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(BoyiaApplication.getInstance(), info,
+				Toast.makeText(BaseApplication.getInstance(), info,
 							Toast.LENGTH_SHORT).show();
 			}
 		});

@@ -1,10 +1,12 @@
 package com.boyia.app.core;
 
 //import android.graphics.PixelFormat;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -14,7 +16,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
-import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.input.BoyiaInputConnection;
 import com.boyia.app.input.BoyiaInputManager;
 import com.boyia.app.common.utils.BoyiaLog;
@@ -44,19 +45,34 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	private BoyiaInputConnection mInputConnect = null;
 	private static BoyiaInputManager mInputManager = null;
 	
-	public BoyiaUIView(BaseActivity context) {
-		super(context);
-		nativeInitJNIContext(context);
-		init();
-		mInputManager = new BoyiaInputManager(this);
+	public BoyiaUIView(Context context) {
+		this(context, null);
+	}
+
+	public BoyiaUIView(Context context, AttributeSet set) {
+		super(context, set);
+		init(context);
 	}
 	
-	private void init() {
+	private void init(Context context) {
 		// 叠在其他surfaceview之上
+		nativeInitJNIContext((Activity) context);
 		setZOrderOnTop(true);
 		//setZOrderMediaOverlay(true);
 		getHolder().addCallback(this);
 		getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		mInputManager = new BoyiaInputManager(this);
+		setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				onTouchDown(event);
+				return true;
+			}
+		});
+
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+		requestFocus();
 	}
 	
 	public void setInputText(String text) {

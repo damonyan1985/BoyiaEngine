@@ -1,7 +1,7 @@
 package com.boyia.app.input;
 
-import com.boyia.app.common.base.BaseActivity;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaUIView;
 
 import android.app.Activity;
@@ -58,13 +58,13 @@ public class BoyiaInputManager {
 	}
     
     public void show(final long item, final String text) {
-    	//BoyiaUtils.showToast("重新弹起");
-    	BaseActivity context = (BaseActivity) mView.getContext();
+    	final Activity context = (Activity) mView.getContext();
     	context.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				BoyiaUtils.showToast("show keyboard");
 		    	mItem = item;
-		    	InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    	InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		    	imm.showSoftInput(mView, 0, null);
 		    	mView.resetCommitText(text);
 			}
