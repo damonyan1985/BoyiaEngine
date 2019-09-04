@@ -186,7 +186,7 @@ void CssParser::addDeclaration(PropertyMap* properties, PropertyName& prop, Prop
     if (prop.GetLength() > 0 && value.GetLength() > 0) {
         // 除去空白
         PropertyName realProp = StringUtils::skipBlank(prop);
-        // 计算处理了大小写的字符串的哈希值
+        // 计算处理了大小写的字符串的标识符
         properties->put(CssTags::getInstance()->genIdentify(realProp.ToLower()), value);
     }
 }

@@ -19,7 +19,7 @@ class ResourceHandle : public NetworkClient, public AppEvent {
 public:
     ResourceHandle(ResourceLoader* loader, LInt type, const String& url)
         : m_loader(loader)
-        , m_result(NetworkClient::NETWORK_SUCCESS)
+        , m_result(NetworkClient::kNetworkSuccess)
         , m_resType(type)
         , m_url(url)
     {
@@ -58,9 +58,9 @@ public:
         __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run");
 
         BOYIA_LOG("ResourceHandle---run---url: %s", GET_STR(m_url));
-        if (m_result == NetworkClient::NETWORK_SUCCESS) {
+        if (m_result == NetworkClient::kNetworkSuccess) {
             //BoyiaPtr<String> sptr = m_builder.toString();
-            __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run NETWORK_SUCCESS");
+            __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run kNetworkSuccess");
             __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "Parse script=%s", (const char*)m_data->GetBuffer());
             m_loader->onLoadFinished(*m_data.get(), m_resType);
         } else {

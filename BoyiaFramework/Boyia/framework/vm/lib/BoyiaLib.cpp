@@ -15,7 +15,6 @@
 #include <stdio.h>
 
 extern void BoyiaLog(const char* format, ...);
-//extern LVoid MiniSort(BoyiaValue* vT, LInt len);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 
 char* convertMStr2Str(BoyiaStr* str)

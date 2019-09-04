@@ -110,7 +110,7 @@ static void nativeOnDataFinished(JNIEnv* env, jobject obj, jlong callback)
 
 static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong callback)
 {
-    reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::NETWORK_FILE_ERROR);
+    reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::kNetworkFileError);
 }
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
