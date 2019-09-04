@@ -10,10 +10,10 @@ namespace yanbo {
 class NetworkClient {
 public:
     enum LoadError {
-        NETWORK_SUCCESS,
-        NETWORK_UNCONNECT,
-        NETWORK_FILE_ERROR,
-        NETWORK_MEMORY_LACK
+        kNetworkSuccess,
+        kNetworkUnConnect,
+        kNetworkFileError,
+        kNetworkMemoryLack
     };
 
 public:
