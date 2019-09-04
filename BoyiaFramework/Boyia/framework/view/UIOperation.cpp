@@ -15,8 +15,8 @@ UIOperation* UIOperation::instance()
 }
 
 UIOperation::UIOperation()
-    : m_msgs(new KVector<MiniMessage*>(0, MAX_OPMSG_SIZE))
-    , m_swapMsgs(new KVector<MiniMessage*>(0, MAX_OPMSG_SIZE))
+    : m_msgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
+    , m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
 {
 }
 
@@ -26,15 +26,15 @@ UIOperation::~UIOperation()
     delete m_swapMsgs;
 }
 
-MiniMessage* UIOperation::obtain()
+Message* UIOperation::obtain()
 {
     AutoLock lock(&m_uiMutex);
-    return MiniMessageCache::obtain();
+    return MessageCache::obtain();
 }
 
 LVoid UIOperation::opSetText(LVoid* view, const String& text)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_SETTEXT;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
@@ -44,7 +44,7 @@ LVoid UIOperation::opSetText(LVoid* view, const String& text)
 
 LVoid UIOperation::opAddChild(LVoid* view, LVoid* child)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_ADDCHILD;
     msg->obj = view;
     msg->arg0 = (LIntPtr)child;
@@ -53,7 +53,7 @@ LVoid UIOperation::opAddChild(LVoid* view, LVoid* child)
 
 LVoid UIOperation::opSetImageUrl(LVoid* view, const String& url)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_SETIMAGE_URL;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
@@ -63,7 +63,7 @@ LVoid UIOperation::opSetImageUrl(LVoid* view, const String& url)
 
 LVoid UIOperation::opLoadImageUrl(LVoid* view, const String& url)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_LOADIMAGE_URL;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
@@ -73,7 +73,7 @@ LVoid UIOperation::opLoadImageUrl(LVoid* view, const String& url)
 
 LVoid UIOperation::opViewDraw(LVoid* view)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_DRAW;
     msg->obj = view;
     m_msgs->addElement(msg);
@@ -81,7 +81,7 @@ LVoid UIOperation::opViewDraw(LVoid* view)
 
 LVoid UIOperation::opApplyDomStyle(LVoid* view)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = UIOP_APPLY_DOM_STYLE;
     msg->obj = view;
     m_msgs->addElement(msg);
@@ -91,7 +91,7 @@ LVoid UIOperation::swapBufferImpl()
 {
     AutoLock lock(&m_uiMutex);
 
-    KVector<MiniMessage*>* buffer = m_msgs;
+    KVector<Message*>* buffer = m_msgs;
     m_msgs = m_swapMsgs;
     m_swapMsgs = buffer;
     m_msgs->clear();
@@ -110,7 +110,7 @@ LVoid UIOperation::execute()
     AutoLock lock(&m_uiMutex);
     LInt size = m_swapMsgs->size();
     for (LInt index = 0; index < size; ++index) {
-        MiniMessage* msg = m_swapMsgs->elementAt(index);
+        Message* msg = m_swapMsgs->elementAt(index);
         if (!msg)
             continue;
         switch (msg->type) {
@@ -148,7 +148,7 @@ LVoid UIOperation::execute()
     m_swapMsgs->clear();
 }
 
-LVoid UIOperation::viewSetText(MiniMessage* msg)
+LVoid UIOperation::viewSetText(Message* msg)
 {
     String text(_CS(msg->obj), LTrue, msg->arg0);
     HtmlView* view = (HtmlView*)msg->arg1;
@@ -169,7 +169,7 @@ LVoid UIOperation::viewSetText(MiniMessage* msg)
     }
 }
 
-LVoid UIOperation::viewAddChild(MiniMessage* msg)
+LVoid UIOperation::viewAddChild(Message* msg)
 {
     HtmlView* view = static_cast<HtmlView*>(msg->obj);
     HtmlView* child = (HtmlView*)msg->arg0;
@@ -179,7 +179,7 @@ LVoid UIOperation::viewAddChild(MiniMessage* msg)
     }
 }
 
-LVoid UIOperation::viewDraw(MiniMessage* msg)
+LVoid UIOperation::viewDraw(Message* msg)
 {
     HtmlView* view = (HtmlView*)msg->obj;
     if (!view)

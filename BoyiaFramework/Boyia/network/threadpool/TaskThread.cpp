@@ -1,54 +1,54 @@
 /*
- * MiniMutex.cpp
+ * TaskThread.cpp
  *
  *  Created on: 2015-11-20
  *      Author: yanbo
  */
-#include "MiniTaskThread.h"
+#include "TaskThread.h"
 #include "AutoLock.h"
 #include "SalLog.h"
 
 namespace yanbo {
 
-MiniTaskThread::MiniTaskThread(MiniBlockQueue* queue)
+TaskThread::TaskThread(BlockQueue* queue)
     : m_queue(queue)
     , m_continue(LTrue)
     , m_working(LFalse)
 {
 }
 
-MiniTaskThread::~MiniTaskThread()
+TaskThread::~TaskThread()
 {
 }
 
-LBool MiniTaskThread::working()
+LBool TaskThread::working()
 {
     return m_working;
 }
 
-void MiniTaskThread::run()
+void TaskThread::run()
 {
     while (m_continue) {
         if (m_queue == NULL) {
             return;
         }
 
-        BoyiaPtr<MiniTaskBase> task = m_queue->pollTask();
+        BoyiaPtr<TaskBase> task = m_queue->pollTask();
         if (task.get() != NULL) {
             m_working = LTrue;
-            KFORMATLOG("MiniTaskThread::run listsize=%d", m_queue->size());
+            KFORMATLOG("TaskThread::run listsize=%d", m_queue->size());
 
             // 智能指针会自动释放内存
             task->execute();
-            KFORMATLOG("MiniTaskThread::run listsize=%d end", m_queue->size());
+            KFORMATLOG("TaskThread::run listsize=%d end", m_queue->size());
         } else {
             m_working = LFalse;
-            MiniThread::waitOnNotify();
+            BaseThread::waitOnNotify();
         }
     }
 }
 
-void MiniTaskThread::stop()
+void TaskThread::stop()
 {
     m_continue = LFalse;
 }

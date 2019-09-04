@@ -3,7 +3,7 @@
 
 #include "GLContext.h"
 #include "LEvent.h"
-#include "MiniMessageThread.h"
+#include "MessageThread.h"
 #include "UtilString.h"
 
 namespace yanbo {
@@ -20,7 +20,7 @@ protected:
     friend class AppThread;
 };
 
-class AppThread : public MiniMessageThread {
+class AppThread : public MessageThread {
 public:
     enum Operation {
         kAppInit = 1,
@@ -31,7 +31,7 @@ public:
     AppThread(AppManager* manager);
     static AppThread* instance();
 
-    virtual LVoid handleMessage(MiniMessage* msg);
+    virtual LVoid handleMessage(Message* msg);
     LVoid destroy();
     LVoid load(const String& url);
     LVoid sendEvent(AppEvent* event);

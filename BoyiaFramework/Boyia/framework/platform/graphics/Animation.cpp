@@ -213,7 +213,7 @@ LVoid Animator::runTask(AnimationTask* task)
     };
 
     static std::function<void()> animCallback = [this]() -> LVoid {
-        MiniMessage* msg = this->obtain();
+        Message* msg = this->obtain();
         msg->type = ANIM_TIMEOUT;
         msg->obj = &timeoutCallback;
         msg->arg0 = (LIntPtr)&animCallback;
@@ -250,7 +250,7 @@ LVoid Animator::runTasks()
     //UIThread::instance()->submit();
 }
 
-LVoid Animator::handleMessage(MiniMessage* msg)
+LVoid Animator::handleMessage(Message* msg)
 {
     switch (msg->type) {
     case Animator::ANIM_TIMEOUT: {

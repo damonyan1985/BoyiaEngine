@@ -14,12 +14,11 @@
 #include "LEvent.h"
 #include "LGdi.h"
 #include "LoaderAndroid.h"
-#include "MiniThread.h"
-#include "MiniThreadPool.h"
 #include "PlatformBridge.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "StringUtils.h"
+#include "ThreadPool.h"
 #include "UIThread.h"
 #include "UIView.h"
 #include <CallStack.h>
@@ -82,7 +81,7 @@ static void nativeInitUIView(
         FileUtil::createDirs(yanbo::PlatformBridge::getAppRoot());
     }
     FileUtil::printAllFiles(yanbo::PlatformBridge::getAppRoot());
-    KLOG("MiniTaskThread::run nativeInitUIView");
+    KLOG("TaskThread::run nativeInitUIView");
     w = 720;
     h = 1280;
     yanbo::ShaderUtil::setScreenSize(w, h);

@@ -36,7 +36,7 @@ import android.app.Activity;
  * @Author Yan bo
  * @Time 2018-9-1
  * @Copyright Reserved
- * @Descrption OpenGL ES 3.0 FrameWork Construct By Yanbo
+ * @Descrption OpenGL ES 3.0 Framework Construct By Yanbo
  */
 public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 	protected static final String TAG = "BoyiaUIView";

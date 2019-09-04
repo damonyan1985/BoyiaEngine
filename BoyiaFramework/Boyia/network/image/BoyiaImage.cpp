@@ -1,4 +1,4 @@
-#include "NetImage.h"
+#include "BoyiaImage.h"
 #include "ImageView.h"
 #include "jpeglib.h"
 #include "png.h"
@@ -24,7 +24,7 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
     }
 }
 
-NetImage::NetImage()
+BoyiaImage::BoyiaImage()
     : m_image(NULL)
     , m_pixels(NULL)
 {
@@ -33,22 +33,22 @@ NetImage::NetImage()
 // jpeg FFD8FFE000104A464946
 // png 89 50 4e 47 0d 0a 1a 0a 00 00
 // gif 47494638396126026f01
-LInt NetImage::getType(const char* data)
+LInt BoyiaImage::getType(const char* data)
 {
     if (data[0] == 0xFF
         && data[1] == 0xD8
         && data[2] == 0xFF) {
-        return ENETIMAGE_JPEG;
+        return kImageJpeg;
     }
 
     if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4e && data[3] == 0x47) {
-        return ENETIMAGE_PNG;
+        return kImagePng;
     }
 
-    return ENETIMAGE_NONE;
+    return kImageNone;
 }
 
-LVoid NetImage::readJPEG(const LByte* data, size_t size)
+LVoid BoyiaImage::readJPEG(const LByte* data, size_t size)
 {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -77,7 +77,7 @@ LVoid NetImage::readJPEG(const LByte* data, size_t size)
     jpeg_destroy_decompress(&cinfo);
 }
 
-LVoid NetImage::readPNG(const LByte* data, size_t size)
+LVoid BoyiaImage::readPNG(const LByte* data, size_t size)
 {
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     if (!png_ptr) {
@@ -151,17 +151,17 @@ LVoid NetImage::readPNG(const LByte* data, size_t size)
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
 }
 
-LVoid* NetImage::item() const
+LVoid* BoyiaImage::item() const
 {
     return m_image;
 }
 
-LVoid* NetImage::pixels() const
+LVoid* BoyiaImage::pixels() const
 {
     return m_pixels;
 }
 
-const String& NetImage::url() const
+const String& BoyiaImage::url() const
 {
     return static_cast<ImageView*>(m_image)->url();
 }

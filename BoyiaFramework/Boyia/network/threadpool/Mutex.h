@@ -1,20 +1,20 @@
 /*
- * MiniMutex.h
+ * Mutex.h
  *
  *  Created on: 2015-7-29
  *      Author: yanbo
  */
-#ifndef MiniMutex_h
-#define MiniMutex_h
+#ifndef Mutex_h
+#define Mutex_h
 
 #include <pthread.h>
 
 namespace yanbo {
 
-class MiniMutex {
+class Mutex {
 public:
-    MiniMutex();
-    ~MiniMutex();
+    Mutex();
+    ~Mutex();
 
     void lock();
     void unlock();

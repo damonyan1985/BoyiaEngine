@@ -1,18 +1,18 @@
 /*
- * MiniMutex.cpp
+ * TaskBase.h
  *
  *  Created on: 2015-11-20
  *      Author: yanbo
  */
-#ifndef MiniTaskBase_h
-#define MiniTaskBase_h
+#ifndef TaskBase_h
+#define TaskBase_h
 #include "BoyiaRef.h"
 
 namespace yanbo {
 
-class MiniTaskBase : public BoyiaRef {
+class TaskBase : public BoyiaRef {
 public:
-    virtual ~MiniTaskBase();
+    virtual ~TaskBase();
 
 public:
     virtual void execute() = 0;

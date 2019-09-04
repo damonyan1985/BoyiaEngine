@@ -4,11 +4,11 @@
 #include "GLContext.h"
 #include "LEvent.h"
 #include "LGdi.h"
-#include "MiniMessageThread.h"
+#include "MessageThread.h"
 
 namespace yanbo {
 class AppManager;
-class UIThread : public MiniMessageThread {
+class UIThread : public MessageThread {
 public:
     enum MessageType {
         kUiInit = 1,
@@ -54,10 +54,10 @@ public:
     LVoid onKeyboardHide(LIntPtr item, LInt keyboardHeight);
 
     LGraphicsContext* graphics() const;
-    virtual LVoid handleMessage(MiniMessage* msg);
+    virtual LVoid handleMessage(Message* msg);
 
 private:
-    LVoid resetGL(MiniMessage* msg);
+    LVoid resetGL(Message* msg);
     LVoid flush();
 
     LVoid drawUI(LVoid* view);

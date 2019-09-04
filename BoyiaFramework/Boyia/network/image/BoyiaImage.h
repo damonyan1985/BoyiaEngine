@@ -1,5 +1,5 @@
-#ifndef NetImage_h
-#define NetImage_h
+#ifndef BoyiaImage_h
+#define BoyiaImage_h
 
 #include "HtmlView.h"
 #include <stddef.h> // size_t
@@ -9,15 +9,15 @@
 // 的首选
 namespace yanbo {
 
-class NetImage : public LImage {
+class BoyiaImage : public LImage {
 public:
     enum ImageType {
-        ENETIMAGE_NONE,
-        ENETIMAGE_JPEG,
-        ENETIMAGE_PNG,
-        ENETIMAGE_GIF
+        kImageNone,
+        kImageJpeg,
+        kImagePng,
+        kImageGif
     };
-    NetImage();
+    BoyiaImage();
 
     LInt getType(const char* data);
     LVoid readJPEG(const LByte* data, size_t size);

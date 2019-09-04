@@ -3,7 +3,7 @@
 
 #include "BoyiaClientListener.h"
 #include "BoyiaRef.h"
-#include "MiniMutex.h"
+#include "Mutex.h"
 #include "UtilString.h"
 
 namespace yanbo {
@@ -37,7 +37,7 @@ private:
 
     LInt m_socketHandle;
     BoyiaClientListener* m_listener;
-    MiniMutex m_mutex;
+    Mutex m_mutex;
 };
 }
 #endif
