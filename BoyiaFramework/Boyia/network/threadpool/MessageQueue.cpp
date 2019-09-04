@@ -1,9 +1,9 @@
-#include "MiniMessageQueue.h"
+#include "MessageQueue.h"
 
 namespace yanbo {
 
 #define MAX_MESSAGE_SIZE 50
-MiniMessage::MiniMessage()
+Message::Message()
     : type(0)
     , obj(NULL)
     , recycle(LTrue)
@@ -11,7 +11,7 @@ MiniMessage::MiniMessage()
 {
 }
 
-LVoid MiniMessage::msgRecycle()
+LVoid Message::msgRecycle()
 {
     if (inCache) {
         recycle = LTrue;
@@ -20,21 +20,21 @@ LVoid MiniMessage::msgRecycle()
     }
 }
 
-MiniMessageCache::MiniMessageCache()
+MessageCache::MessageCache()
     : m_cache(NULL)
 {
 }
 
-LVoid MiniMessageCache::initCache()
+LVoid MessageCache::initCache()
 {
-    m_cache = new MiniMessage[MAX_MESSAGE_SIZE];
+    m_cache = new Message[MAX_MESSAGE_SIZE];
     LInt size = MAX_MESSAGE_SIZE;
     while (size--) {
         m_cache[size].inCache = LTrue;
     }
 }
 
-MiniMessage* MiniMessageCache::obtain()
+Message* MessageCache::obtain()
 {
     if (m_cache == NULL) {
         initCache();
@@ -48,26 +48,26 @@ MiniMessage* MiniMessageCache::obtain()
         }
     }
 
-    return new MiniMessage();
+    return new Message();
 }
 
-void MiniMessageQueue::push(MiniMessage* msg)
+void MessageQueue::push(Message* msg)
 {
     AutoLock lock(&m_queueMutex);
     m_list.push(msg);
 }
 
-LInt MiniMessageQueue::size()
+LInt MessageQueue::size()
 {
     return m_list.count();
 }
 
-MiniMessage* MiniMessageQueue::poll()
+Message* MessageQueue::poll()
 {
     AutoLock lock(&m_queueMutex);
-    MiniMessage* msg = NULL;
+    Message* msg = NULL;
     if (!m_list.empty()) {
-        MiniMessageList::Iterator iter = m_list.begin();
+        MessageList::Iterator iter = m_list.begin();
         msg = *iter;
         m_list.erase(iter);
     }
@@ -75,19 +75,19 @@ MiniMessage* MiniMessageQueue::poll()
     return msg;
 }
 
-MiniMessage* MiniMessageQueue::obtain()
+Message* MessageQueue::obtain()
 {
     AutoLock lock(&m_queueMutex);
-    return MiniMessageCache::obtain();
+    return MessageCache::obtain();
 }
 
-LBool MiniMessageQueue::hasMessage(LInt type)
+LBool MessageQueue::hasMessage(LInt type)
 {
     AutoLock lock(&m_queueMutex);
-    MiniMessageList::Iterator iter = m_list.begin();
-    MiniMessageList::Iterator iterEnd = m_list.end();
+    MessageList::Iterator iter = m_list.begin();
+    MessageList::Iterator iterEnd = m_list.end();
     while (iter != iterEnd) {
-        MiniMessage* msg = *iter;
+        Message* msg = *iter;
         if (msg->type == type) {
             return LTrue;
         }
@@ -99,15 +99,15 @@ LBool MiniMessageQueue::hasMessage(LInt type)
 }
 
 // 删除所有type一样的消息
-LVoid MiniMessageQueue::removeMessage(LInt type)
+LVoid MessageQueue::removeMessage(LInt type)
 {
     AutoLock lock(&m_queueMutex);
-    MiniMessageList::Iterator iter = m_list.begin();
-    MiniMessageList::Iterator iterEnd = m_list.end();
+    MessageList::Iterator iter = m_list.begin();
+    MessageList::Iterator iterEnd = m_list.end();
     while (iter != iterEnd) {
-        MiniMessage* msg = *iter;
+        Message* msg = *iter;
         if (msg->type == type) {
-            MiniMessageList::Iterator tmpIter = iter++;
+            MessageList::Iterator tmpIter = iter++;
             m_list.erase(tmpIter);
 
             msg->msgRecycle();

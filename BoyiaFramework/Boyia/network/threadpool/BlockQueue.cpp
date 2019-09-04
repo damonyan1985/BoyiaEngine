@@ -1,35 +1,35 @@
 /*
- * MiniMutex.cpp
+ * Mutex.cpp
  *
  *  Created on: 2015-11-20
  *      Author: yanbo
  */
-#include "MiniBlockQueue.h"
+#include "BlockQueue.h"
 #include "AutoLock.h"
 
 namespace yanbo {
 
-MiniBlockQueue::MiniBlockQueue()
+BlockQueue::BlockQueue()
 {
 }
 
-MiniBlockQueue::~MiniBlockQueue()
+BlockQueue::~BlockQueue()
 {
     clear();
 }
 
-void MiniBlockQueue::addTask(MiniTaskBase* task)
+void BlockQueue::addTask(TaskBase* task)
 {
     AutoLock lock(&m_queueMutex);
     m_list.push(task);
 }
 
-BoyiaPtr<MiniTaskBase> MiniBlockQueue::pollTask()
+BoyiaPtr<TaskBase> BlockQueue::pollTask()
 {
     AutoLock lock(&m_queueMutex);
-    BoyiaPtr<MiniTaskBase> task = NULL;
+    BoyiaPtr<TaskBase> task = NULL;
     if (!m_list.empty()) {
-        KList<BoyiaPtr<MiniTaskBase>>::Iterator iter = m_list.begin();
+        KList<BoyiaPtr<TaskBase>>::Iterator iter = m_list.begin();
         task = *iter;
         m_list.erase(iter);
     }
@@ -37,13 +37,13 @@ BoyiaPtr<MiniTaskBase> MiniBlockQueue::pollTask()
     return task;
 }
 
-void MiniBlockQueue::clear()
+void BlockQueue::clear()
 {
     AutoLock lock(&m_queueMutex);
     m_list.clear();
 }
 
-int MiniBlockQueue::size()
+int BlockQueue::size()
 {
     return m_list.count();
 }

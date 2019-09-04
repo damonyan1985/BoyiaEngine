@@ -5,7 +5,7 @@
 #include "HtmlView.h"
 #include "KList.h"
 #include "LGraphic.h"
-#include "MiniMessageThread.h"
+#include "MessageThread.h"
 
 namespace yanbo {
 
@@ -82,7 +82,7 @@ private:
 };
 
 typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
-class Animator : public MiniMessageThread {
+class Animator : public MessageThread {
 public:
     enum {
         ANIM_TIMEOUT
@@ -95,7 +95,7 @@ public:
     LVoid runTask(AnimationTask* task);
     LVoid runTasks();
 
-    virtual LVoid handleMessage(MiniMessage* msg);
+    virtual LVoid handleMessage(Message* msg);
 
 private:
     Animator();
@@ -103,7 +103,7 @@ private:
 
     AnimTaskList m_taskList;
     LBool m_continue;
-    MiniMutex m_lock;
+    Mutex m_lock;
 };
 }
 

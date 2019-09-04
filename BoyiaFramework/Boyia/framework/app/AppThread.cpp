@@ -24,7 +24,7 @@ AppThread* AppThread::instance()
     return AppManager::instance()->appThread();
 }
 
-LVoid AppThread::handleMessage(MiniMessage* msg)
+LVoid AppThread::handleMessage(Message* msg)
 {
     switch (msg->type) {
     case kAppInit: {
@@ -45,7 +45,7 @@ LVoid AppThread::handleMessage(MiniMessage* msg)
 
 LVoid AppThread::destroy()
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kAppQuit;
 
     m_queue->push(msg);
@@ -54,7 +54,7 @@ LVoid AppThread::destroy()
 
 LVoid AppThread::load(const String& url)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kAppInit;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
@@ -65,7 +65,7 @@ LVoid AppThread::load(const String& url)
 
 LVoid AppThread::sendEvent(AppEvent* event)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kAppEvent;
     msg->obj = event;
     m_queue->push(msg);

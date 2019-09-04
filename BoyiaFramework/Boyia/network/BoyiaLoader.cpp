@@ -1,17 +1,17 @@
 #include "BoyiaLoader.h"
 #include "BoyiaHttpEngine.h"
 #include "FileUtil.h"
-#include "MiniTaskBase.h"
-#include "MiniThreadPool.h"
 #include "PlatformBridge.h"
 #include "SalLog.h"
+#include "TaskBase.h"
+#include "ThreadPool.h"
 
 namespace yanbo {
 
 const String kSdkPrefix(_CS("boyiasdk://"), LTrue, 11);
 const String kSourcePrefix(_CS("boyia://"), LTrue, 8);
 
-class HttpTask : public MiniTaskBase, HttpCallback {
+class HttpTask : public TaskBase, HttpCallback {
 public:
     HttpTask(NetworkClient* client)
         : m_method(NetworkBase::GET)
@@ -83,7 +83,7 @@ private:
     NetworkClient* m_client;
 };
 
-class FileTask : public MiniTaskBase {
+class FileTask : public TaskBase {
 public:
     FileTask(NetworkClient* client)
         : m_client(client)
@@ -141,9 +141,9 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client)
     loadUrl(url, client, LTrue);
 }
 
-static MiniTaskBase* loadBoyiaUrl(const String& url, NetworkClient* client)
+static TaskBase* loadBoyiaUrl(const String& url, NetworkClient* client)
 {
-    MiniTaskBase* task = NULL;
+    TaskBase* task = NULL;
     if (url.StartWith(kSdkPrefix)) {
         String sdkUrl = url.Mid(kSdkPrefix.GetLength());
         String sdkPath = _CS(PlatformBridge::getAppPath()) + sdkUrl;
@@ -165,7 +165,7 @@ static MiniTaskBase* loadBoyiaUrl(const String& url, NetworkClient* client)
 
 LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWait)
 {
-    MiniTaskBase* task = loadBoyiaUrl(url, client);
+    TaskBase* task = loadBoyiaUrl(url, client);
     if (!task) {
         HttpTask* httpTask = new HttpTask(client);
         // Set Task Info
@@ -176,13 +176,13 @@ LVoid BoyiaLoader::loadUrl(const String& url, NetworkClient* client, LBool isWai
 
     if (isWait) {
         // SendMessage
-        MiniMessage* msg = m_queue->obtain();
+        Message* msg = m_queue->obtain();
         msg->type = ELOAD_URL;
         msg->obj = task;
         m_queue->push(msg);
         notify();
     } else {
-        MiniThreadPool::getInstance()->sendMiniTask(task);
+        ThreadPool::getInstance()->sendTask(task);
     }
 }
 
@@ -205,25 +205,25 @@ LVoid BoyiaLoader::postData(const String& url, NetworkClient* client, LBool isWa
 
     if (isWait) {
         // SendMessage
-        MiniMessage* msg = m_queue->obtain();
+        Message* msg = m_queue->obtain();
         msg->type = ELOAD_URL;
         msg->obj = task;
         m_queue->push(msg);
         notify();
     } else {
-        MiniThreadPool::getInstance()->sendMiniTask(task);
+        ThreadPool::getInstance()->sendTask(task);
     }
 
     // 置空数据指针
     m_data = NULL;
 }
 
-LVoid BoyiaLoader::handleMessage(MiniMessage* msg)
+LVoid BoyiaLoader::handleMessage(Message* msg)
 {
     switch (msg->type) {
     case ELOAD_URL: {
         BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 0);
-        MiniTaskBase* task = (MiniTaskBase*)msg->obj;
+        TaskBase* task = (TaskBase*)msg->obj;
         BOYIA_LOG("BoyiaLoader---handleMessage()---%d", 1);
         BOYIA_LOG("BoyiaLoader---handleMessage()---task=%d", (LIntPtr)task);
         task->execute();

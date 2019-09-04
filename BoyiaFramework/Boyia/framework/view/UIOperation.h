@@ -2,14 +2,14 @@
 #define UIOperation_h
 
 #include "KVector.h"
-#include "MiniMessageQueue.h"
+#include "MessageQueue.h"
 #include "UtilString.h"
 
 namespace yanbo {
 // UI线程一切操作【现有】Widget DOM必须走UIOperation
 // 最后将由PaintThread来执行UIOperation::execute()
 // 来完成绘制工作
-class UIOperation : public MiniMessageCache {
+class UIOperation : public MessageCache {
 public:
     enum UIOpType {
         UIOP_ADDCHILD,
@@ -27,7 +27,7 @@ public:
     ~UIOperation();
 
     LVoid execute();
-    virtual MiniMessage* obtain();
+    virtual Message* obtain();
     LVoid swapBuffer();
 
     // operation
@@ -39,15 +39,15 @@ public:
     LVoid opApplyDomStyle(LVoid* view);
 
 private:
-    LVoid viewAddChild(MiniMessage* msg);
-    LVoid viewSetText(MiniMessage* msg);
-    LVoid viewDraw(MiniMessage* msg);
+    LVoid viewAddChild(Message* msg);
+    LVoid viewSetText(Message* msg);
+    LVoid viewDraw(Message* msg);
 
     LVoid swapBufferImpl();
 
-    KVector<MiniMessage*>* m_msgs;
-    KVector<MiniMessage*>* m_swapMsgs;
-    MiniMutex m_uiMutex;
+    KVector<Message*>* m_msgs;
+    KVector<Message*>* m_swapMsgs;
+    Mutex m_uiMutex;
 };
 }
 #endif

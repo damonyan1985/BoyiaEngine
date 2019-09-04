@@ -7,7 +7,7 @@
 #include "InputView.h"
 #include "KList.h"
 //#include "MatrixState.h"
-#include "MiniMutex.h"
+#include "Mutex.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "UIOperation.h"
@@ -40,7 +40,7 @@ LGraphicsContext* UIThread::graphics() const
 
 LVoid UIThread::draw(LVoid* item)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiDraw;
     msg->obj = item;
     postMessage(msg);
@@ -48,7 +48,7 @@ LVoid UIThread::draw(LVoid* item)
 
 LVoid UIThread::drawOnly(LVoid* item)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiDrawOnly;
     msg->obj = item;
     postMessage(msg);
@@ -56,26 +56,26 @@ LVoid UIThread::drawOnly(LVoid* item)
 
 LVoid UIThread::submit()
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiSubmit;
     postMessage(msg);
 }
 
 LVoid UIThread::destroy()
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiDestory;
     postMessage(msg);
 }
 
 LVoid UIThread::initContext()
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiInit;
     postMessage(msg);
 }
 
-LVoid UIThread::handleMessage(MiniMessage* msg)
+LVoid UIThread::handleMessage(Message* msg)
 {
     switch (msg->type) {
     case kUiInit: {
@@ -171,7 +171,7 @@ LVoid UIThread::flush()
 
 LVoid UIThread::setInputText(const String& text, LIntPtr item)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiSetInput;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
@@ -182,7 +182,7 @@ LVoid UIThread::setInputText(const String& text, LIntPtr item)
 
 void UIThread::videoUpdate(LIntPtr item)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiVideoUpdate;
     msg->arg0 = item;
     m_queue->push(msg);
@@ -191,7 +191,7 @@ void UIThread::videoUpdate(LIntPtr item)
 
 LVoid UIThread::imageLoaded(LIntPtr item)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiImageLoaded;
     msg->arg0 = item;
 
@@ -211,7 +211,7 @@ LVoid UIThread::drawUI(LVoid* view)
 
 LVoid UIThread::uiExecute()
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiOperationExec;
     m_queue->push(msg);
     notify();
@@ -220,7 +220,7 @@ LVoid UIThread::uiExecute()
 LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 {
     m_queue->removeMessage(kUiTouchEvent);
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiTouchEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
@@ -231,7 +231,7 @@ LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 
 LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 {
-    MiniMessage* msg = m_queue->obtain();
+    Message* msg = m_queue->obtain();
     msg->type = kUiKeyEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
@@ -242,7 +242,7 @@ LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 
 LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiOnKeyboardShow;
     msg->arg0 = item;
     msg->arg1 = keyboardHeight;
@@ -251,7 +251,7 @@ LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
 
 LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiOnKeyboardHide;
     msg->arg0 = item;
     msg->arg1 = keyboardHeight;
@@ -260,13 +260,13 @@ LVoid UIThread::onKeyboardHide(LIntPtr item, LInt keyboardHeight)
 
 LVoid UIThread::resetContext()
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->obj = m_manager->currentApp()->view();
     msg->type = kUiReset;
     postMessage(msg);
 }
 
-LVoid UIThread::resetGL(MiniMessage* msg)
+LVoid UIThread::resetGL(Message* msg)
 {
     m_gc->reset();
     UIView* view = (UIView*)msg->obj;
@@ -275,7 +275,7 @@ LVoid UIThread::resetGL(MiniMessage* msg)
 
 LVoid UIThread::runAnimation(LVoid* callback)
 {
-    MiniMessage* msg = obtain();
+    Message* msg = obtain();
     msg->type = kUiRunAnimation;
     msg->obj = callback;
     postMessage(msg);

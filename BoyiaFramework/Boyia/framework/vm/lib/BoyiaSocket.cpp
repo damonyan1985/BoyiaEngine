@@ -1,9 +1,9 @@
 #include "BoyiaSocket.h"
-#include "MiniThread.h"
-#include "MiniThreadPool.h"
+#include "BaseThread.h"
+#include "ThreadPool.h"
 
 namespace yanbo {
-class BoyiaRecvThread : public MiniThread {
+class BoyiaRecvThread : public BaseThread {
 public:
     BoyiaRecvThread(BoyiaClientSocket* socket)
         : m_socket(socket)
@@ -22,7 +22,7 @@ private:
     BoyiaClientSocket* m_socket;
 };
 
-class BoyiaSendTask : public MiniTaskBase {
+class BoyiaSendTask : public TaskBase {
 public:
     BoyiaSendTask(BoyiaClientSocket* socket, const CString& text)
         : m_socket(socket)
@@ -51,7 +51,7 @@ LVoid BoyiaSocket::connect(const CString& hostName, int serverPort)
 
 LVoid BoyiaSocket::sendData(const CString& text)
 {
-    MiniThreadPool::getInstance()->sendMiniTask(new BoyiaSendTask(m_socket, text));
+    ThreadPool::getInstance()->sendTask(new BoyiaSendTask(m_socket, text));
     //text.ReleaseBuffer();
 }
 }

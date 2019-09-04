@@ -1,42 +1,42 @@
-#include "MiniMessageThread.h"
+#include "MessageThread.h"
 
 namespace yanbo {
 
-MiniMessageThread::MiniMessageThread()
-    : m_queue(new MiniMessageQueue())
+MessageThread::MessageThread()
+    : m_queue(new MessageQueue())
     , m_continue(LTrue)
 {
 }
 
-MiniMessageThread::~MiniMessageThread()
+MessageThread::~MessageThread()
 {
     delete m_queue;
 }
 
-LVoid MiniMessageThread::postMessage(MiniMessage* msg)
+LVoid MessageThread::postMessage(Message* msg)
 {
     m_queue->push(msg);
     notify();
 }
 
-MiniMessage* MiniMessageThread::obtain()
+Message* MessageThread::obtain()
 {
     return m_queue->obtain();
 }
 
-void MiniMessageThread::run()
+void MessageThread::run()
 {
     while (m_continue) {
         if (m_queue == NULL) {
             return;
         }
 
-        MiniMessage* msg = m_queue->poll();
+        Message* msg = m_queue->poll();
         if (msg != NULL) {
             handleMessage(msg);
             msg->msgRecycle();
         } else {
-            MiniThread::waitOnNotify();
+            BaseThread::waitOnNotify();
         }
     }
 }

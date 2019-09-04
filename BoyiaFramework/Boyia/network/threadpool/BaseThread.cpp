@@ -1,34 +1,44 @@
 /*
- * MiniThread.cpp
+ * BaseThread.cpp
  *
  *  Created on: 2015-7-29
  *      Author: yanbo
  */
-#include "MiniThread.h"
+#include "BaseThread.h"
 #include "AutoLock.h"
 #include "SalLog.h"
+#if ENABLE(BOYIA_ANDROID)
 #include <time.h>
 #include <unistd.h>
 
-#define TAG "MiniThread"
+#define TAG "BaseThread"
 
 namespace yanbo {
 
-MiniThread::MiniThread()
+class Condition {
+public:
+    Condition() {}
+    pthread_t thread;
+    pthread_cond_t condition;
+};
+
+BaseThread::BaseThread()
     : m_running(false)
+    , m_condition(new Condition())
 {
 }
 
-MiniThread::~MiniThread()
+BaseThread::~BaseThread()
 {
+    delete m_condition;
 }
 
-void MiniThread::start()
+void BaseThread::start()
 {
-    pthread_create(&m_thread, NULL, startThread, this);
+    pthread_create(&m_condition->thread, NULL, startThread, this);
 }
 
-int MiniThread::wait()
+int BaseThread::wait()
 {
     if (!m_running) {
         return 0;
@@ -36,36 +46,36 @@ int MiniThread::wait()
 
     // pthread_join function means waiting for the
     // thread end
-    return pthread_join(m_thread, NULL);
+    return pthread_join(m_condition->thread, NULL);
 }
 
-void* MiniThread::startThread(void* ptr)
+void* BaseThread::startThread(void* ptr)
 {
-    MiniThread* thread = (MiniThread*)ptr;
+    BaseThread* thread = (BaseThread*)ptr;
     thread->m_running = true;
     thread->run();
     thread->m_running = false;
     return ptr;
 }
 
-void MiniThread::stop()
+void BaseThread::stop()
 {
 }
 
-void MiniThread::waitOnNotify()
+void BaseThread::waitOnNotify()
 {
     AutoLock lock(&m_lock);
-    pthread_cond_wait(&m_condition, m_lock.getMutex());
+    pthread_cond_wait(&m_condition->condition, m_lock.getMutex());
 }
 
-void MiniThread::notify()
+void BaseThread::notify()
 {
     AutoLock lock(&m_lock);
-    pthread_cond_signal(&m_condition);
+    pthread_cond_signal(&m_condition->condition);
 }
 
 // millisecond毫秒级别
-void MiniThread::waitTimeOut(long timeout)
+void BaseThread::waitTimeOut(long timeout)
 {
     AutoLock lock(&m_lock);
     struct timespec outtime;
@@ -78,11 +88,11 @@ void MiniThread::waitTimeOut(long timeout)
     outtime.tv_sec = now.tv_sec + nsec / (1000 * 1000 * 1000);
     //outtime.tv_nsec = now.tv_usec * 1000;
     outtime.tv_nsec = nsec % (1000 * 1000 * 1000);
-    pthread_cond_timedwait(&m_condition, m_lock.getMutex(), &outtime);
+    pthread_cond_timedwait(&m_condition->condition, m_lock.getMutex(), &outtime);
 }
 
 // milliseconds
-void MiniThread::sleepMS(long time)
+void BaseThread::sleepMS(long time)
 {
     //	struct timeval delay;
     //	delay.tv_sec = 0;
@@ -96,8 +106,10 @@ void MiniThread::sleepMS(long time)
     nanosleep(&ts, NULL);
 }
 
-int MiniThread::getId()
+int BaseThread::getId()
 {
     return (int)pthread_self();
 }
 }
+
+#endif

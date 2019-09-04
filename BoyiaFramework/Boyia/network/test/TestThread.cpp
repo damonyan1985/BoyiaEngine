@@ -1,9 +1,9 @@
-#include "MiniThread.h"
+#include "BaseThread.h"
 #include "SalLog.h"
 #include "SystemUtil.h"
 
 namespace yanbo {
-class TimeThread : public MiniThread {
+class TimeThread : public BaseThread {
 public:
     void run()
     {

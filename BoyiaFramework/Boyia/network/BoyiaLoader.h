@@ -1,12 +1,12 @@
 #ifndef Loader_h
 #define Loader_h
 
-#include "MiniMessageThread.h"
+#include "MessageThread.h"
 #include "NetworkBase.h"
 #include "UtilString.h"
 
 namespace yanbo {
-class BoyiaLoader : public MiniMessageThread, public NetworkBase {
+class BoyiaLoader : public MessageThread, public NetworkBase {
 public:
     enum LoadMsgType {
         ELOAD_URL,
@@ -20,7 +20,7 @@ public:
     virtual LVoid postData(const String& url, NetworkClient* client);
     virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait);
     virtual LVoid cancel();
-    virtual LVoid handleMessage(MiniMessage* msg);
+    virtual LVoid handleMessage(Message* msg);
 };
 }
 #endif
