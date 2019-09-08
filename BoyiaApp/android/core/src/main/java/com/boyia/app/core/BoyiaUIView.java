@@ -61,12 +61,29 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 		//setZOrderMediaOverlay(true);
 		getHolder().addCallback(this);
 		getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		initEventListener();
+	}
+
+	private void initEventListener() {
 		mInputManager = new BoyiaInputManager(this);
 		setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				onTouchDown(event);
 				return true;
+			}
+		});
+
+		setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+					if (mInputConnect != null) {
+						mInputConnect.deleteCommitText();
+					}
+				}
+				return false;
 			}
 		});
 

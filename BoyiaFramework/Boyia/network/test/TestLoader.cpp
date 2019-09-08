@@ -16,7 +16,7 @@ public:
         //m_file = fopen(APP_PATH, "wb+");
         //String url(_CS(APP_LOAD_URL), LFalse, LStrlen((LUint8*)APP_LOAD_URL));
 
-        BoyiaPtr<String> data = new String(_CS("name=test&pwd=test"));
+        OwnerPtr<String> data = new String(_CS("name=test&pwd=test"));
         m_loader = new BoyiaLoader();
         m_loader->putHeader(_CS("Content-Type"), _CS("application/x-www-form-urlencoded"));
         m_loader->setPostData(data);
@@ -56,7 +56,7 @@ public:
 
     virtual LVoid onLoadFinished()
     {
-        BoyiaPtr<String> contentPtr = m_buffer.toString();
+        OwnerPtr<String> contentPtr = m_buffer.toString();
         String& content = *contentPtr.get();
         KFORMATLOG("boyia app content=%s", GET_STR(content));
         //fclose(m_file);

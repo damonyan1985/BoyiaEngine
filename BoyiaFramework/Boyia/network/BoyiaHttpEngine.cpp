@@ -55,7 +55,7 @@ LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
     }
 }
 
-LVoid BoyiaHttpEngine::setPostData(const BoyiaPtr<String>& data)
+LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
 {
     m_data = data;
 }

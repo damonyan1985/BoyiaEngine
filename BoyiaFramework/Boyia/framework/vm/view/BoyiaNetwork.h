@@ -29,7 +29,7 @@ private:
     BoyiaValue m_callback;
     BoyiaValue m_obj;
     yanbo::StringBuilder m_builder;
-    BoyiaPtr<String> m_data;
+    OwnerPtr<String> m_data;
 };
 }
 #endif
