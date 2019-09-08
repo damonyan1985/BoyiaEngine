@@ -22,7 +22,7 @@ public:
 
     LVoid setHeader(const NetworkMap& headers);
     LVoid request(const String& url, LInt method);
-    LVoid setPostData(const BoyiaPtr<String>& data);
+    LVoid setPostData(const OwnerPtr<String>& data);
 
     static size_t writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param);
 
@@ -30,7 +30,7 @@ private:
     CURL* m_curl;
     HttpCallback* m_callback;
     LInt m_size;
-    BoyiaPtr<String> m_data;
+    OwnerPtr<String> m_data;
 };
 }
 

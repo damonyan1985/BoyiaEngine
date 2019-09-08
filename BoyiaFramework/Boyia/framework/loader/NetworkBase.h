@@ -2,6 +2,7 @@
 #define NetworkBase_h
 
 #include "KListMap.h"
+#include "OwnerPtr.h"
 #include "UtilString.h"
 namespace yanbo {
 
@@ -56,7 +57,7 @@ public:
     virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait) = 0;
     virtual LVoid cancel() = 0;
 
-    virtual LVoid setPostData(const BoyiaPtr<String>& data)
+    virtual LVoid setPostData(const OwnerPtr<String>& data)
     {
         m_data = data;
     }
@@ -73,7 +74,7 @@ public:
 
 protected:
     NetworkMap m_headers;
-    BoyiaPtr<String> m_data; // Post data
+    OwnerPtr<String> m_data; // Post data
 };
 }
 #endif

@@ -79,7 +79,7 @@ private:
     LInt m_resType;
     StringBuilder m_builder;
     LInt m_result;
-    BoyiaPtr<String> m_data;
+    OwnerPtr<String> m_data;
 };
 
 ResourceLoader::ResourceLoader(ResourceLoaderClient* client)

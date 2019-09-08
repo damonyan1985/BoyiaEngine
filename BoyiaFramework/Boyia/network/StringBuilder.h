@@ -1,8 +1,8 @@
 #ifndef StringBuilder_h
 #define StringBuilder_h
 
-#include "BoyiaPtr.h"
 #include "KList.h"
+#include "OwnerPtr.h"
 #include "UtilString.h"
 
 namespace yanbo {
@@ -18,13 +18,13 @@ public:
     void append(const String& str);
     void append(const LByte* buffer, int pos, int len, LBool isConst);
     void append(const LByte* buffer);
-    BoyiaPtr<String> toString() const;
+    OwnerPtr<String> toString() const;
     void clear();
 
     LInt size() const;
 
 private:
-    KList<BoyiaPtr<BufferItem>> m_buffer;
+    KList<OwnerPtr<BufferItem>> m_buffer;
     int m_length;
 };
 }

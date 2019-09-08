@@ -41,7 +41,7 @@ public:
         KFORMATLOG("boyia app HttpTask::setUrl url=%s", GET_STR(m_url));
     }
 
-    LVoid setPostData(const BoyiaPtr<String>& data)
+    LVoid setPostData(const OwnerPtr<String>& data)
     {
         m_engine.setPostData(data);
     }

@@ -4,7 +4,7 @@
 namespace yanbo {
 // const字串和CCString不能执行delete
 // 故需要加以判断，防止出错
-class BufferItem : public BoyiaRef {
+class BufferItem {
 public:
     BufferItem(LBool isConst = LFalse)
         : buffer(NULL)
@@ -62,7 +62,7 @@ void StringBuilder::append(const LByte* buffer, int pos, int len, LBool isConst)
         return;
     }
 
-    BoyiaPtr<BufferItem> item = new BufferItem(isConst);
+    OwnerPtr<BufferItem> item = new BufferItem(isConst);
     item->buffer = (LByte*)(buffer);
     item->length = len;
     item->pos = pos;
@@ -70,7 +70,7 @@ void StringBuilder::append(const LByte* buffer, int pos, int len, LBool isConst)
     m_buffer.push(item);
 }
 
-BoyiaPtr<String> StringBuilder::toString() const
+OwnerPtr<String> StringBuilder::toString() const
 {
     KFORMATLOG("StringBuilder::append str m_length=%d", m_length);
     if (!m_length) {
@@ -80,8 +80,8 @@ BoyiaPtr<String> StringBuilder::toString() const
     //KFORMATLOG("StringBuilder::append str m_length1=%d", m_length);
     LByte* buffer = new LByte[m_length + 1];
     util::LMemset(buffer, 0, m_length + 1);
-    KList<BoyiaPtr<BufferItem>>::Iterator iter = m_buffer.begin();
-    KList<BoyiaPtr<BufferItem>>::Iterator iterEnd = m_buffer.end();
+    BoyiaList<OwnerPtr<BufferItem>>::Iterator iter = m_buffer.begin();
+    BoyiaList<OwnerPtr<BufferItem>>::Iterator iterEnd = m_buffer.end();
 
     int pos = 0;
     for (; iter != iterEnd; ++iter) {

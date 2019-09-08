@@ -1,14 +1,14 @@
 #ifndef ListMap_h
 #define ListMap_h
 
-#include "BoyiaPtr.h"
 #include "KList.h"
+#include "OwnerPtr.h"
 #include "SalLog.h"
 
 namespace util {
 
 template <class Key, class Value>
-class ObjectPair : public BoyiaRef {
+class ObjectPair {
 public:
     ObjectPair() {}
     ObjectPair(const Key& k, const Value& v)
@@ -36,8 +36,8 @@ template <class Key, class Value>
 class KListMap {
 public:
     typedef ObjectPair<Key, Value> MapPair;
-    typedef BoyiaList<BoyiaPtr<MapPair>> MapContainer;
-    typedef ListIterator<BoyiaPtr<MapPair>> Iterator;
+    typedef BoyiaList<OwnerPtr<MapPair>> MapContainer;
+    typedef ListIterator<OwnerPtr<MapPair>> Iterator;
 
 public:
     KListMap() {}
@@ -91,7 +91,7 @@ public:
     {
         KLOG("operator[] 1");
         MapPair* pair = getPair(key);
-        KFORMATLOG("pair count=%d", pair->count());
+        //KFORMATLOG("pair count=%d", pair->count());
         return pair->mValue;
     }
 
@@ -99,7 +99,7 @@ public:
     {
         KLOG("operator[] 2");
         MapPair* pair = getPair(key);
-        KFORMATLOG("operator pair count=%d", pair->count());
+        //KFORMATLOG("operator pair count=%d", pair->count());
         return pair->mValue;
     }
 
@@ -123,9 +123,9 @@ private:
         //MapPair* pair = new MapPair(key, Value());
         MapPair* pair = new MapPair;
         pair->mKey = key;
-        KFORMATLOG("get pair count=%d", pair->count());
+        //KFORMATLOG("get pair count=%d", pair->count());
         m_container.push(pair);
-        KFORMATLOG("get pair end count=%d", pair->count());
+        //KFORMATLOG("get pair end count=%d", pair->count());
         return pair;
     }
 
