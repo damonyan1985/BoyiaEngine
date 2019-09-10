@@ -1,6 +1,6 @@
 # ![Logo](https://github.com/damonyan1985/BoyiaUI/blob/dev/BoyiaApp/android/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaUI
 
-BoyiaUI is a multi-platform framework for building mobile app, but now it's only implements
+BoyiaUI is a cross-platform framework for building mobile app, but now it's only implements
 android platform.
 
 **Boyia Framework Architecture**:

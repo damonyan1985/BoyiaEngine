@@ -61,6 +61,8 @@ void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* 
         createRenderTree(child, elem, item);
     }
 
+    //BOYIA_LOG("DOMBuilder::createRenderTree---elem.size=%d", elem->Size());
+
     // for (LInt index = 0; index < elem->Size(); ++index) {
     //     createRenderTree(elem->GetChild(index), elem, item);
     // }

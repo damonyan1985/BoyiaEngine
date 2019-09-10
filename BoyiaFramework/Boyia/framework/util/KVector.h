@@ -18,6 +18,8 @@
 
 namespace util {
 
+#define kEnlargeCapacity (LInt)20
+
 template <class T>
 class KVector : public BoyiaRef {
 public:
@@ -28,6 +30,7 @@ public:
     virtual ~KVector();
 
 public:
+    LVoid insertElement(const T& kv, LInt index);
     LVoid addElement(const T& kv); // kvalue
     const T& elementAt(LInt position) const;
     const T& lastElement() const;
@@ -165,6 +168,37 @@ template <class T>
 T& KVector<T>::lastElement()
 {
     return *(m_buffer + m_size - 1);
+}
+
+template <class T>
+LVoid KVector<T>::insertElement(const T& kv, LInt index)
+{
+    if (m_size < m_capacity) {
+        for (LInt i = index + 1; i < m_size; i++) {
+            *(m_buffer + i) = *(m_buffer + i - 1);
+        }
+
+        m_buffer[index] = kv;
+        m_size += 1;
+    } else {
+        T* buffer = m_buffer;
+        m_capacity += kEnlargeCapacity;
+
+        m_buffer = new T[m_capacity];
+        m_size += 1;
+
+        for (LInt i = 0; i < index; i++) {
+            *(m_buffer + i) = *(buffer + i);
+        }
+
+        m_buffer[index] = kv;
+
+        for (LInt i = index + 1; i < m_size; i++) {
+            *(m_buffer + i) = *(buffer + i - 1);
+        }
+
+        delete buffer;
+    }
 }
 
 template <class T>

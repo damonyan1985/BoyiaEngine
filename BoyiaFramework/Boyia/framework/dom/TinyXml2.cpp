@@ -542,7 +542,7 @@ XMLNode::XMLNode(XMLDocument* doc)
     , _prev(0)
     , _next(0)
     , _memPool(0)
-    , _vnodes(kVNodeDefultChildSize)
+//, _vnodes(0, kVNodeDefultChildSize)
 {
 }
 
@@ -630,7 +630,7 @@ XMLNode* XMLNode::InsertEndChild(XMLNode* addThis)
     }
     addThis->_parent = this;
 
-    _vnodes.addElement(addThis);
+    //_vnodes.addElement(addThis);
     return addThis;
 }
 
@@ -662,7 +662,7 @@ XMLNode* XMLNode::InsertFirstChild(XMLNode* addThis)
     }
 
     addThis->_parent = this;
-    _vnodes.addElement(addThis);
+    //_vnodes.insertElement(addThis, 0);
     return addThis;
 }
 
@@ -691,7 +691,7 @@ XMLNode* XMLNode::InsertAfterChild(XMLNode* afterThis, XMLNode* addThis)
     afterThis->_next = addThis;
     addThis->_parent = this;
 
-    _vnodes.addElement(addThis);
+    //_vnodes.addElement(addThis);
     return addThis;
 }
 
@@ -819,15 +819,15 @@ char* XMLNode::ParseDeep(char* p, StrPair* parentEnd)
     return 0;
 }
 
-XMLNode* XMLNode::GetChild(int index) const
-{
-    return _vnodes.elementAt(index);
-}
+// XMLNode* XMLNode::GetChild(int index) const
+// {
+//     return _vnodes.elementAt(index);
+// }
 
-int XMLNode::Size() const
-{
-    return _vnodes.size();
-}
+// int XMLNode::Size() const
+// {
+//     return _vnodes.size();
+// }
 
 // --------- XMLText ---------- //
 char* XMLText::ParseDeep(char* p, StrPair*)

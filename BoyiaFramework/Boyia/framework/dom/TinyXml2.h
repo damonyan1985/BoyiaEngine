@@ -14,7 +14,6 @@ not claim that you wrote the original software. If you use this
 software in a product, an acknowledgment in the product documentation
 would be appreciated but is not required.
 
-
 2. Altered source versions must be plainly marked as such, and
 must not be misrepresented as being the original software.
 
@@ -22,6 +21,9 @@ must not be misrepresented as being the original software.
 distribution.
 
 4. TinyXML2 will be modified to build virtual dom for boyia ui.
+
+5. VDOM diff will produce a commands which contain the different
+node with index. 
 */
 
 #ifndef TINYXML2_INCLUDED
@@ -45,7 +47,7 @@ distribution.
 #include <cstring>
 #endif
 
-#include "KVector.h"
+//#include "KVector.h"
 
 /*
    TODO: intern strings instead of allocation.
@@ -112,7 +114,8 @@ distribution.
    const char *format [,
 	  argument] ...
 );*/
-inline int TIXML_SNPRINTF(char* buffer, size_t size, const char* format, ...)
+inline int
+TIXML_SNPRINTF(char* buffer, size_t size, const char* format, ...)
 {
     va_list va;
     va_start(va, format);
@@ -906,11 +909,11 @@ public:
     // internal
     virtual char* ParseDeep(char*, StrPair*);
 
-    // for vdom
-    XMLNode* GetChild(int index) const;
+    // // for vdom
+    // XMLNode* GetChild(int index) const;
 
-    // node size
-    int Size() const;
+    // // node size
+    // int Size() const;
 
 protected:
     XMLNode(XMLDocument*);
@@ -928,7 +931,7 @@ protected:
     XMLNode* _prev;
     XMLNode* _next;
 
-    KVector<XMLNode*> _vnodes;
+    //KVector<XMLNode*> _vnodes;
 
 private:
     MemPool* _memPool;
