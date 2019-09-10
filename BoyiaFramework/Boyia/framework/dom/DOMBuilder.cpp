@@ -55,11 +55,15 @@ void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* 
 {
     //KLOG("createRenderTree");
     HtmlView* item = createHtmlView(elem, parentElem, parent);
-    XMLNode* child = NULL;
+    //XMLNode* child = NULL;
 
-    for (child = elem->FirstChild(); child; child = child->NextSibling()) {
+    for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
         createRenderTree(child, elem, item);
     }
+
+    // for (LInt index = 0; index < elem->Size(); ++index) {
+    //     createRenderTree(elem->GetChild(index), elem, item);
+    // }
 }
 
 HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent)

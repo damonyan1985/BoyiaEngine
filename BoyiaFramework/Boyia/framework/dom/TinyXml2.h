@@ -20,6 +20,8 @@ must not be misrepresented as being the original software.
 
 3. This notice may not be removed or altered from any source
 distribution.
+
+4. TinyXML2 will be modified to build virtual dom for boyia ui.
 */
 
 #ifndef TINYXML2_INCLUDED
@@ -42,6 +44,8 @@ distribution.
 #include <cstdlib>
 #include <cstring>
 #endif
+
+#include "KVector.h"
 
 /*
    TODO: intern strings instead of allocation.
@@ -902,6 +906,12 @@ public:
     // internal
     virtual char* ParseDeep(char*, StrPair*);
 
+    // for vdom
+    XMLNode* GetChild(int index) const;
+
+    // node size
+    int Size() const;
+
 protected:
     XMLNode(XMLDocument*);
     virtual ~XMLNode();
@@ -917,6 +927,8 @@ protected:
 
     XMLNode* _prev;
     XMLNode* _next;
+
+    KVector<XMLNode*> _vnodes;
 
 private:
     MemPool* _memPool;

@@ -1,0 +1,20 @@
+class AppStack {
+    prop appStack;
+    
+    fun curApp() {
+        var size = appStack.size();
+        if (size) {
+            return appStack.get(size - 1);
+        }
+        
+        return null;
+    }
+    
+    fun pushApp(app) {
+        if (!appStack) {
+            appStack = new(Array);
+        }
+        
+        appStack.put(app);
+    }
+}

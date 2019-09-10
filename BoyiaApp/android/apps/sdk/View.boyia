@@ -1,0 +1,96 @@
+class View {
+    prop nativeView = null;
+    
+    fun addEventListener(type, callback) {
+        BY_AddEventListener(this.nativeView, type, callback);
+    }
+    
+    fun setViewToNative() {
+        BY_SetToNativeView(this.nativeView, this);
+    }
+    
+    fun setNativeView(view) {
+        this.nativeView = view;
+    }
+    
+    fun setLeft(x) {
+        BY_SetXpos(this.nativeView, x);
+    }
+       
+    fun setTop(y) {
+        BY_SetYpos(this.nativeView, y);
+    }
+        
+    fun left() {
+        return BY_GetViewXpos(this.nativeView);
+    }
+    
+    fun top() {
+        return BY_GetViewYpos(this.nativeView);
+    }
+    
+    fun width() {
+        return BY_GetViewWidth(this.nativeView);
+    }
+    
+    fun height() {
+        return BY_GetViewHeight(this.nativeView);
+    }
+    
+    fun setStyle(style) {
+        BY_SetViewStyle(this.nativeView, style);
+    }
+    
+    fun startScale(scale, duration) {
+        BY_StartScale(this.nativeView, scale, duration);
+    }
+    
+    fun startOpacity(opacity, duration) {
+        BY_StartOpacity(this.nativeView, opacity, duration);
+    }
+    
+    fun draw() {
+        BY_DrawView(this.nativeView);
+    }
+    
+    fun startTranslate(x, y, duration) {
+        BY_StartTranslate(this.nativeView, x, y, duration);
+    }
+    
+    fun commit() {
+        BY_ViewCommit(this.nativeView);
+    }
+
+    fun setVisible(visible) {
+
+    }
+}
+
+class ViewGroup extends View {
+    prop children = null;
+    fun createViewGroup(nv) {
+        var vg = new(ViewGroup);
+        vg.nativeView = nv;
+        vg.children = new(Array);
+        return vg;
+    }
+    
+    fun createVgWithId(id, sel) {
+        var vg = new(ViewGroup);
+        vg.nativeView = BY_CreateViewGroup(id, sel);
+        vg.children = new(Array);
+        return vg;
+    }
+ 
+    fun setText(text) {
+        BY_SetViewText(this.nativeView, text);
+    }
+    
+    fun appendView(view) {
+        Util.log("ViewGroup appendView");
+        //if (this.children) {
+            this.children.put(view);
+        //}
+        BY_AppendView(this.nativeView, view.nativeView);
+    }
+}
