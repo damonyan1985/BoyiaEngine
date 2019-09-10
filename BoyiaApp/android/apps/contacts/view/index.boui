@@ -5,8 +5,8 @@
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
     <meta http-equiv="Cache-control" content="no-cache" />
     <title></title>
-	<link rel="stylesheet" type="text/css" href="boyia://apps/contacts/css/main.css" />
-	<link rel="stylesheet" type="text/css" href="boyia://apps/contacts/css/chat.css" />
+	<link rel="stylesheet" type="text/css" href="boyia://apps/contacts/css/main.boss" />
+	<link rel="stylesheet" type="text/css" href="boyia://apps/contacts/css/chat.boss" />
 </head>
 <body>
 

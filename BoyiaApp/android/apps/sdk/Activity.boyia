@@ -1,0 +1,46 @@
+class Activity extends Object {
+    prop contentView = null;
+   
+    // Life Cycle onCreate();
+    fun setContent(view) {
+        this.contentView = view;
+    }
+    
+    fun init() {
+        this.onCreate();
+        this.draw();
+    }
+
+    fun draw() {
+        if (this.contentView) {
+            this.contentView.draw();
+            this.contentView.commit();
+        }
+    }
+
+    fun onCreate() {
+    }
+
+    fun onResume() {
+        if (this.contentView) {
+            this.contentView.setVisible(true);
+        }
+    }
+
+    fun onPause() {
+        if (this.contentView) {
+            this.contentView.setVisible(false);
+        }
+    }
+    
+    fun onDestroy() {
+    }
+
+    fun test() {
+        this.testLog();
+    }
+
+    fun testLog() {
+        Util.log("test super use");
+    }
+}
