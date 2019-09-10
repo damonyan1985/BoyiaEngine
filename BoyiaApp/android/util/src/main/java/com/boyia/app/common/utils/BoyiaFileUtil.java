@@ -70,45 +70,6 @@ public class BoyiaFileUtil {
 	    FileUtil.deleteFolder(getFilePathRoot());
 	}
 
-	public static boolean setText(View view, int id, String text) {
-		TextView textView = (TextView) view.findViewById(id);
-		if (textView == null) {
-			return false;
-		}
-
-		textView.setText(text);
-		return true;
-	}
-
-	public static boolean setText(View view, int id, int text) {
-		TextView textView = (TextView) view.findViewById(id);
-		if (textView == null) {
-			return false;
-		}
-
-		textView.setText(text);
-		return true;
-	}
-
-	public static boolean setText(View view, String text) {
-		TextView textView = (TextView) view;
-		if (textView == null) {
-			return false;
-		}
-
-		textView.setText(text);
-		return true;
-	}
-
-	public static String formatDateString(Context context, long time) {
-		DateFormat dateFormat = android.text.format.DateFormat
-				.getDateFormat(context);
-		DateFormat timeFormat = android.text.format.DateFormat
-				.getTimeFormat(context);
-		Date date = new Date(time);
-		return dateFormat.format(date) + " " + timeFormat.format(date);
-	}
-
 	public static String convertStorage(long size) {
 		long kb = 1024;
 		long mb = kb * 1024;
@@ -242,7 +203,7 @@ public class BoyiaFileUtil {
 	}
 
 	public static String readByInputStream(InputStream is) {
-		StringBuffer sb = null;
+		StringBuffer sb;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		try {
@@ -285,24 +246,5 @@ public class BoyiaFileUtil {
 		}
 
 		return null;
-	}
-
-	public static long getSdcardSize() {
-		File path = Environment.getExternalStorageDirectory();
-		StatFs statFs = new StatFs(path.getPath());
-		long blocksize = statFs.getBlockSize();
-		long totalblocks = statFs.getBlockCount();
-
-		// 计算SD卡的空间大小
-		return blocksize * totalblocks;
-	}
-
-	public static long getSdcardLeftSize() {
-		File path = Environment.getExternalStorageDirectory();
-		StatFs statFs = new StatFs(path.getPath());
-		long blocksize = statFs.getBlockSize();
-		long availableblocks = statFs.getAvailableBlocks();
-
-		return availableblocks * blocksize;
 	}
 }
