@@ -22,8 +22,8 @@ public:
     virtual LVoid build(const String& buffer);
 
 private:
-    VNode* createVNode(XMLNode* node, XMLNode* parentElem, VNode* parent);
-    VNode* createVDom(XMLNode* elem, XMLNode* parentElem, VNode* parent);
+    VNode* createVNode(XMLNode* node, XMLNode* parentNode, VNode* parent);
+    VNode* createVDom(XMLNode* elem, XMLNode* parentNode, VNode* parent);
 
 private:
     VDocument* m_vdom;

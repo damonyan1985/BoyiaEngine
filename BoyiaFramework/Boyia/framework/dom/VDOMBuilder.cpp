@@ -4,6 +4,8 @@
 
 namespace yanbo {
 
+const char* kBoyiaForProperty = "boyia-for";
+
 VDOMBuilder::VDOMBuilder()
     : m_xmlDoc(NULL)
     , m_vdom(NULL)
@@ -43,10 +45,10 @@ LVoid VDOMBuilder::build(const String& buffer)
     //m_htmlDoc->sortIds();
 }
 
-VNode* VDOMBuilder::createVDom(XMLNode* elem, XMLNode* parentElem, VNode* parent)
+VNode* VDOMBuilder::createVDom(XMLNode* elem, XMLNode* parentNode, VNode* parent)
 {
     //KLOG("createRenderTree");
-    VNode* item = createVNode(elem, parentElem, parent);
+    VNode* item = createVNode(elem, parentNode, parent);
 
     for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
         static_cast<VElement*>(item)->add(createVDom(child, elem, item));
@@ -55,7 +57,7 @@ VNode* VDOMBuilder::createVDom(XMLNode* elem, XMLNode* parentElem, VNode* parent
     return item;
 }
 
-VNode* VDOMBuilder::createVNode(XMLNode* node, XMLNode* parentElem, VNode* parent)
+VNode* VDOMBuilder::createVNode(XMLNode* node, XMLNode* parentNode, VNode* parent)
 {
     VNode* item = NULL;
     HtmlTags* htmlTags = HtmlTags::getInstance();
@@ -66,19 +68,27 @@ VNode* VDOMBuilder::createVNode(XMLNode* node, XMLNode* parentElem, VNode* paren
             return NULL;
         }
 
-        String tagVal = _CS(elem->Value());
-        String id = _CS(elem->Attribute("id"));
-        //String tagName = _CS(elem->Attribute("name"));
-        String className = _CS(elem->Attribute("class"));
+        XMLElement* parentElem = parentNode->ToElement();
+        String forValue = _CS(parentElem->Attribute(kBoyiaForProperty));
 
-        int tag = htmlTags->symbolAsInt(tagVal);
+        if (forValue.GetLength() > 0) {
+            KVector<String>* args = StringUtils::split(forValue, _CS(":"));
+        } else {
+            String tagVal = _CS(elem->Value());
+            String id = _CS(elem->Attribute("id"));
+            //String tagName = _CS(elem->Attribute("name"));
+            String className = _CS(elem->Attribute("class"));
 
-        VElement* vElem = new VElement();
-        vElem->setId(id);
-        vElem->setClass(className);
-        vElem->setTag(tag);
+            int tag = htmlTags->symbolAsInt(tagVal);
 
-        item = vElem;
+            VElement* vElem = new VElement();
+            vElem->setId(id);
+            vElem->setClass(className);
+            vElem->setTag(tag);
+
+            item = vElem;
+        }
+
     } else if (node->ToText()) {
         XMLText* elem = node->ToText();
         VText* vText = new VText();
