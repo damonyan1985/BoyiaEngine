@@ -23,6 +23,7 @@ public:
     T& top();
     void push(const T& obj);
     T& elementAt(LInt i);
+    LBool contains(const T& kv);
 
 protected:
     KVector<T> m_vector;
@@ -74,6 +75,12 @@ template <class T>
 T& Stack<T>::top()
 {
     return m_vector.lastElement();
+}
+
+template <class T>
+LBool Stack<T>::contains(const T& kv)
+{
+    return m_vector.count(kv);
 }
 }
 

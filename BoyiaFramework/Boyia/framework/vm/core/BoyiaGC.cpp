@@ -81,7 +81,7 @@ static LBool CheckValue(BoyiaValue* value, BoyiaRef* ref)
     return LFalse;
 }
 
-static LVoid deleteRef(BoyiaRef* ref)
+static LVoid DeleteRef(BoyiaRef* ref)
 {
     switch (ref->mType) {
     case BY_STRING: {
@@ -136,7 +136,7 @@ static LVoid GCheckNoneRef(BoyiaRef* ref)
         return;
     }
 
-    deleteRef(ref);
+    DeleteRef(ref);
 }
 
 static LVoid GClearGarbage()
