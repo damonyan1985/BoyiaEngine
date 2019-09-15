@@ -15,13 +15,20 @@ enum DOMValueType {
     kIntValue
 };
 
-typedef struct DOMValue {
+typedef union DOMValueImpl {
+    cJSON* json;
+    LInt loopIndex;
+} DOMValueImpl;
+
+class DOMValue {
+public:
+    DOMValue()
+    {
+        value.json = NULL;
+    }
     LInt type;
-    union Value {
-        cJSON* json;
-        LInt loopIndex;
-    } value;
-} DOMValue;
+    DOMValueImpl value;
+};
 
 class LoopItemData {
 public:
@@ -29,7 +36,7 @@ public:
     LoopItemData(
         const String& argItemName,
         const String& argIndexName,
-        const cJSON* argData,
+        cJSON* argData,
         LInt argLoopIndex)
     {
         itemName = argItemName;
@@ -51,7 +58,7 @@ public:
     String indexName;
     cJSON* data;
     LInt loopIndex;
-}
+};
 
 VDOMBuilder::VDOMBuilder()
     : m_xmlDoc(NULL)
@@ -73,7 +80,7 @@ VDOMBuilder& VDOMBuilder::add(VDocument* doc)
     return *this;
 }
 
-VDOMBuilder& VDOMBuilder::add(JSONState* state)
+VDOMBuilder& VDOMBuilder::add(JSONObject* state)
 {
     m_state = state;
     return *this;
@@ -88,18 +95,28 @@ LVoid VDOMBuilder::build(const String& buffer)
 
     XMLElement* root = m_xmlDoc->RootElement();
     if (root) {
-        Stack<String> stack;
+        Stack<LoopItemData> stack;
         createVDom(root, stack);
     }
 }
 
 // for special attribute
-LVoid VDOMBuilder::findNodeAttribute(XMLNode* elem, VNode* parent, Stack<LoopItemData>& stack)
+LBool VDOMBuilder::findSpecialAttribute(XMLNode* node, VNode* parent, Stack<LoopItemData>& stack)
 {
     if (node->ToText() == NULL && node->ToComment() == NULL) {
         XMLElement* elem = node->ToElement();
         if (!elem) {
-            return;
+            return LTrue;
+        }
+
+        DOMValue outValue;
+        // 优先判断if是否为真，否则一切都别整了
+        String ifValue = _CS(elem->Attribute(kBoyiaIfProperty));
+        if (ifValue.GetLength()) {
+            fetchValue(ifValue, stack, outValue);
+            if (!outValue.value.json->valueint) {
+                return LTrue;
+            }
         }
 
         String loopValue = _CS(elem->Attribute(kBoyiaLoopProperty));
@@ -107,7 +124,7 @@ LVoid VDOMBuilder::findNodeAttribute(XMLNode* elem, VNode* parent, Stack<LoopIte
         // loopValue length must be larger then 2.
         if (loopValue.GetLength() >= 2) {
             OwnerPtr<KVector<String>> args = StringUtils::split(loopValue, _CS(":"));
-            DOMValue outValue;
+
             fetchValue(args->elementAt(0), stack, outValue);
             //cJSON* list = m_state->get(GET_STR(args->elementAt(0)));
             cJSON* list = outValue.value.json;
@@ -116,33 +133,34 @@ LVoid VDOMBuilder::findNodeAttribute(XMLNode* elem, VNode* parent, Stack<LoopIte
                 LInt index = 0;
                 while (nodeData) {
                     LoopItemData itemData(
+                        args->elementAt(1),
+                        args->size() >= 3 ? args->elementAt(2) : String(_CS(NULL)),
                         nodeData,
-                        index,
-                        args->size() >= 3 ? args->elementAt(2) : _CS(""),
-                        args->elementAt(1));
+                        index);
 
                     stack.push(itemData);
-                    static_cast<VElement*>(parent)->add(createVDom(elem, stack, args->elementAt(1)));
+                    static_cast<VElement*>(parent)->add(createVDom(elem, stack));
                     nodeData = nodeData->next;
                     index++;
+                    stack.pop();
                 }
             }
 
-            return;
-        }
-
-        String ifValue = _CS(elem->Attribute(kBoyiaIfProperty));
-        if (ifValue.GetLength()) {
-            m_state->get(ifValue);
+            return LTrue;
         }
     }
+
+    return LFalse;
 }
 
 VNode* VDOMBuilder::createVDom(XMLNode* elem, Stack<LoopItemData>& stack)
 {
+    // root has no special attributes
     VNode* item = createVNode(elem, stack);
     for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
-        findNodeAttribute(child, item);
+        if (!findSpecialAttribute(child, item, stack) && item->isElement()) {
+            static_cast<VElement*>(item)->add(createVDom(child, stack));
+        }
     }
 
     return item;
@@ -176,7 +194,7 @@ LVoid VDOMBuilder::fetchValue(const String& value, Stack<LoopItemData>& stack, D
             }
         } else {
             // such as obj.name.firstName
-            OwnerPtr<KVector<String>> values = StringUtils::split(_CS("."));
+            OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS("."));
             JSONObject data;
             // if value is in stack
             for (LInt j = stack.size() - 1; j >= 0; ++j) {
@@ -196,13 +214,13 @@ LVoid VDOMBuilder::fetchValue(const String& value, Stack<LoopItemData>& stack, D
                 data = data.get(values->elementAt(i));
             }
 
-            outValue.value.json = data;
+            outValue.value.json = data.ptr();
             outValue.type = kJsonValue;
         }
     }
 }
 
-VNode* VDOMBuilder::createVNode(XMLNode* node, LVoid* data, Stack<LoopItemData>& stack)
+VNode* VDOMBuilder::createVNode(XMLNode* node, Stack<LoopItemData>& stack)
 {
     VNode* item = NULL;
     HtmlTags* htmlTags = HtmlTags::getInstance();
@@ -217,16 +235,11 @@ VNode* VDOMBuilder::createVNode(XMLNode* node, LVoid* data, Stack<LoopItemData>&
         String id = _CS(elem->Attribute("id"));
         //String tagName = _CS(elem->Attribute("name"));
         String className = _CS(elem->Attribute("class"));
-
-        // LInt begin = className.Find("{");
-        // LInt end = className.Find("{");
-        // // 如果存在类似{obj.name}
-        // if (begin > 0 && end > begin) {
-        //     //static_cast<cJSON*>(data)->
-        //     String value = className.Mid(begin, end - begin);
-        //     KVector<String> values = StringUtils::split(value, _CS("."));
-        //     m_state->get(GET_STR(value));
-        // }
+        DOMValue outValue;
+        fetchValue(className, stack, outValue);
+        if (outValue.value.json) {
+            className = _CS(outValue.value.json->valuestring);
+        }
 
         LInt tag = htmlTags->symbolAsInt(tagVal);
 

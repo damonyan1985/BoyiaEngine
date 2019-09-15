@@ -17,6 +17,9 @@
     <Filter Include="graphic">
       <UniqueIdentifier>{fcf3021d-6777-4613-8396-4f00251f552f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{eed06614-f91a-418e-bdc4-aa04c0033ebe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thread\PlatformThreadWin.h">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="..\graphic\BoyiaDC.cpp">
       <Filter>graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\Test.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

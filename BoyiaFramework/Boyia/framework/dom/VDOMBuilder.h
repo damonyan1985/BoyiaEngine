@@ -11,7 +11,7 @@ using namespace tinyxml2;
 
 namespace yanbo {
 
-struct DOMValue;
+class DOMValue;
 class LoopItemData;
 class VDOMBuilder {
 public:
@@ -25,7 +25,7 @@ public:
 private:
     VNode* createVNode(XMLNode* node, Stack<LoopItemData>& stack);
     VNode* createVDom(XMLNode* elem, Stack<LoopItemData>& stack);
-    LVoid findNodeAttribute(XMLNode* elem, VNode* parent, Stack<LoopItemData>& stack);
+    LBool findSpecialAttribute(XMLNode* elem, VNode* parent, Stack<LoopItemData>& stack);
     LVoid fetchValue(const String& value, Stack<LoopItemData>& stack, DOMValue& outValue);
 
 private:
