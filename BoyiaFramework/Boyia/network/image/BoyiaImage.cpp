@@ -30,6 +30,22 @@ BoyiaImage::BoyiaImage()
 {
 }
 
+LVoid BoyiaImage::setData(const String& data)
+{
+    const char* buffer = static_cast<const char*>(data.GetBuffer());
+    LInt type = getType(buffer);
+    switch (type) {
+    case kImageJpeg:
+        readJPEG(buffer, data.GetLength());
+        break;
+    case kImagePng:
+        readPNG(buffer, data.GetLength());
+        break;
+    default:
+        break;
+    }
+}
+
 // jpeg FFD8FFE000104A464946
 // png 89 50 4e 47 0d 0a 1a 0a 00 00
 // gif 47494638396126026f01
@@ -164,5 +180,9 @@ LVoid* BoyiaImage::pixels() const
 const String& BoyiaImage::url() const
 {
     return static_cast<ImageView*>(m_image)->url();
+}
+
+LVoid BoyiaImage::load(const String& path, LVoid* image)
+{
 }
 }
