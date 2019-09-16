@@ -7,8 +7,9 @@ namespace yanbo {
 
 class ImageClient {
 public:
-    virtual LVoid setData(const String& data);
-}
+    virtual ~ImageClient();
+    virtual LVoid setData(const String& data) = 0;
+};
 
 class ImageLoader {
 public:

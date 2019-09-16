@@ -3,6 +3,10 @@
 
 namespace yanbo {
 
+ImageClient::~ImageClient()
+{
+}
+
 class ImageLoaderClient : public NetworkClient {
 public:
     ImageLoaderClient(ImageClient* client)

@@ -32,14 +32,14 @@ BoyiaImage::BoyiaImage()
 
 LVoid BoyiaImage::setData(const String& data)
 {
-    const char* buffer = static_cast<const char*>(data.GetBuffer());
-    LInt type = getType(buffer);
+    //const char* buffer = static_cast<const char*>(data.GetBuffer());
+    LInt type = getType(GET_STR(data));
     switch (type) {
     case kImageJpeg:
-        readJPEG(buffer, data.GetLength());
+        readJPEG(data.GetBuffer(), data.GetLength());
         break;
     case kImagePng:
-        readPNG(buffer, data.GetLength());
+        readPNG(data.GetBuffer(), data.GetLength());
         break;
     default:
         break;
