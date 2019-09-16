@@ -252,7 +252,13 @@ VNode* VDOMBuilder::createVNode(XMLNode* node, Stack<LoopItemData>& stack)
     } else if (node->ToText()) {
         XMLText* elem = node->ToText();
         VText* vText = new VText();
-        vText->setText(_CS(elem->Value()));
+        DOMValue value;
+        fetchValue(_CS(elem->Value()), stack, value);
+        if (value.value.json) {
+            vText->setText(_CS(value.value.json->valuestring));
+        } else {
+            vText->setText(_CS(elem->Value()));
+        }
         item = vText;
     }
 
