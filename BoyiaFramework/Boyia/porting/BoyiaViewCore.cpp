@@ -131,17 +131,17 @@ static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, 
 static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint isDown)
 {
 
-    LKeyEvent::KeyEventType mKeyCode = LKeyEvent::KEY_ARROW_DOWN;
+    LKeyEvent::KeyEventType code = LKeyEvent::KEY_ARROW_DOWN;
     switch (keyCode) {
     case ACTION_ARROW_UP: {
-        mKeyCode = LKeyEvent::KEY_ARROW_UP;
+        code = LKeyEvent::KEY_ARROW_UP;
     } break;
     case ACTION_ARROW_DOWN: {
-        mKeyCode = LKeyEvent::KEY_ARROW_DOWN;
+        code = LKeyEvent::KEY_ARROW_DOWN;
     } break;
     }
 
-    LKeyEvent* evt = new LKeyEvent(mKeyCode, isDown);
+    LKeyEvent* evt = new LKeyEvent(code, isDown);
     yanbo::UIThread::instance()->handleKeyEvent(evt);
 }
 

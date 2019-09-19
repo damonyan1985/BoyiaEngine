@@ -44,6 +44,8 @@ LVoid BoyiaImage::setData(const String& data)
     default:
         break;
     }
+
+    setLoaded(LTrue);
 }
 
 // jpeg FFD8FFE000104A464946
@@ -184,5 +186,14 @@ const String& BoyiaImage::url() const
 
 LVoid BoyiaImage::load(const String& path, LVoid* image)
 {
+}
+
+// Execute in UIThread
+LVoid BoyiaImage::setLoaded(LBool loaded)
+{
+    LImage::setLoaded(loaded);
+    if (m_image && loaded) {
+        yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
+    }
 }
 }

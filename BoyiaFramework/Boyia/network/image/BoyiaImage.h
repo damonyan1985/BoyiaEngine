@@ -19,11 +19,13 @@ public:
         kImageGif
     };
     BoyiaImage();
+    ~BoyiaImage();
 
     LInt getType(const char* data);
     LVoid readJPEG(const LByte* data, size_t size);
     LVoid readPNG(const LByte* data, size_t size);
 
+    virtual LVoid setLoaded(LBool loaded);
     virtual LVoid setData(const String& data);
     virtual LVoid load(const String& path, LVoid* image);
     virtual LVoid* item() const;

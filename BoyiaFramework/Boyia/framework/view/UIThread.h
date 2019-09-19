@@ -8,6 +8,12 @@
 
 namespace yanbo {
 class AppManager;
+
+class UIEvent {
+public:
+    LVoid ~UIEvent();
+    virtual LVoid run() = 0;
+};
 class UIThread : public MessageThread {
 public:
     enum MessageType {
@@ -26,7 +32,8 @@ public:
         kUiOnKeyboardHide,
         kUiOperationExec,
         kUiDestory,
-        kUiRunAnimation
+        kUiRunAnimation,
+        kUiEvent
     };
     static UIThread* instance();
 
@@ -46,6 +53,8 @@ public:
     LVoid imageLoaded(LIntPtr item);
     // Anim渲染
     LVoid runAnimation(LVoid* callback);
+    // 回调处理
+    LVoid sendUIEvent(UIEvent* event);
     LVoid destroy();
     LVoid handleTouchEvent(LTouchEvent* evt);
     LVoid handleKeyEvent(LKeyEvent* evt);
