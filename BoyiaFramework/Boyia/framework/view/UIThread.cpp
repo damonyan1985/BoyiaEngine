@@ -8,6 +8,7 @@
 #include "KList.h"
 //#include "MatrixState.h"
 #include "Mutex.h"
+#include "OwnerPtr.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "UIOperation.h"
@@ -161,6 +162,10 @@ LVoid UIThread::handleMessage(Message* msg)
         std::function<void()>* callback = (std::function<void()>*)msg->obj;
         (*callback)();
     } break;
+    case kUiEvent: {
+        OwnerPtr<UIEvent> event = static_cast<UIEvent*>(msg->obj);
+        event->run();
+    } break;
     }
 }
 
@@ -278,6 +283,14 @@ LVoid UIThread::runAnimation(LVoid* callback)
     Message* msg = obtain();
     msg->type = kUiRunAnimation;
     msg->obj = callback;
+    postMessage(msg);
+}
+
+LVoid UIThread::sendUIEvent(UIEvent* event)
+{
+    Message* msg = obtain();
+    msg->type = kUiEvent;
+    msg->obj = event;
     postMessage(msg);
 }
 }
