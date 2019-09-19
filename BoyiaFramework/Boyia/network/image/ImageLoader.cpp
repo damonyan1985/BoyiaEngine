@@ -5,14 +5,46 @@
 
 namespace yanbo {
 
+class ImageItem {
+public:
+    ImageItem()
+        : client(NULL)
+        , id(0)
+        , next(NULL)
+    {
+    }
+
+    ImageClient* client;
+    LInt id;
+    ImageItem* next;
+};
+
 ImageClient::ImageClient()
     : m_loadId(0)
 {
 }
 
 ImageClient::~ImageClient()
-    : m_loadId(0)
 {
+    KVector<ImageItem*>& map = ImageLoader::instance()->map();
+    LInt index = m_loadId % map.capacity();
+    ImageItem* item = map[index];
+    if (item->id == m_loadId) {
+        map[index] = item->next;
+        delete item;
+    } else {
+        ImageItem* next = item->next;
+        while (next) {
+            if (next->id == m_loadId) {
+                item->next = next->next;
+                delete next;
+                break;
+            }
+
+            item = next;
+            next = next->next;
+        }
+    }
 }
 
 LVoid ImageClient::setLoadId(LInt id)
@@ -20,17 +52,10 @@ LVoid ImageClient::setLoadId(LInt id)
     m_loadId = id;
 }
 
-class ImageItem {
-public:
-    ImageItem::ImageItem()
-        : client(NULL)
-        , next(NULL)
-    {
-    }
-
-    ImageClient* client;
-    ImageItem* next;
-};
+LInt ImageClient::getLoadId() const
+{
+    return m_loadId;
+}
 
 class ImageLoadedEvent : public UIEvent {
 public:
@@ -42,7 +67,7 @@ public:
 
     virtual LVoid run()
     {
-        const KVector<ImageItem*>& map = ImageLoader::instance()->map();
+        KVector<ImageItem*>& map = ImageLoader::instance()->map();
         LInt index = m_id % map.capacity();
         ImageItem* item = map[index];
 
@@ -51,14 +76,16 @@ public:
             return;
         }
 
-        if (item->client->id == m_id) {
+        if (item->id == m_id) {
             map[index] = item->next;
+            item->client->setData(*m_data.get());
+            delete item;
         } else {
             ImageItem* next = item->next;
             while (next) {
                 if (next->id == m_id) {
                     item->next = next->next;
-                    next->client->setData(*data.get());
+                    next->client->setData(*m_data.get());
                     delete next;
                     break;
                 }
@@ -137,7 +164,7 @@ ImageLoader* ImageLoader::instance()
     return &sImageLoader;
 }
 
-const KVector<ImageItem*>& ImageLoader::map() const
+KVector<ImageItem*>& ImageLoader::map()
 {
     return m_map;
 }
@@ -149,6 +176,7 @@ LVoid ImageLoader::loadImage(const String& url, ImageClient* client)
     ImageItem* item = new ImageItem();
 
     client->setLoadId(id);
+    item->id = id;
     item->client = client;
     //item->m_map.addElement(item);
     LInt index = id % m_map.capacity();

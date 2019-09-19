@@ -12,18 +12,19 @@ public:
     virtual ~ImageClient();
     virtual LVoid setData(const String& data) = 0;
     LVoid setLoadId(LInt id);
+    LInt getLoadId() const;
 
 private:
     LInt m_loadId;
 };
 
 class ImageItem;
+class ImageLoadedEvent;
 class ImageLoader {
 public:
     static ImageLoader* instance();
     LVoid loadImage(const String& url, ImageClient* client);
-
-    const KVector<ImageItem*>& map() const;
+    KVector<ImageItem*>& map();
 
 private:
     ImageLoader();

@@ -11,7 +11,7 @@ class AppManager;
 
 class UIEvent {
 public:
-    LVoid ~UIEvent();
+    virtual ~UIEvent();
     virtual LVoid run() = 0;
 };
 class UIThread : public MessageThread {
