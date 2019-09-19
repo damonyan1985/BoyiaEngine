@@ -17,6 +17,11 @@
 #include <functional>
 
 namespace yanbo {
+
+UIEvent::~UIEvent()
+{
+}
+
 UIThread::UIThread(AppManager* manager)
     : m_manager(manager)
     , m_gc(LGraphicsContext::create())

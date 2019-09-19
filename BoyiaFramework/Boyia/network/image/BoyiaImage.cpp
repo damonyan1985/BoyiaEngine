@@ -1,5 +1,7 @@
 #include "BoyiaImage.h"
+#include "ImageLoader.h"
 #include "ImageView.h"
+#include "UIView.h"
 #include "jpeglib.h"
 #include "png.h"
 #include <stdio.h>
@@ -27,6 +29,10 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
 BoyiaImage::BoyiaImage()
     : m_image(NULL)
     , m_pixels(NULL)
+{
+}
+
+BoyiaImage::~BoyiaImage()
 {
 }
 
@@ -186,6 +192,8 @@ const String& BoyiaImage::url() const
 
 LVoid BoyiaImage::load(const String& path, LVoid* image)
 {
+    m_image = static_cast<HtmlView*>(image);
+    ImageLoader::instance()->loadImage(path, this);
 }
 
 // Execute in UIThread
