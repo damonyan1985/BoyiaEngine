@@ -1,40 +1,40 @@
 /*
- * CssParser.cpp
+ * StyleParser.cpp
  *
  *  Created on: 2011-6-23
  * Description: CSS Parser Engine
  *      Author: yanbo
  */
 
-#include "CssParser.h"
-#include "CssTags.h"
+#include "StyleParser.h"
 #include "KVector.h"
 #include "LColor.h"
 #include "LGdi.h"
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "Style.h"
+#include "StyleTags.h"
 
 namespace util {
 
 const LInt kStringBufferLen = 30;
 
-CssParser::CssParser()
-    : m_cssManager(NULL)
+StyleParser::StyleParser()
+    : m_styleManager(NULL)
 {
 }
 
-CssParser::~CssParser()
+StyleParser::~StyleParser()
 {
-    if (m_cssManager) {
-        delete m_cssManager;
+    if (m_styleManager) {
+        delete m_styleManager;
     }
 }
 
-void CssParser::parseCss(InputStream& is)
+void StyleParser::parseCss(InputStream& is)
 {
-    if (!m_cssManager) {
-        m_cssManager = new CssManager();
+    if (!m_styleManager) {
+        m_styleManager = new StyleManager();
     }
 
     SelectorGroup* selectorGroup = new SelectorGroup(0, 20);
@@ -129,7 +129,7 @@ void CssParser::parseCss(InputStream& is)
     KFORMATLOG("ParseCSS = %s", "END");
 }
 
-PropertyMap* CssParser::parseDeclarations(InputStream& is)
+PropertyMap* StyleParser::parseDeclarations(InputStream& is)
 {
     LBool done = LFalse;
     PropertyMap* declarations = new PropertyMap();
@@ -181,21 +181,21 @@ PropertyMap* CssParser::parseDeclarations(InputStream& is)
     return declarations;
 }
 
-void CssParser::addDeclaration(PropertyMap* properties, PropertyName& prop, PropertyValue& value)
+void StyleParser::addDeclaration(PropertyMap* properties, PropertyName& prop, PropertyValue& value)
 {
     if (prop.GetLength() > 0 && value.GetLength() > 0) {
         // 除去空白
         PropertyName realProp = StringUtils::skipBlank(prop);
         // 计算处理了大小写的字符串的标识符
-        properties->put(CssTags::getInstance()->genIdentify(realProp.ToLower()), value);
+        properties->put(StyleTags::getInstance()->genIdentify(realProp.ToLower()), value);
     }
 }
 
-void CssParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declarations)
+void StyleParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declarations)
 {
-    KLOG("CssParser::addSelectorGroup");
-    CssRule* rule = CssRule::New();
-    CssTags* tags = CssTags::getInstance();
+    KLOG("StyleParser::addSelectorGroup");
+    StyleRule* rule = StyleRule::New();
+    StyleTags* tags = StyleTags::getInstance();
 
     PropertyMap::Iterator iter = declarations->begin();
     PropertyMap::Iterator iterEnd = declarations->end();
@@ -208,18 +208,18 @@ void CssParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declarat
         KSTRLOG8(property);
         KSTRLOG8(value);
         addProperty(rule, property, value);
-        KFORMATLOG("CssParser:: PropertyValue = %s", (const char*)value.GetBuffer());
+        KFORMATLOG("StyleParser:: PropertyValue = %s", (const char*)value.GetBuffer());
     }
 
     if (selectors->size()) {
         rule->setSelectorGroup(selectors);
-        m_cssManager->addCssRule(rule);
+        m_styleManager->addStyleRule(rule);
     }
 
-    KLOG("CssParser:: addSelectorGroup end");
+    KLOG("StyleParser:: addSelectorGroup end");
 }
 
-LInt CssParser::getCssColor(const String& colorValue)
+LInt StyleParser::getCssColor(const String& colorValue)
 {
     if (colorValue.GetLength() == 4) //Shorthand Hexadecimal Colors e.g #fff
     {
@@ -243,12 +243,12 @@ LInt CssParser::getCssColor(const String& colorValue)
     }
 }
 
-void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
+void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& value)
 {
-    CssTags* tags = CssTags::getInstance();
+    StyleTags* tags = StyleTags::getInstance();
     LInt cssTag = tags->symbolAsInt(property);
     switch (cssTag) {
-    case CssTags::ALIGN: {
+    case StyleTags::ALIGN: {
         if (value.CompareNoCase(_CS("top"))) {
             rule->addProperty(cssTag, Style::ALIGN_TOP);
         } else if (value.CompareNoCase(_CS("left"))) {
@@ -261,12 +261,12 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             rule->addProperty(cssTag, Style::ALIGN_CENTER);
         }
     } break;
-    case CssTags::FONT_WEIGHT: {
+    case StyleTags::FONT_WEIGHT: {
         if (value.CompareNoCase(_CS("bold"))) {
             rule->addProperty(cssTag, LFont::FONT_STYLE_BOLD);
         }
     } break;
-    case CssTags::FONT_STYLE: {
+    case StyleTags::FONT_STYLE: {
         if (value.CompareNoCase(_CS("italic"))) {
             rule->addProperty(cssTag, LFont::FONT_STYLE_ITALIC);
         } else if (value.CompareNoCase(_CS("bold"))) {
@@ -275,24 +275,24 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             rule->addProperty(cssTag, LFont::FONT_STYLE_UNDERLINE);
         }
     } break;
-    case CssTags::WIDTH:
-    case CssTags::HEIGHT:
-    case CssTags::TOP:
-    case CssTags::LEFT:
-    case CssTags::MARGIN_TOP:
-    case CssTags::MARGIN_LEFT:
-    case CssTags::MARGIB_BOTTOM:
-    case CssTags::MARGIN_RIGHT:
-    case CssTags::PADDING_BOTTOM:
-    case CssTags::PADDING_LEFT:
-    case CssTags::PADDING_RIGHT:
-    case CssTags::PADDING_TOP: {
+    case StyleTags::WIDTH:
+    case StyleTags::HEIGHT:
+    case StyleTags::TOP:
+    case StyleTags::LEFT:
+    case StyleTags::MARGIN_TOP:
+    case StyleTags::MARGIN_LEFT:
+    case StyleTags::MARGIB_BOTTOM:
+    case StyleTags::MARGIN_RIGHT:
+    case StyleTags::PADDING_BOTTOM:
+    case StyleTags::PADDING_LEFT:
+    case StyleTags::PADDING_RIGHT:
+    case StyleTags::PADDING_TOP: {
         if (value.EndWithNoCase(_CS("px"))) {
             LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
             rule->addProperty(cssTag, intValue);
         }
     } break;
-    case CssTags::POSITION: {
+    case StyleTags::POSITION: {
         if (value.CompareNoCase(_CS("relative"))) {
             rule->addProperty(cssTag, Style::RELATIVEPOSITION);
         } else if (value.CompareNoCase(_CS("absolute"))) {
@@ -303,7 +303,7 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             rule->addProperty(cssTag, Style::STATICPOSITION);
         }
     } break;
-    case CssTags::PADDING: {
+    case StyleTags::PADDING: {
         //    	    KVector<String>* values = StringUtils::split(value, _CS(" "));
         //    	    LInt size = values->size();
         //    	    for (LInt i=0; i<size; i++)
@@ -316,43 +316,43 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
         //					LInt intValue = StringUtils::stringToInt(value.Mid(0, oneValue.GetLength()-2));
         //    	            KLOG("PADDING");
         //    	            KDESLOG(intValue);
-        //					rule->addProperty(CssTags::PADDING_TOP, intValue);
-        //					rule->addProperty(CssTags::PADDING_BOTTOM, intValue);
-        //					rule->addProperty(CssTags::PADDING_LEFT, intValue);
-        //					rule->addProperty(CssTags::PADDING_RIGHT, intValue);
+        //					rule->addProperty(StyleTags::PADDING_TOP, intValue);
+        //					rule->addProperty(StyleTags::PADDING_BOTTOM, intValue);
+        //					rule->addProperty(StyleTags::PADDING_LEFT, intValue);
+        //					rule->addProperty(StyleTags::PADDING_RIGHT, intValue);
         //    	        }
         //    	    }
         //
         //    	    delete values;
         //    	    values = NULL;
     } break;
-    case CssTags::BORDER_STYLE:
-    case CssTags::BORDER_TOP_STYLE:
-    case CssTags::BORDER_LEFT_STYLE:
-    case CssTags::BORDER_RIGHT_STYLE:
-    case CssTags::BORDER_BOTTOM_STYLE: {
+    case StyleTags::BORDER_STYLE:
+    case StyleTags::BORDER_TOP_STYLE:
+    case StyleTags::BORDER_LEFT_STYLE:
+    case StyleTags::BORDER_RIGHT_STYLE:
+    case StyleTags::BORDER_BOTTOM_STYLE: {
         if (value.CompareNoCase(_CS("dotted"))) {
             rule->addProperty(cssTag, LGraphicsContext::DotPen);
         } else {
             rule->addProperty(cssTag, LGraphicsContext::SolidPen);
         }
     } break;
-    case CssTags::BORDER_BOTTOM_WIDTH:
-    case CssTags::BORDER_TOP_WIDTH:
-    case CssTags::BORDER_LEFT_WIDTH:
-    case CssTags::BORDER_RIGHT_WIDTH: {
+    case StyleTags::BORDER_BOTTOM_WIDTH:
+    case StyleTags::BORDER_TOP_WIDTH:
+    case StyleTags::BORDER_LEFT_WIDTH:
+    case StyleTags::BORDER_RIGHT_WIDTH: {
         if (value.EndWithNoCase(_CS("px"))) {
             LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
             rule->addProperty(cssTag, intValue);
         }
     } break;
-    case CssTags::BACKGROUND: {
+    case StyleTags::BACKGROUND: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
-                rule->addProperty(CssTags::BACKGROUND_COLOR, getCssColor(oneValue));
+                rule->addProperty(StyleTags::BACKGROUND_COLOR, getCssColor(oneValue));
             }
 
             if (oneValue.ToLower().StartWith(_CS("url"))) {
@@ -372,13 +372,13 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
         delete values;
         values = NULL;
     } break;
-    case CssTags::BACKGROUND_COLOR:
-    case CssTags::COLOR:
-    case CssTags::BORDER_COLOR:
-    case CssTags::BORDER_LEFT_COLOR:
-    case CssTags::BORDER_RIGHT_COLOR:
-    case CssTags::BORDER_BOTTOM_COLOR:
-    case CssTags::BORDER_TOP_COLOR: {
+    case StyleTags::BACKGROUND_COLOR:
+    case StyleTags::COLOR:
+    case StyleTags::BORDER_COLOR:
+    case StyleTags::BORDER_LEFT_COLOR:
+    case StyleTags::BORDER_RIGHT_COLOR:
+    case StyleTags::BORDER_BOTTOM_COLOR:
+    case StyleTags::BORDER_TOP_COLOR: {
         LInt color = COLOR_WHITE;
         if (value.StartWith(_CS("#"))) {
             color = getCssColor(value);
@@ -397,7 +397,7 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
         KFORMATLOG("color tag = %d and color = %x", cssTag, color);
         rule->addProperty(cssTag, color);
     } break;
-    case CssTags::FONT_SIZE: {
+    case StyleTags::FONT_SIZE: {
         if (value.CompareNoCase(_CS("large"))) {
             rule->addProperty(cssTag, 60);
         } else if (value.CompareNoCase(_CS("medium"))) {
@@ -409,7 +409,7 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             rule->addProperty(cssTag, intValue);
         }
     } break;
-    case CssTags::TEXT_ALIGN: {
+    case StyleTags::TEXT_ALIGN: {
         if (value.CompareNoCase(_CS("left"))) {
             rule->addProperty(cssTag, LGraphicsContext::TextLeft);
         } else if (value.CompareNoCase(_CS("center"))) {
@@ -418,89 +418,89 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
             rule->addProperty(cssTag, LGraphicsContext::TextRight);
         }
     } break;
-    case CssTags::BORDER_BOTTOM: {
+    case StyleTags::BORDER_BOTTOM: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; ++i) {
             String oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
-                rule->addProperty(CssTags::BORDER_BOTTOM_COLOR, getCssColor(oneValue));
+                rule->addProperty(StyleTags::BORDER_BOTTOM_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(CssTags::BORDER_BOTTOM_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::SolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
                 LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
-                rule->addProperty(CssTags::BORDER_BOTTOM_WIDTH, intValue);
+                rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, intValue);
             }
         }
 
         delete values;
         values = NULL;
     } break;
-    case CssTags::BORDER_TOP: {
+    case StyleTags::BORDER_TOP: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
-                rule->addProperty(CssTags::BORDER_TOP_COLOR, getCssColor(oneValue));
+                rule->addProperty(StyleTags::BORDER_TOP_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(CssTags::BORDER_TOP_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::SolidPen);
             } else if (oneValue.StartWithNoCase(_CS("px"))) {
                 LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
-                rule->addProperty(CssTags::BORDER_TOP_WIDTH, intValue);
+                rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
             }
         }
 
         delete values;
         values = NULL;
     } break;
-    case CssTags::BORDER: {
+    case StyleTags::BORDER: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
 
             if (oneValue.StartWith(_CS("#"))) {
-                rule->addProperty(CssTags::BORDER_COLOR, getCssColor(oneValue));
+                rule->addProperty(StyleTags::BORDER_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(CssTags::BORDER_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_STYLE, LGraphicsContext::SolidPen);
             }
         }
 
         delete values;
         values = NULL;
     } break;
-    case CssTags::DISPLAY: {
+    case StyleTags::DISPLAY: {
         if (value.CompareNoCase(_CS("none"))) {
-            rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_NONE);
+            rule->addProperty(StyleTags::DISPLAY, Style::DISPLAY_NONE);
         } else if (value.CompareNoCase(_CS("block"))) {
-            rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_BLOCK);
+            rule->addProperty(StyleTags::DISPLAY, Style::DISPLAY_BLOCK);
         } else if (value.CompareNoCase(_CS("inline"))) {
-            rule->addProperty(CssTags::DISPLAY, Style::DISPLAY_INLINE);
+            rule->addProperty(StyleTags::DISPLAY, Style::DISPLAY_INLINE);
         }
     } break;
-    case CssTags::SCALE: {
-        rule->addProperty(CssTags::SCALE, StringUtils::stringToInt(value));
+    case StyleTags::SCALE: {
+        rule->addProperty(StyleTags::SCALE, StringUtils::stringToInt(value));
     } break;
-    case CssTags::Z_INDEX: {
-        rule->addProperty(CssTags::Z_INDEX, StringUtils::stringToInt(value));
+    case StyleTags::Z_INDEX: {
+        rule->addProperty(StyleTags::Z_INDEX, StringUtils::stringToInt(value));
     } break;
-    case CssTags::FOCUSABLE: {
+    case StyleTags::FOCUSABLE: {
         if (value.CompareNoCase(_CS("true"))) {
             rule->addProperty(cssTag, LTrue);
         } else {
             rule->addProperty(cssTag, LFalse);
         }
     } break;
-    case CssTags::FLEX_DIRECTION: {
+    case StyleTags::FLEX_DIRECTION: {
         if (value.CompareNoCase(_CS("row"))) {
-            rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_ROW);
+            rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_ROW);
         } else if (value.CompareNoCase(_CS("column"))) {
-            rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_COLUMN);
+            rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_COLUMN);
         } else if (value.CompareNoCase(_CS("row-reverse"))) {
-            rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_ROW_REVERSE);
+            rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_ROW_REVERSE);
         } else if (value.CompareNoCase(_CS("column-reverse"))) {
-            rule->addProperty(CssTags::FLEX_DIRECTION, Style::FLEX_COLUMN_REVERSE);
+            rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_COLUMN_REVERSE);
         }
     } break;
     default: {
@@ -508,8 +508,8 @@ void CssParser::addProperty(CssRule* rule, LUint property, PropertyValue& value)
     }
 }
 
-CssManager* CssParser::getCssManager() const
+StyleManager* StyleParser::getStyleManager() const
 {
-    return m_cssManager;
+    return m_styleManager;
 }
 }

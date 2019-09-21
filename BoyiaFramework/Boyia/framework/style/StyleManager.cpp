@@ -1,22 +1,22 @@
 /*
- * CssManager.cpp
+ * StyleManager.cpp
  *
  *  Created on: 2011-6-29
  *      Author: yanbo
  */
 
-#include "CssManager.h"
-#include "CssTags.h"
+#include "StyleManager.h"
 #include "SalLog.h"
+#include "StyleTags.h"
 
 namespace util {
 
-CssManager::CssManager()
+StyleManager::StyleManager()
     : m_doctree(new Doctree(20))
 {
 }
 
-CssManager::~CssManager()
+StyleManager::~StyleManager()
 {
     RuleList::Iterator iter = m_ruleList.begin();
     RuleList::Iterator endIter = m_ruleList.end();
@@ -35,30 +35,30 @@ CssManager::~CssManager()
     delete m_doctree;
 }
 
-void CssManager::addCssRule(CssRule* rule)
+void StyleManager::addStyleRule(StyleRule* rule)
 {
     m_ruleList.push(rule);
 }
 
-// get Specified htmitem's cssrule
-CssRule* CssManager::getCssRule()
+// get Specified htmitem's StyleRule
+StyleRule* StyleManager::getStyleRule()
 {
-    CssRule* cssStyle = CssRule::New();
+    StyleRule* cssStyle = StyleRule::New();
 
     RuleList::Iterator iter = m_ruleList.begin();
     RuleList::Iterator endIter = m_ruleList.end();
 
     LBool isNull = LTrue;
-    KLOG("CssManager::getCssRule1");
+    KLOG("StyleManager::getStyleRule1");
     for (; iter != endIter; ++iter) {
-        CssRule* newRule = matchRule(*iter);
+        StyleRule* newRule = matchRule(*iter);
         if (newRule != NULL) {
             isNull = LFalse;
             cssStyle->copyPropertiesFrom(newRule);
         }
     }
 
-    KLOG("CssManager::getCssRule2");
+    KLOG("StyleManager::getStyleRule2");
     if (isNull) {
         delete cssStyle;
         cssStyle = NULL;
@@ -67,13 +67,13 @@ CssRule* CssManager::getCssRule()
     return cssStyle;
 }
 
-LBool CssManager::matchPrepare(Selector* sel)
+LBool StyleManager::matchPrepare(Selector* sel)
 {
     if (!sel->size()) {
         return LFalse;
     }
 
-    //KFORMATLOG("CssManager::matchPrepare sel->size()=%d simpler=%d", index, (LIntPtr)simpler);
+    //KFORMATLOG("StyleManager::matchPrepare sel->size()=%d simpler=%d", index, (LIntPtr)simpler);
     const String& elem = sel->elementAt(sel->size() - 1)->getSelectorText();
     DoctreeNode* docElem = m_doctree->elementAt(m_doctree->size() - 1);
     if ((elem.CompareNoCase(docElem->m_tagId) && !elem.CompareNoCase(_CS("#")))
@@ -85,9 +85,9 @@ LBool CssManager::matchPrepare(Selector* sel)
     return LFalse;
 }
 
-CssRule* CssManager::matchRule(CssRule* rule)
+StyleRule* StyleManager::matchRule(StyleRule* rule)
 {
-    CssRule* newCssStyle = NULL;
+    StyleRule* newCssStyle = NULL;
     if (rule != NULL) {
         SelectorGroup* selectorGroup = rule->getSelectorGroup();
         Selector* targetSelector = NULL;
@@ -157,41 +157,41 @@ CssRule* CssManager::matchRule(CssRule* rule)
     return newCssStyle;
 }
 
-void CssManager::pushDoctreeNode(DoctreeNode* node)
+void StyleManager::pushDoctreeNode(DoctreeNode* node)
 {
     m_doctree->push(node);
 }
 
-void CssManager::pushDoctreeNode(const String& tagId, const ClassArray& tagClass, const String& tagName)
+void StyleManager::pushDoctreeNode(const String& tagId, const ClassArray& tagClass, const String& tagName)
 {
     m_doctree->push(new DoctreeNode(tagId, tagClass, tagName));
 }
 
-void CssManager::popDoctreeNode()
+void StyleManager::popDoctreeNode()
 {
     delete m_doctree->pop();
 }
 
 // inherited parent style
-CssRule* CssManager::createNewCssRule(const CssRule* parentRule, CssRule* childRule)
+StyleRule* StyleManager::createNewStyleRule(const StyleRule* parentRule, StyleRule* childRule)
 {
-    KLOG("CssManager::createNewCssRule");
-    CssRule* newCssRule = CssRule::New();
+    KLOG("StyleManager::createNewStyleRule");
+    StyleRule* newStyleRule = StyleRule::New();
     if (NULL != parentRule) {
         const AttributeMap* properties = parentRule->getPropertiesPtr();
         AttributeMap::Iterator iter = properties->begin();
         AttributeMap::Iterator iterEnd = properties->end();
         for (; iter != iterEnd; ++iter) {
-            if ((*iter)->getKey() > CssTags::STYLE_NULL) //  iter.getKey() > 0 can be inherited
+            if ((*iter)->getKey() > StyleTags::STYLE_NULL) //  iter.getKey() > 0 can be inherited
             {
                 LInt key = (*iter)->getKey();
-                LInt styleNull = CssTags::STYLE_NULL;
-                KFORMATLOG("CssManager::createNewCssRule inherited key=%d styleNull=%d", key, styleNull);
+                LInt styleNull = StyleTags::STYLE_NULL;
+                KFORMATLOG("StyleManager::createNewStyleRule inherited key=%d styleNull=%d", key, styleNull);
 
                 if ((*iter)->getValue().strVal.GetLength() > 0) {
-                    newCssRule->addProperty((*iter)->getKey(), (*iter)->getValue().strVal);
+                    newStyleRule->addProperty((*iter)->getKey(), (*iter)->getValue().strVal);
                 } else {
-                    newCssRule->addProperty((*iter)->getKey(), (*iter)->getValue().intVal);
+                    newStyleRule->addProperty((*iter)->getKey(), (*iter)->getValue().intVal);
                 }
             }
         }
@@ -204,15 +204,15 @@ CssRule* CssManager::createNewCssRule(const CssRule* parentRule, CssRule* childR
         for (; iter != iterEnd; ++iter) {
             KDESLOG((*iter)->getKey());
             if ((*iter)->getValue().strVal.GetLength() > 0) {
-                newCssRule->addProperty((*iter)->getKey(), (*iter)->getValue().strVal);
+                newStyleRule->addProperty((*iter)->getKey(), (*iter)->getValue().strVal);
             } else {
-                newCssRule->addProperty((*iter)->getKey(), (*iter)->getValue().intVal);
+                newStyleRule->addProperty((*iter)->getKey(), (*iter)->getValue().intVal);
             }
         }
 
         delete childRule;
     }
 
-    return newCssRule;
+    return newStyleRule;
 }
 }

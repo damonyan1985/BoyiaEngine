@@ -12,7 +12,7 @@ namespace yanbo {
 
 DOMBuilder::DOMBuilder()
     : m_htmlDoc(NULL)
-    , m_cssParser(NULL)
+    , m_styleParser(NULL)
     , m_xmlDoc(NULL)
 {
 }
@@ -30,9 +30,9 @@ DOMBuilder& DOMBuilder::add(HtmlDocument* doc)
     return *this;
 }
 
-DOMBuilder& DOMBuilder::add(util::CssParser* cssParser)
+DOMBuilder& DOMBuilder::add(util::StyleParser* StyleParser)
 {
-    m_cssParser = cssParser;
+    m_styleParser = StyleParser;
     return *this;
 }
 
@@ -193,8 +193,8 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             switch (type) {
             case HtmlTags::STYLE: {
                 util::InputStream is(text);
-                if (m_cssParser) {
-                    m_cssParser->parseCss(is);
+                if (m_styleParser) {
+                    m_styleParser->parseCss(is);
                 }
             } break;
             case HtmlTags::TITLE:

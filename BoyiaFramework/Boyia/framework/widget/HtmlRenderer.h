@@ -1,9 +1,9 @@
 #ifndef HtmlRenderer_h
 #define HtmlRenderer_h
 
-#include "CssParser.h"
 #include "HtmlDocument.h"
 #include "HtmlForm.h"
+#include "StyleParser.h"
 
 namespace yanbo {
 class ResourceLoader;
@@ -19,12 +19,12 @@ public:
         ResourceLoader* loader);
 
     void layout();
-    util::CssManager* getCssManager() const;
+    util::StyleManager* getStyleManager() const;
     void paint(HtmlView* item);
-    util::CssParser* getCssParser() const;
+    util::StyleParser* getStyleParser() const;
 
 private:
-    util::CssParser* m_cssParser;
+    util::StyleParser* m_styleParser;
     HtmlForm* m_form;
     HtmlDocument* m_htmlDoc;
     LRect m_rect;

@@ -16,7 +16,7 @@
 namespace yanbo {
 
 HtmlRenderer::HtmlRenderer()
-    : m_cssParser(NULL)
+    : m_styleParser(NULL)
     , m_form(NULL)
     , m_htmlDoc(NULL)
 {
@@ -24,8 +24,8 @@ HtmlRenderer::HtmlRenderer()
 
 HtmlRenderer::~HtmlRenderer()
 {
-    if (m_cssParser) {
-        delete m_cssParser;
+    if (m_styleParser) {
+        delete m_styleParser;
     }
 }
 
@@ -39,33 +39,33 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
     m_htmlDoc->clearHtmlList();
     m_loader = loader;
 
-    if (NULL == m_cssParser) {
-        m_cssParser = new util::CssParser();
+    if (NULL == m_styleParser) {
+        m_styleParser = new util::StyleParser();
     }
 
     DOMBuilder dom;
     dom.add(m_htmlDoc)
-        .add(m_cssParser)
+        .add(m_styleParser)
         .build(buffer);
-    //dom.createDocument(buffer, m_htmlDoc, m_cssParser);
+    //dom.createDocument(buffer, m_htmlDoc, m_styleParser);
     m_htmlDoc->resetHtmlFocus();
 }
 
-util::CssManager* HtmlRenderer::getCssManager() const
+util::StyleManager* HtmlRenderer::getStyleManager() const
 {
-    return m_cssParser->getCssManager();
+    return m_styleParser->getStyleManager();
 }
 
-util::CssParser* HtmlRenderer::getCssParser() const
+util::StyleParser* HtmlRenderer::getStyleParser() const
 {
-    return m_cssParser;
+    return m_styleParser;
 }
 
 void HtmlRenderer::layout()
 {
-    util::CssManager* cssManager = m_cssParser->getCssManager();
-    if (cssManager) {
-        m_htmlDoc->getRenderTreeRoot()->setStyle(cssManager, NULL);
+    util::StyleManager* StyleManager = m_styleParser->getStyleManager();
+    if (StyleManager) {
+        m_htmlDoc->getRenderTreeRoot()->setStyle(StyleManager, NULL);
     }
 
     m_htmlDoc->getRenderTreeRoot()->layout();

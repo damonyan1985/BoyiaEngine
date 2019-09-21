@@ -1,12 +1,12 @@
 /*
- * CssRule.h
+ * StyleRule.h
  *
  * Created on: 2011-6-23
  * Author    : yanbo
  */
 
-#ifndef CssRule_h
-#define CssRule_h
+#ifndef StyleRule_h
+#define StyleRule_h
 
 #include "KListMap.h"
 #include "KVector.h"
@@ -117,11 +117,11 @@ public:
 typedef KListMap<LUint, PropertyValue> PropertyMap;
 typedef KListMap<LInt, CssPropertyValue> AttributeMap;
 
-class CssRule : public BoyiaRef {
+class StyleRule : public BoyiaRef {
 public:
-    static CssRule* New();
-    static CssRule* New(CssRule& rule);
-    ~CssRule();
+    static StyleRule* New();
+    static StyleRule* New(StyleRule& rule);
+    ~StyleRule();
 
 public:
     void addProperty(LInt property, LInt value);
@@ -129,7 +129,7 @@ public:
 
     CssPropertyValue& getPropertyValue(LInt property);
 
-    void copyPropertiesFrom(const CssRule* rule);
+    void copyPropertiesFrom(const StyleRule* rule);
     void createStyle(Style& style);
 
     const AttributeMap& getProperties() const;
@@ -142,9 +142,9 @@ public:
     LBool isPropertyEmpty();
 
 private:
-    CssRule();
+    StyleRule();
     void construct();
-    void construct(CssRule& rule);
+    void construct(StyleRule& rule);
     void setStyleProperties(Style& style, LInt property,
         const CssPropertyValue& value);
 
@@ -153,4 +153,4 @@ private:
     SelectorGroup* m_selectorGroup; // selector
 };
 }
-#endif /* CSSRULE_H_ */
+#endif /* StyleRule_H_ */

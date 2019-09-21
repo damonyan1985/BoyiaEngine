@@ -2,7 +2,7 @@
  * ImageView.cpp
  *
  *  Created on: 2011-11-14
- *      Author: Administrator
+ *      Author: yanbo
  */
 
 #include "ImageView.h"

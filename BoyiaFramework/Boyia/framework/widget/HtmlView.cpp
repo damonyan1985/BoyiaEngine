@@ -237,7 +237,7 @@ HtmlTags::HtmlType HtmlView::getTagType() const
 }
 
 // apply style property for render tree
-LVoid HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
+LVoid HtmlView::setStyle(util::StyleManager* manager, util::StyleRule* parentRule)
 {
     KLOG("HtmlView::setStyle");
     BoyiaPtr<KVector<String>> classNames = util::StringUtils::split(m_className, _CS(" "));
@@ -249,7 +249,7 @@ LVoid HtmlView::setStyle(util::CssManager* manager, util::CssRule* parentRule)
     KLOG("HtmlView::setStyle1");
     manager->pushDoctreeNode(idCss, *(classNames.get()), m_tagName);
     KLOG("HtmlView::setStyle2");
-    BoyiaPtr<util::CssRule> newRule = manager->createNewCssRule(parentRule, manager->getCssRule());
+    BoyiaPtr<util::StyleRule> newRule = manager->createNewStyleRule(parentRule, manager->getStyleRule());
     KLOG("HtmlView::setStyle3");
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();

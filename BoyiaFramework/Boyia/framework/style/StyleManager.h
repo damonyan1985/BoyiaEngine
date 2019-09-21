@@ -1,33 +1,33 @@
 /*
- * CssManager.h
+ * StyleManager.h
  *
  *  Created on: 2011-6-23
  *      Author: yanbo
  */
 
-#ifndef CssManager_h
-#define CssManager_h
+#ifndef StyleManager_h
+#define StyleManager_h
 
-#include "CssRule.h"
 #include "DoctreeNode.h"
 #include "KList.h"
 #include "Stack.h"
+#include "StyleRule.h"
 
 namespace util {
 
-typedef KList<CssRule*> RuleList;
+typedef KList<StyleRule*> RuleList;
 typedef Stack<DoctreeNode*> Doctree;
-class CssManager {
+class StyleManager {
 public:
-    CssManager();
-    ~CssManager();
+    StyleManager();
+    ~StyleManager();
 
 public:
-    void addCssRule(CssRule* rule);
-    CssRule* getCssRule();
-    CssRule* matchRule(CssRule* rule);
+    void addStyleRule(StyleRule* rule);
+    StyleRule* getStyleRule();
+    StyleRule* matchRule(StyleRule* rule);
     LBool matchPrepare(Selector* selector);
-    CssRule* createNewCssRule(const CssRule* parentRule, CssRule* childRule);
+    StyleRule* createNewStyleRule(const StyleRule* parentRule, StyleRule* childRule);
 
     void pushDoctreeNode(DoctreeNode* node);
     void pushDoctreeNode(const String& tagId, const ClassArray& tagClass, const String& tagName);
@@ -38,4 +38,4 @@ protected:
     Doctree* m_doctree;
 };
 }
-#endif /* CssManager_h */
+#endif /* StyleManager_h */
