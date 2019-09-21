@@ -1,15 +1,15 @@
 /*
- * CssRule.cpp
+ * StyleRule.cpp
  *
  *  Created on: 2011-6-23
  *      Author: yanbo
  */
 
-#include "CssRule.h"
-#include "CssTags.h"
+#include "StyleRule.h"
 #include "LColor.h"
 #include "LGdi.h"
 #include "SalLog.h"
+#include "StyleTags.h"
 
 namespace util {
 
@@ -202,14 +202,14 @@ const CssPropertyValue::PropertySpecificity& CssPropertyValue::getSpecificity() 
     return m_specificity;
 }
 
-CssRule::CssRule()
+StyleRule::StyleRule()
     : m_selectorGroup(NULL)
 {
 }
 
-CssRule::~CssRule()
+StyleRule::~StyleRule()
 {
-    KLOG("CssRule::~CssRule()");
+    KLOG("StyleRule::~StyleRule()");
     if (m_selectorGroup) {
         LInt groupIdx = m_selectorGroup->size();
         while (groupIdx) {
@@ -227,22 +227,22 @@ CssRule::~CssRule()
     }
 }
 
-void CssRule::construct()
+void StyleRule::construct()
 {
 }
 
-CssRule* CssRule::New()
+StyleRule* StyleRule::New()
 {
-    CssRule* rule = new CssRule();
+    StyleRule* rule = new StyleRule();
     if (rule) {
         rule->construct();
     }
     return rule;
 }
 
-CssRule* CssRule::New(CssRule& rule)
+StyleRule* StyleRule::New(StyleRule& rule)
 {
-    CssRule* newRule = new CssRule();
+    StyleRule* newRule = new StyleRule();
     if (newRule) {
         newRule->construct(rule);
     }
@@ -250,20 +250,20 @@ CssRule* CssRule::New(CssRule& rule)
     return newRule;
 }
 
-void CssRule::construct(CssRule& rule)
+void StyleRule::construct(StyleRule& rule)
 {
     m_properties = rule.getProperties();
     m_selectorGroup = rule.getSelectorGroup();
 }
 
-void CssRule::addProperty(LInt property, LInt value)
+void StyleRule::addProperty(LInt property, LInt value)
 {
     CssPropertyValue v;
     v.intVal = value;
     m_properties.put(property, v);
 }
 
-void CssRule::addProperty(LInt property, const String& value)
+void StyleRule::addProperty(LInt property, const String& value)
 {
     CssPropertyValue v;
     v.intVal = 0;
@@ -271,40 +271,40 @@ void CssRule::addProperty(LInt property, const String& value)
     m_properties.put(property, v);
 }
 
-CssPropertyValue& CssRule::getPropertyValue(LInt property)
+CssPropertyValue& StyleRule::getPropertyValue(LInt property)
 {
     return m_properties[property];
 }
 
-const AttributeMap& CssRule::getProperties() const
+const AttributeMap& StyleRule::getProperties() const
 {
     return m_properties;
 }
 
-void CssRule::copyPropertiesFrom(const CssRule* rule)
+void StyleRule::copyPropertiesFrom(const StyleRule* rule)
 {
     if (NULL != rule) {
         AttributeMap::Iterator iter = rule->getProperties().begin();
         AttributeMap::Iterator iterEnd = rule->getProperties().end();
         for (; iter != iterEnd; ++iter) {
-            KFORMATLOG("CssRule::copyPropertiesFrom key=%d prop size=%d", (*iter)->getKey(), m_properties.size());
+            KFORMATLOG("StyleRule::copyPropertiesFrom key=%d prop size=%d", (*iter)->getKey(), m_properties.size());
             m_properties[(*iter)->getKey()].getSpecificity();
-            KLOG("CssRule::copyPropertiesFrom 1");
+            KLOG("StyleRule::copyPropertiesFrom 1");
             (*iter)->getValue().getSpecificity();
-            KLOG("CssRule::copyPropertiesFrom 2");
+            KLOG("StyleRule::copyPropertiesFrom 2");
             if (!CssPropertyValue::compareSpecificity(m_properties[(*iter)->getKey()].getSpecificity(), (*iter)->getValue().getSpecificity())) {
-                KLOG("CssRule::copyPropertiesFrom 3");
+                KLOG("StyleRule::copyPropertiesFrom 3");
                 m_properties.put((*iter)->getKey(), (*iter)->getValue());
-                KLOG("CssRule::copyPropertiesFrom 4");
+                KLOG("StyleRule::copyPropertiesFrom 4");
             }
 
-            KLOG("CssRule::copyPropertiesFrom end");
+            KLOG("StyleRule::copyPropertiesFrom end");
         }
     }
 }
 
 // last style will be send to htmlitem object
-void CssRule::createStyle(Style& style)
+void StyleRule::createStyle(Style& style)
 {
     style.transparent = LTrue;
 
@@ -315,56 +315,56 @@ void CssRule::createStyle(Style& style)
     }
 }
 
-SelectorGroup* CssRule::getSelectorGroup() const
+SelectorGroup* StyleRule::getSelectorGroup() const
 {
     return m_selectorGroup;
 }
 
-const AttributeMap* CssRule::getPropertiesPtr() const
+const AttributeMap* StyleRule::getPropertiesPtr() const
 {
     return &m_properties;
 }
 
-void CssRule::setStyleProperties(Style& style, LInt property,
+void StyleRule::setStyleProperties(Style& style, LInt property,
     const CssPropertyValue& value)
 {
     switch (property) {
-    case CssTags::ALIGN: {
+    case StyleTags::ALIGN: {
         style.align = value.intVal;
     } break;
-    case CssTags::BACKGROUND_COLOR: {
+    case StyleTags::BACKGROUND_COLOR: {
         style.bgColor = util::LColor::parseArgbInt(value.intVal);
         style.transparent = LFalse;
         KFORMATLOG("style.m_bgColor=%x", value.intVal);
     } break;
-    case CssTags::BACKGROUND_IMAGE: {
+    case StyleTags::BACKGROUND_IMAGE: {
         style.bgImageUrl = value.strVal;
         style.transparent = LFalse;
     } break;
-    case CssTags::COLOR: {
+    case StyleTags::COLOR: {
         KFORMATLOG("style Color=%x", value.intVal);
         style.color = util::LColor::parseArgbInt(value.intVal);
     } break;
-    case CssTags::FONT_STYLE: {
+    case StyleTags::FONT_STYLE: {
         style.font.setFontStyle((LFont::FontStyle)value.intVal);
     } break;
-    case CssTags::FONT_WEIGHT: {
+    case StyleTags::FONT_WEIGHT: {
         style.font.setFontStyle((LFont::FontStyle)value.intVal);
     } break;
-    case CssTags::LEFT: {
+    case StyleTags::LEFT: {
         KFORMATLOG("ImageItem::layout style.m_left=%d", value.intVal);
         style.left = value.intVal;
     } break;
-    case CssTags::TOP: {
+    case StyleTags::TOP: {
         style.top = value.intVal;
     } break;
-    case CssTags::POSITION: {
+    case StyleTags::POSITION: {
         style.positionType = value.intVal;
     } break;
-    case CssTags::FONT_SIZE: {
+    case StyleTags::FONT_SIZE: {
         style.font.setFontSize(value.intVal);
     } break;
-    case CssTags::BORDER_STYLE: {
+    case StyleTags::BORDER_STYLE: {
         if (value.intVal == LGraphicsContext::SolidPen) {
             style.border.topWidth = 1;
             style.border.leftWidth = 1;
@@ -372,101 +372,101 @@ void CssRule::setStyleProperties(Style& style, LInt property,
             style.border.rightWidth = 1;
         }
     } break;
-    case CssTags::TEXT_ALIGN: {
+    case StyleTags::TEXT_ALIGN: {
         style.textAlignement = value.intVal;
     } break;
-    case CssTags::MARGIN_LEFT: {
+    case StyleTags::MARGIN_LEFT: {
         style.leftMargin = value.intVal;
     } break;
-    case CssTags::MARGIN_TOP: {
+    case StyleTags::MARGIN_TOP: {
         style.topMargin = value.intVal;
     } break;
-    case CssTags::MARGIN_RIGHT: {
+    case StyleTags::MARGIN_RIGHT: {
         style.rightMargin = value.intVal;
     } break;
-    case CssTags::MARGIB_BOTTOM: {
+    case StyleTags::MARGIB_BOTTOM: {
         style.bottomMargin = value.intVal;
     } break;
-    case CssTags::PADDING_LEFT: {
+    case StyleTags::PADDING_LEFT: {
         style.leftPadding = value.intVal;
     } break;
-    case CssTags::PADDING_TOP: {
+    case StyleTags::PADDING_TOP: {
         style.topPadding = value.intVal;
     } break;
-    case CssTags::PADDING_RIGHT: {
+    case StyleTags::PADDING_RIGHT: {
         style.rightPadding = value.intVal;
     } break;
-    case CssTags::PADDING_BOTTOM: {
+    case StyleTags::PADDING_BOTTOM: {
         style.bottomPadding = value.intVal;
     } break;
-    case CssTags::BORDER_BOTTOM_WIDTH: {
+    case StyleTags::BORDER_BOTTOM_WIDTH: {
         style.border.bottomWidth = value.intVal;
     } break;
-    case CssTags::BORDER_TOP_WIDTH: {
+    case StyleTags::BORDER_TOP_WIDTH: {
         style.border.topWidth = value.intVal;
     } break;
-    case CssTags::BORDER_TOP_STYLE: {
+    case StyleTags::BORDER_TOP_STYLE: {
         style.border.topStyle = value.intVal;
         if (value.intVal == LGraphicsContext::SolidPen) {
             style.border.topWidth = 1;
         }
     } break;
-    case CssTags::BORDER_BOTTOM_STYLE: {
+    case StyleTags::BORDER_BOTTOM_STYLE: {
         style.border.bottomStyle = value.intVal;
         if (value.intVal == LGraphicsContext::SolidPen) {
             style.border.bottomWidth = 1;
         }
     } break;
-    case CssTags::BORDER_LEFT_STYLE: {
+    case StyleTags::BORDER_LEFT_STYLE: {
         style.border.leftStyle = value.intVal;
         if (value.intVal == LGraphicsContext::SolidPen) {
             style.border.leftWidth = 1;
         }
     } break;
-    case CssTags::BORDER_RIGHT_STYLE: {
+    case StyleTags::BORDER_RIGHT_STYLE: {
         style.border.rightStyle = value.intVal;
         if (value.intVal == LGraphicsContext::SolidPen) {
             style.border.rightWidth = 1;
         }
     } break;
-    case CssTags::BORDER_COLOR: {
+    case StyleTags::BORDER_COLOR: {
         style.border.leftColor = value.intVal;
         style.border.topColor = value.intVal;
         style.border.bottomColor = value.intVal;
         style.border.rightColor = value.intVal;
     } break;
-    case CssTags::BORDER_LEFT_COLOR: {
+    case StyleTags::BORDER_LEFT_COLOR: {
         style.border.leftColor = value.intVal;
     } break;
-    case CssTags::BORDER_TOP_COLOR: {
+    case StyleTags::BORDER_TOP_COLOR: {
         style.border.topColor = value.intVal;
     } break;
-    case CssTags::BORDER_BOTTOM_COLOR: {
+    case StyleTags::BORDER_BOTTOM_COLOR: {
         style.border.bottomColor = value.intVal;
     } break;
-    case CssTags::BORDER_RIGHT_COLOR: {
+    case StyleTags::BORDER_RIGHT_COLOR: {
         style.border.rightColor = value.intVal;
     } break;
-    case CssTags::DISPLAY: {
+    case StyleTags::DISPLAY: {
         style.displayType = value.intVal;
     } break;
-    case CssTags::WIDTH: {
+    case StyleTags::WIDTH: {
         style.width = value.intVal;
     } break;
-    case CssTags::HEIGHT: {
+    case StyleTags::HEIGHT: {
         style.height = value.intVal;
     } break;
-    case CssTags::SCALE: {
+    case StyleTags::SCALE: {
         style.scale = ((float)value.intVal) / 100;
     } break;
-    case CssTags::Z_INDEX: {
+    case StyleTags::Z_INDEX: {
         style.zindex = value.intVal;
     } break;
-    case CssTags::FOCUSABLE: {
-        KFORMATLOG("CssTags::FOCUSABLE result=%d", value.intVal);
+    case StyleTags::FOCUSABLE: {
+        KFORMATLOG("StyleTags::FOCUSABLE result=%d", value.intVal);
         style.focusable = value.intVal;
     } break;
-    case CssTags::FLEX_DIRECTION: {
+    case StyleTags::FLEX_DIRECTION: {
         style.flexDirection = value.intVal;
     }
     default:
@@ -474,12 +474,12 @@ void CssRule::setStyleProperties(Style& style, LInt property,
     }
 }
 
-LBool CssRule::isPropertyEmpty()
+LBool StyleRule::isPropertyEmpty()
 {
     return m_properties.isEmpty();
 }
 
-void CssRule::setSelectorGroup(SelectorGroup* group)
+void StyleRule::setSelectorGroup(SelectorGroup* group)
 {
     m_selectorGroup = group;
 }

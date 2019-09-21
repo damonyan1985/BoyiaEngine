@@ -2,12 +2,12 @@
 #define HtmlView_h
 
 // all render base class
-#include "CssManager.h"
 #include "HtmlTags.h"
 #include "IViewListener.h"
 #include "KList.h"
 #include "LBaseView.h"
 #include "LGdi.h"
+#include "StyleManager.h"
 
 namespace yanbo {
 
@@ -41,7 +41,7 @@ public:
     virtual LBool isStyle() const;
     virtual LBool isJavaScript() const;
     virtual LVoid execute();
-    virtual LVoid setStyle(util::CssManager* manager, util::CssRule* parentRule);
+    virtual LVoid setStyle(util::StyleManager* manager, util::StyleRule* parentRule);
 
     LVoid setId(const String& id);
     const String& getId() const;

@@ -1,12 +1,12 @@
 /*
- * CssTags.h
+ * StyleTags.h
  *
  *  Created on: 2011-6-23
  *      Author: yanbo
  */
 
-#ifndef CssTags_h
-#define CssTags_h
+#ifndef StyleTags_h
+#define StyleTags_h
 
 //#include "kmap.h"
 #include "IdentityMap.h"
@@ -17,12 +17,12 @@ namespace util {
  * Objects of this class holds the symbol table for CSS tags.
  * See this class for more info.
  */
-class CssTags {
+class StyleTags {
 public:
     //properties
     //properties that are inherited has value > STYLE_NULL.
     //properties that is not inherited has value < STYLE_NULL.
-    enum CssType {
+    enum StyleType {
         TAGNONE = 0,
         ALIGN,
         WIDTH,
@@ -76,11 +76,11 @@ public:
     };
 
 public:
-    static CssTags* getInstance();
+    static StyleTags* getInstance();
     static void destroyInstance();
 
     void defineInitialSymbol(const String& cssText, LInt cssType);
-    ~CssTags();
+    ~StyleTags();
 
     LInt symbolAsInt(LUint hash);
     void clear();
@@ -88,10 +88,10 @@ public:
     LUint genIdentify(const String& key);
 
 private:
-    CssTags();
+    StyleTags();
 
 private:
-    static CssTags* s_cssTags;
+    static StyleTags* s_tags;
     IdentityMap m_map;
 };
 }

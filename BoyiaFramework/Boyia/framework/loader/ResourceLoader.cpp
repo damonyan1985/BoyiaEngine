@@ -187,7 +187,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 {
     KFORMATLOG("ResourceLoader::executeCss data=%s", GET_STR(data));
     util::InputStream is(data);
-    m_render->getCssParser()->parseCss(is);
+    m_render->getStyleParser()->parseCss(is);
 
     if (--m_cssSize <= 0) {
         m_render->layout();

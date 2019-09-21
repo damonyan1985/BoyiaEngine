@@ -1,8 +1,8 @@
 #ifndef Tiny2Dom_h
 #define Tiny2Dom_h
 
-#include "CssParser.h"
 #include "HtmlView.h"
+#include "StyleParser.h"
 #include "TinyXml2.h"
 
 using namespace tinyxml2;
@@ -15,7 +15,7 @@ public:
     ~DOMBuilder();
 
     DOMBuilder& add(HtmlDocument* doc);
-    DOMBuilder& add(util::CssParser* cssParser);
+    DOMBuilder& add(util::StyleParser* StyleParser);
 
     virtual LVoid build(const String& buffer);
 
@@ -25,7 +25,7 @@ private:
 
 private:
     HtmlDocument* m_htmlDoc;
-    util::CssParser* m_cssParser;
+    util::StyleParser* m_styleParser;
     XMLDocument* m_xmlDoc;
 };
 }

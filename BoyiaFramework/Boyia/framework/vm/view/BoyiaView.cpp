@@ -86,7 +86,7 @@ void BoyiaView::setStyle(String& cls)
         ResourceLoader* loader = UIView::getInstance()->getLoader();
         LGraphicsContext* gc = UIView::getInstance()->getGraphicsContext();
         m_item->setClassName(cls);
-        m_item->setStyle(loader->render()->getCssManager(), NULL);
+        m_item->setStyle(loader->render()->getStyleManager(), NULL);
 
         // 判断z-index
         if (m_item->isPositioned() && m_item->getStyle()->zindex > 0) {
