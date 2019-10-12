@@ -1,6 +1,7 @@
 #include "VDOMBuilder.h"
 #include "HtmlTags.h"
 #include "OwnerPtr.h"
+#include "StringBuilder.h"
 #include "VDocument.h"
 
 namespace yanbo {
@@ -220,12 +221,81 @@ LVoid VDOMBuilder::fetchValue(const String& value, Stack<LoopItemData>& stack, D
     }
 }
 
+LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& outValue)
+{
+    String* val = &value;
+    do {
+        LInt begin = val->Find(_CS("{"));
+        LInt end = val->Find(_CS("}"));
+
+        StringBuilder builder;
+        builder.append(val->Mid(0, begin));
+
+        // if the value is a variable
+        if (begin > 0 && end > begin) {
+            String strVal = val->Mid(begin, end - begin);
+            LInt pos = strVal.Find(_CS("."));
+
+            if (pos < 0) {
+                // value is only support string
+                // because ui display is also string
+                for (LInt i = stack.size() - 1; i >= 0; ++i) {
+                    if (stack.elementAt(i).itemName.CompareCase(strVal)) {
+                        //outValue.value.json = stack.elementAt(i).data;
+                        //outValue.type = kJsonValue;
+                        builder.append(stack.elementAt(i).data->valuestring);
+                        break;
+                    }
+
+                    if (stack.elementAt(i).indexName.CompareCase(strVal)) {
+                        //outValue.value.loopIndex = stack.elementAt(i).loopIndex;
+                        //outValue.type = kIntValue;
+                        String number('\0', 20);
+                        LInt2Str(stack.elementAt(i).loopIndex, selectText.GetBuffer(), 10);
+                        builder.append(number);
+                        break;
+                    }
+                }
+            } else {
+                // such as obj.name.firstName
+                OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS("."));
+                JSONObject data;
+                // if value is in stack
+                for (LInt j = stack.size() - 1; j >= 0; ++j) {
+                    if (stack.elementAt(j).itemName.CompareCase(values->elementAt(0))) {
+                        data = stack.elementAt(j).data;
+                        break;
+                    }
+                }
+
+                // if value is not in stack, now we may find value in m_state
+                if (!data.ptr()) {
+                    data = m_state->get(values->elementAt(0));
+                }
+
+                // such as obj.props1.props2...
+                for (LInt i = 1; i < values->size(); ++i) {
+                    data = data.get(values->elementAt(i));
+                }
+
+                //outValue.value.json = data.ptr();
+                //outValue.type = kJsonValue;
+                if (data.ptr()->type == cJSON_String) {
+                    builder.append((LByte*)data.ptr()->valuestring);
+                }
+            }
+        }
+
+        val = val->Mid(end);
+    } while (val->GetLength());
+}
+
 VNode* VDOMBuilder::createVNode(XMLNode* node, Stack<LoopItemData>& stack)
 {
     VNode* item = NULL;
     HtmlTags* htmlTags = HtmlTags::getInstance();
 
-    if (node->ToText() == NULL && node->ToComment() == NULL) {
+    if (!node->ToText() && !node->ToComment()) {
         XMLElement* elem = node->ToElement();
         if (!elem) {
             return NULL;
@@ -252,13 +322,14 @@ VNode* VDOMBuilder::createVNode(XMLNode* node, Stack<LoopItemData>& stack)
     } else if (node->ToText()) {
         XMLText* elem = node->ToText();
         VText* vText = new VText();
-        DOMValue value;
-        fetchValue(_CS(elem->Value()), stack, value);
+        String value;
+        fetchTextValue(_CS(elem->Value()), stack, value);
         if (value.value.json) {
-            vText->setText(_CS(value.value.json->valuestring));
+            vText->setText(value);
         } else {
-            vText->setText(_CS(elem->Value()));
+            vText->setText(value);
         }
+
         item = vText;
     }
 
