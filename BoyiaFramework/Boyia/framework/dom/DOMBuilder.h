@@ -15,7 +15,7 @@ public:
     ~DOMBuilder();
 
     DOMBuilder& add(HtmlDocument* doc);
-    DOMBuilder& add(util::StyleParser* StyleParser);
+    DOMBuilder& add(util::StyleParser* styleParser);
 
     virtual LVoid build(const String& buffer);
 

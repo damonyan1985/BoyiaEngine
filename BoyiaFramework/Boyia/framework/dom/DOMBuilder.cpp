@@ -30,9 +30,9 @@ DOMBuilder& DOMBuilder::add(HtmlDocument* doc)
     return *this;
 }
 
-DOMBuilder& DOMBuilder::add(util::StyleParser* StyleParser)
+DOMBuilder& DOMBuilder::add(util::StyleParser* styleParser)
 {
-    m_styleParser = StyleParser;
+    m_styleParser = styleParser;
     return *this;
 }
 
