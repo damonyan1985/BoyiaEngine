@@ -27,6 +27,7 @@ private:
     VNode* createVDom(XMLNode* elem, Stack<LoopItemData>& stack);
     LBool findSpecialAttribute(XMLNode* elem, VNode* parent, Stack<LoopItemData>& stack);
     LVoid fetchValue(const String& value, Stack<LoopItemData>& stack, DOMValue& outValue);
+    LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& outValue);
 
 private:
     VDocument* m_vdom;
