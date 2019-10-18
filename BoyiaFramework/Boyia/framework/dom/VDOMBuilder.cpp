@@ -221,9 +221,9 @@ LVoid VDOMBuilder::fetchValue(const String& value, Stack<LoopItemData>& stack, D
     }
 }
 
-LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& outValue)
+LVoid VDOMBuilder::fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& outValue)
 {
-    String* val = &value;
+    OwnerPtr<String> val = new String(value);
     do {
         LInt begin = val->Find(_CS("{"));
         LInt end = val->Find(_CS("}"));
@@ -243,7 +243,7 @@ LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& ou
                     if (stack.elementAt(i).itemName.CompareCase(strVal)) {
                         //outValue.value.json = stack.elementAt(i).data;
                         //outValue.type = kJsonValue;
-                        builder.append(stack.elementAt(i).data->valuestring);
+                        builder.append(_CS(stack.elementAt(i).data->valuestring));
                         break;
                     }
 
@@ -251,7 +251,7 @@ LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& ou
                         //outValue.value.loopIndex = stack.elementAt(i).loopIndex;
                         //outValue.type = kIntValue;
                         String number('\0', 20);
-                        LInt2Str(stack.elementAt(i).loopIndex, selectText.GetBuffer(), 10);
+                        LInt2Str(stack.elementAt(i).loopIndex, number.GetBuffer(), 10);
                         builder.append(number);
                         break;
                     }
@@ -286,7 +286,7 @@ LVoid fetchTextValue(const String& value, Stack<LoopItemData>& stack, String& ou
             }
         }
 
-        val = val->Mid(end);
+        val = new String(val->Mid(end));
     } while (val->GetLength());
 }
 
@@ -324,11 +324,7 @@ VNode* VDOMBuilder::createVNode(XMLNode* node, Stack<LoopItemData>& stack)
         VText* vText = new VText();
         String value;
         fetchTextValue(_CS(elem->Value()), stack, value);
-        if (value.value.json) {
-            vText->setText(value);
-        } else {
-            vText->setText(value);
-        }
+        vText->setText(value);
 
         item = vText;
     }
