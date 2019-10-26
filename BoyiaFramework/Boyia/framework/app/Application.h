@@ -13,6 +13,7 @@ public:
 
     UIView* view() const;
     AppVM* vm() const;
+    LVoid init(const String& entryPage);
 
 private:
     UIView* m_view;

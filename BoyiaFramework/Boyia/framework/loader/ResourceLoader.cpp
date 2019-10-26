@@ -5,17 +5,17 @@
  *      Author: yanbo
  */
 #include "ResourceLoader.h"
-#include "AppThread.h"
 #include "SalLog.h"
 #include "StringBuilder.h"
 #include "StringUtils.h"
+#include "UIThread.h"
 #include "UIView.h"
 #include <android/log.h>
 
 extern LVoid CompileScript(char* code);
 namespace yanbo {
 
-class ResourceHandle : public NetworkClient, public AppEvent {
+class ResourceHandle : public NetworkClient, public UIEvent {
 public:
     ResourceHandle(ResourceLoader* loader, LInt type, const String& url)
         : m_loader(loader)
@@ -44,13 +44,13 @@ public:
     {
         //m_loader->onLoadError(error);
         m_result = error;
-        AppThread::instance()->sendEvent(this);
+        UIThread::instance()->sendUIEvent(this);
     }
 
     virtual LVoid onLoadFinished()
     {
         m_data = m_builder.toString();
-        AppThread::instance()->sendEvent(this);
+        UIThread::instance()->sendUIEvent(this);
     }
 
     virtual LVoid run()

@@ -23,6 +23,14 @@
 -dontwarn com.squareup.**
 -dontwarn okio.**
 
+# okhttp 3
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# boyia util
 -keep class com.boyia.app.core.** {*;}
 -keep class com.boyia.app.common.utils.BoyiaUtils {*;}
 -keep class com.boyia.app.common.utils.ZipOperation {*;}

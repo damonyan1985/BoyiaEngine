@@ -171,6 +171,10 @@ LVoid UIThread::handleMessage(Message* msg)
         OwnerPtr<UIEvent> event = static_cast<UIEvent*>(msg->obj);
         event->run();
     } break;
+    case kUiInitApp: {
+        String entry(_CS(msg->obj), LFalse, msg->arg0);
+        m_manager->currentApp()->init(entry);
+    } break;
     }
 }
 
@@ -297,5 +301,16 @@ LVoid UIThread::sendUIEvent(UIEvent* event)
     msg->type = kUiEvent;
     msg->obj = event;
     postMessage(msg);
+}
+
+LVoid UIThread::initApp(const String& entry)
+{
+    Message* msg = m_queue->obtain();
+    msg->type = kUiInitApp;
+    msg->obj = entry.GetBuffer();
+    msg->arg0 = entry.GetLength();
+
+    m_queue->push(msg);
+    notify();
 }
 }

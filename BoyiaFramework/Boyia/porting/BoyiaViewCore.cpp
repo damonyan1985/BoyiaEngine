@@ -2,7 +2,6 @@
 #define BoyiaViewCore_h
 
 #include "AppManager.h"
-#include "AppThread.h"
 #include "ArmFunction.h"
 #include "AutoObject.h"
 #include "BoyiaExecution.h"
@@ -91,7 +90,7 @@ static void nativeInitUIView(
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)
 {
-    yanbo::AppThread::instance()->destroy();
+    yanbo::AppManager::instance()->uiThread()->destroy();
 }
 
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)

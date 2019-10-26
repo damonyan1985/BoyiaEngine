@@ -8,6 +8,12 @@ Application::Application(AppInfo* info)
     m_view = new UIView();
 }
 
+LVoid Application::init(const String& entryPage)
+{
+    m_vm->useVM();
+    m_view->loadPage(entryPage);
+}
+
 Application::~Application()
 {
 }
