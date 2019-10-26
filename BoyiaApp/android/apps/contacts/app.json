@@ -1,6 +1,6 @@
 {
-    "appName" : "contacts",
-    "entry" : "boyia://apps/contacts/view/index.ui",
-    "versionCode" : 2,
-    "versionName" : "v0.0.2"
+    "appName": "contacts",
+    "entry": "boyia://apps/contacts/view/index.boui",
+    "versionCode": 2,
+    "versionName": "v0.0.2"
 }

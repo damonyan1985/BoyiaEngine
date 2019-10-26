@@ -36,4 +36,5 @@ uploadArchives {
 }
 
 dependencies {
+    implementation gradle.library.zip4jLib
 }

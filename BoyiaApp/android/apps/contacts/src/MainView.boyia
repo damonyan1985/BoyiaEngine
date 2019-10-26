@@ -24,13 +24,13 @@ class MainView extends ViewDoc {
     }
     
     fun appendHeader() {
-        this.headerView = ViewDoc.createView(SearchHeader, "boyia://apps/contacts/view/search_header.ui");
+        this.headerView = ViewDoc.createView(SearchHeader, "boyia://apps/contacts/view/search_header.boui");
         this.headerView.initView();
         this.headerContainer.appendView(this.headerView);
     }
 
     fun appendFooter() {
-        this.footerView = ViewDoc.createView(FooterView, "boyia://apps/contacts/view/footer_tabs.ui");
+        this.footerView = ViewDoc.createView(FooterView, "boyia://apps/contacts/view/footer_tabs.boui");
         this.footerView.initView();
         this.footerContainer.appendView(this.footerView);
     }
