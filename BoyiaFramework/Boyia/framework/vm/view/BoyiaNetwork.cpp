@@ -1,4 +1,5 @@
 #include "BoyiaNetwork.h"
+#include "AppManager.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
 
@@ -45,7 +46,8 @@ void BoyiaNetwork::onLoadError(LInt error)
 void BoyiaNetwork::onLoadFinished()
 {
     m_data = m_builder.toString();
-    yanbo::AppThread::instance()->sendEvent(this);
+    //yanbo::AppThread::instance()->sendEvent(this);
+    yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);
 }
 
 LVoid BoyiaNetwork::run()

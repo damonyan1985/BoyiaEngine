@@ -1,6 +1,5 @@
 #include "AppLoader.h"
 #include "AppManager.h"
-#include "AppThread.h"
 #include "AutoObject.h"
 #include "FileUtil.h"
 #include "JNIUtil.h"

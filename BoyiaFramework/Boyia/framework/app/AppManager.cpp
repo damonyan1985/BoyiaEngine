@@ -7,7 +7,6 @@ AppManager::AppManager()
 {
     m_network = NetworkBase::create();
     m_loader = new AppLoader(this);
-    m_appThread = new AppThread(this);
     m_uiThread = new UIThread(this);
 }
 
@@ -18,11 +17,6 @@ AppManager::~AppManager()
 NetworkBase* AppManager::network() const
 {
     return m_network;
-}
-
-AppThread* AppManager::appThread() const
-{
-    return m_appThread;
 }
 
 UIThread* AppManager::uiThread() const
@@ -59,7 +53,7 @@ const LRect& AppManager::getViewport() const
 LVoid AppManager::launchApp(AppInfo* info)
 {
     m_stack.push(new Application(info));
-    m_appThread->load(info->path);
+    m_uiThread->initApp(info->path);
 }
 
 LVoid AppManager::handleTouchEvent(LInt type, LInt x, LInt y)

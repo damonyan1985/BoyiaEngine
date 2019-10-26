@@ -33,7 +33,8 @@ public:
         kUiOperationExec,
         kUiDestory,
         kUiRunAnimation,
-        kUiEvent
+        kUiEvent,
+        kUiInitApp
     };
     static UIThread* instance();
 
@@ -63,6 +64,7 @@ public:
     LVoid onKeyboardHide(LIntPtr item, LInt keyboardHeight);
 
     LGraphicsContext* graphics() const;
+    LVoid initApp(const String& entry);
     virtual LVoid handleMessage(Message* msg);
 
 private:
