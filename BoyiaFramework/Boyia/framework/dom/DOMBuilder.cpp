@@ -24,13 +24,13 @@ DOMBuilder::~DOMBuilder()
     }
 }
 
-DOMBuilder& DOMBuilder::add(HtmlDocument* doc)
+DOMBuilder& DOMBuilder::with(HtmlDocument* doc)
 {
     m_htmlDoc = doc;
     return *this;
 }
 
-DOMBuilder& DOMBuilder::add(util::StyleParser* styleParser)
+DOMBuilder& DOMBuilder::with(util::StyleParser* styleParser)
 {
     m_styleParser = styleParser;
     return *this;

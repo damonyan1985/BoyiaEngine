@@ -56,7 +56,7 @@ void BoyiaViewDoc::loadHTML(const String& url)
     }
 
     //dom->createDocument(stream, m_doc, NULL);
-    dom->add(m_doc).build(stream);
+    dom->with(m_doc).build(stream);
     m_item = m_doc->getRenderTreeRoot();
 
     //	ResourceLoader* loader = UIView::getInstance()->getLoader();
