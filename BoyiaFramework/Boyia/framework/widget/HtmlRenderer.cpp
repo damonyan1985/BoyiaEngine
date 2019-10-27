@@ -44,8 +44,8 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
     }
 
     DOMBuilder dom;
-    dom.add(m_htmlDoc)
-        .add(m_styleParser)
+    dom.with(m_htmlDoc)
+        .with(m_styleParser)
         .build(buffer);
     //dom.createDocument(buffer, m_htmlDoc, m_styleParser);
     m_htmlDoc->resetHtmlFocus();
