@@ -10,7 +10,7 @@ class ImageClient {
 public:
     ImageClient();
     virtual ~ImageClient();
-    virtual LVoid setData(const String& data) = 0;
+    virtual LVoid setImageInfo(LInt width, LInt height, LByte* pixels) = 0;
     LVoid setLoadId(LInt id);
     LInt getLoadId() const;
 

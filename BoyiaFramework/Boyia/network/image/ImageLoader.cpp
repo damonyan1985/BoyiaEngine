@@ -1,5 +1,6 @@
 #include "ImageLoader.h"
 #include "BoyiaLoader.h"
+#include "ImageInfo.h"
 #include "StringBuilder.h"
 #include "UIThread.h"
 
@@ -59,9 +60,9 @@ LInt ImageClient::getLoadId() const
 
 class ImageLoadedEvent : public UIEvent {
 public:
-    ImageLoadedEvent(LInt id, OwnerPtr<String> data)
+    ImageLoadedEvent(LInt id, const ImageInfo& info)
         : m_id(id)
-        , m_data(data)
+        , m_info(info)
     {
     }
 
@@ -78,14 +79,14 @@ public:
 
         if (item->id == m_id) {
             map[index] = item->next;
-            item->client->setData(*m_data.get());
+            item->client->setImageInfo(m_info.width, m_info.height, m_info.pixels);
             delete item;
         } else {
             ImageItem* next = item->next;
             while (next) {
                 if (next->id == m_id) {
                     item->next = next->next;
-                    next->client->setData(*m_data.get());
+                    next->client->setImageInfo(m_info.width, m_info.height, m_info.pixels);
                     delete next;
                     break;
                 }
@@ -97,8 +98,8 @@ public:
     }
 
 private:
-    OwnerPtr<String> m_data;
     LInt m_id;
+    ImageInfo m_info;
 };
 
 class ImageLoaderClient : public NetworkClient {
@@ -130,14 +131,17 @@ public:
     {
         OwnerPtr<String> data = m_builder.toString();
         // m_client->setData(*data.get());
+        m_info.decodeImage(*data);
         // send to ui thread
-        UIThread::instance()->sendUIEvent(new ImageLoadedEvent(m_id, data));
+        UIThread::instance()
+            ->sendUIEvent(new ImageLoadedEvent(m_id, m_info));
         delete this;
     }
 
 private:
     LInt m_id;
     StringBuilder m_builder;
+    ImageInfo m_info;
 };
 
 // only call in ui thread
