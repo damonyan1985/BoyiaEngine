@@ -1,4 +1,4 @@
-#include "ImageHelper.h"
+#include "ImageInfo.h"
 #include "jpeglib.h"
 #include "png.h"
 #include <stdio.h>
@@ -24,7 +24,21 @@ static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t leng
     }
 }
 
-LVoid ImageHelper::decodeImage(const String& data)
+ImageInfo::ImageInfo()
+    : width(0)
+    , height(0)
+    , pixels(NULL)
+{
+}
+
+ImageInfo::ImageInfo(const ImageInfo& info)
+    : width(info.width)
+    , height(info.height)
+    , pixels(info.pixels)
+{
+}
+
+LVoid ImageInfo::decodeImage(const String& data)
 {
     LInt type = getType(GET_STR(data));
     switch (type) {
@@ -42,7 +56,7 @@ LVoid ImageHelper::decodeImage(const String& data)
 // jpeg FFD8FFE000104A464946
 // png 89 50 4e 47 0d 0a 1a 0a 00 00
 // gif 47494638396126026f01
-LInt ImageHelper::getType(const char* data)
+LInt ImageInfo::getType(const char* data)
 {
     if (data[0] == 0xFF
         && data[1] == 0xD8
@@ -57,7 +71,7 @@ LInt ImageHelper::getType(const char* data)
     return kImageNone;
 }
 
-LVoid ImageHelper::readJPEG(const LByte* data, size_t size)
+LVoid ImageInfo::readJPEG(const LByte* data, size_t size)
 {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -68,10 +82,10 @@ LVoid ImageHelper::readJPEG(const LByte* data, size_t size)
     jpeg_mem_src(&cinfo, data, size);
     (void)jpeg_read_header(&cinfo, TRUE);
 
-    LInt height = cinfo.image_height;
-    LInt width = cinfo.image_width;
+    height = cinfo.image_height;
+    width = cinfo.image_width;
 
-    LByte* pixels = new LByte[cinfo.image_width * cinfo.image_height * cinfo.num_components];
+    pixels = new LByte[cinfo.image_width * cinfo.image_height * cinfo.num_components];
     jpeg_start_decompress(&cinfo);
 
     JSAMPROW row_pointer[1];
@@ -88,7 +102,7 @@ LVoid ImageHelper::readJPEG(const LByte* data, size_t size)
     sendMessage(width, height, pixels);
 }
 
-LVoid ImageHelper::readPNG(const LByte* data, size_t size)
+LVoid ImageInfo::readPNG(const LByte* data, size_t size)
 {
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     if (!png_ptr) {
@@ -115,8 +129,8 @@ LVoid ImageHelper::readPNG(const LByte* data, size_t size)
     png_set_read_fn(png_ptr, &imgsource, pngReadCallback);
     png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_STRIP_ALPHA, 0);
 
-    LInt width = png_get_image_width(png_ptr, info_ptr);
-    LInt height = png_get_image_height(png_ptr, info_ptr);
+    width = png_get_image_width(png_ptr, info_ptr);
+    height = png_get_image_height(png_ptr, info_ptr);
     LInt color_type = png_get_color_type(png_ptr, info_ptr);
     LInt bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
@@ -130,8 +144,10 @@ LVoid ImageHelper::readPNG(const LByte* data, size_t size)
         png_set_packing(png_ptr);
         png_set_palette_to_rgb(png_ptr); //Expand data to 24-bit RGB or 32-bit RGBA if alpha available.
     }
-    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-        png_set_gray_1_2_4_to_8(png_ptr);
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) {
+        //png_set_gray_1_2_4_to_8(png_ptr);
+        png_set_expand_gray_1_2_4_to_8(png_ptr);
+    }
     if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
         png_set_gray_to_rgb(png_ptr);
     if (bit_depth == 16)
@@ -143,7 +159,7 @@ LVoid ImageHelper::readPNG(const LByte* data, size_t size)
     }
 
     // png_read_update_info(png_ptr, info_ptr);
-    LByte* rgba = new LByte[width * height * 4]; //each pixel(RGBA) has 4 bytes
+    pixels = new LByte[width * height * 4]; //each pixel(RGBA) has 4 bytes
     png_bytep* row_pointers;
     row_pointers = (png_bytep*)png_malloc(sizeof(png_bytep) * height);
     for (int y = 0; y < height; y++) {
@@ -156,10 +172,10 @@ LVoid ImageHelper::readPNG(const LByte* data, size_t size)
 
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < (4 * width); col += 4) {
-            rgba[pos++] = row_pointers[row][col]; // red
-            rgba[pos++] = row_pointers[row][col + 1]; // green
-            rgba[pos++] = row_pointers[row][col + 2]; // blue
-            rgba[pos++] = row_pointers[row][col + 3]; // alpha
+            pixels[pos++] = row_pointers[row][col]; // red
+            pixels[pos++] = row_pointers[row][col + 1]; // green
+            pixels[pos++] = row_pointers[row][col + 2]; // blue
+            pixels[pos++] = row_pointers[row][col + 3]; // alpha
         }
         pos = (pos - (width * 4) * 2); //move the pointer back two rows
     }
@@ -202,11 +218,5 @@ LVoid ImageHelper::readPNG(const LByte* data, size_t size)
 
     // free memory
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
-
-    sendMessage(width, height, rgba);
-}
-
-LVoid ImageHelper::sendMessage(LInt width, LInt height, LVoid* pixels)
-{
 }
 }
