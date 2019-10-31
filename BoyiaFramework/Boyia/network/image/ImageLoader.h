@@ -1,6 +1,7 @@
 #ifndef ImageLoader_h
 #define ImageLoader_h
 
+#include "ImageInfo.h"
 #include "KVector.h"
 #include "NetworkBase.h"
 
@@ -10,7 +11,7 @@ class ImageClient {
 public:
     ImageClient();
     virtual ~ImageClient();
-    virtual LVoid setImageInfo(LInt width, LInt height, LByte* pixels) = 0;
+    virtual LVoid setImageInfo(const ImageInfo& info) = 0;
     LVoid setLoadId(LInt id);
     LInt getLoadId() const;
 

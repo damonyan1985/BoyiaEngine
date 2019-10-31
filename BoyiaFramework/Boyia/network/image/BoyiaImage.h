@@ -26,7 +26,7 @@ public:
     LVoid readPNG(const LByte* data, size_t size);
 
     virtual LVoid setLoaded(LBool loaded);
-    virtual LVoid setImageInfo(LInt width, LInt height, LByte* pixels);
+    virtual LVoid setImageInfo(const ImageInfo& info);
     virtual LVoid load(const String& path, LVoid* image);
     virtual LVoid* item() const;
     virtual LVoid* pixels() const;

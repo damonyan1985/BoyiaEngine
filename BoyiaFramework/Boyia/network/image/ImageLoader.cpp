@@ -1,6 +1,5 @@
 #include "ImageLoader.h"
 #include "BoyiaLoader.h"
-#include "ImageInfo.h"
 #include "StringBuilder.h"
 #include "UIThread.h"
 
@@ -79,14 +78,14 @@ public:
 
         if (item->id == m_id) {
             map[index] = item->next;
-            item->client->setImageInfo(m_info.width, m_info.height, m_info.pixels);
+            item->client->setImageInfo(m_info);
             delete item;
         } else {
             ImageItem* next = item->next;
             while (next) {
                 if (next->id == m_id) {
                     item->next = next->next;
-                    next->client->setImageInfo(m_info.width, m_info.height, m_info.pixels);
+                    next->client->setImageInfo(m_info);
                     delete next;
                     break;
                 }

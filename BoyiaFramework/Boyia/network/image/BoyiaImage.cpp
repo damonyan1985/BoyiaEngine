@@ -175,11 +175,11 @@ BoyiaImage::~BoyiaImage()
 //     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
 // }
 
-LVoid BoyiaImage::setImageInfo(LInt width, LInt height, LByte* pixels)
+LVoid BoyiaImage::setImageInfo(const ImageInfo& info)
 {
-    m_width = width;
-    m_height = height;
-    m_pixels = pixels;
+    m_width = info.width;
+    m_height = info.height;
+    m_pixels = info.pixels;
 
     setLoaded(LTrue);
 }
