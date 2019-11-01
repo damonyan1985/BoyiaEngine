@@ -34,6 +34,9 @@ BoyiaImage::BoyiaImage()
 
 BoyiaImage::~BoyiaImage()
 {
+    if (m_pixels) {
+        delete[] m_pixels;
+    }
 }
 
 // LVoid BoyiaImage::setData(const String& data)
@@ -210,7 +213,19 @@ LVoid BoyiaImage::setLoaded(LBool loaded)
 {
     LImage::setLoaded(loaded);
     if (m_image && loaded) {
-        yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
+        UIView::getInstance()->getLoader()->repaint(m_image);
     }
 }
+
+LVoid BoyiaImage::setItem(HtmlView* item)
+{
+    m_image = item;
+}
+}
+
+LImage* LImage::create(LVoid* item)
+{
+    yanbo::BoyiaImage* image = new yanbo::BoyiaImage();
+    image->setItem(static_cast<yanbo::HtmlView*>(item));
+    return image;
 }

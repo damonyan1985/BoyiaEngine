@@ -20,12 +20,12 @@ private:
 };
 
 class ImageItem;
-class ImageLoadedEvent;
 class ImageLoader {
 public:
     static ImageLoader* instance();
     LVoid loadImage(const String& url, ImageClient* client);
     KVector<ImageItem*>& map();
+    LVoid removeItem(LInt id);
 
 private:
     ImageLoader();

@@ -3,6 +3,7 @@
 
 #include "HtmlView.h"
 #include "ImageLoader.h"
+#include "LGdi.h"
 #include <stddef.h> // size_t
 
 // 如果要开发操作系统或者无依赖框架
@@ -12,24 +13,15 @@ namespace yanbo {
 
 class BoyiaImage : public LImage, public ImageClient {
 public:
-    enum ImageType {
-        kImageNone,
-        kImageJpeg,
-        kImagePng,
-        kImageGif
-    };
     BoyiaImage();
     ~BoyiaImage();
-
-    LInt getType(const char* data);
-    LVoid readJPEG(const LByte* data, size_t size);
-    LVoid readPNG(const LByte* data, size_t size);
 
     virtual LVoid setLoaded(LBool loaded);
     virtual LVoid setImageInfo(const ImageInfo& info);
     virtual LVoid load(const String& path, LVoid* image);
     virtual LVoid* item() const;
     virtual LVoid* pixels() const;
+    LVoid setItem(HtmlView* item);
     virtual const String& url() const;
 
 private:

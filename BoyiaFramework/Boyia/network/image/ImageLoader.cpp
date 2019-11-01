@@ -26,25 +26,7 @@ ImageClient::ImageClient()
 
 ImageClient::~ImageClient()
 {
-    KVector<ImageItem*>& map = ImageLoader::instance()->map();
-    LInt index = m_loadId % map.capacity();
-    ImageItem* item = map[index];
-    if (item->id == m_loadId) {
-        map[index] = item->next;
-        delete item;
-    } else {
-        ImageItem* next = item->next;
-        while (next) {
-            if (next->id == m_loadId) {
-                item->next = next->next;
-                delete next;
-                break;
-            }
-
-            item = next;
-            next = next->next;
-        }
-    }
+    ImageLoader::instance()->removeItem(m_loadId);
 }
 
 LVoid ImageClient::setLoadId(LInt id)
@@ -130,7 +112,7 @@ public:
     {
         OwnerPtr<String> data = m_builder.toString();
         // m_client->setData(*data.get());
-        m_info.decodeImage(*data);
+        m_info.decodeImage(*data.get());
         // send to ui thread
         UIThread::instance()
             ->sendUIEvent(new ImageLoadedEvent(m_id, m_info));
@@ -170,6 +152,35 @@ ImageLoader* ImageLoader::instance()
 KVector<ImageItem*>& ImageLoader::map()
 {
     return m_map;
+}
+
+LVoid ImageLoader::removeItem(LInt id)
+{
+    //KVector<ImageItem*>& map = ImageLoader::instance()->map();
+    LInt index = id % m_map.capacity();
+    ImageItem* item = m_map[index];
+
+    // Item maybe delete by uithread before this even run
+    if (!item || !item->client) {
+        return;
+    }
+
+    if (item->id == id) {
+        m_map[index] = item->next;
+        delete item;
+    } else {
+        ImageItem* next = item->next;
+        while (next) {
+            if (next->id == id) {
+                item->next = next->next;
+                delete next;
+                break;
+            }
+
+            item = next;
+            next = next->next;
+        }
+    }
 }
 
 // Only use in ui thread
