@@ -99,7 +99,7 @@ LVoid ImageInfo::readJPEG(const LByte* data, size_t size)
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
-    sendMessage(width, height, pixels);
+    //sendMessage(width, height, pixels);
 }
 
 LVoid ImageInfo::readPNG(const LByte* data, size_t size)
@@ -134,10 +134,12 @@ LVoid ImageInfo::readPNG(const LByte* data, size_t size)
     LInt color_type = png_get_color_type(png_ptr, info_ptr);
     LInt bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
-    png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
+    //png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
 
-    LInt rowBytes = info_ptr->rowbytes;
-    LInt palette = info_ptr->palette;
+    //LInt rowBytes = info_ptr->rowbytes;
+    //LInt palette = info_ptr->palette;
+    //LInt rowBytes = png_get_rowbytes(png_ptr, info_ptr);
+    //LInt palette = png_get_palette_max(png_ptr, info_ptr);
 
     // Convert stuff to appropriate formats!
     if (color_type == PNG_COLOR_TYPE_PALETTE) {
@@ -160,12 +162,13 @@ LVoid ImageInfo::readPNG(const LByte* data, size_t size)
 
     // png_read_update_info(png_ptr, info_ptr);
     pixels = new LByte[width * height * 4]; //each pixel(RGBA) has 4 bytes
-    png_bytep* row_pointers;
-    row_pointers = (png_bytep*)png_malloc(sizeof(png_bytep) * height);
-    for (int y = 0; y < height; y++) {
-        row_pointers[y] = (png_bytep)png_malloc(width << 2); //each pixel(RGBA) has 4 bytes
-    }
-    png_read_image(png_ptr, row_pointers);
+    // png_bytep* row_pointers = (png_bytep*)png_malloc(sizeof(png_bytep) * height);
+    // for (int y = 0; y < height; y++) {
+    //     row_pointers[y] = (png_bytep)png_malloc(width << 2); //each pixel(RGBA) has 4 bytes
+    // }
+    // png_read_image(png_ptr, row_pointers);
+
+    png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
 
     // unlike store the pixel data from top-left corner, store them from bottom-left corner for OGLES Texture drawing...
     int pos = (width * height * 4) - (4 * width);
