@@ -3,12 +3,13 @@
 
 #include "AutoObject.h"
 #include "HtmlView.h"
+#include "ImageLoadMap.h"
 #include "LGdi.h"
 
 namespace util {
 
 struct JBitmapAndroid;
-class ImageAndroid : public LImage {
+class ImageAndroid : public LImage, public yanbo::ImageClient {
 public:
     ImageAndroid();
     virtual ~ImageAndroid();
@@ -33,6 +34,8 @@ public:
     LVoid setItem(yanbo::HtmlView* item);
     LVoid unlockPixels();
     LVoid* pixels() const;
+
+    virtual LVoid onImageLoaded();
 
 private:
     struct JBitmapAndroid* m_privateBitmap;

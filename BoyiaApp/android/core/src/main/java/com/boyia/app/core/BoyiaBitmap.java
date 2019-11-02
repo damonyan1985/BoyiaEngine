@@ -110,8 +110,6 @@ public class BoyiaBitmap implements ITargetImage {
                 align,
                 canvas,
                 paint);
-        
-        //mBitmap.recycle();
     }
 
 	@Override
