@@ -24,7 +24,7 @@ public:
     LVoid registerImage(ImageClient* client);
     KVector<ImageItem*>& map();
     LVoid removeItem(LInt id);
-    LVoid clientCallback(ImageClient* client);
+    LVoid clientCallback(LInt id);
 
 private:
     ImageLoadMap();

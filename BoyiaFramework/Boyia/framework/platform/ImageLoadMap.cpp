@@ -54,10 +54,10 @@ ImageLoadMap::ImageLoadMap()
     }
 }
 
-LVoid ImageLoadMap::clientCallback(ImageClient* client)
+LVoid ImageLoadMap::clientCallback(LInt id)
 {
-    KFORMATLOG("ImageLoadMap::clientCallback client=%ld and clientId=%d", (long)client, client->getLoadId());
-    ImageItem* item = getImageItem(client->getLoadId());
+    KFORMATLOG("ImageLoadMap::clientCallback clientId=%d", id);
+    ImageItem* item = getImageItem(id);
     if (item) {
         KFORMATLOG("ImageLoadMap::clientCallback item->client=%ld", (long)item->client);
         item->client->onImageLoaded();

@@ -120,8 +120,7 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiImageLoaded: {
         if (!msg->arg0)
             return;
-        ImageLoadMap::instance()->clientCallback(reinterpret_cast<ImageClient*>(msg->arg0));
-        //reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
+        ImageLoadMap::instance()->clientCallback(msg->arg0);
     } break;
     case kUiOperationExec: {
         UIOperation::instance()->execute();
