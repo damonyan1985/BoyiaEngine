@@ -5,7 +5,6 @@
 #include "ArmFunction.h"
 #include "AutoObject.h"
 #include "BoyiaExecution.h"
-#include "BoyiaLoader.h"
 #include "FileUtil.h"
 #include "GLContext.h"
 #include "GraphicsContextGL.h"
@@ -20,7 +19,6 @@
 #include "ThreadPool.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include <CallStack.h>
 #include <jni.h>
 
 const char* kBoyiaUIViewClass = "com/boyia/app/core/BoyiaUIView";
@@ -114,16 +112,6 @@ static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong cal
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
 {
-    // if (!yanbo::UIView::getInstance()->canHit()) {
-    //     return;
-    // }
-    // LTouchEvent* evt = new LTouchEvent;
-
-    // evt->m_type = 1 << type;
-    // evt->m_position.Set(yanbo::ShaderUtil::viewX(x), yanbo::ShaderUtil::viewY(y));
-    // KLOG("nativeHandleTouchEvent");
-    // yanbo::UIThread::instance()->handleTouchEvent(evt);
-
     yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
 }
 
@@ -210,11 +198,6 @@ int registerUIViewNatives(JNIEnv* env)
 {
     if (!registerNativeMethods(env, kBoyiaUIViewClass, sUIViewMethods,
             sizeof(sUIViewMethods) / sizeof(sUIViewMethods[0]))) {
-        return JNI_FALSE;
-    }
-
-    if (!registerNativeMethods(env, kBoyiaUtilClass, sUtilMethods,
-            sizeof(sUtilMethods) / sizeof(sUtilMethods[0]))) {
         return JNI_FALSE;
     }
 

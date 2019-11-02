@@ -6,7 +6,7 @@ add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX -DENABLE_BOYIA_ANDRO
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 
-set(THIRD_PARTY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty")
+set(EXTERNAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../External")
 
 if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
     include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)
@@ -52,9 +52,23 @@ file(
 
 file(
     GLOB 
-    thread_src
-    "thread/*.cpp"
+    network_src
+    "network/font/*.cpp"
+    "network/image/*.cpp"
+    "network/ipc/*.cpp"
+    "network/test/*.cpp"
+    "network/threadpool/*.cpp"
+    "network/*.cpp"
+    "network/proxy/ptcp/*.cpp"
+    "network/proxy/server/*.cpp"
+    "network/proxy/socket/*.cpp"
     )
+
+file(
+    GLOB 
+    imessage_src
+    "imessage/ptcp/*.cpp"
+    )    
 
 file(
     GLOB 
@@ -67,7 +81,8 @@ add_library(
     SHARED
     ${framework_src}
     ${graphics_src}
-    ${thread_src}
+    ${network_src}
+    ${imessage_src}
     ${porting_src}
 )
 
@@ -97,9 +112,19 @@ target_include_directories(
     graphics/painter
     graphics/utils
     graphics/vulkan
-    thread
-    ${THIRD_PARTY_PATH}/cjson
-    ${THIRD_PARTY_PATH}/tinyxml
+    network
+    network/font
+    network/image
+    network/ipc
+    network/threadpool
+    network/proxy/ptcp
+    network/proxy/server
+    network/proxy/socket
+    ${EXTERNAL_PATH}/curl/include
+    ${EXTERNAL_PATH}/jpeg
+    ${EXTERNAL_PATH}/lpng/include
+    ${EXTERNAL_PATH}/ft2/include
+    ${EXTERNAL_PATH}/trace
 )
 
 find_library(
@@ -110,11 +135,14 @@ find_library(
 
 target_link_libraries(
     boyia
+    curl
+    jpeg
+    png
+    ft2
     log
     EGL
     GLESv3
     android
     jnigraphics
-    cjson
-    tinyxml
+    bsdiff
 )

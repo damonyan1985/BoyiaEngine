@@ -10,8 +10,9 @@
 
 #include "AppInfo.h"
 //#include "AppManager.h"
-#include "BoyiaLoader.h"
+//#include "BoyiaLoader.h"
 #include "KVector.h"
+#include "NetworkBase.h"
 #include <stdio.h>
 
 namespace yanbo {
@@ -19,6 +20,7 @@ class AppManager;
 class AppLoader : public NetworkClient {
 public:
     AppLoader(AppManager* manager);
+    ~AppLoader();
     LVoid startLoad();
 
     virtual LVoid onDataReceived(const LByte* data, LInt size);
@@ -35,7 +37,7 @@ private:
     LVoid loadApp(AppInfo* info);
     LVoid upgradeApp(const String& name);
 
-    BoyiaLoader m_loader;
+    NetworkBase* m_loader;
     FILE* m_file;
     KVector<AppInfo*> m_appInfos;
     AppInfo* m_sdk;

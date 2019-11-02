@@ -99,12 +99,12 @@ LVoid ImageAndroid::load(const String& path, LVoid* image)
     env->DeleteLocalRef(strPath);
 }
 
-// LImage* LImage::create(LVoid* item)
-// {
-//     ImageAndroid* image = new ImageAndroid();
-//     image->setItem(static_cast<yanbo::HtmlView*>(item));
-//     return image;
-// }
+LImage* LImage::create(LVoid* item)
+{
+    ImageAndroid* image = new ImageAndroid();
+    image->setItem(static_cast<yanbo::HtmlView*>(item));
+    return image;
+}
 
 AutoJObject ImageAndroid::getJavaBitmap() const
 {

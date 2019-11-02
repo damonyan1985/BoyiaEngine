@@ -13,7 +13,6 @@
 #include <unistd.h>
 
 #define MAX_APPS_SIZE 20
-#define APP_LOAD_URL "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/boyia.json"
 #define APP_JSON "/app.json"
 
 namespace yanbo {
@@ -89,7 +88,15 @@ AppLoader::AppLoader(AppManager* manager)
     : m_appInfos(0, MAX_APPS_SIZE)
     , m_manager(manager)
     , m_sdk(NULL)
+    , m_loader(NetworkBase::create())
 {
+}
+
+AppLoader::~AppLoader()
+{
+    if (m_loader) {
+        delete m_loader;
+    }
 }
 
 LVoid AppLoader::startLoad()
@@ -100,7 +107,7 @@ LVoid AppLoader::startLoad()
 
     m_file = fopen(PlatformBridge::getAppJsonPath(), "wb+");
 
-    m_loader.loadUrl(_CS(APP_LOAD_URL), this);
+    m_loader->loadUrl(_CS(PlatformBridge::getBoyiaJsonUrl()), this);
     BOYIA_LOG("AppLoader---startLoad m_file=%d", (LIntPtr)m_file);
 }
 
@@ -236,7 +243,7 @@ LVoid AppLoader::loadApp(AppInfo* info)
     // If the versionCode boyia.json greater than the version
     // which in local app.json
     if (info->versionCode > versionCode) {
-        m_loader.loadUrl(info->url, new AppHandler(info, !hasApp && info->isEntry));
+        m_loader->loadUrl(info->url, new AppHandler(info, !hasApp && info->isEntry));
     }
 }
 

@@ -1,6 +1,16 @@
 {
-    "appName": "contacts",
-    "entry": "boyia://apps/contacts/view/index.boui",
-    "versionCode": 2,
-    "versionName": "v0.0.2"
+    "code": 200,
+    "sdk": {
+        "versionCode": 1,
+        "url": "https://damonyan1985.github.io/app/out/sdk.zip",
+        "name": "sdk"
+    },
+    "apps": [
+        {
+            "versionCode": 13,
+            "url": "https://damonyan1985.github.io/app/out/contacts.zip",
+            "name": "contacts",
+            "isEntry": true
+        }
+    ]
 }

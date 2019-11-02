@@ -140,6 +140,11 @@ LVoid LoaderAndroid::syncLoadUrl(const String& url, String& content)
 {
     JNIUtil::loadHTML(url, content);
 }
+
+NetworkBase* NetworkBase::create()
+{
+    return new LoaderAndroid();
+}
 }
 
 #endif
