@@ -7,6 +7,7 @@
 #include "InputView.h"
 #include "KList.h"
 //#include "MatrixState.h"
+#include "ImageLoadMap.h"
 #include "Mutex.h"
 #include "OwnerPtr.h"
 #include "SalLog.h"
@@ -119,7 +120,8 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiImageLoaded: {
         if (!msg->arg0)
             return;
-        reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
+        ImageLoadMap::instance()->clientCallback(reinterpret_cast<ImageClient*>(msg->arg0));
+        //reinterpret_cast<LImage*>(msg->arg0)->setLoaded(LTrue);
     } break;
     case kUiOperationExec: {
         UIOperation::instance()->execute();
