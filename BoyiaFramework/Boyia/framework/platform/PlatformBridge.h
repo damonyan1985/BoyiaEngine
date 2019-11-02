@@ -12,6 +12,7 @@ public:
     static const char* getAppPath();
     static const char* getAppJsonPath();
     static const char* getSdkPath();
+    static const char* getBoyiaJsonUrl();
 };
 }
 
