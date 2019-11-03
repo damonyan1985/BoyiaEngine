@@ -36,15 +36,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    publishNonDefault true
 }
 
-println "$rootDir/../BoyiaFramework/CMakeLists.txt"
+println "$rootDir/../BoyiaFramework/buildtool/CMakeLists.txt"
 
 uploadArchives {
     repositories.mavenDeployer {

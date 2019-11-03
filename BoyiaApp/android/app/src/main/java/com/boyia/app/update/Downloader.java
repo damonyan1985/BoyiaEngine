@@ -29,7 +29,7 @@ public class Downloader implements ILoadListener {
 
     public void download(DownloadData info) {
         mInfo = info;
-        mLoader = new BoyiaLoader(this, true);
+        mLoader = new BoyiaLoader(this);
         BoyiaLog.d("yanbo", "download url="+info.getFileUrl());
         mLoader.load(info.getFileUrl());
     }

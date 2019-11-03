@@ -30,7 +30,6 @@ distribution.
 #include <cstddef>
 #endif
 
-static const int kVNodeDefultChildSize = 10;
 static const char LINE_FEED = (char)0x0a; // all line endings are normalized to LF
 static const char LF = LINE_FEED;
 static const char CARRIAGE_RETURN = (char)0x0d; // CR gets filtered out

@@ -105,7 +105,10 @@ protobuf {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':core')
+    //debugImplementation project(path: ':core', configuration: 'debug')
+    //releaseImplementation project(path: ':core', configuration: 'release')
+    debugImplementation project(':core')
+    releaseImplementation project(':core')
     //implementation 'com.boyia.app.core:core:1.0.0'
     //implementation gradle.library.boyia_core
     api project(':util')
