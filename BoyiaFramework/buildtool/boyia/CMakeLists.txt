@@ -6,8 +6,8 @@ add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX -DENABLE_BOYIA_ANDRO
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 
-set(BOYIA_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../boyia")
-set(THIRD_PARTY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty")
+set(BOYIA_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/boyia")
+set(THIRD_PARTY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/thirdparty")
 
 if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
     include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)

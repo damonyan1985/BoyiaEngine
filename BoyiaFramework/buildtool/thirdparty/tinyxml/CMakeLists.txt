@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(tinyxml)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
-set(TINYXML_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../thirdparty/tinyxml")
+set(TINYXML_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../source/thirdparty/tinyxml")
 
 if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
     include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)
