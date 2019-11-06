@@ -17,10 +17,14 @@ public class BoyiaActivity extends Activity {
 	private static final String TAG = BoyiaActivity.class.getSimpleName();
 	private boolean mNeedExit = false;
 
+	static {
+		System.loadLibrary("boyia");
+	}
+
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		BoyiaUtils.loadLib();
+		//BoyiaUtils.loadLib();
 		setContentView(R.layout.main);
     }
 

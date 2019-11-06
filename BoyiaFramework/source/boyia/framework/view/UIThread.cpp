@@ -7,12 +7,12 @@
 #include "InputView.h"
 #include "KList.h"
 //#include "MatrixState.h"
-#include "ImageLoadMap.h"
 #include "Mutex.h"
 #include "OwnerPtr.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "UIOperation.h"
+#include "UIThreadClientMap.h"
 #include "UIView.h"
 #include "VideoView.h"
 #include <functional>
@@ -21,6 +21,12 @@ namespace yanbo {
 
 UIEvent::~UIEvent()
 {
+}
+
+LVoid UIEvent::execute()
+{
+    run();
+    //delete this;
 }
 
 UIThread::UIThread(AppManager* manager)
@@ -120,7 +126,7 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiImageLoaded: {
         if (!msg->arg0)
             return;
-        ImageLoadMap::instance()->clientCallback(msg->arg0);
+        UIThreadClientMap::instance()->clientCallback(msg->arg0);
     } break;
     case kUiOperationExec: {
         UIOperation::instance()->execute();
@@ -170,7 +176,7 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiEvent: {
         OwnerPtr<UIEvent> event = static_cast<UIEvent*>(msg->obj);
-        event->run();
+        event->execute();
     } break;
     case kUiInitApp: {
         String entry(_CS(msg->obj), LFalse, msg->arg0);

@@ -29,6 +29,8 @@ android {
         debug {
             minifyEnabled true
             zipAlignEnabled true
+            debuggable true
+            jniDebuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
