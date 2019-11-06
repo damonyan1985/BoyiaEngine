@@ -12,8 +12,15 @@ class AppManager;
 class UIEvent {
 public:
     virtual ~UIEvent();
+
+protected:
     virtual LVoid run() = 0;
+
+private:
+    LVoid execute();
+    friend class UIThread;
 };
+
 class UIThread : public MessageThread {
 public:
     enum MessageType {

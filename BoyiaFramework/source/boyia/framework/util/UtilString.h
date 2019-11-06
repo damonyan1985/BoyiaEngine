@@ -172,7 +172,7 @@ LString<T>::LString(const T* lpsz, Bool isDeep, LInt size)
 template <class T>
 LString<T>::LString(const LString<T>& stringSrc, Bool isDeep)
 {
-    if (isDeep == LTrue) {
+    if (isDeep) {
         int nLen = stringSrc.GetLength();
         AllocBuffer(nLen);
         LMemcpy(m_pchData, stringSrc.GetBuffer(), nLen * sizeof(T));
@@ -208,7 +208,7 @@ LString<T>::LString(T ch, LInt nRepeat)
 template <class T>
 LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
 {
-    if (lpsz == NULL) {
+    if (!lpsz) {
         ResetBuffer();
     } else {
         if (size == -1) {
@@ -247,7 +247,7 @@ const LString<T>& LString<T>::operator=(const LString<T>& stringSrc)
     }
 
     T* src = stringSrc.GetBuffer();
-    if (src == NULL) {
+    if (!src) {
         ResetBuffer();
     } else {
         StrAssignment(src, stringSrc.GetLength());
@@ -259,7 +259,7 @@ const LString<T>& LString<T>::operator=(const LString<T>& stringSrc)
 template <class T>
 const LString<T>& LString<T>::operator=(const T* lpsz)
 {
-    if (lpsz == NULL) {
+    if (!lpsz) {
         ResetBuffer();
     } else {
         StrAssignment(lpsz);

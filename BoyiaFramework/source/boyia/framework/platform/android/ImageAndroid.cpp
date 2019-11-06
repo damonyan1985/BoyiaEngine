@@ -91,14 +91,14 @@ LVoid ImageAndroid::load(const String& path, LVoid* image)
     if (!javaObject.get())
         return;
 
-    yanbo::ImageLoadMap::instance()->registerImage(this);
+    yanbo::UIThreadClientMap::instance()->registerClient(this);
     // 不同的父类引用子类，指针地址值不一样
     //ImageClient* client = static_cast<ImageClient*>(this);
     //KFORMATLOG("ImageAndroid::load this=%ld", (long)client);
     jstring strPath = strToJstring(env, (const char*)path.GetBuffer());
     KFORMATLOG("Image::load path=%s imageItem width=%d height=%d", (const char*)path.GetBuffer(), item->getWidth(), item->getHeight());
     env->CallVoidMethod(javaObject.get(), m_privateBitmap->m_loadImage,
-        strPath, (jlong)getLoadId(), item->getWidth(), item->getHeight());
+        strPath, (jlong)getClientId(), item->getWidth(), item->getHeight());
 
     env->DeleteLocalRef(strPath);
 }
@@ -218,7 +218,7 @@ LVoid* ImageAndroid::pixels() const
     return m_pixels;
 }
 
-LVoid ImageAndroid::onImageLoaded()
+LVoid ImageAndroid::onClientCallback()
 {
     setLoaded(LTrue);
 }
