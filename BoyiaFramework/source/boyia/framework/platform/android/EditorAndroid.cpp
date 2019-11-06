@@ -4,34 +4,24 @@
 
 namespace util {
 
-static EditorAndroid* s_instance = NULL;
 EditorAndroid::EditorAndroid()
-    : m_view(NULL)
 {
 }
 
 LVoid EditorAndroid::showKeyboard(const String& text)
 {
     jstring strText = strToJstring(yanbo::JNIUtil::getEnv(), GET_STR(text));
+    Editor* editor = static_cast<Editor*>(this);
     JNIUtil::callStaticVoidMethod(
         "com/boyia/app/core/BoyiaUIView",
         "showKeyboard",
         "(JLjava/lang/String;)V",
-        (jlong)m_view, strText);
+        (jlong)editor, strText);
 }
 
-LVoid EditorAndroid::setView(LVoid* view)
+Editor* Editor::get()
 {
-    m_view = view;
-}
-
-Editor* Editor::get(LVoid* view)
-{
-    if (NULL == s_instance) {
-        s_instance = new EditorAndroid();
-    }
-
-    s_instance->setView(view);
-    return s_instance;
+    static EditorAndroid sInstance;
+    return &sInstance;
 }
 }
