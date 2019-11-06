@@ -315,9 +315,45 @@ public:
 
 class Editor {
 public:
-    static Editor* get(LVoid* view);
-    virtual ~Editor() {}
+#if ENABLE(BOYIA_KERNEL)
+    static Editor* get()
+    {
+        return NULL;
+    }
+#else
+    static Editor* get(); // instance a platform Editor
+#endif
+    Editor()
+        : m_view(NULL)
+    {
+    }
+
+    virtual ~Editor()
+    {
+    }
+
     virtual LVoid showKeyboard(const String& text) = 0;
+
+    Editor* setView(LVoid* view)
+    {
+        m_view = view;
+        return this;
+    }
+
+    LVoid* view() const
+    {
+        return m_view;
+    }
+
+    LVoid removeView(LVoid* view)
+    {
+        if (m_view == view) {
+            m_view = NULL;
+        }
+    }
+
+private:
+    LVoid* m_view;
 };
 }
 

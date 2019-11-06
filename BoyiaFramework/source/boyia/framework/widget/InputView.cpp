@@ -90,6 +90,8 @@ InputView::~InputView()
     if (m_newFont) {
         delete m_newFont;
     }
+
+    Editor::get()->removeView(this);
 }
 
 LVoid InputView::setInputValue(const String& text)
@@ -101,9 +103,8 @@ LVoid InputView::layout(RenderContext& rc)
 {
     rc.addLineItem(this);
     int maxWidth = rc.getMaxWidth();
-    if (NULL != m_newFont) {
+    if (m_newFont) {
         delete m_newFont;
-        m_newFont = NULL;
     }
 
     m_newFont = LFont::create(getStyle()->font);
@@ -293,7 +294,7 @@ LVoid InputView::setSelected(const LBool selected)
         switch (m_type) {
         case TEXT:
         case PASSWORD: {
-            Editor::get(this)->showKeyboard(m_value);
+            Editor::get()->setView(this)->showKeyboard(m_value);
         } break;
         }
     }

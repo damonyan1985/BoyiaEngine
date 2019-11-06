@@ -116,7 +116,11 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiSetInput: {
         String text(_CS(msg->obj), LTrue, msg->arg0);
-        InputView* view = (InputView*)msg->arg1;
+        InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg1)->view()); //(InputView*)msg->arg1;
+        if (!view) {
+            return;
+        }
+
         view->setInputValue(text);
         drawUI(view);
     } break;
@@ -137,7 +141,8 @@ LVoid UIThread::handleMessage(Message* msg)
         flush();
     } break;
     case kUiOnKeyboardShow: {
-        HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
+        //Editor* editor = reinterpret_cast<Editor*>(msg->arg0);
+        InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
         LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
         LInt y = topLeft.iY + view->getYpos();
         KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
@@ -146,15 +151,18 @@ LVoid UIThread::handleMessage(Message* msg)
         }
 
         HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
-
         rootView->setYpos(rootView->getYpos() - msg->arg1);
-
         rootView->paint(*m_gc);
         flush();
     } break;
     case kUiOnKeyboardHide: {
-        HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg0);
-        HtmlView* rootView = view->getDocument()->getRenderTreeRoot();
+        //Editor* editor = reinterpret_cast<Editor*>(msg->arg0);
+        InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
+        if (!view) {
+            return;
+        }
+
+        HtmlView* rootView = static_cast<HtmlView*>(view)->getDocument()->getRenderTreeRoot();
         if (rootView->getYpos() == 0) {
             return;
         }
