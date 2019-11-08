@@ -73,9 +73,10 @@ public class BoyiaResLoader implements ILoadListener {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		byte[] buffer = new byte[1024];
-		int len = 0;
 		String result = "";
+
 		try {
+			int len;
 			while ((len = in.read(buffer)) != -1) {
 				outStream.write(buffer, 0, len);
 			}
