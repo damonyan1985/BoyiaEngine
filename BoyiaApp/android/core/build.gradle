@@ -73,5 +73,4 @@ dependencies {
     //compileOnly 'com.boyia.app.common:common:1.0.0'
     compileOnly project(':util')
     compileOnly project(':loader')
-    compileOnly project(':task')
 }

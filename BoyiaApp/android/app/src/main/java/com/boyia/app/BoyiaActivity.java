@@ -4,27 +4,22 @@ import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaUIView;
+import com.boyia.app.loader.job.JobScheduler;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.app.Activity;
 import android.os.Process;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 
 public class BoyiaActivity extends Activity {
 	private static final String TAG = BoyiaActivity.class.getSimpleName();
 	private boolean mNeedExit = false;
 
-	static {
-		System.loadLibrary("boyia");
-	}
-
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		//BoyiaUtils.loadLib();
+		BoyiaUtils.loadLib();
 		setContentView(R.layout.main);
     }
 
@@ -40,6 +35,7 @@ public class BoyiaActivity extends Activity {
 
 	@Override
 	public void onDestroy() {
+		JobScheduler.getInstance().stopAllThread();
 		super.onDestroy();
 	}
 
