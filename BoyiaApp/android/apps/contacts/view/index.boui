@@ -18,17 +18,17 @@
 -->
 
 </body>
-<script src="boyiasdk://sdk/Util.boyia" />
-<script src="boyiasdk://sdk/Array.boyia" />
-<script src="boyiasdk://sdk/Network.boyia" />
-<script src="boyiasdk://sdk/Object.boyia" />
-<script src="boyiasdk://sdk/View.boyia" />
-<script src="boyiasdk://sdk/ViewDoc.boyia" />
-<script src="boyiasdk://sdk/InputView.boyia" />
-<script src="boyiasdk://sdk/ImageView.boyia" />
-<script src="boyiasdk://sdk/AppStack.boyia" />
-<script src="boyiasdk://sdk/App.boyia" />
-<script src="boyiasdk://sdk/Activity.boyia" />
+<script src="boyia://apps/sdk/Util.boyia" />
+<script src="boyia://apps/sdk/Array.boyia" />
+<script src="boyia://apps/sdk/Network.boyia" />
+<script src="boyia://apps/sdk/Object.boyia" />
+<script src="boyia://apps/sdk/View.boyia" />
+<script src="boyia://apps/sdk/ViewDoc.boyia" />
+<script src="boyia://apps/sdk/InputView.boyia" />
+<script src="boyia://apps/sdk/ImageView.boyia" />
+<script src="boyia://apps/sdk/AppStack.boyia" />
+<script src="boyia://apps/sdk/App.boyia" />
+<script src="boyia://apps/sdk/Activity.boyia" />
 <script src="boyia://apps/contacts/src/ViewRoot.boyia" />
 <script src="boyia://apps/contacts/src/chat/ChatPage.boyia" />
 <script src="boyia://apps/contacts/src/PosterView.boyia" />

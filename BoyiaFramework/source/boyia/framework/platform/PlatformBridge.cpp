@@ -33,7 +33,7 @@ const char* PlatformBridge::getAppPath()
     return "/data/data/com.boyia.app/files/apps/";
 }
 
-const char* PlatformBridge::getAppJsonPath()
+const char* PlatformBridge::getBoyiaJsonPath()
 {
     return "/data/data/com.boyia.app/files/boyia.json";
 }
