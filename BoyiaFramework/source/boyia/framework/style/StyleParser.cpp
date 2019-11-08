@@ -332,9 +332,9 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
     case StyleTags::BORDER_RIGHT_STYLE:
     case StyleTags::BORDER_BOTTOM_STYLE: {
         if (value.CompareNoCase(_CS("dotted"))) {
-            rule->addProperty(cssTag, LGraphicsContext::DotPen);
+            rule->addProperty(cssTag, LGraphicsContext::kDotPen);
         } else {
-            rule->addProperty(cssTag, LGraphicsContext::SolidPen);
+            rule->addProperty(cssTag, LGraphicsContext::kSolidPen);
         }
     } break;
     case StyleTags::BORDER_BOTTOM_WIDTH:
@@ -411,11 +411,11 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
     } break;
     case StyleTags::TEXT_ALIGN: {
         if (value.CompareNoCase(_CS("left"))) {
-            rule->addProperty(cssTag, LGraphicsContext::TextLeft);
+            rule->addProperty(cssTag, LGraphicsContext::kTextLeft);
         } else if (value.CompareNoCase(_CS("center"))) {
-            rule->addProperty(cssTag, LGraphicsContext::TextCenter);
+            rule->addProperty(cssTag, LGraphicsContext::kTextCenter);
         } else if (value.CompareNoCase(_CS("right"))) {
-            rule->addProperty(cssTag, LGraphicsContext::TextRight);
+            rule->addProperty(cssTag, LGraphicsContext::kTextRight);
         }
     } break;
     case StyleTags::BORDER_BOTTOM: {
@@ -426,7 +426,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_BOTTOM_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
                 LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, intValue);
@@ -444,7 +444,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_TOP_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.StartWithNoCase(_CS("px"))) {
                 LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
@@ -463,7 +463,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
-                rule->addProperty(StyleTags::BORDER_STYLE, LGraphicsContext::SolidPen);
+                rule->addProperty(StyleTags::BORDER_STYLE, LGraphicsContext::kSolidPen);
             }
         }
 

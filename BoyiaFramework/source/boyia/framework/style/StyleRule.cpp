@@ -365,7 +365,7 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.font.setFontSize(value.intVal);
     } break;
     case StyleTags::BORDER_STYLE: {
-        if (value.intVal == LGraphicsContext::SolidPen) {
+        if (value.intVal == LGraphicsContext::kSolidPen) {
             style.border.topWidth = 1;
             style.border.leftWidth = 1;
             style.border.bottomWidth = 1;
@@ -407,25 +407,25 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     } break;
     case StyleTags::BORDER_TOP_STYLE: {
         style.border.topStyle = value.intVal;
-        if (value.intVal == LGraphicsContext::SolidPen) {
+        if (value.intVal == LGraphicsContext::kSolidPen) {
             style.border.topWidth = 1;
         }
     } break;
     case StyleTags::BORDER_BOTTOM_STYLE: {
         style.border.bottomStyle = value.intVal;
-        if (value.intVal == LGraphicsContext::SolidPen) {
+        if (value.intVal == LGraphicsContext::kSolidPen) {
             style.border.bottomWidth = 1;
         }
     } break;
     case StyleTags::BORDER_LEFT_STYLE: {
         style.border.leftStyle = value.intVal;
-        if (value.intVal == LGraphicsContext::SolidPen) {
+        if (value.intVal == LGraphicsContext::kSolidPen) {
             style.border.leftWidth = 1;
         }
     } break;
     case StyleTags::BORDER_RIGHT_STYLE: {
         style.border.rightStyle = value.intVal;
-        if (value.intVal == LGraphicsContext::SolidPen) {
+        if (value.intVal == LGraphicsContext::kSolidPen) {
             style.border.rightWidth = 1;
         }
     } break;

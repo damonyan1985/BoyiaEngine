@@ -79,10 +79,10 @@ LVoid InputView::initView()
     m_style.border.leftWidth = 1;
     m_style.border.rightWidth = 1;
     m_style.border.bottomWidth = 1;
-    m_style.border.topStyle = LGraphicsContext::SolidPen;
-    m_style.border.leftStyle = LGraphicsContext::SolidPen;
-    m_style.border.rightStyle = LGraphicsContext::SolidPen;
-    m_style.border.bottomStyle = LGraphicsContext::SolidPen;
+    m_style.border.topStyle = LGraphicsContext::kSolidPen;
+    m_style.border.leftStyle = LGraphicsContext::kSolidPen;
+    m_style.border.rightStyle = LGraphicsContext::kSolidPen;
+    m_style.border.bottomStyle = LGraphicsContext::kSolidPen;
 }
 
 InputView::~InputView()
@@ -219,10 +219,10 @@ LVoid InputView::paint(LGraphicsContext& gc)
 LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
     if (m_style.bgColor.m_alpha) {
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(getStyle()->bgColor);
 
-        gc.setPenStyle(LGraphicsContext::NullPen);
+        gc.setPenStyle(LGraphicsContext::kNullPen);
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
     }
 
@@ -237,35 +237,35 @@ LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
             String('*', m_value.GetLength()),
             LRect(x + m_leftPadding, y + 6,
                 m_width - m_leftPadding, m_height - 6),
-            util::LGraphicsContext::TextLeft);
+            util::LGraphicsContext::kTextLeft);
     } else {
-        gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width - m_leftPadding, m_height - 6), util::LGraphicsContext::TextLeft);
+        gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width - m_leftPadding, m_height - 6), util::LGraphicsContext::kTextLeft);
     }
 }
 
 LVoid InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 {
     if (getStyle()->bgColor.m_alpha == 0) {
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(COLOR_LIGHTGRAY));
 
-        gc.setPenStyle(LGraphicsContext::SolidPen);
+        gc.setPenStyle(LGraphicsContext::kSolidPen);
         gc.setPenColor(util::LColor::parseArgbInt(COLOR_DARKGRAY));
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
     } else {
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(getStyle()->bgColor);
 
-        gc.setPenStyle(LGraphicsContext::NullPen);
+        gc.setPenStyle(LGraphicsContext::kNullPen);
         gc.drawRect(x + m_leftPadding, y, m_width, m_height);
 
-        gc.setPenStyle(LGraphicsContext::SolidPen);
+        gc.setPenStyle(LGraphicsContext::kSolidPen);
     }
 
     paintBorder(gc, getStyle()->border, x, y);
 
     if (m_value.GetLength() > 0) {
-        gc.setPenStyle(LGraphicsContext::SolidPen);
+        gc.setPenStyle(LGraphicsContext::kSolidPen);
         gc.setPenColor(getStyle()->color);
         //util::String strW;
         //util::StringUtils::strTostrW(m_value, strW);
@@ -275,7 +275,7 @@ LVoid InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
                 y + 6,
                 m_width - m_leftPadding,
                 m_height - 6),
-            LGraphicsContext::TextCenter);
+            LGraphicsContext::kTextCenter);
     }
 }
 
