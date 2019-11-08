@@ -152,11 +152,11 @@ void TextView::paint(LGraphicsContext& gc)
 
             y = i > 0 ? y + textHeight : y;
             LayoutUnit left = x;
-            if (m_style.textAlignement == LGraphicsContext::TextCenter) { // 居中对齐
+            if (m_style.textAlignement == LGraphicsContext::kTextCenter) { // 居中对齐
                 left += (m_width - line->m_lineLength) / 2;
 
                 KFORMATLOG("TextView::paint center left=%d", line->m_lineLength);
-            } else if (m_style.textAlignement == LGraphicsContext::TextRight) { // 右对齐
+            } else if (m_style.textAlignement == LGraphicsContext::kTextRight) { // 右对齐
                 left += m_width - line->m_lineLength;
             }
 
@@ -166,7 +166,7 @@ void TextView::paint(LGraphicsContext& gc)
 
             KLOG("draw Text");
 
-            gc.setBrushStyle(LGraphicsContext::SolidBrush);
+            gc.setBrushStyle(LGraphicsContext::kSolidBrush);
             gc.setFont(*m_newFont);
 
             LRgb color = m_style.color;
@@ -175,10 +175,10 @@ void TextView::paint(LGraphicsContext& gc)
             gc.setPenColor(color);
             KFORMATLOG("text length=%d", line->m_lineLength);
             KFORMATLOG("text x=%d, y=%d", x, y);
-            gc.setPenStyle(LGraphicsContext::SolidPen);
+            gc.setPenStyle(LGraphicsContext::kSolidPen);
 
             gc.setBrushColor(m_style.bgColor);
-            gc.drawText(line->m_text, LRect(left, y, line->m_lineLength, textHeight), util::LGraphicsContext::TextLeft);
+            gc.drawText(line->m_text, LRect(left, y, line->m_lineLength, textHeight), util::LGraphicsContext::kTextLeft);
         }
     }
 

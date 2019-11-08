@@ -25,20 +25,20 @@ class LMediaPlayer;
 class LGraphicsContext {
 public:
     enum BrushStyle {
-        NullBrush = 1,
-        SolidBrush
+        kNullBrush = 1,
+        kSolidBrush
     };
 
     enum PenStyle {
-        NullPen = 1,
-        SolidPen,
-        DotPen
+        kNullPen = 1,
+        kSolidPen,
+        kDotPen
     };
 
     enum TextAlign {
-        TextLeft = 1,
-        TextCenter,
-        TextRight
+        kTextLeft = 1,
+        kTextCenter,
+        kTextRight
     };
 
 public:

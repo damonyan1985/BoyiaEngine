@@ -137,13 +137,13 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
     //KFORMATLOG("tagName=%s, HtmlView m_bgColor=%x", (const char*)m_tagName.GetBuffer(), getStyle()->bgColor);
     if (!getStyle()->transparent && getStyle()->bgColor.m_alpha != 0) {
         KLOG("not transparent");
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
 
         LRgb bgColor = getStyle()->bgColor;
         bgColor.m_alpha = bgColor.m_alpha * ((float)getStyle()->drawOpacity / 255.0f);
 
         gc.setBrushColor(bgColor);
-        gc.setPenStyle(LGraphicsContext::NullPen);
+        gc.setPenStyle(LGraphicsContext::kNullPen);
         gc.drawRect(x, y, m_width, m_height);
     }
 
@@ -162,7 +162,7 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
     if (border.topWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
         gc.setPenColor(util::LColor::parseArgbInt(border.topColor));
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(border.topColor));
         gc.drawRect(x, y, m_width, border.topWidth);
     }
@@ -170,7 +170,7 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
     if (border.leftWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.leftStyle);
         gc.setPenColor(util::LColor::parseArgbInt(border.leftColor));
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(border.leftColor));
         gc.drawRect(x, y, border.leftWidth, m_height);
     }
@@ -178,7 +178,7 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
     if (border.bottomWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.bottomStyle);
         gc.setPenColor(util::LColor::parseArgbInt(border.bottomColor));
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(border.bottomColor));
         gc.drawRect(x, y + m_height - border.bottomWidth, m_width, border.bottomWidth);
     }
@@ -186,7 +186,7 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
     if (border.rightWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.rightStyle);
         gc.setPenColor(util::LColor::parseArgbInt(border.rightColor));
-        gc.setBrushStyle(LGraphicsContext::SolidBrush);
+        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
         gc.setBrushColor(util::LColor::parseArgbInt(border.rightColor));
         gc.drawRect(x + m_width - border.rightWidth, y, border.rightWidth, m_height);
     }
@@ -361,7 +361,7 @@ HtmlView* HtmlView::getNextItem(HtmlView* currentItem)
 
 LVoid HtmlView::itemCenter(RenderContext& rc)
 {
-    if (getStyle()->textAlignement == util::LGraphicsContext::TextCenter) {
+    if (getStyle()->textAlignement == util::LGraphicsContext::kTextCenter) {
         if (m_x < rc.getNewLineXStart() + rc.getMaxWidth() / 2) {
             m_x = rc.getNewLineXStart() + rc.getMaxWidth() / 2;
         }

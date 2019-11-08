@@ -143,7 +143,7 @@ LVoid BlockView::layoutInlineChildren()
     rc.setNextLineHeight(0);
 
     LBool center = (getStyle()->positionType == util::Style::STATICPOSITION
-        && getStyle()->textAlignement == LGraphicsContext::TextCenter);
+        && getStyle()->textAlignement == LGraphicsContext::kTextCenter);
     rc.setCenter(center);
     // add top padding
     rc.addX(getStyle()->leftPadding);

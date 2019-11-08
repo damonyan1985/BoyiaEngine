@@ -21,10 +21,10 @@ Border::Border()
     , rightWidth(0)
     , bottomWidth(0)
 {
-    topStyle = LGraphicsContext::SolidPen;
-    leftStyle = LGraphicsContext::SolidPen;
-    rightStyle = LGraphicsContext::SolidPen;
-    bottomStyle = LGraphicsContext::SolidPen;
+    topStyle = LGraphicsContext::kSolidPen;
+    leftStyle = LGraphicsContext::kSolidPen;
+    rightStyle = LGraphicsContext::kSolidPen;
+    bottomStyle = LGraphicsContext::kSolidPen;
 }
 
 Border::~Border()
@@ -41,10 +41,10 @@ LVoid Border::init()
     leftWidth = 0;
     rightWidth = 0;
     bottomWidth = 0;
-    topStyle = LGraphicsContext::SolidPen;
-    leftStyle = LGraphicsContext::SolidPen;
-    rightStyle = LGraphicsContext::SolidPen;
-    bottomStyle = LGraphicsContext::SolidPen;
+    topStyle = LGraphicsContext::kSolidPen;
+    leftStyle = LGraphicsContext::kSolidPen;
+    rightStyle = LGraphicsContext::kSolidPen;
+    bottomStyle = LGraphicsContext::kSolidPen;
 }
 
 Border::Border(const Border& border)
@@ -181,7 +181,7 @@ void Style::init()
     topMargin = 0;
     bottomMargin = 0;
     transparent = LTrue;
-    textAlignement = LGraphicsContext::TextLeft;
+    textAlignement = LGraphicsContext::kTextLeft;
     topPadding = 0;
     bottomPadding = 0;
     leftPadding = 0;

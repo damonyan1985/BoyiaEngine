@@ -208,9 +208,8 @@ LString<T>::LString(T ch, LInt nRepeat)
 template <class T>
 LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
 {
-    if (!lpsz) {
-        ResetBuffer();
-    } else {
+
+    if (lpsz) {
         if (size == -1) {
             LInt nLen = CountString(lpsz);
             AllocBuffer(nLen);
@@ -222,6 +221,8 @@ LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
             m_pchDataLen = m_size + 1;
             m_pchData = (T*)lpsz;
         }
+    } else {
+        ResetBuffer();
     }
 
     m_isDeep = isDeep;
@@ -247,10 +248,10 @@ const LString<T>& LString<T>::operator=(const LString<T>& stringSrc)
     }
 
     T* src = stringSrc.GetBuffer();
-    if (!src) {
-        ResetBuffer();
-    } else {
+    if (src) {
         StrAssignment(src, stringSrc.GetLength());
+    } else {
+        ResetBuffer();
     }
 
     return *this;
@@ -259,10 +260,10 @@ const LString<T>& LString<T>::operator=(const LString<T>& stringSrc)
 template <class T>
 const LString<T>& LString<T>::operator=(const T* lpsz)
 {
-    if (!lpsz) {
-        ResetBuffer();
-    } else {
+    if (lpsz) {
         StrAssignment(lpsz);
+    } else {
+        ResetBuffer();
     }
 
     return *this;
@@ -357,18 +358,17 @@ LVoid LString<T>::StrPlus(const T* lpsz)
     int plusSize = CountString(lpsz);
     LInt nLen = GetLength() + plusSize;
     if (m_pchDataLen <= nLen) {
-        if (!m_pchData) {
-            AllocBuffer(nLen);
-            LMemcpy(m_pchData, lpsz, plusSize * sizeof(T));
-        } else {
+        if (m_pchData) {
             T* pOldData = m_pchData;
             LInt nOldDataLen = CountString(pOldData);
             AllocBuffer(nLen);
             LMemcpy(m_pchData, pOldData, nOldDataLen * sizeof(T));
             LMemcpy(m_pchData + nOldDataLen, lpsz, plusSize * sizeof(T));
             delete[] pOldData;
+        } else {
+            AllocBuffer(nLen);
+            LMemcpy(m_pchData, lpsz, plusSize * sizeof(T));
         }
-
     } else {
         LMemcpy(m_pchData + GetLength(), lpsz, plusSize * sizeof(T));
     }
@@ -433,11 +433,13 @@ LBool LString<T>::CompareNoCase(const LString<T>& str) const
 template <class T>
 LBool LString<T>::operator!=(const LString<T>& str1) const
 {
-    if (*this == str1) {
-        return LFalse;
-    }
+    // if (*this == str1) {
+    //     return LFalse;
+    // }
 
-    return LTrue;
+    // return LTrue;
+
+    return !(*this == str1);
 }
 
 template <class T>
@@ -464,39 +466,43 @@ LBool LString<T>::operator<(const LString<T>& str1) const
         }
     }
 
-    if (bLargeORequal) {
-        return LFalse;
-    }
+    // if (bLargeORequal) {
+    //     return LFalse;
+    // }
 
-    return LTrue;
+    // return LTrue;
+    return !bLargeORequal;
 }
 
 template <class T>
 LBool LString<T>::operator<=(const LString<T>& str1) const
 {
-    if ((*this < str1) || (*this == str1)) {
-        return LTrue;
-    }
-    return LFalse;
+    // if ((*this < str1) || (*this == str1)) {
+    //     return LTrue;
+    // }
+    // return LFalse;
+    return *this < str1 || *this == str1;
 }
 
 template <class T>
 LBool LString<T>::operator>(const LString<T>& str1) const
 {
-    if (*this <= str1) {
-        return LFalse;
-    }
+    // if (*this <= str1) {
+    //     return LFalse;
+    // }
 
-    return LTrue;
+    // return LTrue;
+    return !(*this <= str1);
 }
 
 template <class T>
 LBool LString<T>::operator>=(const LString<T>& str1) const
 {
-    if ((*this > str1) || (*this == str1)) {
-        return LTrue;
-    }
-    return LFalse;
+    // if ((*this > str1) || (*this == str1)) {
+    //     return LTrue;
+    // }
+    // return LFalse;
+    return *this > str1 || *this == str1;
 }
 
 template <class T>
