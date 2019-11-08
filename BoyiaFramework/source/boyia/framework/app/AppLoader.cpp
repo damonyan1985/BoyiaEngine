@@ -105,7 +105,7 @@ LVoid AppLoader::startLoad()
         mkdir(PlatformBridge::getAppPath(), S_IRWXU);
     }
 
-    m_file = fopen(PlatformBridge::getAppJsonPath(), "wb+");
+    m_file = fopen(PlatformBridge::getBoyiaJsonPath(), "wb+");
 
     m_loader->loadUrl(_CS(PlatformBridge::getBoyiaJsonUrl()), this);
     BOYIA_LOG("AppLoader---startLoad m_file=%d", (LIntPtr)m_file);
@@ -113,7 +113,7 @@ LVoid AppLoader::startLoad()
 
 LVoid AppLoader::loadApps()
 {
-    if (!FileUtil::isExist(PlatformBridge::getAppJsonPath())) {
+    if (!FileUtil::isExist(PlatformBridge::getBoyiaJsonPath())) {
         return;
     }
     parseConfig();
@@ -172,7 +172,7 @@ LVoid AppLoader::parseConfig()
 {
     String content;
 
-    String path(_CS(PlatformBridge::getAppJsonPath()), LFalse, LStrlen((LUint8*)PlatformBridge::getAppJsonPath()));
+    String path(_CS(PlatformBridge::getBoyiaJsonPath()), LFalse, LStrlen((LUint8*)PlatformBridge::getBoyiaJsonPath()));
     util::FileUtil::readFile(path, content);
     BOYIA_LOG("boyia app content=%s", GET_STR(content));
 
