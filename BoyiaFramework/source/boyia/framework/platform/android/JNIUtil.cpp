@@ -190,7 +190,7 @@ void JNIUtil::loadHTML(const String& url, String& stream)
     // 将地址转为jstring
     jstring strUrl = util::strToJstring(env, (const char*)url.GetBuffer());
     jstring text = callStaticStringMethod(
-        "com/boyia/app/core/ResourceLoader",
+        "com/boyia/app/core/BoyiaResLoader",
         "syncLoadResource",
         "(Ljava/lang/String;)Ljava/lang/String;",
         strUrl);

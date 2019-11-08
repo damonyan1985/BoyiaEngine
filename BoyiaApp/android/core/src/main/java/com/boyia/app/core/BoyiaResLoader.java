@@ -8,10 +8,10 @@ import com.boyia.app.loader.http.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class ResourceLoader implements ILoadListener {
+public class BoyiaResLoader implements ILoadListener {
 	private BoyiaLoader mLoader = null;
 
-    public ResourceLoader() {
+    public BoyiaResLoader() {
     }
     
     public void beginRequest(int method) {
