@@ -56,7 +56,7 @@ LVoid LoaderAndroid::initLoader()
     m_privateLoader->m_obj = env->NewGlobalRef(obj);
     m_privateLoader->m_beginRequest = util::GetJMethod(env, clazz, "beginRequest", "(I)V");
     m_privateLoader->m_endRequest = util::GetJMethod(env, clazz, "endRequest", "(Ljava/lang/String;ZJ)V");
-    m_privateLoader->m_putParam = util::GetJMethod(env, clazz, "putParam", "(Ljava/lang/String;Ljava/lang/String;)V");
+    m_privateLoader->m_putParam = util::GetJMethod(env, clazz, "putParam", "(Ljava/lang/String;)V");
     m_privateLoader->m_putHeader = util::GetJMethod(env, clazz, "putHeader", "(Ljava/lang/String;Ljava/lang/String;)V");
     env->DeleteLocalRef(obj);
     env->DeleteLocalRef(clazz);
@@ -109,18 +109,11 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
         }
     }
 
-    if (m_params.size()) {
-        NetworkMap::Iterator iter = m_params.begin();
-        NetworkMap::Iterator iterEnd = m_params.end();
-        for (; iter != iterEnd; ++iter) {
-            const String& key = (*iter)->getKey();
-            const String& value = (*iter)->getValue();
-            env->CallVoidMethod(
-                javaObject.get(),
-                m_privateLoader->m_putHeader,
-                util::strToJstring(env, (const char*)key.GetBuffer()),
-                util::strToJstring(env, (const char*)value.GetBuffer()));
-        }
+    if (m_data != NULL) {
+        env->CallVoidMethod(
+            javaObject.get(),
+            m_privateLoader->m_putParam,
+            util::strToJstring(env, (const char*)m_data->GetBuffer()));
     }
 
     // endRequest
@@ -129,7 +122,6 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
     env->DeleteLocalRef(strUrl);
 
     m_headers.clear();
-    m_params.clear();
 }
 
 LVoid LoaderAndroid::cancel()
