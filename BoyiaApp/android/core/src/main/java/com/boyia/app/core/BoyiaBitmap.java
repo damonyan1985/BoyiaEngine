@@ -22,7 +22,7 @@ import android.graphics.Rect;
  */
 public class BoyiaBitmap implements ITargetImage {
 
-    private static final String TAG = "BoyiaBitmap";
+    private static final String TAG = BoyiaBitmap.class.getSimpleName();
     private Bitmap mBitmap = null;
     private String mUrl = null;
     private long   mImagePtr = 0;
@@ -41,7 +41,7 @@ public class BoyiaBitmap implements ITargetImage {
     }
     
     public void asyncLoadImage(String url) {
-    	BoyiaImager.getInstance().loadImage(url, this);
+    	BoyiaImager.loadImage(url, this);
     }
 
     // 得到图片字节流 数组大小
