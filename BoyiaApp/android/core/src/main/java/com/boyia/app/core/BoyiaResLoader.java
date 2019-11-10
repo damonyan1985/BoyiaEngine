@@ -19,8 +19,8 @@ public class BoyiaResLoader implements ILoadListener {
     	mLoader.setMethod(method);
     }
     
-    public void putParam(String key, String value) {
-    	mLoader.putParam(key, value);
+    public void putParam(String data) {
+    	mLoader.putParam(data);
     }
     
     public void putHeader(String key, String value) {

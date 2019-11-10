@@ -1,6 +1,6 @@
 package com.boyia.app.core;
 
-import com.boyia.app.loader.image.ITargetImage;
+import com.boyia.app.loader.image.IBoyiaImage;
 import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -20,8 +20,7 @@ import android.graphics.Rect;
  * @Copyright Reserved
  * @Descrption Android 2D Bitmap Interface Implements
  */
-public class BoyiaBitmap implements ITargetImage {
-
+public class BoyiaBitmap implements IBoyiaImage {
     private static final String TAG = BoyiaBitmap.class.getSimpleName();
     private Bitmap mBitmap = null;
     private String mUrl = null;

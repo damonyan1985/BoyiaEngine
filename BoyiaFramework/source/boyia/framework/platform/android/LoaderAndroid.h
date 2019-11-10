@@ -36,8 +36,6 @@ public:
 private:
     LVoid request(const String& url, NetworkClient* client, LBool isWait, LInt method);
     struct JLoader* m_privateLoader;
-
-    NetworkMap m_params;
 };
 }
 
