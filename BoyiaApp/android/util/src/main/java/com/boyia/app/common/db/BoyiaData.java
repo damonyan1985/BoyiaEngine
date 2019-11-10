@@ -7,6 +7,7 @@ public class BoyiaData {
     @DBKey
     @DBColumn(name = "id")
     private Integer id;
+
     public Integer getId() {
         return id;
     }

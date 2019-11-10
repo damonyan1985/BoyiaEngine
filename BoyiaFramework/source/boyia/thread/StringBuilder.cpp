@@ -16,10 +16,9 @@ public:
 
     ~BufferItem()
     {
-        if (buffer != NULL && !bConst) {
+        if (buffer && !bConst) {
             KFORMATLOG("HTTPParser::parseResponse delete item address=%d and length=%d", (LIntPtr)buffer, length);
             delete[] buffer;
-            buffer = NULL;
         }
     }
 

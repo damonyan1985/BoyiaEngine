@@ -16,17 +16,17 @@ namespace yanbo {
 class InputView : public FormView {
 public:
     enum InputType {
-        NOTSUPPORTED,
-        TEXT,
-        PASSWORD,
-        CHECKBOX,
-        RADIO,
-        SUBMIT,
-        RESET,
-        FILE,
-        HIDDEN,
-        IMAGE,
-        BUTTON
+        kInputNone,
+        kInputText,
+        kInputPassword,
+        kInputCheckbox,
+        kInputRadio,
+        kInputSubmit,
+        kInputReset,
+        kInputFile,
+        kInputHidden,
+        kInputImage,
+        kInputButton
     };
 
 private:

@@ -20,36 +20,33 @@ import android.graphics.Rect;
  * @Copyright Reserved
  * @Descrption Android 2D Bitmap Interface Implements
  */
-public class BoyiaBitmap implements IBoyiaImage {
-    private static final String TAG = BoyiaBitmap.class.getSimpleName();
+public class BoyiaImage implements IBoyiaImage {
+    private static final String TAG = BoyiaImage.class.getSimpleName();
     private Bitmap mBitmap = null;
     private String mUrl = null;
-    private long   mImagePtr = 0;
-    private int    mWidth = 0;
-    private int    mHeight = 0;
+    private long mImagePtr = 0;
+    private int mWidth = 0;
+    private int mHeight = 0;
 
-    public BoyiaBitmap() {
+    public BoyiaImage() {
     }
 
+    // Call by native image
     public void loadImage(String url, long imagePtr, int width, int height) {
-    	mImagePtr = imagePtr;
-    	mWidth = width;
-    	mHeight = height;
-    	mUrl = url;
-    	asyncLoadImage(url);
-    }
-    
-    public void asyncLoadImage(String url) {
-    	BoyiaImager.loadImage(url, this);
+        mImagePtr = imagePtr;
+        mWidth = width;
+        mHeight = height;
+        mUrl = url;
+        BoyiaImager.loadImage(url, this);
     }
 
     // 得到图片字节流 数组大小
     public int getWidth() {
-    	return mWidth;
+        return mWidth;
     }
 
     public int getHeight() {
-    	return mHeight;
+        return mHeight;
     }
 
     public void recycle() {
@@ -63,14 +60,14 @@ public class BoyiaBitmap implements IBoyiaImage {
         return mBitmap;
     }
 
-    // 绘制文字部分
+    // Call by native image, Draw TextView
     public void drawText(String text,
                          int width, int height,
                          int align, int textSize,
                          int textColor,
                          int textStyle,
                          int bgColor) {
-    	BoyiaLog.d("BoyiaApp", "BoyiaApp bitmap drawText="+text + " width="+width+ " height="+height);
+        BoyiaLog.d("BoyiaApp", "BoyiaApp bitmap drawText=" + text + " width=" + width + " height=" + height);
 
         mBitmap = Bitmap.createBitmap(
                 width,
@@ -111,19 +108,19 @@ public class BoyiaBitmap implements IBoyiaImage {
                 paint);
     }
 
-	@Override
-	public void setImageURL(String url) {
-		mUrl = url;
-	}
+    @Override
+    public void setImageURL(String url) {
+        mUrl = url;
+    }
 
-	@Override
-	public String getImageURL() {
-		return mUrl;
-	}
+    @Override
+    public String getImageURL() {
+        return mUrl;
+    }
 
-	@Override
-	public void setImage(Bitmap bitmap) {
-		mBitmap = bitmap;
-		BoyiaUIView.nativeImageLoaded(mImagePtr);
-	}
+    @Override
+    public void setImage(Bitmap bitmap) {
+        mBitmap = bitmap;
+        BoyiaUIView.nativeImageLoaded(mImagePtr);
+    }
 }

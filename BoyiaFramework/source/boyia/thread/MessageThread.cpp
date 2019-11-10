@@ -27,12 +27,12 @@ Message* MessageThread::obtain()
 void MessageThread::run()
 {
     while (m_continue) {
-        if (m_queue == NULL) {
+        if (!m_queue) {
             return;
         }
 
         Message* msg = m_queue->poll();
-        if (msg != NULL) {
+        if (msg) {
             handleMessage(msg);
             msg->msgRecycle();
         } else {

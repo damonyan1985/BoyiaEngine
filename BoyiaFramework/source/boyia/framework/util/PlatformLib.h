@@ -24,7 +24,8 @@ namespace util {
 #define LCONST const
 
 #ifndef NULL
-#define NULL 0
+//#define NULL 0
+#define NULL nullptr
 #endif
 //
 #define ENABLE(FEATURE) (defined ENABLE_##FEATURE && ENABLE_##FEATURE)

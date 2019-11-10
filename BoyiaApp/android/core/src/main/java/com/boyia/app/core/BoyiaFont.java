@@ -12,26 +12,26 @@ import java.util.List;
 public class BoyiaFont {
     private Paint mFontPaint = null;
     private List<LineText> mList = null;
-    
+
     public BoyiaFont() {
-    	mFontPaint = new Paint();
-    	mList = new ArrayList<LineText>();
+        mFontPaint = new Paint();
+        mList = new ArrayList<LineText>();
     }
-    
+
     public int getFontWidth(String ch, int size) {
         mFontPaint.setTextSize(size);
         return (int) mFontPaint.measureText(ch);
     }
-    
+
     public int getFontHeight(int size) {
-    	BoyiaLog.d("BoyiaFont", "getFontHeight");
+        BoyiaLog.d("BoyiaFont", "getFontHeight");
         mFontPaint.setTextSize(size);
-		FontMetrics fontMetrics = mFontPaint.getFontMetrics();
-        return (int)(fontMetrics.bottom - fontMetrics.top);
+        FontMetrics fontMetrics = mFontPaint.getFontMetrics();
+        return (int) (fontMetrics.bottom - fontMetrics.top);
     }
-    
+
     public int getTextWidth(String text, int size) {
-    	return getFontWidth(text, size);
+        return getFontWidth(text, size);
     }
 
     public int getLineSize() {
@@ -51,17 +51,17 @@ public class BoyiaFont {
     }
 
     public int calcTextLine(String text, int maxWidth, int fontSize) {
-    	mFontPaint.setTextSize(fontSize);
+        mFontPaint.setTextSize(fontSize);
         mList.clear();
 
         char[] charArray = text.toCharArray();
         int currentLineWidth = 0;
         int maxLineWidth = 0;
         StringBuilder builder = new StringBuilder();
-        BoyiaLog.d("libboyia", "java text="+text);
+        BoyiaLog.d("libboyia", "java text=" + text);
         for (int index = 0; index < charArray.length; ++index) {
             int width = BoyiaUtils.getFontWidth(mFontPaint, charArray, index);
-            BoyiaLog.d("libboyia", "text="+charArray[index] +" and width="+width);
+            BoyiaLog.d("libboyia", "text=" + charArray[index] + " and width=" + width);
             if (currentLineWidth + width <= maxWidth) {
                 builder.append(charArray[index]);
                 currentLineWidth += width;
@@ -75,8 +75,8 @@ public class BoyiaFont {
         }
 
         if (currentLineWidth > 0) {
-            maxLineWidth = maxLineWidth < currentLineWidth ? 
-                currentLineWidth : maxLineWidth;
+            maxLineWidth = maxLineWidth < currentLineWidth ?
+                    currentLineWidth : maxLineWidth;
             mList.add(new LineText(builder.toString(), currentLineWidth));
         }
 

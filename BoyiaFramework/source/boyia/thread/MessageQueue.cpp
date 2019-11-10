@@ -36,7 +36,7 @@ LVoid MessageCache::initCache()
 
 Message* MessageCache::obtain()
 {
-    if (m_cache == NULL) {
+    if (!m_cache) {
         initCache();
     }
 

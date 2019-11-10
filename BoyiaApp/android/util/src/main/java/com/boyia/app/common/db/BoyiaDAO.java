@@ -10,6 +10,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.db.DBAnnotation.DBKey;
 import com.boyia.app.common.db.DBAnnotation.DBColumn;
@@ -55,15 +56,15 @@ public class BoyiaDAO<T> {
 
         // 设置父类元素
         if (!cls.getSuperclass().equals(Object.class)) {
-            BoyiaLog.d("yanbo", "setBeanField classname="+cls.getSimpleName()
-                    +"!="+Object.class.getSimpleName());
+            BoyiaLog.d("yanbo", "setBeanField classname=" + cls.getSimpleName()
+                    + "!=" + Object.class.getSimpleName());
             setBeanField(cls.getSuperclass(), bean, cursor);
         }
     }
 
     private String getColumnName(Field field) {
         DBColumn dbField = field.getAnnotation(DBColumn.class);
-        return  (dbField == null || BoyiaUtils.isTextEmpty(dbField.name())) ?
+        return (dbField == null || BoyiaUtils.isTextEmpty(dbField.name())) ?
                 field.getName() : dbField.name();
     }
 
@@ -132,9 +133,9 @@ public class BoyiaDAO<T> {
 
     // 需要被重载
     public String getTableName() {
-        Type type = ((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         Class<?> clzz = (Class<?>) type;
-        BoyiaLog.d("BoyiaDAO", "getTableName="+clzz.getAnnotation(DBTable.class).name());
+        BoyiaLog.d("BoyiaDAO", "getTableName=" + clzz.getAnnotation(DBTable.class).name());
         return clzz.getAnnotation(DBTable.class).name();
     }
 
@@ -146,18 +147,18 @@ public class BoyiaDAO<T> {
     public void update(T bean, int id, Class<T> cls) {
         ContentValues cv = setDbData(bean, cls);
         mDb.update(getTableName(), cv, "id = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
     }
 
     public void delete(int id) {
         mDb.delete(getTableName(), "id = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
     }
 
     public T queryById(int id, Class<T> cls) {
         T appInfo = null;
         Cursor cursor = mDb.rawQuery("select * from " + getTableName()
-                + " where id = ?", new String[] { String.valueOf(id) });
+                + " where id = ?", new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             appInfo = setBeanData(cursor, cls);
         }
@@ -168,7 +169,7 @@ public class BoyiaDAO<T> {
     public List<T> queryAll(Class<T> cls) {
         List<T> Infos = null;
         Cursor cursor = mDb.rawQuery("select * from " + getTableName(),
-                new String[] {});
+                new String[]{});
         while (cursor.moveToNext()) {
             if (null == Infos) {
                 Infos = new ArrayList<T>();
