@@ -10,7 +10,6 @@
 
 #include "HtmlRenderer.h"
 #include "NetworkBase.h"
-#include "ResourceLoaderClient.h"
 
 namespace yanbo {
 
@@ -24,7 +23,7 @@ public:
     };
 
 public:
-    ResourceLoader(ResourceLoaderClient* client);
+    ResourceLoader(UIView* view);
     virtual ~ResourceLoader();
 
 public:
@@ -35,7 +34,6 @@ public:
 public:
     LVoid load(const String& url, LoadType type);
     LVoid loadString(const String& src);
-    LVoid setView(UIView* view);
 
     LVoid repaint(HtmlView* item = NULL);
 
@@ -48,7 +46,6 @@ public:
 protected:
     HtmlRenderer* m_render;
     UIView* m_view;
-    ResourceLoaderClient* m_client;
     LInt m_cssSize;
 };
 }

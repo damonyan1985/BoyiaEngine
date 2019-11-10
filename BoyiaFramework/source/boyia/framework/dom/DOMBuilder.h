@@ -1,5 +1,5 @@
-#ifndef Tiny2Dom_h
-#define Tiny2Dom_h
+#ifndef DOMBuilder_h
+#define DOMBuilder_h
 
 #include "HtmlView.h"
 #include "StyleParser.h"

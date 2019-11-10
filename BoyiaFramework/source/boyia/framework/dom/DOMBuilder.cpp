@@ -55,17 +55,9 @@ void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* 
 {
     //KLOG("createRenderTree");
     HtmlView* item = createHtmlView(elem, parentElem, parent);
-    //XMLNode* child = NULL;
-
     for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
         createRenderTree(child, elem, item);
     }
-
-    //BOYIA_LOG("DOMBuilder::createRenderTree---elem.size=%d", elem->Size());
-
-    // for (LInt index = 0; index < elem->Size(); ++index) {
-    //     createRenderTree(elem->GetChild(index), elem, item);
-    // }
 }
 
 HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent)
@@ -125,14 +117,14 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             KLOG("HtmlTags RootView construct");
         } break;
         case HtmlTags::FORM: {
-            String tagAction = _CS(elem->Attribute("action"));
-            String tagMethod = _CS(elem->Attribute("method"));
-            String tagEncoding = _CS(elem->Attribute("enctype"));
+            // String tagAction = _CS(elem->Attribute("action"));
+            // String tagMethod = _CS(elem->Attribute("method"));
+            // String tagEncoding = _CS(elem->Attribute("enctype"));
             item = new HtmlForm(
                 tagId,
-                tagAction,
-                tagMethod,
-                tagEncoding,
+                _CS(elem->Attribute("action")),
+                _CS(elem->Attribute("method")),
+                _CS(elem->Attribute("enctype")),
                 LFalse);
         } break;
         case HtmlTags::DIV:
@@ -140,26 +132,26 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             item = new BlockView(tagId, LFalse);
         } break;
         case HtmlTags::IMG: {
-            String imageSrc = _CS(elem->Attribute("src"));
-            item = new ImageView(tagId, LFalse, imageSrc);
+            //String imageSrc = _CS(elem->Attribute("src"));
+            item = new ImageView(tagId, LFalse, _CS(elem->Attribute("src")));
         } break;
         case HtmlTags::A: {
-            String tagUrl = _CS(elem->Attribute("href"));
-            item = new LinkView(tagId, tagUrl);
+            //String tagUrl = _CS(elem->Attribute("href"));
+            item = new LinkView(tagId, _CS(elem->Attribute("href")));
         } break;
         case HtmlTags::INPUT: {
-            String tagValue = _CS(elem->Attribute("value"));
-            String tagTitle = _CS(elem->Attribute("title"));
-            String tagInputType = _CS(elem->Attribute("type"));
-            String tagImageUrl = _CS(elem->Attribute("src"));
+            // String tagValue = _CS(elem->Attribute("value"));
+            // String tagTitle = _CS(elem->Attribute("title"));
+            // String tagInputType = _CS(elem->Attribute("type"));
+            // String tagImageUrl = _CS(elem->Attribute("src"));
 
             item = new InputView(
                 tagId,
                 tagName,
-                tagValue,
-                tagTitle,
-                tagInputType,
-                tagImageUrl);
+                _CS(elem->Attribute("value")),
+                _CS(elem->Attribute("title")),
+                _CS(elem->Attribute("type")),
+                _CS(elem->Attribute("src")));
         } break;
         case HtmlTags::VIDEO: {
             item = new VideoView(tagId, LFalse, _CS(elem->Attribute("src")));
@@ -183,14 +175,13 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             KFORMATLOG("HtmlView id %s", (const char*)tagId.GetBuffer());
             m_htmlDoc->putItemID(tagId, item);
         }
-    } else if (node->ToText()) // text
-    {
+    } else if (node->ToText()) { // Text parse
         XMLText* elem = node->ToText();
         if (parentElem) {
             String tagType = _CS(parentElem->Value());
-            int type = htmlTags->symbolAsInt(tagType);
+            //int type = htmlTags->symbolAsInt(tagType);
             String text = _CS(elem->Value());
-            switch (type) {
+            switch (htmlTags->symbolAsInt(tagType)) {
             case HtmlTags::STYLE: {
                 util::InputStream is(text);
                 if (m_styleParser) {

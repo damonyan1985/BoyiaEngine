@@ -177,7 +177,7 @@ StyleRule* StyleManager::createNewStyleRule(const StyleRule* parentRule, StyleRu
 {
     KLOG("StyleManager::createNewStyleRule");
     StyleRule* newStyleRule = StyleRule::New();
-    if (NULL != parentRule) {
+    if (parentRule) {
         const AttributeMap* properties = parentRule->getPropertiesPtr();
         AttributeMap::Iterator iter = properties->begin();
         AttributeMap::Iterator iterEnd = properties->end();
@@ -197,7 +197,7 @@ StyleRule* StyleManager::createNewStyleRule(const StyleRule* parentRule, StyleRu
         }
     }
 
-    if (NULL != childRule) {
+    if (childRule) {
         const AttributeMap* properties = childRule->getPropertiesPtr();
         AttributeMap::Iterator iter = properties->begin();
         AttributeMap::Iterator iterEnd = properties->end();

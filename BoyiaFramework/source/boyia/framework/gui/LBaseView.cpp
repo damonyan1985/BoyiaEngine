@@ -1,5 +1,5 @@
 /*
- * LGraphicItem.cpp
+ * LBaseView.cpp
  *
  *  Created on: 2011-6-23
  *      Author: yanbo

@@ -13,7 +13,6 @@
 #include "LEvent.h"
 #include "LGdi.h"
 #include "ResourceLoader.h"
-#include "ResourceLoaderClient.h"
 #include "UIViewController.h"
 
 namespace yanbo {
@@ -50,8 +49,6 @@ private:
     LRect m_clientRect;
     UIViewController* m_controller;
     boyia::BoyiaEventHandler* m_jsHandler;
-
-    static UIView* s_instance;
 };
 }
 #endif

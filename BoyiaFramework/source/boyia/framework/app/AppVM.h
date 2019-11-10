@@ -1,5 +1,5 @@
-#ifndef VirtualMachine_h
-#define VirtualMachine_h
+#ifndef AppVM_h
+#define AppVM_h
 
 #include "UtilString.h"
 

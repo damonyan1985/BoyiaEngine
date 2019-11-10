@@ -11,7 +11,6 @@
 
 namespace yanbo {
 
-UIView* UIView::s_instance = NULL;
 UIView::UIView()
     : m_loader(NULL)
     , m_doc(NULL)
@@ -49,9 +48,8 @@ const LRect& UIView::getClientRange() const
 void UIView::initComponents()
 {
     if (!m_loader) {
-        m_loader = new ResourceLoader(NULL);
+        m_loader = new ResourceLoader(this);
         m_doc = new HtmlDocument();
-        m_loader->setView(this);
         m_doc->setView(this);
         m_jsHandler = new boyia::BoyiaEventHandler();
         m_controller = new UIViewController(this);
@@ -108,8 +106,6 @@ void UIView::handleKeyEvent(const util::LKeyEvent& evt)
 
 void UIView::handleTouchEvent(const util::LTouchEvent& evt)
 {
-    //	m_jsHandlerm_jsHandler->handleTouch(evt);
-
     switch (evt.getType()) {
     case LTouchEvent::ETOUCH_DOWN:
         m_controller->onTouchDown(evt.getPosition());
