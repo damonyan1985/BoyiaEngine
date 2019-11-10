@@ -151,16 +151,14 @@ void UIViewController::onTouchDown(const LPoint& pt)
     m_target = findViewByPosition(pt, m_view->getDocument()->getRenderTreeRoot());
     m_targetPoint = pt;
     //KFORMATLOG("m_target x=%d, y=%d, w=%d, h=%d", m_target->getXpos(), m_target->getYpos(), m_target->getWidth(), m_target->getHeight());
-    if (m_target) {
+    if (m_target && m_target->getListener()) {
         LayoutPoint topLeft = m_target->getAbsoluteContainerTopLeft();
         LInt x = m_target->getXpos() + topLeft.iX;
         LInt y = m_target->getYpos() + topLeft.iY;
         KFORMATLOG("m_target x=%d, y=%d, w=%d, h=%d", x, y, m_target->getWidth(), m_target->getHeight());
         KFORMATLOG("point x=%d, y=%d", pt.iX, pt.iY);
 
-        if (m_target->getListener()) {
-            m_target->getListener()->onPressDown(m_target);
-        }
+        m_target->getListener()->onPressDown(m_target);
     }
 }
 

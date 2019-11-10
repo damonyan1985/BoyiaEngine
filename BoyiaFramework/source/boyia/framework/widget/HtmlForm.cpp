@@ -77,7 +77,7 @@ LBool HtmlForm::hasPassword()
         FormView* fItem = *iter;
         if (fItem->getTagType() == HtmlTags::INPUT) {
             InputView* inpItem = (InputView*)fItem;
-            if (inpItem->getInputType() == InputView::PASSWORD) {
+            if (inpItem->getInputType() == InputView::kInputPassword) {
                 return LTrue;
             }
         }

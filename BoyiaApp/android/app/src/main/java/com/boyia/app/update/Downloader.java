@@ -35,7 +35,7 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoaderStart() {
+    public void onLoadStart() {
         long rangeStart = 0;
         File downDir = new File(Downloader.DOWN_LOAD_DIR);
         if (!downDir.exists()) {
@@ -53,7 +53,7 @@ public class Downloader implements ILoadListener {
 
         // 断点续传
         if (rangeStart != 0) {
-            mLoader.putHeader("Range", "bytes="+rangeStart+"-");
+            mLoader.putRequestHeader("Range", "bytes="+rangeStart+"-");
         }
 
         try {
@@ -69,13 +69,13 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoaderDataSize(long size) {
+    public void onLoadDataSize(long size) {
         BoyiaLog.d("yanbo", "download size="+size);
         mInfo.setMaxLength(size);
     }
 
     @Override
-    public void onLoaderDataReceive(byte[] data, int length, Object msg) {
+    public void onLoadDataReceive(byte[] data, int length, Object msg) {
         try {
             mSavedFile.write(data, 0, length);
         } catch (IOException e) {
@@ -84,7 +84,7 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoaderFinished(Object msg) {
+    public void onLoadFinished(Object msg) {
         try {
             mSavedFile.close();
             mInfo.setStatus(DownloadData.FINISHED);
@@ -98,7 +98,7 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoaderError(String error, Object msg) {
+    public void onLoadError(String error, Object msg) {
         if (mSavedFile != null) {
             try {
                 mSavedFile.close();
@@ -114,7 +114,7 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoaderRedirectUrl(String redirectUrl) {
+    public void onLoadRedirectUrl(String redirectUrl) {
     }
 
 }

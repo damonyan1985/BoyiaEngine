@@ -1,6 +1,7 @@
 package com.boyia.app.core;
 
 //import android.graphics.PixelFormat;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.view.inputmethod.InputConnection;
 import com.boyia.app.input.BoyiaInputConnection;
 import com.boyia.app.input.BoyiaInputManager;
 import com.boyia.app.common.utils.BoyiaLog;
+
 import android.app.Activity;
 
 /*
@@ -39,137 +41,137 @@ import android.app.Activity;
  * @Descrption OpenGL ES 3.0 Framework Construct By Yanbo
  */
 public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
-	protected static final String TAG = "BoyiaUIView";
-	private boolean mIsUIViewDistroy = true;
-	private SurfaceHolder mHolder = null;
-	private BoyiaInputConnection mInputConnect = null;
-	private static BoyiaInputManager mInputManager = null;
-	
-	public BoyiaUIView(Context context) {
-		this(context, null);
-	}
+    protected static final String TAG = "BoyiaUIView";
+    private boolean mIsUIViewDistroy = true;
+    private SurfaceHolder mHolder = null;
+    private BoyiaInputConnection mInputConnect = null;
+    private static BoyiaInputManager mInputManager = null;
 
-	public BoyiaUIView(Context context, AttributeSet set) {
-		super(context, set);
-		init(context);
-	}
-	
-	private void init(Context context) {
-		// 叠在其他surfaceview之上
-		nativeInitJNIContext((Activity) context);
-		setZOrderOnTop(true);
-		//setZOrderMediaOverlay(true);
-		getHolder().addCallback(this);
-		getHolder().setFormat(PixelFormat.TRANSLUCENT);
-		initEventListener();
-	}
+    public BoyiaUIView(Context context) {
+        this(context, null);
+    }
 
-	private void initEventListener() {
-		mInputManager = new BoyiaInputManager(this);
-		setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				onTouchDown(event);
-				return true;
-			}
-		});
+    public BoyiaUIView(Context context, AttributeSet set) {
+        super(context, set);
+        init(context);
+    }
 
-		setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN
-						&& event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
-					if (mInputConnect != null) {
-						mInputConnect.deleteCommitText();
-					}
-				}
-				return false;
-			}
-		});
+    private void init(Context context) {
+        // 叠在其他surfaceview之上
+        nativeInitJNIContext((Activity) context);
+        setZOrderOnTop(true);
+        //setZOrderMediaOverlay(true);
+        getHolder().addCallback(this);
+        getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        initEventListener();
+    }
 
-		setFocusable(true);
-		setFocusableInTouchMode(true);
-		requestFocus();
-	}
-	
-	public void setInputText(String text) {
-		nativeSetInputText(text, mInputManager.item());
-	}
-	
-	public void resetCommitText(final String text) {
-		if (mInputConnect != null) {
-			mInputConnect.resetCommitText(text);
-		}
-	}
-	
-	public static void showKeyboard(long callback, String text) {
-		mInputManager.show(callback, text);
-	}
-	
-	public void onTouchDown(MotionEvent event) {
-		nativeHandleTouchEvent(event.getAction(), (int) event.getX(), (int) event.getY());
-	}
-	
-	public void onKeyDown(KeyEvent event) {
-		if (event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
-			//BoyiaUtils.showToast("BoyiaUIView onKeyDown delete");
-			if (mInputConnect != null) {
-				mInputConnect.deleteCommitText();
-			}
-		}
-		nativeHandleKeyEvent(event.getKeyCode(), 0);
-	}
-	
-	public View getView() {
-		return this;
-	}
-	
-	public void quitUIView() {
-		nativeDistroyUIView();
-		mIsUIViewDistroy = true;
-	}
-	
-	public void initUIView() {
-		nativeSetGLSurface(mHolder.getSurface());
-		nativeInitUIView(mHolder.getSurfaceFrame().width(),
-				mHolder.getSurfaceFrame().height(),
-				BoyiaLog.ENABLE_LOG);
-	}
+    private void initEventListener() {
+        mInputManager = new BoyiaInputManager(this);
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onTouchDown(event);
+                return true;
+            }
+        });
 
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		BoyiaLog.d(TAG, "surfaceCreated");
-		if (mIsUIViewDistroy) {
-			BoyiaLog.d(TAG, " sendBoyiaUIViewTask");
-			mHolder = holder;
-			initUIView();
-			mIsUIViewDistroy = false;
-		} else {
-			nativeResetGLSurface(mHolder.getSurface());
-			BoyiaLog.d(TAG, " BoyiaUIViewTask DRAW");
-		}
-	}
+        setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+                    if (mInputConnect != null) {
+                        mInputConnect.deleteCommitText();
+                    }
+                }
+                return false;
+            }
+        });
 
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-	}
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        requestFocus();
+    }
 
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-	}
-	
-	// 这个方法继承自View。把自定义的BaseInputConnection通道传递给InputMethodService
-	@Override
-	public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-		if (mInputConnect == null) {
-			mInputConnect = new BoyiaInputConnection(this, false);
-		}
-		
-	    return mInputConnect;
-	}
+    public void setInputText(String text) {
+        nativeSetInputText(text, mInputManager.item());
+    }
 
-	// Native Method Define
+    public void resetCommitText(final String text) {
+        if (mInputConnect != null) {
+            mInputConnect.resetCommitText(text);
+        }
+    }
+
+    public static void showKeyboard(long callback, String text) {
+        mInputManager.show(callback, text);
+    }
+
+    public void onTouchDown(MotionEvent event) {
+        nativeHandleTouchEvent(event.getAction(), (int) event.getX(), (int) event.getY());
+    }
+
+    public void onKeyDown(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+            //BoyiaUtils.showToast("BoyiaUIView onKeyDown delete");
+            if (mInputConnect != null) {
+                mInputConnect.deleteCommitText();
+            }
+        }
+        nativeHandleKeyEvent(event.getKeyCode(), 0);
+    }
+
+    public View getView() {
+        return this;
+    }
+
+    public void quitUIView() {
+        nativeDistroyUIView();
+        mIsUIViewDistroy = true;
+    }
+
+    public void initUIView() {
+        nativeSetGLSurface(mHolder.getSurface());
+        nativeInitUIView(mHolder.getSurfaceFrame().width(),
+                mHolder.getSurfaceFrame().height(),
+                BoyiaLog.ENABLE_LOG);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        BoyiaLog.d(TAG, "surfaceCreated");
+        if (mIsUIViewDistroy) {
+            BoyiaLog.d(TAG, " sendBoyiaUIViewTask");
+            mHolder = holder;
+            initUIView();
+            mIsUIViewDistroy = false;
+        } else {
+            nativeResetGLSurface(mHolder.getSurface());
+            BoyiaLog.d(TAG, " BoyiaUIViewTask DRAW");
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+    }
+
+    // 这个方法继承自View。把自定义的BaseInputConnection通道传递给InputMethodService
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        if (mInputConnect == null) {
+            mInputConnect = new BoyiaInputConnection(this, false);
+        }
+
+        return mInputConnect;
+    }
+
+    // Native Method Define
     public static native void nativeInitUIView(int width, int height, boolean isDebug);
 
     public static native void nativeOnDataReceive(byte[] data, int length, long callback);
@@ -198,5 +200,5 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static native void nativeOnKeyboardShow(long item, int keyboardHeight);
 
-	public static native void nativeOnKeyboardHide(long item, int keyboardHeight);
+    public static native void nativeOnKeyboardHide(long item, int keyboardHeight);
 }

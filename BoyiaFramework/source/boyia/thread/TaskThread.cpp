@@ -29,12 +29,12 @@ LBool TaskThread::working()
 void TaskThread::run()
 {
     while (m_continue) {
-        if (m_queue == NULL) {
+        if (!m_queue) {
             return;
         }
 
         BoyiaPtr<TaskBase> task = m_queue->pollTask();
-        if (task.get() != NULL) {
+        if (task.get()) {
             m_working = LTrue;
             KFORMATLOG("TaskThread::run listsize=%d", m_queue->size());
 

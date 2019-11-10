@@ -34,7 +34,7 @@ ImageAndroid::ImageAndroid()
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     KLOG("BitmapAndroid::BitmapAndroid()0");
     //jclass clazz = env->FindClass("com/mini/app/core/BoyiaBitmap");
-    jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaBitmap");
+    jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaImage");
 
     KLOG("BitmapAndroid::BitmapAndroid()1");
     jmethodID constructMethod = env->GetMethodID(clazz, "<init>",

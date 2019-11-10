@@ -13,6 +13,8 @@
 
 namespace yanbo {
 
+const LInt kDefaultInputBorderWidth = 2;
+
 InputView::InputView(
     const String& id,
     const String& name,
@@ -23,34 +25,33 @@ InputView::InputView(
     : FormView(id, name, value, title)
     , m_newFont(NULL)
 {
-    m_type = TEXT;
+    m_type = kInputText;
     m_value = value;
     m_title = title;
 
     if (inputType.GetLength() > 0) {
         if (inputType.CompareNoCase(_CS("text"))) {
-            m_type = TEXT;
+            m_type = kInputText;
         } else if (inputType.CompareNoCase(_CS("password"))) {
-            m_type = PASSWORD;
+            m_type = kInputPassword;
         } else if (inputType.CompareNoCase(_CS("reset"))) {
-            m_type = RESET;
+            m_type = kInputReset;
         } else if (inputType.CompareNoCase(_CS("radio"))) {
-            m_type = RADIO;
+            m_type = kInputRadio;
         } else if (inputType.CompareNoCase(_CS("checkbox"))) {
-            m_type = CHECKBOX;
+            m_type = kInputCheckbox;
         } else if (inputType.CompareNoCase(_CS("file"))) {
-            m_type = FILE;
-        } else if (inputType.CompareNoCase(_CS("hidden"))) // fixed
-        {
-            m_type = HIDDEN;
+            m_type = kInputFile;
+        } else if (inputType.CompareNoCase(_CS("hidden"))) {
+            m_type = kInputHidden;
         } else if (inputType.CompareNoCase(_CS("button"))) {
-            m_type = BUTTON;
+            m_type = kInputButton;
         } else if (inputType.CompareNoCase(_CS("submit"))) {
-            m_type = SUBMIT;
+            m_type = kInputSubmit;
         } else if (inputType.CompareNoCase(_CS("image"))) {
-            m_type = IMAGE;
+            m_type = kInputImage;
         } else {
-            m_type = NOTSUPPORTED;
+            m_type = kInputNone;
         }
     }
 
@@ -60,14 +61,14 @@ InputView::InputView(
 LVoid InputView::initView()
 {
     switch (m_type) {
-    case TEXT:
-    case PASSWORD:
-    case FILE:
+    case kInputText:
+    case kInputPassword:
+    case kInputFile:
         m_style.bgColor.m_alpha = 0;
         break;
-    case SUBMIT:
-    case BUTTON:
-    case RESET:
+    case kInputSubmit:
+    case kInputButton:
+    case kInputReset:
         m_style.bgColor = util::LColor::parseArgbInt(COLOR_LIGHTGRAY);
         break;
     }
@@ -75,10 +76,10 @@ LVoid InputView::initView()
     m_style.border.leftColor = COLOR_BLACK;
     m_style.border.rightColor = COLOR_BLACK;
     m_style.border.bottomColor = COLOR_BLACK;
-    m_style.border.topWidth = 1;
-    m_style.border.leftWidth = 1;
-    m_style.border.rightWidth = 1;
-    m_style.border.bottomWidth = 1;
+    m_style.border.topWidth = kDefaultInputBorderWidth;
+    m_style.border.leftWidth = kDefaultInputBorderWidth;
+    m_style.border.rightWidth = kDefaultInputBorderWidth;
+    m_style.border.bottomWidth = kDefaultInputBorderWidth;
     m_style.border.topStyle = LGraphicsContext::kSolidPen;
     m_style.border.leftStyle = LGraphicsContext::kSolidPen;
     m_style.border.rightStyle = LGraphicsContext::kSolidPen;
@@ -109,55 +110,53 @@ LVoid InputView::layout(RenderContext& rc)
 
     m_newFont = LFont::create(getStyle()->font);
     switch (m_type) {
-    case BUTTON:
-    case SUBMIT:
-    case RESET: {
+    case kInputButton:
+    case kInputSubmit:
+    case kInputReset: {
         //m_leftPadding = maxWidth / 80;
         m_leftPadding = 0;
         //m_width  = m_width + 6;
         m_width = maxWidth / 5;
         m_height = m_newFont->getFontHeight() + 10;
     } break;
-    case TEXT:
-    case PASSWORD: {
+    case kInputText:
+    case kInputPassword: {
         m_leftPadding = 5;
         m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
         m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight() + 6;
     } break;
-    case IMAGE: {
+    case kInputImage: {
 
     } break;
-    case HIDDEN: {
+    case kInputHidden: {
         m_width = 0;
         m_height = 0;
         m_leftPadding = 0;
     } break;
-    case FILE: {
+    case kInputFile: {
         m_width = maxWidth / 2;
         m_leftPadding = maxWidth / 80;
         m_height = m_newFont->getFontHeight() + 6;
         m_mimeType = _CS("text/plain"); //test
         m_value = _CS("File upload not supported");
     } break;
-    case CHECKBOX: {
+    case kInputCheckbox: {
         m_leftPadding = maxWidth / 25;
         m_width = m_height = m_newFont->getFontHeight();
     } break;
-    case RADIO: {
+    case kInputRadio: {
         m_leftPadding = maxWidth / 25;
         m_width = m_height = m_newFont->getFontHeight();
     } break;
     }
 
-    if (HIDDEN != m_type && rc.getX() >= 0) {
+    if (kInputHidden != m_type && rc.getX() >= 0) {
         if (rc.getX() + m_leftPadding + m_width > rc.getMaxWidth() + rc.getNewLineXStart()) {
             rc.newLine(this);
             rc.setNextLineHeight(m_height);
         } else {
-            if (rc.getLineItemCount() >= 0) {
-                if (m_height > rc.getNextLineHeight()) {
-                    rc.setNextLineHeight(m_height);
-                }
+            if (rc.getLineItemCount() >= 0 && m_height > rc.getNextLineHeight()) {
+                rc.setNextLineHeight(m_height);
             }
         }
     }
@@ -172,7 +171,7 @@ LVoid InputView::layout(RenderContext& rc)
 
     rc.addX(m_width);
 
-    if (m_type != HIDDEN) {
+    if (m_type != kInputHidden) {
         rc.addItemInterval();
         rc.addLineItemCount();
     }
@@ -187,7 +186,7 @@ LVoid InputView::paint(LGraphicsContext& gc)
     LInt x = topLeft.iX + getXpos();
     LInt y = topLeft.iY + getYpos();
 
-    if (HIDDEN == m_type) {
+    if (kInputHidden == m_type) {
         return;
     }
 
@@ -200,17 +199,17 @@ LVoid InputView::paint(LGraphicsContext& gc)
     gc.setPenColor(color);
 
     switch (m_type) {
-    case TEXT:
-    case PASSWORD:
-    case FILE: {
+    case kInputText:
+    case kInputPassword:
+    case kInputFile: {
         paintTextBox(gc, x, y);
     } break;
-    case SUBMIT:
-    case BUTTON:
-    case RESET: {
+    case kInputSubmit:
+    case kInputButton:
+    case kInputReset: {
         paintButton(gc, x, y);
     } break;
-    case CHECKBOX: {
+    case kInputCheckbox: {
 
     } break;
     }
@@ -232,7 +231,7 @@ LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
         return;
     }
 
-    if (m_type == PASSWORD) {
+    if (m_type == kInputPassword) {
         gc.drawText(
             String('*', m_value.GetLength()),
             LRect(x + m_leftPadding, y + 6,
@@ -292,8 +291,8 @@ LVoid InputView::setSelected(const LBool selected)
     HtmlView::setSelected(selected);
     if (selected) {
         switch (m_type) {
-        case TEXT:
-        case PASSWORD: {
+        case kInputText:
+        case kInputPassword: {
             Editor::get()->setView(this)->showKeyboard(m_value);
         } break;
         }

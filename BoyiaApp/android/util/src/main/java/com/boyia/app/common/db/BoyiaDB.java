@@ -1,8 +1,11 @@
-package com.boyia.app.common.db;;
+package com.boyia.app.common.db;
+
+;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.boyia.app.common.utils.BoyiaLog;
 
 public class BoyiaDB extends SQLiteOpenHelper {
