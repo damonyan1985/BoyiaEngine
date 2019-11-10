@@ -82,9 +82,9 @@ private:
     OwnerPtr<String> m_data;
 };
 
-ResourceLoader::ResourceLoader(ResourceLoaderClient* client)
+ResourceLoader::ResourceLoader(UIView* view)
     : m_render(NULL)
-    , m_client(client)
+    , m_view(view)
     , m_cssSize(0)
 {
 }
@@ -134,11 +134,6 @@ LVoid ResourceLoader::load(const String& url, LoadType type)
     m_view->network()->loadUrl(url, new ResourceHandle(this, type, url));
 }
 
-LVoid ResourceLoader::setView(UIView* view)
-{
-    m_view = view;
-}
-
 UIView* ResourceLoader::view() const
 {
     return m_view;
@@ -161,20 +156,9 @@ LVoid ResourceLoader::executeDocument(const String& data)
         return;
     }
 
-    m_render->layout();
     KLOG("m_render->layout()");
-
-    if (m_client) {
-        m_client->onHtmlRenderFinished();
-    }
-
-    KLOG("paint");
+    m_render->layout();
     m_render->paint(NULL);
-
-    if (m_client) {
-        KLOG("NULL != m_client");
-        m_client->onViewNeedToDraw();
-    }
 }
 
 HtmlRenderer* ResourceLoader::render() const
@@ -210,10 +194,6 @@ LVoid ResourceLoader::repaint(HtmlView* item)
     }
 
     m_render->paint(NULL);
-
-    if (m_client) {
-        m_client->onViewNeedToDraw();
-    }
 }
 
 LVoid ResourceLoader::loadString(const String& src)

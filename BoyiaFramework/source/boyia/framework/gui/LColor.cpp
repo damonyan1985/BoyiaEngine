@@ -1,5 +1,5 @@
 /*
- * Color.cpp
+ * LColor.cpp
  *
  *  Created on: 2011-6-22
  *      Author: yanbo
