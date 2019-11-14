@@ -14,7 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 /*
- * BoyiaBitmap
+ * BoyiaImage
  * @Author Yan bo
  * @Time 2018-8-31
  * @Copyright Reserved

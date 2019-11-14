@@ -32,13 +32,13 @@ import android.os.Environment;
 public class BoyiaImager {
     private static final String TAG = BoyiaImager.class.getSimpleName();
     protected static final String BOYIA_IMAGE_DISK_SAVE_PATH = BoyiaFileUtil
-            .getFilePathRoot() + "image/";
+            .getFilePathRoot() + "boyia_image_cache/";
     private static final int BOYIA_IMAGE_SDCARD_DISK_CACHE_SIZE = 60 * 1024 * 1024;
     private static final int BOYIA_IMAGE_DISK_CACHE_SIZE = 20 * 1024 * 1024;
 
     private BoyiaImageCache mBitmapCache = null;
     private DiskLruCache mDiskCache = null;
-    // 正在下载的图片对应的视图, 弱引用表示不控制IBoyiaImage的释放
+    // Loading Cache
     private HashMap<String, List<WeakReference<IBoyiaImage>>> mLoadingMap;
 
     private static class BoyiaImageManagerHolder {
