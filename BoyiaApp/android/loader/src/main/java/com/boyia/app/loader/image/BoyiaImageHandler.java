@@ -41,16 +41,6 @@ public class BoyiaImageHandler {
         mLoader.load(url);
     }
 
-    public void handleError() {
-        if (mRetryTimes > 0) {
-            mRetryTimes--;
-            mLoader.load(mUrl);
-        } else {
-            mLoader = null;
-            BoyiaImager.getInstance().removeLoadImage(mUrl);
-        }
-    }
-
     public void decode(byte[] data) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -67,19 +57,21 @@ public class BoyiaImageHandler {
                 Bitmap bitmap = null;
                 for (WeakReference<IBoyiaImage> loadImageRef : imageList) {
                     IBoyiaImage loadImage = loadImageRef.get();
-                    if (loadImage != null) {
-                        if (width != loadImage.getWidth()) {
-                            options.inSampleSize = options.outWidth / loadImage.getWidth();
-                            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-                            BoyiaImager.getInstance().putBitmapCache(mUrl, bitmap);
-                            width = loadImage.getWidth();
-                        }
+                    if (loadImage == null) {
+                        continue;
+                    }
 
-                        String url = loadImage.getImageURL();
-                        if (!BoyiaUtils.isTextEmpty(url) && url.equals(mUrl) && bitmap != null) {
-                            loadImage.setImage(bitmap);
-                            BoyiaLog.d(TAG, "Decode data in native");
-                        }
+                    if (width != loadImage.getWidth()) {
+                        options.inSampleSize = options.outWidth / loadImage.getWidth();
+                        bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                        BoyiaImager.getInstance().putBitmapCache(mUrl, bitmap);
+                        width = loadImage.getWidth();
+                    }
+
+                    String url = loadImage.getImageURL();
+                    if (!BoyiaUtils.isTextEmpty(url) && url.equals(mUrl) && bitmap != null) {
+                        loadImage.setImage(bitmap);
+                        BoyiaLog.d(TAG, "Decode data in native");
                     }
                 }
             }
