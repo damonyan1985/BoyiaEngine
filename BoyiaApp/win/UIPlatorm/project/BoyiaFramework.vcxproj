@@ -161,7 +161,6 @@
     <ClCompile Include="..\app\BoyiaApp.cpp" />
     <ClCompile Include="..\app\BoyiaAppWindow.cpp" />
     <ClCompile Include="..\graphic\BoyiaDC.cpp" />
-    <ClCompile Include="..\test\Test.cpp" />
     <ClCompile Include="..\thread\PlatformThreadWin.cpp" />
     <ClCompile Include="..\window\BaseWindow.cpp" />
     <ClCompile Include="..\window\BoyiaWindow.cpp" />

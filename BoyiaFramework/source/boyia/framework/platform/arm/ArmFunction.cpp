@@ -1,6 +1,6 @@
 #include "ArmFunction.h"
 #include "SalLog.h"
-#include <android/log.h>
+//#include <android/log.h>
 
 // r            使用任何可用的通用寄存器
 // m            使用变量的内存地址
