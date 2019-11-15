@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BoyiaFramework", "project\BoyiaFramework.vcxproj", "{35967B15-EA16-4939-885F-085B7B569374}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App", "project\BoyiaFramework.vcxproj", "{35967B15-EA16-4939-885F-085B7B569374}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibBoyia", "..\LibBoyia\LibBoyia.vcxproj", "{C8FC730F-CABF-4D82-8E6A-A7CC65CD1C25}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibZ", "..\External\LibZ\LibZ.vcxproj", "{D46D60F9-3F37-4978-B10E-23B920EDBC69}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Libft", "..\External\Libft\Libft.vcxproj", "{E79A133F-70EB-453A-90F1-8B18D9FB1540}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,22 +31,6 @@ Global
 		{C8FC730F-CABF-4D82-8E6A-A7CC65CD1C25}.Release|x64.Build.0 = Release|x64
 		{C8FC730F-CABF-4D82-8E6A-A7CC65CD1C25}.Release|x86.ActiveCfg = Release|Win32
 		{C8FC730F-CABF-4D82-8E6A-A7CC65CD1C25}.Release|x86.Build.0 = Release|Win32
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Debug|x64.ActiveCfg = Debug|x64
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Debug|x64.Build.0 = Debug|x64
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Debug|x86.ActiveCfg = Debug|Win32
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Debug|x86.Build.0 = Debug|Win32
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Release|x64.ActiveCfg = Release|x64
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Release|x64.Build.0 = Release|x64
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Release|x86.ActiveCfg = Release|Win32
-		{D46D60F9-3F37-4978-B10E-23B920EDBC69}.Release|x86.Build.0 = Release|Win32
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Debug|x64.ActiveCfg = Debug|x64
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Debug|x64.Build.0 = Debug|x64
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Debug|x86.ActiveCfg = Debug|Win32
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Debug|x86.Build.0 = Debug|Win32
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Release|x64.ActiveCfg = Release|x64
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Release|x64.Build.0 = Release|x64
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Release|x86.ActiveCfg = Release|Win32
-		{E79A133F-70EB-453A-90F1-8B18D9FB1540}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
