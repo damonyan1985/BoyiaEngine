@@ -48,15 +48,13 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
 
     @Override
     public void setImage(final Bitmap bm) {
-        if (mContext != null) {
-            if (mContext instanceof Activity) {
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setImageBitmap(bm);
-                    }
-                });
-            }
+        if (mContext instanceof Activity) {
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setImageBitmap(bm);
+                }
+            });
         }
     }
 

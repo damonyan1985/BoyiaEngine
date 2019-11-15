@@ -185,7 +185,7 @@ public class BoyiaImager {
                     FileUtil.deleteFolder(BOYIA_IMAGE_DISK_SAVE_PATH);
                 }
 
-                File cacheDir = BoyiaFileUtil.createDirectory(BoyiaImager.BOYIA_IMAGE_DISK_SAVE_PATH);
+                File cacheDir = BoyiaFileUtil.createDirectory(BOYIA_IMAGE_DISK_SAVE_PATH);
                 if (cacheDir == null || !cacheDir.exists()) {
                     return;
                 }
@@ -226,7 +226,7 @@ public class BoyiaImager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            BoyiaLog.d("BitmapSize", "Bitmap Error=" + e.toString());
+            BoyiaLog.d(TAG, "Bitmap Error=" + e.toString());
             bitmap = null;
         }
 

@@ -70,10 +70,11 @@ public class BoyiaLoadJob implements IJob {
     @Override
     public void exec() {
         BoyiaLog.i(TAG, "BoyiaLoadJob execute");
-        if (null != mCallback) {
-            mCallback.onLoadStart();
+        if (null == mCallback) {
+            return;
         }
 
+        mCallback.onLoadStart();
         Response data = mHttpEngine.getResponse(mRequest);
 
         if (null == data) {
@@ -95,20 +96,16 @@ public class BoyiaLoadJob implements IJob {
             return;
         }
 
-        if (null != mCallback) {
-            mCallback.onReceiveFinished(mMessage);
-        }
+        mCallback.onReceiveFinished(mMessage);
     }
 
     private boolean executeRedirect(Response data) {
-        if (null != mCallback) {
-            mCallback.onDataSize(data.getLength());
-            String redirectUrl = data.getRedirectUrl();
-            if (!BoyiaUtils.isTextEmpty(redirectUrl)) {
-                BoyiaLog.d(TAG, "BoyiaLoadJob redirectUrl: " + redirectUrl);
-                mCallback.onRedirectUrl(redirectUrl);
-                return false;
-            }
+        mCallback.onDataSize(data.getLength());
+        String redirectUrl = data.getRedirectUrl();
+        if (!BoyiaUtils.isTextEmpty(redirectUrl)) {
+            BoyiaLog.d(TAG, "BoyiaLoadJob redirectUrl: " + redirectUrl);
+            mCallback.onRedirectUrl(redirectUrl);
+            return false;
         }
 
         return true;
@@ -119,9 +116,7 @@ public class BoyiaLoadJob implements IJob {
         int length;
         try {
             while ((length = data.read(buffer)) != -1 && !mHasStop) {
-                if (null != mCallback) {
-                    mCallback.onDataReceived(buffer, length, mMessage);
-                }
+                mCallback.onDataReceived(buffer, length, mMessage);
             }
 
             BoyiaLog.d(TAG, "BoyiaLoadJob receive data success url: "
@@ -137,12 +132,10 @@ public class BoyiaLoadJob implements IJob {
     }
 
     private void executeError(String error) {
-        if (null != mCallback) {
-            if (mHasStop) {
-                mCallback.onReceiveFinished(mMessage);
-            } else {
-                mCallback.onHttpError(error, mMessage);
-            }
+        if (mHasStop) {
+            mCallback.onReceiveFinished(mMessage);
+        } else {
+            mCallback.onHttpError(error, mMessage);
         }
     }
 }

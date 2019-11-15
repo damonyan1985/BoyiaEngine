@@ -29,30 +29,28 @@ InputView::InputView(
     m_value = value;
     m_title = title;
 
-    if (inputType.GetLength() > 0) {
-        if (inputType.CompareNoCase(_CS("text"))) {
-            m_type = kInputText;
-        } else if (inputType.CompareNoCase(_CS("password"))) {
-            m_type = kInputPassword;
-        } else if (inputType.CompareNoCase(_CS("reset"))) {
-            m_type = kInputReset;
-        } else if (inputType.CompareNoCase(_CS("radio"))) {
-            m_type = kInputRadio;
-        } else if (inputType.CompareNoCase(_CS("checkbox"))) {
-            m_type = kInputCheckbox;
-        } else if (inputType.CompareNoCase(_CS("file"))) {
-            m_type = kInputFile;
-        } else if (inputType.CompareNoCase(_CS("hidden"))) {
-            m_type = kInputHidden;
-        } else if (inputType.CompareNoCase(_CS("button"))) {
-            m_type = kInputButton;
-        } else if (inputType.CompareNoCase(_CS("submit"))) {
-            m_type = kInputSubmit;
-        } else if (inputType.CompareNoCase(_CS("image"))) {
-            m_type = kInputImage;
-        } else {
-            m_type = kInputNone;
-        }
+    if (inputType.CompareNoCase(_CS("text"))) {
+        m_type = kInputText;
+    } else if (inputType.CompareNoCase(_CS("password"))) {
+        m_type = kInputPassword;
+    } else if (inputType.CompareNoCase(_CS("reset"))) {
+        m_type = kInputReset;
+    } else if (inputType.CompareNoCase(_CS("radio"))) {
+        m_type = kInputRadio;
+    } else if (inputType.CompareNoCase(_CS("checkbox"))) {
+        m_type = kInputCheckbox;
+    } else if (inputType.CompareNoCase(_CS("file"))) {
+        m_type = kInputFile;
+    } else if (inputType.CompareNoCase(_CS("hidden"))) {
+        m_type = kInputHidden;
+    } else if (inputType.CompareNoCase(_CS("button"))) {
+        m_type = kInputButton;
+    } else if (inputType.CompareNoCase(_CS("submit"))) {
+        m_type = kInputSubmit;
+    } else if (inputType.CompareNoCase(_CS("image"))) {
+        m_type = kInputImage;
+    } else {
+        m_type = kInputNone;
     }
 
     initView();
@@ -179,6 +177,10 @@ LVoid InputView::layout(RenderContext& rc)
 
 LVoid InputView::paint(LGraphicsContext& gc)
 {
+    if (m_type == kInputNone) {
+        return;
+    }
+
     gc.setHtmlView(this);
     setClipRect(gc);
 

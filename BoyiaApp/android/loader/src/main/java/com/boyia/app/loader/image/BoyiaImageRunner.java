@@ -59,7 +59,7 @@ public class BoyiaImageRunner implements ILoadListener {
     @Override
     public void onLoadError(String error, Object msg) {
         BoyiaLog.d(TAG, "BoyiaImageRunner onLoaderError: " + error);
-        mHandler.handleError();
+        mHandler.retry();
     }
 
     @Override
