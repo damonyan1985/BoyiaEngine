@@ -7,7 +7,15 @@
 #ifndef Mutex_h
 #define Mutex_h
 
+#include "PlatformLib.h"
+
+#if ENABLE(BOYIA_ANDROID)
 #include <pthread.h>
+typedef pthread_mutex_t Lock;
+#elif ENABLE(BOYIA_WINDOWS)
+#include <windows.h>
+typedef CRITICAL_SECTION Lock;
+#endif
 
 namespace yanbo {
 
@@ -20,10 +28,10 @@ public:
     void unlock();
     void tryLock();
 
-    pthread_mutex_t* getMutex();
+    Lock* getMutex();
 
 private:
-    pthread_mutex_t m_lock;
+    Lock m_lock;
 };
 }
 

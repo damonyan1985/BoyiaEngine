@@ -4,8 +4,9 @@
  *  Created on: 2015-7-29
  *      Author: yanbo
  */
-#include "Mutex.h"
 
+#include "Mutex.h"
+#if ENABLE(BOYIA_ANDROID)
 namespace yanbo {
 
 Mutex::Mutex()
@@ -38,3 +39,5 @@ pthread_mutex_t* Mutex::getMutex()
     return &m_lock;
 }
 }
+
+#endif

@@ -11,7 +11,7 @@
 #include "StringUtils.h"
 #include "UIView.h"
 #include "cJSON.h"
-#include <android/log.h>
+//#include <android/log.h>
 #include <stdio.h>
 
 extern void BoyiaLog(const char* format, ...);

@@ -92,6 +92,11 @@ LVoid FileUtil::deleteFile(const char* path)
     }
 }
 
+LInt FileUtil::createDir(const char* path)
+{
+    return mkdir(path, S_IRWXU);
+}
+
 LInt FileUtil::createDirs(const char* path)
 {
     CString dirName = path;
@@ -104,10 +109,8 @@ LInt FileUtil::createDirs(const char* path)
     for (LInt i = 1; i < len; ++i) {
         if ('/' == dirName[i]) {
             dirName[i] = '\0';
-            if (access(dirName.GetBuffer(), F_OK) != 0) {
-                if (mkdir(dirName.GetBuffer(), 0777) == -1) {
-                    return -1;
-                }
+            if (access(dirName.GetBuffer(), F_OK) != 0 && mkdir(dirName.GetBuffer(), 0777) == -1) {
+                return -1;
             }
 
             dirName[i] = '/';
