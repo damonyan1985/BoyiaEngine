@@ -10,7 +10,7 @@
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include <android/log.h>
+//#include <android/log.h>
 
 extern LVoid CompileScript(char* code);
 namespace yanbo {
@@ -55,13 +55,13 @@ public:
 
     virtual LVoid run()
     {
-        __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run");
+		KLOG("ResourceEvent::run");
 
         BOYIA_LOG("ResourceHandle---run---url: %s", GET_STR(m_url));
         if (m_result == NetworkClient::kNetworkSuccess) {
             //BoyiaPtr<String> sptr = m_builder.toString();
-            __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "ResourceEvent::run kNetworkSuccess");
-            __android_log_print(ANDROID_LOG_INFO, "BoyiaVM", "Parse script=%s", (const char*)m_data->GetBuffer());
+			KLOG("ResourceEvent::run kNetworkSuccess");
+			BOYIA_LOG("Parse script=%s", (const char*)m_data->GetBuffer());
             m_loader->onLoadFinished(*m_data.get(), m_resType);
         } else {
             m_loader->onLoadError(m_result);

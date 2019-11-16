@@ -102,7 +102,7 @@ AppLoader::~AppLoader()
 LVoid AppLoader::startLoad()
 {
     if (!FileUtil::isExist(PlatformBridge::getAppPath())) {
-        mkdir(PlatformBridge::getAppPath(), S_IRWXU);
+		FileUtil::createDir(PlatformBridge::getAppPath());
     }
 
     m_file = fopen(PlatformBridge::getBoyiaJsonPath(), "wb+");

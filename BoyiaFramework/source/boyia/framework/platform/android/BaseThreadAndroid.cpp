@@ -4,8 +4,8 @@
  *  Created on: 2015-7-29
  *      Author: yanbo
  */
-#include "BaseThread.h"
 #include "AutoLock.h"
+#include "BaseThread.h"
 #include "SalLog.h"
 #if ENABLE(BOYIA_ANDROID)
 #include <time.h>
