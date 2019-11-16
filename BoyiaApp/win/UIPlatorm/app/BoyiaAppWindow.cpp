@@ -174,15 +174,6 @@ BoyiaAppImpl::~BoyiaAppImpl()
 
 BOOL BoyiaAppImpl::InitInstance(HINSTANCE hIns, int nCmdShow)
 {
-	/*
-	DWORD dwStyle = dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-	_ptwin = new BoyiaAppWindow;
-	_ptwin->InitBaseWindow(hIns);
-	_ptwin->CreateBaseWindow(L"BoyiaApp", L"BoyiaAppWindow", dwStyle, 0, 0, 600, 400, NULL);
-	_ptwin->ShowTW(nCmdShow);
-	_ptwin->UpdateTW();
-	return TRUE;*/
-
 	DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
 	_ptwin = new BoyiaAppWindow;
 	_ptwin->InitBaseWindow(hIns);

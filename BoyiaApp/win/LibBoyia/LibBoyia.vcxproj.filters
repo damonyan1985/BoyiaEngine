@@ -79,6 +79,9 @@
     <Filter Include="boyia\thread">
       <UniqueIdentifier>{66399c33-88f7-4216-a180-84b1e03f74ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\framework\platform\win">
+      <UniqueIdentifier>{d77cf825-3de6-4d8c-b349-4ef2212a8f31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -348,6 +351,15 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.h">
       <Filter>boyia\thread</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\PlatformBridge.h">
+      <Filter>boyia\framework\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\LoaderWin.h">
+      <Filter>boyia\framework\platform\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\ImageWin.h">
+      <Filter>boyia\framework\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -545,9 +557,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.c">
       <Filter>thirdparty\cjson</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.cpp">
-      <Filter>boyia\thread</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.cpp">
       <Filter>boyia\thread</Filter>
     </ClCompile>
@@ -555,9 +564,6 @@
       <Filter>boyia\thread</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.cpp">
-      <Filter>boyia\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\Mutex.cpp">
       <Filter>boyia\thread</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.cpp">
@@ -571,6 +577,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.cpp">
       <Filter>boyia\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\MutexWin.cpp">
+      <Filter>boyia\framework\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\BaseThreadWin.cpp">
+      <Filter>boyia\framework\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\LoaderWin.cpp">
+      <Filter>boyia\framework\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\ImageWin.cpp">
+      <Filter>boyia\framework\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

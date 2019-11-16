@@ -5,9 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="thread">
-      <UniqueIdentifier>{d36c2a83-4416-426a-94d6-3cead720df48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="window">
       <UniqueIdentifier>{46953002-b1ff-4684-9047-7cac774234ff}</UniqueIdentifier>
     </Filter>
@@ -17,11 +14,14 @@
     <Filter Include="graphic">
       <UniqueIdentifier>{fcf3021d-6777-4613-8396-4f00251f552f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{1cc416b9-ef1d-4e5e-a491-f9e496f76e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{bda0e9bb-e3c0-4b54-baea-4fd7dd2c98ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\thread\PlatformThreadWin.h">
-      <Filter>thread</Filter>
-    </ClInclude>
     <ClInclude Include="..\window\BaseWindow.h">
       <Filter>window</Filter>
     </ClInclude>
@@ -31,17 +31,20 @@
     <ClInclude Include="..\app\BoyiaAppWindow.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="..\thread\BaseThread.h">
-      <Filter>thread</Filter>
-    </ClInclude>
     <ClInclude Include="..\graphic\BoyiaDC.h">
       <Filter>graphic</Filter>
     </ClInclude>
+    <ClInclude Include="..\http\BoyiaHttpEngine.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\CharConvertor.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\UrlParser.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\thread\PlatformThreadWin.cpp">
-      <Filter>thread</Filter>
-    </ClCompile>
     <ClCompile Include="..\window\BaseWindow.cpp">
       <Filter>window</Filter>
     </ClCompile>
@@ -56,6 +59,15 @@
     </ClCompile>
     <ClCompile Include="..\graphic\BoyiaDC.cpp">
       <Filter>graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\http\BoyiaHttpEngine.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\CharConvertor.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\UrlParser.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

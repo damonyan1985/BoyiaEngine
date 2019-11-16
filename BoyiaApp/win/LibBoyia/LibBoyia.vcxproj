@@ -97,6 +97,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -171,7 +172,10 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\loader\NetworkBase.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\loader\ResourceLoader.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\arm\ArmFunction.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\PlatformBridge.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\SalLog.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\ImageWin.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\LoaderWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\style\Style.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\framework\style\StyleManager.h" />
@@ -258,6 +262,10 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\loader\AppLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\loader\ResourceLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\arm\ArmFunction.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\BaseThreadWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\ImageWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\LoaderWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\platform\win\MutexWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\style\DoctreeNode.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\style\Style.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\style\StyleManager.cpp" />
@@ -308,11 +316,9 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\widget\RenderContext.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\widget\TextView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\framework\widget\VideoView.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\Mutex.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.cpp" />

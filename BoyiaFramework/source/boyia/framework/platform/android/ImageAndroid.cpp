@@ -1,12 +1,9 @@
 #include "ImageAndroid.h"
-#include "AutoObject.h"
 #include "ImageView.h"
 #include "JNIUtil.h"
 #include "LColor.h"
-#include "LGdi.h"
 #include "MiniTextureCache.h"
 #include "SalLog.h"
-#include "StringUtils.h"
 #include "UIView.h"
 #include <android/bitmap.h>
 
