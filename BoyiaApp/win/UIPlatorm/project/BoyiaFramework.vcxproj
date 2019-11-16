@@ -104,13 +104,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;ENABLE_BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm;$(BOYIA_FRAMEWORK_ROOT)\Boyia\framework\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm\util;E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\framework\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\framework\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\framework\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,8 +153,9 @@
   <ItemGroup>
     <ClInclude Include="..\app\BoyiaAppWindow.h" />
     <ClInclude Include="..\graphic\BoyiaDC.h" />
-    <ClInclude Include="..\thread\BaseThread.h" />
-    <ClInclude Include="..\thread\PlatformThreadWin.h" />
+    <ClInclude Include="..\http\BoyiaHttpEngine.h" />
+    <ClInclude Include="..\util\CharConvertor.h" />
+    <ClInclude Include="..\util\UrlParser.h" />
     <ClInclude Include="..\window\BaseWindow.h" />
     <ClInclude Include="..\window\BoyiaWindow.h" />
   </ItemGroup>
@@ -161,7 +163,9 @@
     <ClCompile Include="..\app\BoyiaApp.cpp" />
     <ClCompile Include="..\app\BoyiaAppWindow.cpp" />
     <ClCompile Include="..\graphic\BoyiaDC.cpp" />
-    <ClCompile Include="..\thread\PlatformThreadWin.cpp" />
+    <ClCompile Include="..\http\BoyiaHttpEngine.cpp" />
+    <ClCompile Include="..\util\CharConvertor.cpp" />
+    <ClCompile Include="..\util\UrlParser.cpp" />
     <ClCompile Include="..\window\BaseWindow.cpp" />
     <ClCompile Include="..\window\BoyiaWindow.cpp" />
   </ItemGroup>
