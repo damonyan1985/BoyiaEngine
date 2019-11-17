@@ -147,7 +147,7 @@ extern LVoid NativeDelete(LVoid* data)
 // "Hello" + "World"
 static LVoid FetchString(BoyiaStr* str, BoyiaValue* value)
 {
-    if (value->mValueType == INT) {
+    if (value->mValueType == BY_INT) {
         str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN);
         LMemset(str->mPtr, 0, MAX_INT_LEN);
         LInt2StrWithLength(value->mValue.mIntVal, (LUint8*)str->mPtr, 10, &str->mLen);
@@ -174,9 +174,9 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right)
     LMemcpy(str + leftStr.mLen, rightStr.mPtr, rightStr.mLen);
     right->mValue.mStrVal.mPtr = str;
     right->mValue.mStrVal.mLen = len;
-    right->mValueType = STRING;
+    right->mValueType = BY_STRING;
 
-    GCAppendRef(str, STRING);
+    GCAppendRef(str, BY_STRING);
     KLOG("StringAdd End");
 }
 

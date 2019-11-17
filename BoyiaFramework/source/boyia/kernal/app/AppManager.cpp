@@ -58,6 +58,7 @@ LVoid AppManager::launchApp(AppInfo* info)
 
 LVoid AppManager::handleTouchEvent(LInt type, LInt x, LInt y)
 {
+#if ENABLE(BOYIA_ANDROID)
     if (!currentApp() || !currentApp()->view() || !currentApp()->view()->canHit()) {
         return;
     }
@@ -68,5 +69,6 @@ LVoid AppManager::handleTouchEvent(LInt type, LInt x, LInt y)
     evt->m_position.Set(ShaderUtil::viewX(x), ShaderUtil::viewY(y));
     BOYIA_LOG("AppManager::handleTouchEvent type=%d, x=%d, y=%d", type, x, y);
     m_uiThread->handleTouchEvent(evt);
+#endif
 }
 }

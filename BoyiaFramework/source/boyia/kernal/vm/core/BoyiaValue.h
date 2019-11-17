@@ -4,23 +4,23 @@
 #include "PlatformLib.h"
 
 enum KeyWord {
-    ARG = 1,
-    CHAR,
-    INT,
-    STRING,
-    FUNC,
-    NAVCLASS,
-    CLASS,
-    EXTEND,
-    VAR,
-    PROP,
-    IF,
-    ELSE,
-    DO,
-    WHILE,
-    BREAK,
-    RETURN,
-    END, // 17
+    BY_ARG = 1,
+	BY_CHAR,
+	BY_INT,
+	BY_STRING,
+	BY_FUNC,
+	BY_NAVCLASS,
+	BY_CLASS,
+	BY_EXTEND,
+	BY_VAR,
+	BY_PROP,
+	BY_IF,
+	BY_ELSE,
+	BY_DO,
+	BY_WHILE,
+	BY_BREAK,
+	BY_RETURN,
+	BY_END, // 17
 };
 
 typedef struct {
