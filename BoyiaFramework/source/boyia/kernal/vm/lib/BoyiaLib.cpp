@@ -6,7 +6,9 @@
 #include "BoyiaNetwork.h"
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
+#if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
+#endif
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "UIView.h"
@@ -483,6 +485,7 @@ LInt setJSTouchCallback()
 
 LInt callStaticMethod()
 {
+#if ENABLE(BOYIA_ANDROID)
     BoyiaValue* clzz = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* method = (BoyiaValue*)GetLocalValue(1);
     BoyiaValue* sign = (BoyiaValue*)GetLocalValue(2);
@@ -513,6 +516,7 @@ LInt callStaticMethod()
     delete[] strClzz;
     delete[] strMethod;
     delete[] strSign;
+#endif
     return 1;
 }
 

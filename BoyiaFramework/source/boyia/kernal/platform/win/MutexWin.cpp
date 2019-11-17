@@ -29,7 +29,7 @@ void Mutex::unlock()
 
 void Mutex::tryLock()
 {
-    //pthread_mutex_trylock(&m_lock);
+    TryEnterCriticalSection(&m_lock);
 }
 
 Lock* Mutex::getMutex()
