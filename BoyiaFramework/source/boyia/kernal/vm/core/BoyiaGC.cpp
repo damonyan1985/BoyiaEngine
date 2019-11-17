@@ -85,15 +85,15 @@ static LVoid DeleteRef(BoyiaRef* ref)
 {
     switch (ref->mType) {
     case BY_STRING: {
-        DELETE(ref->mAddress);
+		VM_DELETE(ref->mAddress);
     } break;
     case BY_NAVCLASS: {
         NativeDelete(ref->mAddress);
     } break;
     case BY_CLASS: {
         BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
-        DELETE(fun->mParams);
-        DELETE(fun);
+		VM_DELETE(fun->mParams);
+		VM_DELETE(fun);
     } break;
     }
 

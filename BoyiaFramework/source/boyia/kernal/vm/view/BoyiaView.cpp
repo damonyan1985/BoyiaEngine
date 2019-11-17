@@ -1,8 +1,8 @@
 #include "BoyiaView.h"
 #include "Animation.h"
-#include "AutoObject.h"
+//#include "AutoObject.h"
 #include "BoyiaViewDoc.h"
-#include "JNIUtil.h"
+//#include "JNIUtil.h"
 #include "UIOperation.h"
 #include "UIView.h"
 
