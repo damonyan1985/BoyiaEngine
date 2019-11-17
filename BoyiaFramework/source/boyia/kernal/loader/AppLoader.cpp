@@ -1,16 +1,16 @@
 #include "AppLoader.h"
 #include "AppManager.h"
-#include "AutoObject.h"
+//#include "AutoObject.h"
 #include "FileUtil.h"
-#include "JNIUtil.h"
+//#include "JNIUtil.h"
 #include "JSONParser.h"
 #include "PlatformBridge.h"
-#include <dirent.h>
+//#include <dirent.h>
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 #define MAX_APPS_SIZE 20
 #define APP_JSON "/app.json"
@@ -102,7 +102,7 @@ AppLoader::~AppLoader()
 LVoid AppLoader::startLoad()
 {
     if (!FileUtil::isExist(PlatformBridge::getAppPath())) {
-		FileUtil::createDir(PlatformBridge::getAppPath());
+        FileUtil::createDir(PlatformBridge::getAppPath());
     }
 
     m_file = fopen(PlatformBridge::getBoyiaJsonPath(), "wb+");

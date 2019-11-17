@@ -72,7 +72,7 @@ LInt addElementToVector()
         fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10));
         fun->mParamCount = count + 10;
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
-        DELETE(value);
+		VM_DELETE(value);
     }
     BoyiaLog("addElementToVector %d", 2);
     //fun->mParams[fun->mParamSize++] = *element;

@@ -1,6 +1,8 @@
 #include "AppManager.h"
 #include "SalLog.h"
+#if ENABLE(BOYIA_ANDROID)
 #include "ShaderUtil.h"
+#endif
 
 namespace yanbo {
 AppManager::AppManager()

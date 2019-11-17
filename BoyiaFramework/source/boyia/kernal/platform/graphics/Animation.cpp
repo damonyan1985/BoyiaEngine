@@ -40,7 +40,7 @@ LVoid Animation::step()
 
 LInt Animation::type()
 {
-    Animation::ENone;
+    return Animation::ENone;
 }
 
 ScaleAnimation::ScaleAnimation(HtmlView* item)
