@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;ENABLE_BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\core;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\arm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\lib;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\json;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\app;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\dom;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\style;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\gui;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget\flex;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\thread;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\tinyxml;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\cjson;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\painter\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\core;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\arm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\lib;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\json;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\app;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\dom;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\style;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\gui;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget\flex;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\thread;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\tinyxml;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\cjson;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\painter\utils;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,8 +174,11 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\arm\ArmFunction.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\PlatformBridge.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\SalLog.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleManager.h" />
@@ -264,9 +267,12 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\ResourceLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\arm\ArmFunction.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BaseThreadWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MutexWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleManager.cpp" />

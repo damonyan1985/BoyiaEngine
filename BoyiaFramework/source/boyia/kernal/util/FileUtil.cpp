@@ -8,6 +8,10 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#elif ENABLE(BOYIA_WINDOWS)
+#include <io.h>
+#include <windows.h>
+#include "CharConvertor.h"
 #endif
 
 namespace util {
@@ -31,28 +35,44 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
 
 bool FileUtil::isExist(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     return access(path, F_OK) == 0;
+#elif ENABLE(BOYIA_WINDOWS)
+	return _access(path, _A_NORMAL) != -1;
+#endif
 }
 
 bool FileUtil::isDir(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) // lstat返回文件的信息，文件信息存放在stat结构中
     {
         return S_ISDIR(statbuf.st_mode) != 0; // S_ISDIR宏，判断文件类型是否为目录
     }
+#elif ENABLE(BOYIA_WINDOWS)
+	wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+	if (GetFileAttributes(wpath.c_str()) & FILE_ATTRIBUTE_DIRECTORY) {
+		return true;
+	}
+#endif
 
     return false;
 }
 
 bool FileUtil::isFile(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) {
         return S_ISREG(statbuf.st_mode) != 0; //判断文件是否为常规文件
     }
 
-    return false;
+	return false;
+#elif ENABLE(BOYIA_WINDOWS)
+	return !isDir(path);
+#endif
+    
 }
 
 bool FileUtil::isSpecialDir(const char* path)
@@ -62,6 +82,7 @@ bool FileUtil::isSpecialDir(const char* path)
 
 LVoid FileUtil::deleteFile(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     DIR* dir;
     dirent* dirInfo;
     if (isFile(path)) {
@@ -91,15 +112,23 @@ LVoid FileUtil::deleteFile(const char* path)
             rmdir(GET_STR(filePath));
         }
     }
+#elif ENABLE(BOYIA_WINDOWS)
+#endif
 }
 
 LInt FileUtil::createDir(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     return mkdir(path, S_IRWXU);
+#elif ENABLE(BOYIA_WINDOWS)
+	wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+	return CreateDirectory(wpath.c_str(), NULL);
+#endif
 }
 
 LInt FileUtil::createDirs(const char* path)
 {
+#if ENABLE(BOYIA_ANDROID)
     CString dirName = path;
     LInt len = dirName.GetLength();
     if ('/' != dirName[len - 1]) {
@@ -118,18 +147,21 @@ LInt FileUtil::createDirs(const char* path)
         }
     }
 
+#elif ENABLE(BOYIA_WINDOWS)
+#endif
     return 0;
 }
 
 LVoid FileUtil::printAllFiles(const char* path)
 {
     BOYIA_LOG("FileUtil::printAllFiles filePath=%s", path);
+#if ENABLE(BOYIA_ANDROID)
     DIR* d;
     struct dirent* file;
     struct stat sb;
 
     if (!(d = opendir(path))) {
-        KFORMATLOG("FileUtil::printAllFiles error opendir %s!!!", path);
+		BOYIA_LOG("FileUtil::printAllFiles error opendir %s!!!", path);
         return;
     }
 
@@ -149,10 +181,12 @@ LVoid FileUtil::printAllFiles(const char* path)
         if (isDir(subPath)) {
             printAllFiles(subPath);
         } else {
-            KFORMATLOG("FileUtil::printAllFiles final filePath=%s", subPath);
+			BOYIA_LOG("FileUtil::printAllFiles final filePath=%s", subPath);
         }
     }
 
     closedir(d);
+#elif ENABLE(BOYIA_WINDOWS)
+#endif
 }
 }

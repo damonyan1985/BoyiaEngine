@@ -40,7 +40,7 @@ void StyleParser::parseCss(InputStream& is)
     SelectorGroup* selectorGroup = new SelectorGroup(0, 20);
     Selector* selector = new Selector(0, 20);
 
-    String selectText('\0', kStringBufferLen);
+    String selectText((LUint8)0, kStringBufferLen);
 
     LBool done = LFalse;
     LBool inComment = LFalse;
@@ -135,8 +135,8 @@ PropertyMap* StyleParser::parseDeclarations(InputStream& is)
     PropertyMap* declarations = new PropertyMap();
     LBool inPropertyField = LTrue;
 
-    PropertyName property('\0', kStringBufferLen);
-    PropertyValue value('\0', kStringBufferLen);
+    PropertyName property((LUint8)0, kStringBufferLen);
+    PropertyValue value((LUint8)0, kStringBufferLen);
 
     do {
         LInt i = is.read();

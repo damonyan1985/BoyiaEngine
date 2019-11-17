@@ -1,7 +1,7 @@
-#ifndef PaintThread_h
-#define PaintThread_h
+#ifndef UIThread_h
+#define UIThread_h
 
-#include "GLContext.h"
+//#include "GLContext.h"
 #include "LEvent.h"
 #include "LGdi.h"
 #include "MessageThread.h"

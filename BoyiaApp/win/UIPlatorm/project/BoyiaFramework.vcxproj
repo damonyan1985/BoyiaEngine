@@ -154,8 +154,6 @@
     <ClInclude Include="..\app\BoyiaAppWindow.h" />
     <ClInclude Include="..\graphic\BoyiaDC.h" />
     <ClInclude Include="..\http\BoyiaHttpEngine.h" />
-    <ClInclude Include="..\util\CharConvertor.h" />
-    <ClInclude Include="..\util\UrlParser.h" />
     <ClInclude Include="..\window\BaseWindow.h" />
     <ClInclude Include="..\window\BoyiaWindow.h" />
   </ItemGroup>
@@ -164,8 +162,6 @@
     <ClCompile Include="..\app\BoyiaAppWindow.cpp" />
     <ClCompile Include="..\graphic\BoyiaDC.cpp" />
     <ClCompile Include="..\http\BoyiaHttpEngine.cpp" />
-    <ClCompile Include="..\util\CharConvertor.cpp" />
-    <ClCompile Include="..\util\UrlParser.cpp" />
     <ClCompile Include="..\window\BaseWindow.cpp" />
     <ClCompile Include="..\window\BoyiaWindow.cpp" />
   </ItemGroup>
