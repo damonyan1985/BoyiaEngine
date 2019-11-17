@@ -1,13 +1,14 @@
 #include "FileUtil.h"
 
-#if ENABLE(BOYIA_ANDROID)
 #include "SalLog.h"
 #include "UtilString.h"
-#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#if ENABLE(BOYIA_ANDROID)
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 namespace util {
 LVoid FileUtil::readFile(const String& fileName, String& content)
@@ -155,5 +156,3 @@ LVoid FileUtil::printAllFiles(const char* path)
     closedir(d);
 }
 }
-
-#endif

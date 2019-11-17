@@ -19,36 +19,36 @@ endif()
 
 file(
     GLOB 
-    framework_src
-    "${BOYIA_SRC_PATH}/framework/vm/view/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/vm/core/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/vm/jit/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/vm/lib/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/vm/json/*.c"
-    "${BOYIA_SRC_PATH}/framework/vm/json/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/dom/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/gui/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/loader/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/platform/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/platform/android/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/platform/arm/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/platform/graphics/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/style/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/util/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/view/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/widget/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/widget/flex/*.cpp"
-    "${BOYIA_SRC_PATH}/framework/app/*.cpp"
+    kernal_src
+    "${BOYIA_SRC_PATH}/kernal/vm/view/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/vm/core/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/vm/jit/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/vm/lib/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/vm/json/*.c"
+    "${BOYIA_SRC_PATH}/kernal/vm/json/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/dom/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/gui/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/loader/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/android/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/arm/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/graphics/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/style/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/util/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/view/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/widget/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/widget/flex/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/app/*.cpp"
     )
 
 file(
     GLOB 
-    graphics_src
-    "${BOYIA_SRC_PATH}/graphics/core/*.cpp"
-    "${BOYIA_SRC_PATH}/graphics/painter/*.cpp"
-    "${BOYIA_SRC_PATH}/graphics/shaders/*.cpp"
-    "${BOYIA_SRC_PATH}/graphics/utils/*.cpp"
-    "${BOYIA_SRC_PATH}/graphics/vulkan/*.cpp"
+    painter_src
+    "${BOYIA_SRC_PATH}/painter/core/*.cpp"
+    "${BOYIA_SRC_PATH}/painter/painter/*.cpp"
+    "${BOYIA_SRC_PATH}/painter/shaders/*.cpp"
+    "${BOYIA_SRC_PATH}/painter/utils/*.cpp"
+    "${BOYIA_SRC_PATH}/painter/vulkan/*.cpp"
     ) 
 
 file(
@@ -66,8 +66,8 @@ file(
 add_library(
     boyia
     SHARED
-    ${framework_src}
-    ${graphics_src}
+    ${kernal_src}
+    ${painter_src}
     ${thread_src}
     ${porting_src}
 )
@@ -75,29 +75,29 @@ add_library(
 target_include_directories(
     boyia
     PRIVATE
-    ${BOYIA_SRC_PATH}/framework/vm/view
-    ${BOYIA_SRC_PATH}/framework/vm/core
-    ${BOYIA_SRC_PATH}/framework/vm/jit
-    ${BOYIA_SRC_PATH}/framework/vm/json
-    ${BOYIA_SRC_PATH}/framework/vm/lib
-    ${BOYIA_SRC_PATH}/framework/app
-    ${BOYIA_SRC_PATH}/framework/dom
-    ${BOYIA_SRC_PATH}/framework/gui
-    ${BOYIA_SRC_PATH}/framework/loader
-    ${BOYIA_SRC_PATH}/framework/platform/android
-    ${BOYIA_SRC_PATH}/framework/platform/arm
-    ${BOYIA_SRC_PATH}/framework/platform/graphics
-    ${BOYIA_SRC_PATH}/framework/platform
-    ${BOYIA_SRC_PATH}/framework/style
-    ${BOYIA_SRC_PATH}/framework/util
-    ${BOYIA_SRC_PATH}/framework/view
-    ${BOYIA_SRC_PATH}/framework/widget
-    ${BOYIA_SRC_PATH}/framework/widget/flex
-    ${BOYIA_SRC_PATH}/graphics/core
-    ${BOYIA_SRC_PATH}/graphics/shaders
-    ${BOYIA_SRC_PATH}/graphics/painter
-    ${BOYIA_SRC_PATH}/graphics/utils
-    ${BOYIA_SRC_PATH}/graphics/vulkan
+    ${BOYIA_SRC_PATH}/kernal/vm/view
+    ${BOYIA_SRC_PATH}/kernal/vm/core
+    ${BOYIA_SRC_PATH}/kernal/vm/jit
+    ${BOYIA_SRC_PATH}/kernal/vm/json
+    ${BOYIA_SRC_PATH}/kernal/vm/lib
+    ${BOYIA_SRC_PATH}/kernal/app
+    ${BOYIA_SRC_PATH}/kernal/dom
+    ${BOYIA_SRC_PATH}/kernal/gui
+    ${BOYIA_SRC_PATH}/kernal/loader
+    ${BOYIA_SRC_PATH}/kernal/platform/android
+    ${BOYIA_SRC_PATH}/kernal/platform/arm
+    ${BOYIA_SRC_PATH}/kernal/platform/graphics
+    ${BOYIA_SRC_PATH}/kernal/platform
+    ${BOYIA_SRC_PATH}/kernal/style
+    ${BOYIA_SRC_PATH}/kernal/util
+    ${BOYIA_SRC_PATH}/kernal/view
+    ${BOYIA_SRC_PATH}/kernal/widget
+    ${BOYIA_SRC_PATH}/kernal/widget/flex
+    ${BOYIA_SRC_PATH}/painter/core
+    ${BOYIA_SRC_PATH}/painter/shaders
+    ${BOYIA_SRC_PATH}/painter/painter
+    ${BOYIA_SRC_PATH}/painter/utils
+    ${BOYIA_SRC_PATH}/painter/vulkan
     ${BOYIA_SRC_PATH}/thread
     ${THIRD_PARTY_PATH}/cjson
     ${THIRD_PARTY_PATH}/tinyxml

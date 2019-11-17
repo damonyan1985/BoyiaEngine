@@ -1,35 +1,41 @@
 #include "SystemUtil.h"
-#include <android/log.h>
+//#include <android/log.h>
+#include "SalLog.h"
+#if ENABLE(BOYIA_ANDROID)
 #include <time.h>
+#elif ENABLE(BOYIA_WINDOWS)
+#include <sys/timeb.h>
+#endif
 
 extern LVoid BoyiaLog(const char* format, ...);
 
 namespace yanbo {
 long SystemUtil::getSystemTime()
 {
+#if ENABLE(BOYIA_ANDROID)
     struct timeval nowTimeval;
     gettimeofday(&nowTimeval, NULL);
-    //    struct tm * tm;
-    //	time_t time_sec ;
-    //	time_sec = nowTimeval.tv_sec;
-    //	tm = localtime(&time_sec);
-
-    //	nMinute = tm->tm_min;
-    //	nSecond = tm->tm_sec;
-    //	nHour = tm->tm_hour;
-
-    //	return tm->tm_hour * 3600 + tm->tm_min * 60 + tm->tm_sec;
-
     long f = nowTimeval.tv_sec * 1000 + (nowTimeval.tv_usec / 1000);
     return f;
+#elif ENABLE(BOYIA_WINDOWS)
+    struct timeb rawtime;
+    ftime(&rawtime);
+    return rawtime.time * 1000 + rawtime.millitm;
+#endif
 }
 
 long SystemUtil::getSystemMicroTime()
 {
+#if ENABLE(BOYIA_ANDROID)
     struct timeval nowTimeval;
     gettimeofday(&nowTimeval, NULL);
     long f = nowTimeval.tv_sec * 1000 * 1000 + nowTimeval.tv_usec;
     return f;
+#elif ENABLE(BOYIA_WINDOWS)
+    struct timeb rawtime;
+    ftime(&rawtime);
+    return (rawtime.time * 1000 + rawtime.millitm) * 1000;
+#endif
 }
 
 int SystemUtil::intCeil(int dividend, int divid)
@@ -74,6 +80,6 @@ TimeAnalysis::TimeAnalysis(const char* tag)
 TimeAnalysis::~TimeAnalysis()
 {
     long now = SystemUtil::getSystemMicroTime();
-    __android_log_print(ANDROID_LOG_INFO, mTag, "TimeAnalysis current=%ld now=%ld time=%ld", mTime, now, now - mTime);
+    BOYIA_LOG("%s TimeAnalysis current=%ld now=%ld time=%ld", mTag, mTime, now, now - mTime);
 }
 }
