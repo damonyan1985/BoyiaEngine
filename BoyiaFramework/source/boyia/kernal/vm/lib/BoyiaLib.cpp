@@ -42,7 +42,7 @@ LInt getFileContent()
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = NEW_ARRAY(LInt8, (len + 1));
-    GCAppendRef(buf, STRING);
+    GCAppendRef(buf, BY_STRING);
     LMemset(buf, 0, len + 1);
     rewind(file);
     fread(buf, sizeof(char), len, file);
@@ -105,7 +105,7 @@ static LBool compareValue(BoyiaValue* src, BoyiaValue* dest)
     case BY_NAVCLASS:
         return src->mValue.mIntVal == dest->mValue.mIntVal ? LTrue : LFalse;
     case BY_CLASS:
-    case BY_FUN:
+    case BY_FUNC:
         return src->mValue.mObj.mPtr == dest->mValue.mObj.mPtr ? LTrue : LFalse;
     case BY_STRING:
         return MStrcmp(&src->mValue.mStrVal, &dest->mValue.mStrVal);
@@ -256,7 +256,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value)
         LMemcpy(ptr, json->valuestring, len);
         value->mValue.mStrVal.mPtr = ptr;
         value->mValue.mStrVal.mLen = len;
-        GCAppendRef(ptr, STRING);
+        GCAppendRef(ptr, BY_STRING);
     }
 }
 
