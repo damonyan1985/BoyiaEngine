@@ -366,6 +366,15 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.h">
       <Filter>boyia\kernal\widget</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -598,6 +607,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.cpp">
       <Filter>boyia\kernal\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

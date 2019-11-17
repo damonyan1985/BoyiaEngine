@@ -17,9 +17,6 @@
     <Filter Include="http">
       <UniqueIdentifier>{1cc416b9-ef1d-4e5e-a491-f9e496f76e5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="util">
-      <UniqueIdentifier>{bda0e9bb-e3c0-4b54-baea-4fd7dd2c98ae}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\window\BaseWindow.h">
@@ -36,12 +33,6 @@
     </ClInclude>
     <ClInclude Include="..\http\BoyiaHttpEngine.h">
       <Filter>http</Filter>
-    </ClInclude>
-    <ClInclude Include="..\util\CharConvertor.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\util\UrlParser.h">
-      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,12 +53,6 @@
     </ClCompile>
     <ClCompile Include="..\http\BoyiaHttpEngine.cpp">
       <Filter>http</Filter>
-    </ClCompile>
-    <ClCompile Include="..\util\CharConvertor.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\util\UrlParser.cpp">
-      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
