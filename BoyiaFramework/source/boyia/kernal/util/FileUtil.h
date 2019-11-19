@@ -23,9 +23,10 @@ public:
     static bool isFile(const char* path);
     static bool isSpecialDir(const char* path);
     static LVoid deleteFile(const char* path);
-	static LInt createDir(const char* path);
+    static LInt createDir(const char* path);
     static LInt createDirs(const char* path);
     static LVoid printAllFiles(const char* path);
+    static LVoid syncLoadUrl(const String& url, String& content);
 };
 }
 

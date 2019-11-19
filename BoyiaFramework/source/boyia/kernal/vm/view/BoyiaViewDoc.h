@@ -29,8 +29,6 @@ public:
     BoyiaView* getItemByID(const String& id) const;
 
 private:
-    void fetchStream(const String& url, String& stream);
-
     static IdentityMap m_domMap;
     yanbo::HtmlDocument* m_doc;
 };

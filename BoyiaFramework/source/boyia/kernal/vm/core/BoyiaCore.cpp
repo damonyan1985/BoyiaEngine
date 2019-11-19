@@ -1146,11 +1146,11 @@ static LVoid DeleteExecutor(CommandTable* table)
     Instruction* pc = table->mBegin;
     while (pc != table->mEnd) {
         Instruction* next = pc->mNext;
-		VM_DELETE(pc);
+        VM_DELETE(pc);
         pc = next;
     }
 
-	VM_DELETE(table);
+    VM_DELETE(table);
 }
 
 // 重置现场

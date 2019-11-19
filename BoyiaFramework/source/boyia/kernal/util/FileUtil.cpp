@@ -1,5 +1,6 @@
 #include "FileUtil.h"
 
+#include "PlatformBridge.h"
 #include "SalLog.h"
 #include "UtilString.h"
 #include <stdio.h>
@@ -9,10 +10,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #elif ENABLE(BOYIA_WINDOWS)
+#include "CharConvertor.h"
 #include <io.h>
 #include <windows.h>
-#include "CharConvertor.h"
 #endif
+
+const String kSourcePrefix(_CS("boyia://"), LTrue, 8);
 
 namespace util {
 LVoid FileUtil::readFile(const String& fileName, String& content)
@@ -33,12 +36,21 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
     content.Copy(_CS(buf), LTrue, len);
 }
 
+LVoid FileUtil::syncLoadUrl(const String& url, String& content)
+{
+    if (url.StartWith(kSourcePrefix)) {
+        String sourceUrl = url.Mid(kSourcePrefix.GetLength());
+        String sourcePath = _CS(yanbo::PlatformBridge::getAppRoot()) + sourceUrl;
+        FileUtil::readFile(sourcePath, content);
+    }
+}
+
 bool FileUtil::isExist(const char* path)
 {
 #if ENABLE(BOYIA_ANDROID)
     return access(path, F_OK) == 0;
 #elif ENABLE(BOYIA_WINDOWS)
-	return _access(path, _A_NORMAL) != -1;
+    return _access(path, _A_NORMAL) != -1;
 #endif
 }
 
@@ -51,10 +63,10 @@ bool FileUtil::isDir(const char* path)
         return S_ISDIR(statbuf.st_mode) != 0; // S_ISDIR宏，判断文件类型是否为目录
     }
 #elif ENABLE(BOYIA_WINDOWS)
-	wstring wpath = yanbo::CharConvertor::CharToWchar(path);
-	if (GetFileAttributes(wpath.c_str()) & FILE_ATTRIBUTE_DIRECTORY) {
-		return true;
-	}
+    wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+    if (GetFileAttributes(wpath.c_str()) & FILE_ATTRIBUTE_DIRECTORY) {
+        return true;
+    }
 #endif
 
     return false;
@@ -68,11 +80,10 @@ bool FileUtil::isFile(const char* path)
         return S_ISREG(statbuf.st_mode) != 0; //判断文件是否为常规文件
     }
 
-	return false;
+    return false;
 #elif ENABLE(BOYIA_WINDOWS)
-	return !isDir(path);
+    return !isDir(path);
 #endif
-    
 }
 
 bool FileUtil::isSpecialDir(const char* path)
@@ -121,8 +132,8 @@ LInt FileUtil::createDir(const char* path)
 #if ENABLE(BOYIA_ANDROID)
     return mkdir(path, S_IRWXU);
 #elif ENABLE(BOYIA_WINDOWS)
-	wstring wpath = yanbo::CharConvertor::CharToWchar(path);
-	return CreateDirectory(wpath.c_str(), NULL);
+    wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+    return CreateDirectory(wpath.c_str(), NULL);
 #endif
 }
 
@@ -161,7 +172,7 @@ LVoid FileUtil::printAllFiles(const char* path)
     struct stat sb;
 
     if (!(d = opendir(path))) {
-		BOYIA_LOG("FileUtil::printAllFiles error opendir %s!!!", path);
+        BOYIA_LOG("FileUtil::printAllFiles error opendir %s!!!", path);
         return;
     }
 
@@ -181,7 +192,7 @@ LVoid FileUtil::printAllFiles(const char* path)
         if (isDir(subPath)) {
             printAllFiles(subPath);
         } else {
-			BOYIA_LOG("FileUtil::printAllFiles final filePath=%s", subPath);
+            BOYIA_LOG("FileUtil::printAllFiles final filePath=%s", subPath);
         }
     }
 

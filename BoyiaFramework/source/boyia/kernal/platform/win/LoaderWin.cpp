@@ -29,6 +29,11 @@ LVoid LoaderWin::postData(const String& url, NetworkClient* client, LBool isWait
 LVoid LoaderWin::cancel()
 {
 }
+
+NetworkBase* NetworkBase::create()
+{
+	return new LoaderWin();
+}
 }
 
 #endif

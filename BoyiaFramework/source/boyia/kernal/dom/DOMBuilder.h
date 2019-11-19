@@ -5,7 +5,8 @@
 #include "StyleParser.h"
 #include "TinyXml2.h"
 
-using namespace tinyxml2;
+//using namespace tinyxml2;
+using tinyxml2::XMLNode;
 
 namespace yanbo {
 
@@ -26,7 +27,7 @@ private:
 private:
     HtmlDocument* m_htmlDoc;
     util::StyleParser* m_styleParser;
-    XMLDocument* m_xmlDoc;
+	tinyxml2::XMLDocument* m_xmlDoc;
 };
 }
 

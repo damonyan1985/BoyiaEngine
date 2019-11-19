@@ -104,4 +104,9 @@ LVoid GraphicsContextWin::clipRect(const LRect& rect)
 LVoid GraphicsContextWin::submit()
 {
 }
+
+LGraphicsContext* LGraphicsContext::create() 
+{
+	return new GraphicsContextWin();
+}
 }
