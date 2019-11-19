@@ -85,6 +85,9 @@
     <Filter Include="boyia\kernal\platform\win">
       <UniqueIdentifier>{0621d51e-cbbd-49d2-9ad0-76f4f7a6bd47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\kernal\platform\graphics">
+      <UniqueIdentifier>{19244e72-bfcb-4a72-a0bc-59a3e520adc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -376,7 +379,7 @@
       <Filter>boyia\kernal\platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.h">
-      <Filter>boyia\kernal\platform</Filter>
+      <Filter>boyia\kernal\platform\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -621,7 +624,24 @@
       <Filter>boyia\kernal\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.cpp">
-      <Filter>boyia\kernal\platform</Filter>
+      <Filter>boyia\kernal\platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PlatformBridgeWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\EditorWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\FontWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MediaPlayerWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libboyia.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

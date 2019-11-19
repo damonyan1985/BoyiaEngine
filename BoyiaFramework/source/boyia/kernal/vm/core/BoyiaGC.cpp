@@ -85,15 +85,15 @@ static LVoid DeleteRef(BoyiaRef* ref)
 {
     switch (ref->mType) {
     case BY_STRING: {
-		VM_DELETE(ref->mAddress);
+        VM_DELETE(ref->mAddress);
     } break;
     case BY_NAVCLASS: {
         NativeDelete(ref->mAddress);
     } break;
     case BY_CLASS: {
         BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
-		VM_DELETE(fun->mParams);
-		VM_DELETE(fun);
+        VM_DELETE(fun->mParams);
+        VM_DELETE(fun);
     } break;
     }
 
@@ -179,10 +179,10 @@ extern LVoid GCAppendRef(LVoid* address, LUint8 type)
     ref->mType = type;
     ref->mNext = NULL;
 
-    if (sGc->mBegin == NULL) {
-        sGc->mBegin = ref;
-    } else {
+    if (sGc->mBegin) {
         sGc->mEnd->mNext = ref;
+    } else {
+        sGc->mBegin = ref;
     }
 
     sGc->mEnd = ref;

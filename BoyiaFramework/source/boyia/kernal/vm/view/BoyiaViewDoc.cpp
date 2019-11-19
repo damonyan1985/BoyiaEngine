@@ -1,11 +1,9 @@
 #include "BoyiaViewDoc.h"
 #include "AppManager.h"
-#include "AutoObject.h"
 #include "BoyiaImageView.h"
 #include "BoyiaInputView.h"
 #include "BoyiaViewGroup.h"
 #include "DOMBuilder.h"
-#include "JNIUtil.h"
 #include "StringUtils.h"
 #include "UIOperation.h"
 #include "UIView.h"
@@ -26,11 +24,6 @@ BoyiaViewDoc::~BoyiaViewDoc()
     if (m_doc && m_doc != UIView::getInstance()->getDocument()) {
         delete m_doc;
     }
-}
-
-void BoyiaViewDoc::fetchStream(const String& url, String& stream)
-{
-    JNIUtil::loadHTML(url, stream);
 }
 
 void BoyiaViewDoc::loadHTML(const String& url)

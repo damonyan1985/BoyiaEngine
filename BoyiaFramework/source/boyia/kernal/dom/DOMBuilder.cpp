@@ -8,6 +8,9 @@
 #include "UIView.h"
 #include "VideoView.h"
 
+using tinyxml2::XMLElement;
+using tinyxml2::XMLText;
+
 namespace yanbo {
 
 DOMBuilder::DOMBuilder()
@@ -39,7 +42,7 @@ DOMBuilder& DOMBuilder::with(util::StyleParser* styleParser)
 LVoid DOMBuilder::build(const String& buffer)
 {
     if (!m_xmlDoc) {
-        m_xmlDoc = new XMLDocument;
+        m_xmlDoc = new tinyxml2::XMLDocument;
         m_xmlDoc->Parse((const LCharA*)buffer.GetBuffer());
     }
 

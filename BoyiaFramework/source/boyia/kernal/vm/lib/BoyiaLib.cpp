@@ -128,6 +128,7 @@ LInt removeElementWidthIndex()
     }
 
     --fun->mParamSize;
+	return 1;
 }
 
 LInt removeElementFromVector()
