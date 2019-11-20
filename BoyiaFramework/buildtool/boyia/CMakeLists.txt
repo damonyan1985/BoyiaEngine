@@ -60,7 +60,7 @@ file(
 file(
     GLOB 
     porting_src
-    "${BOYIA_SRC_PATH}/porting/*.cpp"
+    "${BOYIA_SRC_PATH}/porting/android/*.cpp"
     )          
 
 add_library(

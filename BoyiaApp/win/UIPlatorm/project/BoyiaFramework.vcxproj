@@ -106,9 +106,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;ENABLE_BOYIA_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;ENABLE_BOYIA_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm\util;E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm\util;E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\porting\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="..\app\BoyiaAppWindow.h" />
     <ClInclude Include="..\graphic\BoyiaDC.h" />
+    <ClInclude Include="..\util\BoyiaConsole.h" />
     <ClInclude Include="..\window\BaseWindow.h" />
     <ClInclude Include="..\window\BoyiaWindow.h" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClCompile Include="..\app\BoyiaApp.cpp" />
     <ClCompile Include="..\app\BoyiaAppWindow.cpp" />
     <ClCompile Include="..\graphic\BoyiaDC.cpp" />
+    <ClCompile Include="..\util\BoyiaConsole.cpp" />
     <ClCompile Include="..\window\BaseWindow.cpp" />
     <ClCompile Include="..\window\BoyiaWindow.cpp" />
   </ItemGroup>

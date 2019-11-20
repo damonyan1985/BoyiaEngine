@@ -180,7 +180,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\PlatformBridge.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\SalLog.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.h" />
@@ -246,6 +245,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\TextView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\porting\win\BoyiaOnLoadWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\AutoLock.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.h" />
@@ -276,7 +276,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BaseThreadWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\EditorWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\FontWin.cpp" />
@@ -338,6 +337,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\TextView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\porting\win\BoyiaOnLoadWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.cpp" />

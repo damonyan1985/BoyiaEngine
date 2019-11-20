@@ -8,6 +8,5 @@
 
 void BoyiaOnLoadWin::foo()
 {
-	//do something...
 	printf("hello world");
 }
