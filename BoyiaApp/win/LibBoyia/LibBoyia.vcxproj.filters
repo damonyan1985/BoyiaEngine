@@ -88,6 +88,9 @@
     <Filter Include="boyia\kernal\platform\graphics">
       <UniqueIdentifier>{19244e72-bfcb-4a72-a0bc-59a3e520adc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\porting">
+      <UniqueIdentifier>{27856d6d-9ef9-4414-8833-bfdfc198c332}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -381,6 +384,12 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.h">
       <Filter>boyia\kernal\platform\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -636,6 +645,12 @@
       <Filter>boyia\kernal\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MediaPlayerWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.cpp">
       <Filter>boyia\kernal\platform\win</Filter>
     </ClCompile>
   </ItemGroup>

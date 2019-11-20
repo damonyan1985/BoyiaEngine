@@ -1,1 +1,3 @@
-LIBRARY
+LIBRARY libboyia
+
+EXPORTS
