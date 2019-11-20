@@ -1,4 +1,5 @@
 #define _WINDLL
+#include "BoyiaConsole.h"
 #include "window/BoyiaWindow.h"
 //#include "http/BoyiaHttpEngine.h"
 //#include "PlatformLib.h"
@@ -16,7 +17,8 @@ int BoyiaWinApi BoyiaWinMain(
 	int nCmdShow
 )
 {
-	HINSTANCE hInstLibrary = LoadLibrary(L"LibBoyia.dll");
+	BoyiaConsole console;
+	//HINSTANCE hInstLibrary = LoadLibrary(L"LibBoyia.dll");
 
 	BoyiaOnLoadWin::foo();
 	//char test[100];
