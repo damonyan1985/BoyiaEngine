@@ -97,7 +97,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>libboyia.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -179,6 +179,8 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\PlatformBridge.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\SalLog.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.h" />
@@ -273,6 +275,8 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\arm\ArmFunction.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BaseThreadWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaOnLoadWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\EditorWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\FontWin.cpp" />
