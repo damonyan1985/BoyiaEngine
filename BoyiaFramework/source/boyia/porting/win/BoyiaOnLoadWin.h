@@ -1,16 +1,18 @@
 #ifndef BoyiaOnLoadWin_h
 #define BoyiaOnLoadWin_h
 
+#include <Windows.h>
+
 #ifdef _WINDLL
-#define DLL_API __declspec(dllexport)
+#define BOYIA_PORTING_API __declspec(dllexport)
 #else
-#define DLL_API __declspec(dllimport)
+#define BOYIA_PORTING_API __declspec(dllimport)
 #endif
 
-class DLL_API BoyiaOnLoadWin
+class BOYIA_PORTING_API BoyiaOnLoadWin
 {
 public:
-	static void foo();
+	static void setContextWin(HWND hwnd);
 };
 
 #endif

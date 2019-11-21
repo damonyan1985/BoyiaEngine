@@ -2,11 +2,17 @@
 
 namespace util {
 GraphicsContextWin::GraphicsContextWin()
+	: m_hwnd(0)
 {
 }
 
 GraphicsContextWin::~GraphicsContextWin()
 {
+}
+
+LVoid GraphicsContextWin::setContextWin(HWND hwnd)
+{
+	m_hwnd = hwnd;
 }
 
 LVoid GraphicsContextWin::restore()

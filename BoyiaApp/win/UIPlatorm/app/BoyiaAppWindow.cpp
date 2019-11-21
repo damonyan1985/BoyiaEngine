@@ -1,4 +1,5 @@
 #include "BoyiaAppWindow.h"
+#include "BoyiaOnLoadWin.h"
 
 namespace yanbo {
 
@@ -28,6 +29,7 @@ BoyiaAppWindow::~BoyiaAppWindow()
 
 DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
+	BoyiaOnLoadWin::setContextWin(m_hWnd);
 	/*
 	HWND hWnd = m_hWnd;
 	HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
