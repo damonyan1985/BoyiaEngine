@@ -2,12 +2,15 @@
 #define GraphicsContextWin_h
 
 #include "LGdi.h"
+#include <windows.h>
 
 namespace util {
 class GraphicsContextWin : public LGraphicsContext {
 public:
 	GraphicsContextWin();
 	~GraphicsContextWin();
+
+	LVoid setContextWin(HWND hwnd);
 
     virtual LVoid drawLine(const LPoint& p1, const LPoint& p2);
     virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1);
@@ -40,6 +43,9 @@ public:
     virtual LVoid save();
     virtual LVoid clipRect(const LRect& rect);
     virtual LVoid restore();
+
+private:
+	HWND m_hwnd;
 };
 }
 

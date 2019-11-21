@@ -20,7 +20,7 @@ int BoyiaWinApi BoyiaWinMain(
 	BoyiaConsole console;
 	//HINSTANCE hInstLibrary = LoadLibrary(L"LibBoyia.dll");
 
-	BoyiaOnLoadWin::foo();
+	//BoyiaOnLoadWin::foo();
 	//char test[100];
 	//util::LMemset(test, 0, 100);
 	//engine->request("https://damonyan1985.github.io/app/boyia.json", NetworkBase::GET);

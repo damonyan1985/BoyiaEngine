@@ -1,9 +1,9 @@
 #include "BaseWindow.h"
 
 namespace yanbo {
-
 BaseWindow* BaseWindow::m_currWinPtr = NULL;
 HINSTANCE BaseWindow::m_hInst = NULL;
+
 const TCommandMessageItem BaseWindow::messageEntries[] = {
     { (INT_PTR) nullptr, 0, 0 },
     WM_CLOSE_ITEM()
@@ -12,9 +12,9 @@ const TCommandMessageItem BaseWindow::messageEntries[] = {
 };
 
 BaseWindow::BaseWindow()
+	: m_hWnd(0)
+	, m_prevWinPtr(nullptr)
 {
-    m_hWnd = nullptr;
-    m_prevWinPtr = nullptr;
 }
 
 void BaseWindow::RegisterBaseWindow(WNDCLASS& wndClass)
@@ -57,7 +57,7 @@ BaseWindow* BaseWindow::CreateTChild(LPCWSTR classname, LPCWSTR name, DWORD styl
     BaseWindow* childTW;
     hwnd = ::CreateWindow(classname, name, style | WS_VISIBLE | WS_CHILD, x, y, w, h, hWndParent, (HMENU)id, m_hInst, 0);
 
-    if (NULL == hwnd)
+    if (!hwnd)
         return NULL;
     childTW = new BaseWindow;
     childTW->m_hWnd = hwnd;
