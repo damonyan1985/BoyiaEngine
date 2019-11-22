@@ -20,7 +20,7 @@ size_t BoyiaHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte
 {
     return 0;
 }
-/*
+
 LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 {
 }
@@ -29,7 +29,7 @@ LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
 {
     m_data = data;
 }
-*/
+
 LVoid BoyiaHttpEngine::request(const char* url, LInt method)
 {
 	wstring wurl = CharConvertor::CharToWchar(url);
