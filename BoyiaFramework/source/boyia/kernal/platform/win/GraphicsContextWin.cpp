@@ -1,8 +1,22 @@
 #include "GraphicsContextWin.h"
 
 namespace util {
+const LInt kPaintCommandDefaultCapacity = 1024;
+
+class PaintCommand {
+public:
+	enum PaintType
+	{
+
+	};
+
+	LInt type;
+	LRect rect;
+};
+
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
+	, m_cmds(0, kPaintCommandDefaultCapacity)
 {
 }
 
@@ -109,6 +123,8 @@ LVoid GraphicsContextWin::clipRect(const LRect& rect)
 
 LVoid GraphicsContextWin::submit()
 {
+	HDC dc = ::GetDC(m_hwnd);
+	::ReleaseDC(m_hwnd, dc);
 }
 
 LGraphicsContext* LGraphicsContext::create() 

@@ -20,16 +20,16 @@ public:
     BoyiaHttpEngine(HttpCallback* callback);
     ~BoyiaHttpEngine();
 
-    //LVoid setHeader(const NetworkMap& headers);
+    LVoid setHeader(const NetworkMap& headers);
     LVoid request(const char* url, LInt method);
-    //LVoid setPostData(const OwnerPtr<String>& data);
+    LVoid setPostData(const OwnerPtr<String>& data);
 
     static size_t writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param);
 
 private:
     HttpCallback* m_callback;
     LInt m_size;
-    //OwnerPtr<String> m_data;
+    OwnerPtr<String> m_data;
 };
 }
 

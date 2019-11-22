@@ -2,9 +2,11 @@
 #define GraphicsContextWin_h
 
 #include "LGdi.h"
+#include "KVector.h"
 #include <windows.h>
 
 namespace util {
+class PaintCommand;
 class GraphicsContextWin : public LGraphicsContext {
 public:
 	GraphicsContextWin();
@@ -45,6 +47,7 @@ public:
     virtual LVoid restore();
 
 private:
+	KVector<PaintCommand> m_cmds;
 	HWND m_hwnd;
 };
 }
