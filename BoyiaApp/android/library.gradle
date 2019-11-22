@@ -7,6 +7,14 @@ def initExtension() {
         ext.maven_dir = properties.getProperty("maven_dir")
     }
 
+    if (!ext.library_dir) {
+        ext.library_dir = "$rootDir/library"
+    }
+
+    if (!ext.maven_dir) {
+        ext.library_dir = "$rootDir/maven"
+    }
+
     ext.use_cmake = true
 }
 

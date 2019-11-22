@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MediaPlayerWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MutexWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PlatformBridgeWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.cpp" />

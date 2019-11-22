@@ -1,22 +1,8 @@
 #include "GraphicsContextWin.h"
 
 namespace util {
-const LInt kPaintCommandDefaultCapacity = 1024;
-
-class PaintCommand {
-public:
-	enum PaintType
-	{
-
-	};
-
-	LInt type;
-	LRect rect;
-};
-
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
-	, m_cmds(0, kPaintCommandDefaultCapacity)
 {
 }
 

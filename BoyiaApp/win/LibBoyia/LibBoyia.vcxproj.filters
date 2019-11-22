@@ -390,6 +390,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\porting\win\BoyiaOnLoadWin.h">
       <Filter>boyia\porting</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.h">
+      <Filter>boyia\kernal\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -652,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\porting\win\BoyiaOnLoadWin.cpp">
       <Filter>boyia\porting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.cpp">
+      <Filter>boyia\kernal\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
