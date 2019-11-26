@@ -2,7 +2,7 @@
  * LinkView.cpp
  *
  *  Created on: 2011-7-21
- *      Author: Administrator
+ *      Author: yanbo
  */
 
 #include "LinkView.h"
@@ -30,7 +30,7 @@ LBool LinkView::isLink() const
 
 void LinkView::execute()
 {
-    if (m_url.GetLength() > 0 && NULL != m_itemListener) {
+    if (m_url.GetLength() > 0 && m_itemListener) {
         //m_itemListener->onClick(m_url, m_onClick);
     }
 }

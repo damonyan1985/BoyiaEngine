@@ -7,7 +7,7 @@ namespace yanbo {
 class BufferItem {
 public:
     BufferItem(LBool isConst = LFalse)
-        : buffer(NULL)
+        : buffer(kBoyiaNull)
         , length(0)
         , pos(0)
         , bConst(isConst)
@@ -73,7 +73,7 @@ OwnerPtr<String> StringBuilder::toString() const
 {
     KFORMATLOG("StringBuilder::append str m_length=%d", m_length);
     if (!m_length) {
-        return NULL;
+        return kBoyiaNull;
     }
 
     //KFORMATLOG("StringBuilder::append str m_length1=%d", m_length);

@@ -135,7 +135,7 @@ private:
 IdentityMap::IdentityMap(LInt capacity)
     : m_size(0)
     , m_capacity(capacity)
-    , m_idCreator(NULL)
+    , m_idCreator(kBoyiaNull)
 {
     m_pairs = new IdentityPair[capacity];
     m_idCreator = new IDCreator();

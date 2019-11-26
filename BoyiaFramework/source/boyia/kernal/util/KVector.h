@@ -61,7 +61,7 @@ private:
 template <class T>
 KVector<T>::KVector()
     : m_size(0)
-    , m_buffer(NULL)
+    , m_buffer(kBoyiaNull)
     , m_capacity(0)
     , m_deep(LTrue)
 {
@@ -142,7 +142,7 @@ LVoid KVector<T>::copyElements(const T* buffer, LInt len)
 
     if (m_buffer) {
         delete[] tmp;
-        tmp = NULL;
+        tmp = kBoyiaNull;
     }
 }
 
@@ -263,7 +263,7 @@ void KVector<T>::removeAllElements()
 {
     if (m_buffer) {
         delete[] m_buffer;
-        m_buffer = NULL;
+        m_buffer = kBoyiaNull;
 
         m_size = 0;
         m_capacity = 0;

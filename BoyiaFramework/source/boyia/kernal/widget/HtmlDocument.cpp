@@ -13,8 +13,8 @@ namespace yanbo {
 HtmlDocument::HtmlDocument()
     : m_title(_CS("yanbo"))
     , m_url(_CS(""))
-    , m_root(NULL)
-    , m_view(NULL)
+    , m_root(kBoyiaNull)
+    , m_view(kBoyiaNull)
     , m_idMap(20)
 {
 }

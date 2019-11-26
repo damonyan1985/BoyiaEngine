@@ -12,7 +12,7 @@ namespace util {
 Utf8StreamReader::Utf8StreamReader(InputStream& is)
     : m_is(is)
     , m_top(-1)
-    , m_stack(NULL)
+    , m_stack(kBoyiaNull)
 {
     m_stack = new int[MAX_PARSER_STACK_DEPTH];
 }
@@ -26,9 +26,8 @@ Utf8StreamReader::Utf8StreamReader(String& stream)
 
 Utf8StreamReader::~Utf8StreamReader()
 {
-    if (NULL != m_stack) {
+    if (m_stack) {
         delete[] m_stack;
-        m_stack = NULL;
     }
 }
 

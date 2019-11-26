@@ -12,7 +12,7 @@ namespace util {
 template <typename T>
 class OwnerPtr {
 public:
-    OwnerPtr(T* ptr = nullptr)
+    OwnerPtr(T* ptr = kBoyiaNull)
         : m_ptr(ptr)
     {
     }

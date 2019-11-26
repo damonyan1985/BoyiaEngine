@@ -23,7 +23,7 @@ InputView::InputView(
     const String& inputType,
     const String& imageUrl)
     : FormView(id, name, value, title)
-    , m_newFont(NULL)
+    , m_newFont(kBoyiaNull)
 {
     m_type = kInputText;
     m_value = value;

@@ -1,4 +1,5 @@
 #include "GraphicsContextWin.h"
+//#include <GdiPlus.h>
 
 namespace util {
 GraphicsContextWin::GraphicsContextWin()

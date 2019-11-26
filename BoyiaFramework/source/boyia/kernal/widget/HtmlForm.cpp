@@ -134,7 +134,7 @@ FormView* HtmlForm::getFormView(const String& itemName)
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 
 void HtmlForm::unCheckRadioButtons(const String& name)

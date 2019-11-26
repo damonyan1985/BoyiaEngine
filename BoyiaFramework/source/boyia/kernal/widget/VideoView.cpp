@@ -16,7 +16,6 @@ VideoView::~VideoView()
 {
     if (m_mediaPlayer) {
         delete m_mediaPlayer;
-        m_mediaPlayer = NULL;
     }
 }
 
