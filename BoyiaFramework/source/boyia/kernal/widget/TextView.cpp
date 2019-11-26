@@ -31,8 +31,8 @@ TextView::TextView(
     LBool selectable)
     : InlineView(id, LFalse)
     , m_text(text)
-    , m_textLines(NULL)
-    , m_newFont(NULL)
+    , m_textLines(kBoyiaNull)
+    , m_newFont(kBoyiaNull)
     , m_maxWidth(0)
 {
 }
@@ -41,12 +41,10 @@ TextView::~TextView()
 {
     if (m_newFont) {
         delete m_newFont;
-        m_newFont = NULL;
     }
 
     if (m_textLines) {
         delete m_textLines;
-        m_textLines = NULL;
     }
 }
 
@@ -57,7 +55,7 @@ void TextView::layout(RenderContext& rc)
     m_width = 0;
     m_height = 0;
 
-    if (NULL == m_textLines) {
+    if (!m_textLines) {
         m_textLines = new KVector<Line*>();
     } else {
         m_textLines->clear();

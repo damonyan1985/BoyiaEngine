@@ -203,7 +203,7 @@ LVoid LStrU2A(LUint8* aStrA, const LUint16* aStrW)
 
 LUint8* LInt2Str(LInt value, LUint8* str, LInt radix)
 {
-    return LItoa(value, str, radix, NULL);
+    return LItoa(value, str, radix, kBoyiaNull);
 }
 
 LUint8* LInt2StrWithLength(LInt value, LUint8* str, LInt radix, LInt* lenPtr)
@@ -321,7 +321,7 @@ LChar* LStrchr(const LChar* s, LChar c)
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 
 LInt LMemcmp(const LVoid* buffer1, const LVoid* buffer2, LInt count)

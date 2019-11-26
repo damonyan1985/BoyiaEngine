@@ -27,7 +27,7 @@ void BlockQueue::addTask(TaskBase* task)
 BoyiaPtr<TaskBase> BlockQueue::pollTask()
 {
     AutoLock lock(&m_queueMutex);
-    BoyiaPtr<TaskBase> task = NULL;
+    BoyiaPtr<TaskBase> task = kBoyiaNull;
     if (!m_list.empty()) {
         KList<BoyiaPtr<TaskBase>>::Iterator iter = m_list.begin();
         task = *iter;

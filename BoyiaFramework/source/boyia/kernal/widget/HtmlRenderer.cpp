@@ -16,9 +16,9 @@
 namespace yanbo {
 
 HtmlRenderer::HtmlRenderer()
-    : m_styleParser(NULL)
-    , m_form(NULL)
-    , m_htmlDoc(NULL)
+    : m_styleParser(kBoyiaNull)
+    , m_form(kBoyiaNull)
+    , m_htmlDoc(kBoyiaNull)
 {
 }
 
@@ -39,7 +39,7 @@ void HtmlRenderer::renderHTML(HtmlDocument* doc,
     m_htmlDoc->clearHtmlList();
     m_loader = loader;
 
-    if (NULL == m_styleParser) {
+    if (!m_styleParser) {
         m_styleParser = new util::StyleParser();
     }
 
@@ -65,7 +65,7 @@ void HtmlRenderer::layout()
 {
     util::StyleManager* StyleManager = m_styleParser->getStyleManager();
     if (StyleManager) {
-        m_htmlDoc->getRenderTreeRoot()->setStyle(StyleManager, NULL);
+        m_htmlDoc->getRenderTreeRoot()->setStyle(StyleManager, kBoyiaNull);
     }
 
     m_htmlDoc->getRenderTreeRoot()->layout();

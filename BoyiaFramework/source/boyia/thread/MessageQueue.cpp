@@ -5,7 +5,7 @@ namespace yanbo {
 #define MAX_MESSAGE_SIZE 50
 Message::Message()
     : type(0)
-    , obj(NULL)
+    , obj(kBoyiaNull)
     , recycle(LTrue)
     , inCache(LFalse)
 {
@@ -21,7 +21,7 @@ LVoid Message::msgRecycle()
 }
 
 MessageCache::MessageCache()
-    : m_cache(NULL)
+    : m_cache(kBoyiaNull)
 {
 }
 
@@ -65,7 +65,7 @@ LInt MessageQueue::size()
 Message* MessageQueue::poll()
 {
     AutoLock lock(&m_queueMutex);
-    Message* msg = NULL;
+    Message* msg = kBoyiaNull;
     if (!m_list.empty()) {
         MessageList::Iterator iter = m_list.begin();
         msg = *iter;

@@ -149,7 +149,7 @@ typedef StringA String;
 
 template <class T>
 LString<T>::LString()
-    : m_pchData(NULL)
+    : m_pchData(kBoyiaNull)
     , m_pchDataLen(0)
     , m_size(0)
     , m_isDeep(LTrue)
@@ -164,7 +164,7 @@ LString<T>::~LString()
 
 template <class T>
 LString<T>::LString(const T* lpsz, Bool isDeep, LInt size)
-    : m_pchData(NULL)
+    : m_pchData(kBoyiaNull)
 {
     LString<T>::Copy(lpsz, isDeep, size);
 }
@@ -235,7 +235,7 @@ LVoid LString<T>::ResetBuffer()
         delete[] m_pchData;
     }
 
-    m_pchData = NULL;
+    m_pchData = kBoyiaNull;
     m_pchDataLen = 0;
     m_size = 0;
 }
@@ -785,7 +785,7 @@ LVoid LString<T>::ReleaseBuffer()
 {
     m_pchDataLen = 0;
     m_size = 0;
-    m_pchData = NULL;
+    m_pchData = kBoyiaNull;
     m_isDeep = LTrue;
 }
 

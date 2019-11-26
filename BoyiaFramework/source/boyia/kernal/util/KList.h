@@ -25,14 +25,14 @@ public:
 
     ListNode()
     {
-        m_next = NULL;
-        m_prev = NULL;
+        m_next = kBoyiaNull;
+        m_prev = kBoyiaNull;
     }
 
     ~ListNode()
     {
-        m_next = NULL;
-        m_prev = NULL;
+        m_next = kBoyiaNull;
+        m_prev = kBoyiaNull;
     }
 };
 
@@ -43,7 +43,7 @@ public:
 
 public:
     ListIterator()
-        : m_nodePtr(NULL)
+        : m_nodePtr(kBoyiaNull)
     {
     }
 
@@ -153,9 +153,8 @@ public:
     ~KList()
     {
         clear();
-        if (m_header != NULL) {
+        if (m_header) {
             delete m_header;
-            m_header = NULL;
         }
     }
 
@@ -209,15 +208,15 @@ public:
         }
 
         delete &iter;
-        &iter = NULL;
+        &iter = kBoyiaNull;
     }
 
     Iterator insert(Iterator& iter, const NodeValue& value)
     {
         NodePtr nodePtr = new ListNode<NodeValue>;
         nodePtr->m_value = value;
-        nodePtr->m_next = NULL;
-        nodePtr->m_prev = NULL;
+        nodePtr->m_next = kBoyiaNull;
+        nodePtr->m_prev = kBoyiaNull;
 
         if (m_header->m_next == m_header) {
             m_header->m_next = nodePtr;

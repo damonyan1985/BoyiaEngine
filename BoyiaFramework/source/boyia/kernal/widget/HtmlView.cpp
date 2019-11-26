@@ -21,14 +21,14 @@ HtmlView::HtmlView(
     const String& id,
     LBool selectable)
     : m_id(id)
-    , m_parent(NULL)
+    , m_parent(kBoyiaNull)
     , m_type(HtmlTags::TAGNONE)
-    , m_doc(NULL)
+    , m_doc(kBoyiaNull)
     , m_isViewRoot(LFalse)
-    , m_painter(NULL)
+    , m_painter(kBoyiaNull)
     , m_clip(LTrue)
     , m_needLayout(LTrue)
-    , m_itemListener(NULL)
+    , m_itemListener(kBoyiaNull)
 {
     m_style.focusable = selectable;
 }
@@ -274,7 +274,7 @@ LBool HtmlView::isSelected()
 
 HtmlView* HtmlView::getPreItem()
 {
-    HtmlView* item = NULL;
+    HtmlView* item = kBoyiaNull;
     if (m_parent) {
         HtmlViewList::Iterator iter = m_parent->m_children.begin();
         HtmlViewList::Iterator iterEnd = m_parent->m_children.end();
@@ -293,12 +293,12 @@ HtmlView* HtmlView::getPreItem()
             }
         }
 
-        if (NULL == item) {
+        if (!item) {
             item = m_parent;
         }
     }
 
-    if (NULL == item) {
+    if (!item) {
         item = this;
     }
 
@@ -307,7 +307,7 @@ HtmlView* HtmlView::getPreItem()
 
 HtmlView* HtmlView::getNextItem()
 {
-    HtmlView* item = NULL;
+    HtmlView* item = kBoyiaNull;
 
     if (m_children.count()) {
         HtmlViewList::Iterator iter = m_children.begin();
@@ -316,7 +316,7 @@ HtmlView* HtmlView::getNextItem()
         item = getNextItem(this);
     }
 
-    if (NULL == item) {
+    if (!item) {
         item = this;
     }
 
@@ -336,7 +336,7 @@ HtmlView* HtmlView::getPreItem(HtmlView* currentItem)
 
 HtmlView* HtmlView::getNextItem(HtmlView* currentItem)
 {
-    HtmlView* item = NULL;
+    HtmlView* item = kBoyiaNull;
     if (currentItem->m_parent) {
         // 找自己所在的下一个兄弟节点
         HtmlViewList::Iterator iter = currentItem->m_parent->m_children.begin();
@@ -351,7 +351,7 @@ HtmlView* HtmlView::getNextItem(HtmlView* currentItem)
             }
         }
 
-        if (NULL == item) {
+        if (!item) {
             item = getNextItem(currentItem->m_parent);
         }
     }
@@ -417,7 +417,7 @@ BlockView* HtmlView::getContainingBlock() const
     }
 
     if (!o || !o->isBlockView())
-        return NULL; // This can still happen in case of an orphaned tree
+        return kBoyiaNull; // This can still happen in case of an orphaned tree
 
     return static_cast<BlockView*>(o);
 }

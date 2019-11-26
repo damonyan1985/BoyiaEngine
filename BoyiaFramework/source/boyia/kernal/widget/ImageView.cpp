@@ -19,7 +19,7 @@ ImageView::ImageView(
     LBool selectable,
     const String& src)
     : InlineView(id, LFalse)
-    , m_image(NULL) // img item can't be selected
+    , m_image(kBoyiaNull) // img item can't be selected
     , m_src(src)
 {
 }
@@ -28,7 +28,6 @@ ImageView::~ImageView()
 {
     if (m_image) {
         delete m_image;
-        m_image = NULL;
     }
 }
 

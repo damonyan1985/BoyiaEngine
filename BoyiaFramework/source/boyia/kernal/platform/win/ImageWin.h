@@ -4,6 +4,10 @@
 #include "HtmlView.h"
 #include "LGdi.h"
 #include "UIThreadClientMap.h"
+#include <windows.h>
+#include <GdiPlus.h>
+
+using namespace Gdiplus;
 
 namespace util {
 class ImageWin : public LImage, public yanbo::UIThreadClient {
@@ -27,12 +31,15 @@ public:
     LVoid setItem(yanbo::HtmlView* item);
     LVoid unlockPixels();
     LVoid* pixels() const;
+    LVoid setData(LVoid* data, LInt dataLen);
 
     virtual LVoid onClientCallback();
 
 private:
     yanbo::HtmlView* m_image;
     LVoid* m_pixels;
+    LInt m_dataLen;
+    Gdiplus::Image* m_winImage;
 };
 }
 

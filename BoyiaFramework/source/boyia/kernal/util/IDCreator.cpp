@@ -14,7 +14,7 @@ typedef struct IdLink {
 
 IDCreator::IDCreator()
     : m_idCount(0)
-    , m_idLink(NULL)
+    , m_idLink(kBoyiaNull)
 {
 }
 
@@ -35,8 +35,8 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 {
     if (!m_idLink) {
         m_idLink = new IdLink;
-        m_idLink->mBegin = NULL;
-        m_idLink->mEnd = NULL;
+        m_idLink->mBegin = kBoyiaNull;
+        m_idLink->mEnd = kBoyiaNull;
     }
 
     BoyiaId* id = m_idLink->mBegin;
@@ -53,7 +53,7 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
     id->mStr.mPtr = new LInt8[str->mLen];
     id->mStr.mLen = str->mLen;
     LMemcpy(id->mStr.mPtr, str->mPtr, str->mLen);
-    id->mNext = NULL;
+    id->mNext = kBoyiaNull;
 
     if (!m_idLink->mBegin) {
         m_idLink->mBegin = id;

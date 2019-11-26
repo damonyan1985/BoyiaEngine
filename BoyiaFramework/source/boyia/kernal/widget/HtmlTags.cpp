@@ -8,7 +8,7 @@
 #include "StringUtils.h"
 
 namespace yanbo {
-HtmlTags* HtmlTags::m_htmlTags = NULL;
+HtmlTags* HtmlTags::m_htmlTags = kBoyiaNull;
 
 HtmlTags::HtmlTags()
     : m_map(TAGEND)
@@ -26,7 +26,7 @@ void HtmlTags::defineInitialSymbol(const String& htmlText, LInt htmlType)
 
 HtmlTags* HtmlTags::getInstance()
 {
-    if (m_htmlTags == NULL) {
+    if (!m_htmlTags) {
         m_htmlTags = new HtmlTags();
         m_htmlTags->defineInitialSymbol(_CS("UNDEFINED"), TAGNONE); // 0
         /*
@@ -88,7 +88,7 @@ void HtmlTags::destroyInstance()
 {
     if (m_htmlTags) {
         delete m_htmlTags;
-        m_htmlTags = NULL;
+        m_htmlTags = kBoyiaNull;
     }
 }
 

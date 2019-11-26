@@ -31,7 +31,7 @@ String StringUtils::skipBlank(const String& src)
     }
 
     if (length == 0) {
-        return (const LUint8*)NULL;
+        return (const LUint8*)kBoyiaNull;
     }
 
     for (LInt j = len - 1; j >= 0; j--) {
@@ -68,7 +68,7 @@ KVector<String>* StringUtils::split(const String& src, const String& splitSrc)
             srcTmp = srcTmp.Mid(i + splitLen);
             strLen = srcTmp.GetLength();
         } else {
-            srcTmp = (const LUint8*)NULL;
+            srcTmp = (const LUint8*)kBoyiaNull;
             break;
         }
 

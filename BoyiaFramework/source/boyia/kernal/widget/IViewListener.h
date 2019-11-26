@@ -19,4 +19,4 @@ public:
     virtual void onKeyUp(int keyCode, void* view) = 0;
 };
 }
-#endif /* IITEMLISTENER_H_ */
+#endif
