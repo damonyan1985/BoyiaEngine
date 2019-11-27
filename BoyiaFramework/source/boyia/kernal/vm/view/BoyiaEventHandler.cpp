@@ -4,8 +4,8 @@
 
 namespace boyia {
 BoyiaEventHandler::BoyiaEventHandler()
-    : m_touchCallback(NULL)
-    , m_keyCallback(NULL)
+    : m_touchCallback(kBoyiaNull)
+    , m_keyCallback(kBoyiaNull)
 {
 }
 
@@ -46,7 +46,7 @@ LVoid BoyiaEventHandler::handleTouch(const util::LTouchEvent& evt)
     val.mValueType = BY_INT;
     val.mValue.mIntVal = evt.getPosition().iY;
     LocalPush(&val);
-    NativeCall(NULL);
+    NativeCall(kBoyiaNull);
 }
 
 LVoid BoyiaEventHandler::setKeyCallback(BoyiaValue* callback)

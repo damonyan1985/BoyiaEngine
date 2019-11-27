@@ -312,7 +312,7 @@ BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 
 LInt getRootDocument()

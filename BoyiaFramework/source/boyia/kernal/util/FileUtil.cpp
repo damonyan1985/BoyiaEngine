@@ -102,11 +102,11 @@ LVoid FileUtil::deleteFile(const char* path)
     }
 
     if (isDir(path)) {
-        if ((dir = opendir(path)) == NULL) {
+        if ((dir = opendir(path)) == kBoyiaNull) {
             return;
         }
 
-        while ((dirInfo = readdir(dir)) != NULL) {
+        while ((dirInfo = readdir(dir)) != kBoyiaNull) {
             //get_file_path(path, dirInfo->d_name, filePath);
             if (isSpecialDir(dirInfo->d_name)) {
                 continue;
@@ -133,7 +133,7 @@ LInt FileUtil::createDir(const char* path)
     return mkdir(path, S_IRWXU);
 #elif ENABLE(BOYIA_WINDOWS)
     wstring wpath = yanbo::CharConvertor::CharToWchar(path);
-    return CreateDirectory(wpath.c_str(), NULL);
+    return CreateDirectory(wpath.c_str(), kBoyiaNull);
 #endif
 }
 
@@ -176,7 +176,7 @@ LVoid FileUtil::printAllFiles(const char* path)
         return;
     }
 
-    while ((file = readdir(d)) != NULL) {
+    while ((file = readdir(d)) != kBoyiaNull) {
         //if (strncmp(file->d_name, ".", 1) == 0)
         if (isSpecialDir(file->d_name))
             continue;

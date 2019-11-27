@@ -11,7 +11,7 @@
 #include "BoyiaLib.h"
 
 #define MAX_NATIVE_FUN_SIZE 40
-static NativeFunction* sFunTable = NULL;
+static NativeFunction* sFunTable = kBoyiaNull;
 static LVoid InitLib()
 {
     sFunTable = new NativeFunction[MAX_NATIVE_FUN_SIZE]{
@@ -57,7 +57,7 @@ static LVoid InitLib()
         { GenIdentByStr("BY_SetImageUrl", 14), setImageUrl },
         { GenIdentByStr("BY_ViewCommit", 13), viewCommit },
         // End
-        { 0, NULL }
+        { 0, kBoyiaNull }
     };
 
     InitNativeFun(sFunTable);

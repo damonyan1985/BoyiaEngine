@@ -1,12 +1,10 @@
 #include "PaintCommandAllocator.h"
 
 namespace util {
-const LInt kPaintCommandDefaultCapacity = 2000;
-const LInt kCommandUnit = 20;
-const LInt kCommandSize = kPaintCommandDefaultCapacity / kCommandUnit;
+const LInt kPaintCommandDefaultCapacity = 2048;
 
 PaintCommandAllocator::PaintCommandAllocator()
-    : m_cmds(NULL)
+    : m_cmds(kBoyiaNull)
 {
     initAllocator();
 }
@@ -28,9 +26,9 @@ LVoid PaintCommandAllocator::initAllocator()
 
 PaintCommand* PaintCommandAllocator::alloc() const
 {
-    for (LInt i = 0; i < kCommandSize; ++i) {
-        if (!m_cmds[i * kCommandUnit].inUse) {
-            return &m_cmds[i * kCommandUnit];
+    for (LInt i = 0; i < kPaintCommandDefaultCapacity; ++i) {
+        if (!m_cmds[i].inUse) {
+            return &m_cmds[i];
         }
     }
 

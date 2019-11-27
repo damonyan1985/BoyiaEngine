@@ -6,9 +6,9 @@ namespace yanbo {
 class UIThreadItem {
 public:
     UIThreadItem()
-        : client(NULL)
+        : client(kBoyiaNull)
         , id(0)
-        , next(NULL)
+        , next(kBoyiaNull)
     {
     }
 
@@ -50,7 +50,7 @@ UIThreadClientMap::UIThreadClientMap()
 {
     // Init all pointer to NULL
     for (LInt i = 0; i < m_map.capacity(); ++i) {
-        m_map[i] = NULL;
+        m_map[i] = kBoyiaNull;
     }
 }
 
@@ -83,7 +83,7 @@ UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)
     KFORMATLOG("UIThreadClientMap::getUIThreadItem item=%ld", (long)item);
     // Item maybe delete by uithread before this even run
     if (!item || !item->client) {
-        return NULL;
+        return kBoyiaNull;
     }
 
     KFORMATLOG("UIThreadClientMap::getUIThreadItem item->id=%d", item->id);

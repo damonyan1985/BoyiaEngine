@@ -138,7 +138,7 @@ LVoid UIOperation::execute()
         case UIOP_APPLY_DOM_STYLE: {
             HtmlView* root = (HtmlView*)msg->obj;
             ResourceLoader* loader = UIView::getInstance()->getLoader();
-            root->setStyle(loader->render()->getStyleManager(), NULL);
+            root->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
         } break;
         }
 
@@ -165,7 +165,7 @@ LVoid UIOperation::viewSetText(Message* msg)
         view->addChild(item);
 
         ResourceLoader* loader = UIView::getInstance()->getLoader();
-        view->setStyle(loader->render()->getStyleManager(), NULL);
+        view->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
     }
 }
 

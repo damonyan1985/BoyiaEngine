@@ -52,7 +52,7 @@ StyleRule* StyleManager::getStyleRule()
     KLOG("StyleManager::getStyleRule1");
     for (; iter != endIter; ++iter) {
         StyleRule* newRule = matchRule(*iter);
-        if (newRule != NULL) {
+        if (newRule != kBoyiaNull) {
             isNull = LFalse;
             cssStyle->copyPropertiesFrom(newRule);
         }
@@ -61,7 +61,7 @@ StyleRule* StyleManager::getStyleRule()
     KLOG("StyleManager::getStyleRule2");
     if (isNull) {
         delete cssStyle;
-        cssStyle = NULL;
+        cssStyle = kBoyiaNull;
     }
 
     return cssStyle;
@@ -87,10 +87,10 @@ LBool StyleManager::matchPrepare(Selector* sel)
 
 StyleRule* StyleManager::matchRule(StyleRule* rule)
 {
-    StyleRule* newCssStyle = NULL;
-    if (rule != NULL) {
+    StyleRule* newCssStyle = kBoyiaNull;
+    if (rule != kBoyiaNull) {
         SelectorGroup* selectorGroup = rule->getSelectorGroup();
-        Selector* targetSelector = NULL;
+        Selector* targetSelector = kBoyiaNull;
         CssPropertyValue::PropertySpecificity specificity;
         LInt selId = selectorGroup->size();
 

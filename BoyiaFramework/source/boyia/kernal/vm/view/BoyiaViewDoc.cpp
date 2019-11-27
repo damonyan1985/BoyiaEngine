@@ -14,7 +14,7 @@ using namespace yanbo;
 IdentityMap BoyiaViewDoc::m_domMap(20);
 
 BoyiaViewDoc::BoyiaViewDoc()
-    : m_doc(NULL)
+    : m_doc(kBoyiaNull)
 {
 }
 
@@ -87,6 +87,6 @@ BoyiaView* BoyiaViewDoc::getItemByID(const String& id) const
         return new BoyiaInputView(item);
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 }

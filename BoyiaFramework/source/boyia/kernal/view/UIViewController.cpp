@@ -38,12 +38,12 @@ static HtmlView* findViewByPosition(const LPoint& pt, HtmlView* view)
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 
 UIViewController::UIViewController(UIView* view)
     : m_view(view)
-    , m_target(NULL)
+    , m_target(kBoyiaNull)
 {
 }
 

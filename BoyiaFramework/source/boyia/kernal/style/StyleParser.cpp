@@ -20,7 +20,7 @@ namespace util {
 const LInt kStringBufferLen = 30;
 
 StyleParser::StyleParser()
-    : m_styleManager(NULL)
+    : m_styleManager(kBoyiaNull)
 {
 }
 
@@ -370,7 +370,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
         }
 
         delete values;
-        values = NULL;
+        values = kBoyiaNull;
     } break;
     case StyleTags::BACKGROUND_COLOR:
     case StyleTags::COLOR:
@@ -434,7 +434,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
         }
 
         delete values;
-        values = NULL;
+        values = kBoyiaNull;
     } break;
     case StyleTags::BORDER_TOP: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
@@ -452,7 +452,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
         }
 
         delete values;
-        values = NULL;
+        values = kBoyiaNull;
     } break;
     case StyleTags::BORDER: {
         KVector<String>* values = StringUtils::split(value, _CS(" "));
@@ -468,7 +468,7 @@ void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& va
         }
 
         delete values;
-        values = NULL;
+        values = kBoyiaNull;
     } break;
     case StyleTags::DISPLAY: {
         if (value.CompareNoCase(_CS("none"))) {

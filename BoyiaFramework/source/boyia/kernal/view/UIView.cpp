@@ -12,10 +12,10 @@
 namespace yanbo {
 
 UIView::UIView()
-    : m_loader(NULL)
-    , m_doc(NULL)
-    , m_controller(NULL)
-    , m_jsHandler(NULL)
+    : m_loader(kBoyiaNull)
+    , m_doc(kBoyiaNull)
+    , m_controller(kBoyiaNull)
+    , m_jsHandler(kBoyiaNull)
 {
     initComponents();
 }

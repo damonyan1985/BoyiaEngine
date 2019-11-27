@@ -8,7 +8,7 @@ template <class T>
 class BoyiaPtr {
 public:
     BoyiaPtr()
-        : m_ptr(0)
+        : m_ptr(kBoyiaNull)
     {
     }
     BoyiaPtr(T* ptr);

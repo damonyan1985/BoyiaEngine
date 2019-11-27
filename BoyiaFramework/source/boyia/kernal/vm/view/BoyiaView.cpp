@@ -17,14 +17,14 @@ static LVoid startAnimtion(Animation* anim)
 }
 
 BoyiaView::BoyiaView()
-    : m_item(NULL)
+    : m_item(kBoyiaNull)
 {
 }
 
 BoyiaView::~BoyiaView()
 {
     if (m_item) {
-        m_item->setListener(NULL);
+        m_item->setListener(kBoyiaNull);
     }
 }
 
@@ -86,7 +86,7 @@ void BoyiaView::setStyle(String& cls)
         ResourceLoader* loader = UIView::getInstance()->getLoader();
         LGraphicsContext* gc = UIView::getInstance()->getGraphicsContext();
         m_item->setClassName(cls);
-        m_item->setStyle(loader->render()->getStyleManager(), NULL);
+        m_item->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
 
         // 判断z-index
         if (m_item->isPositioned() && m_item->getStyle()->zindex > 0) {
