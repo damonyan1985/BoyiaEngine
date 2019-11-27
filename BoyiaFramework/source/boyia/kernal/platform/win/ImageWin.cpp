@@ -80,6 +80,7 @@ LVoid ImageWin::unlockPixels()
         return;
     }
     m_winImage = Gdiplus::Image::FromStream(pstm);
+    ::GlobalUnlock(hmem);
 }
 
 const String& ImageWin::url() const

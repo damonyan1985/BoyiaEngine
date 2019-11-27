@@ -1,7 +1,8 @@
 #ifndef PaintCommandAllocator_h
 #define PaintCommandAllocator_h
 
-#include "PlatformLib.h"
+#include "LGdi.h"
+#include "UtilString.h"
 
 namespace util {
 class PaintCommand {
@@ -10,9 +11,13 @@ public:
     {
         kPaintRect,
         kPaintImage,
-        kPaintCircle
+        kPaintCircle,
+        kPaintText
     };
 
+    LRgb color;
+    String text;
+    LRect rect;
     LInt type;
     Bool inUse;
 };

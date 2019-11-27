@@ -203,7 +203,7 @@ const CssPropertyValue::PropertySpecificity& CssPropertyValue::getSpecificity() 
 }
 
 StyleRule::StyleRule()
-    : m_selectorGroup(NULL)
+    : m_selectorGroup(kBoyiaNull)
 {
 }
 
@@ -283,7 +283,7 @@ const AttributeMap& StyleRule::getProperties() const
 
 void StyleRule::copyPropertiesFrom(const StyleRule* rule)
 {
-    if (NULL != rule) {
+    if (kBoyiaNull != rule) {
         AttributeMap::Iterator iter = rule->getProperties().begin();
         AttributeMap::Iterator iterEnd = rule->getProperties().end();
         for (; iter != iterEnd; ++iter) {

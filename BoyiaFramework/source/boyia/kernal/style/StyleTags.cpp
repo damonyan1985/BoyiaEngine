@@ -10,7 +10,7 @@
 
 namespace util {
 
-StyleTags* StyleTags::s_tags = NULL;
+StyleTags* StyleTags::s_tags = kBoyiaNull;
 
 StyleTags::StyleTags()
     : m_map(StyleTags::TAGEND)
@@ -23,7 +23,7 @@ StyleTags::~StyleTags()
 
 StyleTags* StyleTags::getInstance()
 {
-    if (s_tags == NULL) {
+    if (!s_tags) {
         s_tags = new StyleTags();
         /*
          * Initializing Css tokens.

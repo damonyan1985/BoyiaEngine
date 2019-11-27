@@ -3,6 +3,7 @@
 
 #include "LGdi.h"
 #include "KVector.h"
+#include "PaintCommandAllocator.h"
 #include <windows.h>
 
 namespace util {
@@ -47,6 +48,7 @@ public:
 
 private:
 	HWND m_hwnd;
+    KVector<PaintCommand*> m_cmds;
 };
 }
 

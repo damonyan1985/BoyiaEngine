@@ -23,7 +23,7 @@ BaseThread::~BaseThread()
 
 void BaseThread::start()
 {
-    m_condition->thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)startThread, this, 0, &m_condition->threadId);
+    m_condition->thread = CreateThread(kBoyiaNull, 0, (LPTHREAD_START_ROUTINE)startThread, this, 0, &m_condition->threadId);
 }
 
 int BaseThread::wait()

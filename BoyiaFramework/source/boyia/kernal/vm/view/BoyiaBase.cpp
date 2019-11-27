@@ -31,7 +31,7 @@ void BoyiaBase::onPressDown(void* view)
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
         SaveLocalSize();
         LocalPush(val);
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }
 }
@@ -43,7 +43,7 @@ void BoyiaBase::onPressMove(void* view)
 
         SaveLocalSize();
         LocalPush(val);
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }
 }
@@ -56,7 +56,7 @@ void BoyiaBase::onPressUp(void* view)
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
         SaveLocalSize();
         LocalPush(val);
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? NULL : &m_boyiaView;
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }
 }

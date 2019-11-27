@@ -1,9 +1,10 @@
 #include "GraphicsContextWin.h"
-//#include <GdiPlus.h>
+#include <GdiPlus.h>
 
 namespace util {
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
+    , m_cmds(0, 1024)
 {
 }
 
@@ -111,6 +112,33 @@ LVoid GraphicsContextWin::clipRect(const LRect& rect)
 LVoid GraphicsContextWin::submit()
 {
 	HDC dc = ::GetDC(m_hwnd);
+    Gdiplus::Graphics gc(m_hwnd);
+    for (LInt i = 0; i < m_cmds.size(); i++) {
+        switch (m_cmds[i]->type) {
+        case PaintCommand::kPaintRect: {
+            Gdiplus::Rect rect(
+                m_cmds[i]->rect.iTopLeft.iX,
+                m_cmds[i]->rect.iTopLeft.iY,
+                m_cmds[i]->rect.GetWidth(),
+                m_cmds[i]->rect.GetHeight()
+            );
+
+            Gdiplus::SolidBrush brush(Gdiplus::Color(
+                m_cmds[i]->color.m_alpha,
+                m_cmds[i]->color.m_red,
+                m_cmds[i]->color.m_green,
+                m_cmds[i]->color.m_blue
+            ));
+            gc.FillRectangle(&brush, rect);
+        }   break;
+        case PaintCommand::kPaintImage:
+            break;
+        case PaintCommand::kPaintCircle:
+            break;
+        case PaintCommand::kPaintText:
+            break;
+        }
+    }
 	::ReleaseDC(m_hwnd, dc);
 }
 

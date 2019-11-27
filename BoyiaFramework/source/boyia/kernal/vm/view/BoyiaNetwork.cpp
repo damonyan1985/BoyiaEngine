@@ -61,7 +61,7 @@ LVoid BoyiaNetwork::run()
     SaveLocalSize();
     LocalPush(&m_callback);
     LocalPush(&value);
-    BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? NULL : &m_obj;
+    BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_obj;
     NativeCall(obj);
 }
 }

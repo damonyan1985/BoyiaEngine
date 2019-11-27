@@ -17,11 +17,11 @@ template <typename K, typename V>
 class MapEntry {
 public:
     MapEntry()
-        : next(NULL)
+        : next(kBoyiaNull)
     {
     }
     MapEntry(K k, V v)
-        : next(NULL)
+        : next(kBoyiaNull)
         , key(k)
         , value(v)
     {
@@ -78,7 +78,7 @@ public:
             }
         }
 
-        return (V)NULL;
+        return (V)kBoyiaNull;
     }
 
     LInt size() const
