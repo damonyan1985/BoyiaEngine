@@ -7,6 +7,7 @@
 #include <windows.h>
 
 namespace util {
+class ItemPainter;
 class GraphicsContextWin : public LGraphicsContext {
 public:
 	GraphicsContextWin();
@@ -46,9 +47,12 @@ public:
     virtual LVoid clipRect(const LRect& rect);
     virtual LVoid restore();
 
+    ItemPainter* currentPainter();
+
 private:
 	HWND m_hwnd;
-    KVector<PaintCommand*> m_cmds;
+    KVector<ItemPainter*> m_painters;
+    LVoid* m_item;
 };
 }
 

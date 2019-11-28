@@ -3,6 +3,8 @@
 
 #include "LGdi.h"
 #include "UtilString.h"
+#include <windows.h>
+#include <GdiPlus.h>
 
 namespace util {
 class PaintCommand {
@@ -15,6 +17,11 @@ public:
         kPaintText
     };
 
+    PaintCommand();
+    ~PaintCommand();
+   
+    LVoid paint(Gdiplus::Graphics& gc);
+
     LRgb color;
     String text;
     LRect rect;
@@ -26,6 +33,8 @@ class PaintCommandAllocator {
 public:
     PaintCommandAllocator();
     ~PaintCommandAllocator();
+
+    static PaintCommandAllocator* instance();
 
     LVoid initAllocator();
     PaintCommand* alloc() const;

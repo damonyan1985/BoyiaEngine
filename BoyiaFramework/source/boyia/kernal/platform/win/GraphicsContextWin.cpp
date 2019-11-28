@@ -1,15 +1,28 @@
 #include "GraphicsContextWin.h"
+#include "HtmlView.h"
 #include <GdiPlus.h>
 
 namespace util {
+class ItemPainter {
+public:
+    ItemPainter()
+        : cmds(0, 20)
+        , item(kBoyiaNull)
+    {
+    }
+    KVector<PaintCommand*> cmds;
+    LVoid* item;
+};
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
-    , m_cmds(0, 1024)
+    , m_item(kBoyiaNull)
+    , m_painters(0, 1024)
 {
 }
 
 GraphicsContextWin::~GraphicsContextWin()
 {
+    
 }
 
 LVoid GraphicsContextWin::setContextWin(HWND hwnd)
@@ -39,6 +52,9 @@ LVoid GraphicsContextWin::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 
 LVoid GraphicsContextWin::drawRect(const LRect& aRect)
 {
+    ItemPainter* painter = currentPainter();
+    PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
+    painter->cmds.addElement(cmd);
 }
 
 LVoid GraphicsContextWin::drawRect(LInt x, LInt y, LInt w, LInt h)
@@ -55,6 +71,21 @@ LVoid GraphicsContextWin::drawRoundRect(const LRect& aRect, const LSize& aCorner
 
 LVoid GraphicsContextWin::setHtmlView(LVoid* item)
 {
+    m_item = item;
+    currentPainter()->cmds.clear();
+}
+
+ItemPainter* GraphicsContextWin::currentPainter()
+{
+    yanbo::HtmlView* item = (yanbo::HtmlView*)m_item;
+    ItemPainter* painter = (ItemPainter*)item->painter();
+    if (!painter) {
+        painter = new ItemPainter();
+        painter->item = item;
+        item->setPainter(painter);
+    }
+
+    return painter;
 }
 
 LVoid GraphicsContextWin::drawText(const String& aText, const LRect& aRect)
@@ -113,30 +144,9 @@ LVoid GraphicsContextWin::submit()
 {
 	HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
-    for (LInt i = 0; i < m_cmds.size(); i++) {
-        switch (m_cmds[i]->type) {
-        case PaintCommand::kPaintRect: {
-            Gdiplus::Rect rect(
-                m_cmds[i]->rect.iTopLeft.iX,
-                m_cmds[i]->rect.iTopLeft.iY,
-                m_cmds[i]->rect.GetWidth(),
-                m_cmds[i]->rect.GetHeight()
-            );
-
-            Gdiplus::SolidBrush brush(Gdiplus::Color(
-                m_cmds[i]->color.m_alpha,
-                m_cmds[i]->color.m_red,
-                m_cmds[i]->color.m_green,
-                m_cmds[i]->color.m_blue
-            ));
-            gc.FillRectangle(&brush, rect);
-        }   break;
-        case PaintCommand::kPaintImage:
-            break;
-        case PaintCommand::kPaintCircle:
-            break;
-        case PaintCommand::kPaintText:
-            break;
+    for (LInt i = 0; i < m_painters.size(); i++) {
+        for (LInt n = 0; n < m_painters[i]->cmds.size(); n++) {
+            m_painters[i]->cmds[n]->paint(gc);
         }
     }
 	::ReleaseDC(m_hwnd, dc);
