@@ -1,7 +1,83 @@
 #include "PaintCommandAllocator.h"
+#include "KVector.h"
 
 namespace util {
 const LInt kPaintCommandDefaultCapacity = 2048;
+
+class PaintCmdHandler {
+public:
+    virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd) = 0;
+};
+
+class PaintRectHandler : public PaintCmdHandler {
+public:
+    virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
+    {
+        Gdiplus::Rect rect(
+            cmd->rect.iTopLeft.iX,
+            cmd->rect.iTopLeft.iY,
+            cmd->rect.GetWidth(),
+            cmd->rect.GetHeight()
+        );
+
+        Gdiplus::SolidBrush brush(Gdiplus::Color(
+            cmd->color.m_alpha,
+            cmd->color.m_red,
+            cmd->color.m_green,
+            cmd->color.m_blue
+        ));
+        gc.FillRectangle(&brush, rect);
+    }
+};
+
+class PaintTextHandler : public PaintCmdHandler {
+public:
+    virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
+    {
+    }
+};
+
+class PaintImageHandler : public PaintCmdHandler {
+public:
+    virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
+    {
+    }
+};
+
+class PaintCicleHandler : public PaintCmdHandler {
+public:
+    virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
+    {
+    }
+};
+
+
+static KVector<PaintCmdHandler*>* sPaintRegistrayArray = kBoyiaNull;
+static LVoid paintFunctionRegister() {
+    if (!sPaintRegistrayArray) {
+        sPaintRegistrayArray = new KVector<PaintCmdHandler*>(4);
+        (*sPaintRegistrayArray)[PaintCommand::kPaintRect] = new PaintRectHandler();
+        (*sPaintRegistrayArray)[PaintCommand::kPaintImage] = new PaintImageHandler();
+        (*sPaintRegistrayArray)[PaintCommand::kPaintCircle] = new PaintCicleHandler();
+        (*sPaintRegistrayArray)[PaintCommand::kPaintText] = new PaintTextHandler();
+    }
+}
+
+PaintCommand::PaintCommand()
+    : inUse(LFalse)
+{
+}
+
+PaintCommand::~PaintCommand()
+{
+}
+
+LVoid PaintCommand::paint(Gdiplus::Graphics& gc)
+{
+    if (sPaintRegistrayArray) {
+        (*sPaintRegistrayArray)[type]->paint(gc, this);
+    }
+}
 
 PaintCommandAllocator::PaintCommandAllocator()
     : m_cmds(kBoyiaNull)
@@ -16,12 +92,19 @@ PaintCommandAllocator::~PaintCommandAllocator()
     }
 }
 
+PaintCommandAllocator* PaintCommandAllocator::instance()
+{
+    static PaintCommandAllocator sAllocator;
+    return &sAllocator;
+}
+
 LVoid PaintCommandAllocator::initAllocator()
 {
     if (m_cmds) {
         delete[] m_cmds;
     }
     m_cmds = new PaintCommand[kPaintCommandDefaultCapacity];
+    paintFunctionRegister();
 }
 
 PaintCommand* PaintCommandAllocator::alloc() const
@@ -32,6 +115,6 @@ PaintCommand* PaintCommandAllocator::alloc() const
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 }
