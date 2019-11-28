@@ -152,6 +152,11 @@ LVoid GraphicsContextWin::submit()
 	::ReleaseDC(m_hwnd, dc);
 }
 
+HWND GraphicsContextWin::hwnd() const
+{
+    return m_hwnd;
+}
+
 LGraphicsContext* LGraphicsContext::create() 
 {
 	return new GraphicsContextWin();

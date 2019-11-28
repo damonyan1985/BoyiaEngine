@@ -42,6 +42,12 @@ public:
     typedef LUint16* LChars;
 };
 
+template <>
+class LStringPolicy<wchar_t> {
+public:
+    typedef wchar_t* LChars;
+};
+
 template <class T>
 class LString : public BoyiaRef {
 public:
