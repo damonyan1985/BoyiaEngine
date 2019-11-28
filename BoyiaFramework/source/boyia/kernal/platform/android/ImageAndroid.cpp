@@ -22,9 +22,9 @@ struct JBitmapAndroid {
 };
 
 ImageAndroid::ImageAndroid()
-    : m_privateBitmap(NULL)
-    , m_image(NULL)
-    , m_pixels(NULL)
+    : m_privateBitmap(kBoyiaNull)
+    , m_image(kBoyiaNull)
+    , m_pixels(kBoyiaNull)
 {
     KLOG("BitmapAndroid::BitmapAndroid()");
     //JNIEnv* env = getJNIEnv();
@@ -64,7 +64,7 @@ void ImageAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
 
 ImageAndroid::~ImageAndroid()
 {
-    if (m_privateBitmap != NULL) {
+    if (m_privateBitmap) {
         JNIEnv* env = yanbo::JNIUtil::getEnv();
         env->CallVoidMethod(
             m_privateBitmap->m_obj,
@@ -73,8 +73,6 @@ ImageAndroid::~ImageAndroid()
         env->DeleteGlobalRef(m_privateBitmap->m_obj);
         delete m_privateBitmap;
     }
-
-    m_privateBitmap = NULL;
 }
 
 LVoid ImageAndroid::load(const String& path, LVoid* image)

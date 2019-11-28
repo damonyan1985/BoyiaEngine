@@ -49,6 +49,8 @@ public:
 
     ItemPainter* currentPainter();
 
+    HWND hwnd() const;
+
 private:
 	HWND m_hwnd;
     KVector<ItemPainter*> m_painters;

@@ -20,7 +20,7 @@ public:
     OwnerPtr(const OwnerPtr<T>& ownerPtr)
         : m_ptr(ownerPtr.m_ptr)
     {
-        ownerPtr.m_ptr = nullptr;
+        ownerPtr.m_ptr = kBoyiaNull;
     }
 
     bool operator==(T* ptr) const

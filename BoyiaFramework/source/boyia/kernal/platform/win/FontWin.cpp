@@ -1,6 +1,26 @@
 #include "LGdi.h"
+#include "AppManager.h"
+#include "GraphicsContextWin.h"
+#include "CharConvertor.h"
+#include <Windows.h>
+#include <GdiPlus.h>
+
+using namespace Gdiplus;
+typedef util::LString<wchar_t> WString;
 
 namespace util {
+class LineText {
+public:
+    LineText(OwnerPtr<String> ptr, LInt tw)
+        : width(tw)
+        , text(ptr)
+    {
+    }
+
+    OwnerPtr<String> text;
+    LInt width;
+};
+
 class FontWin : public LFont {
 public:
     FontWin(const LFont& font);
@@ -13,6 +33,9 @@ public:
     virtual LInt getLineSize() const;
     virtual LInt getLineWidth(LInt index) const;
     virtual LVoid getLineText(LInt index, String& text);
+
+private:
+    mutable KVector<OwnerPtr<LineText>> m_lines;
 };
 
 FontWin::FontWin(const LFont& font)
@@ -26,7 +49,15 @@ FontWin::~FontWin()
 
 LInt FontWin::getFontHeight() const
 {
-    return 0;
+    GraphicsPath path;
+    FontFamily family;
+    Font font(L"Arial", m_size);
+    StringFormat format(Gdiplus::StringAlignmentNear);
+    path.AddString(L"F", -1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
+    
+    Gdiplus::Rect rect;
+    path.GetBounds(&rect);
+    return rect.Height;
 }
 
 LInt FontWin::getFontWidth(LUint8 ch) const
@@ -41,20 +72,52 @@ LInt FontWin::getTextWidth(const String& text) const
 
 LInt FontWin::getLineSize() const
 {
-    return 0;
+    return m_lines.size();
 }
 
 LInt FontWin::getLineWidth(LInt index) const
 {
-    return 0;
+    return m_lines.elementAt(index)->width;
 }
 
 LVoid FontWin::getLineText(LInt index, String& text)
 {
+    text = *m_lines.elementAt(index)->text.get();
 }
 
 LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
 {
+    GraphicsPath path;
+    FontFamily family;
+    Font font(L"Arial", m_size);
+    StringFormat format(Gdiplus::StringAlignmentNear);
+    Gdiplus::Rect rect;
+
+    LInt currentLineWidth = 0;
+    LInt maxLineWidth = 0;
+
+    wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(text));
+    WString wstr((wchar_t)0, 100);
+    for (LInt i = 0; i < wtext.length(); ++i) {
+        wchar_t ch = wtext.at(i);
+        path.AddString(&ch, 1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
+        path.GetBounds(&rect);
+        
+        if (currentLineWidth + rect.Width <= maxWidth) {
+            wstr += ch;
+            currentLineWidth += rect.Width;
+        } else {
+            maxLineWidth = maxLineWidth < currentLineWidth ?
+                currentLineWidth : maxLineWidth;
+            OwnerPtr<String> lineText = new String();
+            yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
+            OwnerPtr<LineText> line = new LineText(lineText, currentLineWidth);
+            //m_lines.addElement(line);
+            m_lines.addElement(line);
+            currentLineWidth = 0;
+            wstr.ClearBuffer();
+        }
+    }
     return 0;
 }
 

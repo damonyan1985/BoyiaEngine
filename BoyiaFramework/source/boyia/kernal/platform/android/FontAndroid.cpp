@@ -23,7 +23,7 @@ struct JFontAndroid {
 };
 
 FontAndroid::FontAndroid()
-    : m_privateFont(NULL)
+    : m_privateFont(kBoyiaNull)
 {
     KLOG("FontAndroid::FontAndroid()");
     //JNIEnv* env = getJNIEnv();
@@ -59,19 +59,16 @@ void FontAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
 
 FontAndroid::~FontAndroid()
 {
-    if (m_privateFont != NULL) {
+    if (m_privateFont) {
         JNIEnv* env = yanbo::JNIUtil::getEnv();
         env->DeleteGlobalRef(m_privateFont->m_obj);
         delete m_privateFont;
     }
-
-    m_privateFont = NULL;
 }
 
 LInt FontAndroid::getFontWidth(LUint8 ch, LInt size) const
 {
     KLOG("FontAndroid::getFontWidth");
-    ;
     //StringW strW = chW;
     String astr = ch;
     //util::StringUtils::strWtoStr(chW, astr);
@@ -114,7 +111,7 @@ LInt FontAndroid::getFontHeight(LInt size) const
 {
     KLOG("FontAndroid::getFontHeight");
 
-    if (m_privateFont == NULL) {
+    if (!m_privateFont) {
         KLOG("FontAndroid::getFontHeight0");
         return 0;
     }
@@ -133,7 +130,7 @@ LInt FontAndroid::getFontHeight(LInt size) const
 
 LInt FontAndroid::getLineSize() const
 {
-    if (m_privateFont == NULL) {
+    if (!m_privateFont) {
         KLOG("FontAndroid::getFontHeight0");
         return 0;
     }
@@ -151,7 +148,7 @@ LInt FontAndroid::getLineSize() const
 
 LInt FontAndroid::getLineWidth(LInt index) const
 {
-    if (m_privateFont == NULL) {
+    if (!m_privateFont) {
         KLOG("FontAndroid::getFontHeight0");
         return 0;
     }
@@ -169,7 +166,7 @@ LInt FontAndroid::getLineWidth(LInt index) const
 
 LVoid FontAndroid::getLineText(LInt index, String& text)
 {
-    if (m_privateFont == NULL) {
+    if (!m_privateFont) {
         KLOG("FontAndroid::getFontHeight0");
         return;
     }
@@ -190,7 +187,7 @@ LVoid FontAndroid::getLineText(LInt index, String& text)
 
 LInt FontAndroid::calcTextLine(const String& text, LInt maxWidth, LInt fontSize) const
 {
-    if (m_privateFont == NULL) {
+    if (!m_privateFont) {
         KLOG("FontAndroid::calcTextLine0");
         return 0;
     }
