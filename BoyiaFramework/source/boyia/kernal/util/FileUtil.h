@@ -27,6 +27,7 @@ public:
     static LInt createDirs(const char* path);
     static LVoid printAllFiles(const char* path);
     static LVoid syncLoadUrl(const String& url, String& content);
+    static const String& fileSchema();
 };
 }
 

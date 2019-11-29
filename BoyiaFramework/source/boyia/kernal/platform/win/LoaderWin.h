@@ -12,9 +12,11 @@
 
 #if ENABLE(BOYIA_WINDOWS)
 #include "UtilString.h"
+#include "BoyiaHttpEngine.h"
+#include "MessageThread.h"
 
 namespace yanbo {
-class LoaderWin : public NetworkBase {
+class LoaderWin : public NetworkBase, public MessageThread {
 public:
     LoaderWin();
     virtual ~LoaderWin();
@@ -27,6 +29,8 @@ public:
     virtual LVoid postData(const String& url, NetworkClient* client);
     virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait);
     virtual LVoid cancel();
+
+    virtual LVoid handleMessage(Message* msg);
 };
 }
 
