@@ -18,6 +18,11 @@
 const String kSourcePrefix(_CS("boyia://"), LTrue, 8);
 
 namespace util {
+const String& FileUtil::fileSchema()
+{
+    return kSourcePrefix;
+}
+
 LVoid FileUtil::readFile(const String& fileName, String& content)
 {
     FILE* file = fopen(GET_STR(fileName), "r");

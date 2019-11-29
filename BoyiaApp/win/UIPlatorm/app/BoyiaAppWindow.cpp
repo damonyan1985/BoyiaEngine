@@ -17,10 +17,10 @@ END_MAP_TABLE()
 
 BoyiaAppWindow::BoyiaAppWindow()
 {
-	m_hCursor = ::LoadCursor(NULL, IDC_CROSS);
-	m_bGameStart = FALSE;
-	m_bGameEnd = FALSE;
-	m_bFirstShow = FALSE;
+    m_hCursor = ::LoadCursor(NULL, IDC_CROSS);
+    m_bGameStart = FALSE;
+    m_bGameEnd = FALSE;
+    m_bFirstShow = FALSE;
 }
 
 BoyiaAppWindow::~BoyiaAppWindow()
@@ -29,49 +29,49 @@ BoyiaAppWindow::~BoyiaAppWindow()
 
 DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
-	BoyiaOnLoadWin::setContextWin(m_hWnd);
-	/*
-	HWND hWnd = m_hWnd;
-	HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
-	m_hMenu = ::LoadMenu(hins, MAKEINTRESOURCE(IDR_APP_MENU));
-	::SetMenu(hWnd, m_hMenu);
-	m_hIcon = ::LoadIcon(hins, MAKEINTRESOURCE(IDI_APP));
-	::SetClassLong(m_hWnd, GCL_HICON, (LONG)m_hIcon);
-	*/
-	//to do any other logic
+    BoyiaOnLoadWin::setContextWin(m_hWnd);
+    /*
+    HWND hWnd = m_hWnd;
+    HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
+    m_hMenu = ::LoadMenu(hins, MAKEINTRESOURCE(IDR_APP_MENU));
+    ::SetMenu(hWnd, m_hMenu);
+    m_hIcon = ::LoadIcon(hins, MAKEINTRESOURCE(IDI_APP));
+    ::SetClassLong(m_hWnd, GCL_HICON, (LONG)m_hIcon);
+    */
+    //to do any other logic
 
-	return 0;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
-	return 0;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
-	return 0;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
 {
-	BoyiaPaintDC dc(this);
-	OnPrepareDC(&dc);
-	OnDraw(&dc);
-	return 0;
+    BoyiaPaintDC dc(this);
+    OnPrepareDC(&dc);
+    OnDraw(&dc);
+    return 0;
 }
 
 void BoyiaAppWindow::OnDraw(BoyiaDC *pDC)
 {
-	RECT rect;
-	GetClientRect(&rect);
-	pDC->BitBlt(0, 0, rect.right - rect.left, rect.bottom - rect.top, &m_memSurfaceDC, 0, 0, SRCCOPY);
+    RECT rect;
+    GetClientRect(&rect);
+    pDC->BitBlt(0, 0, rect.right - rect.left, rect.bottom - rect.top, &m_memSurfaceDC, 0, 0, SRCCOPY);
 }
 
 DWORD BoyiaAppWindow::OnSetCursor(WPARAM wParam, LPARAM lParam)
 {
-	SetCursor(m_hCursor);
-	return 0;
+    SetCursor(m_hCursor);
+    return 0;
 }
 
 void BoyiaAppWindow::OnPrepareDC(BoyiaDC *pDC)
@@ -80,17 +80,17 @@ void BoyiaAppWindow::OnPrepareDC(BoyiaDC *pDC)
 
 DWORD BoyiaAppWindow::OnGameStart(WPARAM wParam, LPARAM lParam)
 {
-	m_bGameStart = TRUE;
-	m_bFirstShow = TRUE;
+    m_bGameStart = TRUE;
+    m_bFirstShow = TRUE;
 
-	//Invalidate();
-	return 0;
+    //Invalidate();
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnGameEnd(WPARAM wParam, LPARAM lParam)
 {
-	m_bGameEnd = TRUE;
-	return 0;
+    m_bGameEnd = TRUE;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnGamePause(WPARAM wParam, LPARAM lParam)
@@ -176,13 +176,13 @@ BoyiaAppImpl::~BoyiaAppImpl()
 
 BOOL BoyiaAppImpl::InitInstance(HINSTANCE hIns, int nCmdShow)
 {
-	DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-	_ptwin = new BoyiaAppWindow;
-	_ptwin->InitBaseWindow(hIns);
-	_ptwin->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, 0, 0, 600, 400, NULL);
-	_ptwin->ShowTW(nCmdShow);
-	_ptwin->UpdateTW();
-	return TRUE;
+    DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
+    _ptwin = new BoyiaAppWindow;
+    _ptwin->InitBaseWindow(hIns);
+    _ptwin->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, 0, 0, 600, 400, NULL);
+    _ptwin->ShowTW(nCmdShow);
+    _ptwin->UpdateTW();
+    return TRUE;
 }
 
 }

@@ -21,10 +21,8 @@ public:
     ~BoyiaHttpEngine();
 
     LVoid setHeader(const NetworkMap& headers);
-    LVoid request(const char* url, LInt method);
+    LVoid request(const String& url, LInt method);
     LVoid setPostData(const OwnerPtr<String>& data);
-
-    static size_t writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param);
 
 private:
     HttpCallback* m_callback;

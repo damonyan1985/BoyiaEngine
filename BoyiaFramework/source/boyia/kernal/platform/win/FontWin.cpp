@@ -111,14 +111,22 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
                 currentLineWidth : maxLineWidth;
             OwnerPtr<String> lineText = new String();
             yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
-            OwnerPtr<LineText> line = new LineText(lineText, currentLineWidth);
-            //m_lines.addElement(line);
-            m_lines.addElement(line);
+            m_lines.addElement(new LineText(lineText, currentLineWidth));
             currentLineWidth = 0;
             wstr.ClearBuffer();
         }
     }
-    return 0;
+
+    if (currentLineWidth > 0) {
+        maxLineWidth = maxLineWidth < currentLineWidth ?
+            currentLineWidth : maxLineWidth;
+
+        OwnerPtr<String> lineText = new String();
+        yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
+        m_lines.addElement(new LineText(lineText, currentLineWidth));
+    }
+
+    return maxLineWidth;
 }
 
 LFont* LFont::create(const LFont& font)

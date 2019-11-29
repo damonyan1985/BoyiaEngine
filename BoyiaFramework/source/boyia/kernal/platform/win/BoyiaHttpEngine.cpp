@@ -16,11 +16,6 @@ BoyiaHttpEngine::~BoyiaHttpEngine()
 {
 }
 
-size_t BoyiaHttpEngine::writeCallback(LVoid* buffer, size_t size, size_t membyte, LVoid* param)
-{
-    return 0;
-}
-
 LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 {
 }
@@ -30,13 +25,21 @@ LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
     m_data = data;
 }
 
-LVoid BoyiaHttpEngine::request(const char* url, LInt method)
+LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
-	wstring wurl = CharConvertor::CharToWchar(url);
+    if (!m_callback) {
+        return;
+    }
+
+    // 解析Url
+	wstring wurl = CharConvertor::CharToWchar(GET_STR(url));
 	Uri uri;
 	UrlParser::parse(wurl, uri);
+
+    // 初始化wininet
 	HINTERNET internet = ::InternetOpen(L"WinInetGet/0.1", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 	
+    // 建立连接
 	DWORD dwConnectContext = 0;
 	HINTERNET connect = ::InternetConnect(internet, uri.host.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, dwConnectContext);
 
@@ -49,18 +52,20 @@ LVoid BoyiaHttpEngine::request(const char* url, LInt method)
 		INTERNET_FLAG_SECURE |
 		INTERNET_FLAG_RELOAD;
 
+    // 打开请求
 	HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", uri.path.c_str(), NULL,
 		NULL, NULL,
 		dwOpenRequestFlags, dwConnectContext);
 
+    // 发送请求
 	DWORD dwError = 0;
 	if (!HttpSendRequest(request, NULL, 0, NULL, 0)) {
 		dwError = GetLastError();
 		BOYIA_LOG("HttpSendRequest error: ", dwError);
+        m_callback->onLoadError(NetworkClient::kNetworkFileError);
 	}
 
-	if (dwError == ERROR_INTERNET_INVALID_CA)
-	{
+	if (dwError == ERROR_INTERNET_INVALID_CA) {
 		fprintf(stderr, "HttpSendRequest failed, error: %d (0x%x)/n",
 			dwError, dwError);
 
@@ -120,7 +125,9 @@ LVoid BoyiaHttpEngine::request(const char* url, LInt method)
 		delete[] buffer;
 	}
 
+    m_callback->onLoadFinished();
 
+    // Close Http resource
 	InternetCloseHandle(request);
 	InternetCloseHandle(connect);
 	InternetCloseHandle(internet);
