@@ -49,7 +49,6 @@ public:
 
     virtual LVoid onLoadFinished()
     {
-        m_data = m_builder.toString();
         UIThread::instance()->sendUIEvent(this);
     }
 
@@ -61,8 +60,9 @@ public:
         if (m_result == NetworkClient::kNetworkSuccess) {
             //BoyiaPtr<String> sptr = m_builder.toString();
 			KLOG("ResourceEvent::run kNetworkSuccess");
-			BOYIA_LOG("Parse script=%s", (const char*)m_data->GetBuffer());
-            m_loader->onLoadFinished(*m_data.get(), m_resType);
+            OwnerPtr<String> data = m_builder.toString();
+			BOYIA_LOG("Parse script=%s", (const char*)data->GetBuffer());
+            m_loader->onLoadFinished(*data.get(), m_resType);
         } else {
             m_loader->onLoadError(m_result);
         }
@@ -79,7 +79,6 @@ private:
     LInt m_resType;
     StringBuilder m_builder;
     LInt m_result;
-    OwnerPtr<String> m_data;
 };
 
 ResourceLoader::ResourceLoader(UIView* view)

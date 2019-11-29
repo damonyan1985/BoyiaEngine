@@ -27,6 +27,8 @@ public:
     LVoid removeItem(LInt id);
     LVoid clientCallback(LInt id);
 
+    UIThreadClient* getUIThreadClient(LInt id);
+
 private:
     UIThreadClientMap();
     UIThreadItem* getUIThreadItem(LInt id);
