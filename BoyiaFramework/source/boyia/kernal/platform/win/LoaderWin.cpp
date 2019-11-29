@@ -195,13 +195,11 @@ LVoid LoaderWin::postData(const String& url, NetworkClient* client, LBool isWait
         msg->obj = task;
         m_queue->push(msg);
         notify();
-    }
-    else {
+    } else {
         ThreadPool::getInstance()->sendTask(task);
     }
 
-    // ÖÃ¿ÕÊı¾İÖ¸Õë
-    m_data = NULL;
+    m_data = kBoyiaNull;
 }
 
 LVoid LoaderWin::cancel()

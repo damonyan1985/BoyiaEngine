@@ -17,7 +17,7 @@ public:
     ~BufferItem()
     {
         if (buffer && !bConst) {
-            KFORMATLOG("HTTPParser::parseResponse delete item address=%d and length=%d", (LIntPtr)buffer, length);
+            BOYIA_LOG("BufferItem delete item address=%d and length=%d", (LIntPtr)buffer, length);
             delete[] buffer;
         }
     }
@@ -55,7 +55,7 @@ void StringBuilder::append(const LByte* buffer)
     append(buffer, 0, util::LStrlen((const LByte*)buffer), LTrue);
 }
 
-void StringBuilder::append(const LByte* buffer, int pos, int len, LBool isConst)
+void StringBuilder::append(const LByte* buffer, LInt pos, LInt len, LBool isConst)
 {
     if (len <= 0) {
         return;
@@ -82,7 +82,7 @@ OwnerPtr<String> StringBuilder::toString() const
     BoyiaList<OwnerPtr<BufferItem>>::Iterator iter = m_buffer.begin();
     BoyiaList<OwnerPtr<BufferItem>>::Iterator iterEnd = m_buffer.end();
 
-    int pos = 0;
+    LInt pos = 0;
     for (; iter != iterEnd; ++iter) {
         util::LMemcpy(buffer + pos, (*iter)->buffer + (*iter)->pos, (*iter)->length);
         pos += (*iter)->length;
