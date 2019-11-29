@@ -75,6 +75,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     wstring header = CharConvertor::CharToWchar(GET_STR(url));
     BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
     if (!res) {
+        m_callback->onLoadError(NetworkClient::kNetworkFileError);
         InternetCloseHandle(request);
         InternetCloseHandle(connect);
         InternetCloseHandle(internet);
@@ -129,12 +130,14 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 	printf("%s", pInfoBuffer);
 	free(pInfoBuffer);
 	// Get Response Body
-	DWORD dwBytesAvailable;
+	DWORD bufferSize = 1024;
+    LByte* buffer = new LByte[bufferSize];
+    /*
 	while (InternetQueryDataAvailable(request, &dwBytesAvailable, 0, 0)) {
-		LByte* buffer = new LByte[dwBytesAvailable + 1];
 		DWORD dwBytesRead;
 		BOOL bResult = InternetReadFile(request, buffer,
 			dwBytesAvailable, &dwBytesRead);
+        
 		if (!bResult) {
 			fprintf(stderr, "InternetReadFile failed, error: %d (0x%x)/n",
 				GetLastError(), GetLastError());
@@ -145,13 +148,23 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         }
 
         m_callback->onDataReceived(buffer, dwBytesRead);
-		
-		buffer[dwBytesRead] = '/0';
-		printf("%s", buffer);
+	}*/
 
-		delete[] buffer;
-	}
+    while (true) {
+        DWORD readSize;
+        if (!InternetReadFile(request, buffer, bufferSize, &readSize)) {
+            m_callback->onLoadError(NetworkClient::kNetworkFileError);
+            return;
+        }
 
+        if (readSize == 0) {
+            break;
+        }
+
+        m_callback->onDataReceived(buffer, readSize);
+    }
+
+    delete[] buffer;
     m_callback->onLoadFinished();
 
     // Close Http resource

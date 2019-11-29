@@ -76,6 +76,12 @@ KVector<UIThreadItem*>& UIThreadClientMap::map()
     return m_map;
 }
 
+UIThreadClient* UIThreadClientMap::getUIThreadClient(LInt id)
+{
+    UIThreadItem* item = getUIThreadItem(id);
+    return item ? item->client : kBoyiaNull;
+}
+
 UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)
 {
     LInt index = id % m_map.capacity();

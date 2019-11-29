@@ -36,7 +36,7 @@ public:
     LVoid setUrl(const String& url)
     {
         m_url = url;
-        BOYIA_LOG("boyia app HttpTask::setUrl url=%s", GET_STR(m_url));
+        BOYIA_LOG("HttpTask---setUrl---url=%s", GET_STR(m_url));
     }
 
     LVoid setPostData(const OwnerPtr<String>& data)

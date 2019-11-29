@@ -4,6 +4,7 @@
 #include "HtmlView.h"
 #include "LGdi.h"
 #include "UIThreadClientMap.h"
+#include "StringBuilder.h"
 #include <windows.h>
 #include <GdiPlus.h>
 
@@ -19,7 +20,7 @@ public:
     virtual LVoid load(const String& aPath, LVoid* image);
     virtual const String& url() const;
     virtual LVoid setLoaded(LBool loaded);
-    void drawText(
+    LVoid drawText(
         const String& text,
         const LRect& rect,
         LGraphicsContext::TextAlign align,
@@ -31,15 +32,25 @@ public:
     LVoid setItem(yanbo::HtmlView* item);
     LVoid unlockPixels();
     LVoid* pixels() const;
-    LVoid setData(LVoid* data, LInt dataLen);
+    LVoid setData(const OwnerPtr<String>& data);
 
     virtual LVoid onClientCallback();
 
+    /*
+    virtual LVoid onDataReceived(const LByte* data, LInt size);
+    virtual LVoid onStatusCode(LInt statusCode);
+    virtual LVoid onFileLen(LInt len);
+    virtual LVoid onRedirectUrl(const String& redirectUrl);
+    virtual LVoid onLoadError(LInt error);
+    virtual LVoid onLoadFinished();*/
+
 private:
     yanbo::HtmlView* m_image;
-    LVoid* m_pixels;
-    LInt m_dataLen;
+    //LVoid* m_pixels;
+    //LInt m_dataLen;
+    OwnerPtr<String> m_data;
     Gdiplus::Image* m_winImage;
+    yanbo::StringBuilder m_builder;
 };
 }
 
