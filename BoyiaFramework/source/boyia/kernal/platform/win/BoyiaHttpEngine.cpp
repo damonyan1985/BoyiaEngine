@@ -9,6 +9,7 @@ namespace yanbo {
 BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
     : m_callback(callback)
     , m_size(0)
+    , m_header((LUint8)0, 1024)
 {
 }
 
@@ -18,6 +19,20 @@ BoyiaHttpEngine::~BoyiaHttpEngine()
 
 LVoid BoyiaHttpEngine::setHeader(const NetworkMap& headers)
 {
+    if (headers.size()) {
+        NetworkMap::Iterator iter = headers.begin();
+        NetworkMap::Iterator iterEnd = headers.end();
+
+        for (; iter != iterEnd; ++iter) {
+            const String& key = (*iter)->getKey();
+            const String& value = (*iter)->getValue();
+            //String header = key + _CS(":") + value;
+            m_header += key;
+            m_header += _CS(":");
+            m_header += value;
+            m_header += _CS("\r\n");
+        }
+    }
 }
 
 LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
@@ -57,9 +72,20 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 		NULL, NULL,
 		dwOpenRequestFlags, dwConnectContext);
 
-    // 发送请求
+    wstring header = CharConvertor::CharToWchar(GET_STR(url));
+    BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
+    if (!res) {
+        InternetCloseHandle(request);
+        InternetCloseHandle(connect);
+        InternetCloseHandle(internet);
+        return;
+    }
+
+    // 发送请求数据
 	DWORD dwError = 0;
-	if (!HttpSendRequest(request, NULL, 0, NULL, 0)) {
+    LByte* dataBuffer = m_data.get() ? m_data->GetBuffer() : NULL;
+    LInt dataSize = m_data.get() ? m_data->GetLength() : 0;
+	if (!HttpSendRequest(request, NULL, 0, dataBuffer, dataSize)) {
 		dwError = GetLastError();
 		BOYIA_LOG("HttpSendRequest error: ", dwError);
         m_callback->onLoadError(NetworkClient::kNetworkFileError);
@@ -114,11 +140,12 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 				GetLastError(), GetLastError());
 			break;
 		}
-		if (dwBytesRead == 0)
-			break; // End of File.
-		if (m_callback) {
-			m_callback->onDataReceived(buffer, dwBytesRead);
-		}
+        if (dwBytesRead == 0) {
+            break; // End of File.
+        }
+
+        m_callback->onDataReceived(buffer, dwBytesRead);
+		
 		buffer[dwBytesRead] = '/0';
 		printf("%s", buffer);
 

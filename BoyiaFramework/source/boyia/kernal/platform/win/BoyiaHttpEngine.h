@@ -28,6 +28,7 @@ private:
     HttpCallback* m_callback;
     LInt m_size;
     OwnerPtr<String> m_data;
+    String m_header;
 };
 }
 

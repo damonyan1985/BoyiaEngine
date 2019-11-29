@@ -16,7 +16,7 @@ public:
 public:
     void append(const LByte ch);
     void append(const String& str);
-    void append(const LByte* buffer, int pos, int len, LBool isConst);
+    void append(const LByte* buffer, LInt pos, LInt len, LBool isConst);
     void append(const LByte* buffer);
     OwnerPtr<String> toString() const;
     void clear();
