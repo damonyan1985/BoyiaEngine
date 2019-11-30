@@ -1,5 +1,6 @@
 #include "GraphicsContextWin.h"
 #include "HtmlView.h"
+#include "UIView.h"
 #include <GdiPlus.h>
 
 namespace util {
@@ -10,6 +11,16 @@ public:
         , item(kBoyiaNull)
     {
     }
+
+    LVoid clear() 
+    {
+        for (LInt i = 0; i < cmds.size(); i++) {
+            cmds[i]->inUse = LFalse;
+        }
+
+        cmds.clear();
+    }
+
     KVector<PaintCommand*> cmds;
     LVoid* item;
 };
@@ -17,7 +28,6 @@ public:
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
     , m_item(kBoyiaNull)
-    , m_painters(0, 1024)
 {
 }
 
@@ -73,7 +83,7 @@ LVoid GraphicsContextWin::drawRoundRect(const LRect& aRect, const LSize& aCorner
 LVoid GraphicsContextWin::setHtmlView(LVoid* item)
 {
     m_item = item;
-    currentPainter()->cmds.clear();
+    currentPainter()->clear();
 }
 
 ItemPainter* GraphicsContextWin::currentPainter()
@@ -141,15 +151,33 @@ LVoid GraphicsContextWin::clipRect(const LRect& rect)
 {
 }
 
+LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
+{
+    yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
+    ItemPainter* painter = (ItemPainter*)item->painter();
+    if (!painter) {
+        return;
+    }
+
+    KVector<PaintCommand*>& cmds = painter->cmds;
+
+    for (LInt i = 0; i < cmds.size(); i++) {
+        cmds[i]->paint(gc);
+    }
+
+    yanbo::HtmlViewList::Iterator iter = item->m_children.begin();
+    yanbo::HtmlViewList::Iterator iterEnd = item->m_children.end();
+
+    for (; iter != iterEnd; ++iter) {
+        paint(*iter, gc);
+    }
+}
+
 LVoid GraphicsContextWin::submit()
 {
 	HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
-    for (LInt i = 0; i < m_painters.size(); i++) {
-        for (LInt n = 0; n < m_painters[i]->cmds.size(); n++) {
-            m_painters[i]->cmds[n]->paint(gc);
-        }
-    }
+    paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), gc);
 	::ReleaseDC(m_hwnd, dc);
 }
 
