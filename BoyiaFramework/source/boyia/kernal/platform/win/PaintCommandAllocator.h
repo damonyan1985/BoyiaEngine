@@ -23,9 +23,12 @@ public:
     LVoid paint(Gdiplus::Graphics& gc);
 
     LRgb color;
+    LFont font;
     String text;
+    
     LRect rect;
     LInt type;
+    Gdiplus::Image* image;
     Bool inUse;
 };
 

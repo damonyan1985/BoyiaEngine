@@ -11,7 +11,6 @@
 #include "InlineView.h"
 
 namespace yanbo {
-
 class TextView : public InlineView {
 public:
     TextView(const String& id, const String& text);
@@ -47,4 +46,4 @@ protected:
     LInt m_maxWidth;
 };
 }
-#endif /* TextView_H_ */
+#endif

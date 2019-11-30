@@ -1,4 +1,5 @@
 #include "PaintCommandAllocator.h"
+#include "CharConvertor.h"
 #include "KVector.h"
 
 namespace util {
@@ -34,6 +35,25 @@ class PaintTextHandler : public PaintCmdHandler {
 public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
+        wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(cmd->text));
+        Gdiplus::Font font(L"Arial", cmd->font.getFontSize());
+
+        Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
+        Gdiplus::RectF rect(
+            cmd->rect.iTopLeft.iX,
+            cmd->rect.iTopLeft.iY,
+            cmd->rect.GetWidth(),
+            cmd->rect.GetHeight()
+        );
+        
+        Gdiplus::SolidBrush brush(Gdiplus::Color(
+            cmd->color.m_alpha,
+            cmd->color.m_red,
+            cmd->color.m_green,
+            cmd->color.m_blue
+        ));
+
+        gc.DrawString(wtext.c_str(), wtext.length(), &font, rect, &format, &brush);
     }
 };
 
@@ -41,6 +61,13 @@ class PaintImageHandler : public PaintCmdHandler {
 public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
+        Gdiplus::Rect rect(
+            cmd->rect.iTopLeft.iX,
+            cmd->rect.iTopLeft.iY,
+            cmd->rect.GetWidth(),
+            cmd->rect.GetHeight()
+        );
+        gc.DrawImage(cmd->image, rect);
     }
 };
 
@@ -65,6 +92,7 @@ static LVoid paintFunctionRegister() {
 
 PaintCommand::PaintCommand()
     : inUse(LFalse)
+    , image(kBoyiaNull)
 {
 }
 
