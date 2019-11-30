@@ -7,8 +7,8 @@
 #include "JNIUtil.h"
 #include "MatrixState.h"
 #include "MediaPlayerAndroid.h"
-#include "MiniTextureCache.h"
 #include "ShaderUtil.h"
+#include "TextureCache.h"
 #include "UIView.h"
 #include <GLES3/gl3.h>
 #include <android/bitmap.h>
@@ -120,11 +120,11 @@ LVoid GraphicsContextGL::drawImage(const LPoint& aTopLeft, const LImage* aBitmap
 
 LVoid GraphicsContextGL::drawImage(const LImage* image)
 {
-    if (image == NULL) {
+    if (!image) {
         return;
     }
 
-    yanbo::MiniTexture* tex = yanbo::MiniTextureCache::getInst()->put(image);
+    yanbo::Texture* tex = yanbo::TextureCache::getInst()->put(image);
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
@@ -152,7 +152,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
     if (!amp->texId())
         return;
 
-    BoyiaPtr<yanbo::MiniTexture> tex = new yanbo::MiniTexture();
+    BoyiaPtr<yanbo::Texture> tex = new yanbo::Texture();
     tex->width = rect.GetWidth();
     tex->height = rect.GetHeight();
     tex->texId = amp->texId();
@@ -177,8 +177,8 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
     image->unlockPixels();
     image->setRect(rect);
     image->setItem((yanbo::HtmlView*)m_item);
-    if (yanbo::MiniTextureCache::getInst()->find((yanbo::HtmlView*)m_item)) {
-        yanbo::MiniTexture* tex = yanbo::MiniTextureCache::getInst()->updateTexture(image.get());
+    if (yanbo::TextureCache::getInst()->find((yanbo::HtmlView*)m_item)) {
+        yanbo::Texture* tex = yanbo::TextureCache::getInst()->updateTexture(image.get());
         ItemPainter* painter = currentPainter();
         BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
         paint->setColor(m_brushColor);
@@ -219,7 +219,7 @@ LVoid GraphicsContextGL::setFont(const LFont& font)
 
 LVoid GraphicsContextGL::reset()
 {
-    yanbo::MiniTextureCache::getInst()->clear();
+    yanbo::TextureCache::getInst()->clear();
     //GLContext::initGLContext(GLContext::EWindow);
     m_context.initGL(GLContext::EWindow);
     glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());

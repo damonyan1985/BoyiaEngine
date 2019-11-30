@@ -1,7 +1,7 @@
 #ifndef RenderTexture_h
 #define RenderTexture_h
 
-#include "MiniTextureCache.h"
+#include "TextureCache.h"
 #include <GLES3/gl3.h>
 
 namespace yanbo {
@@ -16,7 +16,7 @@ public:
     LVoid unbind();
 
 private:
-    MiniTexture* m_tex;
+    Texture* m_tex;
     GLuint m_fbo;
     GLuint m_rbo;
 };

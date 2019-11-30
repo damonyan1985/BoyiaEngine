@@ -95,13 +95,13 @@ void GLPainter::setRect(const LRect& rect)
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
 }
 
-void GLPainter::setImage(MiniTexture* tex, const LRect& rect)
+void GLPainter::setImage(Texture* tex, const LRect& rect)
 {
     m_cmd.type = EShapeImage;
     setTexture(tex, rect, rect);
 }
 
-void GLPainter::setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
+void GLPainter::setImage(Texture* tex, const LRect& rect, const LRect& clipRect)
 {
     m_cmd.type = EShapeImage;
 
@@ -119,7 +119,7 @@ float* GLPainter::stMatrix() const
     return m_stMatrix;
 }
 
-void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
+void GLPainter::setVideo(Texture* tex, const LRect& rect)
 {
     if (!m_stMatrix) {
         m_stMatrix = new float[16];
@@ -153,7 +153,7 @@ void GLPainter::setVideo(MiniTexture* tex, const LRect& rect)
     quad.topLeft.texCoord.v = 1.0f;
 }
 
-void GLPainter::setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect)
+void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRect)
 {
     m_cmd.texId = tex->texId;
     KFORMATLOG("texSize width=%d. height=%d", tex->width, tex->height);

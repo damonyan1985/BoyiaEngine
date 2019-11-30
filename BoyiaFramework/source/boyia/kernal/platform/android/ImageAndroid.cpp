@@ -2,7 +2,7 @@
 #include "ImageView.h"
 #include "JNIUtil.h"
 #include "LColor.h"
-#include "MiniTextureCache.h"
+//#include "TextureCache.h"
 #include "SalLog.h"
 #include "UIView.h"
 #include <android/bitmap.h>

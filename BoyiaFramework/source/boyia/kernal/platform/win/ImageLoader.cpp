@@ -38,13 +38,7 @@ public:
 
     virtual LVoid onLoadFinished()
     {
-        
-        // m_client->setData(*data.get());
-        // send to ui thread
-        UIThread::instance()->sendUIEvent(this);
-        //yanbo::UIThread::instance()->imageLoaded(m_id);
-        //delete this;
-        
+        UIThread::instance()->sendUIEvent(this);       
     }
 
     virtual LVoid run()

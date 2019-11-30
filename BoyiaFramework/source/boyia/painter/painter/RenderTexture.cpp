@@ -4,7 +4,7 @@ namespace yanbo {
 RenderTexture::RenderTexture()
     : m_fbo(0)
     , m_rbo(0)
-    , m_tex(NULL)
+    , m_tex(kBoyiaNull)
 {
 }
 
@@ -17,7 +17,7 @@ RenderTexture::~RenderTexture()
 LVoid RenderTexture::initFBO(LInt width, LInt height)
 {
     // Generate Texture
-    m_tex = new MiniTexture();
+    m_tex = new Texture();
     m_tex->initWithData(NULL, 0, width, height);
     // Generate FBO
     glGenFramebuffers(1, &m_fbo);

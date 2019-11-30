@@ -25,10 +25,7 @@ TextView::Line::~Line()
 {
 }
 
-TextView::TextView(
-    const String& id,
-    const String& text,
-    LBool selectable)
+TextView::TextView(const String& id, const String& text)
     : InlineView(id, LFalse)
     , m_text(text)
     , m_textLines(kBoyiaNull)

@@ -1,13 +1,11 @@
-#include "MiniTextureCache.h"
+#include "TextureCache.h"
 #include "AutoObject.h"
 #include "ImageView.h"
 #include "SalLog.h"
 #include "StringUtils.h"
 
 namespace yanbo {
-//MiniTextureCache* MiniTextureCache::s_instance = NULL;
-
-MiniTexture::MiniTexture()
+Texture::Texture()
     : texId(0)
     , width(0)
     , height(0)
@@ -15,12 +13,12 @@ MiniTexture::MiniTexture()
 {
 }
 
-MiniTexture::~MiniTexture()
+Texture::~Texture()
 {
     glDeleteTextures(1, &texId);
 }
 
-LVoid MiniTexture::initWithData(LVoid* data, LUint key, LInt width, LInt height)
+LVoid Texture::initWithData(LVoid* data, LUint key, LInt width, LInt height)
 {
     texKey = key;
     glGenTextures(1, &texId);
@@ -46,23 +44,17 @@ LVoid MiniTexture::initWithData(LVoid* data, LUint key, LInt width, LInt height)
 }
 
 TexturePair::TexturePair()
-    : item(NULL)
+    : item(kBoyiaNull)
 {
 }
 
-MiniTextureCache* MiniTextureCache::getInst()
+TextureCache* TextureCache::getInst()
 {
-    // if (!s_instance)
-    // {
-    // 	s_instance = new MiniTextureCache();
-    // }
-
-    // return s_instance;
-    static MiniTextureCache sCache;
+    static TextureCache sCache;
     return &sCache;
 }
 
-MiniTexture* MiniTextureCache::find(LVoid* image)
+Texture* TextureCache::find(LVoid* image)
 {
     LUint key = 0;
     HtmlView* item = (HtmlView*)image;
@@ -74,7 +66,7 @@ MiniTexture* MiniTextureCache::find(LVoid* image)
     return find(item, key);
 }
 
-MiniTexture* MiniTextureCache::put(const LImage* image)
+Texture* TextureCache::put(const LImage* image)
 {
     LUint key = 0;
     HtmlView* item = (HtmlView*)image->item();
@@ -85,16 +77,16 @@ MiniTexture* MiniTextureCache::put(const LImage* image)
         KFORMATLOG("MiniTextureCache::put tex=%x", key);
     }
 
-    MiniTexture* tex = find(item, key);
+    Texture* tex = find(item, key);
 
-    if (tex == NULL) {
+    if (!tex) {
         tex = fetchTexture(item, image->rect(), image, key);
     }
 
     return tex;
 }
 
-MiniTexture* MiniTextureCache::find(HtmlView* item, LUint key)
+Texture* TextureCache::find(HtmlView* item, LUint key)
 {
     TextureMap::Iterator iter = m_texMap.begin();
     TextureMap::Iterator iterEnd = m_texMap.end();
@@ -112,49 +104,24 @@ MiniTexture* MiniTextureCache::find(HtmlView* item, LUint key)
         }
     }
 
-    return NULL;
+    return kBoyiaNull;
 }
 
-MiniTexture* MiniTextureCache::fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key)
+Texture* TextureCache::fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key)
 {
-    //	GLuint textID;
-    //	glGenTextures(1, &textID);
-
     TexturePair* pair = new TexturePair;
     pair->item = item;
-    //	pair->tex = new MiniTexture(textID);
-    //	pair->tex->texKey = key;
-    //	pair->tex->width = image->width();
-    //	pair->tex->height = image->height();
-    pair->tex = new MiniTexture();
+
+    pair->tex = new Texture();
     pair->tex->initWithData(image->pixels(), key, image->width(), image->height());
     m_texMap.push(pair);
-
-    //	glBindTexture(GL_TEXTURE_2D, textID);
-    //	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //
-    //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //
-    //	glTexImage2D(
-    //	    GL_TEXTURE_2D,
-    //	    0,
-    //	    GL_RGBA, // RGB 3, RGBA 4
-    //	    image->width(),
-    //	    image->height(),
-    //	    0,
-    //	    GL_RGBA,
-    //	    GL_UNSIGNED_BYTE,
-    //	    image->pixels());
 
     return pair->tex.get();
 }
 
-MiniTexture* MiniTextureCache::updateTexture(const LImage* image)
+Texture* TextureCache::updateTexture(const LImage* image)
 {
-    MiniTexture* tex = find(image->item());
+    Texture* tex = find(image->item());
 
     if (tex) {
         glBindTexture(GL_TEXTURE_2D, tex->texId);
@@ -174,7 +141,7 @@ MiniTexture* MiniTextureCache::updateTexture(const LImage* image)
     return tex;
 }
 
-LVoid MiniTextureCache::clear()
+LVoid TextureCache::clear()
 {
     m_texMap.clear();
 }
