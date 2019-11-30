@@ -51,9 +51,9 @@ public:
 
 private:
     ItemPainter* currentPainter();
+    LVoid paint(LVoid* ptr, Gdiplus::Graphics& gc);
 
 	HWND m_hwnd;
-    KVector<ItemPainter*> m_painters;
     LVoid* m_item;
 };
 }
