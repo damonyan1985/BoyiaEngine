@@ -70,7 +70,7 @@ void TextView::layout(RenderContext& rc)
     font.setFontSize(font.getFontSize() * m_style.scale);
 
     m_newFont = LFont::create(font); // platform reference font
-    int longestLine = calcTextLine(m_text, m_maxWidth - m_style.leftMargin - m_style.rightMargin);
+    LInt longestLine = calcTextLine(m_text, m_maxWidth - m_style.leftMargin - m_style.rightMargin);
 
     m_width = longestLine + m_style.leftMargin + m_style.rightMargin;
     KFORMATLOG("text=%s and text width=%d and lineWidth=%d", (const char*)m_text.GetBuffer(), m_width, longestLine);
@@ -130,7 +130,7 @@ LBool TextView::isMultiLine()
     return m_textLines->size() > 1 ? LTrue : LFalse;
 }
 
-void TextView::paint(LGraphicsContext& gc)
+LVoid TextView::paint(LGraphicsContext& gc)
 {
     gc.setHtmlView(this);
     setClipRect(gc);
