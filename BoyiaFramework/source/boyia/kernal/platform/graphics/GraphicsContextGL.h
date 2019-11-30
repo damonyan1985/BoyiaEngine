@@ -8,14 +8,7 @@
 #include "LGdi.h"
 
 namespace util {
-
-typedef KList<BoyiaPtr<yanbo::GLPainter>> ListPainter;
-// ItemPainter顾名思义，一个HtmlView对应的所有GLPainter
-struct ItemPainter {
-    ListPainter painters;
-    LVoid* item;
-};
-
+class ItemPainter;
 class GraphicsContextGL : public LGraphicsContext {
 public:
     GraphicsContextGL();

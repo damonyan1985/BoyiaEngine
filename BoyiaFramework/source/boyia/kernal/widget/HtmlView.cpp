@@ -76,14 +76,14 @@ LVoid HtmlView::layoutInline(RenderContext& rc)
     }
 }
 
-LVoid HtmlView::setPainter(LVoid* painter)
+LVoid HtmlView::setPainter(BoyiaRef* painter)
 {
     m_painter = painter;
 }
 
 LVoid* HtmlView::painter() const
 {
-    return m_painter;
+    return m_painter.get();
 }
 
 LVoid HtmlView::handleXYPos(RenderContext& rc)
