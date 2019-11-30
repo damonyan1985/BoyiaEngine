@@ -17,16 +17,27 @@
 
 namespace util {
 
+typedef KList<BoyiaPtr<yanbo::GLPainter>> ListPainter;
+// ItemPainter顾名思义，一个HtmlView对应的所有GLPainter
+class ItemPainter : public BoyiaRef {
+public:
+    ItemPainter()
+        : item(kBoyiaNull)
+    {
+    }
+
+    ListPainter painters;
+    LVoid* item;
+};
 GraphicsContextGL::GraphicsContextGL()
-    : m_item(NULL)
-    , m_clipRect(NULL)
+    : m_item(kBoyiaNull)
+    , m_clipRect(kBoyiaNull)
 {
     //reset();
 }
 
 GraphicsContextGL::~GraphicsContextGL()
 {
-    //GLContext::destroyGLContext();
     m_context.destroyGL();
 }
 
@@ -46,7 +57,7 @@ LVoid GraphicsContextGL::save()
 
 LVoid GraphicsContextGL::restore()
 {
-    m_clipRect = NULL;
+    m_clipRect = kBoyiaNull;
 }
 
 LVoid GraphicsContextGL::setHtmlView(LVoid* item)

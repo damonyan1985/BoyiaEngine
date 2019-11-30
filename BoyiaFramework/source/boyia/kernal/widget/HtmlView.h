@@ -8,6 +8,7 @@
 #include "LBaseView.h"
 #include "LGdi.h"
 #include "StyleManager.h"
+#include "BoyiaPtr.h"
 
 namespace yanbo {
 
@@ -86,7 +87,7 @@ public:
     LVoid setDocument(HtmlDocument* doc);
     HtmlDocument* getDocument() const;
 
-    LVoid setPainter(LVoid* painter);
+    LVoid setPainter(BoyiaRef* painter);
     LVoid* painter() const;
 
     LBool isClipItem() const;
@@ -126,7 +127,7 @@ protected:
 
     String m_className;
     LBool m_isViewRoot;
-    LVoid* m_painter;
+    BoyiaPtr<BoyiaRef> m_painter;
     LBool m_clip;
     LayoutRect m_clipRect;
     LBool m_needLayout;
