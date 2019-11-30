@@ -47,11 +47,11 @@ public:
     virtual LVoid clipRect(const LRect& rect);
     virtual LVoid restore();
 
-    ItemPainter* currentPainter();
-
     HWND hwnd() const;
 
 private:
+    ItemPainter* currentPainter();
+
 	HWND m_hwnd;
     KVector<ItemPainter*> m_painters;
     LVoid* m_item;
