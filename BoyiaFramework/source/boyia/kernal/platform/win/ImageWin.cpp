@@ -47,7 +47,7 @@ LVoid ImageWin::setLoaded(LBool loaded)
 {
     LImage::setLoaded(loaded);
     if (m_image && loaded) {
-        unlockPixels();
+        //unlockPixels();
         yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
     }
 }
@@ -64,17 +64,12 @@ LVoid ImageWin::setItem(yanbo::HtmlView* item)
 
 LVoid ImageWin::setData(const OwnerPtr<String>& data)
 {
-    m_data = data;
-}
-
-LVoid ImageWin::unlockPixels()
-{
-    HGLOBAL hmem = GlobalAlloc(GMEM_FIXED, m_data->GetLength());
+    HGLOBAL hmem = GlobalAlloc(GMEM_FIXED, data->GetLength());
     BYTE* pmem = (BYTE*)GlobalLock(hmem);
     if (!pmem) {
         return;
     }
-    memcpy(pmem, m_data->GetBuffer(), m_data->GetLength());
+    memcpy(pmem, data->GetBuffer(), data->GetLength());
     IStream* pstm;
     HRESULT ht = ::CreateStreamOnHGlobal(hmem, FALSE, &pstm);
     if (ht != S_OK) {
@@ -92,7 +87,7 @@ const String& ImageWin::url() const
 
 LVoid* ImageWin::pixels() const
 {
-    return m_data->GetBuffer();
+    return kBoyiaNull;
 }
 
 LVoid ImageWin::onClientCallback()
@@ -100,38 +95,4 @@ LVoid ImageWin::onClientCallback()
     setLoaded(LTrue);
 }
 
-/*
-LVoid ImageWin::onDataReceived(const LByte* data, LInt size)
-{
-    LByte* destData = new LByte[size];
-    util::LMemcpy(destData, data, size);
-    m_builder.append(destData, 0, size, LFalse);
-}
-
-LVoid ImageWin::onStatusCode(LInt statusCode)
-{
-
-}
-
-LVoid ImageWin::onFileLen(LInt len)
-{
-
-}
-
-LVoid ImageWin::onRedirectUrl(const String& redirectUrl)
-{
-
-}
-
-LVoid ImageWin::onLoadError(LInt error)
-{
-
-}
-
-LVoid ImageWin::onLoadFinished()
-{
-    //m_data = m_builder.toString();
-    //UIThread::instance()->sendUIEvent(this);
-}
-*/
 }

@@ -5,7 +5,7 @@
 #include "KListMap.h"
 #include "KVector.h"
 #include "LGdi.h"
-#include "MiniTextureCache.h"
+#include "TextureCache.h"
 #include <GLES3/gl3.h>
 #include <jni.h>
 //#include <GLES2/gl2ext.h>
@@ -80,9 +80,9 @@ public:
 
     void setRect(const LRect& rect);
     void setLine(const LPoint& p1, const LPoint& p2);
-    void setImage(MiniTexture* tex, const LRect& rect);
-    void setImage(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
-    void setVideo(MiniTexture* tex, const LRect& rect);
+    void setImage(Texture* tex, const LRect& rect);
+    void setImage(Texture* tex, const LRect& rect, const LRect& clipRect);
+    void setVideo(Texture* tex, const LRect& rect);
 
     static void init();
     static void paintCommand();
@@ -93,7 +93,7 @@ public:
     float* stMatrix() const;
 
 protected:
-    void setTexture(MiniTexture* tex, const LRect& rect, const LRect& clipRect);
+    void setTexture(Texture* tex, const LRect& rect, const LRect& clipRect);
 
     PaintCommand m_cmd;
     float m_scale;

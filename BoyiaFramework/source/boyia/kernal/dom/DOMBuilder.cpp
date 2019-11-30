@@ -199,7 +199,7 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             default: {
                 StringUtils::replaceSpecialChars(text);
                 if (text.GetLength()) {
-                    item = new TextView(_CS(""), text, LFalse);
+                    item = new TextView(_CS(""), text);
                     if (parent) {
                         item->setParent(parent);
                         parent->addChild(item);

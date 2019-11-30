@@ -14,11 +14,7 @@ namespace yanbo {
 
 class TextView : public InlineView {
 public:
-    TextView(
-        const String& id,
-        const String& text,
-        LBool selectable);
-
+    TextView(const String& id, const String& text);
     ~TextView();
 
 public:
