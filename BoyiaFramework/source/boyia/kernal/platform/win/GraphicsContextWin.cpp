@@ -3,7 +3,7 @@
 #include <GdiPlus.h>
 
 namespace util {
-class ItemPainter {
+class ItemPainter : public BoyiaRef {
 public:
     ItemPainter()
         : cmds(0, 20)
@@ -13,6 +13,7 @@ public:
     KVector<PaintCommand*> cmds;
     LVoid* item;
 };
+
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
     , m_item(kBoyiaNull)
