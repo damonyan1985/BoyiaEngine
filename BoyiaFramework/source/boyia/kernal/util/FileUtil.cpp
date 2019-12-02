@@ -96,6 +96,31 @@ bool FileUtil::isSpecialDir(const char* path)
     return strcmp(path, ".") == 0 || strcmp(path, "..") == 0;
 }
 
+#if ENABLE(BOYIA_WINDOWS)
+static LVoid deleteFileWin(const wstring& path) {
+    WIN32_FIND_DATA data;
+    wstring fullPath = path;
+    HANDLE hFile = ::FindFirstFile(path.c_str(), &data);
+    do {
+        if ((!wcscmp(L".", data.cFileName)) || (!wcscmp(L"..", data.cFileName))) {
+            continue;
+        }
+
+        fullPath += data.cFileName;
+        if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {   
+            deleteFileWin(fullPath);
+        } else {
+            ::DeleteFile(fullPath.c_str());
+        }
+
+        
+    } while (::FindNextFile(hFile, &data));
+
+    ::CloseHandle(hFile);
+    ::RemoveDirectory(path.c_str());
+}
+#endif
+
 LVoid FileUtil::deleteFile(const char* path)
 {
 #if ENABLE(BOYIA_ANDROID)
@@ -129,6 +154,8 @@ LVoid FileUtil::deleteFile(const char* path)
         }
     }
 #elif ENABLE(BOYIA_WINDOWS)
+    wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+    deleteFileWin(wpath);
 #endif
 }
 
