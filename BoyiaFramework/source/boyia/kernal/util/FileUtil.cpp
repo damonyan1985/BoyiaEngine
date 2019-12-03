@@ -155,6 +155,10 @@ LVoid FileUtil::deleteFile(const char* path)
     }
 #elif ENABLE(BOYIA_WINDOWS)
     wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+    if (GetFileAttributes(wpath.c_str()) & FILE_ATTRIBUTE_NORMAL) {
+        ::DeleteFile(wpath.c_str());
+        return;
+    }
     deleteFileWin(wpath);
 #endif
 }
