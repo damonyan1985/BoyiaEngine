@@ -99,8 +99,16 @@ bool FileUtil::isSpecialDir(const char* path)
 #if ENABLE(BOYIA_WINDOWS)
 static LVoid deleteFileWin(const wstring& path) {
     WIN32_FIND_DATA data;
-    wstring fullPath = path;
+    
     HANDLE hFile = ::FindFirstFile(path.c_str(), &data);
+    // 不存在第一个文件，则表示不是目录
+    if (hFile == INVALID_HANDLE_VALUE) {
+        ::DeleteFile(path.c_str());
+        ::CloseHandle(hFile);
+        return;
+    }
+
+    wstring fullPath = path;
     do {
         if ((!wcscmp(L".", data.cFileName)) || (!wcscmp(L"..", data.cFileName))) {
             continue;
@@ -112,8 +120,6 @@ static LVoid deleteFileWin(const wstring& path) {
         } else {
             ::DeleteFile(fullPath.c_str());
         }
-
-        
     } while (::FindNextFile(hFile, &data));
 
     ::CloseHandle(hFile);
@@ -155,10 +161,6 @@ LVoid FileUtil::deleteFile(const char* path)
     }
 #elif ENABLE(BOYIA_WINDOWS)
     wstring wpath = yanbo::CharConvertor::CharToWchar(path);
-    if (GetFileAttributes(wpath.c_str()) & FILE_ATTRIBUTE_NORMAL) {
-        ::DeleteFile(wpath.c_str());
-        return;
-    }
     deleteFileWin(wpath);
 #endif
 }
