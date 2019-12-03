@@ -103,8 +103,8 @@ static LVoid deleteFileWin(const wstring& path) {
     HANDLE hFile = ::FindFirstFile(path.c_str(), &data);
     // 不存在第一个文件，则表示不是目录
     if (hFile == INVALID_HANDLE_VALUE) {
-        ::DeleteFile(path.c_str());
         ::CloseHandle(hFile);
+        ::DeleteFile(path.c_str());
         return;
     }
 
