@@ -1,6 +1,7 @@
 #include "BoyiaOnLoadWin.h"
 #include "AppManager.h"
 #include "GraphicsContextWin.h"
+#include "PlatformBridge.h"
 #include <stdio.h>
 
 #ifndef  _WINDLL
@@ -12,5 +13,5 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd)
 {
 	util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
 	static_cast<util::GraphicsContextWin*>(gc)->setContextWin(hwnd);
-	printf("hello world");
+	printf("hello world apppath=%s", yanbo::PlatformBridge::getAppPath());
 }
