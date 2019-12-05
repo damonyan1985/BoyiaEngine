@@ -10,6 +10,7 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "PlatformBridge.h"
 
 namespace yanbo {
 
@@ -235,7 +236,7 @@ LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
 
     if (m_type == kInputPassword) {
         gc.drawText(
-            String('*', m_value.GetLength()),
+            String('*', PlatformBridge::getTextSize(m_value)),
             LRect(x + m_leftPadding, y + 6,
                 m_width - m_leftPadding, m_height - 6),
             util::LGraphicsContext::kTextLeft);

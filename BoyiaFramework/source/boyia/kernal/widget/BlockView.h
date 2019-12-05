@@ -26,7 +26,7 @@ public:
 
     // add create anonymous or normal child
     virtual LVoid addChild(HtmlView* child);
-    LVoid addChild(HtmlView* child, LBool isNotAnonymousBlock);
+    LVoid addChild(HtmlView* child, LBool isAnonymousBlock);
 
     // layer layout
     virtual LVoid layout();

@@ -13,5 +13,5 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd)
 {
 	util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
 	static_cast<util::GraphicsContextWin*>(gc)->setContextWin(hwnd);
-	printf("hello world apppath=%s", yanbo::PlatformBridge::getAppPath());
+	BOYIA_LOG("hello world apppath=%s\n", yanbo::PlatformBridge::getAppPath());
 }
