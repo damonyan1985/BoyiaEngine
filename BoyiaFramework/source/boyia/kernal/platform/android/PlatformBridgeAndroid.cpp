@@ -53,5 +53,17 @@ const char* PlatformBridge::getBoyiaJsonUrl()
     return "https://damonyan1985.github.io/app/boyia.json";
 }
 
+const LInt PlatformBridge::getTextSize(const String& text)
+{
+    JNIEnv* env = JNIUtil::getEnv();
+    jstring jtext = util::strToJstring(env, GET_STR(text));
+    LInt result = JNIUtil::callStaticIntMethod(
+            "com/boyia/app/core/BoyiaBridge",
+            "getTextSize",
+            "(Ljava/lang/String;)I",
+            jtext);
+    env->DeleteLocalRef(jtext);
+    return result;
+}
 #endif
 }

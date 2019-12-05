@@ -179,42 +179,41 @@ LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHe
 
 LVoid BlockView::addChild(HtmlView* child)
 {
-    addChild(child, LTrue);
+    addChild(child, LFalse);
 }
 
-LVoid BlockView::addChild(HtmlView* child, LBool isNotAnonymousBlock)
+LVoid BlockView::addChild(HtmlView* child, LBool isAnonymousBlock)
 {
-    if (isNotAnonymousBlock) {
-        if (isChildrenInline() && child->isBlockView()) {
-            LInt size = m_children.count();
-            HtmlView::addChild(child);
-            setChildrenInline(LFalse);
-            if (size) {
-                makeChildrenNonInline(child);
-            }
-        } else if (!isChildrenInline() && child->isInline()) {
-            HtmlViewList::Iterator iter = m_children.end();
-            HtmlView* lastChild = *(--iter);
-            if (lastChild && lastChild->isBlockView()) {
-                BlockView* block = static_cast<BlockView*>(lastChild);
-                if (block->isAnonymousBlock()) {
-                    block->addChild(child, LFalse);
-                    child->setParent(block);
-                    return;
-                }
-            }
+    if (isAnonymousBlock) {
+        HtmlView::addChild(child);
+        return;
+    }
 
-            BlockView* b = createAnonymousBlock();
-            b->setDocument(getDocument());
-            //m_children.push(b);
-            HtmlView::addChild(b);
-            b->setParent(this);
-            b->addChild(child, LFalse);
-            child->setParent(b);
-        } else {
-            HtmlView::addChild(child);
+    if (isChildrenInline() && child->isBlockView()) {
+        LInt size = m_children.count();
+        HtmlView::addChild(child);
+        setChildrenInline(LFalse);
+        if (size) {
+            makeChildrenNonInline(child);
+        }
+    } else if (!isChildrenInline() && child->isInline()) {
+        HtmlViewList::Iterator iter = m_children.end();
+        HtmlView* lastChild = *(--iter);
+        if (lastChild && lastChild->isBlockView()) {
+            BlockView* block = static_cast<BlockView*>(lastChild);
+            if (block->isAnonymousBlock()) {
+                block->addChild(child, LTrue);
+                child->setParent(block);
+                return;
+            }
         }
 
+        BlockView* b = createAnonymousBlock();
+        b->setDocument(getDocument());
+        HtmlView::addChild(b);
+        b->setParent(this);
+        b->addChild(child, LTrue);
+        child->setParent(b);
     } else {
         HtmlView::addChild(child);
     }
@@ -231,7 +230,7 @@ LVoid BlockView::makeChildrenNonInline(HtmlView* block)
         tmpIter = iter;
         ++iter;
         if (*tmpIter != block) {
-            b->addChild(*tmpIter, LFalse);
+            b->addChild(*tmpIter, LTrue);
             (*tmpIter)->setParent(b);
             m_children.erase(tmpIter);
         } else {
@@ -285,9 +284,9 @@ LBool BlockView::canScroll() const
 {
     if (getParent()) {
         return m_height > getParent()->getHeight();
-    } else {
-        return m_height > m_doc->getViewPort().GetHeight();
     }
+        
+    return m_height > m_doc->getViewPort().GetHeight();
 }
 
 LInt BlockView::getHeight() const
@@ -299,8 +298,8 @@ LInt BlockView::scrollHeight() const
 {
     if (getParent()) {
         return m_height - getParent()->getHeight();
-    } else {
-        return m_height - m_doc->getViewPort().GetHeight();
     }
+        
+    return m_height - m_doc->getViewPort().GetHeight();
 }
 }

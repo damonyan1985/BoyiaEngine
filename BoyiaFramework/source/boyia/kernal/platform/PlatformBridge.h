@@ -13,6 +13,7 @@ public:
     static const char* getBoyiaJsonPath();
     static const char* getSdkPath();
     static const char* getBoyiaJsonUrl();
+    static const LInt getTextSize(const String& text);
 };
 }
 

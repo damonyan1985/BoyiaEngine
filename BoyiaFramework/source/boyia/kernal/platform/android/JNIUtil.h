@@ -40,6 +40,11 @@ public:
         const char* signature,
         ...);
 
+    static jint callStaticIntMethod(const char* className,
+        const char* method,
+        const char* signature,
+        ...);
+
     static void loadHTML(const String& url, String& stream);
 
     static void setJavaVM(JavaVM* javaVM);

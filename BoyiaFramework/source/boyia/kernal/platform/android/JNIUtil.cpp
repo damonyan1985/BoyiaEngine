@@ -140,6 +140,27 @@ void JNIUtil::callStaticVoidMethod(const char* className,
     }
 }
 
+jint JNIUtil::callStaticIntMethod(const char* className,
+     const char* method,
+     const char* signature,
+     ...)
+{
+    JniMethodInfo methodInfo;
+    if (getStaticMethodInfo(methodInfo, className, method, signature)) {
+        va_list args;
+        va_start(args, signature);
+        jint result = methodInfo.env->CallStaticIntMethodV(
+                methodInfo.classID,
+                methodInfo.methodID,
+                args);
+        va_end(args);
+        methodInfo.env->DeleteLocalRef(methodInfo.classID);
+        return result;
+    }
+
+    return 0;
+}
+
 bool JNIUtil::callStaticBooleanMethod(const char* className,
     const char* method,
     const char* signature,
