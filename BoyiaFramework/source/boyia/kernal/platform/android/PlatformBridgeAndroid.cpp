@@ -1,13 +1,17 @@
-#include "PlatformBridge.h"
 #include "AutoObject.h"
 #include "JNIUtil.h"
+#include "PlatformBridge.h"
 #include "SalLog.h"
+#include "ZipEntry.h"
 
 namespace yanbo {
 
 #if ENABLE(BOYIA_ANDROID)
 bool PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
+    BOYIA_LOG("PlatformBridge---unzip---src: %s, dest: %s", GET_STR(zipFile), GET_STR(dir));
+    // ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir));
+    // return true;
     JNIEnv* env = JNIUtil::getEnv();
     jstring jpath = util::strToJstring(env, GET_STR(zipFile));
     jstring jdir = util::strToJstring(env, GET_STR(dir));
@@ -58,10 +62,10 @@ const LInt PlatformBridge::getTextSize(const String& text)
     JNIEnv* env = JNIUtil::getEnv();
     jstring jtext = util::strToJstring(env, GET_STR(text));
     LInt result = JNIUtil::callStaticIntMethod(
-            "com/boyia/app/core/BoyiaBridge",
-            "getTextSize",
-            "(Ljava/lang/String;)I",
-            jtext);
+        "com/boyia/app/core/BoyiaBridge",
+        "getTextSize",
+        "(Ljava/lang/String;)I",
+        jtext);
     env->DeleteLocalRef(jtext);
     return result;
 }
