@@ -2,6 +2,7 @@
 #include "SalLog.h"
 #include "CharConvertor.h"
 #if ENABLE(BOYIA_WINDOWS)
+#include "ZipEntry.h"
 #include <windows.h>
 #include <ShlObj.h>
 
@@ -13,9 +14,15 @@ static String sAppPath((LUint8)0, MAX_PATH);
 static String sBoyiaJsonPath((LUint8)0, MAX_PATH);
 static String sSdkPath((LUint8)0, MAX_PATH);
 static String sAppRootPath((LUint8)0, MAX_PATH);
+const char* kZipPassword = "123456";
 
 bool PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
+    if (dir.EndWith(_CS("sdk"))) {
+        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
+    } else {
+        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
+    }
     return false;
 }
 
