@@ -33,6 +33,7 @@ file(
     "${BOYIA_SRC_PATH}/kernal/platform/android/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/platform/arm/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/platform/graphics/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/zip/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/style/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/util/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/view/*.cpp"
@@ -87,6 +88,7 @@ target_include_directories(
     ${BOYIA_SRC_PATH}/kernal/platform/android
     ${BOYIA_SRC_PATH}/kernal/platform/arm
     ${BOYIA_SRC_PATH}/kernal/platform/graphics
+    ${BOYIA_SRC_PATH}/kernal/platform/zip
     ${BOYIA_SRC_PATH}/kernal/platform
     ${BOYIA_SRC_PATH}/kernal/style
     ${BOYIA_SRC_PATH}/kernal/util
@@ -101,6 +103,8 @@ target_include_directories(
     ${BOYIA_SRC_PATH}/thread
     ${THIRD_PARTY_PATH}/cjson
     ${THIRD_PARTY_PATH}/tinyxml
+    ${THIRD_PARTY_PATH}/zip
+    ${THIRD_PARTY_PATH}/zip/minizip
 )
 
 find_library(
@@ -118,4 +122,5 @@ target_link_libraries(
     jnigraphics
     cjson
     tinyxml
+    zip
 )

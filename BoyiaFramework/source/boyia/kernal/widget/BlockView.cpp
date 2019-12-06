@@ -285,7 +285,7 @@ LBool BlockView::canScroll() const
     if (getParent()) {
         return m_height > getParent()->getHeight();
     }
-        
+
     return m_height > m_doc->getViewPort().GetHeight();
 }
 
@@ -299,7 +299,7 @@ LInt BlockView::scrollHeight() const
     if (getParent()) {
         return m_height - getParent()->getHeight();
     }
-        
+
     return m_height - m_doc->getViewPort().GetHeight();
 }
 }
