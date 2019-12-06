@@ -8,7 +8,7 @@
 namespace yanbo {
 class ZipEntry {
 public:
-    static int unzip(const char* src, const char* dest);
+    static int unzip(const char* src, const char* dest, const char* password);
 
 private:
     static int writeFile(unzFile& zipfile, char* name);

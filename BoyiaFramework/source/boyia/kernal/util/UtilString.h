@@ -105,7 +105,7 @@ public:
     LInt ReverseFind(const LString<T>& str) const;
     LInt ReverseFindNoCase(const LString<T>& str) const;
 
-    LBool EndWith(const LString<T>& sEnd);
+    LBool EndWith(const LString<T>& sEnd) const;
     LBool EndWithNoCase(const LString<T>& sEnd);
     LBool StartWith(const LString<T>& sStart) const;
     LBool StartWithNoCase(const LString<T>& sStart) const;
@@ -657,7 +657,7 @@ LInt LString<T>::ReverseFindNoCase(const LString<T>& str) const
 }
 
 template <class T>
-LBool LString<T>::EndWith(const LString<T>& sEnd)
+LBool LString<T>::EndWith(const LString<T>& sEnd) const
 {
     LInt mLen = GetLength();
     LInt sLen = sEnd.GetLength();

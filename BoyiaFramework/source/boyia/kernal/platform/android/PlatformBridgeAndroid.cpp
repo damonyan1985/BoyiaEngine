@@ -4,32 +4,38 @@
 #include "SalLog.h"
 #include "ZipEntry.h"
 
-namespace yanbo {
-
 #if ENABLE(BOYIA_ANDROID)
+namespace yanbo {
+const char* kZipPassword = "123456";
 bool PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
     BOYIA_LOG("PlatformBridge---unzip---src: %s, dest: %s", GET_STR(zipFile), GET_STR(dir));
-    // ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir));
-    // return true;
-    JNIEnv* env = JNIUtil::getEnv();
-    jstring jpath = util::strToJstring(env, GET_STR(zipFile));
-    jstring jdir = util::strToJstring(env, GET_STR(dir));
 
-    KFORMATLOG("boyia app AppHandler unzip path=%s", GET_STR(zipFile));
-    KFORMATLOG("boyia app AppHandler unzip dir=%s", GET_STR(dir));
+    if (dir.EndWith(_CS("sdk"))) {
+        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
+    } else {
+        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
+    }
 
-    bool result = JNIUtil::callStaticBooleanMethod(
-        "com/boyia/app/common/utils/ZipOperation",
-        "unZipFile",
-        "(Ljava/lang/String;Ljava/lang/String;)Z",
-        jpath, jdir);
+    return true;
+    // JNIEnv* env = JNIUtil::getEnv();
+    // jstring jpath = util::strToJstring(env, GET_STR(zipFile));
+    // jstring jdir = util::strToJstring(env, GET_STR(dir));
 
-    env->DeleteLocalRef(jpath);
-    env->DeleteLocalRef(jdir);
+    // KFORMATLOG("boyia app AppHandler unzip path=%s", GET_STR(zipFile));
+    // KFORMATLOG("boyia app AppHandler unzip dir=%s", GET_STR(dir));
 
-    BOYIA_LOG("PlatformBridge---unzip---result=%d", (LInt)result);
-    return result;
+    // bool result = JNIUtil::callStaticBooleanMethod(
+    //     "com/boyia/app/common/utils/ZipOperation",
+    //     "unZipFile",
+    //     "(Ljava/lang/String;Ljava/lang/String;)Z",
+    //     jpath, jdir);
+
+    // env->DeleteLocalRef(jpath);
+    // env->DeleteLocalRef(jdir);
+
+    // BOYIA_LOG("PlatformBridge---unzip---result=%d", (LInt)result);
+    // return result;
 }
 
 const char* PlatformBridge::getAppPath()
@@ -69,5 +75,6 @@ const LInt PlatformBridge::getTextSize(const String& text)
     env->DeleteLocalRef(jtext);
     return result;
 }
-#endif
 }
+
+#endif

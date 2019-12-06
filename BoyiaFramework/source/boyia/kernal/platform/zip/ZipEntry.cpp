@@ -1,17 +1,17 @@
 #include "ZipEntry.h"
 #include "FileUtil.h"
-#include <dirent.h>
+//#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
+//#include <sys/stat.h>
+//#include <unistd.h>
 
 #define dir_delimter '/'
 #define MAX_FILENAME 512
 #define READ_SIZE 8192
 
 namespace yanbo {
-int ZipEntry::unzip(const char* src, const char* dest)
+int ZipEntry::unzip(const char* src, const char* dest, const char* password)
 {
     unzFile zipfile = unzOpen(src);
     if (zipfile == kBoyiaNull)
@@ -36,7 +36,12 @@ int ZipEntry::unzip(const char* src, const char* dest)
             sprintf(name, "%s/%s", dest, filename);
             createDir(name);
         } else {
-            if (unzOpenCurrentFilePassword(zipfile, "123456") != UNZ_OK) {
+            if (password && unzOpenCurrentFilePassword(zipfile, "123456") != UNZ_OK) {
+                unzClose(zipfile);
+                return -1;
+            }
+
+            if (!password && unzOpenCurrentFile(zipfile) != UNZ_OK) {
                 unzClose(zipfile);
                 return -1;
             }
