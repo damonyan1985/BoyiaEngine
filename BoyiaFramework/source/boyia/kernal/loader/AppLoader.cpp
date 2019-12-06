@@ -87,7 +87,7 @@ private:
 AppLoader::AppLoader(AppManager* manager)
     : m_appInfos(0, MAX_APPS_SIZE)
     , m_manager(manager)
-    , m_sdk(NULL)
+    , m_sdk(kBoyiaNull)
     , m_loader(NetworkBase::create())
 {
 }

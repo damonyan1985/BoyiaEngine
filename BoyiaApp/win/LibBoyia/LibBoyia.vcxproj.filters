@@ -91,6 +91,15 @@
     <Filter Include="boyia\porting">
       <UniqueIdentifier>{27856d6d-9ef9-4414-8833-bfdfc198c332}</UniqueIdentifier>
     </Filter>
+    <Filter Include="thirdparty\zip">
+      <UniqueIdentifier>{bc2c6d21-14e2-42a0-a580-51d3524764ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\zip\minizip">
+      <UniqueIdentifier>{bdf2d0f3-eb84-47a2-900d-2bb625233766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernal\platform\zip">
+      <UniqueIdentifier>{30be7a03-54b4-48a2-9f0c-31177e013d4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -396,6 +405,54 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageLoader.h">
       <Filter>boyia\kernal\platform\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzguts.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inffast.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inffixed.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inflate.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inftrees.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\trees.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\zconf.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\zlib.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\zutil.h">
+      <Filter>thirdparty\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\crypt.h">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\ioapi.h">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\unzip.h">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.h">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.h">
+      <Filter>boyia\kernal\platform\zip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -664,6 +721,63 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageLoader.cpp">
       <Filter>boyia\kernal\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\adler32.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\compress.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzclose.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzlib.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzread.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzwrite.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\infback.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inffast.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inflate.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\inftrees.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\trees.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\uncompr.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\zutil.c">
+      <Filter>thirdparty\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\ioapi.c">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\unzip.c">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.c">
+      <Filter>thirdparty\zip\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.cpp">
+      <Filter>boyia\kernal\platform\zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
