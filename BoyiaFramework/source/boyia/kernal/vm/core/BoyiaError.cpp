@@ -1,4 +1,5 @@
 #include "BoyiaError.h"
+#include "SalLog.h"
 #include <stdio.h>
 
 extern void BoyiaLog(const char* format, ...);
@@ -31,7 +32,5 @@ LVoid SntxError(LInt error, LInt lineNum)
         "right parentheses expected",
     };
 
-    char info[50];
-    sprintf(info, "Error=%s in line %d\n", errorMap[error], lineNum);
-    BoyiaLog("BoyiaVM Error=%s \n", info);
+    BOYIA_LOG("BoyiaVM Error=%s lineno=%d\n", errorMap[error], lineNum);
 }
