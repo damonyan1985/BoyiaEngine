@@ -51,7 +51,8 @@ void BaseThread::stop()
 void BaseThread::waitOnNotify()
 {
     //AutoLock lock(&m_lock);
-    WaitForSingleObject(m_condition->thread, INFINITE);
+    //WaitForSingleObject(m_condition->thread, INFINITE);
+    SuspendThread(m_condition->thread);
 }
 
 void BaseThread::notify()

@@ -85,6 +85,11 @@ const String& ImageWin::url() const
     return static_cast<yanbo::ImageView*>(m_image)->url();
 }
 
+Gdiplus::Image* ImageWin::image() const
+{
+    return m_winImage;
+}
+
 LVoid* ImageWin::pixels() const
 {
     return kBoyiaNull;

@@ -55,6 +55,10 @@ private:
 
 	HWND m_hwnd;
     LVoid* m_item;
+    LRect* m_clipRect;
+
+    LRgb m_brushColor;
+    LRgb m_penColor;
 };
 }
 

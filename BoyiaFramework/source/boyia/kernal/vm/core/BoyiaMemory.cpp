@@ -53,9 +53,9 @@ LVoid* InitMemoryPool(LInt size)
     BoyiaMemoryPool* pool = FAST_NEW(BoyiaMemoryPool);
     pool->mAddress = FAST_NEW_ARRAY(LByte, size);
     pool->mSize = size;
-    pool->mNext = NULL;
+    pool->mNext = kBoyiaNull;
     pool->mUsed = 0;
-    pool->mFirstBlock = NULL;
+    pool->mFirstBlock = kBoyiaNull;
     return pool;
 }
 
@@ -73,19 +73,20 @@ LVoid FreeMemoryPool(LVoid* mempool)
 LVoid* NewData(LInt size, LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    MemoryBlockHeader* pHeader = NULL;
+    MemoryBlockHeader* pHeader = kBoyiaNull;
 
     LInt mallocSize = size + constHeaderLen;
     if (mallocSize > pool->mSize) {
-        return NULL;
+        return kBoyiaNull;
     }
 
     if (!pool->mFirstBlock) {
         pHeader = (MemoryBlockHeader*)ADDR_ALIGN((LIntPtr)pool->mAddress);
+        BOYIA_LOG("BoyiaMemory pool->address: %lx pHeader %lx constAlignNum %d", (LIntPtr)pool->mAddress, (LIntPtr)pHeader, constAlignNum);
         pHeader->mSize = size;
         pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
-        pHeader->mNext = NULL;
-        pHeader->mPrevious = NULL;
+        pHeader->mNext = kBoyiaNull;
+        pHeader->mPrevious = kBoyiaNull;
         pool->mFirstBlock = pHeader;
     } else {
         MemoryBlockHeader* current = pool->mFirstBlock;
@@ -97,7 +98,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
                 pHeader->mNext = current;
                 current->mPrevious = pHeader;
-                pHeader->mPrevious = NULL;
+                pHeader->mPrevious = kBoyiaNull;
 
                 pool->mFirstBlock = pHeader;
                 pool->mUsed += constHeaderLen + size;
@@ -114,7 +115,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                         pHeader->mSize = size;
                         pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
                         pHeader->mPrevious = current;
-                        pHeader->mNext = NULL;
+                        pHeader->mNext = kBoyiaNull;
                         current->mNext = pHeader;
                         break;
                     }
@@ -143,7 +144,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
     }
 
     pool->mUsed += pHeader ? (constHeaderLen + size) : 0;
-    return pHeader ? pHeader->mAddress : NULL;
+    return pHeader ? pHeader->mAddress : kBoyiaNull;
 }
 
 LVoid DeleteData(LVoid* data, LVoid* mempool)
@@ -159,7 +160,7 @@ LVoid DeleteData(LVoid* data, LVoid* mempool)
         if (pHeader->mNext) {
             pool->mFirstBlock = pHeader->mNext;
         } else {
-            pool->mFirstBlock = NULL;
+            pool->mFirstBlock = kBoyiaNull;
         }
     } else {
         if (pHeader->mNext) {

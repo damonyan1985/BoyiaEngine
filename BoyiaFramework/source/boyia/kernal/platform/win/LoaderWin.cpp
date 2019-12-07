@@ -117,6 +117,7 @@ private:
 
 LoaderWin::LoaderWin()
 {
+    start();
 }
 LoaderWin::~LoaderWin()
 {

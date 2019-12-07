@@ -56,7 +56,7 @@ extern bool JNI_LOG_ON;
 #define KDESLOG(log_str)
 #define KSTRLOG(log_str)
 #define KSTRLOG8(log_str)
-#define KFORMATLOG(format_str, ...) fprintf(stdout, format_str, __VA_ARGS__) 
+#define KFORMATLOG(format_str, ...) fprintf(stdout, format_str##"\n", __VA_ARGS__) 
 #define KSTRFORMAT(format_str, str)
 #define BOYIA_LOG KFORMATLOG
 #endif
