@@ -2,6 +2,7 @@
 #include "HtmlView.h"
 #include "UIView.h"
 #include "ImageWin.h"
+#include <Windows.h>
 #include <GdiPlus.h>
 
 namespace util {
@@ -31,11 +32,13 @@ GraphicsContextWin::GraphicsContextWin()
     , m_item(kBoyiaNull)
     , m_clipRect(kBoyiaNull)
 {
+    Gdiplus::GdiplusStartupInput startupInput;
+    GdiplusStartup(&m_gdiplusToken, &startupInput, NULL);
 }
 
 GraphicsContextWin::~GraphicsContextWin()
 {
-    
+    Gdiplus::GdiplusShutdown(m_gdiplusToken);
 }
 
 LVoid GraphicsContextWin::setContextWin(HWND hwnd)
@@ -201,6 +204,9 @@ LVoid GraphicsContextWin::submit()
     HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
     paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), gc);
+
+    Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 0, 255));
+    gc.FillRectangle(&brush, Gdiplus::Rect(50, 50, 100, 100));
     ::ReleaseDC(m_hwnd, dc);
 }
 

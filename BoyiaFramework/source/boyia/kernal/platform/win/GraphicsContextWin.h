@@ -59,6 +59,7 @@ private:
 
     LRgb m_brushColor;
     LRgb m_penColor;
+    ULONG_PTR m_gdiplusToken;
 };
 }
 
