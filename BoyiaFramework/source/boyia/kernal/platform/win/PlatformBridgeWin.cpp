@@ -41,6 +41,8 @@ const char* PlatformBridge::getBoyiaJsonPath()
         sBoyiaJsonPath = _CS(getAppRoot());
         sBoyiaJsonPath += _CS("boyia.json");
     }
+
+    BOYIA_LOG("PlatformBridge---getBoyiaJsonPath: %s", GET_STR(sBoyiaJsonPath));
     return GET_STR(sBoyiaJsonPath);
 }
 
@@ -57,7 +59,7 @@ const char* PlatformBridge::getAppRoot()
 {
     if (!sAppRootPath.GetLength()) {
         ::SHGetSpecialFolderPathA(NULL, (char*)sAppRootPath.GetBuffer(), CSIDL_LOCAL_APPDATA, 0);
-        BOYIA_LOG("PlatformBridge---getAppRoot: %s\n", GET_STR(sAppRootPath));
+        BOYIA_LOG("PlatformBridge---getAppRoot: %s", GET_STR(sAppRootPath));
 
         LUint8* buffer = sAppRootPath.GetBuffer();
         LInt len = LStrlen(buffer);

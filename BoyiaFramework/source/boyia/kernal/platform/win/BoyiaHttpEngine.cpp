@@ -42,6 +42,7 @@ LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
 
 LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
+    BOYIA_LOG("BoyiaHttpEngine---request url: %s callback： %d", GET_STR(url), (LIntPtr)m_callback);
     if (!m_callback) {
         return;
     }
@@ -53,7 +54,8 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
     // 初始化wininet
 	HINTERNET internet = ::InternetOpen(L"WinInetGet/0.1", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	
+    BOYIA_LOG("BoyiaHttpEngine---request Open Internet %d", 1);
+
     // 建立连接
 	DWORD dwConnectContext = 0;
 	HINTERNET connect = ::InternetConnect(internet, uri.host.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, dwConnectContext);
@@ -171,5 +173,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 	InternetCloseHandle(request);
 	InternetCloseHandle(connect);
 	InternetCloseHandle(internet);
+
+    BOYIA_LOG("BoyiaHttpEngine---request end %d", 2);
 }
 }

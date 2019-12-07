@@ -266,6 +266,17 @@ static LInt HandleAssignment(LVoid* ins);
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
 
+// 重置现场
+static LVoid ResetScene(BoyiaVM* vm)
+{
+    vm->mEState->mLValSize = 0; /* initialize local variable stack index */
+    vm->mEState->mFunctos = 0; /* initialize the CALL stack index */
+    vm->mEState->mLoopSize = 0;
+    vm->mEState->mResultNum = 0;
+    vm->mEState->mTmpLValSize = 0;
+    vm->mEState->mClass = kBoyiaNull;
+}
+
 LVoid* InitVM()
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
@@ -285,6 +296,7 @@ LVoid* InitVM()
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
+    ResetScene(vm);
 
     return vm;
 }
@@ -1153,17 +1165,6 @@ static LVoid DeleteExecutor(CommandTable* table)
     VM_DELETE(table);
 }
 
-// 重置现场
-static LVoid ResetScene()
-{
-    gBoyiaVM->mEState->mLValSize = 0; /* initialize local variable stack index */
-    gBoyiaVM->mEState->mFunctos = 0; /* initialize the CALL stack index */
-    gBoyiaVM->mEState->mLoopSize = 0;
-    gBoyiaVM->mEState->mResultNum = 0;
-    gBoyiaVM->mEState->mTmpLValSize = 0;
-    gBoyiaVM->mEState->mClass = kBoyiaNull;
-}
-
 // 执行全局的调用
 static LVoid ExecuteCode(CommandTable* cmds)
 {
@@ -1172,7 +1173,7 @@ static LVoid ExecuteCode(CommandTable* cmds)
     ExecInstruction();
     // 删除执行体
     DeleteExecutor(cmds);
-    ResetScene();
+    ResetScene(gBoyiaVM);
 }
 
 static LInt HandleDeclGlobal(LVoid* ins)
@@ -2152,7 +2153,7 @@ LVoid CompileCode(LInt8* code)
     gBoyiaVM->mEState->mLoopSize = 0;
     gBoyiaVM->mEState->mClass = kBoyiaNull;
     ParseStatement(); // 该函数记录全局变量以及函数接口
-    ResetScene();
+    ResetScene(gBoyiaVM);
 }
 
 LVoid* GetLocalValue(LInt idx)

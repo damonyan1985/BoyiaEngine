@@ -12,7 +12,7 @@
 class BOYIA_PORTING_API BoyiaOnLoadWin
 {
 public:
-	static void setContextWin(HWND hwnd);
+	static void setContextWin(HWND hwnd, int width, int height);
 };
 
 #endif

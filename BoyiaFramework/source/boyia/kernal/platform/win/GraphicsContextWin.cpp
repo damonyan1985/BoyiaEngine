@@ -1,6 +1,7 @@
 #include "GraphicsContextWin.h"
 #include "HtmlView.h"
 #include "UIView.h"
+#include "ImageWin.h"
 #include <GdiPlus.h>
 
 namespace util {
@@ -28,6 +29,7 @@ public:
 GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
     , m_item(kBoyiaNull)
+    , m_clipRect(kBoyiaNull)
 {
 }
 
@@ -43,6 +45,7 @@ LVoid GraphicsContextWin::setContextWin(HWND hwnd)
 
 LVoid GraphicsContextWin::restore()
 {
+    m_clipRect = kBoyiaNull;
 }
 
 LVoid GraphicsContextWin::reset()
@@ -65,6 +68,9 @@ LVoid GraphicsContextWin::drawRect(const LRect& aRect)
 {
     ItemPainter* painter = currentPainter();
     PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
+    cmd->type = PaintCommand::kPaintRect;
+    cmd->color = m_brushColor;
+    cmd->rect = aRect;
     painter->cmds.addElement(cmd);
 }
 
@@ -101,6 +107,13 @@ ItemPainter* GraphicsContextWin::currentPainter()
 
 LVoid GraphicsContextWin::drawText(const String& aText, const LRect& aRect)
 {
+    ItemPainter* painter = currentPainter();
+    PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
+    cmd->text = aText;
+    cmd->type = PaintCommand::kPaintText;
+    cmd->color = m_penColor;
+    cmd->rect = aRect;
+    painter->cmds.addElement(cmd);
 }
 
 LVoid GraphicsContextWin::drawText(const String& aText, const LPoint& aPoint)
@@ -113,6 +126,13 @@ LVoid GraphicsContextWin::drawImage(const LPoint& aTopLeft, const LImage* aBitma
 
 LVoid GraphicsContextWin::drawImage(const LImage* image)
 {
+    ItemPainter* painter = currentPainter();
+    PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
+    cmd->image = ((ImageWin*)image)->image();
+    cmd->type = PaintCommand::kPaintImage;
+    cmd->color = m_brushColor;
+    cmd->rect = image->rect();
+    painter->cmds.addElement(cmd);
 }
 
 LVoid GraphicsContextWin::drawImage(const LRect& aDestRect, const LImage* aSource, const LRect& aSourceRect)
@@ -129,10 +149,12 @@ LVoid GraphicsContextWin::setPenStyle(PenStyle aPenStyle)
 
 LVoid GraphicsContextWin::setBrushColor(const LRgb& aColor)
 {
+    m_brushColor = aColor;
 }
 
 LVoid GraphicsContextWin::setPenColor(const LRgb& aColor)
 {
+    m_penColor = aColor;
 }
 
 LVoid GraphicsContextWin::setFont(const LFont& font)
@@ -149,6 +171,7 @@ LVoid GraphicsContextWin::drawText(const String& text, const LRect& rect, TextAl
 
 LVoid GraphicsContextWin::clipRect(const LRect& rect)
 {
+    m_clipRect = (LRect*)& rect;
 }
 
 LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
@@ -175,10 +198,10 @@ LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
 
 LVoid GraphicsContextWin::submit()
 {
-	HDC dc = ::GetDC(m_hwnd);
+    HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
     paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), gc);
-	::ReleaseDC(m_hwnd, dc);
+    ::ReleaseDC(m_hwnd, dc);
 }
 
 HWND GraphicsContextWin::hwnd() const
