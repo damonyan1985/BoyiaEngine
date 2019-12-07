@@ -180,6 +180,6 @@ LInt GetUsedMemory(LVoid* mempool)
 
 LVoid PrintPoolSize(LVoid* mempool)
 {
-    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    BOYIA_LOG("BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
+    //BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
+    //BOYIA_LOG("BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
 }

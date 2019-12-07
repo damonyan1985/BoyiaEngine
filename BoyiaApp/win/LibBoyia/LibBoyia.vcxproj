@@ -92,6 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\core;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\arm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\lib;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\json;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\app;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\dom;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\style;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\gui;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget\flex;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\thread;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\tinyxml;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\cjson;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\painter\utils;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\graphics;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip\minizip;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\zip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

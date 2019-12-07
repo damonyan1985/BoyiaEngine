@@ -10,6 +10,7 @@
 #include "BoyiaError.h"
 #include "BoyiaMemory.h"
 #include "SystemUtil.h"
+#include "SalLog.h"
 
 #define ENABLE_LOG
 
@@ -425,10 +426,10 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count)
 {
     BoyiaFunction* newFunc = NEW(BoyiaFunction);
     // copy function
-    EngineLog("HandleCallInternal CreateObject %d", 5);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 5);
 
     BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
-    EngineLog("HandleCallInternal CreateObject %d", 6);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 6);
     newFunc->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS);
     //EngineLog("HandleCallInternal CreateObject %d", 7);
     newFunc->mParamSize = 0;
@@ -454,15 +455,15 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count)
 
 LInt CreateObject()
 {
-    EngineLog("HandleCallInternal CreateObject %d", 1);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 1);
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
     if (!value || value->mValueType != BY_CLASS) {
         return 0;
     }
 
-    EngineLog("HandleCallInternal CreateObject %d", 2);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 2);
     // 获取CLASS的内部实现
-    EngineLog("HandleCallInternal CreateObject %d", 3);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 3);
     // 指针引用R0
     BoyiaValue* result = &gBoyiaVM->mCpu->mReg0;
     // 设置result的值
@@ -471,7 +472,7 @@ LInt CreateObject()
     BoyiaFunction* newFunc = CopyFunction(value, NUM_FUNC_PARAMS);
     result->mValue.mObj.mPtr = (LIntPtr)newFunc;
     result->mValue.mObj.mSuper = value->mValue.mObj.mSuper;
-    EngineLog("HandleCallInternal CreateObject %d", 4);
+    BOYIA_LOG("HandleCallInternal CreateObject %d", 4);
 
     GCAppendRef(newFunc, BY_CLASS);
     return 1;
@@ -511,7 +512,7 @@ LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src)
 
 static LInt HandleBreak(LVoid* ins)
 {
-    EngineLog("HandleBreak mLoopSize=%d \n", gBoyiaVM->mEState->mLoopSize);
+    BOYIA_LOG("HandleBreak mLoopSize=%d \n", gBoyiaVM->mEState->mLoopSize);
     gBoyiaVM->mEState->mPC = (Instruction*)gBoyiaVM->mLoopStack[--gBoyiaVM->mEState->mLoopSize];
     //EngineLog("HandleBreak end=%d \n", gBoyiaVM->mEState->mPC->mNext->mOPCode);
     return 1;
@@ -519,7 +520,7 @@ static LInt HandleBreak(LVoid* ins)
 
 static LVoid BreakStatement()
 {
-    EngineLog("BreakStatement inst code=%d \n", 1);
+    BOYIA_LOG("BreakStatement inst code=%d \n", 1);
     PutInstruction(kBoyiaNull, kBoyiaNull, BY_BREAK, HandleBreak);
 }
 
@@ -632,7 +633,7 @@ static LInt HandleCallInternal(LVoid* ins)
     Instruction* inst = (Instruction*)ins;
 
     LInt idx = inst->mOPLeft.mValue;
-    EngineLog("HandleCallInternal Exec idx=%d", idx);
+    BOYIA_LOG("HandleCallInternal Exec idx=%d", idx);
     return (*gNativeFunTable[idx].mAddr)();
 }
 
@@ -760,7 +761,7 @@ static LVoid BlockStatement()
                 DoStatement();
                 break;
             case BY_BREAK:
-                EngineLog("BREAK BreakStatement %d \n", 1);
+                BOYIA_LOG("BREAK BreakStatement %d \n", 1);
                 BreakStatement();
                 break;
             }
@@ -1291,7 +1292,7 @@ static LInt HandlePushParams(LVoid* ins)
     // 第一个参数为调用该函数的函数指针
     LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &gBoyiaVM->mLocals[start];
-    EngineLog("HandlePushParams functionName=%u \n", value->mValueType);
+    BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
     if (value->mValueType == BY_FUNC) {
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
@@ -1409,12 +1410,12 @@ static LInt HandleIfEnd(LVoid* ins)
     Instruction* inst = gBoyiaVM->mEState->mPC;
     Instruction* tmpInst = inst->mNext;
     // 查看下一个是否是elseif
-    EngineLog("HandleIfEnd R0=>%d \n", 1);
+    BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == ELIF || tmpInst->mOPCode == BY_ELSE)) {
         inst = (Instruction*)tmpInst->mOPRight.mValue; // 跳转到elif对应的IFEND
         tmpInst = inst->mNext;
     }
-    EngineLog("HandleIfEnd END R0=>%d \n", 1);
+    BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
     if (inst)
         gBoyiaVM->mEState->mPC = inst;
     return 1;
@@ -1538,12 +1539,12 @@ static LInt HandleAdd(LVoid* ins)
     //EngineLog("HandleAdd right=%d \n", right->mValue.mIntVal);
     if (left->mValueType == BY_INT && right->mValueType == BY_INT) {
         right->mValue.mIntVal += left->mValue.mIntVal;
-        EngineLog("HandleAdd result=%d \n", right->mValue.mIntVal);
+        BOYIA_LOG("HandleAdd result=%d", right->mValue.mIntVal);
         return 1;
     }
 
     if (left->mValueType == BY_STRING || right->mValueType == BY_STRING) {
-        EngineLog("StringAdd Begin %d", 1);
+        BOYIA_LOG("StringAdd Begin %d", 1);
         StringAdd(left, right);
         return 1;
     }
@@ -1564,7 +1565,7 @@ static LInt HandleSub(LVoid* ins)
         return 0;
 
     right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
-    EngineLog("HandleSub R0=>%d \n", gBoyiaVM->mCpu->mReg0.mValue.mIntVal);
+    BOYIA_LOG("HandleSub R0=>%d", gBoyiaVM->mCpu->mReg0.mValue.mIntVal);
     return 1;
 }
 
@@ -1578,13 +1579,13 @@ static LInt HandleMul(LVoid* ins)
         return 0;
     }
 
-    EngineLog("HandleMul left=%d \n", left->mValue.mIntVal);
-    EngineLog("HandleMul right=%d \n", right->mValue.mIntVal);
+    BOYIA_LOG("HandleMul left=%d \n", left->mValue.mIntVal);
+    BOYIA_LOG("HandleMul right=%d \n", right->mValue.mIntVal);
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
         return 0;
 
     right->mValue.mIntVal *= left->mValue.mIntVal;
-    EngineLog("HandleMul result=%d \n", right->mValue.mIntVal);
+    BOYIA_LOG("HandleMul result=%d \n", right->mValue.mIntVal);
     return 1;
 }
 
@@ -1638,8 +1639,8 @@ static LInt HandleRelational(LVoid* ins)
         return 0;
     }
 
-    EngineLog("HandleLogic left=%d \n", left->mValue.mIntVal);
-    EngineLog("HandleLogic right=%d \n", right->mValue.mIntVal);
+    BOYIA_LOG("HandleLogic left=%d \n", left->mValue.mIntVal);
+    BOYIA_LOG("HandleLogic right=%d \n", right->mValue.mIntVal);
 
     LInt result = 0;
     switch (inst->mOPCode) {
@@ -2169,7 +2170,7 @@ LInt GetLocalSize()
 
 LVoid CallFunction(LInt8* fun, LVoid* ret)
 {
-    EngineLog("callFunction=>%d \n", 1);
+    BOYIA_LOG("callFunction=>%d \n", 1);
     gBoyiaVM->mEState->mProg = fun;
     CommandTable* cmds = CreateExecutor();
     gBoyiaVM->mEState->mContext = cmds;
