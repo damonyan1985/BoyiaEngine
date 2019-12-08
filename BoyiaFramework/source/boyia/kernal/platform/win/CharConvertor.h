@@ -12,7 +12,7 @@ using std::wstring;
 namespace yanbo {
 class CharConvertor {
 public:
-	static wstring CharToWchar(const char* c, size_t m_encode = CP_ACP);
+	static wstring CharToWchar(const char* c, size_t m_encode = CP_UTF8);
 	static LVoid WcharToChar(const wchar_t* wp, String& text, size_t m_encode = CP_ACP);
 };
 }

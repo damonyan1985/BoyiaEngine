@@ -1,6 +1,7 @@
 #include "PaintCommandAllocator.h"
 #include "CharConvertor.h"
 #include "KVector.h"
+#include "PixelRatio.h"
 
 namespace util {
 const LInt kPaintCommandDefaultCapacity = 2048;
@@ -14,11 +15,17 @@ class PaintRectHandler : public PaintCmdHandler {
 public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
-        Gdiplus::Rect rect(
-            cmd->rect.iTopLeft.iX,
-            cmd->rect.iTopLeft.iY,
-            cmd->rect.GetWidth(),
-            cmd->rect.GetHeight()
+        float ratio = yanbo::PixelRatio::ratio();
+
+        float width = cmd->rect.GetWidth() * yanbo::PixelRatio::ratio();
+        width = width < 1 ? 1 : width;
+        float height = cmd->rect.GetHeight() * yanbo::PixelRatio::ratio();
+        height = height < 1 ? 1 : height;
+        Gdiplus::RectF rect(
+            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            width,
+            height
         );
 
         Gdiplus::SolidBrush brush(Gdiplus::Color(
@@ -36,14 +43,14 @@ public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
         wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(cmd->text));
-        Gdiplus::Font font(L"Arial", cmd->font.getFontSize());
+        Gdiplus::Font font(L"Arial", cmd->font.getFontSize() * yanbo::PixelRatio::ratio());
 
         Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
         Gdiplus::RectF rect(
-            cmd->rect.iTopLeft.iX,
-            cmd->rect.iTopLeft.iY,
-            cmd->rect.GetWidth(),
-            cmd->rect.GetHeight()
+            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            cmd->rect.GetWidth() * yanbo::PixelRatio::ratio(),
+            cmd->rect.GetHeight() * yanbo::PixelRatio::ratio()
         );
         
         Gdiplus::SolidBrush brush(Gdiplus::Color(
@@ -62,10 +69,10 @@ public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
         Gdiplus::Rect rect(
-            cmd->rect.iTopLeft.iX,
-            cmd->rect.iTopLeft.iY,
-            cmd->rect.GetWidth(),
-            cmd->rect.GetHeight()
+            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            cmd->rect.GetWidth() * yanbo::PixelRatio::ratio(),
+            cmd->rect.GetHeight() * yanbo::PixelRatio::ratio()
         );
         gc.DrawImage(cmd->image, rect);
     }
