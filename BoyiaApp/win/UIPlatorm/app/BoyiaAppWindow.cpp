@@ -29,7 +29,7 @@ BoyiaAppWindow::~BoyiaAppWindow()
 
 DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
-    BoyiaOnLoadWin::setContextWin(m_hWnd, 720, 1280);
+    BoyiaOnLoadWin::setContextWin(m_hWnd, 360, 640);
     /*
     HWND hWnd = m_hWnd;
     HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
@@ -159,9 +159,6 @@ void BoyiaAppWindow::ProcessTick()
 		m_memSurfaceDC.DeleteDC();
 		m_memSurfaceDC.DeleteDC();
 	}
-
-
-	//
 }
 
 BoyiaAppImpl::BoyiaAppImpl()
@@ -179,7 +176,7 @@ BOOL BoyiaAppImpl::InitInstance(HINSTANCE hIns, int nCmdShow)
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
     _ptwin = new BoyiaAppWindow;
     _ptwin->InitBaseWindow(hIns);
-    _ptwin->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, 0, 0, 720, 1280, NULL);
+    _ptwin->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, 0, 0, 360, 640, NULL);
     _ptwin->ShowTW(nCmdShow);
     _ptwin->UpdateTW();
     return TRUE;
