@@ -26,7 +26,7 @@ enum InlineCacheType {
     CACHE_METHOD
 };
 
-static LVoid* gMemPool = NULL;
+static LVoid* gMemPool = kBoyiaNull;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 extern LVoid GCollectGarbage();
@@ -234,7 +234,7 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 {
     yanbo::TimeAnalysis analysis("GetInlineCache");
     if (!cache) {
-        return NULL;
+        return kBoyiaNull;
     }
 
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
@@ -256,5 +256,5 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
         ++index;
     }
 
-    return NULL;
+    return kBoyiaNull;
 }

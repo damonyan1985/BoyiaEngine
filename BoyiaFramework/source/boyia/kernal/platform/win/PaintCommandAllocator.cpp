@@ -139,6 +139,7 @@ PaintCommand* PaintCommandAllocator::alloc() const
 {
     for (LInt i = 0; i < kPaintCommandDefaultCapacity; ++i) {
         if (!m_cmds[i].inUse) {
+            m_cmds[i].inUse = LTrue;
             return &m_cmds[i];
         }
     }

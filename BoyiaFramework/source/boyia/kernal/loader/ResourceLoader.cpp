@@ -82,7 +82,7 @@ private:
 };
 
 ResourceLoader::ResourceLoader(UIView* view)
-    : m_render(NULL)
+    : m_render(kBoyiaNull)
     , m_view(view)
     , m_cssSize(0)
 {
@@ -157,7 +157,7 @@ LVoid ResourceLoader::executeDocument(const String& data)
 
     KLOG("m_render->layout()");
     m_render->layout();
-    m_render->paint(NULL);
+    m_render->paint(kBoyiaNull);
 }
 
 HtmlRenderer* ResourceLoader::render() const
@@ -174,7 +174,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 
     if (--m_cssSize <= 0) {
         m_render->layout();
-        m_render->paint(NULL);
+        m_render->paint(kBoyiaNull);
     }
 }
 

@@ -5,9 +5,15 @@
 namespace yanbo {
 class Condition {
 public:
-    Condition() {}
+    Condition() {
+        winEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+    }
+
+    ~Condition() {
+    }
     DWORD threadId;
     HANDLE thread;
+    HANDLE winEvent;
 };
 
 BaseThread::BaseThread()
@@ -51,17 +57,20 @@ void BaseThread::stop()
 void BaseThread::waitOnNotify()
 {
     //AutoLock lock(&m_lock);
-    //WaitForSingleObject(m_condition->thread, INFINITE);
-    SuspendThread(m_condition->thread);
+    WaitForSingleObject(m_condition->winEvent, INFINITE);
+    ::ResetEvent(m_condition->winEvent);
+    //SuspendThread(m_condition->thread);
 }
 
 void BaseThread::notify()
 {
     //AutoLock lock(&m_lock);
     //ResumeThread(m_condition->thread);
+    /*
     if (m_condition->thread) {
         ResumeThread(m_condition->thread);
-    }
+    }*/
+    ::SetEvent(m_condition->winEvent);
 }
 
 // millisecond
