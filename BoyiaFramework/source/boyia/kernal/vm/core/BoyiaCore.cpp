@@ -528,7 +528,9 @@ static LInt HandleCreateProp(LVoid* ins)
 {
     Instruction* inst = (Instruction*)ins;
     BoyiaFunction* func = (BoyiaFunction*)gBoyiaVM->mEState->mClass->mValue.mObj.mPtr;
-    func->mParams[func->mParamSize++].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
+    func->mParams[func->mParamSize].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
+    func->mParams[func->mParamSize].mValue.mIntVal = 0;
+    func->mParamSize++;
     return 1;
 }
 
@@ -1087,7 +1089,7 @@ static LInt HandleExtend(LVoid* ins)
     BoyiaValue* classVal = FindGlobal((LUintPtr)inst->mOPLeft.mValue);
     BoyiaValue* extendVal = FindGlobal((LUintPtr)inst->mOPRight.mValue);
 
-    // 设置super指针
+    // set super pointer
     classVal->mValue.mObj.mSuper = (LIntPtr)extendVal;
     return 1;
 }

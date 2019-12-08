@@ -22,11 +22,9 @@ static LVoid AppendNative(LUintPtr id, NativePtr ptr)
 static LVoid InitLib()
 {
     sFunTable = new NativeFunction[MAX_NATIVE_FUN_SIZE];
-    //sFunTable[0] = { GenIdentByStr("new", 3), CreateObject };
-    //AppendNative(GenIdentByStr("new", 3), CreateObject);
     AppendNative(GenIdentByStr("new", 3), CreateObject);
     AppendNative(GenIdentByStr("BY_Content", 10), getFileContent);
-        // Array Api Begin
+    // Array Api Begin
     AppendNative(GenIdentByStr("BY_GetFromArray", 15), getElementFromVector);
     AppendNative(GenIdentByStr("BY_AddInArray", 13), addElementToVector);
     AppendNative(GenIdentByStr("BY_GetArraySize", 15), getVectorSize);

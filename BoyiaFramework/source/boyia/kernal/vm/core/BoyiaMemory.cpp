@@ -122,7 +122,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 }
 
                 // Out Of Memory
-                return NULL;
+                return kBoyiaNull;
             } else {
                 if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
                     LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));

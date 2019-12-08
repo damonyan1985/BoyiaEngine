@@ -16,7 +16,7 @@
 //#include <android/log.h>
 #include <stdio.h>
 
-extern void BoyiaLog(const char* format, ...);
+//extern void BoyiaLog(const char* format, ...);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 
 char* convertMStr2Str(BoyiaStr* str)
@@ -61,7 +61,7 @@ LInt getFileContent()
 
 LInt addElementToVector()
 {
-    BoyiaLog("addElementToVector %d", 1);
+    BOYIA_LOG("addElementToVector %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* element = (BoyiaValue*)GetLocalValue(1);
 
@@ -74,7 +74,7 @@ LInt addElementToVector()
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
 		VM_DELETE(value);
     }
-    BoyiaLog("addElementToVector %d", 2);
+    BOYIA_LOG("addElementToVector %d", 2);
     //fun->mParams[fun->mParamSize++] = *element;
     ValueCopy(fun->mParams + fun->mParamSize++, element);
 

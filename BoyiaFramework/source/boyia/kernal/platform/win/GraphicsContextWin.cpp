@@ -79,6 +79,7 @@ LVoid GraphicsContextWin::drawRect(const LRect& aRect)
 
 LVoid GraphicsContextWin::drawRect(LInt x, LInt y, LInt w, LInt h)
 {
+    drawRect(LRect(x, y, w, h));
 }
 
 LVoid GraphicsContextWin::drawEllipse(const LRect& aRect)
@@ -110,13 +111,6 @@ ItemPainter* GraphicsContextWin::currentPainter()
 
 LVoid GraphicsContextWin::drawText(const String& aText, const LRect& aRect)
 {
-    ItemPainter* painter = currentPainter();
-    PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
-    cmd->text = aText;
-    cmd->type = PaintCommand::kPaintText;
-    cmd->color = m_penColor;
-    cmd->rect = aRect;
-    painter->cmds.addElement(cmd);
 }
 
 LVoid GraphicsContextWin::drawText(const String& aText, const LPoint& aPoint)
@@ -170,6 +164,13 @@ LVoid GraphicsContextWin::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
 LVoid GraphicsContextWin::drawText(const String& text, const LRect& rect, TextAlign align)
 {
+    ItemPainter* painter = currentPainter();
+    PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
+    cmd->text = text;
+    cmd->type = PaintCommand::kPaintText;
+    cmd->color = m_penColor;
+    cmd->rect = rect;
+    painter->cmds.addElement(cmd);
 }
 
 LVoid GraphicsContextWin::clipRect(const LRect& rect)
@@ -205,8 +206,8 @@ LVoid GraphicsContextWin::submit()
     Gdiplus::Graphics gc(m_hwnd);
     paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), gc);
 
-    Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 0, 255));
-    gc.FillRectangle(&brush, Gdiplus::Rect(50, 50, 100, 100));
+    //Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 0, 255));
+    //gc.FillRectangle(&brush, Gdiplus::Rect(50, 50, 100, 100));
     ::ReleaseDC(m_hwnd, dc);
 }
 

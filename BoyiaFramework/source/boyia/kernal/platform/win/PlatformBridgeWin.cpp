@@ -72,7 +72,8 @@ const char* PlatformBridge::getAppRoot()
 
 const char* PlatformBridge::getBoyiaJsonUrl()
 {
-    return "https://damonyan1985.github.io/app/boyia.json";
+    //return "https://damonyan1985.github.io/app/boyia.json";
+    return "boyia://net_boyia.json";
 }
 
 const LInt PlatformBridge::getTextSize(const String& text)
