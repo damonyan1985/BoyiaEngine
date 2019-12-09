@@ -43,7 +43,7 @@ public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
         wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(cmd->text));
-        Gdiplus::Font font(L"Arial", cmd->font.getFontSize() * yanbo::PixelRatio::ratio());
+        Gdiplus::Font font(L"Arial", cmd->font.getFontSize() * 0.3);
 
         Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
         Gdiplus::RectF rect(

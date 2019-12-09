@@ -17,7 +17,7 @@ END_MAP_TABLE()
 
 BoyiaAppWindow::BoyiaAppWindow()
 {
-    m_hCursor = ::LoadCursor(NULL, IDC_CROSS);
+    m_hCursor = ::LoadCursor(NULL, IDC_ARROW);
     m_bGameStart = FALSE;
     m_bGameEnd = FALSE;
     m_bFirstShow = FALSE;
