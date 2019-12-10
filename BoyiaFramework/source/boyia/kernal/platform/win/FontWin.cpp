@@ -91,6 +91,7 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     GraphicsPath path;
     FontFamily family;
     Font font(L"Arial", m_size);
+    font.GetFamily(&family);
     StringFormat format(Gdiplus::StringAlignmentNear);
     Gdiplus::Rect rect;
 

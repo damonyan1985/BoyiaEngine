@@ -92,6 +92,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 		dwError = GetLastError();
 		BOYIA_LOG("HttpSendRequest error: ", dwError);
         m_callback->onLoadError(NetworkClient::kNetworkFileError);
+        return;
 	}
 
 	if (dwError == ERROR_INTERNET_INVALID_CA) {
