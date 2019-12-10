@@ -52,8 +52,9 @@ LInt FontWin::getFontHeight() const
     GraphicsPath path;
     FontFamily family;
     Font font(L"Arial", m_size);
+    font.GetFamily(&family);
     StringFormat format(Gdiplus::StringAlignmentNear);
-    path.AddString(L"F", -1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
+    path.AddString(L"F", 1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
     
     Gdiplus::Rect rect;
     path.GetBounds(&rect);

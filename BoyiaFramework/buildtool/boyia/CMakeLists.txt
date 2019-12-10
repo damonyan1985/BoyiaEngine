@@ -6,6 +6,9 @@ add_definitions(-DANDROID_NDK -DFT2_BUILD_LIBRARY=1 -DPOSIX -DENABLE_BOYIA_ANDRO
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -frtti")
 
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
 set(BOYIA_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/boyia")
 set(THIRD_PARTY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/thirdparty")
 
