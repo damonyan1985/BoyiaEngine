@@ -2,8 +2,6 @@
 #include "HtmlView.h"
 #include "UIView.h"
 #include "ImageWin.h"
-#include <Windows.h>
-#include <GdiPlus.h>
 
 namespace util {
 class ItemPainter : public BoyiaRef {
@@ -31,6 +29,7 @@ GraphicsContextWin::GraphicsContextWin()
 	: m_hwnd(0)
     , m_item(kBoyiaNull)
     , m_clipRect(kBoyiaNull)
+    , m_cacheBitmap(kBoyiaNull)
 {
     Gdiplus::GdiplusStartupInput startupInput;
     GdiplusStartup(&m_gdiplusToken, &startupInput, NULL);
@@ -38,6 +37,9 @@ GraphicsContextWin::GraphicsContextWin()
 
 GraphicsContextWin::~GraphicsContextWin()
 {
+    if (m_cacheBitmap) {
+        delete m_cacheBitmap;
+    }
     Gdiplus::GdiplusShutdown(m_gdiplusToken);
 }
 
@@ -202,18 +204,36 @@ LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
 
 LVoid GraphicsContextWin::submit()
 {
+    if (!m_cacheBitmap) {
+        RECT rc;
+        GetClientRect(m_hwnd, &rc);
+        m_cacheBitmap = new Gdiplus::Bitmap(int(rc.right), int(rc.bottom));
+    }
+
+    Gdiplus::Graphics cacheGc(m_cacheBitmap);
+    paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), cacheGc);
+    
     HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
-    paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), gc);
-
-    //Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 0, 255));
-    //gc.FillRectangle(&brush, Gdiplus::Rect(50, 50, 100, 100));
+    Gdiplus::CachedBitmap cachedBmp(m_cacheBitmap, &gc);
+    gc.DrawCachedBitmap(&cachedBmp, 0, 0);
     ::ReleaseDC(m_hwnd, dc);
 }
 
 HWND GraphicsContextWin::hwnd() const
 {
     return m_hwnd;
+}
+
+LVoid GraphicsContextWin::repaint() const
+{
+    if (m_cacheBitmap) {
+        HDC dc = ::GetDC(m_hwnd);
+        Gdiplus::Graphics gc(m_hwnd);
+        Gdiplus::CachedBitmap cachedBmp(m_cacheBitmap, &gc);
+        gc.DrawCachedBitmap(&cachedBmp, 0, 0);
+        ::ReleaseDC(m_hwnd, dc);
+    }
 }
 
 LGraphicsContext* LGraphicsContext::create() 

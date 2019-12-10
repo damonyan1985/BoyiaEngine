@@ -48,6 +48,8 @@ public:
         if (image) {
             image->setData(data);
         }
+
+        //AppManager::instance()->uiThread()->imageLoaded(m_id);
     }
 
 private:

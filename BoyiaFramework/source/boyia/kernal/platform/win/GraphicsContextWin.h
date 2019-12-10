@@ -5,6 +5,7 @@
 #include "KVector.h"
 #include "PaintCommandAllocator.h"
 #include <windows.h>
+#include <GdiPlus.h>
 
 namespace util {
 class ItemPainter;
@@ -48,6 +49,7 @@ public:
     virtual LVoid restore();
 
     HWND hwnd() const;
+    LVoid repaint() const;
 
 private:
     ItemPainter* currentPainter();
@@ -60,6 +62,7 @@ private:
     LRgb m_brushColor;
     LRgb m_penColor;
     ULONG_PTR m_gdiplusToken;
+    Gdiplus::Bitmap* m_cacheBitmap;
 };
 }
 

@@ -192,7 +192,7 @@ LVoid ResourceLoader::repaint(HtmlView* item)
         return;
     }
 
-    m_render->paint(NULL);
+    m_render->paint(kBoyiaNull);
 }
 
 LVoid ResourceLoader::loadString(const String& src)

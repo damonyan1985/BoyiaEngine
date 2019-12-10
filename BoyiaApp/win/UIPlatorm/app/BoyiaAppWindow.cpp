@@ -58,6 +58,8 @@ DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
     BoyiaPaintDC dc(this);
     OnPrepareDC(&dc);
     OnDraw(&dc);
+
+    BoyiaOnLoadWin::repaint();
     return 0;
 }
 
