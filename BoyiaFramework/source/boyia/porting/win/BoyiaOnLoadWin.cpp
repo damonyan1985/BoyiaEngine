@@ -20,3 +20,10 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, 1280));
     yanbo::AppManager::instance()->start();
 }
+
+void BoyiaOnLoadWin::repaint()
+{
+    util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
+    static_cast<util::GraphicsContextWin*>(gc)->repaint();
+    //yanbo::AppManager::instance()->currentApp()->view()->getLoader()->repaint();
+}
