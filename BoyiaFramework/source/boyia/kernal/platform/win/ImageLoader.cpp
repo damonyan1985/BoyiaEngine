@@ -47,9 +47,8 @@ public:
         util::ImageWin* image = static_cast<util::ImageWin*>(UIThreadClientMap::instance()->getUIThreadClient(m_id));
         if (image) {
             image->setData(data);
+            image->onClientCallback();
         }
-
-        //AppManager::instance()->uiThread()->imageLoaded(m_id);
     }
 
 private:
