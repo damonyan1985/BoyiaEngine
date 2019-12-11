@@ -25,7 +25,7 @@ const String& FileUtil::fileSchema()
 
 LVoid FileUtil::readFile(const String& fileName, String& content)
 {
-    FILE* file = fopen(GET_STR(fileName), "r");
+    FILE* file = fopen(GET_STR(fileName), "rb");
     if (!file) {
         return;
     }
