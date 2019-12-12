@@ -4,11 +4,12 @@ class Activity extends Object {
     // Life Cycle onCreate();
     fun setContent(view) {
         this.contentView = view;
+        this.draw();
     }
     
     fun init() {
         this.onCreate();
-        this.draw();
+        //this.draw();
     }
 
     fun draw() {
