@@ -56,7 +56,6 @@ void BaseThread::stop()
 
 void BaseThread::waitOnNotify()
 {
-    //AutoLock lock(&m_lock);
     WaitForSingleObject(m_condition->winEvent, INFINITE);
     ::ResetEvent(m_condition->winEvent);
     //SuspendThread(m_condition->thread);
@@ -64,26 +63,23 @@ void BaseThread::waitOnNotify()
 
 void BaseThread::notify()
 {
-    //AutoLock lock(&m_lock);
-    //ResumeThread(m_condition->thread);
-    /*
-    if (m_condition->thread) {
-        ResumeThread(m_condition->thread);
-    }*/
+    //if (m_condition->thread) {
+    //    ResumeThread(m_condition->thread);
+    //}
     ::SetEvent(m_condition->winEvent);
 }
 
 // millisecond
 void BaseThread::waitTimeOut(long timeout)
 {
-    //AutoLock lock(&m_lock);
-    WaitForSingleObject(m_condition->thread, timeout);
+    WaitForSingleObject(m_condition->winEvent, timeout);
+    ::ResetEvent(m_condition->winEvent);
 }
 
 // milliseconds
 void BaseThread::sleepMS(long time)
 {
-    Sleep(time);
+    ::Sleep(time);
 }
 
 int BaseThread::getId()

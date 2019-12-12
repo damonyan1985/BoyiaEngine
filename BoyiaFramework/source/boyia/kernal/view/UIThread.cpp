@@ -28,7 +28,6 @@ UIEvent::~UIEvent()
 LVoid UIEvent::execute()
 {
     run();
-    //delete this;
 }
 
 UIThread::UIThread(AppManager* manager)
@@ -40,6 +39,7 @@ UIThread::UIThread(AppManager* manager)
 
 UIThread::~UIThread()
 {
+    delete m_gc;
 }
 
 UIThread* UIThread::instance()
@@ -244,6 +244,7 @@ LVoid UIThread::drawUI(LVoid* view)
 
 LVoid UIThread::uiExecute()
 {
+    m_queue->removeMessage(kUiOperationExec);
     Message* msg = m_queue->obtain();
     msg->type = kUiOperationExec;
     m_queue->push(msg);
