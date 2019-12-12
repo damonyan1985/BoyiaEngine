@@ -14,9 +14,9 @@ using tinyxml2::XMLText;
 namespace yanbo {
 
 DOMBuilder::DOMBuilder()
-    : m_htmlDoc(NULL)
-    , m_styleParser(NULL)
-    , m_xmlDoc(NULL)
+    : m_htmlDoc(kBoyiaNull)
+    , m_styleParser(kBoyiaNull)
+    , m_xmlDoc(kBoyiaNull)
 {
 }
 
@@ -48,7 +48,7 @@ LVoid DOMBuilder::build(const String& buffer)
 
     XMLElement* root = m_xmlDoc->RootElement();
     if (root) {
-        createRenderTree(root, NULL, NULL);
+        createRenderTree(root, kBoyiaNull, kBoyiaNull);
     }
 
     m_htmlDoc->sortIds();
@@ -65,13 +65,13 @@ void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* 
 
 HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlView* parent)
 {
-    HtmlView* item = NULL;
+    HtmlView* item = kBoyiaNull;
     HtmlTags* htmlTags = HtmlTags::getInstance();
 
-    if (node->ToText() == NULL && node->ToComment() == NULL) {
+    if (node->ToText() == kBoyiaNull && node->ToComment() == kBoyiaNull) {
         XMLElement* elem = node->ToElement();
         if (!elem) {
-            return NULL;
+            return kBoyiaNull;
         }
         String tagType = _CS(elem->Value());
         String tagId = _CS(elem->Attribute("id"));

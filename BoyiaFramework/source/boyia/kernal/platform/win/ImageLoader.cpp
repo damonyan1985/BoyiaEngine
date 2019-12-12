@@ -64,6 +64,6 @@ ImageLoader* ImageLoader::instance()
 
 LVoid ImageLoader::loadImage(const String& url, LInt clientId)
 {
-    AppManager::instance()->network()->loadUrl(url, new ImageLoaderClient(clientId));
+    AppManager::instance()->network()->loadUrl(url, new ImageLoaderClient(clientId), LFalse);
 }
 }

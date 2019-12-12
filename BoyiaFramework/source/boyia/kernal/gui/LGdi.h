@@ -45,7 +45,7 @@ public:
 #if ENABLE(BOYIA_KERNEL)
     static LGraphicsContext* create()
     {
-        return NULL;
+        return kBoyiaNull;
     }
 #else
     static LGraphicsContext* create();
@@ -166,7 +166,7 @@ public:
 #if ENABLE(BOYIA_KERNEL)
     static LImage* create(LVoid* item)
     {
-        return NULL;
+        return kBoyiaNull;
     }
 #else
     static LImage* create(LVoid* item);
@@ -210,7 +210,7 @@ public:
 #if ENABLE(BOYIA_KERNEL)
     static LFont* create(const LFont& font)
     {
-        return NULL;
+        return kBoyiaNull;
     }
 #else
     static LFont* create(const LFont& font); // instance a platform font
@@ -299,7 +299,7 @@ public:
 #if ENABLE(BOYIA_KERNEL)
     static LMediaPlayer* create(LVoid* view)
     {
-        return NULL;
+        return kBoyiaNull;
     }
 #else
     static LMediaPlayer* create(LVoid* view); // instance a platform mediaplayer
@@ -318,13 +318,13 @@ public:
 #if ENABLE(BOYIA_KERNEL)
     static Editor* get()
     {
-        return NULL;
+        return kBoyiaNull;
     }
 #else
     static Editor* get(); // instance a platform Editor
 #endif
     Editor()
-        : m_view(NULL)
+        : m_view(kBoyiaNull)
     {
     }
 
@@ -348,7 +348,7 @@ public:
     LVoid removeView(LVoid* view)
     {
         if (m_view == view) {
-            m_view = NULL;
+            m_view = kBoyiaNull;
         }
     }
 

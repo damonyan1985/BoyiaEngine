@@ -43,11 +43,11 @@ private:
     LVoid viewSetText(Message* msg);
     LVoid viewDraw(Message* msg);
 
-    LVoid swapBufferImpl();
+    //LVoid swapBufferImpl();
 
     KVector<Message*>* m_msgs;
-    KVector<Message*>* m_swapMsgs;
-    Mutex m_uiMutex;
+    //KVector<Message*>* m_swapMsgs;
+    //Mutex m_uiMutex;
 };
 }
 #endif

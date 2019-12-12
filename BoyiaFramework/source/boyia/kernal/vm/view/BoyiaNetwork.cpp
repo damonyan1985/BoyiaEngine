@@ -2,6 +2,7 @@
 #include "AppManager.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
+#include "BaseThread.h"
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj)
@@ -46,18 +47,17 @@ void BoyiaNetwork::onLoadError(LInt error)
 void BoyiaNetwork::onLoadFinished()
 {
     m_data = m_builder.toString();
-    //yanbo::AppThread::instance()->sendEvent(this);
     yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);
 }
 
 LVoid BoyiaNetwork::run()
 {
-    KFORMATLOG("BoyiaNetwork::onLoadFinished %d", 1);
+    BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
     BoyiaValue value;
     value.mValueType = BY_STRING;
     value.mValue.mStrVal.mPtr = (LInt8*)m_data->GetBuffer();
     value.mValue.mStrVal.mLen = m_data->GetLength();
-    KFORMATLOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
+    BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
     SaveLocalSize();
     LocalPush(&m_callback);
     LocalPush(&value);

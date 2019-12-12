@@ -16,19 +16,19 @@ UIOperation* UIOperation::instance()
 
 UIOperation::UIOperation()
     : m_msgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
-    , m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
+    //, m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
 {
 }
 
 UIOperation::~UIOperation()
 {
     delete m_msgs;
-    delete m_swapMsgs;
+    //delete m_swapMsgs;
 }
 
 Message* UIOperation::obtain()
 {
-    AutoLock lock(&m_uiMutex);
+    //AutoLock lock(&m_uiMutex);
     return MessageCache::obtain();
 }
 
@@ -87,30 +87,32 @@ LVoid UIOperation::opApplyDomStyle(LVoid* view)
     m_msgs->addElement(msg);
 }
 
+/*
 LVoid UIOperation::swapBufferImpl()
 {
-    AutoLock lock(&m_uiMutex);
+    //AutoLock lock(&m_uiMutex);
 
     KVector<Message*>* buffer = m_msgs;
     m_msgs = m_swapMsgs;
     m_swapMsgs = buffer;
     m_msgs->clear();
 }
+*/
 
 // 交换buffer，m_swapMsgs指针作为绘制时使用
 LVoid UIOperation::swapBuffer()
 {
-    swapBufferImpl();
+    //swapBufferImpl();
     UIThread::instance()->uiExecute();
 }
 
 LVoid UIOperation::execute()
 {
     // 处理Widget DOM相关操作
-    AutoLock lock(&m_uiMutex);
-    LInt size = m_swapMsgs->size();
+    //AutoLock lock(&m_uiMutex);
+    LInt size = m_msgs->size();
     for (LInt index = 0; index < size; ++index) {
-        Message* msg = m_swapMsgs->elementAt(index);
+        Message* msg = m_msgs->elementAt(index);
         if (!msg)
             continue;
         switch (msg->type) {
@@ -145,7 +147,7 @@ LVoid UIOperation::execute()
         msg->msgRecycle();
     }
 
-    m_swapMsgs->clear();
+    m_msgs->clear();
 }
 
 LVoid UIOperation::viewSetText(Message* msg)
