@@ -12,7 +12,7 @@ def initExtension() {
     }
 
     if (!ext.maven_dir) {
-        ext.library_dir = "$rootDir/maven"
+        ext.maven_dir = "$rootDir/maven/BoyiaMaven"
     }
 
     ext.use_cmake = true
