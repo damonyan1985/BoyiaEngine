@@ -36,10 +36,12 @@ public:
 
 private:
     mutable KVector<OwnerPtr<LineText>> m_lines;
+    mutable LInt m_height;
 };
 
 FontWin::FontWin(const LFont& font)
     : LFont(font)
+    , m_height(0)
 {
 }
 
@@ -49,6 +51,7 @@ FontWin::~FontWin()
 
 LInt FontWin::getFontHeight() const
 {
+    /*
     GraphicsPath path;
     FontFamily family;
     Font font(L"Arial", m_size);
@@ -59,6 +62,8 @@ LInt FontWin::getFontHeight() const
     Gdiplus::Rect rect;
     path.GetBounds(&rect);
     return rect.Height;
+    */
+    return m_height;
 }
 
 LInt FontWin::getFontWidth(LUint8 ch) const
@@ -117,6 +122,8 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
             currentLineWidth = 0;
             wstr.ClearBuffer();
         }
+
+        m_height = m_height < rect.Height ? rect.Height : m_height;
     }
 
     if (currentLineWidth > 0) {
