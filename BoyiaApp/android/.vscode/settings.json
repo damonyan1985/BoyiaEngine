@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.boui": "xml",
+    "*.boss": "css"
+  }
+}
