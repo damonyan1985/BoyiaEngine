@@ -258,3 +258,8 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 
     return kBoyiaNull;
 }
+
+extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str)
+{
+    GetIdCreator()->getIdentName(key, str);
+}

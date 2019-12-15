@@ -65,4 +65,24 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 
     return id->mID;
 }
+
+LVoid IDCreator::getIdentName(LUint id, BoyiaStr* str)
+{
+    if (!m_idLink) {
+        str->mLen = 0;
+        str->mPtr = kBoyiaNull;
+        return;
+    }
+
+    BoyiaId* bid = m_idLink->mBegin;
+    while (bid) {
+        if (bid->mID == id) {
+            str->mLen = bid->mStr.mLen;
+            str->mPtr = bid->mStr.mPtr;
+            return;
+        }
+
+        bid = bid->mNext;
+    }
+}
 }

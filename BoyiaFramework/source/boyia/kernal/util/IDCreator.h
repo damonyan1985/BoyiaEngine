@@ -22,6 +22,7 @@ public:
     LUint genIdentify(const String& str);
     LUint genIdentByStr(const LInt8* str, LInt len);
     LUint genIdentifier(BoyiaStr* str);
+    LVoid getIdentName(LUint id, BoyiaStr* str);
 
 private:
     LUint m_idCount;
