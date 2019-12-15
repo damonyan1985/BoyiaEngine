@@ -12,19 +12,13 @@
 #include "SystemUtil.h"
 #include "SalLog.h"
 
-#define ENABLE_LOG
-
-#ifdef ENABLE_LOG
-extern LVoid BoyiaLog(const char* format, ...);
-#define EngineLog(format, ...) BoyiaLog(format, __VA_ARGS__)
-#else
-#define EngineLog(format, ...)
-#endif
 #define SntxErrorBuild(error) SntxError(error, gBoyiaVM->mEState->mLineNum)
 
 #ifndef kBoyiaNull
 #define kBoyiaNull 0
 #endif
+
+#define RuntimeError(key, error) PrintErrorKey(key, error, gBoyiaVM->mEState->mPC->mCodeLine)
 
 /* Type Define Begin */
 #define NUM_FUNC ((LInt)1024)
@@ -605,7 +599,8 @@ static BoyiaValue* FindVal(LUintPtr key)
 {
     BoyiaValue* value = GetVal(key);
     if (!value) {
-        SntxError(NOT_VAR, gBoyiaVM->mEState->mPC->mCodeLine);
+        //SntxError(NOT_VAR, gBoyiaVM->mEState->mPC->mCodeLine);
+        RuntimeError(key, NOT_VAR);
     }
 
     return value;
@@ -792,8 +787,9 @@ static LVoid SkipComment()
                 ++gBoyiaVM->mEState->mProg;
             }
 
-            if (*gBoyiaVM->mEState->mProg++ == '\n') {
+            if (*gBoyiaVM->mEState->mProg == '\n') {
                 ++gBoyiaVM->mEState->mLineNum;
+                ++gBoyiaVM->mEState->mProg;
             }
 
             SkipComment();
@@ -2150,7 +2146,7 @@ LVoid CompileCode(LInt8* code)
 {
     InitGlobalData();
     gBoyiaVM->mEState->mProg = code;
-    gBoyiaVM->mEState->mLineNum = 0;
+    gBoyiaVM->mEState->mLineNum = 1;
     gBoyiaVM->mEState->mTmpLValSize = 0;
     gBoyiaVM->mEState->mResultNum = 0;
     gBoyiaVM->mEState->mLoopSize = 0;

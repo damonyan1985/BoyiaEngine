@@ -1,10 +1,10 @@
 #include "BoyiaError.h"
 #include "SalLog.h"
-#include <stdio.h>
+#include "BoyiaValue.h"
 
-extern void BoyiaLog(const char* format, ...);
-// error
-LVoid SntxError(LInt error, LInt lineNum)
+extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str);
+
+static const char* FindErrorInfo(LInt error)
 {
     static const LInt8* errorMap[] = {
         "syntax error",
@@ -32,5 +32,17 @@ LVoid SntxError(LInt error, LInt lineNum)
         "right parentheses expected",
     };
 
-    BOYIA_LOG("BoyiaVM Error=%s lineno=%d\n", errorMap[error], lineNum);
+    return errorMap[error];
+}
+// error
+LVoid SntxError(LInt error, LInt lineNum)
+{
+    BOYIA_LOG("BoyiaVM Error=%s lineno=%d", FindErrorInfo(error), lineNum);
+}
+
+LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum)
+{
+    BoyiaStr name;
+    GetIdentName(key, &name);
+    BOYIA_LOG("BoyiaVM Error=%s lineno=%d key=%s", FindErrorInfo(error), lineNum, name.mPtr);
 }

@@ -30,5 +30,6 @@ enum ErrorMsg {
 };
 
 LVoid SntxError(LInt error, LInt lineNum);
+LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum);
 
 #endif // !MiniError_h
