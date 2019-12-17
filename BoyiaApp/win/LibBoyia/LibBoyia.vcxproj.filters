@@ -100,6 +100,9 @@
     <Filter Include="boyia\kernal\platform\zip">
       <UniqueIdentifier>{a4d368a7-49ab-4c94-a08c-24ea86b56d31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="thirdparty\ws">
+      <UniqueIdentifier>{3e1245dc-1c7f-4fd0-aeed-9850d3f86ad8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -223,9 +226,6 @@
       <Filter>boyia\kernal\vm\view</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.h">
-      <Filter>boyia\kernal\vm\view</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaNetwork.h">
       <Filter>boyia\kernal\vm\view</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.h">
@@ -456,6 +456,12 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.h">
       <Filter>boyia\kernal\platform\zip</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.h">
+      <Filter>thirdparty\ws</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.h">
+      <Filter>boyia\kernal\vm\lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -575,9 +581,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBase.cpp">
       <Filter>boyia\kernal\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBindings.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaEventHandler.cpp">
       <Filter>boyia\kernal\vm\view</Filter>
     </ClCompile>
@@ -585,9 +588,6 @@
       <Filter>boyia\kernal\vm\view</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaNetwork.cpp">
       <Filter>boyia\kernal\vm\view</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.cpp">
@@ -784,6 +784,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.cpp">
       <Filter>boyia\kernal\platform\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.cpp">
+      <Filter>thirdparty\ws</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaBindings.cpp">
+      <Filter>boyia\kernal\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.cpp">
+      <Filter>boyia\kernal\vm\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

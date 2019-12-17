@@ -1,8 +1,8 @@
 #include "BoyiaNetwork.h"
 #include "AppManager.h"
+#include "BaseThread.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
-#include "BaseThread.h"
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj)
@@ -15,36 +15,36 @@ BoyiaNetwork::~BoyiaNetwork()
 {
 }
 
-void BoyiaNetwork::load(const String& url)
+LVoid BoyiaNetwork::load(const String& url)
 {
     yanbo::UIView::getInstance()->network()->loadUrl(url, this, LFalse);
 }
 
-void BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
+LVoid BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
 {
     LByte* destData = new LByte[size];
     util::LMemcpy(destData, data, size);
     m_builder.append(destData, 0, size, LFalse);
 }
 
-void BoyiaNetwork::onStatusCode(LInt statusCode)
+LVoid BoyiaNetwork::onStatusCode(LInt statusCode)
 {
 }
 
-void BoyiaNetwork::onFileLen(LInt len)
+LVoid BoyiaNetwork::onFileLen(LInt len)
 {
 }
 
-void BoyiaNetwork::onRedirectUrl(const String& redirectUrl)
+LVoid BoyiaNetwork::onRedirectUrl(const String& redirectUrl)
 {
 }
 
-void BoyiaNetwork::onLoadError(LInt error)
+LVoid BoyiaNetwork::onLoadError(LInt error)
 {
     delete this;
 }
 
-void BoyiaNetwork::onLoadFinished()
+LVoid BoyiaNetwork::onLoadFinished()
 {
     m_data = m_builder.toString();
     yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);

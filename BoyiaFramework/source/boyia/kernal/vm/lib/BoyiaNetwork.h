@@ -14,14 +14,14 @@ public:
     virtual ~BoyiaNetwork();
 
 public:
-    void load(const String& url);
+    LVoid load(const String& url);
 
-    virtual void onDataReceived(const LByte* data, LInt size);
-    virtual void onStatusCode(LInt statusCode);
-    virtual void onFileLen(LInt len);
-    virtual void onRedirectUrl(const String& redirectUrl);
-    virtual void onLoadError(LInt error);
-    virtual void onLoadFinished();
+    virtual LVoid onDataReceived(const LByte* data, LInt size);
+    virtual LVoid onStatusCode(LInt statusCode);
+    virtual LVoid onFileLen(LInt len);
+    virtual LVoid onRedirectUrl(const String& redirectUrl);
+    virtual LVoid onLoadError(LInt error);
+    virtual LVoid onLoadFinished();
 
     virtual LVoid run();
 

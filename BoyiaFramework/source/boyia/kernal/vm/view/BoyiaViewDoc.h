@@ -20,9 +20,9 @@ public:
     BoyiaViewDoc();
     virtual ~BoyiaViewDoc();
 
-    void loadHTML(const String& url);
-    void setDocument(yanbo::HtmlDocument* doc);
-    void removeDocument(String& id, BoyiaViewDoc* doc);
+    LVoid loadHTML(const String& url);
+    LVoid setDocument(yanbo::HtmlDocument* doc);
+    LVoid removeDocument(String& id, BoyiaViewDoc* doc);
 
     yanbo::HtmlDocument* getDocument() const;
 

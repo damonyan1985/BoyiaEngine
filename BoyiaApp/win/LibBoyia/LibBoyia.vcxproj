@@ -224,11 +224,11 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaValue.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\json\JSONParser.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaLib.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBase.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaEventHandler.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaImageView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaNetwork.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewDoc.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewGroup.h" />
@@ -263,6 +263,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzguts.h" />
@@ -335,13 +336,13 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaMemory.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaValue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\json\JSONParser.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaBindings.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaLib.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBase.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBindings.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaEventHandler.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaImageView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaNetwork.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewDoc.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewGroup.cpp" />
@@ -371,6 +372,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\adler32.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\compress.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.c" />
