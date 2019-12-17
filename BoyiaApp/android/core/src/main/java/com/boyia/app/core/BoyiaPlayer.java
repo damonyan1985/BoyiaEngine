@@ -202,7 +202,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
         try {
             mTexture.getTransformMatrix(mSTMatrix);
-            BoyiaLog.d("libboyia", "MiniMediaPlayer updateTexImage texId="
+            BoyiaLog.d("libboyia", "BoyiaPlayer updateTexImage texId="
                     + mTextureID + " threadId=" + Thread.currentThread().getId());
         } catch (Exception ex) {
             ex.printStackTrace();

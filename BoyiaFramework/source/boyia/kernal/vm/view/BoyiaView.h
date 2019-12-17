@@ -20,8 +20,8 @@ class BoyiaView : public BoyiaBase {
 public:
     BoyiaView();
     virtual ~BoyiaView();
-    void setX(LInt x);
-    void setY(LInt y);
+    LVoid setX(LInt x);
+    LVoid setY(LInt y);
 
     LInt left() const;
     LInt top() const;
@@ -29,18 +29,18 @@ public:
     LInt width() const;
     LInt height() const;
 
-    void setStyle(String& cls);
+    LVoid setStyle(String& cls);
 
     yanbo::HtmlView* item() const;
 
-    void drawView();
-    void commit();
+    LVoid drawView();
+    LVoid commit();
     // 动画
-    void startScale(LInt scale, LInt duration);
-    void startOpacity(LInt opacity, LInt duration);
-    void startTranslate(const LPoint& point, LInt duration);
+    LVoid startScale(LInt scale, LInt duration);
+    LVoid startOpacity(LInt opacity, LInt duration);
+    LVoid startTranslate(const LPoint& point, LInt duration);
 
-    virtual void addListener(LInt type, BoyiaValue* callback);
+    virtual LVoid addListener(LInt type, BoyiaValue* callback);
 
 protected:
     yanbo::HtmlView* m_item;

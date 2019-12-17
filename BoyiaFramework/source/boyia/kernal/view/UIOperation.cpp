@@ -1,6 +1,7 @@
 #include "UIOperation.h"
 #include "HtmlView.h"
 #include "ImageView.h"
+#include "InputView.h"
 #include "TextView.h"
 #include "UIThread.h"
 #include "UIView.h"
@@ -16,7 +17,7 @@ UIOperation* UIOperation::instance()
 
 UIOperation::UIOperation()
     : m_msgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
-    //, m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
+//, m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
 {
 }
 
@@ -36,6 +37,16 @@ LVoid UIOperation::opSetText(LVoid* view, const String& text)
 {
     Message* msg = obtain();
     msg->type = UIOP_SETTEXT;
+    msg->obj = text.GetBuffer();
+    msg->arg0 = text.GetLength();
+    msg->arg1 = (LIntPtr)view;
+    m_msgs->addElement(msg);
+}
+
+LVoid UIOperation::opSetInput(LVoid* view, const String& text)
+{
+    Message* msg = obtain();
+    msg->type = UIOP_SETINPUT;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
     msg->arg1 = (LIntPtr)view;
@@ -120,6 +131,7 @@ LVoid UIOperation::execute()
             viewAddChild(msg);
             break;
         case UIOP_SETINPUT:
+            viewSetInput(msg);
             break;
         case UIOP_SETTEXT:
             viewSetText(msg);
@@ -148,6 +160,15 @@ LVoid UIOperation::execute()
     }
 
     m_msgs->clear();
+}
+
+LVoid UIOperation::viewSetInput(Message* msg)
+{
+    if (!msg->arg1) {
+        return;
+    }
+    String text(_CS(msg->obj), LTrue, msg->arg0);
+    reinterpret_cast<InputView*>(msg->arg1)->setInputValue(text);
 }
 
 LVoid UIOperation::viewSetText(Message* msg)

@@ -26,7 +26,7 @@ BoyiaViewDoc::~BoyiaViewDoc()
     }
 }
 
-void BoyiaViewDoc::loadHTML(const String& url)
+LVoid BoyiaViewDoc::loadHTML(const String& url)
 {
     KFORMATLOG("BoyiaViewDoc::loadHTML begin %d", 1);
     m_doc = new HtmlDocument();
@@ -58,13 +58,13 @@ void BoyiaViewDoc::loadHTML(const String& url)
     yanbo::UIOperation::instance()->opApplyDomStyle(m_item);
 }
 
-void BoyiaViewDoc::setDocument(yanbo::HtmlDocument* doc)
+LVoid BoyiaViewDoc::setDocument(yanbo::HtmlDocument* doc)
 {
     m_doc = doc;
     m_item = m_doc->getRenderTreeRoot();
 }
 
-void BoyiaViewDoc::removeDocument(String& id, BoyiaViewDoc* doc)
+LVoid BoyiaViewDoc::removeDocument(String& id, BoyiaViewDoc* doc)
 {
 }
 

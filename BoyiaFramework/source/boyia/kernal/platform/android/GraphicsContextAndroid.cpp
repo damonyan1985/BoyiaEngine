@@ -47,7 +47,7 @@ struct JGraphicsContext {
 void GraphicsContextAndroid::initGraphics()
 {
     JNIEnv* env = yanbo::JNIUtil::getEnv();
-    jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaGraphicsContext");
+    jclass clazz = yanbo::JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaGraphics");
     jmethodID constructMethod = env->GetMethodID(clazz, "<init>",
         "()V");
     jobject obj = env->NewObject(clazz, constructMethod);

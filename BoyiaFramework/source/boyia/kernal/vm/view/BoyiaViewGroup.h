@@ -8,7 +8,7 @@ public:
     BoyiaViewGroup(yanbo::HtmlView* item);
     BoyiaViewGroup(const String& id, LBool selectable);
     LVoid setText(const String& text);
-    void appendView(BoyiaView* view);
+    LVoid appendView(BoyiaView* view);
 };
 }
 

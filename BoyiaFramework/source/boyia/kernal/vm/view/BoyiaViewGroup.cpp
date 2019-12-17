@@ -21,7 +21,7 @@ LVoid BoyiaViewGroup::setText(const String& text)
     yanbo::UIOperation::instance()->opSetText(m_item, text);
 }
 
-void BoyiaViewGroup::appendView(BoyiaView* view)
+LVoid BoyiaViewGroup::appendView(BoyiaView* view)
 {
     if (view && view->item()) {
         KFORMATLOG("BoyiaViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());

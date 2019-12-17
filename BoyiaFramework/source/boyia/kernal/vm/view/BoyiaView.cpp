@@ -28,7 +28,7 @@ BoyiaView::~BoyiaView()
     }
 }
 
-void BoyiaView::addListener(LInt type, BoyiaValue* callback)
+LVoid BoyiaView::addListener(LInt type, BoyiaValue* callback)
 {
     BoyiaBase::addListener(type, callback);
     if (!m_item->getListener()) {
@@ -36,13 +36,13 @@ void BoyiaView::addListener(LInt type, BoyiaValue* callback)
     }
 }
 
-void BoyiaView::setX(LInt x)
+LVoid BoyiaView::setX(LInt x)
 {
     m_item->getStyle()->left = x;
     m_item->setXpos(x);
 }
 
-void BoyiaView::setY(LInt y)
+LVoid BoyiaView::setY(LInt y)
 {
     m_item->getStyle()->top = y;
     m_item->setYpos(y);
@@ -68,19 +68,19 @@ LInt BoyiaView::height() const
     return m_item->getHeight();
 }
 
-void BoyiaView::drawView()
+LVoid BoyiaView::drawView()
 {
     //m_item->relayout();
     //UIView::getInstance()->getLoader()->render()->paint(m_item);
     yanbo::UIOperation::instance()->opViewDraw(m_item);
 }
 
-void BoyiaView::commit()
+LVoid BoyiaView::commit()
 {
     yanbo::UIOperation::instance()->swapBuffer();
 }
 
-void BoyiaView::setStyle(String& cls)
+LVoid BoyiaView::setStyle(String& cls)
 {
     if (m_item) {
         ResourceLoader* loader = UIView::getInstance()->getLoader();
@@ -105,7 +105,7 @@ HtmlView* BoyiaView::item() const
 }
 
 // 动画
-void BoyiaView::startOpacity(LInt opacity, LInt duration)
+LVoid BoyiaView::startOpacity(LInt opacity, LInt duration)
 {
     OpacityAnimation* anim = new OpacityAnimation(m_item);
     anim->setDuration(duration);
@@ -114,7 +114,7 @@ void BoyiaView::startOpacity(LInt opacity, LInt duration)
     startAnimtion(anim);
 }
 
-void BoyiaView::startScale(LInt scale, LInt duration)
+LVoid BoyiaView::startScale(LInt scale, LInt duration)
 {
     ScaleAnimation* anim = new ScaleAnimation(m_item);
     anim->setDuration(duration);
@@ -123,7 +123,7 @@ void BoyiaView::startScale(LInt scale, LInt duration)
     startAnimtion(anim);
 }
 
-void BoyiaView::startTranslate(const LPoint& point, LInt duration)
+LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
 {
     TranslateAnimation* anim = new TranslateAnimation(m_item);
     anim->setDuration(duration);

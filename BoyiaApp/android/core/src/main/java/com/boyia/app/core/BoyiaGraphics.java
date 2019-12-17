@@ -13,14 +13,14 @@ import android.graphics.Point;
 import android.graphics.Rect;
 
 /*
- * BoyiaGraphicsContext
+ * BoyiaGraphics
  * @Author Yan bo
  * @Time 2014-5-4
  * @Copyright Reserved
  * @Descrption Android 2D Graphic Interface Implements
  */
-public class BoyiaGraphicsContext {
-    private static final String TAG = BoyiaGraphicsContext.class.getSimpleName();
+public class BoyiaGraphics {
+    private static final String TAG = BoyiaGraphics.class.getSimpleName();
     public static final int NULL_BRUSH = 1;
     public static final int SOLID_BRUSH = 2;
 
@@ -44,7 +44,7 @@ public class BoyiaGraphicsContext {
 
     private int mPenStyle = SOLID_PEN;
 
-    public BoyiaGraphicsContext(Canvas canvas) {
+    public BoyiaGraphics(Canvas canvas) {
         mPen = new Paint();
         mPen.setAntiAlias(true);
         mBrush = new Paint();
@@ -52,7 +52,7 @@ public class BoyiaGraphicsContext {
         mCanvas = canvas;
     }
 
-    public BoyiaGraphicsContext() {
+    public BoyiaGraphics() {
         mPen = new Paint();
         mPen.setAntiAlias(true);
         mBrush = new Paint();

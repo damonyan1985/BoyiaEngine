@@ -1,16 +1,17 @@
 #include "BoyiaInputView.h"
 #include "InputView.h"
+#include "UIOperation.h"
 
 namespace boyia {
 BoyiaInputView::BoyiaInputView(yanbo::HtmlView* item)
 {
     m_item = item;
-    //m_item->setListener(this);
 }
 
-void BoyiaInputView::setText(const String& text)
+LVoid BoyiaInputView::setText(const String& text)
 {
-    yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
-    item->setInputValue(text);
+    //yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
+    //item->setInputValue(text);
+    yanbo::UIOperation::instance()->opSetInput(m_item, text);
 }
 }

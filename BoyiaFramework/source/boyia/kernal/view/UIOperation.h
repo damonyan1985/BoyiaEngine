@@ -37,11 +37,13 @@ public:
     LVoid opLoadImageUrl(LVoid* view, const String& url);
     LVoid opViewDraw(LVoid* view);
     LVoid opApplyDomStyle(LVoid* view);
+    LVoid opSetInput(LVoid* view, const String& text);
 
 private:
     LVoid viewAddChild(Message* msg);
     LVoid viewSetText(Message* msg);
     LVoid viewDraw(Message* msg);
+    LVoid viewSetInput(Message* msg);
 
     //LVoid swapBufferImpl();
 
