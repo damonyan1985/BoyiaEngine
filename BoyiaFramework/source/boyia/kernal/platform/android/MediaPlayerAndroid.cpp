@@ -1,6 +1,7 @@
 #include "MediaPlayerAndroid.h"
 #include "AutoObject.h"
 #include "JNIUtil.h"
+#include "UIThread.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <jni.h>
@@ -46,8 +47,11 @@ MediaPlayerAndroid::MediaPlayerAndroid(LVoid* view)
     m_player->m_setTextureId = GetJMethod(env, clazz, "setTextureId", "(I)V");
     m_player->m_canDraw = GetJMethod(env, clazz, "canDraw", "()Z");
 
+    // env->CallVoidMethod(obj, m_player->m_setNativePtr,
+    //     (jlong)view);
+    //yanbo::UIThreadClientMap::instance()->registerClient(this);
     env->CallVoidMethod(obj, m_player->m_setNativePtr,
-        (jlong)view);
+        (jlong)getClientId());
 
     env->DeleteLocalRef(obj);
     env->DeleteLocalRef(clazz);
@@ -88,7 +92,7 @@ MediaPlayerAndroid::~MediaPlayerAndroid()
     delete m_player;
 }
 
-void MediaPlayerAndroid::start(const String& url)
+LVoid MediaPlayerAndroid::start(const String& url)
 {
     if (!m_texID) {
         createTextureId();
@@ -125,7 +129,7 @@ void MediaPlayerAndroid::updateTexture(float* matrix)
     env->DeleteLocalRef(arr);
 }
 
-void MediaPlayerAndroid::seek(int progress)
+LVoid MediaPlayerAndroid::seek(int progress)
 {
     JNIEnv* env = JNIUtil::getEnv();
     AutoJObject javaObject = m_player->object(env);
@@ -136,7 +140,7 @@ void MediaPlayerAndroid::seek(int progress)
         progress);
 }
 
-void MediaPlayerAndroid::pause()
+LVoid MediaPlayerAndroid::pause()
 {
     JNIEnv* env = JNIUtil::getEnv();
     AutoJObject javaObject = m_player->object(env);
@@ -146,7 +150,7 @@ void MediaPlayerAndroid::pause()
     env->CallVoidMethod(javaObject.get(), m_player->m_pause);
 }
 
-void MediaPlayerAndroid::stop()
+LVoid MediaPlayerAndroid::stop()
 {
     JNIEnv* env = JNIUtil::getEnv();
     AutoJObject javaObject = m_player->object(env);
@@ -159,6 +163,12 @@ void MediaPlayerAndroid::stop()
 int MediaPlayerAndroid::texId()
 {
     return m_texID;
+}
+
+// Now in ui thread, can use ui thread method to paint
+LVoid MediaPlayerAndroid::onClientCallback()
+{
+    yanbo::UIThread::instance()->drawUI(m_view);
 }
 
 LMediaPlayer* LMediaPlayer::create(LVoid* view)

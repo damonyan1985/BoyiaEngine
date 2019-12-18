@@ -129,7 +129,7 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiVideoUpdate: {
         drawUI((LVoid*)msg->arg0);
     } break;
-    case kUiImageLoaded: {
+    case kUiClientCallback: {
         if (!msg->arg0)
             return;
         UIThreadClientMap::instance()->clientCallback(msg->arg0);
@@ -137,7 +137,6 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiOperationExec: {
         UIOperation::instance()->execute();
         flush();
-        //submit();
     } break;
     case kUiSubmit: {
         flush();
@@ -222,10 +221,10 @@ void UIThread::videoUpdate(LIntPtr item)
     notify();
 }
 
-LVoid UIThread::imageLoaded(LIntPtr item)
+LVoid UIThread::clientCallback(LIntPtr item)
 {
     Message* msg = m_queue->obtain();
-    msg->type = kUiImageLoaded;
+    msg->type = kUiClientCallback;
     msg->arg0 = item;
 
     m_queue->push(msg);

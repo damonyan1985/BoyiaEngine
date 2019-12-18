@@ -1,8 +1,8 @@
 #include "ImageLoader.h"
 #include "AppManager.h"
+#include "ImageWin.h"
 #include "StringBuilder.h"
 #include "UIThreadClientMap.h"
-#include "ImageWin.h"
 
 namespace yanbo {
 class ImageLoaderClient : public NetworkClient, public UIEvent {
@@ -38,13 +38,13 @@ public:
 
     virtual LVoid onLoadFinished()
     {
-        UIThread::instance()->sendUIEvent(this);       
+        UIThread::instance()->sendUIEvent(this);
     }
 
     virtual LVoid run()
     {
         OwnerPtr<String> data = m_builder.toString();
-        util::ImageWin* image = static_cast<util::ImageWin*>(UIThreadClientMap::instance()->getUIThreadClient(m_id));
+        util::ImageWin* image = static_cast<util::ImageWin*>(UIThreadClientMap::instance()->findUIThreadClient(m_id));
         if (image) {
             image->setData(data);
             image->onClientCallback();
@@ -56,7 +56,7 @@ private:
     StringBuilder m_builder;
 };
 
-ImageLoader* ImageLoader::instance() 
+ImageLoader* ImageLoader::instance()
 {
     static ImageLoader sImageLoader;
     return &sImageLoader;
