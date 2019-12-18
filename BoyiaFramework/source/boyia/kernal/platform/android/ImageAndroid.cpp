@@ -86,7 +86,7 @@ LVoid ImageAndroid::load(const String& path, LVoid* image)
     if (!javaObject.get())
         return;
 
-    yanbo::UIThreadClientMap::instance()->registerClient(this);
+    //yanbo::UIThreadClientMap::instance()->registerClient(this);
     // 不同的父类引用子类，指针地址值不一样
     //ImageClient* client = static_cast<ImageClient*>(this);
     //KFORMATLOG("ImageAndroid::load this=%ld", (long)client);

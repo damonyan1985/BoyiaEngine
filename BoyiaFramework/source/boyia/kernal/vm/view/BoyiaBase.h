@@ -13,14 +13,14 @@ public:
     virtual ~BoyiaBase();
 
     // HTMLView事件监听
-    virtual void onPressDown(void* view);
-    virtual void onPressMove(void* view);
-    virtual void onPressUp(void* view);
-    virtual void onKeyDown(int keyCode, void* view);
-    virtual void onKeyUp(int keyCode, void* view);
+    virtual LVoid onPressDown(LVoid* view);
+    virtual LVoid onPressMove(LVoid* view);
+    virtual LVoid onPressUp(LVoid* view);
+    virtual LVoid onKeyDown(LInt keyCode, LVoid* view);
+    virtual LVoid onKeyUp(LInt keyCode, LVoid* view);
 
-    virtual void addListener(LInt type, BoyiaValue* callback);
-    void setBoyiaView(BoyiaValue* value);
+    virtual LVoid addListener(LInt type, BoyiaValue* callback);
+    LVoid setBoyiaView(BoyiaValue* value);
 
 protected:
     LInt m_type;

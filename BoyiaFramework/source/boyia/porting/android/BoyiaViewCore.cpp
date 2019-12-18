@@ -134,7 +134,7 @@ static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint is
 
 static void nativeImageLoaded(JNIEnv* env, jobject obj, jlong item)
 {
-    yanbo::UIThread::instance()->imageLoaded(item);
+    yanbo::UIThread::instance()->clientCallback(item);
 }
 
 static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
@@ -153,7 +153,8 @@ static void nativeSetInputText(JNIEnv* env, jobject obj, jstring text, jlong ite
 
 static void nativeVideoTextureUpdate(JNIEnv* env, jobject obj, jlong item)
 {
-    yanbo::UIThread::instance()->videoUpdate(item);
+    //yanbo::UIThread::instance()->videoUpdate(item);
+    yanbo::UIThread::instance()->clientCallback(item);
 }
 
 static void nativeOnKeyboardShow(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)

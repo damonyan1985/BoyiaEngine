@@ -2,21 +2,23 @@
 #define MediaPlayerAndroid_h
 
 #include "LGdi.h"
+#include "UIThreadClientMap.h"
 
 namespace util {
 
 struct JMediaPlayer;
-class MediaPlayerAndroid : public LMediaPlayer {
+class MediaPlayerAndroid : public LMediaPlayer, public yanbo::UIThreadClient {
 public:
     MediaPlayerAndroid(LVoid* view);
     ~MediaPlayerAndroid();
 
 public:
-    virtual void start(const String& url);
-    virtual void pause();
-    virtual void stop();
-    virtual void seek(int progress);
-    virtual void updateTexture(float* matrix);
+    virtual LVoid start(const String& url);
+    virtual LVoid pause();
+    virtual LVoid stop();
+    virtual LVoid seek(LInt progress);
+    virtual LVoid updateTexture(float* matrix);
+    virtual LVoid onClientCallback();
 
     bool canDraw();
     int texId();

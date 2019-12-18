@@ -20,6 +20,7 @@ public:
 UIThreadClient::UIThreadClient()
     : m_clientId(0)
 {
+    yanbo::UIThreadClientMap::instance()->registerClient(this);
 }
 
 UIThreadClient::~UIThreadClient()
@@ -57,11 +58,10 @@ UIThreadClientMap::UIThreadClientMap()
 LVoid UIThreadClientMap::clientCallback(LInt id)
 {
     KFORMATLOG("UIThreadClientMap::clientCallback clientId=%d", id);
-    UIThreadItem* item = getUIThreadItem(id);
-    if (item) {
-        KFORMATLOG("UIThreadClientMap::clientCallback item->client=%ld", (long)item->client);
-        item->client->onClientCallback();
-        delete item;
+    UIThreadClient* client = findUIThreadClient(id);
+    if (client) {
+        KFORMATLOG("UIThreadClientMap::clientCallback item->client=%ld", (long)client);
+        client->onClientCallback();
     }
 }
 
@@ -76,10 +76,27 @@ KVector<UIThreadItem*>& UIThreadClientMap::map()
     return m_map;
 }
 
-UIThreadClient* UIThreadClientMap::getUIThreadClient(LInt id)
+// UIThreadClient* UIThreadClientMap::getUIThreadClient(LInt id)
+// {
+//     UIThreadItem* item = getUIThreadItem(id);
+//     return item ? item->client : kBoyiaNull;
+// }
+
+UIThreadClient* UIThreadClientMap::findUIThreadClient(LInt id)
 {
-    UIThreadItem* item = getUIThreadItem(id);
-    return item ? item->client : kBoyiaNull;
+    LInt index = id % m_map.capacity();
+    UIThreadItem* item = m_map[index];
+    while (item) {
+        if (item->id == id) {
+            return item->client;
+        }
+
+        item = item->next;
+    }
+
+    KFORMATLOG("UIThreadClientMap::findUIThreadClient item=%ld", (long)item);
+    KFORMATLOG("UIThreadClientMap::findUIThreadClient item->id=%d", item->id);
+    return item->client;
 }
 
 UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)

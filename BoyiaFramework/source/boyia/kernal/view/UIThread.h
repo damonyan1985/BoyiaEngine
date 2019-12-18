@@ -34,7 +34,7 @@ public:
         kUiKeyEvent,
         kUiSetInput,
         kUiVideoUpdate,
-        kUiImageLoaded,
+        kUiClientCallback,
         kUiOnKeyboardShow,
         kUiOnKeyboardHide,
         kUiOperationExec,
@@ -58,7 +58,7 @@ public:
     LVoid setInputText(const String& text, LIntPtr item);
     // Video渲染
     LVoid videoUpdate(LIntPtr item);
-    LVoid imageLoaded(LIntPtr item);
+    LVoid clientCallback(LIntPtr item);
     // Anim渲染
     LVoid runAnimation(LVoid* callback);
     // 回调处理
@@ -73,12 +73,12 @@ public:
     LGraphicsContext* graphics() const;
     LVoid initApp(const String& entry);
     virtual LVoid handleMessage(Message* msg);
+    LVoid drawUI(LVoid* view);
 
 private:
     LVoid resetGL(Message* msg);
     LVoid flush();
 
-    LVoid drawUI(LVoid* view);
     LGraphicsContext* m_gc;
     AppManager* m_manager;
 };
