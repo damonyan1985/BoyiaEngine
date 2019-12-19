@@ -30,6 +30,7 @@ BoyiaAppWindow::~BoyiaAppWindow()
 DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
     BoyiaOnLoadWin::setContextWin(m_hWnd, 360, 640);
+    BoyiaOnLoadWin::connectServer();
     /*
     HWND hWnd = m_hWnd;
     HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
