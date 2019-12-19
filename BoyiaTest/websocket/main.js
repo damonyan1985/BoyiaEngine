@@ -15,11 +15,13 @@ function initWebSocketServer() {
   server.on('connection', (socket, req) => {
     console.log('Test WebSocket connection url=' + req.url);
     socket.send('hello world');
+
+    socket.on('message', event => {
+      console.log('Test WebSocket message data=' + event.toString());
+    });
   });
 
-  server.on('message', message => {
-    console.log('Test WebSocket message url=' + message.data);
-  });
+
 }
 
 initWebSocketServer();
