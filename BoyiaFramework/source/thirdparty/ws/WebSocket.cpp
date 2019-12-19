@@ -24,7 +24,8 @@ typedef SOCKET socket_t;
 #define _SOCKET_T_DEFINED
 #endif
 #ifndef snprintf
-#define snprintf _snprintf_s
+#define snprintf _snprintf
+//#define snprintf _snprintf_s
 #endif
 #if _MSC_VER >= 1600
 // vs2010 or later
@@ -89,10 +90,12 @@ socket_t hostname_connect(const std::string& hostname, int port)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     snprintf(sport, 16, "%d", port);
+    
     if ((ret = getaddrinfo(hostname.c_str(), sport, &hints, &result)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ret));
         return 1;
     }
+
     for (p = result; p != NULL; p = p->ai_next) {
         sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (sockfd == INVALID_SOCKET) {
@@ -507,43 +510,46 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
         return NULL;
     }
     {
-        // XXX: this should be done non-blocking,
-        char line[1024];
-        int status;
-        int i;
+        // XXX: this should be done non-blocking
+        char* line = new char[1024];
+        memset(line, 0, 1024);
         snprintf(line, 1024, "GET /%s HTTP/1.1\r\n", path);
-        ::send(sockfd, line, strlen(line), 0);
+        //::send(sockfd, line, strlen(line), 0);
         if (port == 80) {
-            snprintf(line, 1024, "Host: %s\r\n", host);
-            ::send(sockfd, line, strlen(line), 0);
+            snprintf(line + strlen(line), 1024, "Host: %s\r\n", host);
+            //::send(sockfd, line, strlen(line), 0);
         } else {
-            snprintf(line, 1024, "Host: %s:%d\r\n", host, port);
-            ::send(sockfd, line, strlen(line), 0);
+            snprintf(line + strlen(line), 1024, "Host: %s:%d\r\n", host, port);
+            //::send(sockfd, line, strlen(line), 0);
         }
-        snprintf(line, 1024, "Upgrade: websocket\r\n");
-        ::send(sockfd, line, strlen(line), 0);
-        snprintf(line, 1024, "Connection: Upgrade\r\n");
-        ::send(sockfd, line, strlen(line), 0);
+        snprintf(line + strlen(line), 1024, "Upgrade: websocket\r\n");
+        //::send(sockfd, line, strlen(line), 0);
+        snprintf(line + strlen(line), 1024, "Connection: Upgrade\r\n");
+        //::send(sockfd, line, strlen(line), 0);
         if (!origin.empty()) {
-            snprintf(line, 1024, "Origin: %s\r\n", origin.c_str());
-            ::send(sockfd, line, strlen(line), 0);
+            snprintf(line + strlen(line), 1024, "Origin: %s\r\n", origin.c_str());
+            //::send(sockfd, line, strlen(line), 0);
         }
-        snprintf(line, 1024, "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n");
+        snprintf(line + strlen(line), 1024, "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n");
+        //::send(sockfd, line, strlen(line), 0);
+        snprintf(line + strlen(line), 1024, "Sec-WebSocket-Version: 13\r\n");
+        //::send(sockfd, line, strlen(line), 0);
+        snprintf(line + strlen(line), 1024, "\r\n");
         ::send(sockfd, line, strlen(line), 0);
-        snprintf(line, 1024, "Sec-WebSocket-Version: 13\r\n");
-        ::send(sockfd, line, strlen(line), 0);
-        snprintf(line, 1024, "\r\n");
-        ::send(sockfd, line, strlen(line), 0);
-        for (i = 0; i < 2 || (i < 1023 && line[i - 2] != '\r' && line[i - 1] != '\n'); ++i) {
+       
+        int i = 0;
+        for (; i < 2 || (i < 1023 && line[i - 2] != '\r' && line[i - 1] != '\n'); ++i) {
             if (recv(sockfd, line + i, 1, 0) == 0) {
                 return NULL;
             }
         }
-        line[i] = 0;
+        
         if (i == 1023) {
             fprintf(stderr, "ERROR: Got invalid status line connecting to: %s\n", url.c_str());
             return NULL;
         }
+
+        int status;
         if (sscanf(line, "HTTP/1.1 %d", &status) != 1 || status != 101) {
             fprintf(stderr, "ERROR: Got bad status connecting to %s: %s", url.c_str(), line);
             return NULL;
@@ -559,7 +565,10 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
                 break;
             }
         }
+
+        delete line;
     }
+    
     int flag = 1;
     setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag)); // Disable Nagle's algorithm
 #ifdef _WIN32
@@ -587,4 +596,21 @@ WebSocket::pointer WebSocket::from_url_no_mask(const std::string& url, const std
 {
     return yanbo::from_url(url, false, origin);
 }
+
+void WebSocket::networkInit()
+{
+#ifdef _WIN32
+    INT rc;
+    WSADATA wsaData;
+    rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
+}
+
+void WebSocket::networkDestroy()
+{
+#ifdef _WIN32
+    WSACleanup();
+#endif
+}
+
 }

@@ -24,6 +24,8 @@ public:
     } readyStateValues;
 
     // Factories:
+    static void networkInit();
+    static void networkDestroy();
     static pointer create_dummy();
     static pointer from_url(const std::string& url, const std::string& origin = std::string());
     static pointer from_url_no_mask(const std::string& url, const std::string& origin = std::string());

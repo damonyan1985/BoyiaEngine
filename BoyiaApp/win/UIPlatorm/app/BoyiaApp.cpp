@@ -18,6 +18,7 @@ int BoyiaWinApi BoyiaWinMain(
 )
 {
 	BoyiaConsole console;
+    BoyiaOnLoadWin::networkInit();
 	//HINSTANCE hInstLibrary = LoadLibrary(L"LibBoyia.dll");
 
 	//BoyiaOnLoadWin::foo();
@@ -27,5 +28,6 @@ int BoyiaWinApi BoyiaWinMain(
 	BoyiaApp *ptApp = tfxGetApp();
 	ptApp->InitInstance(hInstance, nCmdShow);
 	ptApp->run();
+    BoyiaOnLoadWin::networkDestroy();
 	return 0;
 }
