@@ -510,7 +510,7 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
         return NULL;
     }
     {
-        // XXX: this should be done non-blocking
+        // Tips: We run this block in thread
         char* line = new char[1024];
         memset(line, 0, 1024);
         snprintf(line, 1024, "GET /%s HTTP/1.1\r\n", path);
