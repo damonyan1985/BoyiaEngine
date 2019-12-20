@@ -107,6 +107,7 @@ target_include_directories(
     ${THIRD_PARTY_PATH}/cjson
     ${THIRD_PARTY_PATH}/tinyxml
     ${THIRD_PARTY_PATH}/zip
+    ${THIRD_PARTY_PATH}/ws
     ${THIRD_PARTY_PATH}/zip/minizip
 )
 
@@ -126,4 +127,5 @@ target_link_libraries(
     cjson
     tinyxml
     zip
+    ws
 )

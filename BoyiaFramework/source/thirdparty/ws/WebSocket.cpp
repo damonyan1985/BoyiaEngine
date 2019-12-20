@@ -41,6 +41,7 @@ typedef unsigned __int64 uint64_t;
 #define socketerrno WSAGetLastError()
 #define SOCKET_EAGAIN_EINPROGRESS WSAEINPROGRESS
 #define SOCKET_EWOULDBLOCK WSAEWOULDBLOCK
+#define BOYIA_LOG(format_str, ...) fprintf(stdout, format_str##"\n", __VA_ARGS__)
 #else
 #include <fcntl.h>
 #include <netdb.h>
@@ -69,6 +70,7 @@ typedef int socket_t;
 #define socketerrno errno
 #define SOCKET_EAGAIN_EINPROGRESS EAGAIN
 #define SOCKET_EWOULDBLOCK EWOULDBLOCK
+#define BOYIA_LOG(format_str, ...)
 #endif
 
 #include <string>
@@ -78,7 +80,7 @@ typedef int socket_t;
 
 namespace yanbo {
 
-socket_t hostname_connect(const std::string& hostname, int port)
+static socket_t hostname_connect(const std::string& hostname, int port)
 {
     struct addrinfo hints;
     struct addrinfo* result;
@@ -92,7 +94,7 @@ socket_t hostname_connect(const std::string& hostname, int port)
     snprintf(sport, 16, "%d", port);
     
     if ((ret = getaddrinfo(hostname.c_str(), sport, &hints, &result)) != 0) {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ret));
+        BOYIA_LOG("getaddrinfo: %s", gai_strerror(ret));
         return 1;
     }
 
@@ -120,11 +122,11 @@ public:
     void sendPing() {}
     void close() {}
     readyStateValues getReadyState() const { return CLOSED; }
-    void _dispatch(Callback_Imp& callable) {}
-    void _dispatchBinary(BytesCallback_Imp& callable) {}
+    void dispatch() {}
+    void setHandler(WebSocketHandler* handler) {}
 };
 
-class RealWebSocket : public WebSocket {
+class WebSocketImpl : public WebSocket {
 public:
     // http://tools.ietf.org/html/rfc6455#section-5.2  Base Framing Protocol
     //
@@ -171,13 +173,20 @@ public:
     readyStateValues readyState;
     bool useMask;
     bool isRxBad;
+    WebSocketHandler* wsHandler;
 
-    RealWebSocket(socket_t sockfd, bool useMask)
+    WebSocketImpl(socket_t sockfd, bool useMask)
         : sockfd(sockfd)
         , readyState(OPEN)
         , useMask(useMask)
         , isRxBad(false)
+        , wsHandler(NULL)
     {
+    }
+
+    virtual void setHandler(WebSocketHandler* handler)
+    {
+        wsHandler = handler;
     }
 
     readyStateValues getReadyState() const
@@ -212,8 +221,7 @@ public:
             ssize_t ret;
             rxbuf.resize(N + 1500);
             ret = recv(sockfd, (char*)&rxbuf[0] + N, 1500, 0);
-            if (false) {
-            } else if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
+            if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
                 rxbuf.resize(N);
                 break;
             } else if (ret <= 0) {
@@ -228,9 +236,7 @@ public:
         }
         while (txbuf.size()) {
             int ret = ::send(sockfd, (char*)&txbuf[0], txbuf.size(), 0);
-            if (false) {
-            } // ??
-            else if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
+            if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
                 break;
             } else if (ret <= 0) {
                 closesocket(sockfd);
@@ -247,32 +253,7 @@ public:
         }
     }
 
-    // Callable must have signature: void(const std::string & message).
-    // Should work with C functions, C++ functors, and C++11 std::function and
-    // lambda:
-    //template<class Callable>
-    //void dispatch(Callable callable)
-    virtual void _dispatch(Callback_Imp& callable)
-    {
-        struct CallbackAdapter : public BytesCallback_Imp
-        // Adapt void(const std::string<uint8_t>&) to void(const std::string&)
-        {
-            Callback_Imp& callable;
-            CallbackAdapter(Callback_Imp& callable)
-                : callable(callable)
-            {
-            }
-            void operator()(const std::vector<uint8_t>& message)
-            {
-                std::string stringMessage(message.begin(), message.end());
-                callable(stringMessage);
-            }
-        };
-        CallbackAdapter bytesCallback(callable);
-        _dispatchBinary(bytesCallback);
-    }
-
-    virtual void _dispatchBinary(BytesCallback_Imp& callable)
+    virtual void dispatch()
     {
         // TODO: consider acquiring a lock on rxbuf...
         if (isRxBad) {
@@ -322,7 +303,7 @@ public:
                     // if it were valid. So just close() and return immediately
                     // for now.
                     isRxBad = true;
-                    fprintf(stderr, "ERROR: Frame has invalid frame length. Closing.\n");
+                    BOYIA_LOG("ERROR: Frame has invalid frame length. Closing.");
                     close();
                     return;
                 }
@@ -346,9 +327,7 @@ public:
             }
 
             // We got a whole message, now do something with it:
-            if (false) {
-            } else if (
-                ws.opcode == wsheader_type::TEXT_FRAME
+            if (ws.opcode == wsheader_type::TEXT_FRAME
                 || ws.opcode == wsheader_type::BINARY_FRAME
                 || ws.opcode == wsheader_type::CONTINUATION) {
                 if (ws.mask) {
@@ -358,7 +337,9 @@ public:
                 }
                 receivedData.insert(receivedData.end(), rxbuf.begin() + ws.header_size, rxbuf.begin() + ws.header_size + (size_t)ws.N); // just feed
                 if (ws.fin) {
-                    callable((const std::vector<uint8_t>)receivedData);
+                    if (wsHandler) {
+                        wsHandler->handleMessage(std::string(receivedData.begin(), receivedData.end()));
+                    }
                     receivedData.erase(receivedData.begin(), receivedData.end());
                     std::vector<uint8_t>().swap(receivedData); // free memory
                 }
@@ -374,7 +355,7 @@ public:
             } else if (ws.opcode == wsheader_type::CLOSE) {
                 close();
             } else {
-                fprintf(stderr, "ERROR: Got unexpected WebSocket message.\n");
+                BOYIA_LOG("ERROR: Got unexpected WebSocket message.");
                 close();
             }
 
@@ -418,8 +399,7 @@ public:
         std::vector<uint8_t> header;
         header.assign(2 + (message_size >= 126 ? 2 : 0) + (message_size >= 65536 ? 6 : 0) + (useMask ? 4 : 0), 0);
         header[0] = 0x80 | type;
-        if (false) {
-        } else if (message_size < 126) {
+        if (message_size < 126) {
             header[1] = (message_size & 0xff) | (useMask ? 0x80 : 0);
             if (useMask) {
                 header[2] = masking_key[0];
@@ -477,21 +457,20 @@ public:
     }
 };
 
-static WebSocket::pointer from_url(const std::string& url, bool useMask, const std::string& origin)
+static WebSocket::pointer createWebSocket(const std::string& url, bool useMask, const std::string& origin)
 {
     char host[512];
     int port;
     char path[512];
     if (url.size() >= 512) {
-        fprintf(stderr, "ERROR: url size limit exceeded: %s\n", url.c_str());
+        BOYIA_LOG("ERROR: url size limit exceeded: %s", url.c_str());
         return NULL;
     }
     if (origin.size() >= 200) {
-        fprintf(stderr, "ERROR: origin size limit exceeded: %s\n", origin.c_str());
+        BOYIA_LOG("ERROR: origin size limit exceeded: %s", origin.c_str());
         return NULL;
     }
-    if (false) {
-    } else if (sscanf(url.c_str(), "ws://%[^:/]:%d/%s", host, &port, path) == 3) {
+    if (sscanf(url.c_str(), "ws://%[^:/]:%d/%s", host, &port, path) == 3) {
     } else if (sscanf(url.c_str(), "ws://%[^:/]/%s", host, path) == 2) {
         port = 80;
     } else if (sscanf(url.c_str(), "ws://%[^:/]:%d", host, &port) == 2) {
@@ -500,13 +479,13 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
         port = 80;
         path[0] = '\0';
     } else {
-        fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
+        BOYIA_LOG("ERROR: Could not parse WebSocket url: %s", url.c_str());
         return NULL;
     }
     //fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
     socket_t sockfd = hostname_connect(host, port);
     if (sockfd == INVALID_SOCKET) {
-        fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
+        BOYIA_LOG("Unable to connect to %s:%d\n", host, port);
         return NULL;
     }
     {
@@ -545,13 +524,13 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
         }
         
         if (i == 1023) {
-            fprintf(stderr, "ERROR: Got invalid status line connecting to: %s\n", url.c_str());
+            BOYIA_LOG("ERROR: Got invalid status line connecting to: %s", url.c_str());
             return NULL;
         }
 
         int status;
         if (sscanf(line, "HTTP/1.1 %d", &status) != 1 || status != 101) {
-            fprintf(stderr, "ERROR: Got bad status connecting to %s: %s", url.c_str(), line);
+            BOYIA_LOG("ERROR: Got bad status connecting to %s: %s", url.c_str(), line);
             return NULL;
         }
         // TODO: verify response headers,
@@ -566,7 +545,7 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
             }
         }
 
-        delete line;
+        delete[] line;
     }
     
     int flag = 1;
@@ -578,7 +557,7 @@ static WebSocket::pointer from_url(const std::string& url, bool useMask, const s
     fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
     //fprintf(stderr, "Connected to: %s\n", url.c_str());
-    return WebSocket::pointer(new RealWebSocket(sockfd, useMask));
+    return WebSocket::pointer(new WebSocketImpl(sockfd, useMask));
 }
 
 WebSocket::pointer WebSocket::create_dummy()
@@ -587,14 +566,14 @@ WebSocket::pointer WebSocket::create_dummy()
     return dummy;
 }
 
-WebSocket::pointer WebSocket::from_url(const std::string& url, const std::string& origin)
+WebSocket::pointer WebSocket::create(const std::string& url, const std::string& origin)
 {
-    return yanbo::from_url(url, true, origin);
+    return yanbo::createWebSocket(url, true, origin);
 }
 
-WebSocket::pointer WebSocket::from_url_no_mask(const std::string& url, const std::string& origin)
+WebSocket::pointer WebSocket::createNoMask(const std::string& url, const std::string& origin)
 {
-    return yanbo::from_url(url, false, origin);
+    return yanbo::createWebSocket(url, false, origin);
 }
 
 void WebSocket::networkInit()

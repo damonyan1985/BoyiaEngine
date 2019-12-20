@@ -3,36 +3,13 @@
 #include "GraphicsContextWin.h"
 #include "PlatformBridge.h"
 #include "PixelRatio.h"
-#include "WebSocket.h"
+#include "BoyiaSocket.h"
 #include "ThreadPool.h"
 #include <stdio.h>
 
 #ifndef  _WINDLL
 #define _WINDLL
 #endif
-
-void handle_message(const std::string& message)
-{
-    printf(">>> %s\n", message.c_str());
-    //if (message == "world") { ws->close(); }
-}
-
-class SocketTask : public yanbo::TaskBase {
-public:
-    virtual void execute()
-    {
-        ws = yanbo::WebSocket::from_url("ws://127.0.0.1:6666/test");
-        while (ws->getReadyState() != yanbo::WebSocket::CLOSED) {
-            ws->poll();
-            ws->send("goodbye");
-            ws->send("hello");
-            ws->dispatch(handle_message);
-        }
-        //delete ws;
-    }
-
-    yanbo::WebSocket::pointer ws;
-};
 
 
 void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
@@ -55,7 +32,8 @@ void BoyiaOnLoadWin::repaint()
 
 void BoyiaOnLoadWin::connectServer()
 {
-    yanbo::ThreadPool::getInstance()->sendTask(new SocketTask());
+    //yanbo::ThreadPool::getInstance()->sendTask(new SocketTask());
+    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.10:6666"));
 }
 
 void BoyiaOnLoadWin::networkInit()

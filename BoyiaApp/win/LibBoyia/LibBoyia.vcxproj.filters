@@ -462,6 +462,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.h">
       <Filter>boyia\kernal\vm\lib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaSocket.h">
+      <Filter>boyia\kernal\vm\lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -792,6 +795,9 @@
       <Filter>boyia\kernal\vm\lib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.cpp">
+      <Filter>boyia\kernal\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaSocket.cpp">
       <Filter>boyia\kernal\vm\lib</Filter>
     </ClCompile>
   </ItemGroup>

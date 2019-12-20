@@ -52,6 +52,7 @@ void* BaseThread::startThread(void* ptr)
 
 void BaseThread::stop()
 {
+    m_running = false;
 }
 
 void BaseThread::waitOnNotify()
