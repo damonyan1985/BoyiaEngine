@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 function initWebSocketServer() {
   const server = new WebSocket.Server(
     {
-      host: '127.0.0.1',
+      host: '192.168.0.10',
       port: 6666
     }
   );
