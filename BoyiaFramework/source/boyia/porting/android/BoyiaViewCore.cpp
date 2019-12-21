@@ -5,6 +5,7 @@
 #include "ArmFunction.h"
 #include "AutoObject.h"
 #include "BoyiaExecution.h"
+#include "BoyiaSocket.h"
 #include "FileUtil.h"
 #include "GLContext.h"
 #include "GraphicsContextGL.h"
@@ -32,6 +33,11 @@ enum KeyEventType {
 };
 
 bool JNI_LOG_ON = true;
+
+static LVoid boyiaSocketTest()
+{
+    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.10:6666"));
+}
 
 extern void nativeUpdatePatch(
     JNIEnv* env, jobject object,
@@ -74,6 +80,8 @@ static void nativeInitUIView(
 
     JNI_LOG_ON = isDebug;
     //ArmMemeset(NULL, 0, 0);
+    boyiaSocketTest();
+
     if (!FileUtil::isExist(yanbo::PlatformBridge::getAppRoot())) {
         FileUtil::createDirs(yanbo::PlatformBridge::getAppRoot());
     }

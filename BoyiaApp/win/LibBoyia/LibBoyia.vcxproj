@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;ENABLE_BOYIA_WINDOWS;_CRT_SECURE_NO_DEPRECATE;ZLIB_WINAPI;WIN32;__LP64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\core;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\arm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\lib;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\json;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\app;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\dom;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\style;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\gui;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget\flex;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\thread;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\tinyxml;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\cjson;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\painter\utils;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\graphics;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip\minizip;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\zip;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\ws;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\util;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\core;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\arm;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\lib;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\vm\json;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\view;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\app;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\loader;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\dom;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\style;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\gui;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\widget\flex;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\thread;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\tinyxml;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\cjson;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\painter\utils;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\win;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\graphics;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip;$(BOYIA_FRAMEWORK_ROOT)\source\thirdparty\zip\minizip;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\zip;$(BOYIA_FRAMEWORK_ROOT)\source\boyia\kernal\platform\ws;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PixelRatio.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.h" />
@@ -264,7 +265,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\gzguts.h" />
@@ -311,6 +311,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PixelRatio.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PlatformBridgeWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\ws\WebSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.cpp" />
@@ -374,7 +375,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\ws\WebSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\adler32.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\compress.c" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.c" />

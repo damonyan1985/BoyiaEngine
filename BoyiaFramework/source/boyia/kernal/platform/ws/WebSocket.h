@@ -1,13 +1,14 @@
 #ifndef WebSocket_h
 #define WebSocket_h
 
+#include "UtilString.h"
 #include <string>
 #include <vector>
 
 namespace yanbo {
 class WebSocketHandler {
 public:
-    virtual void handleMessage(const std::string& message) = 0;
+    virtual void handleMessage(const String& message) = 0;
 };
 
 class WebSocket {
@@ -24,13 +25,13 @@ public:
     static void networkInit();
     static void networkDestroy();
     static pointer create_dummy();
-    static pointer create(const std::string& url, const std::string& origin = std::string());
-    static pointer createNoMask(const std::string& url, const std::string& origin = std::string());
+    static pointer create(const String& url, const std::string& origin = std::string());
+    static pointer createNoMask(const String& url, const std::string& origin = std::string());
 
     // Interfaces:
     virtual ~WebSocket() {}
     virtual void poll(int timeout = 0) = 0; // timeout in milliseconds
-    virtual void send(const std::string& message) = 0;
+    virtual void send(const String& message) = 0;
     virtual void sendBinary(const std::string& message) = 0;
     virtual void sendBinary(const std::vector<uint8_t>& message) = 0;
     virtual void sendPing() = 0;
