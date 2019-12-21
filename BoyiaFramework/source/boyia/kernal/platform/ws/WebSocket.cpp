@@ -76,7 +76,12 @@ typedef int socket_t;
 #include <string>
 #include <vector>
 
+#include "Mutex.h"
+#include "AutoLock.h"
 #include "WebSocket.h"
+#include "KList.h"
+#include "OwnerPtr.h"
+#include "ThreadPool.h"
 
 namespace yanbo {
 
@@ -113,10 +118,124 @@ static socket_t hostname_connect(const std::string& hostname, int port)
     return sockfd;
 }
 
+class SocketSendTask : public TaskBase {
+public:
+    SocketSendTask(const String& msg, int type, socket_t sockfd, bool mask)
+        : message(msg)
+        , headerType(type)
+        , wsockfd(sockfd)
+        , useMask(mask)
+    {
+    }
+
+    virtual LVoid execute()
+    {
+        std::string msg(GET_STR(message));
+        sendData(headerType, msg.size(), msg.begin(), msg.end());
+    }
+
+    void sendImpl(std::vector<uint8_t>& txbuf)
+    {
+        while (txbuf.size()) {
+            int ret = ::send(wsockfd, (char*)& txbuf[0], txbuf.size(), 0);
+            if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
+                break;
+            } else if (ret <= 0) {
+                closesocket(wsockfd);
+                //readyState = CLOSED;
+                BOYIA_LOG(ret < 0 ? "Connection error! %d" : "Connection closed! %d", 1);
+                break;
+            } else {
+                txbuf.erase(txbuf.begin(), txbuf.begin() + ret);
+            }
+        }
+
+        /*
+        if (!txbuf.size() && readyState == CLOSING) {
+            closesocket(sockfd);
+            readyState = CLOSED;
+        }*/
+    }
+
+    template <class Iterator>
+    void sendData(int type, uint64_t message_size, Iterator message_begin, Iterator message_end)
+    {
+        // TODO:
+        // Masking key should (must) be derived from a high quality random
+        // number generator, to mitigate attacks on non-WebSocket friendly
+        // middleware:
+
+        const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
+        // TODO: consider acquiring a lock on txbuf...
+        /*
+        if (readyState == CLOSING || readyState == CLOSED) {
+            return;
+        }*/
+        std::vector<uint8_t> header;
+        header.assign(2 + (message_size >= 126 ? 2 : 0) + (message_size >= 65536 ? 6 : 0) + (useMask ? 4 : 0), 0);
+        header[0] = 0x80 | type;
+        if (message_size < 126) {
+            header[1] = (message_size & 0xff) | (useMask ? 0x80 : 0);
+            if (useMask) {
+                header[2] = masking_key[0];
+                header[3] = masking_key[1];
+                header[4] = masking_key[2];
+                header[5] = masking_key[3];
+            }
+        } else if (message_size < 65536) {
+            header[1] = 126 | (useMask ? 0x80 : 0);
+            header[2] = (message_size >> 8) & 0xff;
+            header[3] = (message_size >> 0) & 0xff;
+            if (useMask) {
+                header[4] = masking_key[0];
+                header[5] = masking_key[1];
+                header[6] = masking_key[2];
+                header[7] = masking_key[3];
+            }
+        } else { // TODO: run coverage testing here
+            header[1] = 127 | (useMask ? 0x80 : 0);
+            header[2] = (message_size >> 56) & 0xff;
+            header[3] = (message_size >> 48) & 0xff;
+            header[4] = (message_size >> 40) & 0xff;
+            header[5] = (message_size >> 32) & 0xff;
+            header[6] = (message_size >> 24) & 0xff;
+            header[7] = (message_size >> 16) & 0xff;
+            header[8] = (message_size >> 8) & 0xff;
+            header[9] = (message_size >> 0) & 0xff;
+            if (useMask) {
+                header[10] = masking_key[0];
+                header[11] = masking_key[1];
+                header[12] = masking_key[2];
+                header[13] = masking_key[3];
+            }
+        }
+        // N.B. - txbuf will keep growing until it can be transmitted over the socket:
+        // Add message header
+        std::vector<uint8_t> txbuf;
+        txbuf.insert(txbuf.end(), header.begin(), header.end());
+        // Add message body
+        txbuf.insert(txbuf.end(), message_begin, message_end);
+        if (useMask) {
+            size_t message_offset = txbuf.size() - message_size;
+            for (size_t i = 0; i != message_size; ++i) {
+                txbuf[message_offset + i] ^= masking_key[i & 0x3];
+            }
+        }
+
+        sendImpl(txbuf);
+    }
+
+private:
+    String message;
+    int headerType;
+    socket_t wsockfd;
+    bool useMask;
+};
+
 class DummyWebSocket : public WebSocket {
 public:
     void poll(int timeout) {}
-    void send(const std::string& message) {}
+    void send(const String& message) {}
     void sendBinary(const std::string& message) {}
     void sendBinary(const std::vector<uint8_t>& message) {}
     void sendPing() {}
@@ -174,6 +293,9 @@ public:
     bool useMask;
     bool isRxBad;
     WebSocketHandler* wsHandler;
+    Mutex mutex;
+    KList<OwnerPtr<String>> msgList;
+    
 
     WebSocketImpl(socket_t sockfd, bool useMask)
         : sockfd(sockfd)
@@ -194,8 +316,9 @@ public:
         return readyState;
     }
 
-    void poll(int timeout)
-    { // timeout in milliseconds
+    virtual void poll(int timeout)
+    { 
+        // timeout in milliseconds
         if (readyState == CLOSED) {
             if (timeout > 0) {
                 timeval tv = { timeout / 1000, (timeout % 1000) * 1000 };
@@ -203,18 +326,20 @@ public:
             }
             return;
         }
-        if (timeout != 0) {
-            fd_set rfds;
-            fd_set wfds;
-            timeval tv = { timeout / 1000, (timeout % 1000) * 1000 };
-            FD_ZERO(&rfds);
-            FD_ZERO(&wfds);
-            FD_SET(sockfd, &rfds);
-            if (txbuf.size()) {
-                FD_SET(sockfd, &wfds);
-            }
-            select(sockfd + 1, &rfds, &wfds, 0, timeout > 0 ? &tv : 0);
+
+        //if (timeout != 0) {
+        fd_set rfds;
+        fd_set wfds;
+        timeval tv = { timeout / 1000, (timeout % 1000) * 1000 };
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_SET(sockfd, &rfds);
+        if (txbuf.size()) {
+            FD_SET(sockfd, &wfds);
         }
+        select(sockfd + 1, &rfds, &wfds, 0, timeout > 0 ? &tv : 0);
+        //}
+
         while (true) {
             // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
@@ -234,6 +359,8 @@ public:
                 rxbuf.resize(N + ret);
             }
         }
+
+        /*
         while (txbuf.size()) {
             int ret = ::send(sockfd, (char*)&txbuf[0], txbuf.size(), 0);
             if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
@@ -250,7 +377,7 @@ public:
         if (!txbuf.size() && readyState == CLOSING) {
             closesocket(sockfd);
             readyState = CLOSED;
-        }
+        }*/
     }
 
     virtual void dispatch()
@@ -303,7 +430,7 @@ public:
                     // if it were valid. So just close() and return immediately
                     // for now.
                     isRxBad = true;
-                    BOYIA_LOG("ERROR: Frame has invalid frame length. Closing.");
+                    BOYIA_LOG("ERROR: Frame has invalid frame length. Closing. %d", 1);
                     close();
                     return;
                 }
@@ -338,7 +465,8 @@ public:
                 receivedData.insert(receivedData.end(), rxbuf.begin() + ws.header_size, rxbuf.begin() + ws.header_size + (size_t)ws.N); // just feed
                 if (ws.fin) {
                     if (wsHandler) {
-                        wsHandler->handleMessage(std::string(receivedData.begin(), receivedData.end()));
+                        //wsHandler->handleMessage(std::string(receivedData.begin(), receivedData.end()));
+                        wsHandler->handleMessage(String(receivedData.data(), receivedData.size()));
                     }
                     receivedData.erase(receivedData.begin(), receivedData.end());
                     std::vector<uint8_t>().swap(receivedData); // free memory
@@ -355,7 +483,7 @@ public:
             } else if (ws.opcode == wsheader_type::CLOSE) {
                 close();
             } else {
-                BOYIA_LOG("ERROR: Got unexpected WebSocket message.");
+                BOYIA_LOG("ERROR: Got unexpected WebSocket message. %d", 1);
                 close();
             }
 
@@ -363,15 +491,23 @@ public:
         }
     }
 
+    void send(const String& message)
+    {
+        ThreadPool::getInstance()->sendTask(
+            new SocketSendTask(
+                message,
+                wsheader_type::TEXT_FRAME,
+                sockfd,
+                useMask
+                ));
+        //std::string msg(GET_STR(message));
+        //sendData(wsheader_type::TEXT_FRAME, msg.size(), msg.begin(), msg.end());
+    }
+
     void sendPing()
     {
         std::string empty;
         sendData(wsheader_type::PING, empty.size(), empty.begin(), empty.end());
-    }
-
-    void send(const std::string& message)
-    {
-        sendData(wsheader_type::TEXT_FRAME, message.size(), message.begin(), message.end());
     }
 
     void sendBinary(const std::string& message)
@@ -384,6 +520,7 @@ public:
         sendData(wsheader_type::BINARY_FRAME, message.size(), message.begin(), message.end());
     }
 
+    
     template <class Iterator>
     void sendData(wsheader_type::opcode_type type, uint64_t message_size, Iterator message_begin, Iterator message_end)
     {
@@ -435,7 +572,9 @@ public:
             }
         }
         // N.B. - txbuf will keep growing until it can be transmitted over the socket:
+        // Add message header
         txbuf.insert(txbuf.end(), header.begin(), header.end());
+        // Add message body
         txbuf.insert(txbuf.end(), message_begin, message_end);
         if (useMask) {
             size_t message_offset = txbuf.size() - message_size;
@@ -457,29 +596,29 @@ public:
     }
 };
 
-static WebSocket::pointer createWebSocket(const std::string& url, bool useMask, const std::string& origin)
+static WebSocket::pointer createWebSocket(const String& url, bool useMask, const std::string& origin)
 {
     char host[512];
     int port;
     char path[512];
-    if (url.size() >= 512) {
-        BOYIA_LOG("ERROR: url size limit exceeded: %s", url.c_str());
+    if (url.GetLength() >= 512) {
+        BOYIA_LOG("ERROR: url size limit exceeded: %s", GET_STR(url));
         return NULL;
     }
     if (origin.size() >= 200) {
         BOYIA_LOG("ERROR: origin size limit exceeded: %s", origin.c_str());
         return NULL;
     }
-    if (sscanf(url.c_str(), "ws://%[^:/]:%d/%s", host, &port, path) == 3) {
-    } else if (sscanf(url.c_str(), "ws://%[^:/]/%s", host, path) == 2) {
+    if (sscanf(GET_STR(url), "ws://%[^:/]:%d/%s", host, &port, path) == 3) {
+    } else if (sscanf(GET_STR(url), "ws://%[^:/]/%s", host, path) == 2) {
         port = 80;
-    } else if (sscanf(url.c_str(), "ws://%[^:/]:%d", host, &port) == 2) {
+    } else if (sscanf(GET_STR(url), "ws://%[^:/]:%d", host, &port) == 2) {
         path[0] = '\0';
-    } else if (sscanf(url.c_str(), "ws://%[^:/]", host) == 1) {
+    } else if (sscanf(GET_STR(url), "ws://%[^:/]", host) == 1) {
         port = 80;
         path[0] = '\0';
     } else {
-        BOYIA_LOG("ERROR: Could not parse WebSocket url: %s", url.c_str());
+        BOYIA_LOG("ERROR: Could not parse WebSocket url: %s", GET_STR(url));
         return NULL;
     }
     //fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
@@ -524,13 +663,13 @@ static WebSocket::pointer createWebSocket(const std::string& url, bool useMask, 
         }
         
         if (i == 1023) {
-            BOYIA_LOG("ERROR: Got invalid status line connecting to: %s", url.c_str());
+            BOYIA_LOG("ERROR: Got invalid status line connecting to: %s", GET_STR(url));
             return NULL;
         }
 
         int status;
         if (sscanf(line, "HTTP/1.1 %d", &status) != 1 || status != 101) {
-            BOYIA_LOG("ERROR: Got bad status connecting to %s: %s", url.c_str(), line);
+            BOYIA_LOG("ERROR: Got bad status connecting to %s: %s", GET_STR(url), line);
             return NULL;
         }
         // TODO: verify response headers,
@@ -566,12 +705,12 @@ WebSocket::pointer WebSocket::create_dummy()
     return dummy;
 }
 
-WebSocket::pointer WebSocket::create(const std::string& url, const std::string& origin)
+WebSocket::pointer WebSocket::create(const String& url, const std::string& origin)
 {
     return yanbo::createWebSocket(url, true, origin);
 }
 
-WebSocket::pointer WebSocket::createNoMask(const std::string& url, const std::string& origin)
+WebSocket::pointer WebSocket::createNoMask(const String& url, const std::string& origin)
 {
     return yanbo::createWebSocket(url, false, origin);
 }

@@ -37,6 +37,7 @@ file(
     "${BOYIA_SRC_PATH}/kernal/platform/arm/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/platform/graphics/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/platform/zip/*.cpp"
+    "${BOYIA_SRC_PATH}/kernal/platform/ws/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/style/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/util/*.cpp"
     "${BOYIA_SRC_PATH}/kernal/view/*.cpp"
@@ -92,6 +93,7 @@ target_include_directories(
     ${BOYIA_SRC_PATH}/kernal/platform/arm
     ${BOYIA_SRC_PATH}/kernal/platform/graphics
     ${BOYIA_SRC_PATH}/kernal/platform/zip
+    ${BOYIA_SRC_PATH}/kernal/platform/ws
     ${BOYIA_SRC_PATH}/kernal/platform
     ${BOYIA_SRC_PATH}/kernal/style
     ${BOYIA_SRC_PATH}/kernal/util
@@ -107,7 +109,6 @@ target_include_directories(
     ${THIRD_PARTY_PATH}/cjson
     ${THIRD_PARTY_PATH}/tinyxml
     ${THIRD_PARTY_PATH}/zip
-    ${THIRD_PARTY_PATH}/ws
     ${THIRD_PARTY_PATH}/zip/minizip
 )
 
@@ -127,5 +128,4 @@ target_link_libraries(
     cjson
     tinyxml
     zip
-    ws
 )

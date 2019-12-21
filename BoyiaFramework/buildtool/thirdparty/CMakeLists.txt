@@ -4,5 +4,4 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
 
 add_subdirectory(cjson)
 add_subdirectory(tinyxml)
-add_subdirectory(ws)
 add_subdirectory(zip)
