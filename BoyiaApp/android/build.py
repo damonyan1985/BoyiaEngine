@@ -14,6 +14,18 @@ upload_core_library_cmd = (
   'cd core && gradle :core:uploadArchives'
 )
 
+upload_util_library_cmd = (
+  'cd util && gradle :util:uploadArchives'
+)
+
+upload_loader_library_cmd = (
+  'cd loader && gradle :loader:uploadArchives'
+)
+
+build_app_cmd = (
+  'cd app && gradle assembleDebug'
+)
+
 def del_file(path, isDel):
   ls = os.listdir(path)
   for i in ls:
@@ -37,7 +49,11 @@ def main():
     os.mkdir(maven_dir)
     os.system(pull_core_maven_cmd)
   del_file(maven_project_dir, False)
+  os.system(upload_util_library_cmd)
+  os.system(upload_loader_library_cmd)
   os.system(upload_core_library_cmd)
+  os.system(build_app_cmd)
+  
   print('Build Finished!')
 
 if __name__ == '__main__':

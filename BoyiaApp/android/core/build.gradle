@@ -57,7 +57,6 @@ println "$rootDir/../BoyiaFramework/buildtool/CMakeLists.txt"
 
 uploadArchives {
     repositories.mavenDeployer {
-        //def mavenDirPath = file('F:\\mavendir')
         repository(url:"file://${maven_dir}")
         pom.project {
             groupId "com.boyia.app.core" // can write any name, but now we use library package name
@@ -69,6 +68,8 @@ uploadArchives {
 
 dependencies {
     //compileOnly 'com.boyia.app.common:common:1.0.0'
-    compileOnly project(':util')
-    compileOnly project(':loader')
+    //compileOnly project(':util')
+    compileOnly gradle.library.boyia_common
+    compileOnly gradle.library.boyia_loader
+    //compileOnly project(':loader')
 }

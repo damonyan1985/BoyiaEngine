@@ -699,7 +699,7 @@ static WebSocket::pointer createWebSocket(const String& url, bool useMask, const
     return WebSocket::pointer(new WebSocketImpl(sockfd, useMask));
 }
 
-WebSocket::pointer WebSocket::create_dummy()
+WebSocket::pointer WebSocket::createDummy()
 {
     static pointer dummy = pointer(new DummyWebSocket);
     return dummy;
@@ -718,16 +718,17 @@ WebSocket::pointer WebSocket::createNoMask(const String& url, const std::string&
 void WebSocket::networkInit()
 {
 #ifdef _WIN32
-    INT rc;
+    //INT rc;
     WSADATA wsaData;
-    rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    //rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    ::WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 }
 
 void WebSocket::networkDestroy()
 {
 #ifdef _WIN32
-    WSACleanup();
+    ::WSACleanup();
 #endif
 }
 
