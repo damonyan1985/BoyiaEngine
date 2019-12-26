@@ -24,7 +24,7 @@ public:
     // Factories:
     static void networkInit();
     static void networkDestroy();
-    static pointer create_dummy();
+    static pointer createDummy();
     static pointer create(const String& url, const std::string& origin = std::string());
     static pointer createNoMask(const String& url, const std::string& origin = std::string());
 
