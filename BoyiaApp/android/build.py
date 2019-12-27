@@ -11,7 +11,7 @@ pull_core_maven_cmd = (
 )
 
 upload_core_library_cmd = (
-  'cd core && gradle :core:uploadArchives'
+  'cd core && gradle :core:uploadArchives --rerun-tasks'
 )
 
 upload_util_library_cmd = (
@@ -51,6 +51,7 @@ def main():
   del_file(maven_project_dir, False)
   os.system(upload_util_library_cmd)
   os.system(upload_loader_library_cmd)
+  #os.system(upload_core_native_sync_cmd)
   os.system(upload_core_library_cmd)
   os.system(build_app_cmd)
   
