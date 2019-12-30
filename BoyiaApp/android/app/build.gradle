@@ -106,14 +106,14 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //debugImplementation project(path: ':core', configuration: 'debug')
     //releaseImplementation project(path: ':core', configuration: 'release')
-    //debugImplementation project(':core')
-    //releaseImplementation project(':core')
+    debugImplementation project(':core')
+    releaseImplementation project(':core')
     //implementation 'com.boyia.app.core:core:1.0.0'
     //implementation gradle.library.boyia_core
     //api project(':util')
     //api project(':loader')
-    debugImplementation gradle.library.boyia_core
-    releaseImplementation gradle.library.boyia_core
+    //debugImplementation gradle.library.boyia_core
+    //releaseImplementation gradle.library.boyia_core
     api gradle.library.boyia_common
     api gradle.library.boyia_loader
     api gradle.library.okhttp_lib

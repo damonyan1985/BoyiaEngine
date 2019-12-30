@@ -1,7 +1,7 @@
 #ifndef BoyiaAppWindow_h
 #define BoyiaAppWindow_h
 
-#include "graphic/BoyiaDC.h"
+#include "BoyiaDC.h"
 #include "window/BoyiaWindow.h"
 
 namespace yanbo {
