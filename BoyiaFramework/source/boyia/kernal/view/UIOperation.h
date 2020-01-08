@@ -9,7 +9,7 @@ namespace yanbo {
 // UI线程一切操作【现有】Widget DOM必须走UIOperation
 // 最后将由PaintThread来执行UIOperation::execute()
 // 来完成绘制工作
-class UIOperation : public MessageCache {
+class UIOperation LFinal: public MessageCache {
 public:
     enum UIOpType {
         UIOP_ADDCHILD,

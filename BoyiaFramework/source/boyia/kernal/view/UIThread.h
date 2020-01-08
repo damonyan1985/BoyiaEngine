@@ -21,7 +21,7 @@ private:
     friend class UIThread;
 };
 
-class UIThread : public MessageThread {
+class UIThread LFinal : public MessageThread {
 public:
     enum MessageType {
         kUiInit = 1,

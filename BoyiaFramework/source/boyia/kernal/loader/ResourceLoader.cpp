@@ -15,7 +15,7 @@
 extern LVoid CompileScript(char* code);
 namespace yanbo {
 
-class ResourceHandle : public NetworkClient, public UIEvent {
+class ResourceHandle LFinal : public NetworkClient, public UIEvent {
 public:
     ResourceHandle(ResourceLoader* loader, LInt type, const String& url)
         : m_loader(loader)
@@ -25,40 +25,39 @@ public:
     {
     }
 
-    virtual LVoid onDataReceived(const LByte* data, LInt size)
+    virtual LVoid onDataReceived(const LByte* data, LInt size) LOverride
     {
         LByte* destData = new LByte[size];
         util::LMemcpy(destData, data, size);
         m_builder.append(destData, 0, size, LFalse);
     }
 
-    virtual LVoid onStatusCode(LInt statusCode)
+    virtual LVoid onStatusCode(LInt statusCode) LOverride
     {
     }
 
-    virtual LVoid onRedirectUrl(const String& redirectUrl)
+    virtual LVoid onRedirectUrl(const String& redirectUrl) LOverride
     {
     }
 
-    virtual LVoid onLoadError(LInt error)
+    virtual LVoid onLoadError(LInt error) LOverride
     {
         //m_loader->onLoadError(error);
         m_result = error;
         UIThread::instance()->sendUIEvent(this);
     }
 
-    virtual LVoid onLoadFinished()
+    virtual LVoid onLoadFinished() LOverride
     {
         UIThread::instance()->sendUIEvent(this);
     }
 
-    virtual LVoid run()
+    virtual LVoid run() LOverride
     {
 		KLOG("ResourceEvent::run");
 
         BOYIA_LOG("ResourceHandle---run---url: %s", GET_STR(m_url));
         if (m_result == NetworkClient::kNetworkSuccess) {
-            //BoyiaPtr<String> sptr = m_builder.toString();
 			KLOG("ResourceEvent::run kNetworkSuccess");
             OwnerPtr<String> data = m_builder.toString();
 			BOYIA_LOG("Parse script=%s", (const char*)data->GetBuffer());
@@ -68,7 +67,7 @@ public:
         }
     }
 
-    virtual LVoid onFileLen(LInt len)
+    virtual LVoid onFileLen(LInt len) LOverride
     {
         //m_loader->onFileLen(len);
     }
