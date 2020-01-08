@@ -12,16 +12,13 @@
 #define PlatformLib_h
 
 // Setting byte alignment with one byte
-// MiniMemory allocator data must byte alignment
+// BoyiaMemory allocator data must byte alignment
 //#pragma pack(4)
 
 namespace util {
-// feature begin
-// #define ENABLE_ANDROID_PORTING 1
-//#define ENABLE_BOYIA_KERNEL 1
-// feature end
-//
-#define LCONST const
+#define LConst const
+#define LFinal final
+#define LOverride override
 
 #ifndef kBoyiaNull
 #define kBoyiaNull 0
@@ -31,17 +28,14 @@ namespace util {
 #define NULL 0
 //#define NULL nullptr
 #endif
-//
+
 #define ENABLE(FEATURE) (defined ENABLE_##FEATURE && ENABLE_##FEATURE)
 #define UNABLE(FEATURE) (defined ENABLE_##FEATURE && !ENABLE_##FEATURE)
 
-//
 #define LCHARSW(CHARS) L##CHARS
 
-//
 #define LCHARSA(CHARS) CHARS
 
-//
 #define LCHARS LCHARSA
 
 #define LSTATIC_CAST(typ, object) static_cast<typ>(object)
