@@ -1,5 +1,7 @@
 package com.boyia.app.loader.job;
 
+import android.os.Process;
+
 /*
  * JobThread
  * @Author Boyia
@@ -32,6 +34,7 @@ public class JobThread extends Thread {
 
     @Override
     public void run() {
+        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         while (mRunning) {
             try {
                 IJob job = mJobScheduler.pollJob();
