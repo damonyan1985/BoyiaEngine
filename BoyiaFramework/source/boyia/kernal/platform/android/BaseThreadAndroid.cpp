@@ -13,6 +13,8 @@
 
 #define TAG "BaseThread"
 
+const LInt kThreadStackSize = 256 * 1024;
+
 namespace yanbo {
 
 class Condition {
@@ -35,7 +37,12 @@ BaseThread::~BaseThread()
 
 void BaseThread::start()
 {
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setstacksize(&attr, kThreadStackSize);
     pthread_create(&m_condition->thread, NULL, startThread, this);
+    pthread_attr_destroy(&attr);
 }
 
 int BaseThread::wait()
