@@ -270,4 +270,8 @@ public class BoyiaImager {
             }
         }
     }
+
+    public void clearMemoryCache() {
+        mBitmapCache.evictAll();
+    }
 }
