@@ -108,7 +108,6 @@ dependencies {
     //releaseImplementation project(path: ':core', configuration: 'release')
     debugImplementation project(':core')
     releaseImplementation project(':core')
-    //implementation 'com.boyia.app.core:core:1.0.0'
     //implementation gradle.library.boyia_core
     //api project(':util')
     //api project(':loader')

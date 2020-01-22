@@ -3,9 +3,11 @@ package com.boyia.app;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
-import com.boyia.app.core.BoyiaUIView;
+import com.boyia.app.loader.image.BoyiaImager;
+import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
 
+import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -19,8 +21,18 @@ public class BoyiaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		BoyiaUtils.loadLib();
-		setContentView(R.layout.main);
+		JobScheduler.getInstance().sendJob(new IJob() {
+			@Override
+			public void exec() {
+				BoyiaUtils.loadLib();
+				BoyiaActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						setContentView(R.layout.main);
+					}
+				});
+			}
+		});
     }
 
 	@Override
@@ -87,5 +99,14 @@ public class BoyiaActivity extends Activity {
 	@Override
 	public void onNewIntent(Intent intent) {
 		BoyiaUtils.showToast(intent.getAction());
+	}
+
+	@Override
+	public void onTrimMemory(int level) {
+		super.onTrimMemory(level);
+		BoyiaLog.d(TAG, "onTrimMemory level=" +level);
+		if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+			BoyiaImager.getInstance().clearMemoryCache();
+		}
 	}
 }
