@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 public class DownloadDAO extends BoyiaDAO<DownloadData> {
-    //public static final String TABLE_NAME = "downloads";
     public DownloadDAO(SQLiteDatabase db) {
         super(db);
     }

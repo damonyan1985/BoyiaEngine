@@ -68,17 +68,13 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void initEventListener() {
         mInputManager = new BoyiaInputManager(this);
-        setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        setOnTouchListener((View v, MotionEvent event) -> {
                 onTouchDown(event);
                 return true;
             }
-        });
+        );
 
-        setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+        setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
                 if (event.getAction() == KeyEvent.ACTION_DOWN
                         && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
                     if (mInputConnect != null) {
@@ -87,7 +83,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
                 }
                 return false;
             }
-        });
+        );
 
         setFocusable(true);
         setFocusableInTouchMode(true);
