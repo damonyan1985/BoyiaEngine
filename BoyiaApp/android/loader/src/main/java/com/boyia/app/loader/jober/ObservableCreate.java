@@ -9,7 +9,7 @@ public class ObservableCreate<T> extends Observable<T> {
     }
 
     private void subscribeImpl(Subscriber<? super T> observer) {
-        CreateEmitter<T> emitter = new CreateEmitter<>(observer, mObserveOnScheduler);
+        EmitterImpl<T> emitter = new EmitterImpl<>(observer, mObserveOnScheduler);
         try {
             // 执行任务的地方
             mSource.subscribe(emitter);
@@ -29,11 +29,11 @@ public class ObservableCreate<T> extends Observable<T> {
         }
     }
 
-    static class CreateEmitter<T> implements Subscriber<T> {
+    static class EmitterImpl<T> implements Subscriber<T> {
         private final Subscriber<? super T> mObserver;
         private final Scheduler mScheduler;
 
-        CreateEmitter(Subscriber<? super T> observer, Scheduler scheduler) {
+        EmitterImpl(Subscriber<? super T> observer, Scheduler scheduler) {
             mObserver = observer;
             mScheduler = scheduler;
         }

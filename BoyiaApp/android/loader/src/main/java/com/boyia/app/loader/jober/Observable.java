@@ -17,6 +17,23 @@ public abstract class Observable<T> implements ObservableSource<T> {
         subscribeActual(observer);
     }
 
+    public void subscribe(ParamAction<? super T> next, ParamAction<? super Throwable> error, Action complete) {
+        ActionSubscriber<T> observer = new ActionSubscriber<>(next, error, complete);
+        subscribe(observer);
+    }
+
+    public void subscribe(ParamAction<? super T> next, ParamAction<? super Throwable> error) {
+        subscribe(next, error, Functions.EMPTY_ACTION);
+    }
+
+    public void subscribe(ParamAction<? super T> next) {
+        subscribe(next, Functions.emptyParamAction(), Functions.EMPTY_ACTION);
+    }
+
+    public void subscribe(Action complete) {
+        subscribe(Functions.emptyParamAction(), Functions.emptyParamAction(), complete);
+    }
+
     public final Observable<T> subscribeOn(Scheduler scheduler) {
         mSubscribeOnScheduler = scheduler;
         return this;
