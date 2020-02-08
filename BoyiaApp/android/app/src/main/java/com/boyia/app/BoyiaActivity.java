@@ -33,13 +33,13 @@ public class BoyiaActivity extends Activity {
 //				BoyiaActivity.this.runOnUiThread(() -> setContentView(R.layout.main));
 //			}
 //		);
-		Observable.create((Subscriber <String> subscriber) -> {
-			BoyiaUtils.loadLib();
-			subscriber.onComplete();
-		})
-		.subscribeOn(JobScheduler.getInstance())
-		.observeOn(MainScheduler.mainScheduler())
-		.subscribe(() -> setContentView(R.layout.main));
+        Observable.create((Subscriber <String> subscriber) -> {
+            BoyiaUtils.loadLib();
+            subscriber.onComplete();
+        })
+        .subscribeOn(JobScheduler.getInstance())
+        .observeOn(MainScheduler.mainScheduler())
+        .subscribe(() -> setContentView(R.layout.main));
 
 		initBroadcast();
    }
