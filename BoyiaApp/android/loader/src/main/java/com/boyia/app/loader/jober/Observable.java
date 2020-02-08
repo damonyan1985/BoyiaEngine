@@ -3,9 +3,6 @@ package com.boyia.app.loader.jober;
 import com.boyia.app.loader.job.Scheduler;
 
 public abstract class Observable<T> implements ObservableSource<T> {
-    protected Scheduler mSubscribeOnScheduler;
-    protected Scheduler mObserveOnScheduler;
-
     public static <T> Observable<T> create(ObservableOnSubscribe<T> source) {
         return new ObservableCreate<>(source);
     }
@@ -35,12 +32,10 @@ public abstract class Observable<T> implements ObservableSource<T> {
     }
 
     public final Observable<T> subscribeOn(Scheduler scheduler) {
-        mSubscribeOnScheduler = scheduler;
-        return this;
+        return new ObservableSubscribeOn<>(this, scheduler);
     }
 
     public final Observable<T> observeOn(Scheduler scheduler) {
-        mObserveOnScheduler = scheduler;
-        return this;
+        return new ObservableObserveOn<>(this, scheduler);
     }
 }
