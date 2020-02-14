@@ -61,7 +61,9 @@ public class OkEngine extends BaseEngine {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .readTimeout(600, TimeUnit.SECONDS)
+                .socketFactory(SSLHelper.getSSLSocketFactory())
                 .build();
+
         switch (request.mMethod) {
             case HTTPFactory.HTTP_GET_METHOD:
                 builder.get();

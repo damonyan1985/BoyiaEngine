@@ -33,7 +33,7 @@ public class BoyiaActivity extends Activity {
 //				BoyiaActivity.this.runOnUiThread(() -> setContentView(R.layout.main));
 //			}
 //		);
-        Observable.create((Subscriber <String> subscriber) -> {
+        Observable.create((Subscriber<String> subscriber) -> {
             BoyiaUtils.loadLib();
             subscriber.onComplete();
         })
