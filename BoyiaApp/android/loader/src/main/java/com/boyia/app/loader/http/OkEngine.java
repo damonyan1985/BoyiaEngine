@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -57,11 +60,13 @@ public class OkEngine extends BaseEngine {
             return response;
         }
 
+        SSLHelper.SSLInfo info = SSLHelper.getSSLInfo();
         okhttp3.Request.Builder builder = setHeader(request);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .readTimeout(600, TimeUnit.SECONDS)
-                .socketFactory(SSLHelper.getSSLSocketFactory())
+                .sslSocketFactory(info.mFactory, info.mTrustManager)
+                .hostnameVerifier((hostname, session) -> true)
                 .build();
 
         switch (request.mMethod) {
