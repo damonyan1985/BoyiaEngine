@@ -14,10 +14,12 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map.Entry;
 
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class URLEngine extends BaseEngine {
     private static final String TAG = URLEngine.class.getSimpleName();
-    private HttpURLConnection mConnection = null;
+    private HttpsURLConnection mConnection = null;
 
     @Override
     public void stop() {
@@ -65,8 +67,9 @@ public class URLEngine extends BaseEngine {
     }
 
     private void executeHttpSetting(URL netUrl, Request request) throws IOException {
-        mConnection = (HttpURLConnection) netUrl.openConnection();
+        mConnection = (HttpsURLConnection) netUrl.openConnection();
         // Not allowed auto skip to another link
+        mConnection.setSSLSocketFactory(SSLHelper.getSSLInfo().mFactory);
         mConnection.setInstanceFollowRedirects(false);
         mConnection.setReadTimeout(HTTPFactory.HTTP_TIME_OUT);
         mConnection.setConnectTimeout(HTTPFactory.HTTP_TIME_OUT);
