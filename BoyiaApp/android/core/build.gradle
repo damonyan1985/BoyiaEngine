@@ -17,7 +17,7 @@ android {
         }
     }
 
-    externalNativeBuild{
+    externalNativeBuild {
         if (use_cmake) {
             cmake {
                 path gradle.library.framework_cmake

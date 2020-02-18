@@ -18,7 +18,7 @@
 
 namespace util {
 
-#define kEnlargeCapacity (LInt)20
+#define kEnlargeCapacity 16
 
 template <class T>
 class KVector : public BoyiaRef {

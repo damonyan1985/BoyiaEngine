@@ -47,7 +47,7 @@ static LInt UIThreadClienIdCreate()
 
 // create a size and capactiy vector
 UIThreadClientMap::UIThreadClientMap()
-    : m_map(kEnlargeCapacity)
+    : m_map(kEnlargeCapacity * 4)
 {
     // Init all pointer to NULL
     for (LInt i = 0; i < m_map.capacity(); ++i) {
@@ -84,7 +84,9 @@ KVector<UIThreadItem*>& UIThreadClientMap::map()
 
 UIThreadClient* UIThreadClientMap::findUIThreadClient(LInt id)
 {
-    LInt index = id % m_map.capacity();
+    // LInt index = id % m_map.capacity();
+    // (n - 1) & hash = hash % n
+    LInt index = (m_map.capacity() - 1) & id;
     UIThreadItem* item = m_map[index];
     while (item) {
         if (item->id == id) {
@@ -101,7 +103,9 @@ UIThreadClient* UIThreadClientMap::findUIThreadClient(LInt id)
 
 UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)
 {
-    LInt index = id % m_map.capacity();
+    // LInt index = id % m_map.capacity();
+    // (n - 1) & hash = hash % n
+    LInt index = (m_map.capacity() - 1) & id;
     UIThreadItem* item = m_map[index];
     KFORMATLOG("UIThreadClientMap::getUIThreadItem item=%ld", (long)item);
     // Item maybe delete by uithread before this even run
@@ -148,7 +152,9 @@ LVoid UIThreadClientMap::registerClient(UIThreadClient* client)
     item->id = id;
     item->client = client;
     //item->m_map.addElement(item);
-    LInt index = id % m_map.capacity();
+    // LInt index = id % m_map.capacity();
+    // (n - 1) & hash = hash % n
+    LInt index = (m_map.capacity() - 1) & id;
     UIThreadItem* mapItem = m_map[index];
     m_map[index] = item;
     if (mapItem) {
