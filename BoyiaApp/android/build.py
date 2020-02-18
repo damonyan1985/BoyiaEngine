@@ -31,6 +31,10 @@ install_apk_cmd = (
   'adb install -t app/build/outputs/apk/boyia/debug/app-boyia-debug.apk'
 )
 
+launch_app_cmd = (
+  'adb shell am start -n com.boyia.app/com.boyia.app.BoyiaActivity'
+)
+
 def del_file(path, isDel):
   ls = os.listdir(path)
   for i in ls:
@@ -60,6 +64,7 @@ def main():
   os.system(upload_core_library_cmd)
   os.system(build_app_cmd)
   os.system(install_apk_cmd)
+  os.system(launch_app_cmd)
   
   print('Build Finished!')
 
