@@ -10,6 +10,7 @@ pull_core_maven_cmd = (
   'cd maven && git clone git@github.com:damonyan1985/BoyiaMaven.git'
 )
 
+# add --rerun-tasks to resolute externalNativeBuild not exist
 upload_core_library_cmd = (
   'cd core && gradle :core:uploadArchives --rerun-tasks'
 )
@@ -24,6 +25,10 @@ upload_loader_library_cmd = (
 
 build_app_cmd = (
   'cd app && gradle assembleDebug'
+)
+
+install_apk_cmd = (
+  'adb install -t app/build/outputs/apk/boyia/debug/app-boyia-debug.apk'
 )
 
 def del_file(path, isDel):
@@ -41,7 +46,7 @@ def del_file(path, isDel):
     else:
       os.remove(c_path)
   if isDel:      
-    os.rmdir(path)   
+    os.rmdir(path)    
 
 def main():
   print('maven_dir=' + maven_dir)
@@ -54,6 +59,7 @@ def main():
   #os.system(upload_core_native_sync_cmd)
   os.system(upload_core_library_cmd)
   os.system(build_app_cmd)
+  os.system(install_apk_cmd)
   
   print('Build Finished!')
 
