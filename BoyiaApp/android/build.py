@@ -23,6 +23,10 @@ upload_loader_library_cmd = (
   'cd loader && gradle :loader:uploadArchives'
 )
 
+upload_leaker_library_cmd = (
+  'cd leaker && gradle :leaker:uploadArchives'
+)
+
 build_app_cmd = (
   'cd app && gradle assembleDebug'
 )
@@ -61,11 +65,11 @@ def main():
   os.system(upload_util_library_cmd)
   os.system(upload_loader_library_cmd)
   #os.system(upload_core_native_sync_cmd)
+  os.system(upload_leaker_library_cmd)
   os.system(upload_core_library_cmd)
   os.system(build_app_cmd)
   os.system(install_apk_cmd)
   os.system(launch_app_cmd)
-  
   print('Build Finished!')
 
 if __name__ == '__main__':

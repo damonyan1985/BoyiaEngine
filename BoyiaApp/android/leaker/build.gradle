@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply from: "$rootDir/library.gradle"
 
 android {
     compileSdkVersion 28
@@ -22,6 +24,17 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url:"file://${maven_dir}")
+        pom.project {
+            groupId "com.boyia.app.leaker" // can write any name, but now we use library package name
+            artifactId "leaker" // can write any name, but now we use library name
+            version "1.0.0" // version name
+        }
     }
 }
 
