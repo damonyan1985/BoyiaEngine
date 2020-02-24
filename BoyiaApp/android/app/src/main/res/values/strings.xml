@@ -7,4 +7,5 @@
     <string name="boyia_app_process">:BoyiaProcess</string>
     <string name="enter">确认按键</string>
     <string name="testString">\ue809</string>
+    <string name="leak_app_name">leaker</string>
 </resources>

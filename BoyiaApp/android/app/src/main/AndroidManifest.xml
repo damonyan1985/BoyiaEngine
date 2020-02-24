@@ -45,6 +45,7 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:theme="@style/BoyiaStartStyle"
+            android:label="leaker"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
