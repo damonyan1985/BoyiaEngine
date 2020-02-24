@@ -2,64 +2,64 @@
 <resources>
 
     <style name="ShadowStyle">
-        <item name="android:shadowColor">#6e6e6e</item>
-        <item name="android:shadowDx">0.5</item>
-        <item name="android:shadowDy">0.5</item>
-        <item name="android:shadowRadius">0.5</item>
+      <item name="android:shadowColor">#6e6e6e</item>
+      <item name="android:shadowDx">0.5</item>
+      <item name="android:shadowDy">0.5</item>
+      <item name="android:shadowRadius">0.5</item>
     </style>
 
     <style name="DeepStyle">
-        <item name="android:shadowColor">#000000</item>
-        <item name="android:shadowDx">-0.5</item>
-        <item name="android:shadowDy">-0.5</item>
-        <item name="android:shadowRadius">0.5</item>
+      <item name="android:shadowColor">#000000</item>
+      <item name="android:shadowDx">-0.5</item>
+      <item name="android:shadowDy">-0.5</item>
+      <item name="android:shadowRadius">0.5</item>
     </style>
 
     <style name="OrangeStyle">
-        <item name="android:shadowColor">#742061</item>
-        <item name="android:shadowDx">-0.5</item>
-        <item name="android:shadowDy">-0.5</item>
-        <item name="android:shadowRadius">0.5</item>
+      <item name="android:shadowColor">#742061</item>
+      <item name="android:shadowDx">-0.5</item>
+      <item name="android:shadowDy">-0.5</item>
+      <item name="android:shadowRadius">0.5</item>
     </style>
 
     <style name="Dialog_Fullscreen">
-        <item name="android:windowNoTitle">true</item>
+      <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="GreenStyle">
-        <item name="android:shadowColor">#003300</item>
-        <item name="android:shadowDx">-0.5</item>
-        <item name="android:shadowDy">-0.5</item>
-        <item name="android:shadowRadius">0.5</item>
+      <item name="android:shadowColor">#003300</item>
+      <item name="android:shadowDx">-0.5</item>
+      <item name="android:shadowDy">-0.5</item>
+      <item name="android:shadowRadius">0.5</item>
     </style>
 
     <style name="HomeButtonStytle">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">20dip</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_marginTop">10dip</item>
+      <item name="android:layout_width">fill_parent</item>
+      <item name="android:layout_height">wrap_content</item>
+      <item name="android:textSize">20dip</item>
+      <item name="android:gravity">center</item>
+      <item name="android:layout_marginTop">10dip</item>
     </style>
 
     <style name="CustomDialog" parent="android:style/Theme.Dialog">
 
-        <!-- 背景颜色及透明程度 -->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!-- 是否有标题 -->
-        <item name="android:windowNoTitle">true</item>
-        <!-- 是否浮现在activity之上 -->
-        <item name="android:windowIsFloating">true</item>
-        <!-- 是否模糊 -->
-        <item name="android:backgroundDimEnabled">false</item>
-        <!-- 是否全屏 -->
-        <item name="android:windowFullscreen">true</item>
+      <!-- 背景颜色及透明程度 -->
+      <item name="android:windowBackground">@android:color/transparent</item>
+      <!-- 是否有标题 -->
+      <item name="android:windowNoTitle">true</item>
+      <!-- 是否浮现在activity之上 -->
+      <item name="android:windowIsFloating">true</item>
+      <!-- 是否模糊 -->
+      <item name="android:backgroundDimEnabled">false</item>
+      <!-- 是否全屏 -->
+      <item name="android:windowFullscreen">true</item>
     </style>
     <style name="BoyiaStartStyle" parent="android:Theme">
-        <item name="android:windowBackground">@drawable/ic_launcher</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowContentOverlay">@null</item>
+      <item name="android:windowBackground">@drawable/ic_launcher</item>
+      <item name="android:windowFullscreen">false</item>
+      <item name="android:windowNoTitle">true</item>
+      <item name="android:windowActionBar">false</item>
+      <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>
