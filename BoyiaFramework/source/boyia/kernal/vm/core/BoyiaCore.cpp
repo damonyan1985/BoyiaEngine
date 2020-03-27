@@ -674,7 +674,7 @@ static LInt HandlePushScene(LVoid* ins)
 
     Instruction* inst = (Instruction*)ins;
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mLValSize = gBoyiaVM->mEState->mTmpLValSize;
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC = (Instruction*)inst->mOPLeft.mValue;
+    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC = (Instruction*)(inst + inst->mOPLeft.mValue);
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mContext = gBoyiaVM->mEState->mContext;
     gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos++].mLoopSize = gBoyiaVM->mEState->mLoopSize;
 
@@ -1364,7 +1364,7 @@ static void CallStatement(OpCommand* objCmd)
     Instruction* funInst = PutInstruction(kBoyiaNull, kBoyiaNull, CALL, HandleCallFunction);
     //EngineLog("CallStatement=>%d HandleFunction", 1);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LIntPtr)funInst;
+    pushInst->mOPLeft.mValue = (LIntPtr)(funInst - pushInst);
 }
 
 /* Push the arguments to a function onto the local variable stack. */
@@ -1788,7 +1788,7 @@ static LVoid CallNativeStatement(LInt idx)
     PutInstruction(&cmd, kBoyiaNull, CALL, HandleCallInternal);
     Instruction* popInst = PutInstruction(kBoyiaNull, kBoyiaNull, POP_SCENE, HandlePopScene);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
-    pushInst->mOPLeft.mValue = (LIntPtr)popInst;
+    pushInst->mOPLeft.mValue = (LIntPtr)(popInst - pushInst);
 }
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst)
