@@ -30,6 +30,7 @@
 #define NUM_PARAMS ((LInt)32)
 #define LOOP_NEST ((LInt)32)
 #define MEMORY_SIZE ((LInt)1024 * 1024 * 6)
+#define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -190,6 +191,7 @@ typedef struct {
     LInt mResultNum;
     BoyiaValue* mClass;
     CommandTable* mContext;
+    CommandTable* mCmds;
     Instruction* mPC; // pc , 指令计数器
 } ExecState;
 
@@ -210,6 +212,11 @@ typedef struct {
     BoyiaValue mReg1; // help register, 辅助运算寄存器
 } VMCpu;
 
+typedef struct {
+    Instruction* mCode;
+    LInt mSize;
+} VMCode;
+
 /* Boyia VM Define
  * Member
  * 1, mPool
@@ -226,6 +233,7 @@ typedef struct {
     ExecScene* mExecStack;
     LIntPtr* mLoopStack;
     BoyiaValue* mOpStack;
+    VMCode* mVMCode;
 } BoyiaVM;
 
 static NativeFunction* gNativeFunTable = kBoyiaNull;
@@ -261,15 +269,23 @@ static LInt HandleAssignment(LVoid* ins);
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
 
-// 重置现场
+// Reset scene of global execute state
 static LVoid ResetScene(BoyiaVM* vm)
 {
-    vm->mEState->mLValSize = 0; /* initialize local variable stack index */
-    vm->mEState->mFunctos = 0; /* initialize the CALL stack index */
+    vm->mEState->mLValSize = 0; /* Initialize local variable stack index */
+    vm->mEState->mFunctos = 0; /* Initialize the call stack index */
     vm->mEState->mLoopSize = 0;
     vm->mEState->mResultNum = 0;
     vm->mEState->mTmpLValSize = 0;
     vm->mEState->mClass = kBoyiaNull;
+}
+
+static VMCode* CreateVMCode()
+{
+    VMCode* code = NEW(VMCode);
+    code->mCode = NEW_ARRAY(Instruction, CODE_CAPACITY);//new Instruction[CODE_CAPACITY];//
+    code->mSize = 0;
+    return code;
 }
 
 LVoid* InitVM()
@@ -288,6 +304,7 @@ LVoid* InitVM()
     vm->mLoopStack = NEW_ARRAY(LIntPtr, LOOP_NEST);
     vm->mEState = NEW(ExecState);
     vm->mCpu = NEW(VMCpu);
+    vm->mVMCode = CreateVMCode();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
@@ -309,13 +326,20 @@ LVoid ChangeVM(LVoid* vm)
     ChangeMemory(gBoyiaVM->mPool);
 }
 
+static Instruction* AllocateInstruction()
+{
+    BOYIA_LOG("AllocateInstruction size=%d", gBoyiaVM->mVMCode->mSize);
+    return gBoyiaVM->mVMCode->mCode + gBoyiaVM->mVMCode->mSize++;
+}
+
 static Instruction* PutInstruction(
     OpCommand* left,
     OpCommand* right,
     LUint8 op,
     OPHandler handler)
 {
-    Instruction* newIns = NEW(Instruction);
+    //Instruction* newIns = NEW(Instruction);
+    Instruction* newIns = AllocateInstruction();
     if (left) {
         newIns->mOPLeft.mType = left->mType;
         newIns->mOPLeft.mValue = left->mValue;
@@ -1171,7 +1195,7 @@ static LVoid ExecuteCode(CommandTable* cmds)
     gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mContext->mBegin;
     ExecInstruction();
     // 删除执行体
-    DeleteExecutor(cmds);
+    //DeleteExecutor(cmds);
     ResetScene(gBoyiaVM);
 }
 
@@ -1424,7 +1448,7 @@ static LInt HandleJumpToIfTrue(LVoid* ins)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     if (!value->mValue.mIntVal) {
-        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPRight.mValue;
+        gBoyiaVM->mEState->mPC = (Instruction*)ins + inst->mOPRight.mValue;
     }
 
     return 1;
@@ -1441,7 +1465,8 @@ static LVoid IfStatement()
     BlockStatement(); /* if true, interpret */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, IF_END, HandleIfEnd);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst); // Compute offset
 }
 
 static LInt HandleLoopBegin(LVoid* ins)

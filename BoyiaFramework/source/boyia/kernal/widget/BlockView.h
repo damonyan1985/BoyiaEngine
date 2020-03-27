@@ -29,7 +29,7 @@ public:
     LVoid addChild(HtmlView* child, LBool isAnonymousBlock);
 
     // layer layout
-    virtual LVoid layout();
+    virtual LVoid layout() LOverride;
     LVoid layoutBlock(LBool relayoutChildren);
     LVoid layoutBlockChildren(LBool relayoutChildren);
     LVoid layoutInlineChildren();
