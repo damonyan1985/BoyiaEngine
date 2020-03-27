@@ -717,7 +717,7 @@ static LVoid ElseStatement()
     BlockStatement();
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, IF_END, kBoyiaNull);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr) (endInst - logicInst); // 最后地址值
 }
 
 static LInt HandleReturn(LVoid* ins)
@@ -1434,7 +1434,7 @@ static LInt HandleIfEnd(LVoid* ins)
     // 查看下一个是否是elseif
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == ELIF || tmpInst->mOPCode == BY_ELSE)) {
-        inst = (Instruction*)tmpInst->mOPRight.mValue; // 跳转到elif对应的IFEND
+        inst = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
         tmpInst = inst->mNext;
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
@@ -1448,7 +1448,7 @@ static LInt HandleJumpToIfTrue(LVoid* ins)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     if (!value->mValue.mIntVal) {
-        gBoyiaVM->mEState->mPC = (Instruction*)ins + inst->mOPRight.mValue;
+        gBoyiaVM->mEState->mPC = inst + inst->mOPRight.mValue;
     }
 
     return 1;
@@ -1473,7 +1473,7 @@ static LInt HandleLoopBegin(LVoid* ins)
 {
     Instruction* inst = (Instruction*)ins;
     // push left => loop stack
-    gBoyiaVM->mLoopStack[gBoyiaVM->mEState->mLoopSize++] = inst->mOPLeft.mValue;
+    gBoyiaVM->mLoopStack[gBoyiaVM->mEState->mLoopSize++] = (LIntPtr)(inst + inst->mOPLeft.mValue);
     return 1;
 }
 
@@ -1483,7 +1483,7 @@ static LInt HandleLoopIfTrue(LVoid* ins)
     BoyiaValue* value = &gBoyiaVM->mCpu->mReg0;
     //EngineLog("HandleLoopIfTrue value=%d", value->mValue.mIntVal);
     if (!value->mValue.mIntVal) {
-        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPRight.mValue;
+        gBoyiaVM->mEState->mPC = inst + inst->mOPRight.mValue;
         gBoyiaVM->mEState->mLoopSize--;
     }
 
@@ -1495,7 +1495,7 @@ static LInt HandleJumpTo(LVoid* ins)
     //EngineLog("HandleJumpTo %d", 1);
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_CONST_NUMBER) {
-        gBoyiaVM->mEState->mPC = (Instruction*)inst->mOPLeft.mValue;
+        gBoyiaVM->mEState->mPC = inst - inst->mOPLeft.mValue;
     }
     //EngineLog("HandleJumpTo %d", 2);
     return 1;
@@ -1516,14 +1516,17 @@ static LVoid WhileStatement()
     }
     //EngineStrLog("WhileStatement last inst name=%s", gToken.mTokenName);
     Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, LOOP_TRUE, HandleLoopIfTrue);
-    BlockStatement(); /* if true, interpret */
+    BlockStatement(); /* If true, execute block */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    //beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    //endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
 }
 
 /* Execute a do loop. */
@@ -1543,11 +1546,14 @@ static LVoid DoStatement()
     Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, LOOP_TRUE, HandleLoopIfTrue);
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, JMP, HandleJumpTo);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    //beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    //endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    endInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
 }
 
 static LInt HandleAdd(LVoid* ins)
