@@ -118,6 +118,14 @@ enum OpType {
     OP_VAR,
 };
 
+enum CmdType {
+    kCmdJmpTrue = 0,
+    kCmdIfEnd,
+    kCmdElif,
+    kCmdElse,
+    kCmdElEnd
+};
+
 typedef struct {
     LUint8 mType;
     LIntPtr mValue;
@@ -234,6 +242,7 @@ typedef struct {
     LIntPtr* mLoopStack;
     BoyiaValue* mOpStack;
     VMCode* mVMCode;
+    OPHandler* mHandlers;
 } BoyiaVM;
 
 static NativeFunction* gNativeFunTable = kBoyiaNull;
@@ -265,9 +274,15 @@ static LVoid EvalExpression();
 
 static LVoid EvalAssignment();
 
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
+
+// Handler Declarations Begin
 static LInt HandleAssignment(LVoid* ins);
 
-static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
+static LInt HandleJumpToIfTrue(LVoid* ins);
+
+static LInt HandleIfEnd(LVoid* ins);
+// Handler Declarations End
 
 // Reset scene of global execute state
 static LVoid ResetScene(BoyiaVM* vm)
@@ -288,6 +303,16 @@ static VMCode* CreateVMCode()
     return code;
 }
 
+static OPHandler* InitHandlers()
+{
+    OPHandler* handlers = NEW_ARRAY(OPHandler, 100);
+    LMemset(handlers, 0, sizeof(OPHandler) * 100);
+    handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
+    handlers[kCmdIfEnd] = HandleIfEnd;
+    handlers[kCmdElse] = kBoyiaNull;
+    return handlers;
+}
+
 LVoid* InitVM()
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
@@ -305,6 +330,7 @@ LVoid* InitVM()
     vm->mEState = NEW(ExecState);
     vm->mCpu = NEW(VMCpu);
     vm->mVMCode = CreateVMCode();
+    vm->mHandlers = InitHandlers();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
@@ -395,18 +421,23 @@ static LVoid ExecPopFunction()
 static LVoid ExecInstruction()
 {
     // 通过指令寄存器进行计算
-    while (gBoyiaVM->mEState->mPC) {
-        if (gBoyiaVM->mEState->mPC->mHandler) {
-            LInt result = gBoyiaVM->mEState->mPC->mHandler(gBoyiaVM->mEState->mPC);
+    ExecState* es = gBoyiaVM->mEState;
+    while (es->mPC) {
+        OPHandler handler = es->mPC->mOPCode >= 100 ? es->mPC->mHandler : gBoyiaVM->mHandlers[es->mPC->mOPCode];
+        if (!handler) {
+           handler = es->mPC->mHandler;
+        }
+        if (handler) {
+            LInt result = handler(es->mPC);
             if (result == 0) { // 指令运行出错跳出循环
                 break;
-            } else if (gBoyiaVM->mEState->mPC && result == 2) { // 函数跳转
+            } else if (es->mPC && result == 2) { // 函数跳转
                 continue;
             } // 指令计算结果为1即为正常情况
         }
 
-        if (gBoyiaVM->mEState->mPC) {
-            gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
+        if (es->mPC) {
+            es->mPC = es->mPC->mNext;
         }
 
         ExecPopFunction();
@@ -713,9 +744,9 @@ static LInt HandlePushObj(LVoid* ins)
 
 static LVoid ElseStatement()
 {
-    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, BY_ELSE, kBoyiaNull);
+    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdElse, kBoyiaNull);
     BlockStatement();
-    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, IF_END, kBoyiaNull);
+    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdElEnd, kBoyiaNull);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
     logicInst->mOPRight.mValue = (LIntPtr) (endInst - logicInst); // 最后地址值
 }
@@ -1355,7 +1386,7 @@ static void CallStatement(OpCommand* objCmd)
         PutInstruction(&COMMAND_R0, kBoyiaNull, POP, HandlePop);
     }
     // 保存对象环境
-    PutInstruction(objCmd, kBoyiaNull, 0, HandlePushObj);
+    PutInstruction(objCmd, kBoyiaNull, PUSH_OBJ, HandlePushObj);
     // 保存调用堆栈
     Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_SCENE, HandlePushScene);
     // 函数形参名哈希值赋给局部变量
@@ -1433,13 +1464,14 @@ static LInt HandleIfEnd(LVoid* ins)
     Instruction* tmpInst = inst->mNext;
     // 查看下一个是否是elseif
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
-    while (tmpInst && (tmpInst->mOPCode == ELIF || tmpInst->mOPCode == BY_ELSE)) {
+    while (tmpInst && (tmpInst->mOPCode == kCmdElif || tmpInst->mOPCode == kCmdElse)) {
         inst = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
         tmpInst = inst->mNext;
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
-    if (inst)
+    if (inst) {
         gBoyiaVM->mEState->mPC = inst;
+    }
     return 1;
 }
 
@@ -1460,10 +1492,10 @@ static LVoid IfStatement()
     NextToken();
     // token = (
     EvalExpression(); /* check the conditional expression => R0 */
-    Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, JMP_TRUE, HandleJumpToIfTrue);
+    Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdJmpTrue, HandleJumpToIfTrue);
     //EngineStrLog("endif last inst name=%s", gToken.mTokenName);
     BlockStatement(); /* if true, interpret */
-    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, IF_END, HandleIfEnd);
+    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdIfEnd, HandleIfEnd);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
     //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
     logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst); // Compute offset
