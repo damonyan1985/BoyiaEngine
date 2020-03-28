@@ -123,7 +123,13 @@ enum CmdType {
     kCmdIfEnd,
     kCmdElif,
     kCmdElse,
-    kCmdElEnd
+    kCmdElEnd,
+    kCmdPushObj,
+    kCmdAdd,
+    kCmdSub,
+    kCmdMul,
+    kCmdDiv,
+    kCmdMod
 };
 
 typedef struct {
@@ -282,6 +288,18 @@ static LInt HandleAssignment(LVoid* ins);
 static LInt HandleJumpToIfTrue(LVoid* ins);
 
 static LInt HandleIfEnd(LVoid* ins);
+
+static LInt HandlePushObj(LVoid* ins);
+
+static LInt HandleAdd(LVoid* ins);
+
+static LInt HandleSub(LVoid* ins);
+
+static LInt HandleMul(LVoid* ins);
+
+static LInt HandleDiv(LVoid* ins);
+
+static LInt HandleMod(LVoid* ins);
 // Handler Declarations End
 
 // Reset scene of global execute state
@@ -310,6 +328,13 @@ static OPHandler* InitHandlers()
     handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
     handlers[kCmdIfEnd] = HandleIfEnd;
     handlers[kCmdElse] = kBoyiaNull;
+    handlers[kCmdPushObj] = HandlePushObj;
+    handlers[kCmdAdd] = HandleAdd;
+    handlers[kCmdSub] = HandleSub;
+    handlers[kCmdMul] = HandleMul;
+    handlers[kCmdDiv] = HandleDiv;
+    handlers[kCmdMod] = HandleMod;
+
     return handlers;
 }
 
@@ -350,6 +375,11 @@ LVoid ChangeVM(LVoid* vm)
 {
     gBoyiaVM = (BoyiaVM*)vm;
     ChangeMemory(gBoyiaVM->mPool);
+}
+
+static BoyiaVM* GetVM()
+{
+    return gBoyiaVM;
 }
 
 static Instruction* AllocateInstruction()
@@ -1386,7 +1416,7 @@ static void CallStatement(OpCommand* objCmd)
         PutInstruction(&COMMAND_R0, kBoyiaNull, POP, HandlePop);
     }
     // 保存对象环境
-    PutInstruction(objCmd, kBoyiaNull, PUSH_OBJ, HandlePushObj);
+    PutInstruction(objCmd, kBoyiaNull, kCmdPushObj, HandlePushObj);
     // 保存调用堆栈
     Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_SCENE, HandlePushScene);
     // 函数形参名哈希值赋给局部变量
@@ -1813,7 +1843,7 @@ static LVoid CallNativeStatement(LInt idx)
 
     // 保存obj现场是必不可少的一步
     OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
-    PutInstruction(&cmdSet, kBoyiaNull, PUSH_OBJ, HandlePushObj);
+    PutInstruction(&cmdSet, kBoyiaNull, kCmdPushObj, HandlePushObj);
 
     Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_SCENE, HandlePushScene);
     OpCommand cmd = { OP_CONST_NUMBER, idx };
@@ -2037,10 +2067,10 @@ static LVoid EvalMinus()
         NextToken();
     }
     EvalSubexpr(); // => R0
-    if (op && op == SUB) {
+    if (op && op == SUB) { // negative must multiply -1
         OpCommand cmd = { OP_CONST_NUMBER, -1 };
         PutInstruction(&COMMAND_R1, &cmd, ASSIGN, HandleAssignment);
-        PutInstruction(&COMMAND_R0, &COMMAND_R1, MUL, HandleMul);
+        PutInstruction(&COMMAND_R0, &COMMAND_R1, kCmdMul, HandleMul);
     }
 }
 
@@ -2059,13 +2089,13 @@ static LVoid EvalArith()
         PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
         switch (op) {
         case MUL:
-            PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleMul);
+            PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdMul, HandleMul);
             break;
         case DIV:
-            PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleDiv);
+            PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdDiv, HandleDiv);
             break;
         case MOD:
-            PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleMod);
+            PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdMod, HandleMod);
             break;
         }
     }
@@ -2086,7 +2116,9 @@ static LVoid EvalAddSub()
         PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
         // R0 + R1 => R0
         // R1 - R0 => R0
-        PutInstruction(&COMMAND_R1, &COMMAND_R0, op, op == ADD ? HandleAdd : HandleSub);
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, 
+            op == ADD ? kCmdAdd : kCmdSub, 
+            op == ADD ? HandleAdd : HandleSub);
     }
 }
 
