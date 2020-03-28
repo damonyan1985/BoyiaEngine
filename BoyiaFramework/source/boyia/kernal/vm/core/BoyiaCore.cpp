@@ -1143,8 +1143,7 @@ static LInt HandleCreateExecutor(LVoid* ins)
 
 static LVoid BodyStatement(LInt type)
 {
-    ExecState* es = GetVM()->mEState;
-    CommandTable* cmds = es->mContext;
+    CommandTable* cmds = GetVM()->mEState->mContext;
 
     CommandTable tmpTable;
     tmpTable.mBegin = kBoyiaNull;
@@ -1156,16 +1155,19 @@ static LVoid BodyStatement(LInt type)
         //CommandTable* funCmds = CreateExecutor();
         //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
         funInst = PutInstruction(kBoyiaNull, kBoyiaNull, EXE_CREATE, HandleCreateExecutor);
-        es->mContext = &tmpTable;
+        GetVM()->mEState->mContext = &tmpTable;
     }
 
     BlockStatement();
     // 拷贝tmpTable中的offset给instruction
     if (funInst) {
+        funInst->mOPLeft.mType = OP_CONST_NUMBER;
         funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - GetVM()->mVMCode->mCode);//(LIntPtr)es->mContext->mBegin;
+        
+        funInst->mOPRight.mType = OP_CONST_NUMBER;
         funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - GetVM()->mVMCode->mCode);
     }
-    gBoyiaVM->mEState->mContext = cmds;
+    GetVM()->mEState->mContext = cmds;
 }
 
 static LInt HandleCreateClass(LVoid* ins)
