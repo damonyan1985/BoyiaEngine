@@ -4,7 +4,7 @@
 #include "PlatformLib.h"
 
 enum KeyWord {
-    BY_ARG = 1,
+    BY_ARG = 100,
 	BY_CHAR,
 	BY_INT,
 	BY_STRING,
