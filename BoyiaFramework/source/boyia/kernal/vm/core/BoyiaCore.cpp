@@ -1132,23 +1132,39 @@ static BoyiaValue* CreateFunVal(LUintPtr hashKey, LUint8 type)
 static LInt HandleCreateExecutor(LVoid* ins)
 {
     Instruction* inst = (Instruction*)ins;
-    gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize - 1].mFuncBody = inst->mOPLeft.mValue;
+
+    CommandTable* newTable = NEW(CommandTable);
+    newTable->mBegin = &GetVM()->mVMCode->mCode[inst->mOPLeft.mValue];
+    newTable->mEnd = &GetVM()->mVMCode->mCode[inst->mOPRight.mValue];
+
+    gBoyiaVM->mFunTable[gBoyiaVM->mEState->mFunSize - 1].mFuncBody = (LIntPtr)newTable;//inst->mOPLeft.mValue;
     return 1;
 }
 
 static LVoid BodyStatement(LInt type)
 {
-    CommandTable* cmds = gBoyiaVM->mEState->mContext;
+    ExecState* es = GetVM()->mEState;
+    CommandTable* cmds = es->mContext;
+
+    CommandTable tmpTable;
+    tmpTable.mBegin = kBoyiaNull;
+    tmpTable.mEnd = kBoyiaNull;
+
+    Instruction* funInst = kBoyiaNull;
     if (FUN_CREATE == type) {
         // 类成员的创建在主体上下中进行
-        CommandTable* funCmds = CreateExecutor();
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
-        PutInstruction(&cmd, kBoyiaNull, EXE_CREATE, HandleCreateExecutor);
-
-        gBoyiaVM->mEState->mContext = funCmds;
+        //CommandTable* funCmds = CreateExecutor();
+        //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
+        funInst = PutInstruction(kBoyiaNull, kBoyiaNull, EXE_CREATE, HandleCreateExecutor);
+        es->mContext = &tmpTable;
     }
 
     BlockStatement();
+    // 拷贝tmpTable中的offset给instruction
+    if (funInst) {
+        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - GetVM()->mVMCode->mCode);//(LIntPtr)es->mContext->mBegin;
+        funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - GetVM()->mVMCode->mCode);
+    }
     gBoyiaVM->mEState->mContext = cmds;
 }
 
