@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 set(BOYIA_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/boyia")
 set(THIRD_PARTY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../source/thirdparty")
+set(BOYIA_KERNEL_PATH "${BOYIA_SRC_PATH}/kernel")
 
 if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
     include_directories(${ANDROID_SYSROOT}/usr/include/arm-linux-androideabi)
@@ -22,28 +23,28 @@ endif()
 
 file(
     GLOB 
-    kernal_src
-    "${BOYIA_SRC_PATH}/kernal/vm/view/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/vm/core/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/vm/jit/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/vm/lib/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/vm/json/*.c"
-    "${BOYIA_SRC_PATH}/kernal/vm/json/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/dom/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/gui/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/loader/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/android/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/arm/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/graphics/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/zip/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/platform/ws/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/style/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/util/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/view/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/widget/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/widget/flex/*.cpp"
-    "${BOYIA_SRC_PATH}/kernal/app/*.cpp"
+    kernel_src
+    "${BOYIA_KERNEL_PATH}/vm/view/*.cpp"
+    "${BOYIA_KERNEL_PATH}/vm/core/*.cpp"
+    "${BOYIA_KERNEL_PATH}/vm/jit/*.cpp"
+    "${BOYIA_KERNEL_PATH}/vm/lib/*.cpp"
+    "${BOYIA_KERNEL_PATH}/vm/json/*.c"
+    "${BOYIA_KERNEL_PATH}/vm/json/*.cpp"
+    "${BOYIA_KERNEL_PATH}/dom/*.cpp"
+    "${BOYIA_KERNEL_PATH}/gui/*.cpp"
+    "${BOYIA_KERNEL_PATH}/loader/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/android/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/arm/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/graphics/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/zip/*.cpp"
+    "${BOYIA_KERNEL_PATH}/platform/ws/*.cpp"
+    "${BOYIA_KERNEL_PATH}/style/*.cpp"
+    "${BOYIA_KERNEL_PATH}/util/*.cpp"
+    "${BOYIA_KERNEL_PATH}/view/*.cpp"
+    "${BOYIA_KERNEL_PATH}/widget/*.cpp"
+    "${BOYIA_KERNEL_PATH}/widget/flex/*.cpp"
+    "${BOYIA_KERNEL_PATH}/app/*.cpp"
     )
 
 file(
@@ -71,7 +72,7 @@ file(
 add_library(
     boyia
     SHARED
-    ${kernal_src}
+    ${kernel_src}
     ${painter_src}
     ${thread_src}
     ${porting_src}
@@ -80,26 +81,26 @@ add_library(
 target_include_directories(
     boyia
     PRIVATE
-    ${BOYIA_SRC_PATH}/kernal/vm/view
-    ${BOYIA_SRC_PATH}/kernal/vm/core
-    ${BOYIA_SRC_PATH}/kernal/vm/jit
-    ${BOYIA_SRC_PATH}/kernal/vm/json
-    ${BOYIA_SRC_PATH}/kernal/vm/lib
-    ${BOYIA_SRC_PATH}/kernal/app
-    ${BOYIA_SRC_PATH}/kernal/dom
-    ${BOYIA_SRC_PATH}/kernal/gui
-    ${BOYIA_SRC_PATH}/kernal/loader
-    ${BOYIA_SRC_PATH}/kernal/platform/android
-    ${BOYIA_SRC_PATH}/kernal/platform/arm
-    ${BOYIA_SRC_PATH}/kernal/platform/graphics
-    ${BOYIA_SRC_PATH}/kernal/platform/zip
-    ${BOYIA_SRC_PATH}/kernal/platform/ws
-    ${BOYIA_SRC_PATH}/kernal/platform
-    ${BOYIA_SRC_PATH}/kernal/style
-    ${BOYIA_SRC_PATH}/kernal/util
-    ${BOYIA_SRC_PATH}/kernal/view
-    ${BOYIA_SRC_PATH}/kernal/widget
-    ${BOYIA_SRC_PATH}/kernal/widget/flex
+    ${BOYIA_KERNEL_PATH}/vm/view
+    ${BOYIA_KERNEL_PATH}/vm/core
+    ${BOYIA_KERNEL_PATH}/vm/jit
+    ${BOYIA_KERNEL_PATH}/vm/json
+    ${BOYIA_KERNEL_PATH}/vm/lib
+    ${BOYIA_KERNEL_PATH}/app
+    ${BOYIA_KERNEL_PATH}/dom
+    ${BOYIA_KERNEL_PATH}/gui
+    ${BOYIA_KERNEL_PATH}/loader
+    ${BOYIA_KERNEL_PATH}/platform/android
+    ${BOYIA_KERNEL_PATH}/platform/arm
+    ${BOYIA_KERNEL_PATH}/platform/graphics
+    ${BOYIA_KERNEL_PATH}/platform/zip
+    ${BOYIA_KERNEL_PATH}/platform/ws
+    ${BOYIA_KERNEL_PATH}/platform
+    ${BOYIA_KERNEL_PATH}/style
+    ${BOYIA_KERNEL_PATH}/util
+    ${BOYIA_KERNEL_PATH}/view
+    ${BOYIA_KERNEL_PATH}/widget
+    ${BOYIA_KERNEL_PATH}/widget/flex
     ${BOYIA_SRC_PATH}/painter/core
     ${BOYIA_SRC_PATH}/painter/shaders
     ${BOYIA_SRC_PATH}/painter/painter

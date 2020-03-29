@@ -5,6 +5,7 @@ android_dir = os.getcwd()
 maven_dir = os.path.join(android_dir, 'maven')
 maven_project_dir = os.path.join(maven_dir, 'BoyiaMaven')
 core_dir = os.path.join(android_dir, 'core')
+apk_build_dir = os.path.join(android_dir, 'app', 'build')
 
 pull_core_maven_cmd = (
   'cd maven && git clone git@github.com:damonyan1985/BoyiaMaven.git'
@@ -61,7 +62,10 @@ def main():
   if os.path.exists(maven_dir) == False:
     os.mkdir(maven_dir)
     os.system(pull_core_maven_cmd)
+  
   del_file(maven_project_dir, False)
+  if os.path.exists(apk_build_dir) == True:
+    del_file(apk_build_dir)
   os.system(upload_util_library_cmd)
   os.system(upload_loader_library_cmd)
   #os.system(upload_core_native_sync_cmd)
