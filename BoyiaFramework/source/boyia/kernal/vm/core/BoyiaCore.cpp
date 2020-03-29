@@ -129,7 +129,35 @@ enum CmdType {
     kCmdSub,
     kCmdMul,
     kCmdDiv,
-    kCmdMod
+    kCmdMod,
+    kCmdAndLogic,
+    kCmdOrLogic,
+    kCmdGtRelation,
+    kCmdLtRelation,
+    kCmdGeRelation,
+    kCmdLeRelation,
+    kCmdNotRelation,
+    kCmdEqRelation,
+    kCmdNeRelation,
+    kCmdPush,
+    kCmdPop,
+    kCmdPushScene,
+    kCmdPopScene,
+    kCmdPushArg,
+    kCmdTmpLocal,
+    kCmdPushParams,
+    kCmdCallFunction,
+    kCmdCallNative,
+    kCmdDeclGlobal,
+    kCmdDeclLocal,
+    kCmdCreateClass,
+    kCmdClassExtend,
+    kCmdDeclConstStr,
+    kCmdExecCreate,
+    kCmdParamCreate,
+    kCmdPropCreate,
+    kCmdFunCreate,
+    kCmdAssign
 };
 
 typedef struct {
@@ -300,6 +328,28 @@ static LInt HandleMul(LVoid* ins);
 static LInt HandleDiv(LVoid* ins);
 
 static LInt HandleMod(LVoid* ins);
+
+static LInt HandleLogic(LVoid* ins);
+
+static LInt HandleRelational(LVoid* ins);
+
+static LInt HandlePush(LVoid* ins);
+
+static LInt HandlePop(LVoid* ins);
+
+static LInt HandlePushScene(LVoid* ins);
+
+static LInt HandlePopScene(LVoid* ins);
+
+static LInt HandlePushArg(LVoid* ins);
+
+static LInt HandleTempLocalSize(LVoid* ins);
+
+static LInt HandlePushParams(LVoid* ins);
+
+static LInt HandleCallFunction(LVoid* ins);
+
+static LInt HandleCallInternal(LVoid* ins);
 // Handler Declarations End
 
 // Reset scene of global execute state
@@ -334,6 +384,24 @@ static OPHandler* InitHandlers()
     handlers[kCmdMul] = HandleMul;
     handlers[kCmdDiv] = HandleDiv;
     handlers[kCmdMod] = HandleMod;
+    handlers[kCmdAndLogic] = HandleLogic;
+    handlers[kCmdOrLogic] = HandleLogic;
+    handlers[kCmdGtRelation] = HandleRelational;
+    handlers[kCmdLtRelation] = HandleRelational;
+    handlers[kCmdGeRelation] = HandleRelational;
+    handlers[kCmdLeRelation] = HandleRelational;
+    handlers[kCmdEqRelation] = HandleRelational;
+    handlers[kCmdNeRelation] = HandleRelational;
+    handlers[kCmdNotRelation] = HandleRelational;
+    handlers[kCmdPush] = HandlePush;
+    handlers[kCmdPop] = HandlePop;
+    handlers[kCmdPushScene] = HandlePushScene;
+    handlers[kCmdPopScene] = HandlePopScene;
+    handlers[kCmdPushArg] = HandlePushArg;
+    handlers[kCmdTmpLocal] = HandleTempLocalSize;
+    handlers[kCmdPushParams] = HandlePushParams;
+    handlers[kCmdCallFunction] = HandleCallFunction;
+    handlers[kCmdCallNative] = HandleCallInternal;
 
     return handlers;
 }
@@ -1426,21 +1494,21 @@ static LInt HandlePop(LVoid* ins)
 /* Call a function. */
 static void CallStatement(OpCommand* objCmd)
 {
-    PutInstruction(kBoyiaNull, kBoyiaNull, TMP_LOCAL, HandleTempLocalSize);
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, HandleTempLocalSize);
     // 设置参数
     PushArgStatement();
     // POP CLASS context
     if (objCmd->mType == OP_VAR) {
-        PutInstruction(&COMMAND_R0, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPop, HandlePop);
     }
     // 保存对象环境
     PutInstruction(objCmd, kBoyiaNull, kCmdPushObj, HandlePushObj);
     // 保存调用堆栈
-    Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_SCENE, HandlePushScene);
+    Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdPushScene, HandlePushScene);
     // 函数形参名哈希值赋给局部变量
-    PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_PARAMS, HandlePushParams);
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdPushParams, HandlePushParams);
     // 执行函数体
-    Instruction* funInst = PutInstruction(kBoyiaNull, kBoyiaNull, CALL, HandleCallFunction);
+    Instruction* funInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdCallFunction, HandleCallFunction);
     //EngineLog("CallStatement=>%d HandleFunction", 1);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
     pushInst->mOPLeft.mValue = (LIntPtr)(funInst - pushInst);
@@ -1450,7 +1518,7 @@ static void CallStatement(OpCommand* objCmd)
 static LVoid PushArgStatement()
 {
     // push函数指针
-    PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH_ARG, HandlePushArg);
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
     NextToken(); // if token == ')' exit
     if (gToken.mTokenValue == RPTR) {
         return;
@@ -1462,7 +1530,7 @@ static LVoid PushArgStatement()
         // 参数值在R0中
         EvalExpression(); // => R0
         // 将函数实参压栈
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH_ARG, HandlePushArg);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
         //NextToken();
     } while (gToken.mTokenValue == COMMA);
 }
@@ -1753,25 +1821,25 @@ static LInt HandleRelational(LVoid* ins)
 
     LInt result = 0;
     switch (inst->mOPCode) {
-    case NOT:
+    case kCmdNotRelation:
         result = right->mValue.mIntVal ? 0 : 1;
         break;
-    case LT:
+    case kCmdLtRelation:
         result = left->mValue.mIntVal < right->mValue.mIntVal ? 1 : 0;
         break;
-    case LE:
+    case kCmdLeRelation:
         result = left->mValue.mIntVal <= right->mValue.mIntVal ? 1 : 0;
         break;
-    case GT:
+    case kCmdGtRelation:
         result = left->mValue.mIntVal > right->mValue.mIntVal ? 1 : 0;
         break;
-    case GE:
+    case kCmdGeRelation:
         result = left->mValue.mIntVal >= right->mValue.mIntVal ? 1 : 0;
         break;
-    case EQ:
+    case kCmdEqRelation:
         result = left->mValue.mIntVal == right->mValue.mIntVal ? 1 : 0;
         break;
-    case NE:
+    case kCmdNeRelation:
         result = left->mValue.mIntVal != right->mValue.mIntVal ? 1 : 0;
         break;
     }
@@ -1793,10 +1861,10 @@ static LInt HandleLogic(LVoid* ins)
 
     LInt result = 0;
     switch (inst->mOPCode) {
-    case AND:
+    case kCmdAndLogic:
         result = left->mValue.mIntVal && right->mValue.mIntVal ? 1 : 0;
         break;
-    case OR:
+    case kCmdOrLogic:
         result = left->mValue.mIntVal || right->mValue.mIntVal ? 1 : 0;
         break;
     }
@@ -1850,12 +1918,12 @@ static LVoid CallNativeStatement(LInt idx)
     if (gToken.mTokenValue != LPTR) // '('
         SntxErrorBuild(PAREN_EXPECTED);
 
-    PutInstruction(kBoyiaNull, kBoyiaNull, TMP_LOCAL, HandleTempLocalSize);
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, HandleTempLocalSize);
     do {
         // 参数值在R0中
         EvalExpression(); // => R0
         // 将函数参数压栈
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH_ARG, HandlePushArg);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
         // if token == ')' exit
     } while (gToken.mTokenValue == COMMA);
 
@@ -1863,10 +1931,10 @@ static LVoid CallNativeStatement(LInt idx)
     OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
     PutInstruction(&cmdSet, kBoyiaNull, kCmdPushObj, HandlePushObj);
 
-    Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, PUSH_SCENE, HandlePushScene);
+    Instruction* pushInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdPushScene, HandlePushScene);
     OpCommand cmd = { OP_CONST_NUMBER, idx };
-    PutInstruction(&cmd, kBoyiaNull, CALL, HandleCallInternal);
-    Instruction* popInst = PutInstruction(kBoyiaNull, kBoyiaNull, POP_SCENE, HandlePopScene);
+    PutInstruction(&cmd, kBoyiaNull, kCmdCallNative, HandleCallInternal);
+    Instruction* popInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdPopScene, HandlePopScene);
     pushInst->mOPLeft.mType = OP_CONST_NUMBER;
     pushInst->mOPLeft.mValue = (LIntPtr)(popInst - pushInst);
 }
@@ -1957,7 +2025,7 @@ static LVoid EvalGetProp()
     }
 
     // Push class context for callstatement
-    PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
     LUintPtr propKey = GenIdentifier(&gToken.mTokenName);
     OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr)propKey };
     PutInstruction(&COMMAND_R0, &cmdR, GET_PROP, HandleGetProp);
@@ -1974,11 +2042,11 @@ static LVoid EvalGetProp()
         }
     } else if (gToken.mTokenValue == DOT) {
         OpCommand cmd = { OP_CONST_NUMBER, 0 };
-        PutInstruction(&cmd, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&cmd, kBoyiaNull, kCmdPop, HandlePop);
         EvalGetProp();
     } else {
         OpCommand cmd = { OP_CONST_NUMBER, 0 };
-        PutInstruction(&cmd, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&cmd, kBoyiaNull, kCmdPop, HandlePop);
     }
 }
 
@@ -2100,11 +2168,11 @@ static LVoid EvalArith()
 
     while ((op = gToken.mTokenValue) == MUL || op == DIV || op == MOD) { // * / %
         // PUSH R0
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
         NextToken();
         EvalMinus();
         // POP R1
-        PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop);
         switch (op) {
         case MUL:
             PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdMul, HandleMul);
@@ -2126,17 +2194,44 @@ static LVoid EvalAddSub()
     EvalArith(); // => R0
     while ((op = gToken.mTokenValue) == ADD || op == SUB) {
         // PUSH
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
 
         NextToken();
         EvalArith();
         // POP R1
-        PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop);
         // R0 + R1 => R0
         // R1 - R0 => R0
         PutInstruction(&COMMAND_R1, &COMMAND_R0, 
             op == ADD ? kCmdAdd : kCmdSub, 
             op == ADD ? HandleAdd : HandleSub);
+    }
+}
+
+static LVoid EvalRelationalImpl(LInt8 opToken)
+{
+    switch (opToken) {
+    case NOT:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdNotRelation, HandleRelational);
+        break;
+    case LT:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdLtRelation, HandleRelational);
+        break;
+    case LE:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdLeRelation, HandleRelational);
+        break;
+    case GT:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdGtRelation, HandleRelational);
+        break;
+    case GE:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdGeRelation, HandleRelational);
+        break;
+    case EQ:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdEqRelation, HandleRelational);
+        break;
+    case NE:
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdNeRelation, HandleRelational);
+        break;
     }
 }
 
@@ -2157,7 +2252,7 @@ static LVoid EvalRelational()
     if (MStrchr(relops, op)) {
         // 计算的结果存入栈中
         if (op != NOT) {
-            PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+            PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
         }
 
         NextToken(); // 查找标识符或者常量
@@ -2165,11 +2260,12 @@ static LVoid EvalRelational()
         // pop R1
         // 上次计算的结果出栈至R1
         if (op != NOT) {
-            PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
+            PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop);
         }
 
         // 计算R0 OP R1, 结果存入R0中
-        PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
+        //PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
+        EvalRelationalImpl(op);
     }
 }
 
@@ -2183,16 +2279,16 @@ static LVoid EvalLogic()
     LInt8 op = 0;
     while (MStrchr(logicops, (op = gToken.mTokenValue))) {
         // 计算的结果存入栈中
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
 
         NextToken(); // 查找标识符或者常量
         EvalRelational(); // 先执行优先级高的操作 => R0
         // pop R1
         // 上次计算的结果出栈至R1
-        PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop);
 
         // 计算R0 OP R1, 结果存入R0中
-        PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleLogic);
+        PutInstruction(&COMMAND_R1, &COMMAND_R0, op == AND ? kCmdAndLogic : kCmdOrLogic, HandleLogic);
     }
 }
 
@@ -2202,11 +2298,11 @@ static LVoid EvalAssignment()
     EvalLogic(); // =>R0
     if (gToken.mTokenValue == ASSIGN) { // '='
         // R0存入栈
-        PutInstruction(&COMMAND_R0, kBoyiaNull, PUSH, HandlePush);
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
         NextToken();
         EvalLogic(); // =>R0
             // 从栈中吐出数据到R1
-        PutInstruction(&COMMAND_R1, kBoyiaNull, POP, HandlePop);
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop);
         PutInstruction(&COMMAND_R1, &COMMAND_R0, ASSIGN_VAR, HandleAssignVar);
     }
 }
