@@ -40,67 +40,67 @@
     <Filter Include="thirdparty\zip\minizip">
       <UniqueIdentifier>{bdf2d0f3-eb84-47a2-900d-2bb625233766}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal">
+    <Filter Include="boyia\kernel">
       <UniqueIdentifier>{dd8c655e-b29e-4131-b5eb-923464790c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\vm">
+    <Filter Include="boyia\kernel\vm">
       <UniqueIdentifier>{264076f9-c178-4423-a537-08928cfd6e4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\vm\lib">
+    <Filter Include="boyia\kernel\vm\lib">
       <UniqueIdentifier>{93151a23-8915-40b6-911c-c17c398099b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\vm\core">
+    <Filter Include="boyia\kernel\vm\core">
       <UniqueIdentifier>{22edb4fc-3470-455c-93b0-d2241654f6a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\vm\json">
+    <Filter Include="boyia\kernel\vm\json">
       <UniqueIdentifier>{ed83b851-76e4-4c55-841a-2970e448813e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\vm\view">
+    <Filter Include="boyia\kernel\vm\view">
       <UniqueIdentifier>{09dc9887-1200-4f01-91b5-017767d4704c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\app">
+    <Filter Include="boyia\kernel\app">
       <UniqueIdentifier>{f70cccae-c8ad-4cc8-be5f-b9f3da6602cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\dom">
+    <Filter Include="boyia\kernel\dom">
       <UniqueIdentifier>{0c0edc2f-555a-4d42-902e-101eb6fbe7e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\gui">
+    <Filter Include="boyia\kernel\gui">
       <UniqueIdentifier>{e41bf9f3-c7d1-42ec-aabf-95f9f33f776c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\util">
+    <Filter Include="boyia\kernel\util">
       <UniqueIdentifier>{0f977666-3bb0-4395-82dd-1d3056c6b151}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\view">
+    <Filter Include="boyia\kernel\view">
       <UniqueIdentifier>{7b509b69-e65b-440b-ab0d-37050fb880f2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\style">
+    <Filter Include="boyia\kernel\style">
       <UniqueIdentifier>{84fc3705-5611-4bff-982a-59c92bcee62a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\widget">
+    <Filter Include="boyia\kernel\widget">
       <UniqueIdentifier>{aa54e2de-0a83-43af-ab33-41171be7a236}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\widget\flex">
+    <Filter Include="boyia\kernel\widget\flex">
       <UniqueIdentifier>{ffa8dba8-bd03-48ae-80bf-ba1b79305a6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\loader">
+    <Filter Include="boyia\kernel\loader">
       <UniqueIdentifier>{78c16a4f-845a-446b-be41-60aaf1126421}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform">
+    <Filter Include="boyia\kernel\platform">
       <UniqueIdentifier>{9899a548-139b-4c54-8d62-2c54cb862cf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform\arm">
+    <Filter Include="boyia\kernel\platform\arm">
       <UniqueIdentifier>{a9cc0f9d-bfd0-4e13-85a0-8bd2dd184061}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform\win">
+    <Filter Include="boyia\kernel\platform\win">
       <UniqueIdentifier>{a02dd964-65ff-4743-a5c7-03b818c4fefa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform\graphics">
+    <Filter Include="boyia\kernel\platform\graphics">
       <UniqueIdentifier>{aa4d218a-5379-4ebd-bd7e-45cf8f4b9c22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform\zip">
+    <Filter Include="boyia\kernel\platform\zip">
       <UniqueIdentifier>{a4d368a7-49ab-4c94-a08c-24ea86b56d31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernal\platform\ws">
+    <Filter Include="boyia\kernel\platform\ws">
       <UniqueIdentifier>{293f42ec-9ea1-4ea0-8e22-846c48cc08da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -198,272 +198,272 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.h">
       <Filter>thirdparty\zip\minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaLib.h">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaCore.h">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.h">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaError.h">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.h">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaMemory.h">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.h">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaValue.h">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.h">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\json\JSONParser.h">
-      <Filter>boyia\kernal\vm\json</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h">
+      <Filter>boyia\kernel\vm\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBase.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaEventHandler.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaImageView.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewDoc.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaViewDoc.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewGroup.h">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaViewGroup.h">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppInfo.h">
-      <Filter>boyia\kernal\app</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppInfo.h">
+      <Filter>boyia\kernel\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\Application.h">
-      <Filter>boyia\kernal\app</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\Application.h">
+      <Filter>boyia\kernel\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppManager.h">
-      <Filter>boyia\kernal\app</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppManager.h">
+      <Filter>boyia\kernel\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppStack.h">
-      <Filter>boyia\kernal\app</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.h">
+      <Filter>boyia\kernel\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppVM.h">
-      <Filter>boyia\kernal\app</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.h">
+      <Filter>boyia\kernel\app</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\dom\DOMBuilder.h">
-      <Filter>boyia\kernal\dom</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.h">
+      <Filter>boyia\kernel\dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LBaseView.h">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.h">
+      <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LColor.h">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.h">
+      <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LEvent.h">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LEvent.h">
+      <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LGdi.h">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LGdi.h">
+      <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LGraphic.h">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LGraphic.h">
+      <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\BoyiaPtr.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaPtr.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\BoyiaRef.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\FileUtil.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\HashMap.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\HashMap.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\IDCreator.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\IdentityMap.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\InputStream.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\KList.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\KList.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\KListMap.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\KListMap.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\KSet.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\KSet.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\KVector.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\KVector.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\OwnerPtr.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\OwnerPtr.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\PlatformLib.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\Stack.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Stack.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\StringUtils.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\Utf8StreamReader.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Utf8StreamReader.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\UtilString.h">
-      <Filter>boyia\kernal\util</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h">
+      <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIOperation.h">
-      <Filter>boyia\kernal\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIOperation.h">
+      <Filter>boyia\kernel\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIThread.h">
-      <Filter>boyia\kernal\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThread.h">
+      <Filter>boyia\kernel\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIThreadClientMap.h">
-      <Filter>boyia\kernal\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThreadClientMap.h">
+      <Filter>boyia\kernel\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIView.h">
-      <Filter>boyia\kernal\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIView.h">
+      <Filter>boyia\kernel\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIViewController.h">
-      <Filter>boyia\kernal\view</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIViewController.h">
+      <Filter>boyia\kernel\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleManager.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleManager.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleParser.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleParser.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleRule.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleRule.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleTags.h">
-      <Filter>boyia\kernal\style</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleTags.h">
+      <Filter>boyia\kernel\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\BlockView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\BlockView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\FormView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\FormView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlDocument.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlForm.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlRenderer.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlTags.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlTags.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\IHtmlForm.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\IHtmlForm.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\ImageView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\ImageView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\InlineView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InlineView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\InputView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InputView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\IViewListener.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\IViewListener.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\LinkView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\LinkView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\RenderContext.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\RenderContext.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\TextView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\TextView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.h">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.h">
+      <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\flex\FlexLayout.h">
-      <Filter>boyia\kernal\widget\flex</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\flex\FlexLayout.h">
+      <Filter>boyia\kernel\widget\flex</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\AppLoader.h">
-      <Filter>boyia\kernal\loader</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\AppLoader.h">
+      <Filter>boyia\kernel\loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\NetworkBase.h">
-      <Filter>boyia\kernal\loader</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\NetworkBase.h">
+      <Filter>boyia\kernel\loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\ResourceLoader.h">
-      <Filter>boyia\kernal\loader</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\ResourceLoader.h">
+      <Filter>boyia\kernel\loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\PlatformBridge.h">
-      <Filter>boyia\kernal\platform</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.h">
+      <Filter>boyia\kernel\platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\SalLog.h">
-      <Filter>boyia\kernal\platform</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\SalLog.h">
+      <Filter>boyia\kernel\platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\arm\ArmFunction.h">
-      <Filter>boyia\kernal\platform\arm</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\arm\ArmFunction.h">
+      <Filter>boyia\kernel\platform\arm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageLoader.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PixelRatio.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PixelRatio.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.h">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.h">
-      <Filter>boyia\kernal\platform\graphics</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\graphics\Animation.h">
+      <Filter>boyia\kernel\platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.h">
-      <Filter>boyia\kernal\platform\zip</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.h">
+      <Filter>boyia\kernel\platform\zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.h">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaSocket.h">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\ws\WebSocket.h">
-      <Filter>boyia\kernal\platform\ws</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h">
+      <Filter>boyia\kernel\platform\ws</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -560,245 +560,245 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.c">
       <Filter>thirdparty\zip\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaLib.cpp">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaCore.cpp">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.cpp">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaError.cpp">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.cpp">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaGC.cpp">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaGC.cpp">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaMemory.cpp">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.cpp">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\core\BoyiaValue.cpp">
-      <Filter>boyia\kernal\vm\core</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.cpp">
+      <Filter>boyia\kernel\vm\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\json\JSONParser.cpp">
-      <Filter>boyia\kernal\vm\json</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp">
+      <Filter>boyia\kernel\vm\json</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaBase.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaEventHandler.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaImageView.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaInputView.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaView.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewDoc.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaViewDoc.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\view\BoyiaViewGroup.cpp">
-      <Filter>boyia\kernal\vm\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaViewGroup.cpp">
+      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppInfo.cpp">
-      <Filter>boyia\kernal\app</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppInfo.cpp">
+      <Filter>boyia\kernel\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\Application.cpp">
-      <Filter>boyia\kernal\app</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\Application.cpp">
+      <Filter>boyia\kernel\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppManager.cpp">
-      <Filter>boyia\kernal\app</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppManager.cpp">
+      <Filter>boyia\kernel\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppStack.cpp">
-      <Filter>boyia\kernal\app</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.cpp">
+      <Filter>boyia\kernel\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\app\AppVM.cpp">
-      <Filter>boyia\kernal\app</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.cpp">
+      <Filter>boyia\kernel\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\dom\DOMBuilder.cpp">
-      <Filter>boyia\kernal\dom</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.cpp">
+      <Filter>boyia\kernel\dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LBaseView.cpp">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.cpp">
+      <Filter>boyia\kernel\gui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\gui\LColor.cpp">
-      <Filter>boyia\kernal\gui</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.cpp">
+      <Filter>boyia\kernel\gui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\BoyiaRef.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\FileUtil.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\IDCreator.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\IdentityMap.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\InputStream.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\PlatformLib.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\StringUtils.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\util\Utf8StreamReader.cpp">
-      <Filter>boyia\kernal\util</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Utf8StreamReader.cpp">
+      <Filter>boyia\kernel\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIOperation.cpp">
-      <Filter>boyia\kernal\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIOperation.cpp">
+      <Filter>boyia\kernel\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIThread.cpp">
-      <Filter>boyia\kernal\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThread.cpp">
+      <Filter>boyia\kernel\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIThreadClientMap.cpp">
-      <Filter>boyia\kernal\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThreadClientMap.cpp">
+      <Filter>boyia\kernel\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIView.cpp">
-      <Filter>boyia\kernal\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIView.cpp">
+      <Filter>boyia\kernel\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\view\UIViewController.cpp">
-      <Filter>boyia\kernal\view</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIViewController.cpp">
+      <Filter>boyia\kernel\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\DoctreeNode.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\Style.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleManager.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleManager.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleParser.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleParser.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleRule.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleRule.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\style\StyleTags.cpp">
-      <Filter>boyia\kernal\style</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\StyleTags.cpp">
+      <Filter>boyia\kernel\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\BlockView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\BlockView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\FormView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\FormView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlDocument.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlForm.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlRenderer.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlTags.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlTags.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\HtmlView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\ImageView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\ImageView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\InlineView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InlineView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\InputView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InputView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\LinkView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\LinkView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\RenderContext.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\RenderContext.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\TextView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\TextView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\VideoView.cpp">
-      <Filter>boyia\kernal\widget</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.cpp">
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\widget\flex\FlexLayout.cpp">
-      <Filter>boyia\kernal\widget\flex</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\flex\FlexLayout.cpp">
+      <Filter>boyia\kernel\widget\flex</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\AppLoader.cpp">
-      <Filter>boyia\kernal\loader</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\AppLoader.cpp">
+      <Filter>boyia\kernel\loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\loader\ResourceLoader.cpp">
-      <Filter>boyia\kernal\loader</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\ResourceLoader.cpp">
+      <Filter>boyia\kernel\loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\arm\ArmFunction.cpp">
-      <Filter>boyia\kernal\platform\arm</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\arm\ArmFunction.cpp">
+      <Filter>boyia\kernel\platform\arm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BaseThreadWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BaseThreadWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\BoyiaHttpEngine.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\CharConvertor.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\EditorWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\EditorWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\FontWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\GraphicsContextWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageLoader.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\ImageWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\LoaderWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MediaPlayerWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MediaPlayerWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\MutexWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MutexWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PaintCommandAllocator.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PixelRatio.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PixelRatio.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\PlatformBridgeWin.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PlatformBridgeWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\win\UrlParser.cpp">
-      <Filter>boyia\kernal\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\graphics\Animation.cpp">
-      <Filter>boyia\kernal\platform\graphics</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\graphics\Animation.cpp">
+      <Filter>boyia\kernel\platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\zip\ZipEntry.cpp">
-      <Filter>boyia\kernal\platform\zip</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.cpp">
+      <Filter>boyia\kernel\platform\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaBindings.cpp">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBindings.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaNetwork.cpp">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\vm\lib\BoyiaSocket.cpp">
-      <Filter>boyia\kernal\vm\lib</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernal\platform\ws\WebSocket.cpp">
-      <Filter>boyia\kernal\platform\ws</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp">
+      <Filter>boyia\kernel\platform\ws</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
