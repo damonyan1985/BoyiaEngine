@@ -151,6 +151,7 @@ enum CmdType {
     kCmdDeclGlobal,
     kCmdDeclLocal,
     kCmdCreateClass,
+    kCmdCreateFunction,
     kCmdClassExtend,
     kCmdDeclConstStr,
     kCmdExecCreate,
@@ -162,7 +163,10 @@ enum CmdType {
     kCmdLoopTrue,
     kCmdJmpTo,
     kCmdGetProp,
-    kCmdConstStr
+    kCmdConstStr,
+    kCmdLoop,
+    kCmdBreak,
+    kCmdReturn
 };
 
 typedef struct {
@@ -367,6 +371,28 @@ static LInt HandleConstString(LVoid* ins);
 static LInt HandleAssignment(LVoid* ins);
 
 static LInt HandleAssignVar(LVoid* ins);
+
+static LInt HandleLoopBegin(LVoid* ins);
+
+static LInt HandleCreateClass(LVoid* ins);
+
+static LInt HandleExtend(LVoid* ins);
+
+static LInt HandleDeclGlobal(LVoid* ins);
+
+static LInt HandleDeclLocal(LVoid* ins);
+
+static LInt HandleFunCreate(LVoid* ins);
+
+static LInt HandleCreateExecutor(LVoid* ins);
+
+static LInt HandleCreateParam(LVoid* ins);
+
+static LInt HandleReturn(LVoid* ins);
+
+static LInt HandleBreak(LVoid* ins);
+
+static LInt HandleCreateProp(LVoid* ins);
 // Handler Declarations End
 
 // Reset scene of global execute state
@@ -425,6 +451,17 @@ static OPHandler* InitHandlers()
     handlers[kCmdConstStr] = HandleConstString;
     handlers[kCmdAssign] = HandleAssignment;
     handlers[kCmdAssignVar] = HandleAssignVar;
+    handlers[kCmdLoop] = HandleLoopBegin;
+    handlers[kCmdCreateClass] = HandleCreateClass;
+    handlers[kCmdClassExtend] = HandleExtend;
+    handlers[kCmdDeclGlobal] = HandleDeclGlobal;
+    handlers[kCmdDeclLocal] = HandleDeclLocal;
+    handlers[kCmdCreateFunction] = HandleFunCreate;
+    handlers[kCmdExecCreate] = HandleCreateExecutor;
+    handlers[kCmdParamCreate] = HandleCreateParam;
+    handlers[kCmdReturn] = HandleReturn;
+    handlers[kCmdBreak] = HandleBreak;
+    handlers[kCmdPropCreate] = HandleCreateProp;
 
     return handlers;
 }
@@ -691,7 +728,7 @@ static LInt HandleBreak(LVoid* ins)
 static LVoid BreakStatement()
 {
     BOYIA_LOG("BreakStatement inst code=%d \n", 1);
-    PutInstruction(kBoyiaNull, kBoyiaNull, BY_BREAK, HandleBreak);
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdBreak, HandleBreak);
 }
 
 static LInt HandleCreateProp(LVoid* ins)
@@ -710,7 +747,7 @@ static LVoid PropStatement()
     //EngineStrLog("PropStatement name=%s", gToken.mTokenName);
     if (gToken.mTokenType == IDENTIFIER) {
         OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
-        PutInstruction(&cmd, kBoyiaNull, PROP_CREATE, HandleCreateProp);
+        PutInstruction(&cmd, kBoyiaNull, kCmdPropCreate, HandleCreateProp);
         Putback();
         EvalExpression();
 
@@ -881,7 +918,7 @@ static LInt HandleReturn(LVoid* ins)
 static LVoid ReturnStatement()
 {
     EvalExpression(); // => R0
-    PutInstruction(kBoyiaNull, kBoyiaNull, BY_RETURN, HandleReturn);
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdReturn, HandleReturn);
 }
 
 static LVoid BlockStatement()
@@ -1178,7 +1215,7 @@ static LVoid InitParams()
         NextToken(); // 得到属性名
         if (gToken.mTokenValue != RPTR) {
             OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
-            PutInstruction(&cmd, kBoyiaNull, PARAM_CREATE, HandleCreateParam);
+            PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, HandleCreateParam);
             NextToken(); // 获取逗号分隔符','
         } else
             break;
@@ -1245,7 +1282,7 @@ static LVoid BodyStatement(LInt type)
         // 类成员的创建在主体上下中进行
         //CommandTable* funCmds = CreateExecutor();
         //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
-        funInst = PutInstruction(kBoyiaNull, kBoyiaNull, EXE_CREATE, HandleCreateExecutor);
+        funInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdExecCreate, HandleCreateExecutor);
         GetVM()->mEState->mContext = &tmpTable;
     }
 
@@ -1289,7 +1326,7 @@ static LVoid ClassStatement()
     NextToken();
     LUintPtr classKey = GenIdentifier(&gToken.mTokenName);
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)classKey };
-    PutInstruction(&cmd, kBoyiaNull, CLASS_CREATE, HandleCreateClass);
+    PutInstruction(&cmd, kBoyiaNull, kCmdCreateClass, HandleCreateClass);
     // 判断继承关系
     NextToken();
     LUintPtr extendKey = 0;
@@ -1304,12 +1341,12 @@ static LVoid ClassStatement()
     // 设置继承成员
     if (extendKey != 0) {
         OpCommand extendCmd = { OP_CONST_NUMBER, (LIntPtr)extendKey };
-        PutInstruction(&cmd, &extendCmd, HANDLE_EXTEND, HandleExtend);
+        PutInstruction(&cmd, &extendCmd, kCmdClassExtend, HandleExtend);
     }
 
     // 执行完后需将CLASS置为kBoyiaNull
     OpCommand cmdEnd = { OP_NONE, 0 };
-    PutInstruction(&cmdEnd, kBoyiaNull, CLASS_CREATE, HandleCreateClass);
+    PutInstruction(&cmdEnd, kBoyiaNull, kCmdCreateClass, HandleCreateClass);
 }
 
 static LInt HandleFunCreate(LVoid* ins)
@@ -1337,7 +1374,7 @@ static LVoid FunStatement()
     //EngineStrLog("HandlePushParams FunStatement name %s", gToken.mTokenName);
     // 第一步，Function变量
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
-    PutInstruction(&cmd, kBoyiaNull, FUN_CREATE, HandleFunCreate);
+    PutInstruction(&cmd, kBoyiaNull, kCmdCreateFunction, HandleFunCreate);
     //EngineStrLog("FunctionName=%s", gToken.mTokenName);
     // 第二步，初始化函数参数
     NextToken(); //   '(', 即LPTR
@@ -1387,7 +1424,7 @@ static LVoid GlobalStatement()
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
         OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
 
-        PutInstruction(&cmdLeft, &cmdRight, DECL_GLOBAL, HandleDeclGlobal);
+        PutInstruction(&cmdLeft, &cmdRight, kCmdDeclGlobal, HandleDeclGlobal);
         Putback();
         EvalExpression();
     } while (gToken.mTokenValue == COMMA);
@@ -1456,7 +1493,7 @@ static LVoid LocalStatement()
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
         OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
         //EngineStrLog("value Name=%s", gToken.mTokenName);
-        PutInstruction(&cmdLeft, &cmdRight, DECL_LOCAL, HandleDeclLocal);
+        PutInstruction(&cmdLeft, &cmdRight, kCmdDeclLocal, HandleDeclLocal);
         Putback();
         EvalExpression();
     } while (gToken.mTokenValue == COMMA);
@@ -1676,7 +1713,7 @@ static LInt HandleJumpTo(LVoid* ins)
 static LVoid WhileStatement()
 {
     //EngineLog("WhileStatement %d", 0);
-    Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, LOOP, HandleLoopBegin);
+    Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin);
     NextToken(); // '('
     if (gToken.mTokenValue != LPTR) {
         SntxErrorBuild(LPTR_EXPECTED);
@@ -1703,7 +1740,7 @@ static LVoid WhileStatement()
 /* Execute a do loop. */
 static LVoid DoStatement()
 {
-    Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, LOOP, HandleLoopBegin);
+    Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin);
     BlockStatement(); /* interpret loop */
     NextToken();
     if (gToken.mTokenValue != BY_WHILE) {
