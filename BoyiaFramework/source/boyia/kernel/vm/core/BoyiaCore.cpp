@@ -187,7 +187,7 @@ typedef struct Instruction {
     LInt mCodeLine;
     OpCommand mOPLeft;
     OpCommand mOPRight;
-    OPHandler mHandler;
+    //OPHandler mHandler;
     InlineCache* mCache;
     Instruction* mNext;
 } Instruction;
@@ -536,7 +536,7 @@ static Instruction* PutInstruction(
 
     newIns->mCodeLine = gBoyiaVM->mEState->mLineNum;
     newIns->mOPCode = op;
-    newIns->mHandler = handler;
+    //newIns->mHandler = kBoyiaNull;
     newIns->mNext = kBoyiaNull;
     newIns->mCache = kBoyiaNull;
     Instruction* ins = gBoyiaVM->mEState->mContext->mEnd;
@@ -581,10 +581,12 @@ static LVoid ExecInstruction()
     // 通过指令寄存器进行计算
     ExecState* es = gBoyiaVM->mEState;
     while (es->mPC) {
-        OPHandler handler = es->mPC->mOPCode >= 100 ? es->mPC->mHandler : gBoyiaVM->mHandlers[es->mPC->mOPCode];
+        //OPHandler handler = es->mPC->mOPCode >= 100 ? es->mPC->mHandler : gBoyiaVM->mHandlers[es->mPC->mOPCode];
+        OPHandler handler = gBoyiaVM->mHandlers[es->mPC->mOPCode];
+        /*
         if (!handler) {
            handler = es->mPC->mHandler;
-        }
+        }*/
         if (handler) {
             LInt result = handler(es->mPC);
             if (result == 0) { // 指令运行出错跳出循环
