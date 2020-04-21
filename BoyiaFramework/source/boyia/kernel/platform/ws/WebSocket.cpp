@@ -76,8 +76,6 @@ typedef int socket_t;
 #include <string>
 #include <vector>
 
-#include "Mutex.h"
-#include "AutoLock.h"
 #include "WebSocket.h"
 #include "KList.h"
 #include "OwnerPtr.h"
@@ -240,7 +238,7 @@ public:
     void sendBinary(const std::vector<uint8_t>& message) {}
     void sendPing() {}
     void close() {}
-    readyStateValues getReadyState() const { return CLOSED; }
+    ReadyState getReadyState() const { return kClosed; }
     void dispatch() {}
     void setHandler(WebSocketHandler* handler) {}
 };
@@ -289,17 +287,16 @@ public:
     std::vector<uint8_t> receivedData;
 
     socket_t sockfd;
-    readyStateValues readyState;
+    ReadyState readyState;
     bool useMask;
     bool isRxBad;
     WebSocketHandler* wsHandler;
-    Mutex mutex;
     KList<OwnerPtr<String>> msgList;
     
 
     WebSocketImpl(socket_t sockfd, bool useMask)
         : sockfd(sockfd)
-        , readyState(OPEN)
+        , readyState(WebSocket::kOpen)
         , useMask(useMask)
         , isRxBad(false)
         , wsHandler(NULL)
@@ -311,7 +308,7 @@ public:
         wsHandler = handler;
     }
 
-    readyStateValues getReadyState() const
+    ReadyState getReadyState() const
     {
         return readyState;
     }
@@ -319,7 +316,7 @@ public:
     virtual void poll(int timeout)
     { 
         // timeout in milliseconds
-        if (readyState == CLOSED) {
+        if (readyState == WebSocket::kClosed) {
             if (timeout > 0) {
                 timeval tv = { timeout / 1000, (timeout % 1000) * 1000 };
                 select(0, NULL, NULL, NULL, &tv);
@@ -352,7 +349,7 @@ public:
             } else if (ret <= 0) {
                 rxbuf.resize(N);
                 closesocket(sockfd);
-                readyState = CLOSED;
+                readyState = WebSocket::kClosed;
                 fputs(ret < 0 ? "Connection error!\n" : "Connection closed!\n", stderr);
                 break;
             } else {
@@ -530,7 +527,7 @@ public:
         // middleware:
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         // TODO: consider acquiring a lock on txbuf...
-        if (readyState == CLOSING || readyState == CLOSED) {
+        if (readyState == WebSocket::kClosing || readyState == WebSocket::kClosed) {
             return;
         }
         std::vector<uint8_t> header;
@@ -586,10 +583,10 @@ public:
 
     void close()
     {
-        if (readyState == CLOSING || readyState == CLOSED) {
+        if (readyState == WebSocket::kClosing || readyState == WebSocket::kClosed) {
             return;
         }
-        readyState = CLOSING;
+        readyState = WebSocket::kClosing;
         uint8_t closeFrame[6] = { 0x88, 0x80, 0x00, 0x00, 0x00, 0x00 }; // last 4 bytes are a masking key
         std::vector<uint8_t> header(closeFrame, closeFrame + 6);
         txbuf.insert(txbuf.end(), header.begin(), header.end());

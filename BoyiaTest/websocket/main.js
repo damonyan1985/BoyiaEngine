@@ -1,9 +1,10 @@
 const WebSocket = require('ws');
+const util = require('./util');
 
 function initWebSocketServer() {
   const server = new WebSocket.Server(
     {
-      host: '192.168.0.10',
+      host: util.getLocalIP(),
       port: 6666
     }
   );
