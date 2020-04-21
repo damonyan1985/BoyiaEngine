@@ -46,7 +46,7 @@ LVoid BoyiaSocket::run()
         m_listener->onListen();
     }
 
-    while (m_socket->getReadyState() != yanbo::WebSocket::CLOSED) {
+    while (m_socket->getReadyState() != yanbo::WebSocket::kClosed) {
         m_socket->poll();
         m_socket->dispatch();
         m_socket->send(_CS("hahaha"));

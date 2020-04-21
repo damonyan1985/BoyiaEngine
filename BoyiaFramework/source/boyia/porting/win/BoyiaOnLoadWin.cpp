@@ -33,7 +33,7 @@ void BoyiaOnLoadWin::repaint()
 void BoyiaOnLoadWin::connectServer()
 {
     //yanbo::ThreadPool::getInstance()->sendTask(new SocketTask());
-    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.10:6666"));
+    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.7:6666"));
 }
 
 void BoyiaOnLoadWin::networkInit()
