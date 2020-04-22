@@ -6,6 +6,8 @@
 #include "BoyiaSocket.h"
 #include "ThreadPool.h"
 #include <stdio.h>
+//#include <WinSock2.h>
+#pragma comment(lib, "ws2_32")
 
 #ifndef  _WINDLL
 #define _WINDLL
@@ -38,10 +40,14 @@ void BoyiaOnLoadWin::connectServer()
 
 void BoyiaOnLoadWin::networkInit()
 {
-    yanbo::WebSocket::networkInit();
+    //yanbo::WebSocket::networkInit();
+    WSADATA wsaData;
+    //rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    ::WSAStartup(MAKEWORD(2, 2), &wsaData);
 }
 
 void BoyiaOnLoadWin::networkDestroy()
 {
-    yanbo::WebSocket::networkDestroy();
+    ::WSACleanup();
+    //yanbo::WebSocket::networkDestroy();
 }
