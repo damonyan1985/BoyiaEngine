@@ -9,7 +9,6 @@
 #include <WS2tcpip.h>
 #include <WinSock2.h>
 #include <fcntl.h>
-#pragma comment(lib, "ws2_32")
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -710,23 +709,6 @@ WebSocket::pointer WebSocket::create(const String& url, const std::string& origi
 WebSocket::pointer WebSocket::createNoMask(const String& url, const std::string& origin)
 {
     return yanbo::createWebSocket(url, false, origin);
-}
-
-void WebSocket::networkInit()
-{
-#ifdef _WIN32
-    //INT rc;
-    WSADATA wsaData;
-    //rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    ::WSAStartup(MAKEWORD(2, 2), &wsaData);
-#endif
-}
-
-void WebSocket::networkDestroy()
-{
-#ifdef _WIN32
-    ::WSACleanup();
-#endif
 }
 
 }
