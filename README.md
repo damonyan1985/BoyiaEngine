@@ -1,15 +1,15 @@
-# ![Logo](https://github.com/damonyan1985/BoyiaUI/blob/dev/BoyiaApp/android/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaUI
+# ![Logo](https://github.com/damonyan1985/BoyiaEngine/blob/dev/BoyiaApp/android/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaUI
 
 BoyiaUI is a cross-platform framework for building mobile app, but now it's only implements
 android platform.
 
 **Boyia Framework Architecture**:
-![Architecture](https://github.com/damonyan1985/BoyiaUI/blob/dev/Docs/Architecture.png?raw=true)
+![Architecture](https://github.com/damonyan1985/BoyiaEngine/blob/dev/Docs/Architecture.png?raw=true)
 
 ## Git user attention
 
 1. Clone the repo from GitHub.
-$ git clone https://github.com/damonyan1985/BoyiaUI.git
+$ git clone git@github.com:damonyan1985/BoyiaEngine.git
 
 ## Boyia Framework Modules
 
