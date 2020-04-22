@@ -65,7 +65,7 @@ def main():
   
   del_file(maven_project_dir, False)
   if os.path.exists(apk_build_dir) == True:
-    del_file(apk_build_dir)
+    del_file(apk_build_dir, True)
   os.system(upload_util_library_cmd)
   os.system(upload_loader_library_cmd)
   #os.system(upload_core_native_sync_cmd)
