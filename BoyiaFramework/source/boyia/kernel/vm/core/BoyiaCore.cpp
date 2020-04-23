@@ -31,6 +31,7 @@
 #define LOOP_NEST ((LInt)32)
 #define MEMORY_SIZE ((LInt)1024 * 1024 * 6)
 #define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
+#define CONST_CAPACITY ((LInt)1024)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -268,6 +269,11 @@ typedef struct {
     LInt mSize;
 } VMCode;
 
+typedef struct {
+    BoyiaStr mTable[CONST_CAPACITY];
+    LInt mSize;
+} VMStrTable;
+
 /* Boyia VM Define
  * Member
  * 1, mPool
@@ -285,6 +291,7 @@ typedef struct {
     LIntPtr* mLoopStack;
     BoyiaValue* mOpStack;
     VMCode* mVMCode;
+    VMStrTable* mStrTable;
     OPHandler* mHandlers;
 } BoyiaVM;
 
@@ -466,6 +473,13 @@ static OPHandler* InitHandlers()
     return handlers;
 }
 
+static VMStrTable* CreateVMStringTable()
+{
+    VMStrTable* table = NEW(VMStrTable);
+    table->mSize = 0;
+    return table;
+}
+
 LVoid* InitVM()
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
@@ -484,6 +498,7 @@ LVoid* InitVM()
     vm->mCpu = NEW(VMCpu);
     vm->mVMCode = CreateVMCode();
     vm->mHandlers = InitHandlers();
+    vm->mStrTable = CreateVMStringTable();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
@@ -2132,8 +2147,9 @@ static LInt HandleConstString(LVoid* ins)
 {
     Instruction* inst = (Instruction*)ins;
     gBoyiaVM->mCpu->mReg0.mValueType = BY_STRING;
-    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mPtr = (LInt8*)inst->mOPLeft.mValue;
-    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mLen = inst->mOPRight.mValue;
+    BoyiaStr* constStr = &GetVM()->mStrTable->mTable[inst->mOPLeft.mValue];
+    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mPtr = constStr->mPtr;
+    gBoyiaVM->mCpu->mReg0.mValue.mStrVal.mLen = constStr->mLen;
     return 1;
 }
 
@@ -2172,20 +2188,21 @@ static LVoid Atom()
     }
         return;
     case STRING_VALUE: {
-        // 设置常量字符串， 所有常量hash值为0
-        BoyiaStr constStr;
-        CopyStringFromToken(&constStr);
-        OpCommand lCmd = { OP_CONST_NUMBER, (LIntPtr)constStr.mPtr };
-        OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
-        PutInstruction(&lCmd, &rCmd, kCmdConstStr, HandleConstString);
+        // 从StringTable中分配常量字符串
+        BoyiaStr* constStr = &GetVM()->mStrTable->mTable[GetVM()->mStrTable->mSize];
+        CopyStringFromToken(constStr);
+        OpCommand lCmd = { OP_CONST_NUMBER,  GetVM()->mStrTable->mSize++ };
+        //OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
+        PutInstruction(&lCmd, kBoyiaNull, kCmdConstStr, HandleConstString);
         NextToken();
     }
         return;
     default: {
-        if (gToken.mTokenValue == RPTR)
+        if (gToken.mTokenValue == RPTR) {
             return;
-        else
-            SntxErrorBuild(SYNTAX);
+        }
+
+        SntxErrorBuild(SYNTAX);
     } break;
     }
 }
