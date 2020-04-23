@@ -4,7 +4,7 @@ BoyiaEngine is a cross-platform framework for building mobile app, but now it's 
 android platform.
 
 **Boyia Framework Architecture**:
-![Architecture](https://github.com/damonyan1985/BoyiaEngine/blob/dev/Docs/Architecture.png?raw=true)
+![Architecture](https://github.com/damonyan1985/BoyiaEngine/blob/dev/BoyiaStudy/images/Architecture.png?raw=true)
 
 ## Git user attention
 

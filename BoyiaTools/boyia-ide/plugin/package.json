@@ -1,0 +1,73 @@
+{
+	"name": "boyia-ide",
+	"publisher": "BoyiaIDE",
+	"displayNveame": "Boyia IDE",
+	"description": "Boyia IDE",
+	"version": "0.0.6",
+	"repository": {
+		"url": ""
+	},
+	"engines": {
+		"vscode": "^1.36.0"
+	},
+	"icon": "icon/icon.png",
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"snippets": [
+			{
+				"language": "boyia",
+				"path": "./config/snippets.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "boyia",
+				"extensions": [
+					".boyia"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "boyia",
+				"scopeName": "source.boyia",
+				"path": "./syntaxes/boyia.tmLanguage.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "extension.helloWorld",
+				"title": "Hello World"
+			}
+		]
+	},
+	"scripts": {
+		"test": "node ./test/runTest.js",
+		"build": "webpack --mode production"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.12.21",
+		"@types/vscode": "^1.36.0",
+		"eslint": "^5.13.0",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"typescript": "^3.3.1",
+		"vscode-test": "^1.0.2",
+		"webpack-cli": "^3.3.6",
+		"vscode": "^1.1.36",
+		"webpack": "^4.39.1"
+	},
+	"dependencies": {
+		"babel-core": "^6.26.3",
+		"babel-loader": "^7.1.5",
+		"fs-extra": "^8.1.0"
+	}
+}
