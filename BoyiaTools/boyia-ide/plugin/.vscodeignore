@@ -1,0 +1,13 @@
+.vscode/**
+.vscode-test/**
+test/**
+.gitignore
+vsc-extension-quickstart.md
+**/jsconfig.json
+**/*.map
+**/.eslintrc.json
+node_modules/**
+src/**
+package-lock.json
+webpack.config.js
+boyia-ide**

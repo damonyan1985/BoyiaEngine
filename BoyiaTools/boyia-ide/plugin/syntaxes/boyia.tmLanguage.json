@@ -1,0 +1,159 @@
+{
+  "scopeName": "source.boyia",
+  "patterns": [
+    {
+      "include": "#expression"
+    }
+  ],
+  "repository": {
+    "expression": {
+      "patterns": [
+        {
+          "include": "#keyword"
+        },
+        {
+          "include": "#keyword-control"
+        },
+        {
+          "include": "#string-expression"
+        },
+        {
+          "include": "#paren-expression"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#function-def-name"
+        },
+        {
+          "include": "#parameters"
+        },
+        {
+          "include": "#code-expression-base"
+        },
+        {
+          "include": "#code-expression"
+        },
+        {
+          "include": "#comments-single-line"
+        }
+      ]
+    },
+    "keyword": {
+      "match": "class|fun|prop|var|extends|this|super",
+      "name": "keyword.letter.boyia"
+    },
+    "keyword-control": {
+      "match": "return|if|elif|else|do|while",
+      "name": "keyword.control.boyia"
+    },
+    "constants": {
+      "patterns": [
+        {
+          "match": "true|false",
+          "name": "constant.language.boolean.boyia"
+        }
+      ]
+    },
+    "function-def-name": {
+      "patterns": [
+        {
+          "name": "entity.name.function.boyia",
+          "match": "(?x)\n \\b ([[:alpha:]_]\\w*) \\b\n"
+        }
+      ]
+    },
+    "parameters": {
+      "name": "meta.function.parameters.boyia",
+      "begin": "(\\()",
+      "end": "(\\))",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.parameters.begin.boyia"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.parameters.end.boyia"
+        }
+      },
+      "patterns": [
+        {
+          "name": "keyword.operator.unpacking.parameter.boyia",
+          "match": "(\\*\\*|\\*)"
+        },
+        {
+          "match": "(?x)\n ([[:alpha:]_]\\w*)\n \\s* (?: (,) | (?=[)#\\n=]))\n",
+          "captures": {
+            "1": {
+              "name": "variable.parameter.function.language.boyia"
+            },
+            "2": {
+              "name": "punctuation.separator.parameters.boyia"
+            }
+          }
+        }
+      ]
+    },
+    "string-expression": {
+      "begin": "\"",
+      "end": "\"",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.begin.boyia"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.end.boyia"
+        }
+      },
+      "name": "string.quoted.double.boyia",
+      "patterns": [
+        {
+          "match": "\\.",
+          "name": "constant.character.escape.boyia"
+        }
+      ]
+    },
+    "comments-single-line": {
+      "name": "comment.line.number-sign.python",
+      "begin": "(\\#)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.comment.python"
+        }
+      },
+      "end": "($|(?='''))",
+      "patterns": [
+        {
+          "include": "#codetags"
+        }
+      ]
+    },
+    "paren-expression": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.paren.open"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.paren.close"
+        }
+      },
+      "name": "expression.group",
+      "patterns": [
+        {
+          "include": "#keyword"
+        },
+        {
+          "include": "#keyword-control"
+        }
+      ]
+    }
+  }
+}
