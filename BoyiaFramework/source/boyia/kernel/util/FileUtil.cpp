@@ -41,6 +41,17 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
     content.Copy(_CS(buf), LTrue, len);
 }
 
+LVoid FileUtil::writeFile(const String& fileName, const String& content)
+{
+    FILE* file = fopen(GET_STR(fileName), "wb");
+    if (!file) {
+        return;
+    }
+
+    fwrite(GET_STR(content), 1, content.GetLength(), file);
+    fclose(file);
+}
+
 LVoid FileUtil::syncLoadUrl(const String& url, String& content)
 {
     if (url.StartWith(kSourcePrefix)) {

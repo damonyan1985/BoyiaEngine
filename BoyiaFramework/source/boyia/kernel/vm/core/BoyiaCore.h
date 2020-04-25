@@ -42,5 +42,9 @@ LVoid DestroyVM(LVoid* vm);
 LInt CreateObject();
 LVoid InitNativeFun(NativeFunction* funs);
 LVoid ChangeVM(LVoid* vm);
+LVoid CacheVMCode();
+LVoid LoadStringTable(BoyiaStr* stringTable, LInt size);
+LVoid LoadInstructions(LVoid* buffer, LInt size);
+LVoid LoadEntryTable(LVoid* buffer, LInt size);
 
 #endif

@@ -52,6 +52,7 @@ public:
         UIThread::instance()->sendUIEvent(this);
     }
 
+    // Run In UIThread
     virtual LVoid run() LOverride
     {
 		KLOG("ResourceEvent::run");
@@ -65,6 +66,12 @@ public:
         } else {
             m_loader->onLoadError(m_result);
         }
+
+        /*
+        if (m_url.CompareNoCase(_CS("boyia://apps/contacts/src/Main.boyia"))) {
+            //CacheVMCode();
+            //LoadVMCode();
+        }*/
     }
 
     virtual LVoid onFileLen(LInt len) LOverride

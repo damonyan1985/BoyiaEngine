@@ -18,6 +18,7 @@
 #define kBoyiaNull 0
 #endif
 
+#define kInvalidInstruction (-1)
 #define RuntimeError(key, error) PrintErrorKey(key, error, gBoyiaVM->mEState->mPC->mCodeLine)
 
 /* Type Define Begin */
@@ -32,6 +33,7 @@
 #define MEMORY_SIZE ((LInt)1024 * 1024 * 6)
 #define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
 #define CONST_CAPACITY ((LInt)1024)
+#define ENTRY_CAPACITY ((LInt)1024)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -190,7 +192,7 @@ typedef struct Instruction {
     OpCommand mOPRight;
     //OPHandler mHandler;
     InlineCache* mCache;
-    Instruction* mNext;
+    LIntPtr mNext;
 } Instruction;
 
 typedef struct {
@@ -274,6 +276,11 @@ typedef struct {
     LInt mSize;
 } VMStrTable;
 
+typedef struct {
+    LInt mTable[ENTRY_CAPACITY];
+    LInt mSize;
+} VMEntryTable;
+
 /* Boyia VM Define
  * Member
  * 1, mPool
@@ -292,6 +299,7 @@ typedef struct {
     BoyiaValue* mOpStack;
     VMCode* mVMCode;
     VMStrTable* mStrTable;
+    VMEntryTable* mEntry;
     OPHandler* mHandlers;
 } BoyiaVM;
 
@@ -480,6 +488,13 @@ static VMStrTable* CreateVMStringTable()
     return table;
 }
 
+static VMEntryTable* CreateVMEntryTable()
+{
+    VMEntryTable* table = NEW(VMEntryTable);
+    table->mSize = 0;
+    return table;
+}
+
 LVoid* InitVM()
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
@@ -499,6 +514,7 @@ LVoid* InitVM()
     vm->mVMCode = CreateVMCode();
     vm->mHandlers = InitHandlers();
     vm->mStrTable = CreateVMStringTable();
+    vm->mEntry = CreateVMEntryTable();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
@@ -549,19 +565,19 @@ static Instruction* PutInstruction(
         newIns->mOPRight.mValue = right->mValue;
     }
 
-    newIns->mCodeLine = gBoyiaVM->mEState->mLineNum;
+    newIns->mCodeLine = GetVM()->mEState->mLineNum;
     newIns->mOPCode = op;
     //newIns->mHandler = kBoyiaNull;
-    newIns->mNext = kBoyiaNull;
+    newIns->mNext = kInvalidInstruction;
     newIns->mCache = kBoyiaNull;
-    Instruction* ins = gBoyiaVM->mEState->mContext->mEnd;
+    Instruction* ins = GetVM()->mEState->mContext->mEnd;
     if (!ins) {
-        gBoyiaVM->mEState->mContext->mBegin = newIns;
+        GetVM()->mEState->mContext->mBegin = newIns;
     } else {
-        ins->mNext = newIns;
+        ins->mNext = GetVM()->mVMCode->mSize - 1;
     }
 
-    gBoyiaVM->mEState->mContext->mEnd = newIns;
+    GetVM()->mEState->mContext->mEnd = newIns;
     return newIns;
 }
 
@@ -579,13 +595,21 @@ static LInt HandlePopScene(LVoid* ins)
     return 1;
 }
 
+static Instruction* NextInstruction(Instruction* instruction) {
+    if (instruction->mNext == kInvalidInstruction) {
+        return kBoyiaNull;
+    }
+
+    return GetVM()->mVMCode->mCode + instruction->mNext;
+}
+
 static LVoid ExecPopFunction()
 {
     // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
     if (!gBoyiaVM->mEState->mPC && gBoyiaVM->mEState->mFunctos > 0) {
         HandlePopScene(kBoyiaNull);
         if (gBoyiaVM->mEState->mPC) {
-            gBoyiaVM->mEState->mPC = gBoyiaVM->mEState->mPC->mNext;
+            gBoyiaVM->mEState->mPC = NextInstruction(gBoyiaVM->mEState->mPC);//gBoyiaVM->mEState->mPC->mNext;
             ExecPopFunction();
         }
     }
@@ -612,7 +636,7 @@ static LVoid ExecInstruction()
         }
 
         if (es->mPC) {
-            es->mPC = es->mPC->mNext;
+            es->mPC = NextInstruction(es->mPC);//es->mPC->mNext;
         }
 
         ExecPopFunction();
@@ -1404,7 +1428,7 @@ static LVoid DeleteExecutor(CommandTable* table)
 {
     Instruction* pc = table->mBegin;
     while (pc != table->mEnd) {
-        Instruction* next = pc->mNext;
+        Instruction* next = NextInstruction(pc);//pc->mNext;
         VM_DELETE(pc);
         pc = next;
     }
@@ -1451,11 +1475,22 @@ static LVoid GlobalStatement()
     }
 }
 
+static LVoid AppendEntry(CommandTable* table) 
+{
+    // Entry的begin为空，证明没有指令
+    if (!table || !table->mBegin) {
+        return;
+    }
+
+    // Entry起始位置获取在VMCode中的索引
+    GetVM()->mEntry->mTable[GetVM()->mEntry->mSize++] = table->mBegin - GetVM()->mVMCode->mCode;
+}
+
 // 该函数记录全局变量以及函数接口
 static LVoid ParseStatement()
 {
     LInt brace = 0; // ‘{’的个数
-    gBoyiaVM->mEState->mContext = CreateExecutor();
+    GetVM()->mEState->mContext = CreateExecutor();
     do {
         while (brace) {
             NextToken();
@@ -1487,8 +1522,9 @@ static LVoid ParseStatement()
         }
     } while (gToken.mTokenValue != BY_END);
 
+    AppendEntry(GetVM()->mEState->mContext);
     // 执行全局声明和定义
-    ExecuteCode(gBoyiaVM->mEState->mContext);
+    ExecuteCode(GetVM()->mEState->mContext);
 }
 
 static LInt HandleDeclLocal(LVoid* ins)
@@ -1654,12 +1690,12 @@ static LInt HandleAssignment(LVoid* ins)
 static LInt HandleIfEnd(LVoid* ins)
 {
     Instruction* inst = gBoyiaVM->mEState->mPC;
-    Instruction* tmpInst = inst->mNext;
+    Instruction* tmpInst = NextInstruction(inst);//inst->mNext;
     // 查看下一个是否是elseif
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == kCmdElif || tmpInst->mOPCode == kCmdElse)) {
         inst = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
-        tmpInst = inst->mNext;
+        tmpInst = NextInstruction(inst);//inst->mNext;
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
     if (inst) {
@@ -2433,14 +2469,14 @@ LVoid GetGlobalTable(LInt* table, LInt* size)
 LVoid CompileCode(LInt8* code)
 {
     InitGlobalData();
-    gBoyiaVM->mEState->mProg = code;
-    gBoyiaVM->mEState->mLineNum = 1;
-    gBoyiaVM->mEState->mTmpLValSize = 0;
-    gBoyiaVM->mEState->mResultNum = 0;
-    gBoyiaVM->mEState->mLoopSize = 0;
-    gBoyiaVM->mEState->mClass = kBoyiaNull;
+    GetVM()->mEState->mProg = code;
+    GetVM()->mEState->mLineNum = 1;
+    GetVM()->mEState->mTmpLValSize = 0;
+    GetVM()->mEState->mResultNum = 0;
+    GetVM()->mEState->mLoopSize = 0;
+    GetVM()->mEState->mClass = kBoyiaNull;
     ParseStatement(); // 该函数记录全局变量以及函数接口
-    ResetScene(gBoyiaVM);
+    ResetScene(GetVM());
 }
 
 LVoid* GetLocalValue(LInt idx)
@@ -2487,4 +2523,44 @@ LVoid NativeCall(BoyiaValue* obj)
     HandleCallFunction(kBoyiaNull);
 
     ExecInstruction();
+}
+
+LVoid CacheVMCode()
+{
+    CacheStringTable(GetVM()->mStrTable->mTable, GetVM()->mStrTable->mSize);
+    CacheInstuctionEntry(GetVM()->mEntry->mTable, sizeof(LInt) * GetVM()->mEntry->mSize);
+    CacheInstuctions(GetVM()->mVMCode->mCode, sizeof(Instruction) * GetVM()->mVMCode->mSize);
+}
+
+LVoid LoadStringTable(BoyiaStr* stringTable, LInt size)
+{
+    for (LInt i = 0; i < size; i++) {
+        GetVM()->mStrTable->mTable[i].mPtr = stringTable[i].mPtr;
+        GetVM()->mStrTable->mTable[i].mLen = stringTable[i].mLen;
+    }
+
+    GetVM()->mStrTable->mSize = size;
+}
+
+LVoid LoadInstructions(LVoid* buffer, LInt size)
+{
+    GetVM()->mVMCode->mSize = size / sizeof(Instruction);
+    LMemcpy(GetVM()->mVMCode->mCode, buffer, size);
+}
+
+LVoid LoadEntryTable(LVoid* buffer, LInt size)
+{
+    GetVM()->mEntry->mSize = size / sizeof(LInt);
+    LMemcpy(GetVM()->mEntry->mTable, buffer, size);
+
+    InitGlobalData();
+    GetVM()->mEState->mGValSize = 0;
+    GetVM()->mEState->mFunSize = 0;
+    GetVM()->mEState->mLoopSize = 0;
+    ResetScene(GetVM());
+    CommandTable cmds;
+    for (LInt i = 0; i < GetVM()->mEntry->mSize; i++) {
+        cmds.mBegin = GetVM()->mVMCode->mCode + GetVM()->mEntry->mTable[i];
+        ExecuteCode(&cmds);
+    }
 }

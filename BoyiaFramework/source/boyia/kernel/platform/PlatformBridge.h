@@ -14,6 +14,9 @@ public:
     static const char* getSdkPath();
     static const char* getBoyiaJsonUrl();
     static const LInt getTextSize(const String& text);
+    static const char* getInstructionCachePath();
+    static const char* getStringTableCachePath();
+    static const char* getInstructionEntryPath();
 };
 }
 

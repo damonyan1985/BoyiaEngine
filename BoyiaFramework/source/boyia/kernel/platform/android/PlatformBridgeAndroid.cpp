@@ -58,6 +58,21 @@ const char* PlatformBridge::getAppRoot()
     return "/data/data/com.boyia.app/files/";
 }
 
+const char* PlatformBridge::getInstructionCachePath()
+{
+    return "/data/data/com.boyia.app/files/instruction_cache.bin";
+}
+
+const char* PlatformBridge::getStringTableCachePath()
+{
+    return "/data/data/com.boyia.app/files/stringtable_cache.bin";
+}
+
+const char* PlatformBridge::getInstructionEntryPath()
+{
+    return "/data/data/com.boyia.app/files/instruction_entry.bin";
+}
+
 const char* PlatformBridge::getBoyiaJsonUrl()
 {
     return "https://damonyan1985.github.io/app/boyia.json";
