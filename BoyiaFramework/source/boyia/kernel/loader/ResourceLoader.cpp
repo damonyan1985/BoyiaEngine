@@ -67,11 +67,11 @@ public:
             m_loader->onLoadError(m_result);
         }
 
-        /*
+        
         if (m_url.CompareNoCase(_CS("boyia://apps/contacts/src/Main.boyia"))) {
             //CacheVMCode();
             //LoadVMCode();
-        }*/
+        }
     }
 
     virtual LVoid onFileLen(LInt len) LOverride

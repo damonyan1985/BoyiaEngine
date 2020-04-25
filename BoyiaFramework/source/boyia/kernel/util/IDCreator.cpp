@@ -49,7 +49,7 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
     }
 
     id = new BoyiaId;
-    id->mID = ++m_idCount;
+    id->mID = m_idLink->mEnd ? m_idLink->mEnd->mID + 1 : m_idCount + 1;
     id->mStr.mPtr = new LInt8[str->mLen];
     id->mStr.mLen = str->mLen;
     LMemcpy(id->mStr.mPtr, str->mPtr, str->mLen);
@@ -63,6 +63,7 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 
     m_idLink->mEnd = id;
 
+    ++m_idCount;
     return id->mID;
 }
 
@@ -84,5 +85,30 @@ LVoid IDCreator::getIdentName(LUint id, BoyiaStr* str)
 
         bid = bid->mNext;
     }
+}
+
+LVoid IDCreator::setIdentify(const String& str, LUint id)
+{
+    if (!m_idLink) {
+        m_idLink = new IdLink;
+        m_idLink->mBegin = kBoyiaNull;
+        m_idLink->mEnd = kBoyiaNull;
+    }
+
+    BoyiaId* bid = new BoyiaId;
+    bid->mID = id;
+    bid->mStr.mPtr = new LInt8[str.GetLength()];
+    bid->mStr.mLen = str.GetLength();
+    LMemcpy(bid->mStr.mPtr, str.GetBuffer(), str.GetLength());
+    bid->mNext = kBoyiaNull;
+
+    if (!m_idLink->mBegin) {
+        m_idLink->mBegin = bid;
+    } else {
+        m_idLink->mEnd->mNext = bid;
+    }
+
+    m_idCount = id;
+    m_idLink->mEnd = bid;
 }
 }
