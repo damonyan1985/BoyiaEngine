@@ -9,6 +9,10 @@
 #include "PlatformLib.h"
 #include "SalLog.h"
 #include "SystemUtil.h"
+#include "FileUtil.h"
+#include "PlatformBridge.h"
+#include "StringUtils.h"
+#include "BoyiaPtr.h"
 #include <stdio.h>
 #include <stdlib.h>
 #if ENABLE(BOYIA_WINDOWS)
@@ -262,4 +266,71 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str)
 {
     GetIdCreator()->getIdentName(key, str);
+}
+
+LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
+{
+    FileUtil::writeFile(
+        _CS(yanbo::PlatformBridge::getInstructionCachePath()),
+        String(_CS(instructionBuffer), LFalse, size)
+    );
+}
+
+const LUint8* kStringTableSplitFlag = _CS("@boyia@stringtable@");
+
+LVoid CacheStringTable(BoyiaStr* stringTable, LInt size)
+{
+    LInt length = 0;
+    LInt flagLen = LStrlen(kStringTableSplitFlag);
+    for (LInt i = 0; i < size; i++) {
+        // String will add a flag, except the last one
+        length += i == size - 1 ? stringTable[i].mLen : stringTable[i].mLen + flagLen;
+    }
+    LUint8* buffer = new LUint8[length];
+    LInt index = 0;
+    for (LInt i = 0; i < size; i++) {
+        LMemcpy(buffer + index, stringTable[i].mPtr, stringTable[i].mLen);
+        index += stringTable[i].mLen;
+        if (i < size - 1) {
+            LMemcpy(buffer + index, kStringTableSplitFlag, flagLen);
+            index += flagLen;
+        }
+    }
+    FileUtil::writeFile(
+        _CS(yanbo::PlatformBridge::getStringTableCachePath()),
+        String(buffer, LFalse, length)
+    );
+}
+
+LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size)
+{
+    FileUtil::writeFile(
+        _CS(yanbo::PlatformBridge::getInstructionEntryPath()),
+        String(_CS(vmEntryBuffer), LFalse, size)
+    );
+}
+
+LVoid LoadVMCode()
+{
+    // Load StringTable
+    String content;
+    FileUtil::readFile(_CS(yanbo::PlatformBridge::getStringTableCachePath()), content);
+    BoyiaPtr<KVector<String> > stringTable = StringUtils::split(content, kStringTableSplitFlag);
+    BoyiaStr* strTable = new BoyiaStr[stringTable->size()];
+    for (LInt i = 0; i < stringTable->size(); i++) {
+        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i).GetLength());
+        strTable[i].mLen = stringTable->elementAt(i).GetLength();
+        LMemcpy(strTable[i].mPtr, stringTable->elementAt(i).GetBuffer(), strTable[i].mLen);
+    }
+
+    LoadStringTable(strTable, stringTable->size());
+    delete strTable;
+
+    // Load Instructions
+    FileUtil::readFile(_CS(yanbo::PlatformBridge::getInstructionCachePath()), content);
+    LoadInstructions(content.GetBuffer(), content.GetLength());
+
+    // Load EntryTable
+    FileUtil::readFile(_CS(yanbo::PlatformBridge::getInstructionEntryPath()), content);
+    LoadEntryTable(content.GetBuffer(), content.GetLength());
 }

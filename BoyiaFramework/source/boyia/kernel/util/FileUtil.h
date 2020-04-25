@@ -18,6 +18,7 @@ namespace util {
 class FileUtil {
 public:
     static LVoid readFile(const String& fileName, String& content);
+    static LVoid writeFile(const String& fileName, const String& content);
     static bool isExist(const char* path);
     static bool isDir(const char* path);
     static bool isFile(const char* path);

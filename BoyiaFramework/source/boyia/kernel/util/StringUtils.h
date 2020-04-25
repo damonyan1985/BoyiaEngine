@@ -44,4 +44,4 @@ public:
 }
 
 using util::StringUtils;
-#endif /* STRINGUTILS_H_ */
+#endif /* StringUtils_h */

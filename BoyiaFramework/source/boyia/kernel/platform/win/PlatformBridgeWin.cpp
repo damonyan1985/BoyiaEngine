@@ -14,6 +14,10 @@ static String sAppPath((LUint8)0, MAX_PATH);
 static String sBoyiaJsonPath((LUint8)0, MAX_PATH);
 static String sSdkPath((LUint8)0, MAX_PATH);
 static String sAppRootPath((LUint8)0, MAX_PATH);
+static String sInstructionCachePath((LUint8)0, MAX_PATH);
+static String sStringTableCachePath((LUint8)0, MAX_PATH);
+static String sInstructionEntryPath((LUint8)0, MAX_PATH);
+
 const char* kZipPassword = "123456";
 
 bool PlatformBridge::unzip(const String& zipFile, const String& dir)
@@ -80,6 +84,33 @@ const LInt PlatformBridge::getTextSize(const String& text)
 {
     wstring wtext = CharConvertor::CharToWchar(GET_STR(text));
     return wtext.length();
+}
+
+const char* PlatformBridge::getInstructionCachePath()
+{
+    if (!sInstructionCachePath.GetLength()) {
+        sInstructionCachePath = _CS(getAppRoot());
+        sInstructionCachePath += _CS("instruction_cache.bin");
+    }
+    return GET_STR(sInstructionCachePath);
+}
+
+const char* PlatformBridge::getStringTableCachePath()
+{
+    if (!sStringTableCachePath.GetLength()) {
+        sStringTableCachePath = _CS(getAppRoot());
+        sStringTableCachePath += _CS("stringtable_cache.bin");
+    }
+    return GET_STR(sStringTableCachePath);
+}
+
+const char* PlatformBridge::getInstructionEntryPath() 
+{
+    if (!sInstructionEntryPath.GetLength()) {
+        sInstructionEntryPath = _CS(getAppRoot());
+        sInstructionEntryPath += _CS("instruction_entry.bin");
+    }
+    return GET_STR(sInstructionEntryPath);
 }
 }
 
