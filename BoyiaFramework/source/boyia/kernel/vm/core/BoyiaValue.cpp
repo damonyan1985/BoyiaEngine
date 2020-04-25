@@ -284,10 +284,24 @@ LVoid CacheStringTable(BoyiaStr* stringTable, LInt size)
     LInt flagLen = LStrlen(kStringTableSplitFlag);
     for (LInt i = 0; i < size; i++) {
         // String will add a flag, except the last one
-        length += i == size - 1 ? stringTable[i].mLen : stringTable[i].mLen + flagLen;
+        length += stringTable[i].mLen + flagLen;
     }
-    LUint8* buffer = new LUint8[length];
+    
     LInt index = 0;
+    // 增加ids中相关数据
+    LUint id =  GenIdentByStr("Array", 5);
+    String idString = _CS("Array:");
+    LUint8 str[256];
+    LInt2Str(id, str, 10);
+    idString += str;
+
+    LUint8* buffer = new LUint8[length + idString.GetLength()];
+    LMemcpy(buffer + index, idString.GetBuffer(), idString.GetLength());
+    index += idString.GetLength();
+    LMemcpy(buffer + index, kStringTableSplitFlag, flagLen);
+    index += flagLen;
+
+    // 添加StringTable数据
     for (LInt i = 0; i < size; i++) {
         LMemcpy(buffer + index, stringTable[i].mPtr, stringTable[i].mLen);
         index += stringTable[i].mLen;
@@ -298,7 +312,7 @@ LVoid CacheStringTable(BoyiaStr* stringTable, LInt size)
     }
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getStringTableCachePath()),
-        String(buffer, LFalse, length)
+        String(buffer, LFalse, length + idString.GetLength())
     );
 }
 
@@ -316,14 +330,19 @@ LVoid LoadVMCode()
     String content;
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getStringTableCachePath()), content);
     BoyiaPtr<KVector<String> > stringTable = StringUtils::split(content, kStringTableSplitFlag);
-    BoyiaStr* strTable = new BoyiaStr[stringTable->size()];
-    for (LInt i = 0; i < stringTable->size(); i++) {
-        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i).GetLength());
-        strTable[i].mLen = stringTable->elementAt(i).GetLength();
-        LMemcpy(strTable[i].mPtr, stringTable->elementAt(i).GetBuffer(), strTable[i].mLen);
+    
+    BoyiaPtr<KVector<String> > ids = StringUtils::split(stringTable->elementAt(0), _CS(":"));
+    LUint id = StringUtils::stringToInt(ids->elementAt(1));
+    GetIdCreator()->setIdentify(ids->elementAt(0), id);
+
+    BoyiaStr* strTable = new BoyiaStr[stringTable->size() - 1];
+    for (LInt i = 0; i < stringTable->size() - 1; i++) {
+        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i + 1).GetLength());
+        strTable[i].mLen = stringTable->elementAt(i + 1).GetLength();
+        LMemcpy(strTable[i].mPtr, stringTable->elementAt(i + 1).GetBuffer(), strTable[i].mLen);
     }
 
-    LoadStringTable(strTable, stringTable->size());
+    LoadStringTable(strTable, stringTable->size() - 1);
     delete strTable;
 
     // Load Instructions

@@ -198,7 +198,6 @@ LInt logPrint()
 
 static LUint getJsonObjHash(cJSON* json)
 {
-    //return StringUtils::hashCode(String(_CS(json->string), LFalse, LStrlen(_CS(json->string))));
     return GenIdentByStr(json->string, LStrlen(_CS(json->string)));
 }
 
