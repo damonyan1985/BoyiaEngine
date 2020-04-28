@@ -917,11 +917,10 @@ static LInt HandlePushArg(LVoid* ins)
     BoyiaValue* value = GetOpValue(inst, OpLeft);
     if (value) {
         LocalPush(value);
-    } else {
-        return 0;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
 static LInt HandlePushObj(LVoid* ins)
@@ -1254,12 +1253,14 @@ static LVoid InitParams()
 {
     do {
         NextToken(); // 得到属性名
-        if (gToken.mTokenValue != RPTR) {
-            OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
-            PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, HandleCreateParam);
-            NextToken(); // 获取逗号分隔符','
-        } else
+        // 如果是右括号，则跳出循环
+        if (gToken.mTokenValue == RPTR) {
             break;
+        }
+
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
+        PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, HandleCreateParam);
+        NextToken(); // 获取逗号分隔符','
     } while (gToken.mTokenValue == COMMA);
     if (gToken.mTokenValue != RPTR)
         SntxErrorBuild(PAREN_EXPECTED);
@@ -1635,10 +1636,9 @@ static LVoid PushArgStatement()
     NextToken(); // if token == ')' exit
     if (gToken.mTokenValue == RPTR) {
         return;
-    } else {
-        Putback();
     }
-
+    Putback();
+    
     do {
         // 参数值在R0中
         EvalExpression(); // => R0
@@ -1667,12 +1667,12 @@ static LInt HandleAssignment(LVoid* ins)
     } break;
     case OP_VAR: {
         BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue);
-        if (val) {
-            ValueCopyNoName(left, val);
-            left->mNameKey = (LUintPtr)val;
-        } else {
+        if (!val) {
             return 0;
         }
+
+        ValueCopyNoName(left, val);
+        left->mNameKey = (LUintPtr)val;
     } break;
     case OP_REG0: {
         ValueCopyNoName(left, &gBoyiaVM->mCpu->mReg0);
