@@ -1,0 +1,10 @@
+class ChatPage extends ViewDoc {
+	prop msgView = null;
+	prop chatEdit = null;
+	fun initView() {
+		if (!this.msgView) {
+			this.msgView = this.itemByID(ViewGroup, "chat_msg_view");
+			this.chatEdit = this.itemByID(ViewGroup, "chat_edit");
+		}
+	}
+}

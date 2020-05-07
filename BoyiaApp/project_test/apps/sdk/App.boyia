@@ -1,0 +1,17 @@
+class App {
+    // Activity Stack
+    prop actStack = null;
+    
+    fun initApp() {
+        AppStack.pushApp(this);
+    }
+    
+    fun startAct(act) {
+        if (!this.actStack) {
+            this.actStack = new(Array);
+        }
+        
+        this.actStack.put(act);
+        act.init();
+    }
+}

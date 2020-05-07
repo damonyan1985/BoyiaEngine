@@ -1,0 +1,30 @@
+// 大规模Boyia编程
+// 这个是数组类的定义
+class Array {
+    fun ctor() {
+    }
+
+    fun put(elem) {
+        BY_AddInArray(this, elem);
+    }
+
+    fun get(idx) {
+        return BY_GetFromArray(this, idx);
+    }
+
+    fun size() {
+        return BY_GetArraySize(this);
+    }
+	
+    fun remove(elem) {
+        BY_RemoveFromArray(this, elem);
+    }
+    
+    fun removeIndex(idx) {
+        BY_RemoveWidthIndex(this, idx);
+    }
+
+    fun clear() {
+        BY_ClearArray(this);
+    }
+}

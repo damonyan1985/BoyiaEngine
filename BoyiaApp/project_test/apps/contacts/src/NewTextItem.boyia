@@ -1,0 +1,43 @@
+class NewTextItem extends ViewDoc {
+    prop title = null;
+    prop info = null;
+    prop image = null;
+    prop titleText = null;
+    
+    fun initView() {
+        Util.log("NewTextItem0");
+        if (!this.image) {
+            Util.log("NewTextItem1");
+            this.image = this.itemByID(ImageView, "hot");
+        }
+        if (!this.title) {
+            this.title = this.itemByID(ViewGroup, "title");
+        }
+        if (!this.info) {
+            this.info = this.itemByID(ViewGroup, "info");
+        }
+        
+        this.addEventListener(2, this.touchDownCallback);
+    }
+    
+    fun touchDownCallback() {
+        Util.showToast(this.titleText);
+    }
+    
+    fun setTitle(t) {
+        this.titleText = t;
+        this.title.setText(t);
+    }
+    
+    fun loadImage(url) {
+        this.image.loadImage(url);
+    }
+    
+    fun setImage(url) {
+        this.image.setImageUrl(url);
+    }
+    
+    fun setInfo(i) {
+        this.info.setText(i);
+    }
+}

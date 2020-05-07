@@ -1,0 +1,8 @@
+<view class="search">
+<div class="header_center">
+<img class="header_img" src="boyia://apps/contacts/img/login.png" />
+<input id="search_edit" type="text" value="搜索" />
+<img class="header_img" src="boyia://apps/contacts/img/artcle.png" />
+</div>
+<div id="category" />
+</view>
