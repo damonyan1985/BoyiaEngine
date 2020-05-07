@@ -1,0 +1,5 @@
+class Network {
+    fun load(url, callback, obj) {
+        BY_LoadData(url, callback, obj);
+    }
+}

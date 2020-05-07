@@ -3,6 +3,7 @@
 #include "CharConvertor.h"
 #if ENABLE(BOYIA_WINDOWS)
 #include "ZipEntry.h"
+#include <stdlib.h>
 #include <windows.h>
 #include <ShlObj.h>
 
@@ -10,6 +11,8 @@
 #define MAX_PATH          260
 
 namespace yanbo {
+#define BOYIA_WIN_DEBUG
+
 static String sAppPath((LUint8)0, MAX_PATH);
 static String sBoyiaJsonPath((LUint8)0, MAX_PATH);
 static String sSdkPath((LUint8)0, MAX_PATH);
@@ -62,22 +65,30 @@ const char* PlatformBridge::getSdkPath()
 const char* PlatformBridge::getAppRoot()
 {
     if (!sAppRootPath.GetLength()) {
+#ifdef BOYIA_WIN_DEBUG
+        sAppRootPath = _CS(getenv("BOYIA_UI_ROOT"));
+        sAppRootPath += _CS("\\BoyiaApp\\project_test\\");
+#else
         ::SHGetSpecialFolderPathA(NULL, (char*)sAppRootPath.GetBuffer(), CSIDL_LOCAL_APPDATA, 0);
-        BOYIA_LOG("PlatformBridge---getAppRoot: %s", GET_STR(sAppRootPath));
-
+        BOYIA_LOG("PlatformBridge---getAppRoot: %s BoyiaUI: %s", GET_STR(sAppRootPath), getenv("BOYIA_UI_ROOT"));
         LUint8* buffer = sAppRootPath.GetBuffer();
         LInt len = LStrlen(buffer);
         //sAppRootPath += _CS("\\boyia_app\\");
         sAppRootPath.Copy(buffer, LTrue, len);
         sAppRootPath += _CS("\\boyia_app\\");
+#endif
+        
     }
     return GET_STR(sAppRootPath);
 }
 
 const char* PlatformBridge::getBoyiaJsonUrl()
 {
-    //return "https://damonyan1985.github.io/app/boyia.json";
+#ifdef BOYIA_WIN_DEBUG
     return "boyia://net_boyia.json";
+#else
+    return "https://damonyan1985.github.io/app/boyia.json";
+#endif
 }
 
 const LInt PlatformBridge::getTextSize(const String& text)

@@ -1,0 +1,41 @@
+var root = null;
+class ViewDoc extends View {
+    fun rootView() {
+        if (root == null) {
+            root = new(ViewDoc);
+            root.nativeView = BY_GetRootDocument();
+        }
+       
+        return root;
+    }
+    
+    fun createView(view, layout) {
+        var v = new(view);
+        v.createDoc(layout);
+        v.setViewToNative();
+        Util.log("begin addchild 5");
+        return v;
+    }
+    
+    fun createDoc(docText) {
+        nativeView = BY_CreateDocument(docText);
+    }
+    
+    fun setDoc(doc) {
+        BY_SetDocument(this.nativeView, doc);
+    }
+    
+    fun removeView(view) {
+        BY_RemoveDocument(this.nativeView, view);
+    }
+   
+    fun itemByID(view, id) {
+        var v = new(view);
+        if (Util.instanceof(v, ViewGroup)) {
+            v.children = new(Array);
+        }
+        v.nativeView = BY_GetHtmlItem(this.nativeView, id);
+        v.setViewToNative();
+        return v;
+    }
+}

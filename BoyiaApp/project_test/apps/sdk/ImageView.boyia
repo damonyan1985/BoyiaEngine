@@ -1,0 +1,10 @@
+class ImageView extends View {
+    fun loadImage(url) {
+        Util.log(url);
+        BY_LoadImage(this.nativeView, url);
+    }
+    
+    fun setImageUrl(url) {
+        BY_SetImageUrl(this.nativeView, url);
+    }
+}

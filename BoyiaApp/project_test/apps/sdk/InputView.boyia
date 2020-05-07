@@ -1,0 +1,10 @@
+class InputView extends View {
+
+    fun initView() {
+        this.addEventListener(1, this.touchDownCallback);
+    }
+    
+    fun touchDownCallback() {
+        //BY_CallStaticMethod("com/boyia/app/core/MiniUIView", "showKeyboard", "(I)V", this.nativeView);
+    }
+}
