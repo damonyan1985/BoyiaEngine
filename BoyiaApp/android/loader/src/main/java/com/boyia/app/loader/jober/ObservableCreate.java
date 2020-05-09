@@ -22,6 +22,7 @@ public class ObservableCreate<T> extends Observable<T> {
     }
 
     static class EmitterImpl<T> implements Subscriber<T> {
+        // 该mObserver为subscribe传入的对象
         private final Subscriber<? super T> mObserver;
 
         EmitterImpl(Subscriber<? super T> observer) {
