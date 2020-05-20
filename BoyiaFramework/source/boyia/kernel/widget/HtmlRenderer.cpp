@@ -17,7 +17,6 @@ namespace yanbo {
 
 HtmlRenderer::HtmlRenderer()
     : m_styleParser(kBoyiaNull)
-    , m_form(kBoyiaNull)
     , m_htmlDoc(kBoyiaNull)
 {
 }

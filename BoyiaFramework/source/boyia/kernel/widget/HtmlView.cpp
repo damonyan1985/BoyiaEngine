@@ -383,11 +383,6 @@ LBool HtmlView::isStyle() const
     return LFalse;
 }
 
-LBool HtmlView::isJavaScript() const
-{
-    return LFalse;
-}
-
 LBool HtmlView::isBlockView() const
 {
     return LFalse;

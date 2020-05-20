@@ -76,11 +76,6 @@ HtmlView* HtmlDocument::getNextItem()
     return *m_currentItemIter;
 }
 
-void HtmlDocument::addForm(HtmlForm* form)
-{
-    m_formList.push(form);
-}
-
 HtmlView* HtmlDocument::getCurrentItem()
 {
     return *m_currentItemIter;

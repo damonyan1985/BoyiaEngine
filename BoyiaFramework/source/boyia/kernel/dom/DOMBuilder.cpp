@@ -119,17 +119,6 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
 
             KLOG("HtmlTags RootView construct");
         } break;
-        case HtmlTags::FORM: {
-            // String tagAction = _CS(elem->Attribute("action"));
-            // String tagMethod = _CS(elem->Attribute("method"));
-            // String tagEncoding = _CS(elem->Attribute("enctype"));
-            item = new HtmlForm(
-                tagId,
-                _CS(elem->Attribute("action")),
-                _CS(elem->Attribute("method")),
-                _CS(elem->Attribute("enctype")),
-                LFalse);
-        } break;
         case HtmlTags::DIV:
         case HtmlTags::P: {
             item = new BlockView(tagId, LFalse);

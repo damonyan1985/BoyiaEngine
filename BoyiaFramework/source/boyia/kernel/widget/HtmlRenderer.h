@@ -2,7 +2,6 @@
 #define HtmlRenderer_h
 
 #include "HtmlDocument.h"
-#include "HtmlForm.h"
 #include "StyleParser.h"
 
 namespace yanbo {
@@ -25,7 +24,6 @@ public:
 
 private:
     util::StyleParser* m_styleParser;
-    HtmlForm* m_form;
     HtmlDocument* m_htmlDoc;
     LRect m_rect;
     ResourceLoader* m_loader;

@@ -7,6 +7,7 @@
 
 #include "UIViewController.h"
 #include "UIView.h"
+#include "BlockView.h"
 
 namespace yanbo {
 
