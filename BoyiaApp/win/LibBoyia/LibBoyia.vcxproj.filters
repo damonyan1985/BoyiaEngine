@@ -363,9 +363,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.h">
       <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.h">
-      <Filter>boyia\kernel\widget</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.h">
       <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
@@ -373,9 +370,6 @@
       <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlView.h">
-      <Filter>boyia\kernel\widget</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\IHtmlForm.h">
       <Filter>boyia\kernel\widget</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\ImageView.h">
@@ -690,9 +684,6 @@
       <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.cpp">
-      <Filter>boyia\kernel\widget</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.cpp">
       <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.cpp">

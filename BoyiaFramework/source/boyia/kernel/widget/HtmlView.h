@@ -40,7 +40,6 @@ public:
     virtual LBool isBlockView() const;
     virtual LBool isImage() const;
     virtual LBool isStyle() const;
-    virtual LBool isJavaScript() const;
     virtual LVoid execute();
     virtual LVoid setStyle(util::StyleManager* manager, util::StyleRule* parentRule);
 

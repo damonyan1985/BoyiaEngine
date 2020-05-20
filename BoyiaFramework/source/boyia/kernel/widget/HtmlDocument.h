@@ -8,13 +8,11 @@
 #ifndef HtmlDocument_h
 #define HtmlDocument_h
 
-#include "HtmlForm.h"
 #include "HtmlView.h"
 #include "IdentityMap.h"
 
 namespace yanbo {
 
-typedef BoyiaList<HtmlForm*> FormList;
 class UIView;
 class HtmlDocument {
 public:
@@ -35,9 +33,6 @@ public:
     HtmlView* getNextItem();
 
     HtmlView* getCurrentItem();
-
-    void addForm(HtmlForm* form);
-
     void addHtmlView(HtmlView* item);
 
     void resetHtmlFocus();
@@ -68,7 +63,6 @@ private:
 
     //	HtmlView*                     m_currentItem;
 
-    FormList m_formList;
     HtmlViewList m_itemList;
     HtmlViewList::Iterator m_currentItemIter; // control up, down key event display
     LayoutRect m_viewRect;

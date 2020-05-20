@@ -238,11 +238,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\flex\FlexLayout.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\FormView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlTags.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlView.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\IHtmlForm.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\ImageView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InlineView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\InputView.h" />
@@ -353,7 +351,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\flex\FlexLayout.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\FormView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlDocument.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlForm.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlRenderer.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlTags.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\HtmlView.cpp" />

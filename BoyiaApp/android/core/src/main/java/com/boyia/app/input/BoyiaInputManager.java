@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
 public class BoyiaInputManager {
@@ -25,9 +24,7 @@ public class BoyiaInputManager {
     private void initViewListener() {
         Activity activity = (Activity) mView.getContext();
         final View rootView = activity.getWindow().getDecorView();
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 Rect rect = new Rect();
                 rootView.getWindowVisibleDisplayFrame(rect);
                 BoyiaLog.d(
@@ -53,21 +50,17 @@ public class BoyiaInputManager {
                     BoyiaUIView.nativeOnKeyboardHide(mItem, rect.height() - mRootViewVisibleHeight);
                     mRootViewVisibleHeight = rect.height();
                 }
-            }
-        });
+            });
     }
 
     public void show(final long item, final String text) {
         final Activity context = (Activity) mView.getContext();
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        context.runOnUiThread(() -> {
                 BoyiaUtils.showToast("show keyboard");
                 mItem = item;
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(mView, 0, null);
                 mView.resetCommitText(text);
-            }
         });
     }
 
