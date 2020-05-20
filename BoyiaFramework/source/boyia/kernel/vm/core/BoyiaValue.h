@@ -4,7 +4,7 @@
 #include "PlatformLib.h"
 
 enum KeyWord {
-    BY_ARG = 100,
+    BY_ARG = 0,
 	BY_CHAR,
 	BY_INT,
 	BY_STRING,
@@ -15,12 +15,13 @@ enum KeyWord {
 	BY_VAR,
 	BY_PROP,
 	BY_IF,
+    BY_ELIF,
 	BY_ELSE,
 	BY_DO,
 	BY_WHILE,
 	BY_BREAK,
 	BY_RETURN,
-	BY_END, // 17
+	BY_END, // 18
 };
 
 typedef struct {
