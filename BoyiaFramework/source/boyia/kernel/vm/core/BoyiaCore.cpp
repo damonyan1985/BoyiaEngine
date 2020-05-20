@@ -50,7 +50,8 @@ enum TokenType {
     STRING_VALUE,
 };
 
-enum LogicValue { AND = BY_END + 1,
+enum LogicValue { 
+    AND = BY_END + 1,
     OR,
     NOT,
     LT,
@@ -58,56 +59,33 @@ enum LogicValue { AND = BY_END + 1,
     GT,
     GE,
     EQ,
-    NE }; // 26
+    NE 
+}; // 26
 
-enum MathValue { ADD = NE + 1,
+enum MathValue { 
+    ADD = NE + 1,
     SUB,
     MUL,
     DIV,
     MOD,
     POW,
-    ASSIGN }; // 33
+    ASSIGN 
+}; // 33
 // 标点符号
-enum DelimiValue { SEMI = ASSIGN + 1,
+enum DelimiValue { 
+    SEMI = ASSIGN + 1,
     COMMA,
     QUOTE,
-    DOT }; // 37
+    DOT 
+}; // 37
 // 小括号，中括号，大括号
-enum BracketValue { LPTR = DOT + 1,
+enum BracketValue { 
+    LPTR = DOT + 1,
     RPTR,
     ARRAY_BEGIN,
     ARRAY_END,
     BLOCK_START,
-    BLOCK_END };
-// JMP_TRUE,表示 if true,则跳转
-enum OpCodeType {
-    ASSIGN_VAR = BLOCK_END + 1,
-    PUSH,
-    POP,
-    CALL,
-    LOOP,
-    LOOP_TRUE,
-    JMP,
-    JMP_TRUE,
-    ELIF,
-    IF_END,
-    DECL_LOCAL,
-    DECL_GLOBAL,
-    PUSH_ARG,
-    PUSH_PARAMS,
-    GET_PROP,
-    TMP_LOCAL,
-    PUSH_SCENE,
-    POP_SCENE,
-    CLASS_CREATE,
-    FUN_CREATE,
-    EXE_CREATE,
-    PARAM_CREATE,
-    PROP_CREATE,
-    HANDLE_EXTEND,
-    PUSH_OBJ,
-    HANDLE_CONST_STR,
-    PROPS_SORT,
+    BLOCK_END
 };
 
 typedef LInt (*OPHandler)(LVoid* instruction);
@@ -206,7 +184,7 @@ struct KeywordPair {
 } gKeywordTable[] = {
     /* Commands must be entered lowercase */
     { D_STR("if", 2), BY_IF }, /* in this table. */
-    { D_STR("elif", 4), ELIF },
+    { D_STR("elif", 4), BY_ELIF },
     { D_STR("else", 4), BY_ELSE },
     { D_STR("do", 2), BY_DO },
     { D_STR("while", 5), BY_WHILE },
@@ -998,7 +976,7 @@ static LVoid BlockStatement()
                 ReturnStatement();
                 break;
             case BY_IF: /* process an if statement */
-            case ELIF:
+            case BY_ELIF:
                 IfStatement();
                 break;
             case BY_ELSE: /* process an else statement */
@@ -1311,7 +1289,7 @@ static LInt HandleCreateExecutor(LVoid* ins)
     return 1;
 }
 
-static LVoid BodyStatement(LInt type)
+static LVoid BodyStatement(LBool isFunction)
 {
     CommandTable* cmds = GetVM()->mEState->mContext;
 
@@ -1320,7 +1298,7 @@ static LVoid BodyStatement(LInt type)
     tmpTable.mEnd = kBoyiaNull;
 
     Instruction* funInst = kBoyiaNull;
-    if (FUN_CREATE == type) {
+    if (isFunction) {
         // 类成员的创建在主体上下中进行
         //CommandTable* funCmds = CreateExecutor();
         //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
@@ -1379,7 +1357,7 @@ static LVoid ClassStatement()
         Putback();
     }
     // 初始化类体
-    BodyStatement(CLASS_CREATE);
+    BodyStatement(LFalse);
     // 设置继承成员
     if (extendKey != 0) {
         OpCommand extendCmd = { OP_CONST_NUMBER, (LIntPtr)extendKey };
@@ -1422,7 +1400,7 @@ static LVoid FunStatement()
     NextToken(); //   '(', 即LPTR
     InitParams(); //  初始化参数
     // 第三步，函数体内部编译
-    BodyStatement(FUN_CREATE);
+    BodyStatement(LTrue);
 }
 
 static LVoid DeleteExecutor(CommandTable* table)
