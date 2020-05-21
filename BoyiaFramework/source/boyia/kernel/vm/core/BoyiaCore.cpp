@@ -212,12 +212,6 @@ typedef struct {
 } BoyiaToken;
 
 typedef struct {
-    LInt8* mProg;
-    LInt mLineNum;
-    BoyiaToken mToken;
-} CompileState;
-
-typedef struct {
     LInt mLineNum; /* program string position */
     LInt mLoopSize;
     LInt mFunctos;
@@ -286,8 +280,14 @@ typedef struct {
     OPHandler* mHandlers;
 } BoyiaVM;
 
+typedef struct {
+    LInt8* mProg;
+    LInt mLineNum;
+    BoyiaToken mToken;
+    BoyiaVM* mVm;
+} CompileState;
+
 static NativeFunction* gNativeFunTable = kBoyiaNull;
-static BoyiaToken gToken;
 static BoyiaVM* gBoyiaVM = kBoyiaNull;
 
 static LUintPtr gThis = GenIdentByStr("this", 4);
@@ -629,7 +629,6 @@ static LVoid ExecInstruction()
 static LVoid Putback(CompileState* cs)
 {
     cs->mProg -= cs->mToken.mTokenName.mLen;
-    //gBoyiaVM->mEState->mProg -= gToken.mTokenName.mLen;
 }
 
 static LUint8 LookUp(BoyiaStr* name)
@@ -769,14 +768,14 @@ static LInt HandleCreateProp(LVoid* ins)
 static LVoid PropStatement(CompileState* cs)
 {
     NextToken(cs);
-    //EngineStrLog("PropStatement name=%s", gToken.mTokenName);
-    if (gToken.mTokenType == IDENTIFIER) {
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
+    //EngineStrLog("PropStatement name=%s", cs->mToken.mTokenName);
+    if (cs->mToken.mTokenType == IDENTIFIER) {
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
         PutInstruction(&cmd, kBoyiaNull, kCmdPropCreate, HandleCreateProp);
         Putback(cs);
         EvalExpression(cs);
 
-        if (gToken.mTokenValue != SEMI) {
+        if (cs->mToken.mTokenValue != SEMI) {
             SntxErrorBuild(SEMI_EXPECTED);
         }
     } else {
@@ -950,25 +949,25 @@ static LVoid BlockStatement(CompileState* cs)
     LBool block = LFalse;
     do {
         NextToken(cs);
-        //EngineStrLog("BlockStatement name=%s", gToken.mTokenName);
+        //EngineStrLog("BlockStatement name=%s", cs->mToken.mTokenName);
         /* If interpreting single statement, return on first semicolon. */
         /* see what kind of token is up */
-        if (gToken.mTokenType == IDENTIFIER) {
+        if (cs->mToken.mTokenType == IDENTIFIER) {
             /* Not a keyword, so process expression. */
             Putback(cs); /* restore token to input stream for further processing by EvalExpression() */
-            //EngineStrLog("token name=%s", gToken.mTokenName);
+            //EngineStrLog("token name=%s", cs->mToken.mTokenName);
             EvalExpression(cs); /* process the expression */
 
-            if (gToken.mTokenValue != SEMI) {
+            if (cs->mToken.mTokenValue != SEMI) {
                 SntxErrorBuild(SEMI_EXPECTED);
             }
-        } else if (gToken.mTokenValue == BLOCK_START) {
+        } else if (cs->mToken.mTokenValue == BLOCK_START) {
             block = LTrue;
-        } else if (gToken.mTokenValue == BLOCK_END) {
+        } else if (cs->mToken.mTokenValue == BLOCK_END) {
             block = LFalse;
             return; /* is a }, so return */
-        } else if (gToken.mTokenType == KEYWORD) { /* is keyword */
-            switch (gToken.mTokenValue) {
+        } else if (cs->mToken.mTokenType == KEYWORD) { /* is keyword */
+            switch (cs->mToken.mTokenValue) {
             case BY_VAR:
                 LocalStatement(cs);
                 break;
@@ -1000,7 +999,7 @@ static LVoid BlockStatement(CompileState* cs)
                 break;
             }
         }
-    } while (gToken.mTokenValue != BY_END && block);
+    } while (cs->mToken.mTokenValue != BY_END && block);
 }
 
 static LVoid SkipComment(CompileState* cs)
@@ -1209,11 +1208,7 @@ static LInt NextToken(CompileState* cs)
 
     if (*cs->mProg == '\0') {
         cs->mToken.mTokenValue = BY_END;
-
-        gToken.mTokenName.mPtr = cs->mToken.mTokenName.mPtr;
-        gToken.mTokenName.mLen = cs->mToken.mTokenName.mLen;
-        gToken.mTokenType = DELIMITER;
-        gToken.mTokenValue = cs->mToken.mTokenValue;
+        cs->mVm->mEState->mLineNum = cs->mLineNum;
         return (cs->mToken.mTokenType = DELIMITER);
     }
 
@@ -1225,51 +1220,12 @@ static LInt NextToken(CompileState* cs)
         || GetDelimiter(cs)
         || GetStringValue(cs)
         || GetNumberValue(cs)) {
-        gToken.mTokenName.mPtr = cs->mToken.mTokenName.mPtr;
-        gToken.mTokenName.mLen = cs->mToken.mTokenName.mLen;
-        gToken.mTokenType = cs->mToken.mTokenType;
-        gToken.mTokenValue = cs->mToken.mTokenValue;
-        //return gToken.mTokenType;
+        cs->mVm->mEState->mLineNum = cs->mLineNum;
         return cs->mToken.mTokenType;
     }
 
-    gToken.mTokenName.mPtr = cs->mToken.mTokenName.mPtr;
-    gToken.mTokenName.mLen = cs->mToken.mTokenName.mLen;
-    gToken.mTokenType = cs->mToken.mTokenType;
-    gToken.mTokenValue = cs->mToken.mTokenValue;
     return 0;
 }
-/*
-static LInt NextToken(CompileState* cs)
-{
-    gToken.mTokenType = 0;
-    gToken.mTokenValue = 0;
-    InitStr(&gToken.mTokenName, kBoyiaNull);
-    while (LIsSpace(*gBoyiaVM->mEState->mProg) && *gBoyiaVM->mEState->mProg) {
-        if (*gBoyiaVM->mEState->mProg == '\n') {
-            ++gBoyiaVM->mEState->mLineNum;
-        }
-        ++gBoyiaVM->mEState->mProg;
-    }
-
-    if (*gBoyiaVM->mEState->mProg == '\0') {
-        gToken.mTokenValue = BY_END;
-        return (gToken.mTokenType = DELIMITER);
-    }
-    // 程序注释部分
-    SkipComment(cs);
-    // 处理Token操作
-    if (GetIdentifer(cs)
-        || GetLogicValue(cs)
-        || GetDelimiter(cs)
-        || GetStringValue(cs)
-        || GetNumberValue(cs)) {
-        return gToken.mTokenType;
-    }
-
-    return 0;
-}
-*/
 
 static LInt HandleCreateParam(LVoid* ins)
 {
@@ -1291,7 +1247,7 @@ static LVoid InitParams(CompileState* cs)
             break;
         }
 
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
         PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, HandleCreateParam);
         NextToken(cs); // 获取逗号分隔符','
     } while (cs->mToken.mTokenValue == COMMA);
@@ -1399,15 +1355,15 @@ static LInt HandleExtend(LVoid* ins)
 static LVoid ClassStatement(CompileState* cs)
 {
     NextToken(cs);
-    LUintPtr classKey = GenIdentifier(&gToken.mTokenName);
+    LUintPtr classKey = GenIdentifier(&cs->mToken.mTokenName);
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)classKey };
     PutInstruction(&cmd, kBoyiaNull, kCmdCreateClass, HandleCreateClass);
     // 判断继承关系
     NextToken(cs);
     LUintPtr extendKey = 0;
-    if (BY_EXTEND == gToken.mTokenValue) {
+    if (BY_EXTEND == cs->mToken.mTokenValue) {
         NextToken(cs);
-        extendKey = GenIdentifier(&gToken.mTokenName);
+        extendKey = GenIdentifier(&cs->mToken.mTokenName);
     } else {
         Putback(cs);
     }
@@ -1446,11 +1402,11 @@ static LInt HandleFunCreate(LVoid* ins)
 static LVoid FunStatement(CompileState* cs)
 {
     NextToken(cs);
-    //EngineStrLog("HandlePushParams FunStatement name %s", gToken.mTokenName);
+    //EngineStrLog("HandlePushParams FunStatement name %s", cs->mToken.mTokenName);
     // 第一步，Function变量
-    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
+    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
     PutInstruction(&cmd, kBoyiaNull, kCmdCreateFunction, HandleFunCreate);
-    //EngineStrLog("FunctionName=%s", gToken.mTokenName);
+    //EngineStrLog("FunctionName=%s", cs->mToken.mTokenName);
     // 第二步，初始化函数参数
     NextToken(cs); //   '(', 即LPTR
     InitParams(cs); //  初始化参数
@@ -1493,18 +1449,18 @@ static LInt HandleDeclGlobal(LVoid* ins)
 
 static LVoid GlobalStatement(CompileState* cs)
 {
-    LInt type = gToken.mTokenValue;
+    LInt type = cs->mToken.mTokenValue;
     do {
         NextToken(cs); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
 
         PutInstruction(&cmdLeft, &cmdRight, kCmdDeclGlobal, HandleDeclGlobal);
         Putback(cs);
         EvalExpression(cs);
-    } while (gToken.mTokenValue == COMMA);
+    } while (cs->mToken.mTokenValue == COMMA);
 
-    if (gToken.mTokenValue != SEMI) {
+    if (cs->mToken.mTokenValue != SEMI) {
         SntxErrorBuild(SEMI_EXPECTED);
     }
 }
@@ -1528,33 +1484,33 @@ static LVoid ParseStatement(CompileState* cs)
     do {
         while (brace) {
             NextToken(cs);
-            if (gToken.mTokenValue == BLOCK_START) {
+            if (cs->mToken.mTokenValue == BLOCK_START) {
                 ++brace;
             }
 
-            if (gToken.mTokenValue == BLOCK_END) {
+            if (cs->mToken.mTokenValue == BLOCK_END) {
                 --brace;
             }
         }
 
         NextToken(cs);
-        if (gToken.mTokenValue == BY_VAR) {
+        if (cs->mToken.mTokenValue == BY_VAR) {
             GlobalStatement(cs);
-        } else if (gToken.mTokenValue == BY_FUNC) {
+        } else if (cs->mToken.mTokenValue == BY_FUNC) {
             FunStatement(cs);
-        } else if (gToken.mTokenValue == BY_CLASS) {
+        } else if (cs->mToken.mTokenValue == BY_CLASS) {
             ClassStatement(cs);
-        } else if (gToken.mTokenType == IDENTIFIER) {
+        } else if (cs->mToken.mTokenType == IDENTIFIER) {
             Putback(cs);
             EvalExpression(cs);
 
-            if (gToken.mTokenValue != SEMI) {
+            if (cs->mToken.mTokenValue != SEMI) {
                 SntxErrorBuild(SEMI_EXPECTED);
             }
-        } else if (gToken.mTokenValue == BLOCK_START) {
+        } else if (cs->mToken.mTokenValue == BLOCK_START) {
             ++brace;
         }
-    } while (gToken.mTokenValue != BY_END);
+    } while (cs->mToken.mTokenValue != BY_END);
 
     AppendEntry(GetVM()->mEState->mContext);
     // 执行全局声明和定义
@@ -1574,18 +1530,18 @@ static LInt HandleDeclLocal(LVoid* ins)
 /* Declare a local variable. */
 static LVoid LocalStatement(CompileState* cs)
 {
-    LInt type = gToken.mTokenValue;
+    LInt type = cs->mToken.mTokenValue;
     do {
         NextToken(cs); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&gToken.mTokenName) };
-        //EngineStrLog("value Name=%s", gToken.mTokenName);
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+        //EngineStrLog("value Name=%s", cs->mToken.mTokenName);
         PutInstruction(&cmdLeft, &cmdRight, kCmdDeclLocal, HandleDeclLocal);
         Putback(cs);
         EvalExpression(cs);
-    } while (gToken.mTokenValue == COMMA);
+    } while (cs->mToken.mTokenValue == COMMA);
 
-    if (gToken.mTokenValue != SEMI) {
+    if (cs->mToken.mTokenValue != SEMI) {
         SntxErrorBuild(SEMI_EXPECTED);
     }
 }
@@ -1667,7 +1623,7 @@ static LVoid PushArgStatement(CompileState* cs)
     // push函数指针
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
     NextToken(cs); // if token == ')' exit
-    if (gToken.mTokenValue == RPTR) {
+    if (cs->mToken.mTokenValue == RPTR) {
         return;
     }
     Putback(cs);
@@ -1678,7 +1634,7 @@ static LVoid PushArgStatement(CompileState* cs)
         // 将函数实参压栈
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
         //NextToken();
-    } while (gToken.mTokenValue == COMMA);
+    } while (cs->mToken.mTokenValue == COMMA);
 }
 
 /* Assign a value to a Register 0 or 1. */
@@ -1755,7 +1711,7 @@ static LVoid IfStatement(CompileState* cs)
     // token = (
     EvalExpression(cs); /* check the conditional expression => R0 */
     Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdJmpTrue, HandleJumpToIfTrue);
-    //EngineStrLog("endif last inst name=%s", gToken.mTokenName);
+    //EngineStrLog("endif last inst name=%s", cs->mToken.mTokenName);
     BlockStatement(cs); /* if true, interpret */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdIfEnd, HandleIfEnd);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
@@ -1801,14 +1757,14 @@ static LVoid WhileStatement(CompileState* cs)
     //EngineLog("WhileStatement %d", 0);
     Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin);
     NextToken(cs); // '('
-    if (gToken.mTokenValue != LPTR) {
+    if (cs->mToken.mTokenValue != LPTR) {
         SntxErrorBuild(LPTR_EXPECTED);
     }
     EvalExpression(cs); /* check the conditional expression => R0 */
-    if (gToken.mTokenValue != RPTR) {
+    if (cs->mToken.mTokenValue != RPTR) {
         SntxErrorBuild(RPTR_EXPECTED);
     }
-    //EngineStrLog("WhileStatement last inst name=%s", gToken.mTokenName);
+    //EngineStrLog("WhileStatement last inst name=%s", cs->mToken.mTokenName);
     Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue);
     BlockStatement(cs); /* If true, execute block */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo);
@@ -1829,12 +1785,12 @@ static LVoid DoStatement(CompileState* cs)
     Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin);
     BlockStatement(cs); /* interpret loop */
     NextToken(cs);
-    if (gToken.mTokenValue != BY_WHILE) {
+    if (cs->mToken.mTokenValue != BY_WHILE) {
         SntxErrorBuild(WHILE_EXPECTED);
     }
     EvalExpression(cs); /* check the loop condition */
 
-    if (gToken.mTokenValue != SEMI) {
+    if (cs->mToken.mTokenValue != SEMI) {
         SntxErrorBuild(SEMI_EXPECTED);
     }
     Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue);
@@ -2024,12 +1980,12 @@ static LInt HandleLogic(LVoid* ins)
 static LVoid EvalExpression(CompileState* cs)
 {
     NextToken(cs);
-    if (!gToken.mTokenName.mLen) {
+    if (!cs->mToken.mTokenName.mLen) {
         SntxErrorBuild(NO_EXP);
         return;
     }
 
-    if (gToken.mTokenValue == SEMI) {
+    if (cs->mToken.mTokenValue == SEMI) {
         return;
     }
 
@@ -2061,7 +2017,7 @@ static LInt HandleAssignVar(LVoid* ins)
 static LVoid CallNativeStatement(CompileState* cs, LInt idx)
 {
     NextToken(cs);
-    if (gToken.mTokenValue != LPTR) // '('
+    if (cs->mToken.mTokenValue != LPTR) // '('
         SntxErrorBuild(PAREN_EXPECTED);
 
     PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, HandleTempLocalSize);
@@ -2071,7 +2027,7 @@ static LVoid CallNativeStatement(CompileState* cs, LInt idx)
         // 将函数参数压栈
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, HandlePushArg);
         // if token == ')' exit
-    } while (gToken.mTokenValue == COMMA);
+    } while (cs->mToken.mTokenValue == COMMA);
 
     // 保存obj现场是必不可少的一步
     OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
@@ -2166,27 +2122,27 @@ static LInt HandleGetProp(LVoid* ins)
 static LVoid EvalGetProp(CompileState* cs)
 {
     NextToken(cs);
-    if (gToken.mTokenType != IDENTIFIER) {
+    if (cs->mToken.mTokenType != IDENTIFIER) {
         return;
     }
 
     // Push class context for callstatement
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
-    LUintPtr propKey = GenIdentifier(&gToken.mTokenName);
+    LUintPtr propKey = GenIdentifier(&cs->mToken.mTokenName);
     OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr)propKey };
     PutInstruction(&COMMAND_R0, &cmdR, kCmdGetProp, HandleGetProp);
 
     // Last must next
     NextToken(cs);
-    if (gToken.mTokenValue == LPTR) {
+    if (cs->mToken.mTokenValue == LPTR) {
         OpCommand objCmd = { OP_VAR, 0 };
         CallStatement(cs, &objCmd); // result into r0
         NextToken(cs);
-        if (gToken.mTokenValue == DOT) {
+        if (cs->mToken.mTokenValue == DOT) {
             // obj.func().prop
             EvalGetProp(cs);
         }
-    } else if (gToken.mTokenValue == DOT) {
+    } else if (cs->mToken.mTokenValue == DOT) {
         OpCommand cmd = { OP_CONST_NUMBER, 0 };
         PutInstruction(&cmd, kBoyiaNull, kCmdPop, HandlePop);
         EvalGetProp(cs);
@@ -2200,16 +2156,16 @@ static LVoid EvalGetValue(CompileState* cs, LUintPtr objKey)
 {
     OpCommand cmdR = { OP_VAR, (LIntPtr)objKey };
     PutInstruction(&COMMAND_R0, &cmdR, kCmdAssign, HandleAssignment);
-    if (gToken.mTokenValue == DOT) {
+    if (cs->mToken.mTokenValue == DOT) {
         EvalGetProp(cs);
     }
 }
 
-static LVoid CopyStringFromToken(BoyiaStr* str)
+static LVoid CopyStringFromToken(CompileState* cs, BoyiaStr* str)
 {
-    str->mLen = gToken.mTokenName.mLen - 2;
+    str->mLen = cs->mToken.mTokenName.mLen - 2;
     str->mPtr = NEW_ARRAY(LInt8, str->mLen);
-    LMemcpy(str->mPtr, gToken.mTokenName.mPtr, str->mLen * sizeof(LInt8));
+    LMemcpy(str->mPtr, cs->mToken.mTokenName.mPtr, str->mLen * sizeof(LInt8));
 }
 
 static LInt HandleConstString(LVoid* ins)
@@ -2224,22 +2180,22 @@ static LInt HandleConstString(LVoid* ins)
 
 static LVoid Atom(CompileState* cs)
 {
-    switch (gToken.mTokenType) {
+    switch (cs->mToken.mTokenType) {
     case IDENTIFIER: {
-        LInt idx = FindNativeFunc(GenIdentifier(&gToken.mTokenName));
+        LInt idx = FindNativeFunc(GenIdentifier(&cs->mToken.mTokenName));
         if (idx != -1) {
             CallNativeStatement(cs, idx);
             NextToken(cs);
         } else {
-            LUintPtr key = GenIdentifier(&gToken.mTokenName);
+            LUintPtr key = GenIdentifier(&cs->mToken.mTokenName);
             NextToken(cs);
-            if (gToken.mTokenValue == LPTR) {
+            if (cs->mToken.mTokenValue == LPTR) {
                 OpCommand cmd = { OP_VAR, (LIntPtr)key };
                 PutInstruction(&COMMAND_R0, &cmd, kCmdAssign, HandleAssignment);
                 OpCommand objCmd = { OP_CONST_NUMBER, 0 };
                 CallStatement(cs, &objCmd);
                 NextToken(cs);
-                if (gToken.mTokenValue == DOT) {
+                if (cs->mToken.mTokenValue == DOT) {
                     EvalGetProp(cs);
                 }
             } else {
@@ -2250,7 +2206,7 @@ static LVoid Atom(CompileState* cs)
     }
         return;
     case NUMBER: {
-        OpCommand cmd = { OP_CONST_NUMBER, STR2_INT(gToken.mTokenName) };
+        OpCommand cmd = { OP_CONST_NUMBER, STR2_INT(cs->mToken.mTokenName) };
         //EngineLog("Atom NUMBER=%d \n", cmd.mValue);
         PutInstruction(&COMMAND_R0, &cmd, kCmdAssign, HandleAssignment);
         NextToken(cs);
@@ -2259,7 +2215,7 @@ static LVoid Atom(CompileState* cs)
     case STRING_VALUE: {
         // 从StringTable中分配常量字符串
         BoyiaStr* constStr = &GetVM()->mStrTable->mTable[GetVM()->mStrTable->mSize];
-        CopyStringFromToken(constStr);
+        CopyStringFromToken(cs, constStr);
         OpCommand lCmd = { OP_CONST_NUMBER,  GetVM()->mStrTable->mSize++ };
         //OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
         PutInstruction(&lCmd, kBoyiaNull, kCmdConstStr, HandleConstString);
@@ -2267,7 +2223,7 @@ static LVoid Atom(CompileState* cs)
     }
         return;
     default: {
-        if (gToken.mTokenValue == RPTR) {
+        if (cs->mToken.mTokenValue == RPTR) {
             return;
         }
 
@@ -2278,12 +2234,12 @@ static LVoid Atom(CompileState* cs)
 
 static LVoid EvalSubexpr(CompileState* cs)
 {
-    if (gToken.mTokenValue == LPTR) {
+    if (cs->mToken.mTokenValue == LPTR) {
         NextToken(cs);
-        //EngineStrLog("EvalSubexpr %s", gToken.mTokenName);
+        //EngineStrLog("EvalSubexpr %s", cs->mToken.mTokenName);
         EvalAssignment(cs);
-        //EngineStrLog("EvalSubexpr %s", gToken.mTokenName);
-        if (gToken.mTokenValue != RPTR) {
+        //EngineStrLog("EvalSubexpr %s", cs->mToken.mTokenName);
+        if (cs->mToken.mTokenValue != RPTR) {
             SntxErrorBuild(PAREN_EXPECTED);
         }
         NextToken(cs);
@@ -2296,8 +2252,8 @@ static LVoid EvalSubexpr(CompileState* cs)
 static LVoid EvalMinus(CompileState* cs)
 {
     LInt8 op = 0;
-    if (gToken.mTokenValue == ADD || gToken.mTokenValue == SUB) {
-        op = gToken.mTokenValue;
+    if (cs->mToken.mTokenValue == ADD || cs->mToken.mTokenValue == SUB) {
+        op = cs->mToken.mTokenValue;
         NextToken(cs);
     }
     EvalSubexpr(cs); // => R0
@@ -2314,7 +2270,7 @@ static LVoid EvalArith(CompileState* cs)
     LInt8 op = 0;
     EvalMinus(cs);
 
-    while ((op = gToken.mTokenValue) == MUL || op == DIV || op == MOD) { // * / %
+    while ((op = cs->mToken.mTokenValue) == MUL || op == DIV || op == MOD) { // * / %
         // PUSH R0
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
         NextToken(cs);
@@ -2340,7 +2296,7 @@ static LVoid EvalAddSub(CompileState* cs)
 {
     LInt8 op = 0;
     EvalArith(cs); // => R0
-    while ((op = gToken.mTokenValue) == ADD || op == SUB) {
+    while ((op = cs->mToken.mTokenValue) == ADD || op == SUB) {
         // PUSH
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
 
@@ -2392,11 +2348,11 @@ static LVoid EvalRelational(CompileState* cs)
 
     // '<' and '>' etc need both sides of expression
     // ，but '!' only need right side.
-    if (gToken.mTokenValue != NOT) {
+    if (cs->mToken.mTokenValue != NOT) {
         EvalAddSub(cs); // 计算结果 => R0
     }
 
-    LInt8 op = gToken.mTokenValue;
+    LInt8 op = cs->mToken.mTokenValue;
     if (MStrchr(relops, op)) {
         // 计算的结果存入栈中
         if (op != NOT) {
@@ -2425,7 +2381,7 @@ static LVoid EvalLogic(CompileState* cs)
 
     EvalRelational(cs);
     LInt8 op = 0;
-    while (MStrchr(logicops, (op = gToken.mTokenValue))) {
+    while (MStrchr(logicops, (op = cs->mToken.mTokenValue))) {
         // 计算的结果存入栈中
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
 
@@ -2444,7 +2400,7 @@ static LVoid EvalLogic(CompileState* cs)
 static LVoid EvalAssignment(CompileState* cs)
 {
     EvalLogic(cs); // =>R0
-    if (gToken.mTokenValue == ASSIGN) { // '='
+    if (cs->mToken.mTokenValue == ASSIGN) { // '='
         // R0存入栈
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush);
         NextToken(cs);
@@ -2511,6 +2467,7 @@ LVoid CompileCode(LInt8* code)
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
+    cs.mVm = gBoyiaVM;
     ParseStatement(&cs); // 该函数记录全局变量以及函数接口
     ResetScene(GetVM());
 }
@@ -2535,6 +2492,7 @@ LVoid CallFunction(LInt8* fun, LVoid* ret)
     CompileState cs;
     cs.mProg = fun;
     cs.mLineNum = 1;
+    cs.mVm = gBoyiaVM;
     EvalExpression(&cs); // 解析例如func(a,b,c);
     ExecuteCode(cmds);
 
