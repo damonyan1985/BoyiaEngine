@@ -22,10 +22,8 @@ public:
     void drawText(
         const String& text,
         const LRect& rect,
-        LGraphicsContext::TextAlign align,
         const LFont& font,
-        const LRgb& penColor,
-        const LRgb& brushColor);
+        const LRgb& penColor);
 
     AutoJObject getJavaBitmap() const;
     AutoJObject getBitmapObject() const;

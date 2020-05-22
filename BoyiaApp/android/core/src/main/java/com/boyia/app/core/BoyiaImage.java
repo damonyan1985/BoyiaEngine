@@ -49,6 +49,7 @@ public class BoyiaImage implements IBoyiaImage {
         return mHeight;
     }
 
+    // Call by Native
     public void recycle() {
         if (mBitmap != null) {
             mBitmap.recycle();
@@ -61,18 +62,10 @@ public class BoyiaImage implements IBoyiaImage {
     }
 
     // Call by native image, Draw TextView
-    public void drawText(String text,
-                         int width, int height,
-                         int align, int textSize,
-                         int textColor,
-                         int textStyle,
-                         int bgColor) {
+    public void drawText(String text, int width, int height, int textSize, int textColor, int textStyle) {
         BoyiaLog.d("BoyiaApp", "BoyiaApp bitmap drawText=" + text + " width=" + width + " height=" + height);
 
-        mBitmap = Bitmap.createBitmap(
-                width,
-                height,
-                Config.ARGB_8888);
+        mBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 
         Canvas canvas = new Canvas(mBitmap);
         canvas.drawColor(Color.argb(0, 0, 0, 0));
@@ -94,18 +87,11 @@ public class BoyiaImage implements IBoyiaImage {
         }
 
         paint.setTextSize(textSize);
-        paint.setColor(Color.argb(
-                Color.alpha(textColor),
-                Color.red(textColor),
-                Color.green(textColor),
+        paint.setColor(Color.argb(Color.alpha(textColor), Color.red(textColor), Color.green(textColor),
                 Color.blue(textColor)));
 
         BoyiaLog.d(TAG, "gl drawText=" + text);
-        BoyiaUtils.drawText(text,
-                new Rect(0, 0, width, height),
-                align,
-                canvas,
-                paint);
+        BoyiaUtils.drawText(text, new Rect(0, 0, width, height), GraphicsConst.TEXT_ALIGN_LEFT, canvas, paint);
     }
 
     @Override

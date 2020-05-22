@@ -37,6 +37,7 @@ public:
     Texture* put(const LImage* image);
     Texture* find(LVoid* image);
     Texture* updateTexture(const LImage* image);
+    LVoid updateTexture(Texture* tex, const LImage* image);
 
 private:
     Texture* fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key);

@@ -25,12 +25,18 @@ TextView::Line::~Line()
 {
 }
 
+LVoid TextView::Line::paint(LGraphicsContext& gc, const LRect& rect)
+{
+    gc.drawText(m_text, rect, util::LGraphicsContext::kTextLeft);
+}
+
 TextView::TextView(const String& id, const String& text)
     : InlineView(id, LFalse)
     , m_text(text)
     , m_textLines(kBoyiaNull)
     , m_newFont(kBoyiaNull)
     , m_maxWidth(0)
+    , m_canDrawText(text.GetLength() > 0)
 {
 }
 
@@ -47,6 +53,7 @@ TextView::~TextView()
 
 void TextView::layout(RenderContext& rc)
 {
+    m_canDrawText = LTrue;
     handleXYPos(rc);
 
     m_width = 0;
@@ -100,6 +107,12 @@ void TextView::layout(RenderContext& rc)
 void TextView::setText(const String& text)
 {
     m_text = text;
+    m_canDrawText = LTrue;
+}
+
+LBool TextView::canDrawText() const
+{
+    return m_canDrawText;
 }
 
 void TextView::setAlignement(LGraphicsContext::TextAlign alignement)
@@ -173,10 +186,12 @@ LVoid TextView::paint(LGraphicsContext& gc)
             gc.setPenStyle(LGraphicsContext::kSolidPen);
 
             gc.setBrushColor(m_style.bgColor);
-            gc.drawText(line->m_text, LRect(left, y, line->m_lineLength, textHeight), util::LGraphicsContext::kTextLeft);
+
+            line->paint(gc, LRect(left, y, line->m_lineLength, textHeight));
         }
     }
 
+    m_canDrawText = LFalse;
     gc.restore();
 }
 

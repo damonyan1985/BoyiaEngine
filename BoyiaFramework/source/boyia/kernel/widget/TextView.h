@@ -18,7 +18,7 @@ public:
 
 public:
     virtual void layout(RenderContext& rc);
-    virtual void paint(LGraphicsContext& dc);
+    virtual LVoid paint(LGraphicsContext& gc);
     virtual LBool isText() const;
 
     void setAlignement(LGraphicsContext::TextAlign alignement);
@@ -27,12 +27,14 @@ public:
     LInt calcTextLine(const String& text, LInt maxWidth);
     LBool isMultiLine();
     HtmlView* getLinkItem();
+    LBool canDrawText() const;
 
 private:
     class Line {
     public:
         Line(LInt length, const String& text);
         ~Line();
+        LVoid paint(LGraphicsContext& gc, const LRect& rect);
 
     public:
         LInt m_lineLength;
@@ -44,6 +46,8 @@ protected:
     KVector<Line*>* m_textLines;
     LFont* m_newFont;
     LInt m_maxWidth;
+
+    LBool m_canDrawText;
 };
 }
 #endif

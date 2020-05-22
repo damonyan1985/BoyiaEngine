@@ -55,7 +55,7 @@ void ImageAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
     m_privateBitmap->m_obj = env->NewGlobalRef(obj);
     m_privateBitmap->m_loadImage = GetJMethod(env, clazz, "loadImage", "(Ljava/lang/String;JII)V");
     m_privateBitmap->m_getBitmap = GetJMethod(env, clazz, "getBitmap", "()Landroid/graphics/Bitmap;");
-    m_privateBitmap->m_drawText = GetJMethod(env, clazz, "drawText", "(Ljava/lang/String;IIIIIII)V");
+    m_privateBitmap->m_drawText = GetJMethod(env, clazz, "drawText", "(Ljava/lang/String;IIIII)V");
     m_privateBitmap->m_recycle = GetJMethod(env, clazz, "recycle", "()V");
 
     env->DeleteLocalRef(clazz);
@@ -126,10 +126,8 @@ AutoJObject ImageAndroid::getBitmapObject() const
 
 void ImageAndroid::drawText(const String& text,
     const LRect& rect,
-    LGraphicsContext::TextAlign align,
     const LFont& font,
-    const LRgb& penColor,
-    const LRgb& brushColor)
+    const LRgb& penColor)
 {
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     AutoJObject javaObject = m_privateBitmap->object(env);
@@ -147,11 +145,9 @@ void ImageAndroid::drawText(const String& text,
         strText,
         rect.GetWidth(),
         rect.GetHeight(),
-        (jint)align,
         font.getFontSize(),
         (jint)LColor::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha),
-        (jint)font.getFontStyle(),
-        (jint)LColor::rgb(brushColor.m_red, brushColor.m_green, brushColor.m_blue, brushColor.m_alpha));
+        (jint)font.getFontStyle());
     env->DeleteLocalRef(strText);
 }
 

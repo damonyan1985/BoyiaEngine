@@ -119,10 +119,8 @@ Texture* TextureCache::fetchTexture(HtmlView* item, const LRect& rect, const LIm
     return pair->tex.get();
 }
 
-Texture* TextureCache::updateTexture(const LImage* image)
+LVoid TextureCache::updateTexture(Texture* tex, const LImage* image)
 {
-    Texture* tex = find(image->item());
-
     if (tex) {
         glBindTexture(GL_TEXTURE_2D, tex->texId);
 
@@ -137,7 +135,12 @@ Texture* TextureCache::updateTexture(const LImage* image)
             GL_UNSIGNED_BYTE,
             image->pixels());
     }
+}
 
+Texture* TextureCache::updateTexture(const LImage* image)
+{
+    Texture* tex = find(image->item());
+    updateTexture(tex, image);
     return tex;
 }
 
