@@ -3,6 +3,7 @@
 #include "LEvent.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
+#include "AppManager.h"
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 // C++对象垃圾回收基类
@@ -23,6 +24,11 @@ BoyiaBase::~BoyiaBase()
 {
 }
 
+LVoid* BoyiaBase::vm() const
+{
+    return yanbo::AppManager::instance()->currentApp()->runtime()->vm();
+}
+
 LVoid BoyiaBase::onPressDown(LVoid* view)
 {
     if (m_type & LTouchEvent::ETOUCH_DOWN) {
@@ -30,7 +36,7 @@ LVoid BoyiaBase::onPressDown(LVoid* view)
         // 处理touchdown
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
         SaveLocalSize();
-        LocalPush(val);
+        LocalPush(val, vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }
@@ -42,7 +48,7 @@ LVoid BoyiaBase::onPressMove(LVoid* view)
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_MOVE >> 1];
 
         SaveLocalSize();
-        LocalPush(val);
+        LocalPush(val, vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }
@@ -55,7 +61,7 @@ LVoid BoyiaBase::onPressUp(LVoid* view)
         // 处理touchup
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
         SaveLocalSize();
-        LocalPush(val);
+        LocalPush(val, vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
         NativeCall(obj);
     }

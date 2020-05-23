@@ -166,7 +166,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\Application.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppManager.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.h" />
@@ -226,9 +225,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.h" />
@@ -286,7 +285,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\Application.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppManager.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.cpp" />
@@ -339,9 +337,9 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBindings.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.cpp" />

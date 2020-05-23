@@ -15,7 +15,6 @@ UIView::UIView()
     : m_loader(kBoyiaNull)
     , m_doc(kBoyiaNull)
     , m_controller(kBoyiaNull)
-    , m_jsHandler(kBoyiaNull)
 {
     initComponents();
 }
@@ -28,10 +27,6 @@ UIView::~UIView()
 
     if (m_doc) {
         delete m_doc;
-    }
-
-    if (m_jsHandler) {
-        delete m_jsHandler;
     }
 }
 
@@ -51,7 +46,6 @@ void UIView::initComponents()
         m_loader = new ResourceLoader(this);
         m_doc = new HtmlDocument();
         m_doc->setView(this);
-        m_jsHandler = new boyia::BoyiaEventHandler();
         m_controller = new UIViewController(this);
     }
 }
@@ -132,11 +126,6 @@ NetworkBase* UIView::network() const
 void UIView::loadString(const String& src)
 {
     m_loader->loadString(src);
-}
-
-boyia::BoyiaEventHandler* UIView::jsHandler() const
-{
-    return m_jsHandler;
 }
 
 bool UIView::canHit() const

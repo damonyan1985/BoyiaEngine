@@ -5,80 +5,78 @@
 
 char* convertMStr2Str(BoyiaStr* str);
 
-LInt getFileContent();
+LInt getFileContent(LVoid* vm);
 
-LInt addElementToVector();
+LInt addElementToVector(LVoid* vm);
 
-LInt getElementFromVector();
+LInt getElementFromVector(LVoid* vm);
 
-LInt getVectorSize();
+LInt getVectorSize(LVoid* vm);
 
-LInt clearVector();
+LInt clearVector(LVoid* vm);
 
-LInt logPrint();
+LInt logPrint(LVoid* vm);
 
-LInt jsonParseWithCJSON();
+LInt jsonParseWithCJSON(LVoid* vm);
 
-LInt createJSDocument();
+LInt createJSDocument(LVoid* vm);
 
-LInt appendView();
+LInt appendView(LVoid* vm);
 
-LInt getRootDocument();
+LInt getRootDocument(LVoid* vm);
 
-LInt setDocument();
+LInt setDocument(LVoid* vm);
 
-LInt removeDocument();
+LInt removeDocument(LVoid* vm);
 
-LInt setViewXpos();
+LInt setViewXpos(LVoid* vm);
 
-LInt setViewYpos();
+LInt setViewYpos(LVoid* vm);
 
-LInt drawView();
+LInt drawView(LVoid* vm);
 
-LInt startScale();
+LInt startScale(LVoid* vm);
 
-LInt startOpacity();
+LInt startOpacity(LVoid* vm);
 
-LInt removeElementWidthIndex();
+LInt removeElementWidthIndex(LVoid* vm);
 
-LInt removeElementFromVector();
+LInt removeElementFromVector(LVoid* vm);
 
-LInt getViewXpos();
+LInt getViewXpos(LVoid* vm);
 
-LInt getViewYpos();
+LInt getViewYpos(LVoid* vm);
 
-LInt getViewWidth();
+LInt getViewWidth(LVoid* vm);
 
-LInt getViewHeight();
+LInt getViewHeight(LVoid* vm);
 
-LInt setViewStyle();
+LInt setViewStyle(LVoid* vm);
 
-LInt loadDataFromNative();
+LInt loadDataFromNative(LVoid* vm);
 
-LInt setJSTouchCallback();
+LInt callStaticMethod(LVoid* vm);
 
-LInt callStaticMethod();
+LInt startTranslate(LVoid* vm);
 
-LInt startTranslate();
+LInt getHtmlItem(LVoid* vm);
 
-LInt getHtmlItem();
+LInt loadImageByUrl(LVoid* vm);
 
-LInt loadImageByUrl();
+LInt setViewGroupText(LVoid* vm);
 
-LInt setViewGroupText();
+LInt setInputViewText(LVoid* vm);
 
-LInt setInputViewText();
+LInt addEventListener(LVoid* vm);
 
-LInt addEventListener();
+LInt setToNativeView(LVoid* vm);
 
-LInt setToNativeView();
+LInt instanceOfClass(LVoid* vm);
 
-LInt instanceOfClass();
+LInt createViewGroup(LVoid* vm);
 
-LInt createViewGroup();
+LInt setImageUrl(LVoid* vm);
 
-LInt setImageUrl();
-
-LInt viewCommit();
+LInt viewCommit(LVoid* vm);
 
 #endif // !BoyiaLib_h

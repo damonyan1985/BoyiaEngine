@@ -8,7 +8,6 @@
 #ifndef UIView_h
 #define UIView_h
 
-#include "BoyiaEventHandler.h"
 #include "HtmlDocument.h"
 #include "LEvent.h"
 #include "LGdi.h"
@@ -33,7 +32,6 @@ public:
     HtmlDocument* getDocument() const;
     ResourceLoader* getLoader() const;
     NetworkBase* network() const;
-    boyia::BoyiaEventHandler* jsHandler() const;
     LGraphicsContext* getGraphicsContext() const;
 
     void handleMouseEvent(const LMouseEvent& evt);
@@ -48,7 +46,6 @@ private:
     LGraphicsContext* m_gc;
     LRect m_clientRect;
     UIViewController* m_controller;
-    boyia::BoyiaEventHandler* m_jsHandler;
 };
 }
 #endif

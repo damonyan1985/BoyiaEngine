@@ -21,6 +21,7 @@ public:
 
     virtual LVoid addListener(LInt type, BoyiaValue* callback);
     LVoid setBoyiaView(BoyiaValue* value);
+    LVoid* vm() const;
 
 protected:
     LInt m_type;

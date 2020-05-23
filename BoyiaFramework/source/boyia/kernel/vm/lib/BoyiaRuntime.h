@@ -1,16 +1,17 @@
-#ifndef AppVM_h
-#define AppVM_h
+#ifndef BoyiaRuntime_h
+#define BoyiaRuntime_h
 
 #include "UtilString.h"
 
-namespace yanbo {
-class AppVM {
+namespace boyia {
+class BoyiaRuntime {
 public:
-    AppVM();
-    ~AppVM();
+    BoyiaRuntime();
+    ~BoyiaRuntime();
 
     LVoid compile(const String& script);
     LVoid useVM();
+    LVoid* vm() const;
 
 private:
     LVoid* m_vm;
