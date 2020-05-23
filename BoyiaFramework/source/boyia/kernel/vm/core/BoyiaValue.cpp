@@ -33,7 +33,7 @@ enum InlineCacheType {
 static LVoid* gMemPool = kBoyiaNull;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
-extern LVoid GCollectGarbage();
+extern LVoid GCollectGarbage(LVoid* vm);
 
 extern LVoid BoyiaLog(const char* format, ...)
 {
@@ -83,24 +83,17 @@ LVoid ChangeMemory(LVoid* mem)
     gMemPool = mem;
 }
 
-static LVoid SystemGC()
+static LVoid SystemGC(LVoid* vm)
 {
     if (GetUsedMemory(gMemPool) >= MEMORY_SIZE / 2) {
-        GCollectGarbage();
+        GCollectGarbage(GetGabargeCollect(vm));
     }
 }
 
-LVoid* BoyiaNew(LInt size)
+LVoid* BoyiaAlloc(LInt size, LVoid* vm)
 {
-    SystemGC();
-    LVoid* data = NewData(size, gMemPool);
-    PrintPoolSize(gMemPool);
-    return data;
-}
-
-LVoid BoyiaDelete(LVoid* data)
-{
-    DeleteData(data, gMemPool);
+    SystemGC(vm);
+    return BoyiaNew(size, vm);
 }
 
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src)
@@ -149,10 +142,10 @@ extern LVoid NativeDelete(LVoid* data)
 }
 
 // "Hello" + "World"
-static LVoid FetchString(BoyiaStr* str, BoyiaValue* value)
+static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
 {
     if (value->mValueType == BY_INT) {
-        str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN);
+        str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN, vm);
         LMemset(str->mPtr, 0, MAX_INT_LEN);
         LInt2StrWithLength(value->mValue.mIntVal, (LUint8*)str->mPtr, 10, &str->mLen);
     } else {
@@ -161,18 +154,18 @@ static LVoid FetchString(BoyiaStr* str, BoyiaValue* value)
     }
 }
 
-extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right)
+extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
 {
     KLOG("StringAdd Begin");
     BoyiaStr leftStr, rightStr;
     LInt8 tmpArray[MAX_INT_LEN];
     leftStr.mPtr = tmpArray;
     rightStr.mPtr = tmpArray;
-    FetchString(&leftStr, left);
-    FetchString(&rightStr, right);
+    FetchString(&leftStr, left, vm);
+    FetchString(&rightStr, right, vm);
 
     LInt len = leftStr.mLen + rightStr.mLen;
-    LInt8* str = NEW_ARRAY(LInt8, len);
+    LInt8* str = NEW_ARRAY(LInt8, len, vm);
 
     LMemcpy(str, leftStr.mPtr, leftStr.mLen);
     LMemcpy(str + leftStr.mLen, rightStr.mPtr, rightStr.mLen);
@@ -200,11 +193,11 @@ LUintPtr GenIdentifier(BoyiaStr* str)
     return GetIdCreator()->genIdentifier(str);
 }
 
-InlineCache* CreateInlineCache()
+InlineCache* CreateInlineCache(LVoid* vm)
 {
-    InlineCache* cache = NEW(InlineCache);
+    InlineCache* cache = NEW(InlineCache, vm);
     cache->mSize = 0;
-    cache->mItems = NEW_ARRAY(InlineCacheItem, MAX_INLINE_CACHE);
+    cache->mItems = NEW_ARRAY(InlineCacheItem, MAX_INLINE_CACHE, vm);
     return cache;
 }
 
@@ -324,7 +317,7 @@ LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size)
     );
 }
 
-LVoid LoadVMCode()
+LVoid LoadVMCode(LVoid* vm)
 {
     // Load StringTable
     String content;
@@ -337,7 +330,7 @@ LVoid LoadVMCode()
 
     BoyiaStr* strTable = new BoyiaStr[stringTable->size() - 1];
     for (LInt i = 0; i < stringTable->size() - 1; i++) {
-        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i + 1).GetLength());
+        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i + 1).GetLength(), vm);
         strTable[i].mLen = stringTable->elementAt(i + 1).GetLength();
         LMemcpy(strTable[i].mPtr, stringTable->elementAt(i + 1).GetBuffer(), strTable[i].mLen);
     }
