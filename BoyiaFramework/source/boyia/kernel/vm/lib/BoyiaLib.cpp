@@ -53,7 +53,7 @@ LInt getFileContent(LVoid* vm)
     val.mValue.mStrVal.mPtr = buf;
     val.mValue.mStrVal.mLen = len;
 
-    SetNativeResult(&val);
+    SetNativeResult(&val, vm);
 
     printf("getFileContent data=%s\n", buf);
     return 1;
@@ -89,7 +89,7 @@ LInt getElementFromVector(LVoid* vm)
 
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
     BoyiaValue* result = &fun->mParams[index->mValue.mIntVal];
-    SetNativeResult(result);
+    SetNativeResult(result, vm);
     return 1;
 }
 
@@ -167,7 +167,7 @@ LInt getVectorSize(LVoid* vm)
     value.mValueType = BY_INT;
     value.mValue.mIntVal = fun->mParamSize;
 
-    SetNativeResult(&value);
+    SetNativeResult(&value, vm);
 
     return 1;
 }
@@ -266,7 +266,7 @@ LInt jsonParseWithCJSON(LVoid* vm)
     char* content = convertMStr2Str(&val->mValue.mStrVal);
     cJSON* json = cJSON_Parse(content);
     delete[] content;
-    BoyiaValue* value = (BoyiaValue*)GetNativeResult();
+    BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
     jsonParse(json, value, vm);
     cJSON_Delete(json);
     return 1;
@@ -282,7 +282,7 @@ LInt createJSDocument(LVoid* vm)
 
     char* url = convertMStr2Str(&val->mValue.mStrVal);
     String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
-    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc();
+    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
     doc->loadHTML(strUrl);
     return 1;
 }
@@ -316,8 +316,9 @@ BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
 
 LInt getRootDocument(LVoid* vm)
 {
-    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc();
-    doc->setDocument(yanbo::UIView::getInstance()->getDocument());
+    boyia::BoyiaRuntime* runtime = static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
+    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(runtime);
+    doc->setDocument(runtime->view()->getDocument());
     return 1;
 }
 
@@ -367,7 +368,7 @@ LInt getViewXpos(LVoid* vm)
     BoyiaValue val;
     val.mValueType = BY_INT;
     val.mValue.mIntVal = jsDoc->left();
-    SetNativeResult(&val);
+    SetNativeResult(&val, vm);
 
     return 1;
 }
@@ -379,7 +380,7 @@ LInt getViewYpos(LVoid* vm)
     BoyiaValue val;
     val.mValueType = BY_INT;
     val.mValue.mIntVal = jsDoc->top();
-    SetNativeResult(&val);
+    SetNativeResult(&val, vm);
 
     return 1;
 }
@@ -391,7 +392,7 @@ LInt getViewWidth(LVoid* vm)
     BoyiaValue val;
     val.mValueType = BY_INT;
     val.mValue.mIntVal = jsDoc->width();
-    SetNativeResult(&val);
+    SetNativeResult(&val, vm);
 
     return 1;
 }
@@ -403,7 +404,7 @@ LInt getViewHeight(LVoid* vm)
     BoyiaValue val;
     val.mValueType = BY_INT;
     val.mValue.mIntVal = jsDoc->height();
-    SetNativeResult(&val);
+    SetNativeResult(&val, vm);
 
     return 1;
 }
@@ -504,7 +505,7 @@ LInt callStaticMethod(LVoid* vm)
         size,
         &result);
 
-    SetNativeResult(&result);
+    SetNativeResult(&result, vm);
     delete[] strClzz;
     delete[] strMethod;
     delete[] strSign;
@@ -596,7 +597,11 @@ LInt createViewGroup(LVoid* vm)
 
     char* idStr = convertMStr2Str(&idVal->mValue.mStrVal);
     String strUrl(_CS(idStr), LTrue, idVal->mValue.mStrVal.mLen);
-    new boyia::BoyiaViewGroup(strUrl, selectVal->mValue.mIntVal);
+    
+    new boyia::BoyiaViewGroup(
+        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)), 
+        strUrl, 
+        selectVal->mValue.mIntVal);
 
     return 1;
 }
@@ -625,7 +630,7 @@ LInt instanceOfClass(LVoid* vm)
     BoyiaValue value;
     value.mValueType = BY_INT;
     value.mValue.mIntVal = result;
-    SetNativeResult(&value);
+    SetNativeResult(&value, vm);
     return 1;
 }
 

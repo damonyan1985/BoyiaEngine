@@ -13,15 +13,16 @@ using namespace yanbo;
 
 IdentityMap BoyiaViewDoc::m_domMap(20);
 
-BoyiaViewDoc::BoyiaViewDoc()
-    : m_doc(kBoyiaNull)
+BoyiaViewDoc::BoyiaViewDoc(BoyiaRuntime* runtime)
+    : BoyiaView(runtime)
+    , m_doc(kBoyiaNull)
 {
 }
 
 BoyiaViewDoc::~BoyiaViewDoc()
 {
     // 不允许删除rootdoc
-    if (m_doc && m_doc != UIView::getInstance()->getDocument()) {
+    if (m_doc && m_doc != m_runtime->view()->getDocument()) {
         delete m_doc;
     }
 }
@@ -80,11 +81,11 @@ BoyiaView* BoyiaViewDoc::getItemByID(const String& id) const
     KLOG("BoyiaViewDoc::getItemByID end");
     switch (item->getTagType()) {
     case HtmlTags::IMG:
-        return new BoyiaImageView(item);
+        return new BoyiaImageView(runtime(), item);
     case HtmlTags::DIV:
-        return new BoyiaViewGroup(item);
+        return new BoyiaViewGroup(runtime(), item);
     case HtmlTags::INPUT:
-        return new BoyiaInputView(item);
+        return new BoyiaInputView(runtime(), item);
     }
 
     return kBoyiaNull;

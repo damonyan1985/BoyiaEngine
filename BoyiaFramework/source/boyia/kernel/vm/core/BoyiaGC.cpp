@@ -16,6 +16,7 @@ typedef struct BoyiaGC {
     BoyiaRef* mBegin;
     BoyiaRef* mEnd;
     LInt mSize;
+    LVoid* mBoyiaVM;
 } BoyiaGC;
 
 // 收集器
@@ -24,12 +25,13 @@ static BoyiaGC* sGc = kBoyiaNull;
 extern LVoid NativeDelete(LVoid* data);
 static LBool CheckValue(BoyiaValue* val, BoyiaRef* ref);
 
-extern LVoid* CreateGC()
+extern LVoid* CreateGC(LVoid* vm)
 {
     BoyiaGC* gc = FAST_NEW(BoyiaGC);
     gc->mBegin = kBoyiaNull;
     gc->mEnd = kBoyiaNull;
     gc->mSize = 0;
+    gc->mBoyiaVM = vm;
     return gc;
 }
 
@@ -38,12 +40,13 @@ extern LVoid ChangeGC(LVoid* gc)
     sGc = (BoyiaGC*)gc;
 }
 
+/*
 static LVoid GCInit()
 {
     if (!sGc) {
         sGc = (BoyiaGC*)CreateGC();
     }
-}
+}*/
 
 static LBool GCCheckObject(BoyiaValue* value, BoyiaRef* ref)
 {
@@ -131,7 +134,7 @@ static LVoid GCheckNoneRef(BoyiaRef* ref)
         return;
     }
     // 查找结果寄存器，是否有引用过期
-    BoyiaValue* val = (BoyiaValue*)GetNativeResult();
+    BoyiaValue* val = (BoyiaValue*)GetNativeResult(sGc->mBoyiaVM);
     if (CheckValue(val, ref)) {
         return;
     }
@@ -172,7 +175,7 @@ static LVoid GClearGarbage()
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type)
 {
-    GCInit();
+    //GCInit();
 
     BoyiaRef* ref = FAST_NEW(BoyiaRef);
     ref->mAddress = address;

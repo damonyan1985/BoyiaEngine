@@ -6,12 +6,14 @@
 #include "UIView.h"
 
 namespace boyia {
-BoyiaViewGroup::BoyiaViewGroup(yanbo::HtmlView* item)
+BoyiaViewGroup::BoyiaViewGroup(BoyiaRuntime* runtime, yanbo::HtmlView* item)
+    : BoyiaView(runtime)
 {
     m_item = item;
 }
 
-BoyiaViewGroup::BoyiaViewGroup(const String& id, LBool selectable)
+BoyiaViewGroup::BoyiaViewGroup(BoyiaRuntime* runtime, const String& id, LBool selectable)
+    : BoyiaView(runtime)
 {
     m_item = new yanbo::BlockView(id, selectable);
 }

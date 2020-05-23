@@ -1,15 +1,14 @@
 #include "BoyiaRuntime.h"
 #include "BoyiaCore.h"
 #include "SalLog.h"
+#include "Application.h"
 
 extern LVoid CompileScript(char* code);
-extern LVoid* CreateGC();
-extern LVoid ChangeGC(LVoid* gc);
 
 namespace boyia {
-BoyiaRuntime::BoyiaRuntime()
-    : m_vm(InitVM())
-    , m_gc(CreateGC())
+BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
+    : m_app(app)
+    , m_vm(InitVM(this))
 {
 }
 
@@ -25,9 +24,6 @@ LVoid BoyiaRuntime::compile(const String& script)
 
 LVoid BoyiaRuntime::useVM()
 {
-    BOYIA_LOG("BoyiaRuntime---useVM---%s", "ChangeGC");
-    ChangeGC(m_gc);
-    BOYIA_LOG("BoyiaRuntime---useVM---%s", "ChangeVM");
     ChangeVM(m_vm);
     BOYIA_LOG("BoyiaRuntime---useVM---%s", "end");
 }
@@ -35,5 +31,10 @@ LVoid BoyiaRuntime::useVM()
 LVoid* BoyiaRuntime::vm() const
 {
     return m_vm;
+}
+
+yanbo::UIView* BoyiaRuntime::view() const
+{
+    return m_app->view();
 }
 }

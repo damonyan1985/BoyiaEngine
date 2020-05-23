@@ -3,7 +3,8 @@
 #include "UIOperation.h"
 
 namespace boyia {
-BoyiaImageView::BoyiaImageView(yanbo::HtmlView* item)
+BoyiaImageView::BoyiaImageView(BoyiaRuntime* runtime, yanbo::HtmlView* item)
+    : BoyiaView(runtime)
 {
     m_item = item;
 }

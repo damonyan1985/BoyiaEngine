@@ -18,7 +18,7 @@
 namespace boyia {
 class BoyiaView : public BoyiaBase {
 public:
-    BoyiaView();
+    BoyiaView(BoyiaRuntime* runtime);
     virtual ~BoyiaView();
     LVoid setX(LInt x);
     LVoid setY(LInt y);

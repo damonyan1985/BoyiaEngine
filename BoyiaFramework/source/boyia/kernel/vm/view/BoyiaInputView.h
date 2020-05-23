@@ -6,7 +6,7 @@
 namespace boyia {
 class BoyiaInputView : public BoyiaView {
 public:
-    BoyiaInputView(yanbo::HtmlView* item);
+    BoyiaInputView(BoyiaRuntime* runtime, yanbo::HtmlView* item);
     LVoid setText(const String& text);
 };
 }
