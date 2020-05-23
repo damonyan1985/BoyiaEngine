@@ -61,7 +61,6 @@ private:
     LVoid* m_item;
     LRect* m_clipRect;
     GLContext m_context;
-    LBool m_texInvalid;
 };
 }
 #endif

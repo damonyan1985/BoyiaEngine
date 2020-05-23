@@ -36,7 +36,6 @@ TextView::TextView(const String& id, const String& text)
     , m_textLines(kBoyiaNull)
     , m_newFont(kBoyiaNull)
     , m_maxWidth(0)
-    , m_canDrawText(text.GetLength() > 0)
 {
 }
 
@@ -53,7 +52,6 @@ TextView::~TextView()
 
 void TextView::layout(RenderContext& rc)
 {
-    m_canDrawText = LTrue;
     handleXYPos(rc);
 
     m_width = 0;
@@ -107,12 +105,6 @@ void TextView::layout(RenderContext& rc)
 void TextView::setText(const String& text)
 {
     m_text = text;
-    m_canDrawText = LTrue;
-}
-
-LBool TextView::canDrawText() const
-{
-    return m_canDrawText;
 }
 
 void TextView::setAlignement(LGraphicsContext::TextAlign alignement)
@@ -191,7 +183,6 @@ LVoid TextView::paint(LGraphicsContext& gc)
         }
     }
 
-    m_canDrawText = LFalse;
     gc.restore();
 }
 
