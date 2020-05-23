@@ -2465,18 +2465,19 @@ LVoid GetGlobalTable(LInt* table, LInt* size)
 }
 
 /*  output function */
-LVoid CompileCode(LInt8* code)
+LVoid CompileCode(LInt8* code, LVoid* vm)
 {
-    GetVM()->mEState->mTmpLValSize = 0;
-    GetVM()->mEState->mResultNum = 0;
-    GetVM()->mEState->mLoopSize = 0;
-    GetVM()->mEState->mClass = kBoyiaNull;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    vmPtr->mEState->mTmpLValSize = 0;
+    vmPtr->mEState->mResultNum = 0;
+    vmPtr->mEState->mLoopSize = 0;
+    vmPtr->mEState->mClass = kBoyiaNull;
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
-    cs.mVm = gBoyiaVM;
+    cs.mVm = vmPtr;
     ParseStatement(&cs); // 该函数记录全局变量以及函数接口
-    ResetScene(GetVM());
+    ResetScene(vmPtr);
 }
 
 LVoid* GetLocalValue(LInt idx)

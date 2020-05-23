@@ -4,7 +4,7 @@ namespace yanbo {
 Application::Application(AppInfo* info)
     : m_info(info)
 {
-    m_view = new UIView();
+    m_view = new UIView(this);
     m_runtime = new boyia::BoyiaRuntime(this);
 }
 

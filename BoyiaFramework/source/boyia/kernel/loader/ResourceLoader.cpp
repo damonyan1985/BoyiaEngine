@@ -10,9 +10,10 @@
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
+#include "Application.h"
 //#include <android/log.h>
 
-extern LVoid CompileScript(char* code);
+extern LVoid CompileScript(char* code, LVoid* vm);
 namespace yanbo {
 
 class ResourceHandle LFinal : public NetworkClient, public UIEvent {
@@ -187,7 +188,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 // Execute external script
 LVoid ResourceLoader::executeScript(const String& data)
 {
-    CompileScript((char*)data.GetBuffer());
+    CompileScript((char*)data.GetBuffer(), m_view->application()->runtime()->vm());
 }
 
 LVoid ResourceLoader::repaint(HtmlView* item)
