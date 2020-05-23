@@ -3,7 +3,7 @@
 #include "SalLog.h"
 #include "Application.h"
 
-extern LVoid CompileScript(char* code);
+extern LVoid CompileScript(char* code, LVoid* vm);
 
 namespace boyia {
 BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
@@ -19,7 +19,7 @@ BoyiaRuntime::~BoyiaRuntime()
 
 LVoid BoyiaRuntime::compile(const String& script)
 {
-    CompileScript((char*)script.GetBuffer());
+    CompileScript((char*)script.GetBuffer(), m_vm);
 }
 
 LVoid BoyiaRuntime::useVM()

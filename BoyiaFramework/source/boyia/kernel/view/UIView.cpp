@@ -6,13 +6,15 @@
  */
 
 #include "UIView.h"
+#include "Application.h"
 #include "AppManager.h"
 #include "HtmlView.h"
 
 namespace yanbo {
 
-UIView::UIView()
-    : m_loader(kBoyiaNull)
+UIView::UIView(Application* app)
+    : m_app(app)
+    , m_loader(kBoyiaNull)
     , m_doc(kBoyiaNull)
     , m_controller(kBoyiaNull)
 {
@@ -28,6 +30,11 @@ UIView::~UIView()
     if (m_doc) {
         delete m_doc;
     }
+}
+
+Application* UIView::application() const
+{
+    return m_app;
 }
 
 UIView* UIView::getInstance()

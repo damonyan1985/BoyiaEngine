@@ -15,11 +15,15 @@
 #include "UIViewController.h"
 
 namespace yanbo {
+class Application;
+}
+
+namespace yanbo {
 class UIView {
 public:
     static UIView* getInstance();
 
-    UIView();
+    UIView(Application* app);
     virtual ~UIView();
 
 public:
@@ -33,6 +37,7 @@ public:
     ResourceLoader* getLoader() const;
     NetworkBase* network() const;
     LGraphicsContext* getGraphicsContext() const;
+    Application* application() const;
 
     void handleMouseEvent(const LMouseEvent& evt);
     void handleKeyEvent(const LKeyEvent& evt);
@@ -46,6 +51,7 @@ private:
     LGraphicsContext* m_gc;
     LRect m_clientRect;
     UIViewController* m_controller;
+    Application* m_app;
 };
 }
 #endif
