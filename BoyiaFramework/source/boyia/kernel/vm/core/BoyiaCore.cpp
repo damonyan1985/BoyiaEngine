@@ -39,6 +39,8 @@
 
 extern LInt Str2Int(LInt8* ptr, LInt len, LInt radix);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
+extern LVoid* CreateGC(LVoid* vm);
+extern LVoid ChangeGC(LVoid* gc);
 
 enum TokenType {
     DELIMITER = 1,
@@ -277,6 +279,8 @@ typedef struct BoyiaVM {
     VMStrTable* mStrTable;
     VMEntryTable* mEntry;
     OPHandler* mHandlers;
+    LVoid* mGc;
+    LVoid* mCreator; // 此处传入创建vm的外部对象
 } BoyiaVM;
 
 typedef struct {
@@ -302,8 +306,6 @@ static LVoid WhileStatement(CompileState* cs);
 
 static LVoid DoStatement(CompileState* cs);
 
-static BoyiaValue* FindVal(LUintPtr key);
-
 static LVoid BlockStatement(CompileState* cs);
 
 static LVoid FunStatement(CompileState* cs);
@@ -313,6 +315,8 @@ static LInt NextToken(CompileState* cs);
 static LVoid EvalExpression(CompileState* cs);
 
 static LVoid EvalAssignment(CompileState* cs);
+
+static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm);
 
 static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst);
 
@@ -477,7 +481,7 @@ static VMEntryTable* CreateVMEntryTable()
     return table;
 }
 
-LVoid* InitVM()
+LVoid* InitVM(LVoid* creator)
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mPool = InitMemoryPool(MEMORY_SIZE);
@@ -500,9 +504,22 @@ LVoid* InitVM()
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
+    vm->mGc = CreateGC(vm);
+    vm->mCreator = creator;
+    ChangeGC(vm->mGc);
     ResetScene(vm);
 
     return vm;
+}
+
+LVoid* GetVMCreator(LVoid* vm)
+{
+    return ((BoyiaVM*)vm)->mCreator;
+}
+
+LVoid* GetGabargeCollect(LVoid* vm)
+{
+    return ((BoyiaVM*)vm)->mGc;
 }
 
 LVoid DestroyVM(LVoid* vm)
@@ -2412,14 +2429,6 @@ static LVoid EvalAssignment(CompileState* cs)
     }
 }
 
-// init global data such as gBoyiaVM->mGlobals, gBoyiaVM->mLocals, gBoyiaVM->mFunTable
-static LVoid InitGlobalData()
-{
-    if (!gBoyiaVM) {
-        gBoyiaVM = (BoyiaVM*)InitVM();
-    }
-}
-
 LVoid InitNativeFun(NativeFunction* funs)
 {
     if (!gNativeFunTable) {
@@ -2427,10 +2436,10 @@ LVoid InitNativeFun(NativeFunction* funs)
     }
 }
 
-LVoid SetNativeResult(LVoid* result)
+LVoid SetNativeResult(LVoid* result, LVoid* vm)
 {
     BoyiaValue* value = (BoyiaValue*)result;
-    ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
+    ValueCopy(&((BoyiaVM*)vm)->mCpu->mReg0, value);
 }
 
 LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm)
@@ -2438,9 +2447,9 @@ LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm)
     return CopyFunction(FindGlobal(hashKey, (BoyiaVM*)vm), size);
 }
 
-LVoid* GetNativeResult()
+LVoid* GetNativeResult(LVoid* vm)
 {
-    return &gBoyiaVM->mCpu->mReg0;
+    return &((BoyiaVM*)vm)->mCpu->mReg0;
 }
 
 LVoid GetLocalStack(LInt* stack, LInt* size)
@@ -2458,7 +2467,6 @@ LVoid GetGlobalTable(LInt* table, LInt* size)
 /*  output function */
 LVoid CompileCode(LInt8* code)
 {
-    InitGlobalData();
     GetVM()->mEState->mTmpLValSize = 0;
     GetVM()->mEState->mResultNum = 0;
     GetVM()->mEState->mLoopSize = 0;
@@ -2506,19 +2514,20 @@ LVoid SaveLocalSize()
     HandleTempLocalSize(kBoyiaNull, GetVM());
 }
 
-LVoid NativeCall(BoyiaValue* obj)
+LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
 {
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mClass = gBoyiaVM->mEState->mClass;
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mLValSize = gBoyiaVM->mEState->mTmpLValSize;
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mPC = gBoyiaVM->mEState->mPC;
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos].mContext = gBoyiaVM->mEState->mContext;
-    gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos++].mLoopSize = gBoyiaVM->mEState->mLoopSize;
-    gBoyiaVM->mEState->mClass = obj;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass = vmPtr->mEState->mClass;
+    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mLValSize = vmPtr->mEState->mTmpLValSize;
+    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mPC = vmPtr->mEState->mPC;
+    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mContext = vmPtr->mEState->mContext;
+    vmPtr->mExecStack[vmPtr->mEState->mFunctos++].mLoopSize = vmPtr->mEState->mLoopSize;
+    vmPtr->mEState->mClass = obj;
 
-    HandlePushParams(kBoyiaNull, GetVM());
-    HandleCallFunction(kBoyiaNull, GetVM());
+    HandlePushParams(kBoyiaNull, vmPtr);
+    HandleCallFunction(kBoyiaNull, vmPtr);
 
-    ExecInstruction(GetVM());
+    ExecInstruction(vmPtr);
 }
 
 LVoid CacheVMCode()
@@ -2549,7 +2558,6 @@ LVoid LoadEntryTable(LVoid* buffer, LInt size)
     GetVM()->mEntry->mSize = size / sizeof(LInt);
     LMemcpy(GetVM()->mEntry->mTable, buffer, size);
 
-    InitGlobalData();
     GetVM()->mEState->mGValSize = 0;
     GetVM()->mEState->mFunSize = 0;
     GetVM()->mEState->mLoopSize = 0;

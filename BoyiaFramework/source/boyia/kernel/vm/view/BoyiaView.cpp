@@ -16,8 +16,9 @@ static LVoid startAnimtion(Animation* anim)
     Animator::instance()->runTask(task);
 }
 
-BoyiaView::BoyiaView()
-    : m_item(kBoyiaNull)
+BoyiaView::BoyiaView(BoyiaRuntime* runtime)
+    : BoyiaBase(runtime)
+    , m_item(kBoyiaNull)
 {
 }
 

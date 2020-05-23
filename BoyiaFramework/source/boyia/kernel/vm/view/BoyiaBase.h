@@ -4,12 +4,13 @@
 #include "BoyiaCore.h"
 #include "IViewListener.h"
 #include "KVector.h"
+#include "BoyiaRuntime.h"
 
 namespace boyia {
 #define EVENT_MAX_SIZE 10
 class BoyiaBase : public yanbo::IViewListener {
 public:
-    BoyiaBase();
+    BoyiaBase(BoyiaRuntime* runtime);
     virtual ~BoyiaBase();
 
     // HTMLView事件监听
@@ -21,12 +22,14 @@ public:
 
     virtual LVoid addListener(LInt type, BoyiaValue* callback);
     LVoid setBoyiaView(BoyiaValue* value);
-    LVoid* vm() const;
+
+    BoyiaRuntime* runtime() const;
 
 protected:
     LInt m_type;
     BoyiaValue m_callbacks[EVENT_MAX_SIZE];
     BoyiaValue m_boyiaView;
+    BoyiaRuntime* m_runtime;
 };
 }
 

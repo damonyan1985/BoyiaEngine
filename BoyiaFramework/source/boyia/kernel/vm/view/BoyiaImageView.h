@@ -5,7 +5,7 @@
 namespace boyia {
 class BoyiaImageView : public BoyiaView {
 public:
-    BoyiaImageView(yanbo::HtmlView* item);
+    BoyiaImageView(BoyiaRuntime* runtime, yanbo::HtmlView* item);
     LVoid setImageUrl(const String& url);
     LVoid loadImage(const String& url);
 };

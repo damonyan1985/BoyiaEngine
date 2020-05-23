@@ -4,8 +4,8 @@ namespace yanbo {
 Application::Application(AppInfo* info)
     : m_info(info)
 {
-    m_runtime = new boyia::BoyiaRuntime();
     m_view = new UIView();
+    m_runtime = new boyia::BoyiaRuntime(this);
 }
 
 LVoid Application::init(const String& entryPage)

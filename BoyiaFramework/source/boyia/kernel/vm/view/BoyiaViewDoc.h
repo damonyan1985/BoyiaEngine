@@ -17,7 +17,7 @@
 namespace boyia {
 class BoyiaViewDoc : public BoyiaView {
 public:
-    BoyiaViewDoc();
+    BoyiaViewDoc(BoyiaRuntime* runtime);
     virtual ~BoyiaViewDoc();
 
     LVoid loadHTML(const String& url);

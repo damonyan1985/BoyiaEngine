@@ -8,15 +8,16 @@
 extern LVoid GCAppendRef(LVoid* address, LUint8 type);
 // C++对象垃圾回收基类
 namespace boyia {
-BoyiaBase::BoyiaBase()
+BoyiaBase::BoyiaBase(BoyiaRuntime* runtime)
     : m_type(0)
+    , m_runtime(runtime)
 {
     BoyiaValue value;
     value.mValueType = BY_NAVCLASS;
     value.mValue.mIntVal = (LIntPtr)this;
     // 放入临时变量中进行存储
     // 则不会再GC线程中被误清除
-    SetNativeResult(&value);
+    SetNativeResult(&value, m_runtime->vm());
     GCAppendRef(this, BY_NAVCLASS);
 }
 
@@ -24,9 +25,9 @@ BoyiaBase::~BoyiaBase()
 {
 }
 
-LVoid* BoyiaBase::vm() const
+BoyiaRuntime* BoyiaBase::runtime() const
 {
-    return yanbo::AppManager::instance()->currentApp()->runtime()->vm();
+    return m_runtime;
 }
 
 LVoid BoyiaBase::onPressDown(LVoid* view)
@@ -36,9 +37,9 @@ LVoid BoyiaBase::onPressDown(LVoid* view)
         // 处理touchdown
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
         SaveLocalSize();
-        LocalPush(val, vm());
+        LocalPush(val, m_runtime->vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj);
+        NativeCall(obj, m_runtime->vm());
     }
 }
 LVoid BoyiaBase::onPressMove(LVoid* view)
@@ -48,9 +49,9 @@ LVoid BoyiaBase::onPressMove(LVoid* view)
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_MOVE >> 1];
 
         SaveLocalSize();
-        LocalPush(val, vm());
+        LocalPush(val, m_runtime->vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj);
+        NativeCall(obj, m_runtime->vm());
     }
 }
 
@@ -61,9 +62,9 @@ LVoid BoyiaBase::onPressUp(LVoid* view)
         // 处理touchup
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
         SaveLocalSize();
-        LocalPush(val, vm());
+        LocalPush(val, m_runtime->vm());
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj);
+        NativeCall(obj, m_runtime->vm());
     }
 }
 

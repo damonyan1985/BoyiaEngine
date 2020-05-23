@@ -24,20 +24,20 @@ typedef struct {
     LInt mSize;
 } NativeFunMap;
 
-LVoid CompileCode(char* code);
-LVoid CallFunction(char* funcCall, LVoid* ret);
+LVoid CompileCode(LInt8* code);
+LVoid CallFunction(LInt8* funcCall, LVoid* ret);
 LInt GetLocalSize();
 LVoid* GetLocalValue(LInt idx);
-LVoid SetNativeResult(LVoid* result);
+LVoid SetNativeResult(LVoid* result, LVoid* vm);
 LVoid GetLocalStack(LInt* stack, LInt* size);
-LVoid* GetNativeResult();
+LVoid* GetNativeResult(LVoid* vm);
 LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm);
 LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 LVoid GetGlobalTable(LInt* table, LInt* size);
-LVoid NativeCall(BoyiaValue* obj);
+LVoid NativeCall(BoyiaValue* obj, LVoid* vm);
 LVoid LocalPush(BoyiaValue* value, LVoid* vm);
 LVoid SaveLocalSize();
-LVoid* InitVM();
+LVoid* InitVM(LVoid* creator);
 LVoid DestroyVM(LVoid* vm);
 LInt CreateObject(LVoid* vm);
 LVoid InitNativeFun(NativeFunction* funs);
@@ -46,5 +46,7 @@ LVoid CacheVMCode();
 LVoid LoadStringTable(BoyiaStr* stringTable, LInt size);
 LVoid LoadInstructions(LVoid* buffer, LInt size);
 LVoid LoadEntryTable(LVoid* buffer, LInt size);
+LVoid* GetGabargeCollect(LVoid* vm);
+LVoid* GetVMCreator(LVoid* vm);
 
 #endif

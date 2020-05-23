@@ -5,8 +5,8 @@
 namespace boyia {
 class BoyiaViewGroup : public BoyiaView {
 public:
-    BoyiaViewGroup(yanbo::HtmlView* item);
-    BoyiaViewGroup(const String& id, LBool selectable);
+    BoyiaViewGroup(BoyiaRuntime* runtime, yanbo::HtmlView* item);
+    BoyiaViewGroup(BoyiaRuntime* runtime, const String& id, LBool selectable);
     LVoid setText(const String& text);
     LVoid appendView(BoyiaView* view);
 };
