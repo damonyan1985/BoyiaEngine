@@ -41,7 +41,7 @@ LInt getFileContent(LVoid* vm)
     delete[] fileName;
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
-    LInt8* buf = NEW_ARRAY(LInt8, (len + 1));
+    LInt8* buf = NEW_ARRAY(LInt8, (len + 1), vm);
     GCAppendRef(buf, BY_STRING);
     LMemset(buf, 0, len + 1);
     rewind(file);
@@ -69,10 +69,10 @@ LInt addElementToVector(LVoid* vm)
     if (fun->mParamSize >= fun->mParamCount) {
         BoyiaValue* value = fun->mParams;
         LInt count = fun->mParamCount;
-        fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10));
+        fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10), vm);
         fun->mParamCount = count + 10;
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
-		VM_DELETE(value);
+		VM_DELETE(value, vm);
     }
     BOYIA_LOG("addElementToVector %d", 2);
     //fun->mParams[fun->mParamSize++] = *element;
@@ -201,11 +201,11 @@ static LUint getJsonObjHash(cJSON* json)
     return GenIdentByStr(json->string, LStrlen(_CS(json->string)));
 }
 
-static BoyiaFunction* getObjFun(cJSON* json)
+static BoyiaFunction* getObjFun(cJSON* json, LVoid* vm)
 {
-    BoyiaFunction* fun = NEW(BoyiaFunction);
+    BoyiaFunction* fun = NEW(BoyiaFunction, vm);
     LInt size = cJSON_GetArraySize(json);
-    fun->mParams = NEW_ARRAY(BoyiaValue, size);
+    fun->mParams = NEW_ARRAY(BoyiaValue, size, vm);
     fun->mParamSize = size;
     return fun;
 }
@@ -221,7 +221,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         cJSON* child = json->child;
         LInt index = 0;
 
-        BoyiaFunction* fun = getObjFun(json);
+        BoyiaFunction* fun = getObjFun(json, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS);
@@ -252,7 +252,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
     } else if (json->type == cJSON_String) {
         value->mValueType = BY_STRING;
         LInt len = LStrlen(_CS(json->valuestring));
-        LInt8* ptr = NEW_ARRAY(LInt8, len);
+        LInt8* ptr = NEW_ARRAY(LInt8, len, vm);
         LMemcpy(ptr, json->valuestring, len);
         value->mValue.mStrVal.mPtr = ptr;
         value->mValue.mStrVal.mLen = len;
