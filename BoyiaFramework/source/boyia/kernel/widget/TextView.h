@@ -27,7 +27,6 @@ public:
     LInt calcTextLine(const String& text, LInt maxWidth);
     LBool isMultiLine();
     HtmlView* getLinkItem();
-    LBool canDrawText() const;
 
 private:
     class Line {
@@ -46,8 +45,6 @@ protected:
     KVector<Line*>* m_textLines;
     LFont* m_newFont;
     LInt m_maxWidth;
-
-    LBool m_canDrawText;
 };
 }
 #endif

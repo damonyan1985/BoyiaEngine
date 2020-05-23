@@ -33,7 +33,6 @@ public:
 GraphicsContextGL::GraphicsContextGL()
     : m_item(kBoyiaNull)
     , m_clipRect(kBoyiaNull)
-    , m_texInvalid(LTrue)
 {
 }
 
@@ -184,24 +183,16 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
 LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAlign align)
 {
-    yanbo::TextView* view = static_cast<yanbo::TextView*>(m_item);
-    BoyiaPtr<ImageAndroid> image;
-    // 如果需要绘制文本, 如果当前应用从后台进入，则需要强制重绘
-    if (view->canDrawText() || m_texInvalid) {
-        image = new ImageAndroid();
-        image->drawText(text, rect, m_font, m_penColor);
-        image->unlockPixels();
-        image->setRect(rect);
-        image->setItem((yanbo::HtmlView*)m_item);
-    }
-    
-    yanbo::Texture* tex = yanbo::TextureCache::getInst()->find(view);
+    BoyiaPtr<ImageAndroid> image = new ImageAndroid();
+    image->drawText(text, rect, m_font, m_penColor);
+    image->unlockPixels();
+    image->setRect(rect);
+    image->setItem((yanbo::HtmlView*)m_item);
+
+    yanbo::Texture* tex = yanbo::TextureCache::getInst()->find((yanbo::HtmlView*)m_item);
     if (tex) {
-        if (view->canDrawText()) {
-            // 如果拥有texture，只需要更新texture就可以了
-            yanbo::TextureCache::getInst()->updateTexture(tex, image.get());
-        }
-        
+        yanbo::TextureCache::getInst()->updateTexture(tex, image.get());
+
         ItemPainter* painter = currentPainter();
         BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
         paint->setColor(m_brushColor);
@@ -243,7 +234,6 @@ LVoid GraphicsContextGL::setFont(const LFont& font)
 
 LVoid GraphicsContextGL::reset()
 {
-    m_texInvalid = LTrue;
     yanbo::TextureCache::getInst()->clear();
     //GLContext::initGLContext(GLContext::EWindow);
     m_context.initGL(GLContext::EWindow);
@@ -306,8 +296,6 @@ LVoid GraphicsContextGL::submit()
     yanbo::GLPainter::unbindVBO();
 
     m_context.postBuffer();
-
-    m_texInvalid = LFalse;
 }
 
 LGraphicsContext* LGraphicsContext::create()
