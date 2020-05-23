@@ -16,7 +16,7 @@
 
 typedef struct {
     LUintPtr mNameKey;
-    LInt (*mAddr)();
+    LInt (*mAddr)(LVoid* vm);
 } NativeFunction;
 
 typedef struct {
@@ -31,15 +31,15 @@ LVoid* GetLocalValue(LInt idx);
 LVoid SetNativeResult(LVoid* result);
 LVoid GetLocalStack(LInt* stack, LInt* size);
 LVoid* GetNativeResult();
-LVoid* CopyObject(LUintPtr hashKey, LInt size);
+LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm);
 LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 LVoid GetGlobalTable(LInt* table, LInt* size);
 LVoid NativeCall(BoyiaValue* obj);
-LVoid LocalPush(BoyiaValue* value);
+LVoid LocalPush(BoyiaValue* value, LVoid* vm);
 LVoid SaveLocalSize();
 LVoid* InitVM();
 LVoid DestroyVM(LVoid* vm);
-LInt CreateObject();
+LInt CreateObject(LVoid* vm);
 LVoid InitNativeFun(NativeFunction* funs);
 LVoid ChangeVM(LVoid* vm);
 LVoid CacheVMCode();

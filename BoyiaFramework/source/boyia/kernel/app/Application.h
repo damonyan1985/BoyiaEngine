@@ -2,7 +2,7 @@
 #define Application_h
 
 #include "AppInfo.h"
-#include "AppVM.h"
+#include "BoyiaRuntime.h"
 #include "UIView.h"
 
 namespace yanbo {
@@ -12,12 +12,12 @@ public:
     ~Application();
 
     UIView* view() const;
-    AppVM* vm() const;
+    boyia::BoyiaRuntime* runtime() const;
     LVoid init(const String& entryPage);
 
 private:
     UIView* m_view;
-    AppVM* m_vm;
+    boyia::BoyiaRuntime* m_runtime;
     AppInfo* m_info;
 };
 }

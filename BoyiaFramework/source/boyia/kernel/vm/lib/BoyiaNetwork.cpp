@@ -5,7 +5,8 @@
 #include "UIView.h"
 
 namespace boyia {
-BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj)
+BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
+    : m_vm(vm)
 {
     ValueCopy(&m_callback, callback);
     ValueCopy(&m_obj, obj);
@@ -59,8 +60,8 @@ LVoid BoyiaNetwork::run()
     value.mValue.mStrVal.mLen = m_data->GetLength();
     BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
     SaveLocalSize();
-    LocalPush(&m_callback);
-    LocalPush(&value);
+    LocalPush(&m_callback, m_vm);
+    LocalPush(&value, m_vm);
     BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_obj;
     NativeCall(obj);
 }

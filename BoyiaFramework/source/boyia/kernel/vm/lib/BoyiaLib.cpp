@@ -28,7 +28,7 @@ char* convertMStr2Str(BoyiaStr* str)
     return newStr;
 }
 
-LInt getFileContent()
+LInt getFileContent(LVoid* vm)
 {
     // 0 索引第一个参数
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
@@ -59,7 +59,7 @@ LInt getFileContent()
     return 1;
 }
 
-LInt addElementToVector()
+LInt addElementToVector(LVoid* vm)
 {
     BOYIA_LOG("addElementToVector %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
@@ -81,7 +81,7 @@ LInt addElementToVector()
     return 1;
 }
 
-LInt getElementFromVector()
+LInt getElementFromVector(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* index = (BoyiaValue*)GetLocalValue(1);
@@ -116,7 +116,7 @@ static LBool compareValue(BoyiaValue* src, BoyiaValue* dest)
     return LFalse;
 }
 
-LInt removeElementWidthIndex()
+LInt removeElementWidthIndex(LVoid* vm)
 {
     BoyiaValue* array = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* idxVal = (BoyiaValue*)GetLocalValue(1);
@@ -131,7 +131,7 @@ LInt removeElementWidthIndex()
 	return 1;
 }
 
-LInt removeElementFromVector()
+LInt removeElementFromVector(LVoid* vm)
 {
     BoyiaValue* array = (BoyiaValue*)GetLocalValue(0);
     //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
@@ -157,7 +157,7 @@ LInt removeElementFromVector()
     return 1;
 }
 
-LInt getVectorSize()
+LInt getVectorSize(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
@@ -172,7 +172,7 @@ LInt getVectorSize()
     return 1;
 }
 
-LInt clearVector()
+LInt clearVector(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
@@ -182,7 +182,7 @@ LInt clearVector()
     return 1;
 }
 
-LInt logPrint()
+LInt logPrint(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     if (val->mValueType == BY_INT) {
@@ -210,7 +210,7 @@ static BoyiaFunction* getObjFun(cJSON* json)
     return fun;
 }
 
-LVoid jsonParse(cJSON* json, BoyiaValue* value)
+LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
 {
     if (json->valuestring) {
         value->mNameKey = getJsonObjHash(json);
@@ -228,14 +228,14 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value)
 
         while (child) {
             fun->mParams[index].mNameKey = getJsonObjHash(child);
-            jsonParse(child, fun->mParams + index++);
+            jsonParse(child, fun->mParams + index++, vm);
             child = child->next;
         }
     } else if (json->type == cJSON_Array) {
         value->mValueType = BY_CLASS;
 
         LInt size = cJSON_GetArraySize(json);
-        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size);
+        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS);
@@ -243,7 +243,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value)
         cJSON* child = json->child;
         while (child) {
             fun->mParams[fun->mParamSize].mNameKey = 0;
-            jsonParse(child, fun->mParams + fun->mParamSize++);
+            jsonParse(child, fun->mParams + fun->mParamSize++, vm);
             child = child->next;
         }
     } else if (json->type == cJSON_Number || json->type == cJSON_True || json->type == cJSON_False) {
@@ -260,19 +260,19 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value)
     }
 }
 
-LInt jsonParseWithCJSON()
+LInt jsonParseWithCJSON(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     char* content = convertMStr2Str(&val->mValue.mStrVal);
     cJSON* json = cJSON_Parse(content);
     delete[] content;
     BoyiaValue* value = (BoyiaValue*)GetNativeResult();
-    jsonParse(json, value);
+    jsonParse(json, value, vm);
     cJSON_Delete(json);
     return 1;
 }
 
-LInt createJSDocument()
+LInt createJSDocument(LVoid* vm)
 {
     KFORMATLOG("BoyiaViewDoc::loadHTML createBoyiaViewDoc %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
@@ -287,7 +287,7 @@ LInt createJSDocument()
     return 1;
 }
 
-LInt appendView()
+LInt appendView(LVoid* vm)
 {
     BoyiaValue* parent = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* child = (BoyiaValue*)GetLocalValue(1);
@@ -314,14 +314,14 @@ BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
     return kBoyiaNull;
 }
 
-LInt getRootDocument()
+LInt getRootDocument(LVoid* vm)
 {
     boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc();
     doc->setDocument(yanbo::UIView::getInstance()->getDocument());
     return 1;
 }
 
-LInt setDocument()
+LInt setDocument(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaViewDoc* destDoc = (boyia::BoyiaViewDoc*)val->mValue.mIntVal;
@@ -333,12 +333,12 @@ LInt setDocument()
     return 1;
 }
 
-LInt removeDocument()
+LInt removeDocument(LVoid* vm)
 {
     return 1;
 }
 
-LInt setViewXpos()
+LInt setViewXpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* posX = (BoyiaValue*)GetLocalValue(1);
@@ -349,7 +349,7 @@ LInt setViewXpos()
     return 1;
 }
 
-LInt setViewYpos()
+LInt setViewYpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* posY = (BoyiaValue*)GetLocalValue(1);
@@ -360,7 +360,7 @@ LInt setViewYpos()
     return 1;
 }
 
-LInt getViewXpos()
+LInt getViewXpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaView* jsDoc = (boyia::BoyiaView*)doc->mValue.mIntVal;
@@ -372,7 +372,7 @@ LInt getViewXpos()
     return 1;
 }
 
-LInt getViewYpos()
+LInt getViewYpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
@@ -384,7 +384,7 @@ LInt getViewYpos()
     return 1;
 }
 
-LInt getViewWidth()
+LInt getViewWidth(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
@@ -396,7 +396,7 @@ LInt getViewWidth()
     return 1;
 }
 
-LInt getViewHeight()
+LInt getViewHeight(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
@@ -408,7 +408,7 @@ LInt getViewHeight()
     return 1;
 }
 
-LInt setViewStyle()
+LInt setViewStyle(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* style = (BoyiaValue*)GetLocalValue(1);
@@ -422,7 +422,7 @@ LInt setViewStyle()
     return 1;
 }
 
-LInt drawView()
+LInt drawView(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
@@ -431,7 +431,7 @@ LInt drawView()
     return 1;
 }
 
-LInt startScale()
+LInt startScale(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* scale = (BoyiaValue*)GetLocalValue(1);
@@ -441,7 +441,7 @@ LInt startScale()
     return 1;
 }
 
-LInt startOpacity()
+LInt startOpacity(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* opacity = (BoyiaValue*)GetLocalValue(1);
@@ -451,7 +451,7 @@ LInt startOpacity()
     return 1;
 }
 
-LInt startTranslate()
+LInt startTranslate(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* posx = (BoyiaValue*)GetLocalValue(1);
@@ -462,12 +462,12 @@ LInt startTranslate()
     return 1;
 }
 
-LInt loadDataFromNative()
+LInt loadDataFromNative(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1);
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2);
-    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(callback, obj);
+    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(callback, obj, vm);
     char* url = convertMStr2Str(&val->mValue.mStrVal);
     String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
     network->load(strUrl);
@@ -475,15 +475,7 @@ LInt loadDataFromNative()
     return 1;
 }
 
-LInt setJSTouchCallback()
-{
-    BoyiaValue* val = (BoyiaValue*)GetLocalValue(0);
-    yanbo::UIView::getInstance()->jsHandler()->setTouchCallback(val);
-
-    return 1;
-}
-
-LInt callStaticMethod()
+LInt callStaticMethod(LVoid* vm)
 {
 #if ENABLE(BOYIA_ANDROID)
     BoyiaValue* clzz = (BoyiaValue*)GetLocalValue(0);
@@ -520,7 +512,7 @@ LInt callStaticMethod()
     return 1;
 }
 
-LInt getHtmlItem()
+LInt getHtmlItem(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* idArg = (BoyiaValue*)GetLocalValue(1);
@@ -534,7 +526,7 @@ LInt getHtmlItem()
     return 1;
 }
 
-LInt loadImageByUrl()
+LInt loadImageByUrl(LVoid* vm)
 {
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1);
@@ -547,7 +539,7 @@ LInt loadImageByUrl()
     return 1;
 }
 
-LInt setViewGroupText()
+LInt setViewGroupText(LVoid* vm)
 {
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1);
@@ -561,7 +553,7 @@ LInt setViewGroupText()
     return 1;
 }
 
-LInt setInputViewText()
+LInt setInputViewText(LVoid* vm)
 {
     BoyiaValue* input = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1);
@@ -574,7 +566,7 @@ LInt setInputViewText()
     return 1;
 }
 
-LInt addEventListener()
+LInt addEventListener(LVoid* vm)
 {
     BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* type = (BoyiaValue*)GetLocalValue(1);
@@ -586,7 +578,7 @@ LInt addEventListener()
     return 1;
 }
 
-LInt setToNativeView()
+LInt setToNativeView(LVoid* vm)
 {
     BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* jsVal = (BoyiaValue*)GetLocalValue(1);
@@ -597,7 +589,7 @@ LInt setToNativeView()
     return 1;
 }
 
-LInt createViewGroup()
+LInt createViewGroup(LVoid* vm)
 {
     BoyiaValue* idVal = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* selectVal = (BoyiaValue*)GetLocalValue(1);
@@ -609,7 +601,7 @@ LInt createViewGroup()
     return 1;
 }
 
-LInt instanceOfClass()
+LInt instanceOfClass(LVoid* vm)
 {
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* cls = (BoyiaValue*)GetLocalValue(1);
@@ -637,7 +629,7 @@ LInt instanceOfClass()
     return 1;
 }
 
-LInt setImageUrl()
+LInt setImageUrl(LVoid* vm)
 {
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1);
@@ -651,7 +643,7 @@ LInt setImageUrl()
     return 1;
 }
 
-LInt viewCommit()
+LInt viewCommit(LVoid* vm)
 {
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
     boyia::BoyiaView* view = (boyia::BoyiaView*)itemArg->mValue.mIntVal;
@@ -660,7 +652,7 @@ LInt viewCommit()
     return 1;
 }
 
-LInt setViewVisible()
+LInt setViewVisible(LVoid* vm)
 {
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0);
     BoyiaValue* visibleArg = (BoyiaValue*)GetLocalValue(1);

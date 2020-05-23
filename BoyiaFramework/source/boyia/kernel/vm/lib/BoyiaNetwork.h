@@ -10,7 +10,7 @@ namespace boyia {
 // BoyiaNetwork会根据回调的情况，自动释放自己
 class BoyiaNetwork : public yanbo::NetworkClient, public yanbo::UIEvent {
 public:
-    BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj);
+    BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm);
     virtual ~BoyiaNetwork();
 
 public:
@@ -30,6 +30,7 @@ private:
     BoyiaValue m_obj;
     yanbo::StringBuilder m_builder;
     OwnerPtr<String> m_data;
+    LVoid* m_vm;
 };
 }
 #endif

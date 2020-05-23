@@ -12,7 +12,7 @@
 
 #define MAX_NATIVE_FUN_SIZE 40
 static NativeFunction* sFunTable = kBoyiaNull;
-typedef LInt(*NativePtr)();
+typedef LInt(*NativePtr)(LVoid* vm);
 static LVoid AppendNative(LUintPtr id, NativePtr ptr)
 {
     static LInt index = 0;
@@ -48,7 +48,6 @@ static LVoid InitLib()
     AppendNative(GenIdentByStr("BY_GetViewHeight", 16), getViewHeight);
     AppendNative(GenIdentByStr("BY_SetViewStyle", 15), setViewStyle);
     AppendNative(GenIdentByStr("BY_LoadData", 11), loadDataFromNative);
-    AppendNative(GenIdentByStr("BY_SetTouchCallback", 19), setJSTouchCallback);
     AppendNative(GenIdentByStr("BY_StartScale", 13), startScale);
     AppendNative(GenIdentByStr("BY_StartOpacity", 15), startOpacity);
     AppendNative(GenIdentByStr("BY_CallStaticMethod", 19), callStaticMethod);

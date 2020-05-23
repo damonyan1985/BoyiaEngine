@@ -219,9 +219,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.h">
       <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.h">
-      <Filter>boyia\kernel\vm\view</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.h">
       <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
@@ -247,9 +244,6 @@
       <Filter>boyia\kernel\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.h">
-      <Filter>boyia\kernel\app</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.h">
       <Filter>boyia\kernel\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.h">
@@ -459,6 +453,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h">
       <Filter>boyia\kernel\platform\ws</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -578,9 +575,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.cpp">
       <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaEventHandler.cpp">
-      <Filter>boyia\kernel\vm\view</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.cpp">
       <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
@@ -606,9 +600,6 @@
       <Filter>boyia\kernel\app</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.cpp">
-      <Filter>boyia\kernel\app</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppVM.cpp">
       <Filter>boyia\kernel\app</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.cpp">
@@ -790,6 +781,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp">
       <Filter>boyia\kernel\platform\ws</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

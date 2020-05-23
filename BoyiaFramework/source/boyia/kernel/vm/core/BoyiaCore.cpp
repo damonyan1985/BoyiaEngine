@@ -525,7 +525,7 @@ static BoyiaVM* GetVM()
 
 static Instruction* AllocateInstruction(BoyiaVM* vm)
 {
-    BOYIA_LOG("AllocateInstruction size=%d", gBoyiaVM->mVMCode->mSize);
+    BOYIA_LOG("AllocateInstruction size=%d", vm->mVMCode->mSize);
     return vm->mVMCode->mCode + vm->mVMCode->mSize++;
 }
 
@@ -683,8 +683,9 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count)
     return newFunc;
 }
 
-LInt CreateObject()
+LInt CreateObject(LVoid* vm)
 {
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
     BOYIA_LOG("HandleCallInternal CreateObject %d", 1);
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
     if (!value || value->mValueType != BY_CLASS) {
@@ -695,7 +696,7 @@ LInt CreateObject()
     // 获取CLASS的内部实现
     BOYIA_LOG("HandleCallInternal CreateObject %d", 3);
     // 指针引用R0
-    BoyiaValue* result = &gBoyiaVM->mCpu->mReg0;
+    BoyiaValue* result = &vmPtr->mCpu->mReg0;
     // 设置result的值
     ValueCopy(result, value);
     // 拷贝出新的内部实现
@@ -782,58 +783,59 @@ static LVoid PropStatement(CompileState* cs)
     }
 }
 
-LVoid LocalPush(BoyiaValue* value)
+LVoid LocalPush(BoyiaValue* value, LVoid* vm)
 {
-    if (gBoyiaVM->mEState->mLValSize > NUM_LOCAL_VARS) {
-        SntxError(TOO_MANY_LVARS, gBoyiaVM->mEState->mPC->mCodeLine);
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    if (vmPtr->mEState->mLValSize > NUM_LOCAL_VARS) {
+        SntxError(TOO_MANY_LVARS, vmPtr->mEState->mPC->mCodeLine);
     }
 
-    ValueCopy(gBoyiaVM->mLocals + (gBoyiaVM->mEState->mLValSize++), value);
+    ValueCopy(vmPtr->mLocals + (vmPtr->mEState->mLValSize++), value);
 }
 
-static BoyiaValue* FindGlobal(LUintPtr key)
+static BoyiaValue* FindGlobal(LUintPtr key, BoyiaVM* vm)
 {
     for (LInt idx = 0; idx < gBoyiaVM->mEState->mGValSize; ++idx) {
-        if (gBoyiaVM->mGlobals[idx].mNameKey == key)
-            return &gBoyiaVM->mGlobals[idx];
+        if (vm->mGlobals[idx].mNameKey == key)
+            return &vm->mGlobals[idx];
     }
 
     return kBoyiaNull;
 }
 
 /* Find the value of a variable. */
-static BoyiaValue* GetVal(LUintPtr key)
+static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
 {
     /* First, see if has obj scope */
     if (key == gThis) {
-        return gBoyiaVM->mEState->mClass;
+        return vm->mEState->mClass;
     }
 
     if (key == gSuper) {
-        return gBoyiaVM->mEState->mClass ? (BoyiaValue*)gBoyiaVM->mEState->mClass->mValue.mObj.mSuper : kBoyiaNull;
+        return vm->mEState->mClass ? (BoyiaValue*)vm->mEState->mClass->mValue.mObj.mSuper : kBoyiaNull;
     }
 
     /* second, see if it's a local variable */
-    LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
-    LInt idx = gBoyiaVM->mEState->mLValSize - 1;
+    LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
+    LInt idx = vm->mEState->mLValSize - 1;
     // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
     for (; idx > start; --idx) {
-        if (gBoyiaVM->mLocals[idx].mNameKey == key)
-            return &gBoyiaVM->mLocals[idx];
+        if (vm->mLocals[idx].mNameKey == key)
+            return &vm->mLocals[idx];
     }
 
     /* otherwise, try global vars */
-    BoyiaValue* val = FindGlobal(key);
+    BoyiaValue* val = FindGlobal(key, vm);
     if (val) {
         return val;
     }
 
-    return FindObjProp(gBoyiaVM->mEState->mClass, key, kBoyiaNull);
+    return FindObjProp(vm->mEState->mClass, key, kBoyiaNull);
 }
 
-static BoyiaValue* FindVal(LUintPtr key)
+static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm)
 {
-    BoyiaValue* value = GetVal(key);
+    BoyiaValue* value = GetVal(key, vm);
     if (!value) {
         //SntxError(NOT_VAR, gBoyiaVM->mEState->mPC->mCodeLine);
         RuntimeError(key, NOT_VAR);
@@ -842,7 +844,7 @@ static BoyiaValue* FindVal(LUintPtr key)
     return value;
 }
 
-static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type)
+static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm)
 {
     BoyiaValue* val = kBoyiaNull;
     OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
@@ -854,7 +856,7 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type)
         val = &gBoyiaVM->mCpu->mReg1;
         break;
     case OP_VAR:
-        val = FindVal((LUintPtr)op->mValue);
+        val = FindVal((LUintPtr)op->mValue, vm);
         break;
     }
 
@@ -867,7 +869,7 @@ static LInt HandleCallInternal(LVoid* ins, BoyiaVM* vm)
 
     LInt idx = inst->mOPLeft.mValue;
     BOYIA_LOG("HandleCallInternal Exec idx=%d", idx);
-    return (*gNativeFunTable[idx].mAddr)();
+    return (*gNativeFunTable[idx].mAddr)(vm);
 }
 
 static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm)
@@ -896,9 +898,9 @@ static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
 static LInt HandlePushArg(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* value = GetOpValue(inst, OpLeft);
+    BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
     if (value) {
-        LocalPush(value);
+        LocalPush(value, vm);
         return 1;
     }
 
@@ -1341,8 +1343,8 @@ static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm)
 static LInt HandleExtend(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* classVal = FindGlobal((LUintPtr)inst->mOPLeft.mValue);
-    BoyiaValue* extendVal = FindGlobal((LUintPtr)inst->mOPRight.mValue);
+    BoyiaValue* classVal = FindGlobal((LUintPtr)inst->mOPLeft.mValue, vm);
+    BoyiaValue* extendVal = FindGlobal((LUintPtr)inst->mOPRight.mValue, vm);
 
     // set super pointer
     classVal->mValue.mObj.mSuper = (LIntPtr)extendVal;
@@ -1522,7 +1524,7 @@ static LInt HandleDeclLocal(LVoid* ins, BoyiaVM* vm)
     BoyiaValue local;
     local.mValueType = inst->mOPLeft.mValue;
     local.mNameKey = (LUintPtr)inst->mOPRight.mValue;
-    LocalPush(&local); // 塞入本地符号表
+    LocalPush(&local, vm); // 塞入本地符号表
     return 1;
 }
 
@@ -1640,7 +1642,7 @@ static LVoid PushArgStatement(CompileState* cs)
 static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     if (!left)
         return 0;
 
@@ -1654,7 +1656,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
         left->mValue.mIntVal = inst->mOPRight.mValue;
     } break;
     case OP_VAR: {
-        BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue);
+        BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue, vm);
         if (!val) {
             return 0;
         }
@@ -1808,8 +1810,8 @@ static LVoid DoStatement(CompileState* cs)
 static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
         return 0;
     }
@@ -1833,8 +1835,8 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
 static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
         return 0;
     }
@@ -1850,8 +1852,8 @@ static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
 static LInt HandleMul(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
         return 0;
@@ -1870,8 +1872,8 @@ static LInt HandleMul(LVoid* ins, BoyiaVM* vm)
 static LInt HandleDiv(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
         return 0;
@@ -1890,8 +1892,8 @@ static LInt HandleDiv(LVoid* ins, BoyiaVM* vm)
 static LInt HandleMod(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
         return 0;
@@ -1910,8 +1912,8 @@ static LInt HandleMod(LVoid* ins, BoyiaVM* vm)
 static LInt HandleRelational(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
         return 0;
@@ -1953,8 +1955,8 @@ static LInt HandleRelational(LVoid* ins, BoyiaVM* vm)
 static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* right = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
         return 0;
@@ -2002,8 +2004,8 @@ static LInt HandlePush(LVoid* ins, BoyiaVM* vm)
 static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaValue* left = GetOpValue(inst, OpLeft);
-    BoyiaValue* result = GetOpValue(inst, OpRight);
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+    BoyiaValue* result = GetOpValue(inst, OpRight, vm);
     if (!left || !result) {
         return 0;
     }
@@ -2094,7 +2096,7 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
     // r0 -> lVal
-    BoyiaValue* lVal = GetOpValue(inst, OpLeft);
+    BoyiaValue* lVal = GetOpValue(inst, OpLeft, vm);
     if (!lVal) {
         return 0;
     }
@@ -2431,9 +2433,9 @@ LVoid SetNativeResult(LVoid* result)
     ValueCopy(&gBoyiaVM->mCpu->mReg0, value);
 }
 
-LVoid* CopyObject(LUintPtr hashKey, LInt size)
+LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm)
 {
-    return CopyFunction(FindGlobal(hashKey), size);
+    return CopyFunction(FindGlobal(hashKey, (BoyiaVM*)vm), size);
 }
 
 LVoid* GetNativeResult()
