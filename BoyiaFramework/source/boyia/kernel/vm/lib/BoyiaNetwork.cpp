@@ -18,7 +18,7 @@ BoyiaNetwork::~BoyiaNetwork()
 
 LVoid BoyiaNetwork::load(const String& url)
 {
-    yanbo::UIView::getInstance()->network()->loadUrl(url, this, LFalse);
+    yanbo::AppManager::instance()->network()->loadUrl(url, this, LFalse);
 }
 
 LVoid BoyiaNetwork::onDataReceived(const LByte* data, LInt size)

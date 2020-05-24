@@ -479,9 +479,9 @@ LInt loadDataFromNative(LVoid* vm)
 LInt callStaticMethod(LVoid* vm)
 {
 #if ENABLE(BOYIA_ANDROID)
-    BoyiaValue* clzz = (BoyiaValue*)GetLocalValue(0);
-    BoyiaValue* method = (BoyiaValue*)GetLocalValue(1);
-    BoyiaValue* sign = (BoyiaValue*)GetLocalValue(2);
+    BoyiaValue* clzz = (BoyiaValue*)GetLocalValue(0, vm);
+    BoyiaValue* method = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaValue* sign = (BoyiaValue*)GetLocalValue(2, vm);
 
     char* strClzz = convertMStr2Str(&clzz->mValue.mStrVal);
     char* strMethod = convertMStr2Str(&method->mValue.mStrVal);
@@ -493,7 +493,7 @@ LInt callStaticMethod(LVoid* vm)
         strSign[method->mValue.mStrVal.mLen - 1] = 0;
     }
 
-    LInt size = GetLocalSize() - 3;
+    LInt size = GetLocalSize(vm) - 3;
     BoyiaValue result;
     yanbo::JNIUtil::callStaticMethod(
         strClzz,
