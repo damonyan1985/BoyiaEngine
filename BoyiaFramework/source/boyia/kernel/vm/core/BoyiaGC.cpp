@@ -122,13 +122,13 @@ static LBool CheckValueTable(BoyiaRef* ref, BoyiaValue* table, LInt size)
 static LVoid GCheckNoneRef(BoyiaRef* ref, BoyiaGC* gc)
 {
     LInt stackAddr, size;
-    GetLocalStack(&stackAddr, &size);
+    GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
     BoyiaValue* stack = (BoyiaValue*)stackAddr;
     if (CheckValueTable(ref, stack, size)) {
         return;
     }
 
-    GetGlobalTable(&stackAddr, &size);
+    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
     stack = (BoyiaValue*)stackAddr;
     if (CheckValueTable(ref, stack, size)) {
         return;

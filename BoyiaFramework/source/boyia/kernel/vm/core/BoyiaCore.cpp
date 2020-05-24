@@ -19,7 +19,7 @@
 #endif
 
 #define kInvalidInstruction (-1)
-#define RuntimeError(key, error) PrintErrorKey(key, error, gBoyiaVM->mEState->mPC->mCodeLine)
+#define RuntimeError(key, error, vm) PrintErrorKey(key, error, vm->mEState->mPC->mCodeLine)
 
 /* Type Define Begin */
 #define NUM_FUNC ((LInt)1024)
@@ -721,7 +721,7 @@ LInt CreateObject(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     BOYIA_LOG("HandleCallInternal CreateObject %d", 1);
-    BoyiaValue* value = (BoyiaValue*)GetLocalValue(0);
+    BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
     if (!value || value->mValueType != BY_CLASS) {
         return 0;
     }
@@ -871,7 +871,7 @@ static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm)
 {
     BoyiaValue* value = GetVal(key, vm);
     if (!value) {
-        RuntimeError(key, NOT_VAR);
+        RuntimeError(key, NOT_VAR, vm);
     }
 
     return value;
@@ -1334,7 +1334,7 @@ static LInt HandleCreateExecutor(LVoid* ins, BoyiaVM* vm)
 
 static LVoid BodyStatement(CompileState* cs, LBool isFunction)
 {
-    CommandTable* cmds = GetVM()->mEState->mContext;
+    CommandTable* cmds = cs->mVm->mEState->mContext;
 
     CommandTable tmpTable;
     tmpTable.mBegin = kBoyiaNull;
@@ -1346,19 +1346,19 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction)
         //CommandTable* funCmds = CreateExecutor();
         //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
         funInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdExecCreate, HandleCreateExecutor, cs);
-        GetVM()->mEState->mContext = &tmpTable;
+        cs->mVm->mEState->mContext = &tmpTable;
     }
 
     BlockStatement(cs);
     // 拷贝tmpTable中的offset给instruction
     if (funInst) {
         funInst->mOPLeft.mType = OP_CONST_NUMBER;
-        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - GetVM()->mVMCode->mCode);//(LIntPtr)es->mContext->mBegin;
+        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - cs->mVm->mVMCode->mCode);//(LIntPtr)es->mContext->mBegin;
         
         funInst->mOPRight.mType = OP_CONST_NUMBER;
-        funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - GetVM()->mVMCode->mCode);
+        funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - cs->mVm->mVMCode->mCode);
     }
-    GetVM()->mEState->mContext = cmds;
+    cs->mVm->mEState->mContext = cmds;
 }
 
 static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm)
@@ -2248,9 +2248,9 @@ static LVoid Atom(CompileState* cs)
         return;
     case STRING_VALUE: {
         // 从StringTable中分配常量字符串
-        BoyiaStr* constStr = &cs->mVm->mStrTable->mTable[GetVM()->mStrTable->mSize];
+        BoyiaStr* constStr = &cs->mVm->mStrTable->mTable[cs->mVm->mStrTable->mSize];
         CopyStringFromToken(cs, constStr);
-        OpCommand lCmd = { OP_CONST_NUMBER,  GetVM()->mStrTable->mSize++ };
+        OpCommand lCmd = { OP_CONST_NUMBER,  cs->mVm->mStrTable->mSize++ };
         //OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
         PutInstruction(&lCmd, kBoyiaNull, kCmdConstStr, HandleConstString, cs);
         NextToken(cs);
@@ -2468,16 +2468,18 @@ LVoid* GetNativeResult(LVoid* vm)
     return &((BoyiaVM*)vm)->mCpu->mReg0;
 }
 
-LVoid GetLocalStack(LInt* stack, LInt* size)
+LVoid GetLocalStack(LInt* stack, LInt* size, LVoid* vm)
 {
-    *stack = (LIntPtr)gBoyiaVM->mLocals;
-    *size = gBoyiaVM->mEState->mLValSize;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    *stack = (LIntPtr)vmPtr->mLocals;
+    *size = vmPtr->mEState->mLValSize;
 }
 
-LVoid GetGlobalTable(LInt* table, LInt* size)
+LVoid GetGlobalTable(LInt* table, LInt* size, LVoid* vm)
 {
-    *table = (LIntPtr)gBoyiaVM->mGlobals;
-    *size = gBoyiaVM->mEState->mGValSize;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    *table = (LIntPtr)vmPtr->mGlobals;
+    *size = vmPtr->mEState->mGValSize;
 }
 
 /*  output function */
@@ -2496,40 +2498,43 @@ LVoid CompileCode(LInt8* code, LVoid* vm)
     ResetScene(vmPtr);
 }
 
-LVoid* GetLocalValue(LInt idx)
+LVoid* GetLocalValue(LInt idx, LVoid* vm)
 {
-    LInt start = gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
-    return &gBoyiaVM->mLocals[start + idx];
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    LInt start = vmPtr->mExecStack[vmPtr->mEState->mFunctos - 1].mLValSize;
+    return &vmPtr->mLocals[start + idx];
 }
 
-LInt GetLocalSize()
+LInt GetLocalSize(LVoid* vm)
 {
-    return gBoyiaVM->mEState->mLValSize - gBoyiaVM->mExecStack[gBoyiaVM->mEState->mFunctos - 1].mLValSize;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    return vmPtr->mEState->mLValSize - vmPtr->mExecStack[vmPtr->mEState->mFunctos - 1].mLValSize;
 }
 
-LVoid CallFunction(LInt8* fun, LVoid* ret)
+LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm)
 {
     BOYIA_LOG("callFunction=>%d \n", 1);
     //gBoyiaVM->mEState->mProg = fun;
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
     CompileState cs;
     cs.mProg = fun;
     cs.mLineNum = 1;
-    cs.mVm = gBoyiaVM;
+    cs.mVm = vmPtr;
     CommandTable* cmds = CreateExecutor(&cs);
-    gBoyiaVM->mEState->mContext = cmds;
+    vmPtr->mEState->mContext = cmds;
     
     EvalExpression(&cs); // 解析例如func(a,b,c);
     ExecuteCode(cs.mVm);
 
     if (ret) {
         BoyiaValue* value = (BoyiaValue*)ret;
-        ValueCopy(value, &gBoyiaVM->mCpu->mReg0);
+        ValueCopy(value, &vmPtr->mCpu->mReg0);
     }
 }
 
-LVoid SaveLocalSize()
+LVoid SaveLocalSize(LVoid* vm)
 {
-    HandleTempLocalSize(kBoyiaNull, GetVM());
+    HandleTempLocalSize(kBoyiaNull, (BoyiaVM*)vm);
 }
 
 LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
@@ -2548,41 +2553,45 @@ LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
     ExecInstruction(vmPtr);
 }
 
-LVoid CacheVMCode()
+LVoid CacheVMCode(LVoid* vm)
 {
-    CacheStringTable(GetVM()->mStrTable->mTable, GetVM()->mStrTable->mSize);
-    CacheInstuctionEntry(GetVM()->mEntry->mTable, sizeof(LInt) * GetVM()->mEntry->mSize);
-    CacheInstuctions(GetVM()->mVMCode->mCode, sizeof(Instruction) * GetVM()->mVMCode->mSize);
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    CacheStringTable(vmPtr->mStrTable->mTable, vmPtr->mStrTable->mSize);
+    CacheInstuctionEntry(vmPtr->mEntry->mTable, sizeof(LInt) * vmPtr->mEntry->mSize);
+    CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);
 }
 
-LVoid LoadStringTable(BoyiaStr* stringTable, LInt size)
+LVoid LoadStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm)
 {
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
     for (LInt i = 0; i < size; i++) {
-        GetVM()->mStrTable->mTable[i].mPtr = stringTable[i].mPtr;
-        GetVM()->mStrTable->mTable[i].mLen = stringTable[i].mLen;
+        vmPtr->mStrTable->mTable[i].mPtr = stringTable[i].mPtr;
+        vmPtr->mStrTable->mTable[i].mLen = stringTable[i].mLen;
     }
 
-    GetVM()->mStrTable->mSize = size;
+    vmPtr->mStrTable->mSize = size;
 }
 
-LVoid LoadInstructions(LVoid* buffer, LInt size)
+LVoid LoadInstructions(LVoid* buffer, LInt size, LVoid* vm)
 {
-    GetVM()->mVMCode->mSize = size / sizeof(Instruction);
-    LMemcpy(GetVM()->mVMCode->mCode, buffer, size);
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    vmPtr->mVMCode->mSize = size / sizeof(Instruction);
+    LMemcpy(vmPtr->mVMCode->mCode, buffer, size);
 }
 
-LVoid LoadEntryTable(LVoid* buffer, LInt size)
+LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm)
 {
-    GetVM()->mEntry->mSize = size / sizeof(LInt);
-    LMemcpy(GetVM()->mEntry->mTable, buffer, size);
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    vmPtr->mEntry->mSize = size / sizeof(LInt);
+    LMemcpy(vmPtr->mEntry->mTable, buffer, size);
 
-    GetVM()->mEState->mGValSize = 0;
-    GetVM()->mEState->mFunSize = 0;
-    GetVM()->mEState->mLoopSize = 0;
-    ResetScene(GetVM());
+    vmPtr->mEState->mGValSize = 0;
+    vmPtr->mEState->mFunSize = 0;
+    vmPtr->mEState->mLoopSize = 0;
+    ResetScene(vmPtr);
     CommandTable cmds;
-    for (LInt i = 0; i < GetVM()->mEntry->mSize; i++) {
-        cmds.mBegin = GetVM()->mVMCode->mCode + GetVM()->mEntry->mTable[i];
-        ExecuteCode(GetVM());
+    for (LInt i = 0; i < vmPtr->mEntry->mSize; i++) {
+        cmds.mBegin = vmPtr->mVMCode->mCode + vmPtr->mEntry->mTable[i];
+        ExecuteCode(vmPtr);
     }
 }
