@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 //extern void BoyiaLog(const char* format, ...);
-extern LVoid GCAppendRef(LVoid* address, LUint8 type);
+extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 
 char* convertMStr2Str(BoyiaStr* str)
 {
@@ -42,7 +42,7 @@ LInt getFileContent(LVoid* vm)
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = NEW_ARRAY(LInt8, (len + 1), vm);
-    GCAppendRef(buf, BY_STRING);
+    GCAppendRef(buf, BY_STRING, vm);
     LMemset(buf, 0, len + 1);
     rewind(file);
     fread(buf, sizeof(char), len, file);
@@ -224,7 +224,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         BoyiaFunction* fun = getObjFun(json, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
-        GCAppendRef(fun, BY_CLASS);
+        GCAppendRef(fun, BY_CLASS, vm);
 
         while (child) {
             fun->mParams[index].mNameKey = getJsonObjHash(child);
@@ -238,7 +238,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
-        GCAppendRef(fun, BY_CLASS);
+        GCAppendRef(fun, BY_CLASS, vm);
 
         cJSON* child = json->child;
         while (child) {
@@ -256,7 +256,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         LMemcpy(ptr, json->valuestring, len);
         value->mValue.mStrVal.mPtr = ptr;
         value->mValue.mStrVal.mLen = len;
-        GCAppendRef(ptr, BY_STRING);
+        GCAppendRef(ptr, BY_STRING, vm);
     }
 }
 

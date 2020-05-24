@@ -5,7 +5,7 @@
 #include "SalLog.h"
 #include "AppManager.h"
 
-extern LVoid GCAppendRef(LVoid* address, LUint8 type);
+extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 // C++对象垃圾回收基类
 namespace boyia {
 BoyiaBase::BoyiaBase(BoyiaRuntime* runtime)
@@ -18,7 +18,7 @@ BoyiaBase::BoyiaBase(BoyiaRuntime* runtime)
     // 放入临时变量中进行存储
     // 则不会再GC线程中被误清除
     SetNativeResult(&value, m_runtime->vm());
-    GCAppendRef(this, BY_NAVCLASS);
+    GCAppendRef(this, BY_NAVCLASS, m_runtime->vm());
 }
 
 BoyiaBase::~BoyiaBase()

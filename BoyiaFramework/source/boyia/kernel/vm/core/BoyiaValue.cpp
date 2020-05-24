@@ -32,7 +32,7 @@ enum InlineCacheType {
 
 static LVoid* gMemPool = kBoyiaNull;
 
-extern LVoid GCAppendRef(LVoid* address, LUint8 type);
+extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid GCollectGarbage(LVoid* vm);
 
 extern LVoid BoyiaLog(const char* format, ...)
@@ -85,8 +85,8 @@ LVoid ChangeMemory(LVoid* mem)
 
 static LVoid SystemGC(LVoid* vm)
 {
-    if (GetUsedMemory(gMemPool) >= MEMORY_SIZE / 2) {
-        GCollectGarbage(GetGabargeCollect(vm));
+    if (GetUsedMemory(GetVmMemoryPool(vm)) >= MEMORY_SIZE / 2) {
+        GCollectGarbage(vm);
     }
 }
 
@@ -173,7 +173,7 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     right->mValue.mStrVal.mLen = len;
     right->mValueType = BY_STRING;
 
-    GCAppendRef(str, BY_STRING);
+    GCAppendRef(str, BY_STRING, vm);
     KLOG("StringAdd End");
 }
 
