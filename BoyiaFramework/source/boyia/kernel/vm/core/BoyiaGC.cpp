@@ -84,19 +84,19 @@ static LBool CheckValue(BoyiaValue* value, BoyiaRef* ref)
     return LFalse;
 }
 
-static LVoid DeleteRef(BoyiaRef* ref)
+static LVoid DeleteRef(BoyiaRef* ref, BoyiaGC* gc)
 {
     switch (ref->mType) {
     case BY_STRING: {
-        VM_DELETE(ref->mAddress, sGc->mBoyiaVM);
+        VM_DELETE(ref->mAddress, gc->mBoyiaVM);
     } break;
     case BY_NAVCLASS: {
         NativeDelete(ref->mAddress);
     } break;
     case BY_CLASS: {
         BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
-        VM_DELETE(fun->mParams, sGc->mBoyiaVM);
-        VM_DELETE(fun, sGc->mBoyiaVM);
+        VM_DELETE(fun->mParams, gc->mBoyiaVM);
+        VM_DELETE(fun, gc->mBoyiaVM);
     } break;
     }
 
@@ -119,7 +119,7 @@ static LBool CheckValueTable(BoyiaRef* ref, BoyiaValue* table, LInt size)
 }
 
 // 全栈中查找引用是否过期
-static LVoid GCheckNoneRef(BoyiaRef* ref)
+static LVoid GCheckNoneRef(BoyiaRef* ref, BoyiaGC* gc)
 {
     LInt stackAddr, size;
     GetLocalStack(&stackAddr, &size);
@@ -134,26 +134,26 @@ static LVoid GCheckNoneRef(BoyiaRef* ref)
         return;
     }
     // 查找结果寄存器，是否有引用过期
-    BoyiaValue* val = (BoyiaValue*)GetNativeResult(sGc->mBoyiaVM);
+    BoyiaValue* val = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
     if (CheckValue(val, ref)) {
         return;
     }
 
-    DeleteRef(ref);
+    DeleteRef(ref, gc);
 }
 
-static LVoid GClearGarbage()
+static LVoid GClearGarbage(BoyiaGC* gc)
 {
-    BoyiaRef* prev = sGc->mBegin;
+    BoyiaRef* prev = gc->mBegin;
     while (prev && !prev->mAddress) {
-        sGc->mBegin = prev->mNext;
+        gc->mBegin = prev->mNext;
         FAST_DELETE(prev);
-        --sGc->mSize;
-        prev = sGc->mBegin;
+        --gc->mSize;
+        prev = gc->mBegin;
     }
 
     if (!prev) {
-        sGc->mEnd = kBoyiaNull;
+        gc->mEnd = kBoyiaNull;
         return;
     }
 
@@ -162,7 +162,7 @@ static LVoid GClearGarbage()
         if (!current->mAddress) {
             prev->mNext = current->mNext;
             FAST_DELETE(current);
-            --sGc->mSize;
+            --gc->mSize;
             current = prev->mNext;
         } else {
             prev = current;
@@ -170,44 +170,45 @@ static LVoid GClearGarbage()
         }
     }
 
-    sGc->mEnd = prev;
+    gc->mEnd = prev;
 }
 
-extern LVoid GCAppendRef(LVoid* address, LUint8 type)
+extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
 {
     //GCInit();
-
+    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
     BoyiaRef* ref = FAST_NEW(BoyiaRef);
     ref->mAddress = address;
     ref->mType = type;
     ref->mNext = kBoyiaNull;
 
-    if (sGc->mBegin) {
-        sGc->mEnd->mNext = ref;
+    if (gc->mBegin) {
+        gc->mEnd->mNext = ref;
     } else {
-        sGc->mBegin = ref;
+        gc->mBegin = ref;
     }
 
-    sGc->mEnd = ref;
-    ++sGc->mSize;
+    gc->mEnd = ref;
+    ++gc->mSize;
 }
 
 extern LVoid GCollectGarbage(LVoid* vm)
 {
-    if (!sGc) {
+    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
+    if (!gc) {
         return;
     }
 
-    KFORMATLOG("GCollect begin Size=%d\n", sGc->mSize);
-    BoyiaRef* ref = sGc->mBegin;
+    KFORMATLOG("GCollect begin Size=%d\n", gc->mSize);
+    BoyiaRef* ref = gc->mBegin;
     // 开始回收内存
     while (ref) {
-        GCheckNoneRef(ref);
+        GCheckNoneRef(ref, gc);
         ref = ref->mNext;
     }
 
-    GClearGarbage();
+    GClearGarbage(gc);
 
-    KFORMATLOG("GCollect end Size=%d\n", sGc->mSize);
+    KFORMATLOG("GCollect end Size=%d\n", gc->mSize);
     //KFORMATLOG("GCollect end CollectSize=%d\n", sGc->mSize);
 }

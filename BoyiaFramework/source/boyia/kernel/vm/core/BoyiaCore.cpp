@@ -38,7 +38,7 @@
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
 extern LInt Str2Int(LInt8* ptr, LInt len, LInt radix);
-extern LVoid GCAppendRef(LVoid* address, LUint8 type);
+extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid* CreateGC(LVoid* vm);
 extern LVoid ChangeGC(LVoid* gc);
 
@@ -408,6 +408,11 @@ LVoid BoyiaDelete(LVoid* data, LVoid* vm)
     return DeleteData(data, ((BoyiaVM*)vm)->mPool);;
 }
 
+LVoid* GetVmMemoryPool(LVoid* vm)
+{
+    return ((BoyiaVM*)vm)->mPool;
+}
+
 // Reset scene of global execute state
 static LVoid ResetScene(BoyiaVM* vm)
 {
@@ -518,7 +523,7 @@ LVoid* InitVM(LVoid* creator)
     vm->mEState->mFunSize = 0;
     vm->mGc = CreateGC(vm);
     vm->mCreator = creator;
-    ChangeGC(vm->mGc);
+    //ChangeGC(vm->mGc);
     ResetScene(vm);
 
     return vm;
@@ -734,7 +739,7 @@ LInt CreateObject(LVoid* vm)
     result->mValue.mObj.mSuper = value->mValue.mObj.mSuper;
     BOYIA_LOG("HandleCallInternal CreateObject %d", 4);
 
-    GCAppendRef(newFunc, BY_CLASS);
+    GCAppendRef(newFunc, BY_CLASS, vm);
     return 1;
 }
 

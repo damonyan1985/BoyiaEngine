@@ -75,6 +75,7 @@ LVoid* BoyiaAlloc(LInt size, LVoid* vm);
 LVoid* BoyiaNew(LInt size, LVoid* vm);
 LVoid BoyiaDelete(LVoid* data, LVoid* vm);
 LVoid* GetGabargeCollect(LVoid* vm);
+LVoid* GetVmMemoryPool(LVoid* vm);
 
 LVoid InitStr(BoyiaStr* str, LInt8* ptr);
 LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
