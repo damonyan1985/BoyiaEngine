@@ -335,14 +335,14 @@ LVoid LoadVMCode(LVoid* vm)
         LMemcpy(strTable[i].mPtr, stringTable->elementAt(i + 1).GetBuffer(), strTable[i].mLen);
     }
 
-    LoadStringTable(strTable, stringTable->size() - 1);
+    LoadStringTable(strTable, stringTable->size() - 1, vm);
     delete strTable;
 
     // Load Instructions
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getInstructionCachePath()), content);
-    LoadInstructions(content.GetBuffer(), content.GetLength());
+    LoadInstructions(content.GetBuffer(), content.GetLength(), vm);
 
     // Load EntryTable
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getInstructionEntryPath()), content);
-    LoadEntryTable(content.GetBuffer(), content.GetLength());
+    LoadEntryTable(content.GetBuffer(), content.GetLength(), vm);
 }

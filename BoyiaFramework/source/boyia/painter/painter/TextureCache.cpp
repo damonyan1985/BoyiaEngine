@@ -124,15 +124,15 @@ LVoid TextureCache::updateTexture(Texture* tex, const LImage* image)
     if (tex) {
         glBindTexture(GL_TEXTURE_2D, tex->texId);
 
-        glTexImage2D(
+        glTexSubImage2D(
             GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            image->width(),
-            image->height(),
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
+            0, // level
+            0, // xoffset
+            0, // yoffset
+            image->width(), // width
+            image->height(), // height
+            GL_RGBA, // format
+            GL_UNSIGNED_BYTE, // type
             image->pixels());
     }
 }

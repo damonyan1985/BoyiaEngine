@@ -59,7 +59,7 @@ LVoid BoyiaNetwork::run()
     value.mValue.mStrVal.mPtr = (LInt8*)m_data->GetBuffer();
     value.mValue.mStrVal.mLen = m_data->GetLength();
     BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
-    SaveLocalSize();
+    SaveLocalSize(m_vm);
     LocalPush(&m_callback, m_vm);
     LocalPush(&value, m_vm);
     BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_obj;
