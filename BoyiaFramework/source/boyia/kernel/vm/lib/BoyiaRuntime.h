@@ -15,7 +15,6 @@ public:
     ~BoyiaRuntime();
 
     LVoid compile(const String& script);
-    LVoid useVM();
     LVoid* vm() const;
     yanbo::UIView* view() const;
 

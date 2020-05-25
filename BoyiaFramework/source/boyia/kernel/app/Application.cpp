@@ -10,7 +10,6 @@ Application::Application(AppInfo* info)
 
 LVoid Application::init(const String& entryPage)
 {
-    m_runtime->useVM();
     m_view->loadPage(entryPage);
 }
 

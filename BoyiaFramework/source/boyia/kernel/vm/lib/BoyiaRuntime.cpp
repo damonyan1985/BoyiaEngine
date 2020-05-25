@@ -22,12 +22,6 @@ LVoid BoyiaRuntime::compile(const String& script)
     CompileScript((char*)script.GetBuffer(), m_vm);
 }
 
-LVoid BoyiaRuntime::useVM()
-{
-    ChangeVM(m_vm);
-    BOYIA_LOG("BoyiaRuntime---useVM---%s", "end");
-}
-
 LVoid* BoyiaRuntime::vm() const
 {
     return m_vm;
