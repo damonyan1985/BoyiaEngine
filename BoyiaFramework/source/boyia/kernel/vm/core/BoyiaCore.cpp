@@ -291,7 +291,6 @@ typedef struct {
 } CompileState;
 
 static NativeFunction* gNativeFunTable = kBoyiaNull;
-static BoyiaVM* gBoyiaVM = kBoyiaNull;
 
 static LUintPtr gThis = GenIdentByStr("this", 4);
 static LUintPtr gSuper = GenIdentByStr("super", 5);
@@ -544,17 +543,6 @@ LVoid DestroyVM(LVoid* vm)
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     FreeMemoryPool(vmPtr->mPool);
     FAST_DELETE(vmPtr);
-}
-
-LVoid ChangeVM(LVoid* vm)
-{
-    gBoyiaVM = (BoyiaVM*)vm;
-    ChangeMemory(gBoyiaVM->mPool);
-}
-
-static BoyiaVM* GetVM()
-{
-    return gBoyiaVM;
 }
 
 static Instruction* AllocateInstruction(BoyiaVM* vm)
