@@ -5,15 +5,14 @@
  *      Author: yanbo
  */
 #include "ResourceLoader.h"
+#include "Application.h"
 #include "SalLog.h"
 #include "StringBuilder.h"
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include "Application.h"
 //#include <android/log.h>
 
-extern LVoid CompileScript(char* code, LVoid* vm);
 namespace yanbo {
 
 class ResourceHandle LFinal : public NetworkClient, public UIEvent {
@@ -56,19 +55,18 @@ public:
     // Run In UIThread
     virtual LVoid run() LOverride
     {
-		KLOG("ResourceEvent::run");
+        KLOG("ResourceEvent::run");
 
         BOYIA_LOG("ResourceHandle---run---url: %s", GET_STR(m_url));
         if (m_result == NetworkClient::kNetworkSuccess) {
-			KLOG("ResourceEvent::run kNetworkSuccess");
+            KLOG("ResourceEvent::run kNetworkSuccess");
             OwnerPtr<String> data = m_builder.toString();
-			BOYIA_LOG("Parse script=%s", (const char*)data->GetBuffer());
+            BOYIA_LOG("Parse script=%s", (const char*)data->GetBuffer());
             m_loader->onLoadFinished(*data.get(), m_resType);
         } else {
             m_loader->onLoadError(m_result);
         }
 
-        
         if (m_url.CompareNoCase(_CS("boyia://apps/contacts/src/Main.boyia"))) {
             //CacheVMCode();
             //LoadVMCode();
@@ -188,7 +186,8 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 // Execute external script
 LVoid ResourceLoader::executeScript(const String& data)
 {
-    CompileScript((char*)data.GetBuffer(), m_view->application()->runtime()->vm());
+    m_view->application()->runtime()->compile(data);
+    //CompileScript((char*)data.GetBuffer(), m_view->application()->runtime()->vm());
 }
 
 LVoid ResourceLoader::repaint(HtmlView* item)

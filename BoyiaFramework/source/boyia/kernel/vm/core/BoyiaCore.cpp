@@ -19,7 +19,7 @@
 #endif
 
 #define kInvalidInstruction (-1)
-#define RuntimeError(key, error, vm) PrintErrorKey(key, error, vm->mEState->mPC->mCodeLine)
+#define RuntimeError(key, error, vm) PrintErrorKey(key, error, vm->mEState->mPC->mCodeLine, vm)
 
 /* Type Define Begin */
 #define NUM_FUNC ((LInt)1024)
@@ -290,10 +290,13 @@ typedef struct {
     BoyiaVM* mVm;
 } CompileState;
 
-static NativeFunction* gNativeFunTable = kBoyiaNull;
+//static NativeFunction* gNativeFunTable = kBoyiaNull;
 
-static LUintPtr gThis = GenIdentByStr("this", 4);
-static LUintPtr gSuper = GenIdentByStr("super", 5);
+//static LUintPtr gThis = GenIdentByStr("this", 4);
+//static LUintPtr gSuper = GenIdentByStr("super", 5);
+static LUintPtr gThis = 1;
+static LUintPtr gSuper = 2;
+
 /* Global value define end */
 static LVoid LocalStatement(CompileState* cs);
 
@@ -501,7 +504,6 @@ LVoid* InitVM(LVoid* creator)
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mPool = InitMemoryPool(MEMORY_SIZE);
-    ChangeMemory(vm->mPool);
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS, vm);
     vm->mLocals = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS, vm);
@@ -663,17 +665,6 @@ static LUint8 LookUp(BoyiaStr* name)
     return 0;
 }
 
-static LInt FindNativeFunc(LUintPtr key)
-{
-    LInt idx = -1;
-    while (gNativeFunTable[++idx].mAddr) {
-        if (gNativeFunTable[idx].mNameKey == key)
-            return idx;
-    }
-
-    return -1;
-}
-
 static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm)
 {
     BoyiaFunction* newFunc = NEW(BoyiaFunction, vm);
@@ -792,7 +783,7 @@ static LVoid PropStatement(CompileState* cs)
     NextToken(cs);
     //EngineStrLog("PropStatement name=%s", cs->mToken.mTokenName);
     if (cs->mToken.mTokenType == IDENTIFIER) {
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
         PutInstruction(&cmd, kBoyiaNull, kCmdPropCreate, HandleCreateProp, cs);
         Putback(cs);
         EvalExpression(cs);
@@ -890,7 +881,8 @@ static LInt HandleCallInternal(LVoid* ins, BoyiaVM* vm)
 
     LInt idx = inst->mOPLeft.mValue;
     BOYIA_LOG("HandleCallInternal Exec idx=%d", idx);
-    return (*gNativeFunTable[idx].mAddr)(vm);
+    //return (*gNativeFunTable[idx].mAddr)(vm);
+    return CallNativeFunction(idx, vm);
 }
 
 static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm)
@@ -1267,7 +1259,7 @@ static LVoid InitParams(CompileState* cs)
             break;
         }
 
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
         PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, HandleCreateParam, cs);
         NextToken(cs); // 获取逗号分隔符','
     } while (cs->mToken.mTokenValue == COMMA);
@@ -1375,7 +1367,7 @@ static LInt HandleExtend(LVoid* ins, BoyiaVM* vm)
 static LVoid ClassStatement(CompileState* cs)
 {
     NextToken(cs);
-    LUintPtr classKey = GenIdentifier(&cs->mToken.mTokenName);
+    LUintPtr classKey = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)classKey };
     PutInstruction(&cmd, kBoyiaNull, kCmdCreateClass, HandleCreateClass, cs);
     // 判断继承关系
@@ -1383,7 +1375,7 @@ static LVoid ClassStatement(CompileState* cs)
     LUintPtr extendKey = 0;
     if (BY_EXTEND == cs->mToken.mTokenValue) {
         NextToken(cs);
-        extendKey = GenIdentifier(&cs->mToken.mTokenName);
+        extendKey = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
     } else {
         Putback(cs);
     }
@@ -1424,7 +1416,7 @@ static LVoid FunStatement(CompileState* cs)
     NextToken(cs);
     //EngineStrLog("HandlePushParams FunStatement name %s", cs->mToken.mTokenName);
     // 第一步，Function变量
-    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
     PutInstruction(&cmd, kBoyiaNull, kCmdCreateFunction, HandleFunCreate, cs);
     //EngineStrLog("FunctionName=%s", cs->mToken.mTokenName);
     // 第二步，初始化函数参数
@@ -1474,7 +1466,7 @@ static LVoid GlobalStatement(CompileState* cs)
     do {
         NextToken(cs); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
 
         PutInstruction(&cmdLeft, &cmdRight, kCmdDeclGlobal, HandleDeclGlobal, cs);
         Putback(cs);
@@ -1556,7 +1548,7 @@ static LVoid LocalStatement(CompileState* cs)
     do {
         NextToken(cs); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName) };
+        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
         //EngineStrLog("value Name=%s", cs->mToken.mTokenName);
         PutInstruction(&cmdLeft, &cmdRight, kCmdDeclLocal, HandleDeclLocal, cs);
         Putback(cs);
@@ -2150,7 +2142,7 @@ static LVoid EvalGetProp(CompileState* cs)
 
     // Push class context for callstatement
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
-    LUintPtr propKey = GenIdentifier(&cs->mToken.mTokenName);
+    LUintPtr propKey = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
     OpCommand cmdR = { OP_CONST_NUMBER, (LIntPtr)propKey };
     PutInstruction(&COMMAND_R0, &cmdR, kCmdGetProp, HandleGetProp, cs);
 
@@ -2204,12 +2196,12 @@ static LVoid Atom(CompileState* cs)
 {
     switch (cs->mToken.mTokenType) {
     case IDENTIFIER: {
-        LInt idx = FindNativeFunc(GenIdentifier(&cs->mToken.mTokenName));
+        LInt idx = FindNativeFunc(GenIdentifier(&cs->mToken.mTokenName, cs->mVm), cs->mVm);
         if (idx != -1) {
             CallNativeStatement(cs, idx);
             NextToken(cs);
         } else {
-            LUintPtr key = GenIdentifier(&cs->mToken.mTokenName);
+            LUintPtr key = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
             NextToken(cs);
             if (cs->mToken.mTokenValue == LPTR) {
                 OpCommand cmd = { OP_VAR, (LIntPtr)key };
@@ -2433,13 +2425,6 @@ static LVoid EvalAssignment(CompileState* cs)
     }
 }
 
-LVoid InitNativeFun(NativeFunction* funs)
-{
-    if (!gNativeFunTable) {
-        gNativeFunTable = funs;
-    }
-}
-
 LVoid SetNativeResult(LVoid* result, LVoid* vm)
 {
     BoyiaValue* value = (BoyiaValue*)result;
@@ -2544,7 +2529,7 @@ LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
 LVoid CacheVMCode(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    CacheStringTable(vmPtr->mStrTable->mTable, vmPtr->mStrTable->mSize);
+    CacheStringTable(vmPtr->mStrTable->mTable, vmPtr->mStrTable->mSize, vm);
     CacheInstuctionEntry(vmPtr->mEntry->mTable, sizeof(LInt) * vmPtr->mEntry->mSize);
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);
 }

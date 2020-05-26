@@ -196,9 +196,9 @@ LInt logPrint(LVoid* vm)
     return 1;
 }
 
-static LUint getJsonObjHash(cJSON* json)
+static LUint getJsonObjHash(cJSON* json, LVoid* vm)
 {
-    return GenIdentByStr(json->string, LStrlen(_CS(json->string)));
+    return GenIdentByStr(json->string, LStrlen(_CS(json->string)), vm);
 }
 
 static BoyiaFunction* getObjFun(cJSON* json, LVoid* vm)
@@ -213,7 +213,7 @@ static BoyiaFunction* getObjFun(cJSON* json, LVoid* vm)
 LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
 {
     if (json->valuestring) {
-        value->mNameKey = getJsonObjHash(json);
+        value->mNameKey = getJsonObjHash(json, vm);
     }
 
     if (json->type == cJSON_Object) {
@@ -227,7 +227,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         GCAppendRef(fun, BY_CLASS, vm);
 
         while (child) {
-            fun->mParams[index].mNameKey = getJsonObjHash(child);
+            fun->mParams[index].mNameKey = getJsonObjHash(child, vm);
             jsonParse(child, fun->mParams + index++, vm);
             child = child->next;
         }
@@ -235,7 +235,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         value->mValueType = BY_CLASS;
 
         LInt size = cJSON_GetArraySize(json);
-        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5), size, vm);
+        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5, vm), size, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS, vm);
@@ -458,7 +458,7 @@ LInt startTranslate(LVoid* vm)
     BoyiaValue* posx = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* posy = (BoyiaValue*)GetLocalValue(2, vm);
     BoyiaValue* duration = (BoyiaValue*)GetLocalValue(3, vm);
-    boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
+    boyia::BoyiaViewDoc* jsDoc = reinterpret_cast<boyia::BoyiaViewDoc*>(doc->mValue.mIntVal);
     jsDoc->startTranslate(LPoint(posx->mValue.mIntVal, posy->mValue.mIntVal), duration->mValue.mIntVal);
     return 1;
 }
@@ -535,7 +535,7 @@ LInt loadImageByUrl(LVoid* vm)
     char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
     String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
 
-    boyia::BoyiaImageView* image = (boyia::BoyiaImageView*)itemArg->mValue.mIntVal;
+    boyia::BoyiaImageView* image = reinterpret_cast<boyia::BoyiaImageView*>(itemArg->mValue.mIntVal);
     image->loadImage(urlStr);
     return 1;
 }

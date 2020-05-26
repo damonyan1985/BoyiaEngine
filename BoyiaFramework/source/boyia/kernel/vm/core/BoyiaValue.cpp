@@ -13,6 +13,7 @@
 #include "PlatformBridge.h"
 #include "StringUtils.h"
 #include "BoyiaPtr.h"
+#include "BoyiaRuntime.h"
 #include <stdio.h>
 #include <stdlib.h>
 #if ENABLE(BOYIA_WINDOWS)
@@ -29,8 +30,6 @@ enum InlineCacheType {
     CACHE_PROP = 1,
     CACHE_METHOD
 };
-
-static LVoid* gMemPool = kBoyiaNull;
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid GCollectGarbage(LVoid* vm);
@@ -76,11 +75,6 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix)
     }
 
     return total * sign;
-}
-
-LVoid ChangeMemory(LVoid* mem)
-{
-    gMemPool = mem;
 }
 
 static LVoid SystemGC(LVoid* vm)
@@ -177,20 +171,14 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     KLOG("StringAdd End");
 }
 
-static util::IDCreator* GetIdCreator()
+LUintPtr GenIdentByStr(const LInt8* str, LInt len, LVoid* vm)
 {
-    static util::IDCreator sIDCreator;
-    return &sIDCreator;
+    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->genIdentByStr(str, len);
 }
 
-LUintPtr GenIdentByStr(const LInt8* str, LInt len)
+LUintPtr GenIdentifier(BoyiaStr* str, LVoid* vm)
 {
-    return GetIdCreator()->genIdentByStr(str, len);
-}
-
-LUintPtr GenIdentifier(BoyiaStr* str)
-{
-    return GetIdCreator()->genIdentifier(str);
+    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->genIdentifier(str);
 }
 
 InlineCache* CreateInlineCache(LVoid* vm)
@@ -256,9 +244,9 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
     return kBoyiaNull;
 }
 
-extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str)
+extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm)
 {
-    GetIdCreator()->getIdentName(key, str);
+    ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->getIdentName(key, str);
 }
 
 LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
@@ -271,7 +259,7 @@ LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
 
 const LUint8* kStringTableSplitFlag = _CS("@boyia@stringtable@");
 
-LVoid CacheStringTable(BoyiaStr* stringTable, LInt size)
+LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm)
 {
     LInt length = 0;
     LInt flagLen = LStrlen(kStringTableSplitFlag);
@@ -282,7 +270,7 @@ LVoid CacheStringTable(BoyiaStr* stringTable, LInt size)
     
     LInt index = 0;
     // 增加ids中相关数据
-    LUint id =  GenIdentByStr("Array", 5);
+    LUint id =  GenIdentByStr("Array", 5, vm);
     String idString = _CS("Array:");
     LUint8 str[256];
     LInt2Str(id, str, 10);
@@ -326,7 +314,7 @@ LVoid LoadVMCode(LVoid* vm)
     
     BoyiaPtr<KVector<String> > ids = StringUtils::split(stringTable->elementAt(0), _CS(":"));
     LUint id = StringUtils::stringToInt(ids->elementAt(1));
-    GetIdCreator()->setIdentify(ids->elementAt(0), id);
+    ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->setIdentify(ids->elementAt(0), id);
 
     BoyiaStr* strTable = new BoyiaStr[stringTable->size() - 1];
     for (LInt i = 0; i < stringTable->size() - 1; i++) {
@@ -345,4 +333,14 @@ LVoid LoadVMCode(LVoid* vm)
     // Load EntryTable
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getInstructionEntryPath()), content);
     LoadEntryTable(content.GetBuffer(), content.GetLength(), vm);
+}
+
+LInt FindNativeFunc(LUintPtr key, LVoid* vm)
+{
+    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->findNativeFunc(key);
+}
+
+LInt CallNativeFunction(LInt idx, LVoid* vm)
+{
+    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->callNativeFunction(idx);
 }

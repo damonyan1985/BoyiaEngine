@@ -2,7 +2,7 @@
 #include "SalLog.h"
 #include "BoyiaValue.h"
 
-extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str);
+extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm);
 
 static const char* FindErrorInfo(LInt error)
 {
@@ -40,9 +40,9 @@ LVoid SntxError(LInt error, LInt lineNum)
     BOYIA_LOG("BoyiaVM Error=%s lineno=%d", FindErrorInfo(error), lineNum);
 }
 
-LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum)
+LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum, LVoid* vm)
 {
     BoyiaStr name;
-    GetIdentName(key, &name);
+    GetIdentName(key, &name, vm);
     BOYIA_LOG("BoyiaVM Error=%s lineno=%d key=%s", FindErrorInfo(error), lineNum, name.mPtr);
 }

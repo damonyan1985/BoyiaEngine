@@ -82,9 +82,8 @@ LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest);
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src);
 LBool MStrchr(const LInt8* s, LInt8 ch);
 LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm);
-LUintPtr GenIdentifier(BoyiaStr* str);
-LUintPtr GenIdentByStr(const LInt8* str, LInt len);
-LVoid ChangeMemory(LVoid* mem);
+LUintPtr GenIdentifier(BoyiaStr* str, LVoid* vm);
+LUintPtr GenIdentByStr(const LInt8* str, LInt len, LVoid* vm);
 
 InlineCache* CreateInlineCache(LVoid* vm);
 LVoid AddPropInlineCache(InlineCache* cache, BoyiaValue* klass, LInt index);
@@ -92,8 +91,11 @@ LVoid AddFunInlineCache(InlineCache* cache, BoyiaValue* klass, BoyiaValue* fun);
 BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* klass);
 
 LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size);
-LVoid CacheStringTable(BoyiaStr* stringTable, LInt size);
+LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm);
 LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size);
 
 LVoid LoadVMCode(LVoid* vm);
+
+LInt FindNativeFunc(LUintPtr key, LVoid* vm);
+LInt CallNativeFunction(LInt idx, LVoid* vm);
 #endif

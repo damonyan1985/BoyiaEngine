@@ -14,9 +14,12 @@
 
 #include "BoyiaValue.h"
 
+typedef LInt(*NativePtr)(LVoid* vm);
+
 typedef struct {
     LUintPtr mNameKey;
-    LInt (*mAddr)(LVoid* vm);
+    //LInt (*mAddr)(LVoid* vm);
+    NativePtr mAddr;
 } NativeFunction;
 
 typedef struct {
@@ -40,7 +43,6 @@ LVoid SaveLocalSize(LVoid* vm);
 LVoid* InitVM(LVoid* creator);
 LVoid DestroyVM(LVoid* vm);
 LInt CreateObject(LVoid* vm);
-LVoid InitNativeFun(NativeFunction* funs);
 LVoid CacheVMCode(LVoid* vm);
 LVoid LoadStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm);
 LVoid LoadInstructions(LVoid* buffer, LInt size, LVoid* vm);
