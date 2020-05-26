@@ -334,7 +334,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBindings.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.cpp" />

@@ -770,9 +770,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.cpp">
       <Filter>boyia\kernel\platform\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBindings.cpp">
-      <Filter>boyia\kernel\vm\lib</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.cpp">
       <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>

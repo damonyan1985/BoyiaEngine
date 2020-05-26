@@ -88,6 +88,7 @@ LVoid ImageAndroid::load(const String& path, LVoid* image)
 
     //yanbo::UIThreadClientMap::instance()->registerClient(this);
     // 不同的父类引用子类，指针地址值不一样
+    // 多重继承下，子类指针转换成父类指针时，指针值会变化
     //ImageClient* client = static_cast<ImageClient*>(this);
     //KFORMATLOG("ImageAndroid::load this=%ld", (long)client);
     jstring strPath = strToJstring(env, (const char*)path.GetBuffer());
