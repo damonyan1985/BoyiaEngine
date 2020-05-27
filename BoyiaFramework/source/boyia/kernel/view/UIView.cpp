@@ -6,8 +6,8 @@
  */
 
 #include "UIView.h"
-#include "Application.h"
 #include "AppManager.h"
+#include "Application.h"
 #include "HtmlView.h"
 
 namespace yanbo {
@@ -37,7 +37,7 @@ Application* UIView::application() const
     return m_app;
 }
 
-UIView* UIView::getInstance()
+UIView* UIView::current()
 {
     return AppManager::instance()->currentApp()->view();
 }

@@ -21,7 +21,7 @@ class Application;
 namespace yanbo {
 class UIView {
 public:
-    static UIView* getInstance();
+    static UIView* current();
 
     UIView(Application* app);
     virtual ~UIView();

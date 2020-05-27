@@ -151,7 +151,7 @@ LVoid UIOperation::execute()
         } break;
         case UIOP_APPLY_DOM_STYLE: {
             HtmlView* root = (HtmlView*)msg->obj;
-            ResourceLoader* loader = UIView::getInstance()->getLoader();
+            ResourceLoader* loader = UIView::current()->getLoader();
             root->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
         } break;
         }
@@ -187,7 +187,7 @@ LVoid UIOperation::viewSetText(Message* msg)
         item->setParent(view);
         view->addChild(item);
 
-        ResourceLoader* loader = UIView::getInstance()->getLoader();
+        ResourceLoader* loader = UIView::current()->getLoader();
         view->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
     }
 }
@@ -208,7 +208,7 @@ LVoid UIOperation::viewDraw(Message* msg)
     if (!view)
         return;
     view->layout();
-    LGraphicsContext* gc = UIView::getInstance()->getGraphicsContext();
+    LGraphicsContext* gc = UIView::current()->getGraphicsContext();
     view->paint(*gc);
 }
 }

@@ -309,9 +309,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h">
       <Filter>boyia\kernel\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Utf8StreamReader.h">
-      <Filter>boyia\kernel\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h">
       <Filter>boyia\kernel\util</Filter>
     </ClInclude>
@@ -630,9 +627,6 @@
       <Filter>boyia\kernel\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.cpp">
-      <Filter>boyia\kernel\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Utf8StreamReader.cpp">
       <Filter>boyia\kernel\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIOperation.cpp">

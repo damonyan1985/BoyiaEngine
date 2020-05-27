@@ -20,7 +20,7 @@ typedef struct BoyiaGC {
 } BoyiaGC;
 
 // 收集器
-static BoyiaGC* sGc = kBoyiaNull;
+//static BoyiaGC* sGc = kBoyiaNull;
 
 extern LVoid NativeDelete(LVoid* data);
 static LBool CheckValue(BoyiaValue* val, BoyiaRef* ref);
@@ -33,11 +33,6 @@ extern LVoid* CreateGC(LVoid* vm)
     gc->mSize = 0;
     gc->mBoyiaVM = vm;
     return gc;
-}
-
-extern LVoid ChangeGC(LVoid* gc)
-{
-    sGc = (BoyiaGC*)gc;
 }
 
 /*

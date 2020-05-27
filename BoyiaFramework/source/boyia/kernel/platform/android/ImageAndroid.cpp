@@ -3,8 +3,8 @@
 #include "JNIUtil.h"
 #include "LColor.h"
 //#include "TextureCache.h"
+#include "AppManager.h"
 #include "SalLog.h"
-#include "UIView.h"
 #include <android/bitmap.h>
 
 namespace util {
@@ -152,12 +152,14 @@ void ImageAndroid::drawText(const String& text,
     env->DeleteLocalRef(strText);
 }
 
+// setLoaded在uithread线程中执行
 LVoid ImageAndroid::setLoaded(LBool loaded)
 {
     LImage::setLoaded(loaded);
     if (m_image && loaded) {
         unlockPixels();
-        yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
+        //yanbo::AppManager::instance()->getLoader()->repaint(m_image);
+        yanbo::AppManager::instance()->uiThread()->draw(m_image);
     }
 }
 
