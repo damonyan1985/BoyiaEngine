@@ -211,7 +211,7 @@ LVoid GraphicsContextWin::submit()
     }
 
     Gdiplus::Graphics cacheGc(m_cacheBitmap);
-    paint(yanbo::UIView::getInstance()->getDocument()->getRenderTreeRoot(), cacheGc);
+    paint(yanbo::UIView::current()->getDocument()->getRenderTreeRoot(), cacheGc);
     
     HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);

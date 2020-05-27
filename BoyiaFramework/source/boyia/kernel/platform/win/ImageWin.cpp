@@ -1,10 +1,10 @@
 #include "ImageWin.h"
+#include "AppManager.h"
+#include "ImageLoader.h"
 #include "ImageView.h"
 #include "LColor.h"
 #include "LGdi.h"
 #include "SalLog.h"
-#include "UIView.h"
-#include "ImageLoader.h"
 #include <Objidl.h>
 
 namespace util {
@@ -43,12 +43,14 @@ void ImageWin::drawText(const String& text,
 {
 }
 
+// setLoaded在UIthread中执行
 LVoid ImageWin::setLoaded(LBool loaded)
 {
     LImage::setLoaded(loaded);
     if (m_image && loaded) {
         //unlockPixels();
-        yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
+        //yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
+        yanbo::AppManager::instance()->uiThread()->draw(m_image);
     }
 }
 

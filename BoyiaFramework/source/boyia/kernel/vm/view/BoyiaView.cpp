@@ -84,8 +84,8 @@ LVoid BoyiaView::commit()
 LVoid BoyiaView::setStyle(String& cls)
 {
     if (m_item) {
-        ResourceLoader* loader = UIView::getInstance()->getLoader();
-        LGraphicsContext* gc = UIView::getInstance()->getGraphicsContext();
+        ResourceLoader* loader = runtime()->view()->getLoader();
+        LGraphicsContext* gc = runtime()->view()->getGraphicsContext();
         m_item->setClassName(cls);
         m_item->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
 
