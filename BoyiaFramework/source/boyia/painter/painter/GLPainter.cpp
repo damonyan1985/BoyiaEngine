@@ -68,7 +68,7 @@ GLPainter::GLPainter()
     : m_scale(1)
     , m_stMatrix(NULL)
 {
-    init();
+    //init();
 }
 
 GLPainter::~GLPainter()

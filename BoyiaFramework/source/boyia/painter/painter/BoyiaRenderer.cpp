@@ -35,6 +35,9 @@ BoyiaRenderer::~BoyiaRenderer()
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
+
+    glDeleteBuffers(2, m_buffersVBO);
+    glDeleteVertexArrays(1, &m_buffersVAO);
 }
 
 LVoid BoyiaRenderer::bindPosition()

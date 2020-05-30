@@ -159,7 +159,7 @@ LVoid ImageAndroid::setLoaded(LBool loaded)
     if (m_image && loaded) {
         unlockPixels();
         //yanbo::AppManager::instance()->getLoader()->repaint(m_image);
-        yanbo::AppManager::instance()->uiThread()->draw(m_image);
+        yanbo::AppManager::instance()->uiThread()->drawUI(m_image);
     }
 }
 
