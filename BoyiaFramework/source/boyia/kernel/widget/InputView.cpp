@@ -21,45 +21,19 @@ InputView::InputView(
     const String& name,
     const String& value,
     const String& title,
-    const String& inputType,
     const String& imageUrl)
     : FormView(id, name, value, title)
     , m_newFont(kBoyiaNull)
 {
-    m_type = kInputText;
     m_value = value;
     m_title = title;
-
-    if (inputType.CompareNoCase(_CS("text"))) {
-        m_type = kInputText;
-    } else if (inputType.CompareNoCase(_CS("password"))) {
-        m_type = kInputPassword;
-    } else if (inputType.CompareNoCase(_CS("reset"))) {
-        m_type = kInputReset;
-    } else if (inputType.CompareNoCase(_CS("radio"))) {
-        m_type = kInputRadio;
-    } else if (inputType.CompareNoCase(_CS("checkbox"))) {
-        m_type = kInputCheckbox;
-    } else if (inputType.CompareNoCase(_CS("file"))) {
-        m_type = kInputFile;
-    } else if (inputType.CompareNoCase(_CS("hidden"))) {
-        m_type = kInputHidden;
-    } else if (inputType.CompareNoCase(_CS("button"))) {
-        m_type = kInputButton;
-    } else if (inputType.CompareNoCase(_CS("submit"))) {
-        m_type = kInputSubmit;
-    } else if (inputType.CompareNoCase(_CS("image"))) {
-        m_type = kInputImage;
-    } else {
-        m_type = kInputNone;
-    }
 
     initView();
 }
 
 LVoid InputView::initView()
 {
-    switch (m_type) {
+    switch (getInputType()) {
     case kInputText:
     case kInputPassword:
     case kInputFile:
@@ -99,56 +73,18 @@ LVoid InputView::setInputValue(const String& text)
     m_value = text;
 }
 
-LVoid InputView::layout(RenderContext& rc)
+LVoid InputView::layoutBegin(RenderContext& rc)
 {
     rc.addLineItem(this);
-    int maxWidth = rc.getMaxWidth();
     if (m_newFont) {
         delete m_newFont;
     }
 
     m_newFont = LFont::create(getStyle()->font);
-    switch (m_type) {
-    case kInputButton:
-    case kInputSubmit:
-    case kInputReset: {
-        //m_leftPadding = maxWidth / 80;
-        m_leftPadding = 0;
-        //m_width  = m_width + 6;
-        m_width = maxWidth / 5;
-        m_height = m_newFont->getFontHeight() + 10;
-    } break;
-    case kInputText:
-    case kInputPassword: {
-        m_leftPadding = 5;
-        m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
-        m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight() + 6;
-    } break;
-    case kInputImage: {
+}
 
-    } break;
-    case kInputHidden: {
-        m_width = 0;
-        m_height = 0;
-        m_leftPadding = 0;
-    } break;
-    case kInputFile: {
-        m_width = maxWidth / 2;
-        m_leftPadding = maxWidth / 80;
-        m_height = m_newFont->getFontHeight() + 6;
-        m_mimeType = _CS("text/plain"); //test
-        m_value = _CS("File upload not supported");
-    } break;
-    case kInputCheckbox: {
-        m_leftPadding = maxWidth / 25;
-        m_width = m_height = m_newFont->getFontHeight();
-    } break;
-    case kInputRadio: {
-        m_leftPadding = maxWidth / 25;
-        m_width = m_height = m_newFont->getFontHeight();
-    } break;
-    }
-
+LVoid InputView::layoutEnd(RenderContext& rc)
+{
     if (kInputHidden != m_type && rc.getX() >= 0) {
         if (rc.getX() + m_leftPadding + m_width > rc.getMaxWidth() + rc.getNewLineXStart()) {
             rc.newLine(this);
@@ -176,22 +112,14 @@ LVoid InputView::layout(RenderContext& rc)
     }
 }
 
-LVoid InputView::paint(LGraphicsContext& gc)
+LVoid InputView::paintBegin(LGraphicsContext& gc, LayoutPoint& point)
 {
-    if (m_type == kInputNone) {
-        return;
-    }
-
     gc.setHtmlView(this);
     setClipRect(gc);
 
     LayoutPoint topLeft = getAbsoluteContainerTopLeft();
     LInt x = topLeft.iX + getXpos();
     LInt y = topLeft.iY + getYpos();
-
-    if (kInputHidden == m_type) {
-        return;
-    }
 
     if (!m_newFont) {
         m_newFont = LFont::create(getStyle()->font);
@@ -201,105 +129,8 @@ LVoid InputView::paint(LGraphicsContext& gc)
     color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
     gc.setPenColor(color);
 
-    switch (m_type) {
-    case kInputText:
-    case kInputPassword:
-    case kInputFile: {
-        paintTextBox(gc, x, y);
-    } break;
-    case kInputSubmit:
-    case kInputButton:
-    case kInputReset: {
-        paintButton(gc, x, y);
-    } break;
-    case kInputCheckbox: {
-
-    } break;
-    }
-}
-
-LVoid InputView::paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
-{
-    if (m_style.bgColor.m_alpha) {
-        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(getStyle()->bgColor);
-
-        gc.setPenStyle(LGraphicsContext::kNullPen);
-        gc.drawRect(x + m_leftPadding, y, m_width, m_height);
-    }
-
-    paintBorder(gc, getStyle()->border, x + m_leftPadding, y);
-
-    if (m_value.GetLength() == 0) {
-        return;
-    }
-
-    if (m_type == kInputPassword) {
-        gc.drawText(
-            String('*', PlatformBridge::getTextSize(m_value)),
-            LRect(x + m_leftPadding, y + 6,
-                m_width - m_leftPadding, m_height - 6),
-            util::LGraphicsContext::kTextLeft);
-    } else {
-        gc.drawText(m_value, LRect(x + m_leftPadding, y + 6, m_width - m_leftPadding, m_height - 6), util::LGraphicsContext::kTextLeft);
-    }
-}
-
-LVoid InputView::paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y)
-{
-    if (getStyle()->bgColor.m_alpha == 0) {
-        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(util::LColor::parseArgbInt(COLOR_LIGHTGRAY));
-
-        gc.setPenStyle(LGraphicsContext::kSolidPen);
-        gc.setPenColor(util::LColor::parseArgbInt(COLOR_DARKGRAY));
-        gc.drawRect(x + m_leftPadding, y, m_width, m_height);
-    } else {
-        gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(getStyle()->bgColor);
-
-        gc.setPenStyle(LGraphicsContext::kNullPen);
-        gc.drawRect(x + m_leftPadding, y, m_width, m_height);
-
-        gc.setPenStyle(LGraphicsContext::kSolidPen);
-    }
-
-    paintBorder(gc, getStyle()->border, x, y);
-
-    if (m_value.GetLength() > 0) {
-        gc.setPenStyle(LGraphicsContext::kSolidPen);
-        gc.setPenColor(getStyle()->color);
-        //util::String strW;
-        //util::StringUtils::strTostrW(m_value, strW);
-        //dc.drawText(strW, util::LPoint(m_x + m_leftPadding, m_y - m_scrollY + m_height));
-        gc.drawText(m_value,
-            LRect(x + m_leftPadding,
-                y + 6,
-                m_width - m_leftPadding,
-                m_height - 6),
-            LGraphicsContext::kTextCenter);
-    }
-}
-
-LVoid InputView::paintRadioButton(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
-{
-}
-
-LVoid InputView::paintCheckBox(LGraphicsContext& dc, LayoutUnit x, LayoutUnit y)
-{
-}
-
-LVoid InputView::setSelected(const LBool selected)
-{
-    HtmlView::setSelected(selected);
-    if (selected) {
-        switch (m_type) {
-        case kInputText:
-        case kInputPassword: {
-            Editor::get()->setView(this)->showKeyboard(m_value);
-        } break;
-        }
-    }
+    point.iX = x;
+    point.iY = y;
 }
 
 LVoid InputView::execute()
@@ -308,6 +139,189 @@ LVoid InputView::execute()
 
 LInt InputView::getInputType()
 {
-    return m_type;
+    return kInputText;
+}
+
+class InputTextBox : public InputView {
+public:
+    InputTextBox(
+        const String& id,
+        const String& name,
+        const String& value,
+        const String& title,
+        const String& imageUrl)
+        : InputView(id, name, value, title, imageUrl)
+    {
+    }
+
+    LVoid layout(RenderContext& rc)
+    {
+        InputView::layoutBegin(rc);
+        LInt maxWidth = rc.getMaxWidth();
+        m_leftPadding = 5;
+        m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
+        m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight() + 6;
+        InputView::layoutEnd(rc);
+    }
+
+    virtual LInt getInputType() 
+    {
+        return kInputText;
+    }
+
+    virtual LVoid paint(LGraphicsContext& gc)
+    {
+        LayoutPoint point;
+        paintTextBorder(gc, point);
+        if (m_value.GetLength() == 0) {
+            return;
+        }
+        gc.drawText(m_value, 
+            LRect(point.iX + m_leftPadding, 
+                point.iY + 6, m_width - m_leftPadding, 
+                m_height - 6), 
+            util::LGraphicsContext::kTextLeft);
+    }
+
+    LVoid paintTextBorder(LGraphicsContext& gc, LayoutPoint& point)
+    {
+        paintBegin(gc, point);
+        if (m_style.bgColor.m_alpha) {
+            gc.setBrushStyle(LGraphicsContext::kSolidBrush);
+            gc.setBrushColor(getStyle()->bgColor);
+
+            gc.setPenStyle(LGraphicsContext::kNullPen);
+            gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
+        }
+
+        paintBorder(gc, getStyle()->border, point.iX + m_leftPadding, point.iY);
+    }
+
+    virtual LVoid setSelected(const LBool selected)
+    {
+        HtmlView::setSelected(selected);
+        Editor::get()->setView(this)->showKeyboard(m_value);
+    }
+};
+
+class InputPassword : public InputTextBox {
+public:
+    InputPassword(
+        const String& id,
+        const String& name,
+        const String& value,
+        const String& title,
+        const String& imageUrl)
+        : InputTextBox(id, name, value, title, imageUrl)
+    {
+    }
+
+    virtual LInt getInputType()
+    {
+        return kInputPassword;
+    }
+
+    virtual LVoid paint(LGraphicsContext& gc)
+    {
+        LayoutPoint point;
+        paintTextBorder(gc, point);
+        if (m_value.GetLength() == 0) {
+            return;
+        }
+        
+        gc.drawText(
+            m_value, 
+            LRect(point.iX + m_leftPadding, point.iY + 6, 
+                m_width - m_leftPadding, m_height - 6), util::LGraphicsContext::kTextLeft);
+    }
+};
+
+class InputButton : public InputView {
+public:
+    InputButton(
+        const String& id,
+        const String& name,
+        const String& value,
+        const String& title,
+        const String& imageUrl)
+        : InputView(id, name, value, title, imageUrl)
+    {
+    }
+
+    virtual LVoid layout(RenderContext& rc)
+    {
+        InputView::layoutBegin(rc);
+        LInt maxWidth = rc.getMaxWidth();
+        m_leftPadding = 0;
+        m_width = maxWidth / 5;
+        m_height = m_newFont->getFontHeight() + 10;
+        InputView::layoutEnd(rc);
+    }
+
+    virtual LInt getInputType()
+    {
+        return kInputButton;
+    }
+
+    virtual LVoid paint(LGraphicsContext& gc)
+    {
+        LayoutPoint point;
+        InputView::paintBegin(gc, point);
+
+        if (getStyle()->bgColor.m_alpha == 0) {
+            gc.setBrushStyle(LGraphicsContext::kSolidBrush);
+            gc.setBrushColor(util::LColor::parseArgbInt(COLOR_LIGHTGRAY));
+
+            gc.setPenStyle(LGraphicsContext::kSolidPen);
+            gc.setPenColor(util::LColor::parseArgbInt(COLOR_DARKGRAY));
+            gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
+        } else {
+            gc.setBrushStyle(LGraphicsContext::kSolidBrush);
+            gc.setBrushColor(getStyle()->bgColor);
+
+            gc.setPenStyle(LGraphicsContext::kNullPen);
+            gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
+
+            gc.setPenStyle(LGraphicsContext::kSolidPen);
+        }
+
+        paintBorder(gc, getStyle()->border, point.iX, point.iY);
+
+        if (m_value.GetLength() > 0) {
+            gc.setPenStyle(LGraphicsContext::kSolidPen);
+            gc.setPenColor(getStyle()->color);
+
+            gc.drawText(m_value,
+                LRect(point.iX + m_leftPadding,
+                    point.iY + 6,
+                    m_width - m_leftPadding,
+                    m_height - 6),
+                LGraphicsContext::kTextCenter);
+        }
+    }
+};
+
+InputView* InputView::create(
+    const String& id,
+    const String& name,
+    const String& value,
+    const String& title,
+    const String& inputType,
+    const String& imageUrl)
+{
+    if (inputType.CompareNoCase(_CS("text"))) {
+        return new InputTextBox(id, name, value, title, imageUrl);
+    } else if (inputType.CompareNoCase(_CS("password"))) {
+        return new InputPassword(id, name, value, title, imageUrl);
+    } else if (inputType.CompareNoCase(_CS("reset"))) {
+    } else if (inputType.CompareNoCase(_CS("radio"))) {
+    } else if (inputType.CompareNoCase(_CS("checkbox"))) {
+    } else if (inputType.CompareNoCase(_CS("button"))) {
+        return new InputButton(id, name, value, title, imageUrl);
+    } else if (inputType.CompareNoCase(_CS("submit"))) {
+        return new InputButton(id, name, value, title, imageUrl);
+    }
+
+    return kBoyiaNull;
 }
 }
