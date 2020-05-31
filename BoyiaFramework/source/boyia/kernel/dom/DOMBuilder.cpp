@@ -136,8 +136,15 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             // String tagTitle = _CS(elem->Attribute("title"));
             // String tagInputType = _CS(elem->Attribute("type"));
             // String tagImageUrl = _CS(elem->Attribute("src"));
-
+            /*
             item = new InputView(
+                tagId,
+                tagName,
+                _CS(elem->Attribute("value")),
+                _CS(elem->Attribute("title")),
+                _CS(elem->Attribute("type")),
+                _CS(elem->Attribute("src")));*/
+            item = InputView::create(
                 tagId,
                 tagName,
                 _CS(elem->Attribute("value")),

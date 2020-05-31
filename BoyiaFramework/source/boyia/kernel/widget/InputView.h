@@ -29,14 +29,15 @@ public:
         kInputButton
     };
 
-private:
-    LInt m_type;
-    LBool m_checked;
-    LBool m_activated;
-    LFont* m_newFont;
-
 public:
     InputView(
+        const String& id,
+        const String& name,
+        const String& value,
+        const String& title,
+        const String& imageUrl);
+
+    static InputView* create(
         const String& id,
         const String& name,
         const String& value,
@@ -47,20 +48,22 @@ public:
     ~InputView();
 
 public:
-    virtual LVoid layout(RenderContext& rc);
-    virtual LVoid paint(LGraphicsContext& dc);
     virtual LVoid execute();
 
-    LInt getInputType();
-    virtual LVoid setSelected(const LBool selected);
+    virtual LInt getInputType();
     LVoid setInputValue(const String& text);
 
-private:
+protected:
     LVoid initView();
-    LVoid paintTextBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit y);
-    LVoid paintButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-    LVoid paintRadioButton(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
-    LVoid paintCheckBox(LGraphicsContext& gc, LayoutUnit x, LayoutUnit);
+    LVoid layoutBegin(RenderContext& rc);
+    LVoid layoutEnd(RenderContext& rc);
+    
+    LVoid paintBegin(LGraphicsContext& gc, LayoutPoint& point);
+
+    LInt m_type;
+    LBool m_checked;
+    LBool m_activated;
+    LFont* m_newFont;
 };
 }
 #endif /* InputView_h */
