@@ -2,15 +2,15 @@
  * InputView.cpp
  *
  *  Created on: 2011-7-17
- *      Author: Administrator
+ *      Author: yanbo
  */
 
 #include "InputView.h"
 #include "LColor.h"
+#include "PlatformBridge.h"
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
-#include "PlatformBridge.h"
 
 namespace yanbo {
 
@@ -164,7 +164,7 @@ public:
         InputView::layoutEnd(rc);
     }
 
-    virtual LInt getInputType() 
+    virtual LInt getInputType()
     {
         return kInputText;
     }
@@ -176,10 +176,10 @@ public:
         if (m_value.GetLength() == 0) {
             return;
         }
-        gc.drawText(m_value, 
-            LRect(point.iX + m_leftPadding, 
-                point.iY + 6, m_width - m_leftPadding, 
-                m_height - 6), 
+        gc.drawText(m_value,
+            LRect(point.iX + m_leftPadding,
+                point.iY + 6, m_width - m_leftPadding,
+                m_height - 6),
             util::LGraphicsContext::kTextLeft);
     }
 
@@ -228,11 +228,12 @@ public:
         if (m_value.GetLength() == 0) {
             return;
         }
-        
+
         gc.drawText(
-            m_value, 
-            LRect(point.iX + m_leftPadding, point.iY + 6, 
-                m_width - m_leftPadding, m_height - 6), util::LGraphicsContext::kTextLeft);
+            String('*', PlatformBridge::getTextSize(m_value)),
+            LRect(point.iX + m_leftPadding, point.iY + 6,
+                m_width - m_leftPadding, m_height - 6),
+            util::LGraphicsContext::kTextLeft);
     }
 };
 
