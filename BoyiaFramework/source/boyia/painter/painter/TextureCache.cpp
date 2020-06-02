@@ -80,7 +80,7 @@ Texture* TextureCache::put(const LImage* image)
     Texture* tex = find(item, key);
 
     if (!tex) {
-        tex = fetchTexture(item, image->rect(), image, key);
+        tex = fetchTexture(item, image, key);
     }
 
     return tex;
@@ -107,7 +107,21 @@ Texture* TextureCache::find(HtmlView* item, LUint key)
     return kBoyiaNull;
 }
 
-Texture* TextureCache::fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key)
+Texture* TextureCache::findText(const ViewPainter* item)
+{
+    TextureMap::Iterator iter = m_texMap.begin();
+    TextureMap::Iterator iterEnd = m_texMap.end();
+
+    for (; iter != iterEnd; ++iter) {
+        if (item == (*iter)->item) {
+            return (*iter)->tex.get();
+        }
+    }
+
+    return kBoyiaNull;
+}
+
+Texture* TextureCache::fetchTexture(ViewPainter* item, const LImage* image, LUint key)
 {
     TexturePair* pair = new TexturePair;
     pair->item = item;

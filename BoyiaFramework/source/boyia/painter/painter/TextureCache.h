@@ -25,7 +25,7 @@ class TexturePair : public BoyiaRef {
 public:
     TexturePair();
 
-    HtmlView* item;
+    ViewPainter* item;
     BoyiaPtr<Texture> tex;
 };
 
@@ -38,9 +38,11 @@ public:
     Texture* find(LVoid* image);
     Texture* updateTexture(const LImage* image);
     LVoid updateTexture(Texture* tex, const LImage* image);
+    // 查找文本产生的纹理
+    Texture* findText(const ViewPainter* item);
+    Texture* fetchTexture(ViewPainter* item, const LImage* image, LUint key);
 
 private:
-    Texture* fetchTexture(HtmlView* item, const LRect& rect, const LImage* image, LUint key);
     Texture* find(HtmlView* item, LUint key);
 
     TextureMap m_texMap;

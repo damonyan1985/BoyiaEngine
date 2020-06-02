@@ -27,6 +27,10 @@ public:
     {
     }
 
+    ~ItemPainter()
+    {
+    }
+
     ListPainter painters;
     LVoid* item;
 };
@@ -60,7 +64,7 @@ LVoid GraphicsContextGL::restore()
     m_clipRect = kBoyiaNull;
 }
 
-LVoid GraphicsContextGL::setHtmlView(LVoid* item)
+LVoid GraphicsContextGL::setHtmlView(ViewPainter* item)
 {
     m_item = item;
     ItemPainter* painter = currentPainter();
@@ -69,7 +73,7 @@ LVoid GraphicsContextGL::setHtmlView(LVoid* item)
 
 ItemPainter* GraphicsContextGL::currentPainter()
 {
-    yanbo::HtmlView* item = (yanbo::HtmlView*)m_item;
+    ViewPainter* item = (ViewPainter*)m_item;
     ItemPainter* painter = (ItemPainter*)item->painter();
     if (!painter) {
         painter = new ItemPainter();
@@ -157,8 +161,6 @@ LVoid GraphicsContextGL::drawImage(const LRect& aDestRect, const LImage* aSource
 
 LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
-    //KLOG("GraphicsContextGL::drawBitmap drawVideo");
-
     MediaPlayerAndroid* amp = (MediaPlayerAndroid*)mp;
     if (!amp->texId())
         return;
@@ -187,26 +189,27 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
     image->drawText(text, rect, m_font, m_penColor);
     image->unlockPixels();
     image->setRect(rect);
-    image->setItem((yanbo::HtmlView*)m_item);
+    //image->setItem((yanbo::HtmlView*)m_item);
 
-    yanbo::Texture* tex = yanbo::TextureCache::getInst()->find((yanbo::HtmlView*)m_item);
-    if (tex) {
+    yanbo::Texture* tex = yanbo::TextureCache::getInst()->findText((ViewPainter*)m_item);
+    if (!tex) {
+        tex = yanbo::TextureCache::getInst()->fetchTexture((ViewPainter*)m_item, image.get(), 0);
+    } else {
         yanbo::TextureCache::getInst()->updateTexture(tex, image.get());
-
-        ItemPainter* painter = currentPainter();
-        BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
-        paint->setColor(m_brushColor);
-        if (m_clipRect) {
-            paint->setImage(tex, rect, *m_clipRect);
-        } else {
-            paint->setImage(tex, rect);
-        }
-
-        painter->painters.push(paint);
-        return;
     }
 
-    drawImage(image.get());
+    ItemPainter* painter = currentPainter();
+    BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+    paint->setColor(m_brushColor);
+    if (m_clipRect) {
+        paint->setImage(tex, rect, *m_clipRect);
+    } else {
+        paint->setImage(tex, rect);
+    }
+
+    painter->painters.push(paint);
+
+    //drawImage(image.get());
 }
 
 LVoid GraphicsContextGL::setBrushStyle(BrushStyle aBrushStyle)
@@ -260,6 +263,17 @@ LVoid GraphicsContextGL::reset()
 LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 {
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
+    // 如果是文本，则使用linetext来绘制
+    if (item->isText()) {
+        yanbo::TextView* text = dynamic_cast<yanbo::TextView*>(item);
+        for (LInt i = 0; i < text->lineSize(); i++) {
+            ItemPainter* painter = static_cast<ItemPainter*>(text->linePainter(i)->painter());
+            (*painter->painters.begin())->appendToBuffer();
+        }
+
+        return;
+    }
+
     ItemPainter* painter = (ItemPainter*)item->painter();
     if (!painter) {
         return;

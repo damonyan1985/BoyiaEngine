@@ -44,7 +44,7 @@ public:
 
     virtual LVoid reset();
     virtual LVoid submit();
-    virtual LVoid setHtmlView(LVoid* item);
+    virtual LVoid setHtmlView(ViewPainter* item);
     virtual LVoid save();
     virtual LVoid clipRect(const LRect& rect);
     virtual LVoid restore();

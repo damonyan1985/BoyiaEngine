@@ -13,6 +13,7 @@
 
 #include "LGraphic.h"
 #include "UtilString.h"
+#include "BoyiaPtr.h"
 
 // software abstraction layer API
 // graphic abstract class
@@ -22,6 +23,31 @@ class LImage;
 class LFont;
 class LRgb;
 class LMediaPlayer;
+class ViewPainter {
+public:
+    ViewPainter()
+        : m_painter(kBoyiaNull)
+    {
+    }
+
+    virtual ~ViewPainter()
+    {
+    }
+
+    LVoid setPainter(BoyiaRef* painter)
+    {
+        m_painter = painter;
+    }
+
+    LVoid* painter() const
+    {
+        return m_painter.get();
+    }
+
+protected:
+    BoyiaPtr<BoyiaRef> m_painter;
+};
+
 class LGraphicsContext {
 public:
     enum BrushStyle {
@@ -84,7 +110,7 @@ public:
 
     virtual LVoid submit() = 0;
     virtual LVoid reset() = 0;
-    virtual LVoid setHtmlView(LVoid* item) = 0;
+    virtual LVoid setHtmlView(ViewPainter* item) = 0;
     virtual LVoid save() = 0;
     virtual LVoid clipRect(const LRect& rect) = 0;
     virtual LVoid restore() = 0;
@@ -363,6 +389,7 @@ using util::LGraphicsContext;
 using util::LImage;
 using util::LMediaPlayer;
 using util::LRgb;
+using util::ViewPainter;
 
 #endif // LGDI_H
 

@@ -8,7 +8,6 @@
 #ifndef LBaseView_h
 #define LBaseView_h
 
-#include "PlatformLib.h"
 #include "Style.h"
 
 namespace util {
@@ -17,26 +16,29 @@ namespace util {
  * LBaseView. 所有View的基类
  * 隶属于GuiLayer即抽象接口层
  */
-
-class LBaseView : public BoyiaRef {
+// 目前不能使HtmlView继承自ViewPainter，HtmlView指针转换成void*或者intptr后
+// 使用ViewPainter*强转将无法正常引用ViewPainter中的内存，
+// 必须再使用HtmlView*将void*或者intptr强转后，才能使用ViewPainter*引用，
+// 可以参看C++多重继承中内存模型原理
+class LBaseView : public ViewPainter {
 public:
     LBaseView();
     virtual ~LBaseView();
 
 public:
-    void setTransparent(LBool transparent);
+    LVoid setTransparent(LBool transparent);
     LBool getTransparency();
 
-    void setFont(LFont font);
+    LVoid setFont(LFont font);
     const LFont& getFont() const;
 
-    void setPos(LInt x, LInt y);
-    void setSize(LInt width, LInt height);
+    LVoid setPos(LInt x, LInt y);
+    LVoid setSize(LInt width, LInt height);
 
-    void translate(LInt x, LInt y);
+    LVoid translate(LInt x, LInt y);
 
-    void setXpos(LInt x);
-    void setYpos(LInt y);
+    LVoid setXpos(LInt x);
+    LVoid setYpos(LInt y);
 
     LInt getXpos() const;
     LInt getYpos() const;
@@ -44,17 +46,17 @@ public:
     virtual LInt getWidth() const;
     virtual LInt getHeight() const;
 
-    void setWidth(LInt width);
-    void setHeight(LInt height);
+    LVoid setWidth(LInt width);
+    LVoid setHeight(LInt height);
 
-    void setPadding(LInt leftPadding, LInt topPadding);
+    LVoid setPadding(LInt leftPadding, LInt topPadding);
 
-    void setVisible(LBool visible);
+    LVoid setVisible(LBool visible);
 
-    virtual int getEndX();
-    virtual int getBottomY();
+    virtual LInt getEndX();
+    virtual LInt getBottomY();
 
-    void setTagName(const String& tagName);
+    LVoid setTagName(const String& tagName);
     const String& getTagName() const;
 
 protected:
@@ -81,4 +83,6 @@ protected:
     Style m_style;
 };
 }
+
+using util::LBaseView;
 #endif /* LGRAPHICITEM_H_ */

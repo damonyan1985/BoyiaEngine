@@ -11,6 +11,7 @@ import android.view.Surface;
  * 同层渲染，本地view控制类
  */
 public class PlatformViewController {
+    private Context mContext;
     // 创建VirtualDisplay
     public VirtualDisplay createVirtualDisplay(Context context, int texId, int width, int height) {
         SurfaceTexture texture = new SurfaceTexture(texId);
@@ -24,5 +25,10 @@ public class PlatformViewController {
                 densityDpi,
                 surface,
                 0);
+    }
+
+    private int toPhysicalPixels(double logicalPixels) {
+        float density = mContext.getResources().getDisplayMetrics().density;
+        return (int) Math.round(logicalPixels * density);
     }
 }
