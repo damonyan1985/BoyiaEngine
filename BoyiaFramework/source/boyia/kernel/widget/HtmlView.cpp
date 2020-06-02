@@ -25,10 +25,10 @@ HtmlView::HtmlView(
     , m_type(HtmlTags::TAGNONE)
     , m_doc(kBoyiaNull)
     , m_isViewRoot(LFalse)
-    , m_painter(kBoyiaNull)
     , m_clip(LTrue)
     , m_needLayout(LTrue)
     , m_itemListener(kBoyiaNull)
+    , m_selected(LFalse)
 {
     m_style.focusable = selectable;
 }
@@ -74,16 +74,6 @@ LVoid HtmlView::layoutInline(RenderContext& rc)
         rc.addX(m_width);
         rc.setNextLineHeight(m_height);
     }
-}
-
-LVoid HtmlView::setPainter(BoyiaRef* painter)
-{
-    m_painter = painter;
-}
-
-LVoid* HtmlView::painter() const
-{
-    return m_painter.get();
 }
 
 LVoid HtmlView::handleXYPos(RenderContext& rc)
@@ -147,14 +137,14 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         gc.drawRect(x, y, m_width, m_height);
     }
 
+    paintBorder(gc, m_style.border, x, y);
+
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
 
     for (; iter != iterEnd; ++iter) {
         (*iter)->paint(gc);
     }
-
-    paintBorder(gc, m_style.border, x, y);
 }
 
 LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)
@@ -527,7 +517,7 @@ LayoutRect HtmlView::clipRect() const
     return m_clipRect;
 }
 
-LVoid HtmlView::setClipRect(util::LGraphicsContext& gc)
+LVoid HtmlView::setClipRect(LGraphicsContext& gc)
 {
     HtmlView* parent = getParent();
     if (!parent) {

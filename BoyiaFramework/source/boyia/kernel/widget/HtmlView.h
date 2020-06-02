@@ -21,7 +21,7 @@ typedef LRect LayoutRect;
 typedef LInt LayoutUnit;
 typedef LPoint LayoutPoint;
 
-class HtmlView : public util::LBaseView {
+class HtmlView : public LBaseView {
 public:
     HtmlView(const String& id, LBool selectable);
     virtual ~HtmlView();
@@ -86,9 +86,6 @@ public:
     LVoid setDocument(HtmlDocument* doc);
     HtmlDocument* getDocument() const;
 
-    LVoid setPainter(BoyiaRef* painter);
-    LVoid* painter() const;
-
     LBool isClipItem() const;
     LVoid setClipRect(LGraphicsContext& gc);
     LayoutRect clipRect() const;
@@ -126,7 +123,6 @@ protected:
 
     String m_className;
     LBool m_isViewRoot;
-    BoyiaPtr<BoyiaRef> m_painter;
     LBool m_clip;
     LayoutRect m_clipRect;
     LBool m_needLayout;

@@ -2,13 +2,13 @@
 #include "HtmlView.h"
 #include "UIView.h"
 #include "ImageWin.h"
+#include "TextView.h"
 
 namespace util {
 class ItemPainter : public BoyiaRef {
 public:
     ItemPainter()
         : cmds(0, 20)
-        , item(kBoyiaNull)
     {
     }
 
@@ -22,7 +22,6 @@ public:
     }
 
     KVector<PaintCommand*> cmds;
-    LVoid* item;
 };
 
 GraphicsContextWin::GraphicsContextWin()
@@ -92,7 +91,7 @@ LVoid GraphicsContextWin::drawRoundRect(const LRect& aRect, const LSize& aCorner
 {
 }
 
-LVoid GraphicsContextWin::setHtmlView(LVoid* item)
+LVoid GraphicsContextWin::setHtmlView(ViewPainter* item)
 {
     m_item = item;
     currentPainter()->clear();
@@ -100,11 +99,10 @@ LVoid GraphicsContextWin::setHtmlView(LVoid* item)
 
 ItemPainter* GraphicsContextWin::currentPainter()
 {
-    yanbo::HtmlView* item = (yanbo::HtmlView*)m_item;
+    ViewPainter* item = (ViewPainter*)m_item;
     ItemPainter* painter = (ItemPainter*)item->painter();
     if (!painter) {
         painter = new ItemPainter();
-        painter->item = item;
         item->setPainter(painter);
     }
 
@@ -183,6 +181,16 @@ LVoid GraphicsContextWin::clipRect(const LRect& rect)
 LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
 {
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
+    
+    if (item->isText()) {
+        yanbo::TextView* text = dynamic_cast<yanbo::TextView*>(item);
+        for (LInt i = 0; i < text->lineSize(); i++) {
+            static_cast<ItemPainter*>(text->linePainter(i)->painter())->cmds[0]->paint(gc);
+        }
+
+        return;
+    }
+
     ItemPainter* painter = (ItemPainter*)item->painter();
     if (!painter) {
         return;

@@ -180,7 +180,7 @@ public:
             LRect(point.iX + m_leftPadding,
                 point.iY + 6, m_width - m_leftPadding,
                 m_height - 6),
-            util::LGraphicsContext::kTextLeft);
+            LGraphicsContext::kTextLeft);
     }
 
     LVoid paintTextBorder(LGraphicsContext& gc, LayoutPoint& point)
@@ -233,7 +233,7 @@ public:
             String('*', PlatformBridge::getTextSize(m_value)),
             LRect(point.iX + m_leftPadding, point.iY + 6,
                 m_width - m_leftPadding, m_height - 6),
-            util::LGraphicsContext::kTextLeft);
+            LGraphicsContext::kTextLeft);
     }
 };
 

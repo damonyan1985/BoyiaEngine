@@ -14,21 +14,28 @@
 #include "StringUtils.h"
 
 namespace yanbo {
+class TextLine : public ViewPainter {
+public:
+    TextLine(LInt length, const String& text)
+    {
+        m_lineLength = length;
+        m_text = text;
+    }
 
-TextView::Line::Line(LInt length, const String& text)
-{
-    m_lineLength = length;
-    m_text = text;
-}
+    ~TextLine()
+    {
+    }
 
-TextView::Line::~Line()
-{
-}
+    LVoid paint(LGraphicsContext& gc, const LRect& rect)
+    {
+        gc.setHtmlView(this);
+        gc.drawText(m_text, rect, LGraphicsContext::kTextLeft);
+    }
 
-LVoid TextView::Line::paint(LGraphicsContext& gc, const LRect& rect)
-{
-    gc.drawText(m_text, rect, util::LGraphicsContext::kTextLeft);
-}
+public:
+    LInt m_lineLength;
+    String m_text;
+};
 
 TextView::TextView(const String& id, const String& text)
     : InlineView(id, LFalse)
@@ -50,6 +57,16 @@ TextView::~TextView()
     }
 }
 
+ViewPainter* TextView::linePainter(LInt i) const
+{
+    return m_textLines->elementAt(i);
+}
+
+LInt TextView::lineSize() const
+{
+    return m_textLines->size();
+}
+
 void TextView::layout(RenderContext& rc)
 {
     handleXYPos(rc);
@@ -58,7 +75,7 @@ void TextView::layout(RenderContext& rc)
     m_height = 0;
 
     if (!m_textLines) {
-        m_textLines = new KVector<Line*>();
+        m_textLines = new KVector<TextLine*>();
     } else {
         m_textLines->clear();
     }
@@ -122,7 +139,7 @@ LInt TextView::calcTextLine(const String& text, LInt maxWidth)
     for (LInt i = 0; i < len; ++i) {
         String text;
         m_newFont->getLineText(i, text);
-        m_textLines->addElement(new Line(
+        m_textLines->addElement(new TextLine(
             m_newFont->getLineWidth(i),
             text));
     }
@@ -137,7 +154,7 @@ LBool TextView::isMultiLine()
 
 LVoid TextView::paint(LGraphicsContext& gc)
 {
-    gc.setHtmlView(this);
+    //gc.setHtmlView(this);
     setClipRect(gc);
     LayoutPoint topLeft = getAbsoluteContainerTopLeft();
     KFORMATLOG("TextView::paint topLeft.x=%d", topLeft.iX);
@@ -148,7 +165,7 @@ LVoid TextView::paint(LGraphicsContext& gc)
         LInt textHeight = m_newFont->getFontHeight();
         LInt len = m_textLines->size();
         for (LInt i = 0; i < len; ++i) {
-            Line* line = m_textLines->elementAt(i);
+            TextLine* line = m_textLines->elementAt(i);
 
             y = i > 0 ? y + textHeight : y;
             LayoutUnit left = x;

@@ -11,6 +11,7 @@
 #include "InlineView.h"
 
 namespace yanbo {
+class TextLine;
 class TextView : public InlineView {
 public:
     TextView(const String& id, const String& text);
@@ -28,21 +29,12 @@ public:
     LBool isMultiLine();
     HtmlView* getLinkItem();
 
-private:
-    class Line {
-    public:
-        Line(LInt length, const String& text);
-        ~Line();
-        LVoid paint(LGraphicsContext& gc, const LRect& rect);
-
-    public:
-        LInt m_lineLength;
-        String m_text;
-    };
+    LInt lineSize() const;
+    ViewPainter* linePainter(LInt i) const;
 
 protected:
     String m_text;
-    KVector<Line*>* m_textLines;
+    KVector<TextLine*>* m_textLines;
     LFont* m_newFont;
     LInt m_maxWidth;
 };
