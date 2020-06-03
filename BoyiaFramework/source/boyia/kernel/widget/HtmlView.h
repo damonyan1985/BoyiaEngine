@@ -2,13 +2,13 @@
 #define HtmlView_h
 
 // all render base class
+#include "BoyiaPtr.h"
 #include "HtmlTags.h"
 #include "IViewListener.h"
 #include "KList.h"
 #include "LBaseView.h"
 #include "LGdi.h"
 #include "StyleManager.h"
-#include "BoyiaPtr.h"
 
 namespace yanbo {
 
@@ -27,12 +27,12 @@ public:
     virtual ~HtmlView();
 
 public:
+    // layout时计算相对坐标
     virtual LVoid layout(RenderContext& rc);
-
-    // prepare to reconstruct the layout
     virtual LVoid layout();
     LVoid relayout();
 
+    // 绘制时根据元素的相对坐标计算绝对坐标
     virtual LVoid paint(LGraphicsContext& gc);
     virtual LVoid paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y);
     virtual LBool isText() const;

@@ -9,6 +9,7 @@
 #define LBaseView_h
 
 #include "Style.h"
+#include "BoyiaRef.h"
 
 namespace util {
 
