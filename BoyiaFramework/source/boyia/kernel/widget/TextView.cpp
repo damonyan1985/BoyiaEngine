@@ -88,10 +88,8 @@ void TextView::layout(RenderContext& rc)
         delete m_newFont;
     }
 
-    LFont font = m_style.font;
-    font.setFontSize(font.getFontSize() * m_style.scale);
-
-    m_newFont = LFont::create(font); // platform reference font
+    m_newFont = LFont::create(m_style.font); // platform reference font
+    m_newFont->setFontSize(m_style.font.getFontSize() * m_style.scale);
     LInt longestLine = calcTextLine(m_text, m_maxWidth - m_style.leftMargin - m_style.rightMargin);
 
     m_width = longestLine + m_style.leftMargin + m_style.rightMargin;
