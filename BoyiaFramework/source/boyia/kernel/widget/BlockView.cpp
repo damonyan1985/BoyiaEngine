@@ -73,7 +73,7 @@ LVoid BlockView::layoutBlock(LBool relayoutChildren)
 
     if (m_style.flexDirection == util::Style::FLEX_ROW) {
         FlexLayout::flexRowLayout(this);
-        KFORMATLOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
+        BOYIA_LOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
     } else if (m_style.flexDirection == util::Style::FLEX_ROW_REVERSE) {
         FlexLayout::flexRowReverse(this);
     } else {
@@ -105,14 +105,11 @@ LVoid BlockView::layoutBlockChildren(LBool relayoutChildren)
     }
     //m_height = absoluteLogicalHeight > previousLogicalHeight ? absoluteLogicalHeight : previousLogicalHeight;
 
-    KFORMATLOG("BlockView layoutBlockChildren m_height=%d", m_height);
+    BOYIA_LOG("BlockView layoutBlockChildren m_height=%d", m_height);
 }
 
 LVoid BlockView::layoutPositionChild(HtmlView* child)
 {
-    if (child->getStyle()->align == util::Style::ALIGN_CENTER) {
-        KFORMATLOG("BlockView layoutPositionChild m_width=%d child.width=%d", m_width, child->getWidth());
-    }
     child->layout();
     if (m_style.height && child->getStyle()->align == util::Style::ALIGN_BOTTOM) {
         child->setXpos(child->getStyle()->left);
@@ -120,7 +117,7 @@ LVoid BlockView::layoutPositionChild(HtmlView* child)
     } else if (m_style.width && child->getStyle()->align == util::Style::ALIGN_CENTER) {
         child->setXpos((m_width - child->getWidth()) / 2);
         child->setYpos(child->getStyle()->top);
-        KFORMATLOG("BlockView layoutPositionChild m_width=%d child.width=%d", m_width, child->getWidth());
+        BOYIA_LOG("BlockView layoutPositionChild m_width=%d child.width=%d", m_width, child->getWidth());
         //child->setYpos(m_height - child->getHeight());
     } else {
         child->setXpos(child->getStyle()->left);
@@ -131,8 +128,8 @@ LVoid BlockView::layoutPositionChild(HtmlView* child)
     // {
     // 	previousLogicalHeight = child->getYpos() + child->getHeight();
     // }
-    KFORMATLOG("adjustPositioned, x=%d, y=%d", child->getStyle()->left, child->getStyle()->top);
-    KFORMATLOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
+    BOYIA_LOG("adjustPositioned, x=%d, y=%d", child->getStyle()->left, child->getStyle()->top);
+    BOYIA_LOG("adjustPositioned, w=%d, h=%d", child->getWidth(), child->getHeight());
 }
 
 LVoid BlockView::layoutInlineChildren()
@@ -152,11 +149,11 @@ LVoid BlockView::layoutInlineChildren()
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
 
-    KFORMATLOG("ImageItem Block rc.X=%d", rc.getX());
+    BOYIA_LOG("ImageItem Block rc.X=%d", rc.getX());
     for (; iter != iterEnd; ++iter) {
         (*iter)->layout(rc);
     }
-    KFORMATLOG("ImageItem Block rc.Y=%d", rc.getY());
+    BOYIA_LOG("ImageItem Block rc.Y=%d", rc.getY());
     rc.newLine(this); // 换行
     rc.setNextLineHeight(0);
 
@@ -174,7 +171,7 @@ LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHe
     child->layout();
     previousLogicalHeight += child->getHeight();
 
-    KFORMATLOG("BlockView previousLogicalHeight=%d", previousLogicalHeight);
+    BOYIA_LOG("BlockView previousLogicalHeight=%d", previousLogicalHeight);
 }
 
 LVoid BlockView::addChild(HtmlView* child)

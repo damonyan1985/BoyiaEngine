@@ -17,9 +17,7 @@
 
 namespace yanbo {
 
-HtmlView::HtmlView(
-    const String& id,
-    LBool selectable)
+HtmlView::HtmlView(const String& id, LBool selectable)
     : m_id(id)
     , m_parent(kBoyiaNull)
     , m_type(HtmlTags::TAGNONE)

@@ -101,7 +101,7 @@ LVoid* BoyiaRuntime::vm() const
 
 yanbo::UIView* BoyiaRuntime::view() const
 {
-    return m_app->view();
+    return m_app ? m_app->view() : kBoyiaNull;
 }
 
 util::IDCreator* BoyiaRuntime::idCreator() const
