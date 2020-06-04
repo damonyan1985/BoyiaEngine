@@ -441,6 +441,7 @@ static OPHandler* InitHandlers(LVoid* vm)
     handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
     handlers[kCmdIfEnd] = HandleIfEnd;
     handlers[kCmdElse] = kBoyiaNull;
+    handlers[kCmdElEnd] = kBoyiaNull;
     handlers[kCmdPushObj] = HandlePushObj;
     handlers[kCmdAdd] = HandleAdd;
     handlers[kCmdSub] = HandleSub;
