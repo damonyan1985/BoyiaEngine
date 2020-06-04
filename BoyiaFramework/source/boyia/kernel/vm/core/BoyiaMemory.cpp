@@ -73,13 +73,13 @@ LVoid FreeMemoryPool(LVoid* mempool)
 LVoid* NewData(LInt size, LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    MemoryBlockHeader* pHeader = kBoyiaNull;
-
     LInt mallocSize = size + constHeaderLen;
     if (mallocSize > pool->mSize) {
         return kBoyiaNull;
     }
 
+    MemoryBlockHeader* pHeader = kBoyiaNull;
+    // 如果firstBlock不存在，则创建内存单元，然后完成
     if (!pool->mFirstBlock) {
         pHeader = (MemoryBlockHeader*)ADDR_ALIGN((LIntPtr)pool->mAddress);
         BOYIA_LOG("BoyiaMemory pool->address: %lx pHeader %lx constAlignNum %d", (LIntPtr)pool->mAddress, (LIntPtr)pHeader, constAlignNum);
@@ -90,6 +90,8 @@ LVoid* NewData(LInt size, LVoid* mempool)
         pool->mFirstBlock = pHeader;
     } else {
         MemoryBlockHeader* current = pool->mFirstBlock;
+        // 如果第一个内存单元与内存池首地址之间存在一块空白区域
+        // 该空白区域大小大于mallocSize，则尝试利用该区域进行分配
         if ((LIntPtr)current - (LIntPtr)pool->mAddress >= mallocSize) {
             LIntPtr newAddr = ADDR_ALIGN((LIntPtr)pool->mAddress);
             if ((LIntPtr)current - newAddr >= mallocSize) {
@@ -107,6 +109,10 @@ LVoid* NewData(LInt size, LVoid* mempool)
         }
 
         while (current) {
+            // 如果当前单元没有下一个元素
+            // 则直接利用剩余的空白空间
+            // 如果当前单元存在下一个元素
+            // 则尝试利用当前与下一个元素之间的空白区域进行分配
             if (!current->mNext) {
                 if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
                     LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
@@ -157,11 +163,13 @@ LVoid DeleteData(LVoid* data, LVoid* mempool)
     }
 
     if (pool->mFirstBlock == pHeader) {
+        /*
         if (pHeader->mNext) {
             pool->mFirstBlock = pHeader->mNext;
         } else {
             pool->mFirstBlock = kBoyiaNull;
-        }
+        }*/
+        pool->mFirstBlock = pHeader->mNext;
     } else {
         if (pHeader->mNext) {
             pHeader->mPrevious->mNext = pHeader->mNext;

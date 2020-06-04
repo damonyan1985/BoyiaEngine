@@ -70,11 +70,11 @@ Texture* TextureCache::put(const LImage* image)
 {
     LUint key = 0;
     HtmlView* item = (HtmlView*)image->item();
-    KFORMATLOG("MiniTextureCache::put isImage=%d", item->isImage());
+    KFORMATLOG("TextureCache::put isImage=%d", item->isImage());
     if (item->isImage()) {
         ImageView* imgItem = (ImageView*)item;
         key = StringUtils::hashCode(imgItem->url());
-        KFORMATLOG("MiniTextureCache::put tex=%x", key);
+        KFORMATLOG("TextureCache::put tex=%x", key);
     }
 
     Texture* tex = find(item, key);
