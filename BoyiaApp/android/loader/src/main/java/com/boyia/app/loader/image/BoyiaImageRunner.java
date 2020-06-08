@@ -1,10 +1,8 @@
 package com.boyia.app.loader.image;
 
-
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.loader.BoyiaLoader;
 import com.boyia.app.loader.ILoadListener;
-
 import java.io.ByteArrayOutputStream;
 
 /*
@@ -16,7 +14,7 @@ import java.io.ByteArrayOutputStream;
  *     Callback Implements ILoadListener
  */
 public class BoyiaImageRunner implements ILoadListener {
-    private static final String TAG = BoyiaImageRunner.class.getSimpleName();
+    private static final String TAG = "BoyiaImageRunner";
     private long mDataSize;
     private boolean mNeedCached;
     private ByteArrayOutputStream mByteStream;

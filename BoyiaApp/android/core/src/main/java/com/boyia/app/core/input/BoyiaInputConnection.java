@@ -1,4 +1,4 @@
-package com.boyia.app.input;
+package com.boyia.app.core.input;
 
 import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.common.utils.BoyiaUtils;

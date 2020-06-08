@@ -3,10 +3,7 @@ package com.boyia.app.core;
 //import android.graphics.PixelFormat;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -17,8 +14,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
-import com.boyia.app.input.BoyiaInputConnection;
-import com.boyia.app.input.BoyiaInputManager;
+import com.boyia.app.core.input.BoyiaInputConnection;
+import com.boyia.app.core.input.BoyiaInputManager;
 import com.boyia.app.common.utils.BoyiaLog;
 
 import android.app.Activity;
@@ -138,13 +135,13 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         BoyiaLog.d(TAG, "surfaceCreated");
         if (mIsUIViewDistroy) {
-            BoyiaLog.d(TAG, " sendBoyiaUIViewTask");
+            BoyiaLog.d(TAG, "initUIView");
             mHolder = holder;
             initUIView();
             mIsUIViewDistroy = false;
         } else {
             nativeResetGLSurface(mHolder.getSurface());
-            BoyiaLog.d(TAG, " BoyiaUIViewTask DRAW");
+            BoyiaLog.d(TAG, "resetGLSurface");
         }
     }
 

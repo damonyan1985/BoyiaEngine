@@ -20,7 +20,7 @@ import android.graphics.Rect;
  * @Descrption Android 2D Graphic Interface Implements
  */
 public class BoyiaGraphics {
-    private static final String TAG = BoyiaGraphics.class.getSimpleName();
+    private static final String TAG = "BoyiaGraphics";
     public static final int NULL_BRUSH = 1;
     public static final int SOLID_BRUSH = 2;
 

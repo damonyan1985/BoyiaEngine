@@ -18,7 +18,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class URLEngine extends BaseEngine {
-    private static final String TAG = URLEngine.class.getSimpleName();
+    private static final String TAG = "URLEngine";
     private HttpsURLConnection mConnection = null;
 
     @Override

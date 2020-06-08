@@ -1,7 +1,5 @@
 package com.boyia.app.loader.http;
 
-import android.content.res.AssetManager;
-
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 
@@ -12,7 +10,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 public abstract class BaseEngine {
-    public static final String TAG = BaseEngine.class.getSimpleName();
+    public static final String TAG = "BaseEngine";
     public static final String BOYIA_SCHEMA = "boyia://";
 
     public abstract void stop();

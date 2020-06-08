@@ -1,4 +1,4 @@
-package com.boyia.app.input;
+package com.boyia.app.core.input;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public class BoyiaInputManager {
-    private static final String TAG = BoyiaInputManager.class.getSimpleName();
+    private static final String TAG = "BoyiaInputManager";
     private BoyiaUIView mView;
     private long mItem = 0;
     private int mRootViewVisibleHeight = 0;

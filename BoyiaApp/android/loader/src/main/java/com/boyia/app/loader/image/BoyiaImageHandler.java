@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class BoyiaImageHandler {
-    public static final String TAG = BoyiaImageHandler.class.getSimpleName();
+    public static final String TAG = "BoyiaImageHandler";
     private static final int RETRY_TIME = 3;
     private int mRetryTimes;
     private BoyiaLoader mLoader;

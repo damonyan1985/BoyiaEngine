@@ -1,4 +1,4 @@
-package com.boyia.app.platform;
+package com.boyia.app.core.view;
 
 import android.app.Presentation;
 import android.content.Context;

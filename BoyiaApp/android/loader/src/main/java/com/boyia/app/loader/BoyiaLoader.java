@@ -14,7 +14,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
  * Copyright(c) Reserved
  */
 public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
-    private static final String TAG = BoyiaLoader.class.getSimpleName();
+    private static final String TAG = "BoyiaLoader";
     protected ILoadListener mListener;
     protected BoyiaLoadJob mLoadJob;
     protected Request mRequest;

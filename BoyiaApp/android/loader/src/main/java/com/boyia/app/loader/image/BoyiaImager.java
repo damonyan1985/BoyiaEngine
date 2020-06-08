@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.boyia.app.common.utils.DiskLruCache;
-import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
@@ -30,7 +29,7 @@ import android.os.Environment;
  */
 
 public class BoyiaImager {
-    private static final String TAG = BoyiaImager.class.getSimpleName();
+    private static final String TAG = "BoyiaImager";
     protected static final String BOYIA_IMAGE_DISK_SAVE_PATH = BoyiaFileUtil
             .getFilePathRoot() + "boyia_image_cache/";
     private static final int BOYIA_IMAGE_SDCARD_DISK_CACHE_SIZE = 60 * 1024 * 1024;
