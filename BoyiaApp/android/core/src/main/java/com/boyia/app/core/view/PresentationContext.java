@@ -1,4 +1,4 @@
-package com.boyia.app.platform;
+package com.boyia.app.core.view;
 
 import android.content.Context;
 import android.content.ContextWrapper;

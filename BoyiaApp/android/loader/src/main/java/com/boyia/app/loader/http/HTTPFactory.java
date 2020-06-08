@@ -10,7 +10,7 @@ package com.boyia.app.loader.http;
  */
 
 public class HTTPFactory {
-    public static final String TAG = HTTPFactory.class.getSimpleName();
+    public static final String TAG = "HTTPFactory";
     public static final int HTTP_GET_METHOD = 0;
     public static final int HTTP_POST_METHOD = 1;
     public static final String HTTP_GET_METHOD_STR = "GET";

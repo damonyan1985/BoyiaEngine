@@ -17,7 +17,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
  * Copyright Reserved
  */
 public class BoyiaLoadJob implements IJob {
-    private static final String TAG = BoyiaLoadJob.class.getSimpleName();
+    private static final String TAG = "BoyiaLoadJob";
     public static final int REQUEST_BUFFER_SIZE = 1024;
 
     private LoadJobCallback mCallback;

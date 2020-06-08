@@ -21,7 +21,7 @@ import android.graphics.Rect;
  * @Descrption Android 2D Bitmap Interface Implements
  */
 public class BoyiaImage implements IBoyiaImage {
-    private static final String TAG = BoyiaImage.class.getSimpleName();
+    private static final String TAG = "BoyiaImage";
     private Bitmap mBitmap = null;
     private String mUrl = null;
     private long mImagePtr = 0;

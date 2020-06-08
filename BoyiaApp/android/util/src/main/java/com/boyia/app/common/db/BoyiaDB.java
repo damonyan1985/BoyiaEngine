@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.boyia.app.common.utils.BoyiaLog;
 
 public class BoyiaDB extends SQLiteOpenHelper {
-    private static final String TAG = BoyiaDB.class.getSimpleName();
+    private static final String TAG = "BoyiaDB";
     private static final int DEFAULT_DB_VERSION = 81;
     private static final String DEFAULT_DB_NAME = "BoyiaDB";
     private Context mContext;

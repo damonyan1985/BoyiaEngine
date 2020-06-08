@@ -14,7 +14,7 @@ import android.graphics.Paint.FontMetrics;
 import android.widget.Toast;
 
 public class BoyiaUtils {
-    public static final String TAG = BoyiaUtils.class.getSimpleName();
+    public static final String TAG = "BoyiaUtils";
 
     // 根据align对字符串进行居左，居右，或是居中对齐
     // 整个字符串会被框进传入的rect范围内
