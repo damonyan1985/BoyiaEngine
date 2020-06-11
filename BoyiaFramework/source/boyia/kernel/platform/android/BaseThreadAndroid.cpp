@@ -25,8 +25,7 @@ public:
 };
 
 BaseThread::BaseThread()
-    : m_running(false)
-    , m_condition(new Condition())
+    : m_condition(new Condition())
 {
 }
 
@@ -47,7 +46,7 @@ void BaseThread::start()
 
 int BaseThread::wait()
 {
-    if (!m_running) {
+    if (!isAlive()) {
         return 0;
     }
 
@@ -59,14 +58,8 @@ int BaseThread::wait()
 void* BaseThread::startThread(void* ptr)
 {
     BaseThread* thread = (BaseThread*)ptr;
-    thread->m_running = true;
     thread->run();
-    thread->m_running = false;
     return ptr;
-}
-
-void BaseThread::stop()
-{
 }
 
 void BaseThread::waitOnNotify()
@@ -116,6 +109,11 @@ void BaseThread::sleepMS(long time)
 int BaseThread::getId()
 {
     return (int)pthread_self();
+}
+
+void BaseThread::stop()
+{
+    pthread_kill(m_condition->thread, 0);
 }
 }
 

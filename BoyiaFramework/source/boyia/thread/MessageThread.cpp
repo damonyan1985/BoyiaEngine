@@ -24,6 +24,11 @@ Message* MessageThread::obtain()
     return m_queue->obtain();
 }
 
+bool MessageThread::isAlive()
+{
+    return m_continue;
+}
+
 void MessageThread::run()
 {
     while (m_continue) {
