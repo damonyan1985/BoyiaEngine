@@ -5,11 +5,23 @@
 namespace yanbo {
 class Condition {
 public:
-    Condition() {
+    Condition()
+        : thread(0)
+        , winEvent(0)
+        , threadId(0)
+    {
         winEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
     }
 
-    ~Condition() {
+    ~Condition() 
+    {
+        if (winEvent) {
+            ::CloseHandle(winEvent);
+        }
+
+        if (thread) {
+            ::CloseHandle(thread);
+        }
     }
     DWORD threadId;
     HANDLE thread;
