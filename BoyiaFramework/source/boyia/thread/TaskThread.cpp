@@ -48,6 +48,11 @@ void TaskThread::run()
     }
 }
 
+bool TaskThread::isAlive()
+{
+    return m_continue;
+}
+
 void TaskThread::stop()
 {
     m_continue = LFalse;

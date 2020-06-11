@@ -13,6 +13,7 @@ public:
 
     virtual void stop();
     LBool working();
+    virtual bool isAlive();
 
 protected:
     virtual void run();

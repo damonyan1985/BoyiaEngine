@@ -17,8 +17,7 @@ public:
 };
 
 BaseThread::BaseThread()
-    : m_running(false)
-    , m_condition(new Condition())
+    : m_condition(new Condition())
 {
 }
 
@@ -34,25 +33,18 @@ void BaseThread::start()
 
 int BaseThread::wait()
 {
-    if (!m_running) {
+    if (!isAlive()) {
         return 0;
     }
 
-    WaitForSingleObject(m_condition->thread, INFINITE);
+    return WaitForSingleObject(m_condition->thread, INFINITE);
 }
 
 void* BaseThread::startThread(void* ptr)
 {
     BaseThread* thread = (BaseThread*)ptr;
-    thread->m_running = true;
     thread->run();
-    thread->m_running = false;
     return ptr;
-}
-
-void BaseThread::stop()
-{
-    m_running = false;
 }
 
 void BaseThread::waitOnNotify()
@@ -87,5 +79,11 @@ int BaseThread::getId()
 {
     return m_condition->threadId;
 }
+
+void BaseThread::stop()
+{
+    ::TerminateThread(m_condition->thread, NULL);
+}
+
 }
 #endif

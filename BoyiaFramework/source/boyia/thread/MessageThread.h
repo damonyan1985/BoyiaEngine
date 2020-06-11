@@ -14,6 +14,7 @@ public:
     virtual LVoid handleMessage(Message* msg) = 0;
     LVoid postMessage(Message* msg);
     Message* obtain();
+    virtual bool isAlive();
 
 protected:
     virtual void run() LFinal;

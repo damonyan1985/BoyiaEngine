@@ -27,6 +27,7 @@ public:
 
     static void sleepMS(long time);
     virtual void stop();
+    virtual bool isAlive() { return false; };
 
 protected:
     virtual void run() = 0;
@@ -34,7 +35,6 @@ protected:
 
 protected:
     Mutex m_lock;
-    bool m_running;
     Condition* m_condition;
 };
 }
