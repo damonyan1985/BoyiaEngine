@@ -265,7 +265,7 @@ LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
     // 如果是文本，则使用linetext来绘制
     if (item->isText()) {
-        yanbo::TextView* text = dynamic_cast<yanbo::TextView*>(item);
+        yanbo::TextView* text = static_cast<yanbo::TextView*>(item);
         for (LInt i = 0; i < text->lineSize(); i++) {
             ItemPainter* painter = static_cast<ItemPainter*>(text->linePainter(i)->painter());
             (*painter->painters.begin())->appendToBuffer();
