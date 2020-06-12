@@ -183,7 +183,7 @@ LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
     
     if (item->isText()) {
-        yanbo::TextView* text = dynamic_cast<yanbo::TextView*>(item);
+        yanbo::TextView* text = static_cast<yanbo::TextView*>(item);
         for (LInt i = 0; i < text->lineSize(); i++) {
             static_cast<ItemPainter*>(text->linePainter(i)->painter())->cmds[0]->paint(gc);
         }
