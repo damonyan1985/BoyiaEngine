@@ -170,7 +170,7 @@ public class BoyiaGraphics {
                            int top,
                            int width,
                            int height) {
-        BoyiaLog.d(TAG, "MiniGraphicsContext.drawBitmap");
+        BoyiaLog.d(TAG, "BoyiaGraphicsContext.drawBitmap");
         if (bitmap.getBitmap() == null) {
             return;
         }
@@ -193,7 +193,7 @@ public class BoyiaGraphics {
                            int width,
                            int height,
                            int tmp) {
-        BoyiaLog.d(TAG, "MiniGraphicsContext.drawBitmap");
+        BoyiaLog.d(TAG, "BoyiaGraphicsContext.drawBitmap");
         if (bitmap == null) {
             return;
         }
