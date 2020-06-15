@@ -63,7 +63,7 @@ public class BoyiaImage implements IBoyiaImage {
 
     // Call by native image, Draw TextView
     public void drawText(String text, int width, int height, int textSize, int textColor, int textStyle) {
-        BoyiaLog.d("BoyiaApp", "BoyiaApp bitmap drawText=" + text + " width=" + width + " height=" + height);
+        BoyiaLog.d(TAG, "BoyiaApp bitmap drawText=" + text + " width=" + width + " height=" + height);
 
         mBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 
