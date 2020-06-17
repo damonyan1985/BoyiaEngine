@@ -48,6 +48,10 @@ UIViewController::UIViewController(UIView* view)
 {
 }
 
+UIViewController::~UIViewController()
+{
+}
+
 void UIViewController::onUpKey(LBool repeated)
 {
     HtmlView* item = m_view->getDocument()->getCurrentItem();

@@ -135,7 +135,7 @@ LVoid UIThread::handleMessage(Message* msg)
         UIThreadClientMap::instance()->clientCallback(msg->arg0);
     } break;
     case kUiOperationExec: {
-        UIOperation::instance()->execute();
+        m_manager->currentApp()->view()->operation()->execute();
         flush();
     } break;
     case kUiSubmit: {

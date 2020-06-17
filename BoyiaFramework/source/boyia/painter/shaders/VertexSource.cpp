@@ -15,12 +15,6 @@ const char* VertexSource::s_uielement = "#version 300 es\n"
                                         "  vTexCoord = aTexCoord;\n"
                                         "}\n";
 
-const char* VertexSource::s_tank = NULL;
-
-const char* VertexSource::s_soldier = NULL;
-
-const char* VertexSource::s_hero = NULL;
-
 const char* VertexSource::s_video = "#version 300 es\n"
                                     "uniform mat4 uMVPMatrix;\n"
                                     "uniform mat4 uSTMatrix;\n"

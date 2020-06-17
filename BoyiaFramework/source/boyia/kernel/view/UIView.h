@@ -13,6 +13,7 @@
 #include "LGdi.h"
 #include "ResourceLoader.h"
 #include "UIViewController.h"
+#include "UIOperation.h"
 
 namespace yanbo {
 class Application;
@@ -38,6 +39,7 @@ public:
     NetworkBase* network() const;
     LGraphicsContext* getGraphicsContext() const;
     Application* application() const;
+    UIOperation* operation() const;
 
     void handleMouseEvent(const LMouseEvent& evt);
     void handleKeyEvent(const LKeyEvent& evt);
@@ -52,6 +54,8 @@ private:
     LRect m_clientRect;
     UIViewController* m_controller;
     Application* m_app;
+    UIOperation* m_operation;
+
 };
 }
 #endif

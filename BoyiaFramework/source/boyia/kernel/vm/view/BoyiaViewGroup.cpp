@@ -20,14 +20,14 @@ BoyiaViewGroup::BoyiaViewGroup(BoyiaRuntime* runtime, const String& id, LBool se
 
 LVoid BoyiaViewGroup::setText(const String& text)
 {
-    yanbo::UIOperation::instance()->opSetText(m_item, text);
+    runtime()->view()->operation()->opSetText(m_item, text);
 }
 
 LVoid BoyiaViewGroup::appendView(BoyiaView* view)
 {
     if (view && view->item()) {
-        KFORMATLOG("BoyiaViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());
-        yanbo::UIOperation::instance()->opAddChild(m_item, view->item());
+        BOYIA_LOG("BoyiaViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());
+        runtime()->view()->operation()->opAddChild(m_item, view->item());
     }
 }
 }

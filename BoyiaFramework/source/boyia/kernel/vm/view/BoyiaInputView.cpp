@@ -13,6 +13,6 @@ LVoid BoyiaInputView::setText(const String& text)
 {
     //yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
     //item->setInputValue(text);
-    yanbo::UIOperation::instance()->opSetInput(m_item, text);
+    runtime()->view()->operation()->opSetInput(m_item, text);
 }
 }

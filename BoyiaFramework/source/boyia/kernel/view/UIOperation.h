@@ -21,8 +21,6 @@ public:
         UIOP_APPLY_DOM_STYLE,
     };
 
-    static UIOperation* instance();
-
     UIOperation();
     ~UIOperation();
 

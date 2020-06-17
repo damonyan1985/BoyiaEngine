@@ -17,6 +17,7 @@ UIView::UIView(Application* app)
     , m_loader(kBoyiaNull)
     , m_doc(kBoyiaNull)
     , m_controller(kBoyiaNull)
+    , m_operation(kBoyiaNull)
 {
     initComponents();
 }
@@ -29,6 +30,14 @@ UIView::~UIView()
 
     if (m_doc) {
         delete m_doc;
+    }
+
+    if (m_controller) {
+        delete m_controller;
+    }
+
+    if (m_operation) {
+        delete m_operation;
     }
 }
 
@@ -54,6 +63,7 @@ void UIView::initComponents()
         m_doc = new HtmlDocument();
         m_doc->setView(this);
         m_controller = new UIViewController(this);
+        m_operation = new UIOperation();
     }
 }
 
@@ -138,5 +148,10 @@ void UIView::loadString(const String& src)
 bool UIView::canHit() const
 {
     return getDocument() && getDocument()->getRenderTreeRoot();
+}
+
+UIOperation* UIView::operation() const
+{
+    return m_operation;
 }
 }
