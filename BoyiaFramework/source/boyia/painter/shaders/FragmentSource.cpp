@@ -18,7 +18,7 @@ const char* FragmentSource::s_uielement = "#version 300 es\n"
                                           "    } else if (uIsImage == 2) {\n"
                                           "        float x = gl_FragCoord.x;\n"
                                           "        float y = gl_FragCoord.y;\n"
-                                          "		 } else {\n"
+                                          "    } else {\n"
                                           "        FragColor = vColor;\n"
                                           "    }\n"
                                           "}\n";

@@ -7,6 +7,7 @@
 #include <GdiPlus.h>
 
 namespace util {
+class PaintResource;
 class PaintCommand {
 public:
     enum PaintType
@@ -21,15 +22,51 @@ public:
     ~PaintCommand();
    
     LVoid paint(Gdiplus::Graphics& gc);
+    Bool inUse;
+    PaintResource* resource;
+};
+
+class PaintResource {
+public:
+    virtual ~PaintResource() {}
+    virtual LInt type() const = 0;
 
     LRgb color;
+    LRect rect;
+};
+
+class PaintImageResource : public PaintResource {
+public:
+    PaintImageResource()
+        : image(kBoyiaNull)
+    {
+    }
+
+    virtual LInt type() const 
+    {
+        return PaintCommand::kPaintImage;
+    }
+
+    Gdiplus::Image* image;
+};
+
+class PaintRectResource : public PaintResource {
+public:
+    virtual LInt type() const
+    {
+        return PaintCommand::kPaintRect;
+    }
+};
+
+class PaintTextResource : public PaintResource {
+public:
+    virtual LInt type() const
+    {
+        return PaintCommand::kPaintText;
+    }
+
     LFont font;
     String text;
-    
-    LRect rect;
-    LInt type;
-    Gdiplus::Image* image;
-    Bool inUse;
 };
 
 class PaintCommandAllocator {

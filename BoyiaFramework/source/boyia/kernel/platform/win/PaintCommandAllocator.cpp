@@ -16,23 +16,23 @@ public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
         float ratio = yanbo::PixelRatio::ratio();
-
-        float width = cmd->rect.GetWidth() * yanbo::PixelRatio::ratio();
+        PaintRectResource* resource = static_cast<PaintRectResource*>(cmd->resource);
+        float width = resource->rect.GetWidth() * yanbo::PixelRatio::ratio();
         width = width < 1 ? 1 : width;
-        float height = cmd->rect.GetHeight() * yanbo::PixelRatio::ratio();
+        float height = resource->rect.GetHeight() * yanbo::PixelRatio::ratio();
         height = height < 1 ? 1 : height;
         Gdiplus::RectF rect(
-            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
-            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
             width,
             height
         );
 
         Gdiplus::SolidBrush brush(Gdiplus::Color(
-            cmd->color.m_alpha,
-            cmd->color.m_red,
-            cmd->color.m_green,
-            cmd->color.m_blue
+            resource->color.m_alpha,
+            resource->color.m_red,
+            resource->color.m_green,
+            resource->color.m_blue
         ));
         gc.FillRectangle(&brush, rect);
     }
@@ -42,22 +42,23 @@ class PaintTextHandler : public PaintCmdHandler {
 public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
-        wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(cmd->text));
-        Gdiplus::Font font(L"Arial", cmd->font.getFontSize() * 0.15);
+        PaintTextResource* resource = static_cast<PaintTextResource*>(cmd->resource);
+        wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(resource->text));
+        Gdiplus::Font font(L"Arial", resource->font.getFontSize() * 0.15);
 
         Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
         Gdiplus::RectF rect(
-            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
-            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
-            cmd->rect.GetWidth() * yanbo::PixelRatio::ratio(),
-            cmd->rect.GetHeight() * yanbo::PixelRatio::ratio()
+            resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            resource->rect.GetWidth() * yanbo::PixelRatio::ratio(),
+            resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
         );
         
         Gdiplus::SolidBrush brush(Gdiplus::Color(
-            cmd->color.m_alpha,
-            cmd->color.m_red,
-            cmd->color.m_green,
-            cmd->color.m_blue
+            resource->color.m_alpha,
+            resource->color.m_red,
+            resource->color.m_green,
+            resource->color.m_blue
         ));
 
         gc.DrawString(wtext.c_str(), wtext.length(), &font, rect, &format, &brush);
@@ -68,13 +69,14 @@ class PaintImageHandler : public PaintCmdHandler {
 public:
     virtual LVoid paint(Gdiplus::Graphics& gc, PaintCommand* cmd)
     {
+        PaintImageResource* resource = static_cast<PaintImageResource*>(cmd->resource);
         Gdiplus::Rect rect(
-            cmd->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
-            cmd->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
-            cmd->rect.GetWidth() * yanbo::PixelRatio::ratio(),
-            cmd->rect.GetHeight() * yanbo::PixelRatio::ratio()
+            resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+            resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+            resource->rect.GetWidth() * yanbo::PixelRatio::ratio(),
+            resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
         );
-        gc.DrawImage(cmd->image, rect);
+        gc.DrawImage(resource->image, rect);
     }
 };
 
@@ -99,7 +101,7 @@ static LVoid paintFunctionRegister() {
 
 PaintCommand::PaintCommand()
     : inUse(LFalse)
-    , image(kBoyiaNull)
+    , resource(kBoyiaNull)
 {
 }
 
@@ -110,7 +112,7 @@ PaintCommand::~PaintCommand()
 LVoid PaintCommand::paint(Gdiplus::Graphics& gc)
 {
     if (sPaintRegistrayArray) {
-        (*sPaintRegistrayArray)[type]->paint(gc, this);
+        (*sPaintRegistrayArray)[resource->type()]->paint(gc, this);
     }
 }
 
