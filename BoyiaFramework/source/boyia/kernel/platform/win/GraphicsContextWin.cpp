@@ -72,9 +72,19 @@ LVoid GraphicsContextWin::drawRect(const LRect& aRect)
 {
     ItemPainter* painter = currentPainter();
     PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
-    cmd->type = PaintCommand::kPaintRect;
-    cmd->color = m_brushColor;
-    cmd->rect = aRect;
+    if (cmd->resource && cmd->resource->type() != PaintCommand::kPaintRect) {
+        delete cmd->resource;
+        cmd->resource = kBoyiaNull;
+    }
+
+    if (!cmd->resource) {
+        cmd->resource = new PaintRectResource();
+    }
+
+    PaintRectResource* resource = static_cast<PaintRectResource*>(cmd->resource);
+    resource->rect = aRect;
+    resource->color = m_brushColor;
+
     painter->cmds.addElement(cmd);
 }
 
@@ -125,10 +135,20 @@ LVoid GraphicsContextWin::drawImage(const LImage* image)
 {
     ItemPainter* painter = currentPainter();
     PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
-    cmd->image = ((ImageWin*)image)->image();
-    cmd->type = PaintCommand::kPaintImage;
-    cmd->color = m_brushColor;
-    cmd->rect = image->rect();
+
+    if (cmd->resource && cmd->resource->type() != PaintCommand::kPaintImage) {
+        delete cmd->resource;
+        cmd->resource = kBoyiaNull;
+    }
+
+    if (!cmd->resource) {
+        cmd->resource = new PaintImageResource();
+    }
+
+    PaintImageResource* resource = static_cast<PaintImageResource*>(cmd->resource);
+    resource->image = ((ImageWin*)image)->image();
+    resource->color = m_brushColor;
+    resource->rect = image->rect();
     painter->cmds.addElement(cmd);
 }
 
@@ -166,10 +186,21 @@ LVoid GraphicsContextWin::drawText(const String& text, const LRect& rect, TextAl
 {
     ItemPainter* painter = currentPainter();
     PaintCommand* cmd = PaintCommandAllocator::instance()->alloc();
-    cmd->text = text;
-    cmd->type = PaintCommand::kPaintText;
-    cmd->color = m_penColor;
-    cmd->rect = rect;
+
+    if (cmd->resource && cmd->resource->type() != PaintCommand::kPaintText) {
+        delete cmd->resource;
+        cmd->resource = kBoyiaNull;
+    }
+
+    if (!cmd->resource) {
+        cmd->resource = new PaintTextResource();
+    }
+
+    PaintTextResource* resource = static_cast<PaintTextResource*>(cmd->resource);
+
+    resource->text = text;
+    resource->color = m_penColor;
+    resource->rect = rect;
     painter->cmds.addElement(cmd);
 }
 
