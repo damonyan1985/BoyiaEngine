@@ -107,6 +107,9 @@ PaintCommand::PaintCommand()
 
 PaintCommand::~PaintCommand()
 {
+    if (resource) {
+        delete resource;
+    }
 }
 
 LVoid PaintCommand::paint(Gdiplus::Graphics& gc)
