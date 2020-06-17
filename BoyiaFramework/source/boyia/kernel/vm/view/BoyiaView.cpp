@@ -73,12 +73,12 @@ LVoid BoyiaView::drawView()
 {
     //m_item->relayout();
     //UIView::getInstance()->getLoader()->render()->paint(m_item);
-    yanbo::UIOperation::instance()->opViewDraw(m_item);
+    runtime()->view()->operation()->opViewDraw(m_item);
 }
 
 LVoid BoyiaView::commit()
 {
-    yanbo::UIOperation::instance()->swapBuffer();
+    runtime()->view()->operation()->swapBuffer();
 }
 
 LVoid BoyiaView::setStyle(String& cls)

@@ -56,7 +56,7 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
     //	ResourceLoader* loader = UIView::getInstance()->getLoader();
     //	m_item->setStyle(loader->render()->getCssManager(), NULL);
 
-    yanbo::UIOperation::instance()->opApplyDomStyle(m_item);
+    runtime()->view()->operation()->opApplyDomStyle(m_item);
 }
 
 LVoid BoyiaViewDoc::setDocument(yanbo::HtmlDocument* doc)

@@ -9,12 +9,6 @@
 namespace yanbo {
 #define MAX_OPMSG_SIZE 50
 
-UIOperation* UIOperation::instance()
-{
-    static UIOperation sOperation;
-    return &sOperation;
-}
-
 UIOperation::UIOperation()
     : m_msgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
 //, m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
