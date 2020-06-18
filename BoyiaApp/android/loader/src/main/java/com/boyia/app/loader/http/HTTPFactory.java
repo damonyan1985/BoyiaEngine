@@ -8,7 +8,6 @@ package com.boyia.app.loader.http;
  * @Descrption HTTP Resource Base Function
  *  Interface
  */
-
 public class HTTPFactory {
     public static final String TAG = "HTTPFactory";
     public static final int HTTP_GET_METHOD = 0;

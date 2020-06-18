@@ -21,7 +21,7 @@ import android.os.Environment;
 
 /*
  * BoyiaImager
- * @Author Boyia
+ * @Author yanbo.boyia
  * @Date 2012-5-4
  * @Copyright Reserved
  * @Descrption Image Resource Download

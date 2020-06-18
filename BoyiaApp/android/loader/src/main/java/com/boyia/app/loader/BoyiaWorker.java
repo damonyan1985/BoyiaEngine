@@ -3,6 +3,11 @@ package com.boyia.app.loader;
 import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobQueue;
 
+/*
+ * BoyiaWorker
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 // SingleThread worker
 public class BoyiaWorker extends Thread {
     protected JobQueue mJobQueue;

@@ -12,9 +12,9 @@ import com.boyia.app.common.utils.BoyiaUtils;
 
 /*
  * BoyiaLoadJob
- * Author Boyia
+ * Author yanbo.boyia
  * Date 2018-8-31
- * Copyright Reserved
+ * All Copyright Reserved
  */
 public class BoyiaLoadJob implements IJob {
     private static final String TAG = "BoyiaLoadJob";

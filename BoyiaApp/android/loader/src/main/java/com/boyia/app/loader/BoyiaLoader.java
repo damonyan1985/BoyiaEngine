@@ -9,7 +9,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
 
 /*
  * BoyiaLoader
- * Author Yanbo
+ * Author yanbo.boyia
  * Time 2018-12-31
  * Copyright(c) Reserved
  */

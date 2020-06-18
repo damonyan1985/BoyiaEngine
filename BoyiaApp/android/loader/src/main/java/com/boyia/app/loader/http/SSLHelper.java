@@ -21,6 +21,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+/*
+ * SSLHelper
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class SSLHelper {
     private static final String CERT_PATH = "cert";
     private static final String KEY_STORE_PASSWORD = "";

@@ -9,6 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+/*
+ * BaseEngine
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public abstract class BaseEngine {
     public static final String TAG = "BaseEngine";
     public static final String BOYIA_SCHEMA = "boyia://";

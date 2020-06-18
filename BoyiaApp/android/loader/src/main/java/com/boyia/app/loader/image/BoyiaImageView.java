@@ -12,10 +12,10 @@ import com.boyia.app.loader.jober.MainScheduler;
 
 /*
  * BoyiaImageView
- * @Author Boyia
+ * @Author yanbo.boyia
  * @Time 2014-5-4
  * @Copyright Reserved
- * @Descrption LoadImageView
+ * @Descrption BoyiaImageView
  *     Base On Android UI
  */
 

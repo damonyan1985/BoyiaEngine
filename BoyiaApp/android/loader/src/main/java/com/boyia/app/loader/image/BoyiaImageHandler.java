@@ -10,6 +10,7 @@ import com.boyia.app.loader.BoyiaLoader;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+
 public class BoyiaImageHandler {
     public static final String TAG = "BoyiaImageHandler";
     private static final int RETRY_TIME = 3;

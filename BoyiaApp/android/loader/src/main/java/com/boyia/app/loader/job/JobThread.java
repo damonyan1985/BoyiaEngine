@@ -4,9 +4,9 @@ import android.os.Process;
 
 /*
  * JobThread
- * @Author Boyia
+ * @Author yanbo.boyia
  * @Time 2018-8-31
- * @Copyright Reserved
+ * All Copyright Reserved
  */
 public class JobThread extends Thread {
     private boolean mIsWorking;

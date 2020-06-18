@@ -1,5 +1,10 @@
 package com.boyia.app.loader.jober;
 
+/*
+ * ActionSubscriber
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class ActionSubscriber<T> implements Subscriber<T> {
     private final Action mOnComplete;
     private final ParamAction<? super T> mOnNext;

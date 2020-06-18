@@ -4,9 +4,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /*
  * JobQueue
- * @Author Boyia
+ * @Author yanbo.boyia
  * @Time 2018-8-31
- * @Copyright Reserved
+ * All Copyright Reserved
  */
 public class JobQueue {
     private LinkedBlockingQueue<IJob> mQueue;
