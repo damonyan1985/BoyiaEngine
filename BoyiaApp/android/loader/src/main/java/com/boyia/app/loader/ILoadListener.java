@@ -2,7 +2,7 @@ package com.boyia.app.loader;
 
 /*
  * ILoadListener
- * Author Boyia
+ * Author yanbo.boyia
  * Date 2018-12-31
  * Copyright reserved
  * Descrption HTTP Resource Download Listener Interface

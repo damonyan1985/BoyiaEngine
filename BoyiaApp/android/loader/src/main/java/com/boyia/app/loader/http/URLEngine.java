@@ -16,7 +16,11 @@ import java.util.Map.Entry;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
+/*
+ * URLEngine
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class URLEngine extends BaseEngine {
     private static final String TAG = "URLEngine";
     private HttpsURLConnection mConnection = null;

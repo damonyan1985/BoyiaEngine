@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.LruCache;
 
+/*
+ * BoyiaImageCache
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class BoyiaImageCache extends LruCache<String, Bitmap> {
     public BoyiaImageCache(int maxSize) {
         super(maxSize);

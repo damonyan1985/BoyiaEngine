@@ -1,5 +1,10 @@
 package com.boyia.app.loader.jober;
 
+/*
+ * ObservableCreate
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class ObservableCreate<T> extends Observable<T> {
     private final ObservableOnSubscribe<T> mSource;
 

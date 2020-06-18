@@ -2,6 +2,11 @@ package com.boyia.app.loader.jober;
 
 import com.boyia.app.loader.job.Scheduler;
 
+/*
+ * Observable
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public abstract class Observable<T> implements ObservableSource<T> {
     public static <T> Observable<T> create(ObservableOnSubscribe<T> source) {
         return new ObservableCreate<>(source);

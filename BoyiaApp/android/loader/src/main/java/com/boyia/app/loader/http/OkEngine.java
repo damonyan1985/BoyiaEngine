@@ -9,6 +9,11 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
+/*
+ * OkEngine
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class OkEngine extends BaseEngine {
     @Override
     public void stop() {

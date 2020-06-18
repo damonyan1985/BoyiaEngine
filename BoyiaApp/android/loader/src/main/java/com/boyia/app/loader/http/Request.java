@@ -9,7 +9,6 @@ import java.util.Map;
  * @Date 2014-5-4
  * @Copyright Reserved
  */
-
 public class Request {
     public Map<String, String> mHeaders;
     public String mPostData;

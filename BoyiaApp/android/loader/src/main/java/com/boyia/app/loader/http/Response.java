@@ -11,7 +11,6 @@ import java.util.Map;
  * @Date 2018-9-1
  * @Copyright Reserved
  */
-
 public class Response {
     protected int mCode;
     protected InputStream mInput;

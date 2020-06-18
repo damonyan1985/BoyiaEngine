@@ -2,9 +2,9 @@ package com.boyia.app.loader.job;
 
 /*
  * IJob
- * @Author Boyia
+ * @Author yanbo.boyia
  * @Time 2018-8-31
- * @Copyright Reserved
+ * All Copyright Reserved
  */
 public interface IJob {
     void exec();

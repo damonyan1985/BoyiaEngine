@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 /*
  * IBoyiaImage
- * @Author Yan bo
+ * @Author yanbo.boyia
  * @Time 2014-5-4
  * @Copyright Reserved
  * @Descrption ITargetImage

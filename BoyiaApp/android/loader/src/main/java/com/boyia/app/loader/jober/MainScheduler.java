@@ -5,7 +5,11 @@ import android.os.Handler;
 import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.Scheduler;
 
-
+/*
+ * MainScheduler
+ * Author yanbo.boyia
+ * All Copyright reserved
+ */
 public class MainScheduler implements Scheduler {
     private Handler mHandler;
 
@@ -24,5 +28,10 @@ public class MainScheduler implements Scheduler {
     @Override
     public void sendJob(IJob job) {
         mHandler.post(() -> job.exec());
+    }
+
+    // 延时提交job
+    public void sendJobDelay(IJob job, long delayMillis) {
+        mHandler.postDelayed(() -> job.exec(), delayMillis);
     }
 }
