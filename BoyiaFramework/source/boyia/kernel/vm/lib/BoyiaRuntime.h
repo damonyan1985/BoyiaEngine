@@ -31,6 +31,7 @@ private:
     yanbo::Application* m_app;
     util::IDCreator* m_idCreator;
     NativeFunction* m_nativeFunTable;
+    LInt m_nativeSize;
 };
 }
 

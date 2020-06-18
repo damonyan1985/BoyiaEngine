@@ -10,6 +10,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_vm(InitVM(this))
     , m_idCreator(new util::IDCreator())
     , m_nativeFunTable(new NativeFunction[kNativeFunctionCapacity])
+    , m_nativeSize(0)
 {
     m_idCreator->genIdentByStr("this", 4);
     m_idCreator->genIdentByStr("super", 5);
@@ -23,8 +24,7 @@ BoyiaRuntime::~BoyiaRuntime()
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 {
-    static LInt index = 0;
-    m_nativeFunTable[index++] = { id, ptr };
+    m_nativeFunTable[m_nativeSize++] = { id, ptr };
 }
 
 LVoid BoyiaRuntime::initNativeFunction()

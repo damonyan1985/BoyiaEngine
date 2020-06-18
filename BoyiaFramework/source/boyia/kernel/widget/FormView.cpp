@@ -7,9 +7,6 @@
 
 #include "FormView.h"
 
-//#define MAX_PASSWORD 32
-//#define MAX_TEXTAREA 1024
-
 namespace yanbo {
 
 FormView::FormView(
@@ -22,7 +19,6 @@ FormView::FormView(
 {
     m_value = inValue;
     m_title = inTitle;
-    m_mimeType = _CS("application/x-www-form-urlencoded");
     m_style.transparent = LFalse;
 }
 
@@ -48,21 +44,6 @@ void FormView::setTitle(const String& title)
 const String& FormView::getTitle() const
 {
     return m_title;
-}
-
-void FormView::setParentForm(HtmlForm* form)
-{
-    m_parentForm = form;
-}
-
-const String& FormView::getMimeType() const
-{
-    return m_mimeType;
-}
-
-const String FormView::getEncodingParams() const
-{
-    return _CS("");
 }
 
 void FormView::setName(const String& name)

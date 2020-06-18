@@ -67,7 +67,7 @@ const char* PlatformBridge::getAppRoot()
     if (!sAppRootPath.GetLength()) {
 #ifdef BOYIA_WIN_DEBUG
         sAppRootPath = _CS(getenv("BOYIA_UI_ROOT"));
-        sAppRootPath += _CS("\\BoyiaApp\\project_test\\");
+        sAppRootPath += _CS("\\BoyiaTools\\test\\project\\");
 #else
         ::SHGetSpecialFolderPathA(NULL, (char*)sAppRootPath.GetBuffer(), CSIDL_LOCAL_APPDATA, 0);
         BOYIA_LOG("PlatformBridge---getAppRoot: %s BoyiaUI: %s", GET_STR(sAppRootPath), getenv("BOYIA_UI_ROOT"));
