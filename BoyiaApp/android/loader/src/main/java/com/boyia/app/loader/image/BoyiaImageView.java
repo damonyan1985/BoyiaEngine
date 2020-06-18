@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.boyia.app.loader.jober.MainScheduler;
+
 /*
  * BoyiaImageView
  * @Author Boyia
@@ -18,11 +20,8 @@ import android.widget.ImageView;
  */
 
 public class BoyiaImageView extends ImageView implements IBoyiaImage {
-    private Context mContext;
-
     public BoyiaImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mContext = context;
     }
 
     public BoyiaImageView(Context context) {
@@ -48,14 +47,7 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
 
     @Override
     public void setImage(final Bitmap bm) {
-        if (mContext instanceof Activity) {
-            ((Activity) mContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setImageBitmap(bm);
-                }
-            });
-        }
+        MainScheduler.mainScheduler().sendJob(() -> setImageBitmap(bm));
     }
 
     public void releaseImageViewResouce() {
