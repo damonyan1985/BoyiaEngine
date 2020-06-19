@@ -261,6 +261,6 @@ void StringUtils::replaceSpecialChars(util::String& text)
 
 LUint StringUtils::hashCode(const String& keyName)
 {
-    return GenHashCode((const LInt8*)keyName.GetBuffer(), keyName.GetLength());
+    return GenHashCode(GET_STR(keyName), keyName.GetLength());
 }
 }
