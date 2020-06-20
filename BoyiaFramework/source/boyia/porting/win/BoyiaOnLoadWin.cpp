@@ -26,7 +26,7 @@ public:
     {
     }
 
-    bool operator==(const HashString& str1) const
+    bool operator == (const HashString& str1) const
     {
         return m_value.CompareCase(str1.m_value);
     }
@@ -63,14 +63,18 @@ void BoyiaOnLoadWin::connectServer()
     //yanbo::ThreadPool::getInstance()->sendTask(new SocketTask());
     yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.7:6666"));
 
-    
     HashMap<HashString, String> map;
     map.put(HashString(_CS("key1")), _CS("value1"));
     map.put(HashString(_CS("key2")), _CS("value2"));
     map.put(HashString(_CS("key3")), _CS("value3"));
     map.put(HashString(_CS("key4")), _CS("value4"));
+    
+    map.put(HashString(_CS("key5")), _CS("value5"));
+    map.put(HashString(_CS("key6")), _CS("value6"));
+    map.put(HashString(_CS("key7")), _CS("value7"));
+    map.put(HashString(_CS("key8")), _CS("value8"));
 
-    BOYIA_LOG("get map value=%s", GET_STR(map.get(HashString(_CS("key3")))));
+    BOYIA_LOG("get map value=%s", GET_STR(map.get(HashString(_CS("key7")))));
 }
 
 void BoyiaOnLoadWin::networkInit()

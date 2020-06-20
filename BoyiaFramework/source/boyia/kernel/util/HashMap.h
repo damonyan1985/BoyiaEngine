@@ -25,6 +25,7 @@ public:
         : next(kBoyiaNull)
         , key(k)
         , value(v)
+        , hash(0)
     {
     }
 
@@ -42,33 +43,30 @@ public:
 
 public:
     HashMap()
-        : m_capacity(HASH_TABLE_DEFAULT_SIZE)
-        , m_size(0)
-        , m_table(new HashMapEntryPtr[m_capacity])
+        : m_size(0)
         , m_threshold(HASH_TABLE_DEFAULT_SIZE * HASH_TABLE_DEFAULT_FACTOR)
     {
+        m_capacity = HASH_TABLE_DEFAULT_SIZE;
+        // 在构造中声明m_table好像有点问题，delete[]时出错
+        // 例如, : m_table(new HashMapEntryPtr[m_capacity])
+        // 这样初始化貌似无法正常delete[], 所以放入函数体中进行初始化
+        m_table = new HashMapEntryPtr[m_capacity];
         LMemset(m_table, 0, m_capacity * sizeof(HashMapEntryPtr));
+    }
+
+    ~HashMap()
+    {
+        delete[] m_table;
     }
 
     LVoid put(K key, V val)
     {
-        LUint hash = genHash(key);
-        HashMapEntryPtr entry = m_table[indexHash(hash)];
-        // 如果entry存在，则比较碰撞链表中值
-        for (; entry; entry->next) {
-            if (entry->key == key) {
-                entry->value = val;
-                return;
-            }
-        }
-
         // 如果超过阈值指定的元素数量
         if (++m_size > m_threshold) {
             resize();
-            addEntry(hash, key, val);
-        } else {
-            addEntry(hash, key, val);
         }
+        
+        addEntry(genHash(key), key, val);
     }
 
     V get(K key)
@@ -94,7 +92,7 @@ public:
         // 2的n次方，满足(n-1)&hash = hash % n
         // 与运算效率远高于取余运算
         LInt oldCapacity = m_capacity;
-        HashMapEntryPtr* table = m_table;
+        HashMapEntryPtr* oldTable = m_table;
 
         // 双倍扩容
         m_capacity <<= 1;
@@ -103,15 +101,18 @@ public:
 
         // 拷贝原table数据到新table中
         for (LInt i = 0; i < oldCapacity; ++i) {
-            HashMapEntryPtr entry = table[i];
-            for (; entry; entry->next) {
-                addEntry(indexHash(entry->hash), entry);
+            HashMapEntryPtr entry = oldTable[i];
+            while (entry) {
+                HashMapEntryPtr next = entry->next;
+                resetEntry(entry);
+                entry = next;
             }
         }
 
-        m_threshold = (LInt)m_capacity * HASH_TABLE_DEFAULT_FACTOR;
         // 释放之前容器
-        delete table;
+        delete[] oldTable;
+        // 重新设置阈值
+        m_threshold = (LInt)m_capacity * HASH_TABLE_DEFAULT_FACTOR;
     }
 
 private:
@@ -126,8 +127,9 @@ private:
         return (m_capacity - 1) & hash;
     }
 
-    LVoid addEntry(LInt index, HashMapEntryPtr ptr)
+    LVoid resetEntry(HashMapEntryPtr ptr)
     {
+        LUint index = indexHash(ptr->hash);
         // 如果链表头部为空，则创建头部
         if (!m_table[index]) {
             m_table[index] = ptr;
@@ -141,9 +143,25 @@ private:
 
     LVoid addEntry(LUint hash, K key, V value)
     {
+        LInt index = indexHash(hash);
+        if (m_table[index]) {
+            // 遍历hash碰撞链表，比较key值
+            // 如果key值相同，则直接复制，否则
+            HashMapEntryPtr entry = m_table[index];
+            for (; entry; entry->next) {
+                if (entry->key == key) {
+                    entry->value = value;
+                    return;
+                }
+            }
+        }
+
+        // 初始化一个新的entry
         HashMapEntryPtr entry = new HashMapEntry(key, value);
         entry->hash = hash;
-        addEntry(indexHash(hash), entry);
+        // entry插入hash碰撞链表头部
+        entry->next = m_table[index];
+        m_table[index] = entry;
     }
 
     HashMapEntryPtr* m_table;
