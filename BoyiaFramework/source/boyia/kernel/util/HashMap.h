@@ -56,6 +56,14 @@ public:
 
     ~HashMap()
     {
+        for (LInt i = 0; i < m_capacity; i++) {
+            HashMapEntryPtr entry = m_table[i];
+            while (entry) {
+                HashMapEntryPtr next = entry->next;
+                delete entry;
+                entry = next;
+            }
+        }
         delete[] m_table;
     }
 

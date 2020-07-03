@@ -3,6 +3,7 @@ package com.boyia.app.core.input;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaUIView;
+import com.boyia.app.loader.jober.MainScheduler;
 
 import android.app.Activity;
 import android.content.Context;
@@ -54,13 +55,12 @@ public class BoyiaInputManager {
     }
 
     public void show(final long item, final String text) {
-        final Activity context = (Activity) mView.getContext();
-        context.runOnUiThread(() -> {
-                BoyiaUtils.showToast("show keyboard");
-                mItem = item;
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mView, 0, null);
-                mView.resetCommitText(text);
+        MainScheduler.mainScheduler().sendJob(() -> {
+            BoyiaUtils.showToast("show keyboard");
+            mItem = item;
+            InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(mView, 0, null);
+            mView.resetCommitText(text);
         });
     }
 
