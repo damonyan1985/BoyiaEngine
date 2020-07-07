@@ -11,7 +11,6 @@ namespace yanbo {
 HtmlTags* HtmlTags::m_htmlTags = kBoyiaNull;
 
 HtmlTags::HtmlTags()
-    : m_map(TAGEND)
 {
 }
 
@@ -19,9 +18,9 @@ HtmlTags::~HtmlTags()
 {
 }
 
-void HtmlTags::defineInitialSymbol(const String& htmlText, LInt htmlType)
+LVoid HtmlTags::defineInitialSymbol(const String& htmlText, LInt htmlType)
 {
-    m_map.put(htmlText, htmlType);
+    m_map.put(HashString(htmlText), htmlType);
 }
 
 HtmlTags* HtmlTags::getInstance()
@@ -72,29 +71,21 @@ HtmlTags* HtmlTags::getInstance()
         m_htmlTags->defineInitialSymbol(_CS("link"), LINK);
         m_htmlTags->defineInitialSymbol(_CS("base"), BASE);
         m_htmlTags->defineInitialSymbol(_CS("video"), VIDEO);
-
-        m_htmlTags->m_map.sort();
     }
 
     return m_htmlTags;
-}
-
-void HtmlTags::clear()
-{
-    m_map.clear();
 }
 
 void HtmlTags::destroyInstance()
 {
     if (m_htmlTags) {
         delete m_htmlTags;
-        m_htmlTags = kBoyiaNull;
     }
 }
 
 int HtmlTags::symbolAsInt(String& key)
 {
     //LUint hash = StringUtils::hashCode(inSymbol.ToLower());
-    return m_map.get(key.ToLower());
+    return m_map.get(HashString(key.ToLower(), LFalse));
 }
 }

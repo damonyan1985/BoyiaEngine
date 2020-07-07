@@ -6,6 +6,7 @@
 #include "BoyiaSocket.h"
 #include "ThreadPool.h"
 #include "HashMap.h"
+#include "HashUtil.h"
 #include <stdio.h>
 //#include <WinSock2.h>
 #pragma comment(lib, "ws2_32")
@@ -13,32 +14,6 @@
 #ifndef  _WINDLL
 #define _WINDLL
 #endif
-
-class HashString {
-public:
-    HashString(const HashString& str)
-    {
-        m_value = str.m_value;
-    }
-
-    HashString(const String& value)
-        : m_value(value)
-    {
-    }
-
-    bool operator == (const HashString& str1) const
-    {
-        return m_value.CompareCase(str1.m_value);
-    }
-
-    LUint hash() const
-    {
-        return StringUtils::hashCode(m_value);
-    }
-
-    String m_value;
-};
-
 
 void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {

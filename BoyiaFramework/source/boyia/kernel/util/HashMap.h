@@ -81,7 +81,7 @@ public:
     {
         LUint hash = genHash(key);
         HashMapEntryPtr entry = m_table[indexHash(hash)];
-        for (; entry; entry->next) {
+        for (; entry; entry = entry->next) {
             if (entry->key == key) {
                 return entry->value;
             }
@@ -141,6 +141,8 @@ private:
         // 如果链表头部为空，则创建头部
         if (!m_table[index]) {
             m_table[index] = ptr;
+            // next置空
+            ptr->next = kBoyiaNull;
         } else {
             // 如果头部不为空，则将entry插在最前面
             // ptr的next指针指向头部
@@ -156,7 +158,7 @@ private:
             // 遍历hash碰撞链表，比较key值
             // 如果key值相同，则直接复制，否则
             HashMapEntryPtr entry = m_table[index];
-            for (; entry; entry->next) {
+            for (; entry; entry = entry->next) {
                 if (entry->key == key) {
                     entry->value = value;
                     return;
