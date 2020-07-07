@@ -33,7 +33,7 @@ private:
     void addDeclaration(PropertyMap* properties, PropertyName& prop, PropertyValue& value);
 
     LInt getCssColor(const String& colorValue);
-    void addProperty(StyleRule* rule, LUint property, PropertyValue& value);
+    void addProperty(StyleRule* rule, LInt property, PropertyValue& value);
 
 private:
     StyleManager* m_styleManager;
