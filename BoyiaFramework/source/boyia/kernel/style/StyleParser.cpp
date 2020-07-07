@@ -187,7 +187,8 @@ void StyleParser::addDeclaration(PropertyMap* properties, PropertyName& prop, Pr
         // 除去空白
         PropertyName realProp = StringUtils::skipBlank(prop);
         // 计算处理了大小写的字符串的标识符
-        properties->put(StyleTags::getInstance()->genIdentify(realProp.ToLower()), value);
+        LInt type = StyleTags::getInstance()->symbolAsInt(realProp.ToLower());
+        properties->put(type, value);
     }
 }
 
@@ -195,7 +196,7 @@ void StyleParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declar
 {
     KLOG("StyleParser::addSelectorGroup");
     StyleRule* rule = StyleRule::New();
-    StyleTags* tags = StyleTags::getInstance();
+    //StyleTags* tags = StyleTags::getInstance();
 
     PropertyMap::Iterator iter = declarations->begin();
     PropertyMap::Iterator iterEnd = declarations->end();
@@ -238,15 +239,15 @@ LInt StyleParser::getCssColor(const String& colorValue)
 
         return LColor::parseRgbString(colorStr);
     } else {
-        KFORMATLOG("getCssColor = %s", (const char*)colorValue.GetBuffer());
+        BOYIA_LOG("getCssColor = %s", GET_STR(colorValue));
         return LColor::parseRgbString(colorValue);
     }
 }
 
-void StyleParser::addProperty(StyleRule* rule, LUint property, PropertyValue& value)
+void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value)
 {
-    StyleTags* tags = StyleTags::getInstance();
-    LInt cssTag = tags->symbolAsInt(property);
+    //StyleTags* tags = StyleTags::getInstance();
+    //LInt cssTag = property;
     switch (cssTag) {
     case StyleTags::ALIGN: {
         if (value.CompareNoCase(_CS("top"))) {

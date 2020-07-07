@@ -13,7 +13,7 @@ namespace util {
 StyleTags* StyleTags::s_tags = kBoyiaNull;
 
 StyleTags::StyleTags()
-    : m_map(StyleTags::TAGEND)
+    //: m_map(StyleTags::TAGEND)
 {
 }
 
@@ -71,8 +71,6 @@ StyleTags* StyleTags::getInstance()
         s_tags->defineInitialSymbol(_CS("z-index"), Z_INDEX);
         s_tags->defineInitialSymbol(_CS("focusable"), FOCUSABLE);
         s_tags->defineInitialSymbol(_CS("flex-direction"), FLEX_DIRECTION);
-
-        s_tags->m_map.sort();
     }
 
     return s_tags;
@@ -81,12 +79,7 @@ StyleTags* StyleTags::getInstance()
 void StyleTags::defineInitialSymbol(const String& cssText, LInt cssType)
 {
     // Use Tagmap accelerate search speed
-    m_map.put(cssText, cssType);
-}
-
-void StyleTags::clear()
-{
-    m_map.clear();
+    m_map.put(HashString(cssText), cssType);
 }
 
 void StyleTags::destroyInstance()
@@ -96,13 +89,8 @@ void StyleTags::destroyInstance()
     }
 }
 
-LInt StyleTags::symbolAsInt(LUint hash)
+LInt StyleTags::symbolAsInt(const String& key)
 {
-    return m_map.get(hash);
-}
-
-LUint StyleTags::genIdentify(const String& key)
-{
-    return m_map.genKey(key);
+    return m_map.get(HashString(key, LFalse));
 }
 }

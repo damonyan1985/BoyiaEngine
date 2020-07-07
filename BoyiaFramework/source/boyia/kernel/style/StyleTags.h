@@ -9,8 +9,10 @@
 #define StyleTags_h
 
 //#include "kmap.h"
-#include "IdentityMap.h"
-#include "UtilString.h"
+//#include "IdentityMap.h"
+//#include "UtilString.h"
+#include "HashMap.h"
+#include "HashUtil.h"
 
 namespace util {
 /**
@@ -82,17 +84,15 @@ public:
     void defineInitialSymbol(const String& cssText, LInt cssType);
     ~StyleTags();
 
-    LInt symbolAsInt(LUint hash);
-    void clear();
-
-    LUint genIdentify(const String& key);
+    LInt symbolAsInt(const String& key);
 
 private:
     StyleTags();
 
 private:
     static StyleTags* s_tags;
-    IdentityMap m_map;
+    //IdentityMap m_map;
+    HashMap<HashString, LInt> m_map;
 };
 }
 #endif

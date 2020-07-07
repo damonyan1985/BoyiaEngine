@@ -114,7 +114,7 @@ public:
     PropertySpecificity m_specificity;
 };
 
-typedef KListMap<LUint, PropertyValue> PropertyMap;
+typedef KListMap<LInt, PropertyValue> PropertyMap;
 typedef KListMap<LInt, CssPropertyValue> AttributeMap;
 
 class StyleRule : public BoyiaRef {
