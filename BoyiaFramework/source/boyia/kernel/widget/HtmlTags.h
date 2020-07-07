@@ -1,8 +1,9 @@
 #ifndef HtmlTags_h
 #define HtmlTags_h
 
-#include "IdentityMap.h"
-#include "UtilString.h"
+//#include "IdentityMap.h"
+#include "HashMap.h"
+#include "HashUtil.h"
 
 namespace yanbo {
 class HtmlTags {
@@ -55,20 +56,20 @@ public:
 
 public:
     static HtmlTags* getInstance();
-    static void destroyInstance();
+    static LVoid destroyInstance();
 
-    void defineInitialSymbol(const String& htmlText, LInt htmlType);
+    LVoid defineInitialSymbol(const String& htmlText, LInt htmlType);
     ~HtmlTags();
 
-    int symbolAsInt(String& key);
-    void clear();
+    LInt symbolAsInt(String& key);
 
 private:
     HtmlTags();
 
 private:
     static HtmlTags* m_htmlTags;
-    IdentityMap m_map;
+    //IdentityMap m_map;
+    HashMap<HashString, LInt> m_map;
 };
 }
 #endif

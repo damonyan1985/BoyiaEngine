@@ -453,6 +453,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.h">
       <Filter>boyia\kernel\vm\lib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\HashUtil.h">
+      <Filter>boyia\kernel\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

@@ -200,6 +200,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\HashMap.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\HashUtil.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.h" />
