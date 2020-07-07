@@ -67,7 +67,7 @@ public:
         delete[] m_table;
     }
 
-    LVoid put(K key, V val)
+    LVoid put(const K& key, V val)
     {
         // 如果超过阈值指定的元素数量
         if (++m_size > m_threshold) {
@@ -77,7 +77,7 @@ public:
         addEntry(genHash(key), key, val);
     }
 
-    V get(K key)
+    V get(const K& key)
     {
         LUint hash = genHash(key);
         HashMapEntryPtr entry = m_table[indexHash(hash)];
@@ -124,7 +124,7 @@ public:
     }
 
 private:
-    LUint genHash(K key)
+    LUint genHash(const K& key)
     {
         LUint hash = (hash = key.hash()) ^ (hash >> 16);
         return hash;
@@ -149,7 +149,7 @@ private:
         }
     }
 
-    LVoid addEntry(LUint hash, K key, V value)
+    LVoid addEntry(LUint hash, const K& key, V value)
     {
         LInt index = indexHash(hash);
         if (m_table[index]) {
