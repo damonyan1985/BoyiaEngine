@@ -79,7 +79,7 @@ StyleTags* StyleTags::getInstance()
 void StyleTags::defineInitialSymbol(const String& cssText, LInt cssType)
 {
     // Use Tagmap accelerate search speed
-    m_map.put(HashString(cssText), cssType);
+    m_map.put(HashString(cssText, LFalse), cssType);
 }
 
 void StyleTags::destroyInstance()
