@@ -82,7 +82,8 @@ public:
         LUint hash = genHash(key);
         HashMapEntryPtr entry = m_table[indexHash(hash)];
         for (; entry; entry = entry->next) {
-            if (entry->key == key) {
+            // 先判断hash值来节省时间
+            if (hash == entry->hash && entry->key == key) {
                 return entry->value;
             }
         }
@@ -159,7 +160,7 @@ private:
             // 如果key值相同，则直接复制，否则
             HashMapEntryPtr entry = m_table[index];
             for (; entry; entry = entry->next) {
-                if (entry->key == key) {
+                if (hash == entry->hash && entry->key == key) {
                     entry->value = value;
                     return;
                 }
