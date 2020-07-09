@@ -20,7 +20,7 @@ HtmlTags::~HtmlTags()
 
 LVoid HtmlTags::defineInitialSymbol(const String& htmlText, LInt htmlType)
 {
-    m_map.put(HashString(htmlText, LFalse), htmlType);
+    m_map.put(HashString(htmlText), htmlType);
 }
 
 HtmlTags* HtmlTags::getInstance()
