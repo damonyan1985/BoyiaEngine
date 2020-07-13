@@ -21,7 +21,7 @@ public:
         : next(kBoyiaNull)
     {
     }
-    MapEntry(K k, V v)
+    MapEntry(const K& k, const V& v)
         : next(kBoyiaNull)
         , key(k)
         , value(v)
@@ -67,7 +67,7 @@ public:
         delete[] m_table;
     }
 
-    LVoid put(const K& key, V val)
+    LVoid put(const K& key, const V& val)
     {
         // 如果超过阈值指定的元素数量
         if (++m_size > m_threshold) {

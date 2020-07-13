@@ -13,7 +13,6 @@ namespace util {
 StyleTags* StyleTags::s_tags = kBoyiaNull;
 
 StyleTags::StyleTags()
-    //: m_map(StyleTags::TAGEND)
 {
 }
 
