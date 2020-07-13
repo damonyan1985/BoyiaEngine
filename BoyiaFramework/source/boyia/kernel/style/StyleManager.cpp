@@ -76,9 +76,9 @@ LBool StyleManager::matchPrepare(Selector* sel)
     //KFORMATLOG("StyleManager::matchPrepare sel->size()=%d simpler=%d", index, (LIntPtr)simpler);
     const String& elem = sel->elementAt(sel->size() - 1)->getSelectorText();
     DoctreeNode* docElem = m_doctree->elementAt(m_doctree->size() - 1);
-    if ((elem.CompareNoCase(docElem->m_tagId) && !elem.CompareNoCase(_CS("#")))
-        || elem.CompareNoCase(docElem->m_tagName)
-        || (docElem->m_classArray.contains(elem) && !elem.CompareNoCase(_CS(".")))) {
+    if ((elem.CompareNoCase(docElem->tagId) && !elem.CompareNoCase(_CS("#")))
+        || elem.CompareNoCase(docElem->tagName)
+        || (docElem->tagClassArray.contains(elem) && !elem.CompareNoCase(_CS(".")))) {
         return LTrue;
     }
 
@@ -112,9 +112,9 @@ StyleRule* StyleManager::matchRule(StyleRule* rule)
                 const String& elem = sel->elementAt(--simIdx)->getSelectorText();
                 while (docIndex >= 0) {
                     DoctreeNode* docElem = m_doctree->elementAt(docIndex--);
-                    if ((elem.StartWith(_CS("#")) && elem.CompareNoCase(docElem->m_tagId))
-                        || (elem.StartWith(_CS(".")) && docElem->m_classArray.contains(elem))
-                        || elem.CompareNoCase(docElem->m_tagName)) {
+                    if ((elem.StartWith(_CS("#")) && elem.CompareNoCase(docElem->tagId))
+                        || (elem.StartWith(_CS(".")) && docElem->tagClassArray.contains(elem))
+                        || elem.CompareNoCase(docElem->tagName)) {
                         // find one
                         find = LTrue;
                         break;
