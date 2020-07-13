@@ -55,7 +55,6 @@ private:
     UIViewController* m_controller;
     Application* m_app;
     UIOperation* m_operation;
-
 };
 }
 #endif
