@@ -11,12 +11,12 @@ DoctreeNode::DoctreeNode()
 {
 }
 
-DoctreeNode::DoctreeNode(const String& tagId,
-    const ClassArray& tagClassArray,
-    const String& tagName)
-    : m_tagName(tagName, LFalse)
-    , m_tagId(tagId, LFalse)
-    , m_classArray(tagClassArray, LFalse)
+DoctreeNode::DoctreeNode(const String& id,
+    const ClassArray& classArray,
+    const String& name)
+    : tagName(name, LFalse)
+    , tagId(id, LFalse)
+    , tagClassArray(classArray, LFalse)
 {
 }
 

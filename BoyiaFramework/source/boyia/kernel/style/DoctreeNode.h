@@ -16,15 +16,15 @@ typedef KVector<String> ClassArray;
 class DoctreeNode {
 public:
     DoctreeNode();
-    DoctreeNode(const String& tagId,
-        const ClassArray& tagClassArray, const String& tagName);
+    DoctreeNode(const String& id,
+        const ClassArray& classArray, const String& name);
 
     ~DoctreeNode();
 
 public:
-    String m_tagName; // such as input,html,body
-    String m_tagId; // such as #id
-    ClassArray m_classArray; // such as .class
+    String tagName; // such as input,html,body
+    String tagId; // such as #id
+    ClassArray tagClassArray; // such as .class
 };
 }
 #endif /* DOCTREENODE_H_ */

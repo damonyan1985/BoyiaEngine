@@ -14,6 +14,7 @@
 #include "StringUtils.h"
 #include "Style.h"
 #include "StyleTags.h"
+#include "OwnerPtr.h"
 
 namespace util {
 
@@ -246,8 +247,6 @@ LInt StyleParser::getCssColor(const String& colorValue)
 
 void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value)
 {
-    //StyleTags* tags = StyleTags::getInstance();
-    //LInt cssTag = property;
     switch (cssTag) {
     case StyleTags::ALIGN: {
         if (value.CompareNoCase(_CS("top"))) {
@@ -348,7 +347,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         }
     } break;
     case StyleTags::BACKGROUND: {
-        KVector<String>* values = StringUtils::split(value, _CS(" "));
+        OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
@@ -369,9 +368,6 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
                 rule->addProperty(cssTag, urlValue);
             }
         }
-
-        delete values;
-        values = kBoyiaNull;
     } break;
     case StyleTags::BACKGROUND_COLOR:
     case StyleTags::COLOR:
@@ -420,7 +416,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         }
     } break;
     case StyleTags::BORDER_BOTTOM: {
-        KVector<String>* values = StringUtils::split(value, _CS(" "));
+        OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; ++i) {
             String oneValue = values->elementAt(i);
@@ -433,12 +429,9 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
                 rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, intValue);
             }
         }
-
-        delete values;
-        values = kBoyiaNull;
     } break;
     case StyleTags::BORDER_TOP: {
-        KVector<String>* values = StringUtils::split(value, _CS(" "));
+        OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
@@ -451,25 +444,18 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
                 rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
             }
         }
-
-        delete values;
-        values = kBoyiaNull;
     } break;
     case StyleTags::BORDER: {
-        KVector<String>* values = StringUtils::split(value, _CS(" "));
+        OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
             String oneValue = values->elementAt(i);
-
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_STYLE, LGraphicsContext::kSolidPen);
             }
         }
-
-        delete values;
-        values = kBoyiaNull;
     } break;
     case StyleTags::DISPLAY: {
         if (value.CompareNoCase(_CS("none"))) {
