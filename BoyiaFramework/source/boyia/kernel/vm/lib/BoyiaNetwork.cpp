@@ -24,7 +24,7 @@ LVoid BoyiaNetwork::load(const String& url)
 LVoid BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
 {
     LByte* destData = new LByte[size];
-    util::LMemcpy(destData, data, size);
+    LMemcpy(destData, data, size);
     m_builder.append(destData, 0, size, LFalse);
 }
 
