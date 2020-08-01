@@ -20,6 +20,8 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
 BoyiaRuntime::~BoyiaRuntime()
 {
     DestroyVM(m_vm);
+    delete[] m_nativeFunTable;
+    delete m_idCreator;
 }
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)

@@ -45,12 +45,9 @@ public:
     HashMap()
         : m_size(0)
         , m_threshold(HASH_TABLE_DEFAULT_SIZE * HASH_TABLE_DEFAULT_FACTOR)
+        , m_capacity(HASH_TABLE_DEFAULT_SIZE)
+        , m_table(new HashMapEntryPtr[HASH_TABLE_DEFAULT_SIZE])
     {
-        m_capacity = HASH_TABLE_DEFAULT_SIZE;
-        // 在构造中声明m_table好像有点问题，delete[]时出错
-        // 例如, : m_table(new HashMapEntryPtr[m_capacity])
-        // 这样初始化貌似无法正常delete[], 所以放入函数体中进行初始化
-        m_table = new HashMapEntryPtr[m_capacity];
         LMemset(m_table, 0, m_capacity * sizeof(HashMapEntryPtr));
     }
 
