@@ -17,7 +17,7 @@ import com.boyia.app.common.db.DBAnnotation.DBColumn;
 import com.boyia.app.common.db.DBAnnotation.DBTable;
 import com.boyia.app.common.utils.BoyiaUtils;
 
-public class BoyiaDAO<T> {
+public class BoyiaDAO<T extends BoyiaData> {
     private SQLiteDatabase mDb;
 
     public BoyiaDAO(SQLiteDatabase db) {
