@@ -35,6 +35,7 @@ public:
         return StringUtils::hashCode(m_value);
     }
 
+private:   
     String m_value;
 };
 }
