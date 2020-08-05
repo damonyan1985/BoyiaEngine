@@ -35,6 +35,10 @@ public:
     MapEntry* next;
 };
 
+// 1. 成员变量初始化顺序与构造函数中成员变量初始化列表顺序无关
+// 与成员变量在类中声明的顺序有关
+// 2. 如果构造函数中成员变量初始化列表没有包含某成员变量
+// 则其初始化会默认排在成员变量初始化列表之后才进行初始化
 template <typename K, typename V>
 class HashMap {
 public:
