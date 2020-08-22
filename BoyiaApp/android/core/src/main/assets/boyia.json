@@ -2,13 +2,13 @@
     "code": 200,
     "sdk": {
         "versionCode": 1,
-        "url": "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/out/sdk.zip",
+        "url": "boyia_assets://out/sdk.zip",
         "name": "sdk"
     },
     "apps": [
         {
             "versionCode": 13,
-            "url": "https://raw.githubusercontent.com/damonyan1985/BoyiaApp/master/out/contacts.zip",
+            "url": "boyia_assets://out/contacts.zip",
             "name": "contacts",
             "isEntry": true
         }

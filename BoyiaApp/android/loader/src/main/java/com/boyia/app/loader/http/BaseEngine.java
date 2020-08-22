@@ -6,6 +6,7 @@ import com.boyia.app.common.utils.BoyiaLog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
@@ -17,13 +18,20 @@ import java.net.HttpURLConnection;
 public abstract class BaseEngine {
     public static final String TAG = "BaseEngine";
     public static final String BOYIA_SCHEMA = "boyia://";
+    public static final String BOYIA_ASSETS_SCHEMA = "boyia_assets://";
 
     public abstract void stop();
 
     public abstract Response getResponse(Request request);
 
-    protected boolean isBoyiaPath(String url) {
-        return url.startsWith(BOYIA_SCHEMA);
+    private InputStream boyiaAssetsStream(String url) throws IOException {
+        if (url.startsWith(BOYIA_ASSETS_SCHEMA)) {
+            int length = BOYIA_ASSETS_SCHEMA.length();
+            String path = url.substring(length);
+            return BaseApplication.getInstance().getAssets().open(path);
+        }
+
+        return null;
     }
 
     private InputStream boyiaAppStream(String url) throws FileNotFoundException {
@@ -42,24 +50,33 @@ public abstract class BaseEngine {
     }
 
     protected Response getLocalResponse(String url) {
-        if (isBoyiaPath(url) && BaseApplication.getInstance() != null) {
-            Response data = new Response();
-            try {
-                data.mInput = boyiaAppStream(url);
-                data.mLength = data.mInput.available();
-                data.mCode = HttpURLConnection.HTTP_OK;
-            } catch (Exception e) {
-                e.printStackTrace();
-                data.mInput = null;
-                data.mLength = 0;
-                data.mCode = HttpURLConnection.HTTP_NOT_FOUND;
-                data.mError = ErrorInfo.ERROR_RESOURCE_NOT_FOUNT;
-            }
-
-            return data;
+        if (BaseApplication.getInstance() == null) {
+            return null;
         }
 
-        return null;
+        Response data = new Response();
+        try {
+            InputStream stream = boyiaAssetsStream(url);
+            if (stream == null) {
+                stream = boyiaAppStream(url);
+            }
+
+            if (stream == null) {
+                return null;
+            }
+
+            data.mInput = stream;
+            data.mLength = data.mInput.available();
+            data.mCode = HttpURLConnection.HTTP_OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            data.mInput = null;
+            data.mLength = 0;
+            data.mCode = HttpURLConnection.HTTP_NOT_FOUND;
+            data.mError = ErrorInfo.ERROR_RESOURCE_NOT_FOUNT;
+        }
+
+        return data;
     }
 
     protected static BaseEngine getHttpEngine(int type) {
