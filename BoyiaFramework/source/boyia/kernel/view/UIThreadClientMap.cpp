@@ -117,18 +117,18 @@ UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)
     if (item->id == id) {
         m_map[index] = item->next;
         return item;
-    } else {
-        UIThreadItem* next = item->next;
-        while (next) {
-            KFORMATLOG("UIThreadClientMap::getUIThreadItem next->id=%d", next->id);
-            if (next->id == id) {
-                item->next = next->next;
-                return next;
-            }
+    }
 
-            item = next;
-            next = next->next;
+    UIThreadItem* next = item->next;
+    while (next) {
+        KFORMATLOG("UIThreadClientMap::getUIThreadItem next->id=%d", next->id);
+        if (next->id == id) {
+            item->next = next->next;
+            return next;
         }
+
+        item = next;
+        next = next->next;
     }
 }
 

@@ -210,6 +210,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\KVector.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\OwnerPtr.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Stack.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIOperation.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThread.cpp" />

@@ -129,19 +129,19 @@ LVoid* NewData(LInt size, LVoid* mempool)
 
                 // Out Of Memory
                 return kBoyiaNull;
-            } else {
-                if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
-                    LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
-                    if ((LIntPtr)current->mNext - newAddr >= mallocSize) {
-                        pHeader = (MemoryBlockHeader*)newAddr;
-                        pHeader->mSize = size;
-                        pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
-                        pHeader->mPrevious = current;
-                        pHeader->mNext = current->mNext;
-                        current->mNext->mPrevious = pHeader;
-                        current->mNext = pHeader;
-                        break;
-                    }
+            }
+
+            if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
+                LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+                if ((LIntPtr)current->mNext - newAddr >= mallocSize) {
+                    pHeader = (MemoryBlockHeader*)newAddr;
+                    pHeader->mSize = size;
+                    pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
+                    pHeader->mPrevious = current;
+                    pHeader->mNext = current->mNext;
+                    current->mNext->mPrevious = pHeader;
+                    current->mNext = pHeader;
+                    break;
                 }
             }
 
