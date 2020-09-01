@@ -8,7 +8,7 @@
 
 namespace util {
 BoyiaRef::BoyiaRef()
-    : m_refCount(0)
+    : m_refCount(new RefCount())
 {
 }
 
@@ -18,20 +18,22 @@ BoyiaRef::~BoyiaRef()
 
 void BoyiaRef::ref()
 {
-    ++m_refCount;
+    m_refCount->ref();
 }
 
 void BoyiaRef::deref()
 {
-    if (--m_refCount <= 0) {
+    m_refCount->deref();
+    if (m_refCount->shareCount() <= 0) {
         delete this;
     }
 }
 
+/*
 LInt BoyiaRef::count()
 {
     return m_refCount;
-}
+}*/
 
 void* BoyiaRef::operator new(size_t sz)
 {
