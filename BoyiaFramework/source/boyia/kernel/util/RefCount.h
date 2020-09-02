@@ -11,7 +11,12 @@ public:
 
     LVoid ref();
     LVoid deref();
-    LInt shareCount();
+    LInt shareCount() const;
+    LInt weakCount() const;
+
+    LVoid addWeak();
+    LVoid detchWeak();
+    LVoid release();
 
 private:
     LInt m_shareCount;

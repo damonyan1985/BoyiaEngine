@@ -14,6 +14,7 @@ BoyiaRef::BoyiaRef()
 
 BoyiaRef::~BoyiaRef()
 {
+    m_refCount->release();
 }
 
 void BoyiaRef::ref()
@@ -29,11 +30,11 @@ void BoyiaRef::deref()
     }
 }
 
-/*
-LInt BoyiaRef::count()
+
+RefCount* BoyiaRef::count() const
 {
     return m_refCount;
-}*/
+}
 
 void* BoyiaRef::operator new(size_t sz)
 {

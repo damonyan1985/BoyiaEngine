@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\Stack.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\WeakPtr.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIOperation.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThread.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\view\UIThreadClientMap.h" />

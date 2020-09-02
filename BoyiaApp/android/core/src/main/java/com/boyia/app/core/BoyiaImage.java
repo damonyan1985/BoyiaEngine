@@ -107,6 +107,6 @@ public class BoyiaImage implements IBoyiaImage {
     @Override
     public void setImage(Bitmap bitmap) {
         mBitmap = bitmap;
-        BoyiaUIView.nativeImageLoaded(mImagePtr);
+        BoyiaCoreJNI.nativeImageLoaded(mImagePtr);
     }
 }

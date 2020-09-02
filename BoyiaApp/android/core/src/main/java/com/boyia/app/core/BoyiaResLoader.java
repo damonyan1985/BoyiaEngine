@@ -50,20 +50,20 @@ public class BoyiaResLoader implements ILoadListener {
     @Override
     public void onLoadDataReceive(byte[] data, int length, Object msg) {
         ResInfo info = (ResInfo) msg;
-        BoyiaUIView.nativeOnDataReceive(data, length, info.mCallback);
+        BoyiaCoreJNI.nativeOnDataReceive(data, length, info.mCallback);
     }
 
     @Override
     public void onLoadFinished(Object msg) {
         ResInfo info = (ResInfo) msg;
-        BoyiaUIView.nativeOnDataFinished(info.mCallback);
+        BoyiaCoreJNI.nativeOnDataFinished(info.mCallback);
     }
 
     @Override
     public void onLoadError(String error, Object msg) {
         ResInfo info = (ResInfo) msg;
         info.mData = error;
-        BoyiaUIView.nativeOnLoadError(info.mData, info.mCallback);
+        BoyiaCoreJNI.nativeOnLoadError(info.mData, info.mCallback);
     }
 
     // Call By JNI

@@ -2,6 +2,7 @@ package com.boyia.app.core.input;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.loader.jober.MainScheduler;
 
@@ -44,11 +45,11 @@ public class BoyiaInputManager {
                     // 软键盘弹起
                     //mKeyboardHeight = rootView.getHeight() - rect.bottom;
                     BoyiaLog.d(TAG, "BoyiaInputManager SHOW");
-                    BoyiaUIView.nativeOnKeyboardShow(mItem, mRootViewVisibleHeight - rect.height());
+                    BoyiaCoreJNI.nativeOnKeyboardShow(mItem, mRootViewVisibleHeight - rect.height());
                     mRootViewVisibleHeight = rect.height();
                 } else if (rect.height() - mRootViewVisibleHeight > 200) {
                     BoyiaLog.d(TAG, "BoyiaInputManager HIDE");
-                    BoyiaUIView.nativeOnKeyboardHide(mItem, rect.height() - mRootViewVisibleHeight);
+                    BoyiaCoreJNI.nativeOnKeyboardHide(mItem, rect.height() - mRootViewVisibleHeight);
                     mRootViewVisibleHeight = rect.height();
                 }
             });

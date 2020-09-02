@@ -55,7 +55,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void init(Context context) {
         // 叠在其他surfaceview之上
-        nativeInitJNIContext((Activity) context);
+        BoyiaCoreJNI.nativeInitJNIContext((Activity) context);
         setZOrderOnTop(true);
         //setZOrderMediaOverlay(true);
         getHolder().addCallback(this);
@@ -88,7 +88,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void setInputText(String text) {
-        nativeSetInputText(text, mInputManager.item());
+        BoyiaCoreJNI.nativeSetInputText(text, mInputManager.item());
     }
 
     public void resetCommitText(final String text) {
@@ -102,7 +102,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void onTouchDown(MotionEvent event) {
-        nativeHandleTouchEvent(event.getAction(), (int) event.getX(), (int) event.getY());
+        BoyiaCoreJNI.nativeHandleTouchEvent(event.getAction(), (int) event.getX(), (int) event.getY());
     }
 
     public void onKeyDown(KeyEvent event) {
@@ -112,7 +112,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
                 mInputConnect.deleteCommitText();
             }
         }
-        nativeHandleKeyEvent(event.getKeyCode(), 0);
+        BoyiaCoreJNI.nativeHandleKeyEvent(event.getKeyCode(), 0);
     }
 
     public View getView() {
@@ -120,13 +120,13 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void quitUIView() {
-        nativeDistroyUIView();
+        BoyiaCoreJNI.nativeDistroyUIView();
         mIsUIViewDistroy = true;
     }
 
     public void initUIView() {
-        nativeSetGLSurface(mHolder.getSurface());
-        nativeInitUIView(mHolder.getSurfaceFrame().width(),
+        BoyiaCoreJNI.nativeSetGLSurface(mHolder.getSurface());
+        BoyiaCoreJNI.nativeInitUIView(mHolder.getSurfaceFrame().width(),
                 mHolder.getSurfaceFrame().height(),
                 BoyiaLog.ENABLE_LOG);
     }
@@ -140,7 +140,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
             initUIView();
             mIsUIViewDistroy = false;
         } else {
-            nativeResetGLSurface(mHolder.getSurface());
+            BoyiaCoreJNI.nativeResetGLSurface(mHolder.getSurface());
             BoyiaLog.d(TAG, "resetGLSurface");
         }
     }
@@ -163,35 +163,4 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
         return mInputConnect;
     }
-
-    // Native Method Define
-    public static native void nativeInitUIView(int width, int height, boolean isDebug);
-
-    public static native void nativeOnDataReceive(byte[] data, int length, long callback);
-
-    public static native void nativeOnDataFinished(long callback);
-
-    public static native void nativeHandleKeyEvent(int keyCode, int isDown);
-
-    public static native void nativeDistroyUIView();
-
-    public static native void nativeImageLoaded(long item);
-
-    public static native void nativeHandleTouchEvent(int type, int x, int y);
-
-    public static native void nativeOnLoadError(String error, long callback);
-
-    public static native void nativeInitJNIContext(Activity context);
-
-    public static native void nativeSetInputText(String text, long item);
-
-    public static native void nativeVideoTextureUpdate(long item);
-
-    public static native void nativeSetGLSurface(Surface surface);
-
-    public static native void nativeResetGLSurface(Surface surface);
-
-    public static native void nativeOnKeyboardShow(long item, int keyboardHeight);
-
-    public static native void nativeOnKeyboardHide(long item, int keyboardHeight);
 }
