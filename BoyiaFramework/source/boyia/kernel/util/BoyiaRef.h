@@ -11,7 +11,7 @@ public:
 
     LVoid ref();
     LVoid deref();
-    //LInt count();
+    RefCount* count() const;
 
     void* operator new(size_t sz);
     void operator delete(void* p);
@@ -20,7 +20,6 @@ protected:
     BoyiaRef();
 
 protected:
-    //LInt m_refCount;
     RefCount* m_refCount;
 };
 }

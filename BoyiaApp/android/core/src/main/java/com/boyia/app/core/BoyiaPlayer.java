@@ -238,6 +238,6 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
             }
         }
 
-        BoyiaUIView.nativeVideoTextureUpdate(mNativePtr);
+        BoyiaCoreJNI.nativeVideoTextureUpdate(mNativePtr);
     }
 }

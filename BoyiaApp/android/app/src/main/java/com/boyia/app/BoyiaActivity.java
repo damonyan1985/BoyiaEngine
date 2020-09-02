@@ -4,6 +4,7 @@ import com.boyia.app.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
@@ -33,14 +34,15 @@ public class BoyiaActivity extends Activity {
 //				BoyiaActivity.this.runOnUiThread(() -> setContentView(R.layout.main));
 //			}
 //		);
-        Observable.create((Subscriber<String> subscriber) -> {
-            BoyiaUtils.loadLib();
-            subscriber.onComplete();
-        })
-        .subscribeOn(JobScheduler.getInstance())
-        .observeOn(MainScheduler.mainScheduler())
-        .subscribe(() -> setContentView(R.layout.main));
+//        Observable.create((Subscriber<String> subscriber) -> {
+//            BoyiaUtils.loadLib();
+//            subscriber.onComplete();
+//        })
+//        .subscribeOn(JobScheduler.getInstance())
+//        .observeOn(MainScheduler.mainScheduler())
+//        .subscribe(() -> setContentView(R.layout.main));
 
+		BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
 		initBroadcast();
    }
 

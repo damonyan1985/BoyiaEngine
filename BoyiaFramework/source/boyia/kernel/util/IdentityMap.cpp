@@ -41,6 +41,7 @@ public:
     {
         for (LInt i = 1; i < size; ++i) {
             for (LInt j = i; j - 1 >= 0 && pairs[j].key < pairs[j - 1].key; --j) {
+                /*
                 IdentityPair tmp;
                 tmp.key = pairs[j].key;
                 tmp.value = pairs[j].value;
@@ -49,7 +50,8 @@ public:
                 pairs[j].value = pairs[j - 1].value;
 
                 pairs[j - 1].key = tmp.key;
-                pairs[j - 1].value = tmp.value;
+                pairs[j - 1].value = tmp.value;*/
+                swap(&pairs[j], &pairs[j - 1]);
             }
         }
     }

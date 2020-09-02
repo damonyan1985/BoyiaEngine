@@ -22,7 +22,7 @@
 #include "UIView.h"
 #include <jni.h>
 
-const char* kBoyiaUIViewClass = "com/boyia/app/core/BoyiaUIView";
+const char* kBoyiaUIViewClass = "com/boyia/app/core/BoyiaCoreJNI";
 const char* kBoyiaUtilClass = "com/boyia/app/common/utils/BoyiaUtils";
 
 enum KeyEventType {
@@ -175,6 +175,10 @@ static void nativeOnKeyboardHide(JNIEnv* env, jobject obj, jlong item, jint keyb
     yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::ShaderUtil::viewY(keyboardHight));
 }
 
+static void nativeBoyiaSync(JNIEnv* env, jobject obj, jlong item)
+{
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
@@ -191,6 +195,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface },
     { "nativeOnKeyboardShow", "(JI)V", (void*)nativeOnKeyboardShow },
     { "nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide },
+    { "nativeBoyiaSync", "(J)V", (void*)nativeBoyiaSync },
 };
 
 static JNINativeMethod sUtilMethods[] = {
