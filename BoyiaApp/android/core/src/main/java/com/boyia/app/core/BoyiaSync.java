@@ -12,8 +12,8 @@ public class BoyiaSync {
      * @param ptr
      */
     public static void awaitSync(long ptr) {
-        Choreographer.getInstance().postFrameCallback((callback) -> {
-            BoyiaCoreJNI.nativeBoyiaSync(ptr);
-        });
+        Choreographer.getInstance().postFrameCallback((frameTimeNanos) ->
+            BoyiaCoreJNI.nativeBoyiaSync(ptr)
+        );
     }
 }
