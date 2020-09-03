@@ -10,8 +10,10 @@ public:
     WeakPtr(BoyiaPtr<T> ptr)
     {
         m_ptr = ptr.get();
-        m_refCount = static_cast<const BoyiaRef*>(ptr.get())->count();
-        m_refCount->attachWeak();
+        if (m_ptr) {
+            m_refCount = static_cast<const BoyiaRef*>(m_ptr)->count();
+            m_refCount->attachWeak();
+        }
     }
 
     // if the pointer is expired
@@ -20,15 +22,18 @@ public:
         return !m_refCount->shareCount();
     }
 
+    // if ptr expired, reture null pointer
     T* get() const 
     {
-        return m_ptr;
+        return expired() ? kBoyiaNull : m_ptr;
     }
 
     ~WeakPtr()
     {
         if (m_refCount) {
+            // detch weak count
             m_refCount->detchWeak();
+            // release reference count
             m_refCount->release();
         }
     }
