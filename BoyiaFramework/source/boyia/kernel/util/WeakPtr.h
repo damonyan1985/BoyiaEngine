@@ -11,11 +11,11 @@ public:
     {
         m_ptr = ptr.get();
         m_refCount = static_cast<const BoyiaRef*>(ptr.get())->count();
-        m_refCount->addWeak();
+        m_refCount->attachWeak();
     }
 
-    // 判断指针是否过期
-    LBool expire()
+    // if the pointer is expired
+    LBool expired()
     {
         return !m_refCount->shareCount();
     }

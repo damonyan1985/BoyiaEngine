@@ -39,7 +39,7 @@ LInt RefCount::weakCount() const
     return m_weakCount;
 }
 
-LVoid RefCount::addWeak()
+LVoid RefCount::attachWeak()
 {
     ++m_weakCount;
 }

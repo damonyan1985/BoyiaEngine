@@ -14,7 +14,7 @@ public:
     LInt shareCount() const;
     LInt weakCount() const;
 
-    LVoid addWeak();
+    LVoid attachWeak();
     LVoid detchWeak();
     LVoid release();
 
