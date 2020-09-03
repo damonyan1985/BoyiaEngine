@@ -92,21 +92,21 @@ LVoid* NewData(LInt size, LVoid* mempool)
         MemoryBlockHeader* current = pool->mFirstBlock;
         // 如果第一个内存单元与内存池首地址之间存在一块空白区域
         // 该空白区域大小大于mallocSize，则尝试利用该区域进行分配
-        if ((LIntPtr)current - (LIntPtr)pool->mAddress >= mallocSize) {
-            LIntPtr newAddr = ADDR_ALIGN((LIntPtr)pool->mAddress);
-            if ((LIntPtr)current - newAddr >= mallocSize) {
-                pHeader = (MemoryBlockHeader*)newAddr;
-                pHeader->mSize = size;
-                pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
-                pHeader->mNext = current;
-                current->mPrevious = pHeader;
-                pHeader->mPrevious = kBoyiaNull;
+        //if ((LIntPtr)current - (LIntPtr)pool->mAddress >= mallocSize) {
+        LIntPtr newAddr = ADDR_ALIGN((LIntPtr)pool->mAddress);
+        if ((LIntPtr)current - newAddr >= mallocSize) {
+            pHeader = (MemoryBlockHeader*)newAddr;
+            pHeader->mSize = size;
+            pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
+            pHeader->mNext = current;
+            current->mPrevious = pHeader;
+            pHeader->mPrevious = kBoyiaNull;
 
-                pool->mFirstBlock = pHeader;
-                pool->mUsed += constHeaderLen + size;
-                return pHeader->mAddress;
-            }
+            pool->mFirstBlock = pHeader;
+            pool->mUsed += constHeaderLen + size;
+            return pHeader->mAddress;
         }
+        //}
 
         while (current) {
             // 如果当前单元没有下一个元素
@@ -114,36 +114,36 @@ LVoid* NewData(LInt size, LVoid* mempool)
             // 如果当前单元存在下一个元素
             // 则尝试利用当前与下一个元素之间的空白区域进行分配
             if (!current->mNext) {
-                if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
-                    LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
-                    if (((LIntPtr)pool->mAddress + pool->mSize) - newAddr >= mallocSize) {
-                        pHeader = (MemoryBlockHeader*)newAddr;
-                        pHeader->mSize = size;
-                        pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
-                        pHeader->mPrevious = current;
-                        pHeader->mNext = kBoyiaNull;
-                        current->mNext = pHeader;
-                        break;
-                    }
+                //if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
+                LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+                if (((LIntPtr)pool->mAddress + pool->mSize) - newAddr >= mallocSize) {
+                    pHeader = (MemoryBlockHeader*)newAddr;
+                    pHeader->mSize = size;
+                    pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
+                    pHeader->mPrevious = current;
+                    pHeader->mNext = kBoyiaNull;
+                    current->mNext = pHeader;
+                    break;
                 }
+                //}
 
                 // Out Of Memory
                 return kBoyiaNull;
             }
 
-            if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
-                LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
-                if ((LIntPtr)current->mNext - newAddr >= mallocSize) {
-                    pHeader = (MemoryBlockHeader*)newAddr;
-                    pHeader->mSize = size;
-                    pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
-                    pHeader->mPrevious = current;
-                    pHeader->mNext = current->mNext;
-                    current->mNext->mPrevious = pHeader;
-                    current->mNext = pHeader;
-                    break;
-                }
+            //if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
+            LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+            if ((LIntPtr)current->mNext - newAddr >= mallocSize) {
+                pHeader = (MemoryBlockHeader*)newAddr;
+                pHeader->mSize = size;
+                pHeader->mAddress = (LByte*)pHeader + constHeaderLen;
+                pHeader->mPrevious = current;
+                pHeader->mNext = current->mNext;
+                current->mNext->mPrevious = pHeader;
+                current->mNext = pHeader;
+                break;
             }
+            //}
 
             current = current->mNext;
         }
