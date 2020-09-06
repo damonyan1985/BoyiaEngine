@@ -62,3 +62,8 @@ void BoyiaOnLoadWin::networkDestroy()
 {
     ::WSACleanup();
 }
+
+void BoyiaOnLoadWin::handleTouchEvent(int type, int x, int y)
+{
+    yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
+}

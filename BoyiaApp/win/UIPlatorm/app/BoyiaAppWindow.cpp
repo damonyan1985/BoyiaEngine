@@ -46,11 +46,19 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 
 DWORD BoyiaAppWindow::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
+    int mouseX = (int)LOWORD(lParam);
+    int mouseY = (int)HIWORD(lParam);
+
+    BoyiaOnLoadWin::handleTouchEvent(0, mouseX, mouseY);
     return 0;
 }
 
 DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
+    int mouseX = (int)LOWORD(lParam);
+    int mouseY = (int)HIWORD(lParam);
+
+    BoyiaOnLoadWin::handleTouchEvent(1, mouseX, mouseY);
     return 0;
 }
 

@@ -1,6 +1,5 @@
 package com.boyia.app.core.view;
 
-import android.app.Presentation;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
