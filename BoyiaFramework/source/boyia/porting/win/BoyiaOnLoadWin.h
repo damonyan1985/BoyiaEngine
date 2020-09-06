@@ -17,6 +17,7 @@ public:
     static void networkInit();
     static void networkDestroy();
     static void connectServer();
+    static void handleTouchEvent(int type, int x, int y);
 };
 
 #endif
