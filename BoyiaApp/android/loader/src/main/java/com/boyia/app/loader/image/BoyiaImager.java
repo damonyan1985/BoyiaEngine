@@ -77,7 +77,13 @@ public class BoyiaImager {
     }
 
     protected List<WeakReference<IBoyiaImage>> getImageList(String url) {
-        return mLoadingMap == null || mLoadingMap.size() == 0 ? null : mLoadingMap.get(url);
+        if (mLoadingMap == null) {
+            return null;
+        }
+
+        synchronized (mLoadingMap) {
+            return mLoadingMap.size() == 0 ? null : mLoadingMap.get(url);
+        }
     }
 
     public void removeLoadImage(String url) {
@@ -118,7 +124,11 @@ public class BoyiaImager {
 
     private boolean obtainImageFromCache(IBoyiaImage image, String url) {
         // First get image in memory cache
-        Bitmap bitmap = mBitmapCache.get(url);
+        Bitmap bitmap;
+        synchronized (mBitmapCache) {
+            bitmap = mBitmapCache.get(url);
+        }
+
         if (bitmap != null) {
             BoyiaLog.d(TAG, "Bitmap in Bitmap Memory Cache url=" + url);
             image.setImage(bitmap);
