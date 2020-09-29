@@ -203,10 +203,10 @@ void StyleParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declar
     PropertyMap::Iterator iterEnd = declarations->end();
 
     for (; iter != iterEnd; ++iter) {
-        LUint property = (*iter)->getKey();
-        PropertyValue value = (*iter)->getValue();
+        const LUint& property = (*iter)->getKey();
+        const PropertyValue& propValue = (*iter)->getValue();
 
-        value = StringUtils::skipBlank(value);
+        String value = StringUtils::skipBlank(propValue);
         KSTRLOG8(property);
         KSTRLOG8(value);
         addProperty(rule, property, value);
