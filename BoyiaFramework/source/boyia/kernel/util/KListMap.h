@@ -19,14 +19,14 @@ public:
     virtual ~ObjectPair() { KLOG("~ObjectPair"); }
 
     Key mKey;
-    Value mValue;
+    mutable Value mValue;
 
-    Key getKey() const
+    const Key& getKey() const
     {
         return mKey;
     }
 
-    Value getValue() const
+    Value& getValue() const
     {
         return mValue;
     }
