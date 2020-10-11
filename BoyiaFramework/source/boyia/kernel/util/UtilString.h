@@ -5,7 +5,7 @@
  Version     : 1.0
  Copyright   : All Copyright Reserved
  Description : support Original 本字符串封装包含
-               浅拷贝字符串，如果m_isDeep为LFalse
+               浅拷贝字符串，如果m_owner为LFalse
                则表示该字符串为浅拷贝，浅拷贝字符串只能
                用作临时字符串进行比较查询使用，用来提高
                程序效率，不可作为打印和显示的正式字符串使用，
@@ -56,12 +56,12 @@ public:
 public:
     LString();
     virtual ~LString();
-    LString(const LString<T>& stringSrc, Bool isDeep = LTrue);
-    LString(const T* lpsz, Bool isDeep = LTrue, LInt size = -1);
+    LString(const LString<T>& stringSrc, Bool owner = LTrue);
+    LString(const T* lpsz, Bool owner = LTrue, LInt size = -1);
     LString(T ch, LInt nRepeat = 1);
     LString(const T* lpsz, LInt nLength);
     LVoid AllocBuffer(LInt nLen);
-    LVoid Copy(const T* lpsz, Bool isDeep = LTrue, LInt size = -1);
+    LVoid Copy(const T* lpsz, Bool owner = LTrue, LInt size = -1);
 
 protected:
     LVoid StrAssignment(const T* lpsz);
@@ -130,7 +130,7 @@ protected:
     LInt m_pchDataLen;
     LInt m_size;
     T* m_pchData;
-    Bool m_isDeep;
+    Bool m_owner;
 };
 
 typedef LString<LUint8> StringA;
@@ -158,7 +158,7 @@ LString<T>::LString()
     : m_pchData(kBoyiaNull)
     , m_pchDataLen(0)
     , m_size(0)
-    , m_isDeep(LTrue)
+    , m_owner(LTrue)
 {
 }
 
@@ -169,16 +169,16 @@ LString<T>::~LString()
 }
 
 template <class T>
-LString<T>::LString(const T* lpsz, Bool isDeep, LInt size)
+LString<T>::LString(const T* lpsz, Bool owner, LInt size)
     : m_pchData(kBoyiaNull)
 {
-    LString<T>::Copy(lpsz, isDeep, size);
+    LString<T>::Copy(lpsz, owner, size);
 }
 
 template <class T>
-LString<T>::LString(const LString<T>& stringSrc, Bool isDeep)
+LString<T>::LString(const LString<T>& stringSrc, Bool owner)
 {
-    if (isDeep) {
+    if (owner) {
         int nLen = stringSrc.GetLength();
         AllocBuffer(nLen);
         LMemcpy(m_pchData, stringSrc.GetBuffer(), nLen * sizeof(T));
@@ -189,7 +189,7 @@ LString<T>::LString(const LString<T>& stringSrc, Bool isDeep)
         m_size = stringSrc.GetLength();
     }
 
-    m_isDeep = isDeep;
+    m_owner = owner;
 }
 
 template <class T>
@@ -199,7 +199,7 @@ LString<T>::LString(const T* lpsz, LInt nLength)
     AllocBuffer(nLen);
     LMemcpy(m_pchData, lpsz, (nLen) * sizeof(T));
     m_size = nLen;
-    m_isDeep = LTrue;
+    m_owner = LTrue;
 }
 
 template <class T>
@@ -208,36 +208,36 @@ LString<T>::LString(T ch, LInt nRepeat)
     AllocBuffer(nRepeat);
     LMemset(m_pchData, ch, nRepeat * sizeof(T));
     m_size = ch == 0 ? 0 : nRepeat;
-    m_isDeep = LTrue;
+    m_owner = LTrue;
 }
 
 template <class T>
-LVoid LString<T>::Copy(const T* lpsz, Bool isDeep, LInt size)
+LVoid LString<T>::Copy(const T* lpsz, Bool owner, LInt size)
 {
-
-    if (lpsz) {
-        if (size == -1) {
-            LInt nLen = CountString(lpsz);
-            AllocBuffer(nLen);
-            LMemcpy(m_pchData, lpsz, nLen * sizeof(T));
-            m_size = nLen;
-        } else {
-            //KFORMATLOG("String not deep STR=%s and size=%d", (const char*)lpsz, size);
-            m_size = size;
-            m_pchDataLen = m_size + 1;
-            m_pchData = (T*)lpsz;
-        }
-    } else {
+    if (!lpsz) {
         ResetBuffer();
+        return;
     }
 
-    m_isDeep = isDeep;
+    if (size == -1) {
+        LInt nLen = CountString(lpsz);
+        AllocBuffer(nLen);
+        LMemcpy(m_pchData, lpsz, nLen * sizeof(T));
+        m_size = nLen;
+    } else {
+        //KFORMATLOG("String not deep STR=%s and size=%d", (const char*)lpsz, size);
+        m_size = size;
+        m_pchDataLen = m_size + 1;
+        m_pchData = (T*)lpsz;
+    }
+
+    m_owner = owner;
 }
 
 template <class T>
 LVoid LString<T>::ResetBuffer()
 {
-    if (m_pchData && m_isDeep) {
+    if (m_pchData && m_owner) {
         delete[] m_pchData;
     }
 
@@ -437,22 +437,16 @@ LBool LString<T>::CompareNoCase(const LString<T>& str) const
 }
 
 template <class T>
-LBool LString<T>::operator!=(const LString<T>& str1) const
+LBool LString<T>::operator!=(const LString<T>& str) const
 {
-    // if (*this == str1) {
-    //     return LFalse;
-    // }
-
-    // return LTrue;
-
-    return !(*this == str1);
+    return !(*this == str);
 }
 
 template <class T>
-LBool LString<T>::operator<(const LString<T>& str1) const
+LBool LString<T>::operator<(const LString<T>& str) const
 {
     LInt nLen = GetLength();
-    LInt nComparedLen = str1.GetLength();
+    LInt nComparedLen = str.GetLength();
     LInt nLowerLen = 0;
     LBool bLargeORequal = LFalse;
     if (nLen >= nComparedLen) {
@@ -464,51 +458,34 @@ LBool LString<T>::operator<(const LString<T>& str1) const
 
     LInt ipos = 0;
     for (; ipos < nLowerLen; ++ipos) {
-        if (m_pchData[ipos] < str1[ipos]) {
+        if (m_pchData[ipos] < str[ipos]) {
             return LTrue;
         }
-        if (m_pchData[ipos] > str1[ipos]) {
+        if (m_pchData[ipos] > str[ipos]) {
             return LFalse;
         }
     }
 
-    // if (bLargeORequal) {
-    //     return LFalse;
-    // }
-
-    // return LTrue;
     return !bLargeORequal;
 }
 
 template <class T>
-LBool LString<T>::operator<=(const LString<T>& str1) const
+LBool LString<T>::operator<=(const LString<T>& str) const
 {
-    // if ((*this < str1) || (*this == str1)) {
-    //     return LTrue;
-    // }
-    // return LFalse;
-    return *this < str1 || *this == str1;
+    return *this < str || *this == str;
 }
 
 template <class T>
-LBool LString<T>::operator>(const LString<T>& str1) const
+LBool LString<T>::operator>(const LString<T>& str) const
 {
-    // if (*this <= str1) {
-    //     return LFalse;
-    // }
-
-    // return LTrue;
-    return !(*this <= str1);
+    return !(*this <= str);
 }
 
 template <class T>
-LBool LString<T>::operator>=(const LString<T>& str1) const
+LBool LString<T>::operator>=(const LString<T>& str) const
 {
-    // if ((*this > str1) || (*this == str1)) {
-    //     return LTrue;
-    // }
-    // return LFalse;
-    return *this > str1 || *this == str1;
+    //return *this > str1 || *this == str1;
+    return !(*this < str);
 }
 
 template <class T>
@@ -792,7 +769,7 @@ LVoid LString<T>::ReleaseBuffer()
     m_pchDataLen = 0;
     m_size = 0;
     m_pchData = kBoyiaNull;
-    m_isDeep = LTrue;
+    m_owner = LTrue;
 }
 
 template <class T>
