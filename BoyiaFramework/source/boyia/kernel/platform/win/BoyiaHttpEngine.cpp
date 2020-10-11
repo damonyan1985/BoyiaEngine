@@ -74,14 +74,18 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 		NULL, NULL,
 		dwOpenRequestFlags, dwConnectContext);
 
-    wstring header = CharConvertor::CharToWchar(GET_STR(url));
-    BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
-    if (!res) {
-        m_callback->onLoadError(NetworkClient::kNetworkFileError);
-        InternetCloseHandle(request);
-        InternetCloseHandle(connect);
-        InternetCloseHandle(internet);
-        return;
+    // 设置HTTP请求头
+    if (m_header.GetLength() > 0) {
+        wstring header = CharConvertor::CharToWchar(GET_STR(m_header));
+        BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
+    
+        if (!res) {
+            m_callback->onLoadError(NetworkClient::kNetworkFileError);
+            InternetCloseHandle(request);
+            InternetCloseHandle(connect);
+            InternetCloseHandle(internet);
+            return;
+        }
     }
 
     // 发送请求数据
