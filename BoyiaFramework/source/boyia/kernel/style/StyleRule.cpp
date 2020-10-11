@@ -165,28 +165,30 @@ LBool CssPropertyValue::compareSpecificity(const PropertySpecificity& specificit
     KLOG("CssPropertyValue::compareSpecificity");
     if (specificity1.m_important > 0)
         return LTrue;
-    else if (specificity2.m_important > 0)
+    
+    if (specificity2.m_important > 0)
         return LFalse;
+
     KLOG("CssPropertyValue::compareSpecificity1");
     if (specificity1.m_id > specificity2.m_id) {
         KLOG("CssPropertyValue::compareSpecificity");
         return LTrue;
-    } else if (specificity1.m_id == specificity2.m_id) {
+    } 
+    
+    if (specificity1.m_id == specificity2.m_id) {
         KLOG("CssPropertyValue::compareSpecificity");
         if (specificity1.m_classOrPseudo > specificity2.m_classOrPseudo) {
             return LTrue;
-        } else if (specificity1.m_classOrPseudo == specificity2.m_classOrPseudo) {
+        } 
+        
+        if (specificity1.m_classOrPseudo == specificity2.m_classOrPseudo
+            && specificity1.m_tag > specificity2.m_tag) {
             KLOG("CssPropertyValue::compareSpecificity");
-            if (specificity1.m_tag > specificity2.m_tag)
-                return LTrue;
-            else
-                return LFalse;
-        } else {
-            return LFalse;
-        }
-    } else {
-        return LFalse;
+            return LTrue;
+        }        
     }
+    
+    return LFalse;
 }
 
 void CssPropertyValue::setSpecificity(const CssPropertyValue::PropertySpecificity& specificity)

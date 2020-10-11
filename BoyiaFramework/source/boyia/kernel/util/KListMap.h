@@ -87,7 +87,7 @@ public:
         return m_container.empty();
     }
 
-    Value operator[](const Key& key) const
+    Value& operator[](const Key& key) const
     {
         KLOG("operator[] 1");
         MapPair* pair = getPair(key);
