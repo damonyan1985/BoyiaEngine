@@ -12,12 +12,11 @@ bool PlatformBridge::unzip(const String& zipFile, const String& dir)
     BOYIA_LOG("PlatformBridge---unzip---src: %s, dest: %s", GET_STR(zipFile), GET_STR(dir));
 
     if (dir.EndWith(_CS("sdk"))) {
-        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
-    } else {
-        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
+        return ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
     }
 
-    return true;
+    return ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
+
     // JNIEnv* env = JNIUtil::getEnv();
     // jstring jpath = util::strToJstring(env, GET_STR(zipFile));
     // jstring jdir = util::strToJstring(env, GET_STR(dir));

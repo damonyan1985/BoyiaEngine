@@ -11,16 +11,16 @@
 #define READ_SIZE 8192
 
 namespace yanbo {
-int ZipEntry::unzip(const char* src, const char* dest, const char* password)
+bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
 {
     unzFile zipfile = unzOpen(src);
     if (zipfile == kBoyiaNull)
-        return -1;
+        return false;
 
     unz_global_info global_info;
     if (unzGetGlobalInfo(zipfile, &global_info) != UNZ_OK) {
         unzClose(zipfile);
-        return -1;
+        return false;
     }
     char read_buffer[READ_SIZE] = { 0 };
 
@@ -36,21 +36,21 @@ int ZipEntry::unzip(const char* src, const char* dest, const char* password)
             sprintf(name, "%s/%s", dest, filename);
             createDir(name);
         } else {
-            if (password && unzOpenCurrentFilePassword(zipfile, "123456") != UNZ_OK) {
+            if (password && unzOpenCurrentFilePassword(zipfile, password) != UNZ_OK) {
                 unzClose(zipfile);
-                return -1;
+                return false;
             }
 
             if (!password && unzOpenCurrentFile(zipfile) != UNZ_OK) {
                 unzClose(zipfile);
-                return -1;
+                return false;
             }
             sprintf(name, "%s/%s", dest, filename);
 
             if (writeFile(zipfile, name) < 0) {
                 unzCloseCurrentFile(zipfile);
                 unzClose(zipfile);
-                return -1;
+                return false;
             }
             //setFileTime(name, file_info64.dosDate);
         }
@@ -58,15 +58,15 @@ int ZipEntry::unzip(const char* src, const char* dest, const char* password)
 
         if ((i + 1) < global_info.number_entry && unzGoToNextFile(zipfile) != UNZ_OK) {
             unzClose(zipfile);
-            return -1;
+            return false;
         }
     }
-    unzClose(zipfile);
 
-    return 0;
+    unzClose(zipfile);
+    return true;
 }
 
-int ZipEntry::createDir(const char* path)
+bool ZipEntry::createDir(const char* path)
 {
     char dirName[256] = { 0 };
     strcpy(dirName, path);
@@ -77,23 +77,23 @@ int ZipEntry::createDir(const char* path)
         }
         dirName[i] = 0;
         if (!FileUtil::isExist(dirName) && FileUtil::createDir(dirName) == -1) {
-            return -1;
+            return false;
         }
         dirName[i] = '/';
     }
 
-    return 0;
+    return true;
 }
 
-int ZipEntry::writeFile(unzFile& zipfile, char* name)
+bool ZipEntry::writeFile(unzFile& zipfile, char* name)
 {
     if (name == kBoyiaNull) {
-        return -1;
+        return false;
     }
     createDir(name);
     FILE* out = fopen(name, "wb");
     if (out == kBoyiaNull) {
-        return -1;
+        return false;
     }
 
     char read_buffer[READ_SIZE] = { 0 };
@@ -101,7 +101,7 @@ int ZipEntry::writeFile(unzFile& zipfile, char* name)
     do {
         error = unzReadCurrentFile(zipfile, read_buffer, READ_SIZE);
         if (error < 0)
-            return -1;
+            return false;
 
         if (error > 0) {
             fwrite(read_buffer, error, 1, out);
@@ -110,6 +110,6 @@ int ZipEntry::writeFile(unzFile& zipfile, char* name)
 
     fclose(out);
     out = kBoyiaNull;
-    return 0;
+    return true;
 }
 }
