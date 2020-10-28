@@ -26,11 +26,10 @@ const char* kZipPassword = "123456";
 bool PlatformBridge::unzip(const String& zipFile, const String& dir)
 {
     if (dir.EndWith(_CS("sdk"))) {
-        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
-    } else {
-        ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
+        return ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kBoyiaNull);
     }
-    return false;
+        
+    return ZipEntry::unzip(GET_STR(zipFile), GET_STR(dir), kZipPassword);
 }
 
 const char* PlatformBridge::getAppPath()
