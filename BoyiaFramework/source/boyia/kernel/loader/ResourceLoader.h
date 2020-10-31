@@ -40,6 +40,7 @@ public:
     LVoid executeDocument(const String& data);
     LVoid executeStyleSheet(const String& data);
     LVoid executeScript(const String& data);
+    LVoid startupPage();
     HtmlRenderer* render() const;
     UIView* view() const;
 

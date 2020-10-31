@@ -87,7 +87,29 @@ LVoid IDCreator::getIdentName(LUint id, BoyiaStr* str)
     }
 }
 
-LVoid IDCreator::setIdentify(const String& str, LUint id)
+OwnerPtr<String> IDCreator::idsToString()
+{
+    String buffer((LUint8)0, 1024);
+    BoyiaId* bid = m_idLink->mBegin;
+    while (bid) {
+        buffer += String(_CS(bid->mStr.mPtr), LFalse, bid->mStr.mLen);
+        buffer += _CS(":");
+        LUint8 str[256];
+        LInt2Str(bid->mID, str, 10);
+        buffer += str;
+        if (bid != m_idLink->mEnd) {
+            buffer += _CS("\n");
+        }
+
+        bid = bid->mNext;
+    }
+    
+    OwnerPtr<String> ownerString = new String(buffer.GetBuffer(), LFalse, buffer.GetLength());
+    buffer.ReleaseBuffer();
+    return ownerString;
+}
+
+LVoid IDCreator::appendIdentify(const String& str, LUint id)
 {
     if (!m_idLink) {
         m_idLink = new IdLink;
@@ -108,7 +130,7 @@ LVoid IDCreator::setIdentify(const String& str, LUint id)
         m_idLink->mEnd->mNext = bid;
     }
 
-    m_idCount = id;
     m_idLink->mEnd = bid;
+    m_idCount = id;
 }
 }

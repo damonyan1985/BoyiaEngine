@@ -48,5 +48,6 @@ LVoid LoadStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm);
 LVoid LoadInstructions(LVoid* buffer, LInt size, LVoid* vm);
 LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm);
 LVoid* GetVMCreator(LVoid* vm);
+LVoid ExecuteGlobalCode(LVoid* vm);
 
 #endif

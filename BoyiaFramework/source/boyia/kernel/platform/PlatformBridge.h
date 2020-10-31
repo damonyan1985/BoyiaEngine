@@ -17,6 +17,7 @@ public:
     static const char* getInstructionCachePath();
     static const char* getStringTableCachePath();
     static const char* getInstructionEntryPath();
+    static const char* getSymbolTablePath();
 };
 }
 

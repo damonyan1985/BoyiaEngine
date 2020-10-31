@@ -7,6 +7,8 @@
 #include "ThreadPool.h"
 #include "HashMap.h"
 #include "HashUtil.h"
+#include "BoyiaCore.h"
+#include "FileUtil.h"
 #include <stdio.h>
 //#include <WinSock2.h>
 #pragma comment(lib, "ws2_32")
@@ -66,4 +68,14 @@ void BoyiaOnLoadWin::networkDestroy()
 void BoyiaOnLoadWin::handleTouchEvent(int type, int x, int y)
 {
     yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
+}
+
+void BoyiaOnLoadWin::cacheCode()
+{
+   
+    if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
+        return;
+    }
+
+    CacheVMCode(yanbo::AppManager::instance()->currentApp()->runtime()->vm());
 }
