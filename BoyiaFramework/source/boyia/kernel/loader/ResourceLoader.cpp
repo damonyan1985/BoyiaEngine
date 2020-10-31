@@ -151,8 +151,7 @@ LVoid ResourceLoader::startupPage()
     m_render->paint(kBoyiaNull);
 
     if (FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
-        //LoadVMCode(AppManager::instance()->currentApp()->runtime()->vm());
-        ExecuteGlobalCode(AppManager::instance()->currentApp()->runtime()->vm());
+        ExecuteGlobalCode(m_view->application()->runtime()->vm());
     }
 }
 
