@@ -12,6 +12,7 @@ WM_LBUTTONUP_ITEM()
 WM_SETCURSOR_ITEM()
 WM_KEYDOWN_ITEM()
 WM_RBUTTONDOWN_ITEM()
+WM_CLOSE_ITEM()
 // msg mapping item end
 END_MAP_TABLE()
 
@@ -137,6 +138,12 @@ DWORD BoyiaAppWindow::OnGameAbout(WPARAM wParam, LPARAM lParam)
 DWORD BoyiaAppWindow::OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	return 0;
+}
+
+DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
+{
+    BoyiaOnLoadWin::cacheCode();
+    return BoyiaWindow::OnClose(wParam, lParam);
 }
 
 void BoyiaAppWindow::ProcessTick()

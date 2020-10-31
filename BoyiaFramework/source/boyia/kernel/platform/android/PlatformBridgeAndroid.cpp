@@ -72,6 +72,11 @@ const char* PlatformBridge::getInstructionEntryPath()
     return "/data/data/com.boyia.app/files/instruction_entry.bin";
 }
 
+const char* PlatformBridge::getSymbolTablePath()
+{
+    return "/data/data/com.boyia.app/files/symbol_table.bin";
+}
+
 const char* PlatformBridge::getBoyiaJsonUrl()
 {
     return "boyia_assets://boyia.json";

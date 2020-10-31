@@ -12,6 +12,7 @@
 
 #include "BoyiaValue.h"
 #include "UtilString.h"
+#include "OwnerPtr.h"
 
 namespace util {
 
@@ -23,7 +24,8 @@ public:
     LUint genIdentByStr(const LInt8* str, LInt len);
     LUint genIdentifier(BoyiaStr* str);
     LVoid getIdentName(LUint id, BoyiaStr* str);
-    LVoid setIdentify(const String& str, LUint id);
+    LVoid appendIdentify(const String& str, LUint id);
+    OwnerPtr<String> idsToString();
 
 private:
     LUint m_idCount;

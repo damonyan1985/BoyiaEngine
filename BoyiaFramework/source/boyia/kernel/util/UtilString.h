@@ -66,7 +66,7 @@ public:
 protected:
     LVoid StrAssignment(const T* lpsz);
     LVoid StrAssignment(const T* lpsz, LInt len);
-    LVoid StrPlus(const T* lpsz);
+    LVoid StrPlus(const T* lpsz, LInt len);
     LInt CountString(const T* lpsz) const;
     LVoid ResetBuffer();
 
@@ -286,14 +286,14 @@ const LString<T>& LString<T>::operator=(const T ch)
 template <class T>
 const LString<T>& LString<T>::operator+=(const LString<T>& stringSrc)
 {
-    StrPlus(stringSrc.GetBuffer());
+    StrPlus(stringSrc.GetBuffer(), stringSrc.GetLength());
     return *this;
 }
 
 template <class T>
 const LString<T>& LString<T>::operator+=(const T* lpsz)
 {
-    StrPlus(lpsz);
+    StrPlus(lpsz, 0);
     return *this;
 }
 
@@ -301,7 +301,7 @@ template <class T>
 const LString<T>& LString<T>::operator+=(const T ch)
 {
     T str[2] = { ch, 0 };
-    StrPlus(str);
+    StrPlus(str, 1);
     return *this;
 }
 
@@ -359,14 +359,14 @@ LVoid LString<T>::StrAssignment(const T* lpsz)
 }
 
 template <class T>
-LVoid LString<T>::StrPlus(const T* lpsz)
+LVoid LString<T>::StrPlus(const T* lpsz, LInt len)
 {
-    int plusSize = CountString(lpsz);
+    int plusSize = len > 0 ? len : CountString(lpsz);
     LInt nLen = GetLength() + plusSize;
     if (m_pchDataLen <= nLen) {
         if (m_pchData) {
             T* pOldData = m_pchData;
-            LInt nOldDataLen = CountString(pOldData);
+            LInt nOldDataLen = m_size;
             AllocBuffer(nLen);
             LMemcpy(m_pchData, pOldData, nOldDataLen * sizeof(T));
             LMemcpy(m_pchData + nOldDataLen, lpsz, plusSize * sizeof(T));

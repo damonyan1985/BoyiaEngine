@@ -37,6 +37,7 @@ protected:
     BoyiaMsg DWORD OnGameEnd(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnGameAbout(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnRButtonDown(WPARAM wParam, LPARAM lParam);
+    BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
     MESSAGE_MAP_TABLE()
 };
 

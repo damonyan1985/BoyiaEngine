@@ -18,6 +18,7 @@ public:
     static void networkDestroy();
     static void connectServer();
     static void handleTouchEvent(int type, int x, int y);
+    static void cacheCode();
 };
 
 #endif

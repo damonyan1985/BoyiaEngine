@@ -16,6 +16,7 @@ public:
     BoyiaRuntime(yanbo::Application* app);
     ~BoyiaRuntime();
 
+    LVoid init();
     LVoid compile(const String& script);
     LVoid* vm() const;
     yanbo::UIView* view() const;

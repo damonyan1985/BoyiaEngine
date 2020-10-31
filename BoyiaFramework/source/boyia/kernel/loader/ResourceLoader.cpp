@@ -11,6 +11,9 @@
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
+#include "AppManager.h"
+#include "FileUtil.h"
+#include "PlatformBridge.h"
 //#include <android/log.h>
 
 namespace yanbo {
@@ -65,11 +68,6 @@ public:
             m_loader->onLoadFinished(*data.get(), m_resType);
         } else {
             m_loader->onLoadError(m_result);
-        }
-
-        if (m_url.CompareNoCase(_CS("boyia://apps/contacts/src/Main.boyia"))) {
-            //CacheVMCode();
-            //LoadVMCode();
         }
     }
 
@@ -131,6 +129,10 @@ LVoid ResourceLoader::onLoadFinished(const String& data, LInt resType)
 
 LVoid ResourceLoader::load(const String& url, LoadType type)
 {
+    if (type == kCacheScript && FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
+        return;
+    }
+
     if (type == kCacheStyleSheet) {
         ++m_cssSize;
     }
@@ -141,6 +143,17 @@ LVoid ResourceLoader::load(const String& url, LoadType type)
 UIView* ResourceLoader::view() const
 {
     return m_view;
+}
+
+LVoid ResourceLoader::startupPage()
+{
+    m_render->layout();
+    m_render->paint(kBoyiaNull);
+
+    if (FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
+        //LoadVMCode(AppManager::instance()->currentApp()->runtime()->vm());
+        ExecuteGlobalCode(AppManager::instance()->currentApp()->runtime()->vm());
+    }
 }
 
 LVoid ResourceLoader::executeDocument(const String& data)
@@ -161,8 +174,7 @@ LVoid ResourceLoader::executeDocument(const String& data)
     }
 
     KLOG("m_render->layout()");
-    m_render->layout();
-    m_render->paint(kBoyiaNull);
+    startupPage();
 }
 
 HtmlRenderer* ResourceLoader::render() const
@@ -178,8 +190,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
     m_render->getStyleParser()->parseCss(is);
 
     if (--m_cssSize <= 0) {
-        m_render->layout();
-        m_render->paint(kBoyiaNull);
+        startupPage();
     }
 }
 
@@ -187,7 +198,6 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 LVoid ResourceLoader::executeScript(const String& data)
 {
     m_view->application()->runtime()->compile(data);
-    //CompileScript((char*)data.GetBuffer(), m_view->application()->runtime()->vm());
 }
 
 LVoid ResourceLoader::repaint(HtmlView* item)

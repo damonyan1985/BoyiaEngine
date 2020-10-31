@@ -20,7 +20,7 @@ class MainActivity extends Activity {
 	    //var appBox = root.itemByID(ViewGroup, "AppBox");
 	    var appBox = ViewRoot.getRoot();
 
-        this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
+      this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
 	    this.main.initView();
 	    
 	    appBox.appendView(this.main);
@@ -43,7 +43,12 @@ class MainActivity extends Activity {
 	    var obj = Util.json(data);
 	    //Util.log(obj.app_version.last);
 	    var categoryView = this.main.headerView.categoryView;
-	    var size = obj.data.categoryList.size();
+			
+			var dataObj = obj.data;
+			
+			var categoryList = obj.data.categoryList;
+	    var size = categoryList.size();
+			
 	    var view;
 	    while (size > 0) {
 	        size = size - 1;
@@ -55,10 +60,12 @@ class MainActivity extends Activity {
 	        categoryView.appendView(view);
 	    }
 	    
+			
 	    var detailContainer = this.main.detailContainer;
 	    var categoryItem = obj.data.categoryList.get(0);
 	    var detailList = categoryItem.detailList;
 	    size = detailList.size();
+			
 	    while (size > 0) {
 	        size = size - 1;
 	        var detailItem = detailList.get(size);
@@ -69,10 +76,8 @@ class MainActivity extends Activity {
 	        view.setInfo(detailList.get(size).info1);
 	        view.setImage(detailList.get(size).image1);
 	    }
-
-	    //this.main.draw();
-	    //this.main.commit();   
-	    this.draw(); 
+			
+	    this.draw();
 	}
 }
 

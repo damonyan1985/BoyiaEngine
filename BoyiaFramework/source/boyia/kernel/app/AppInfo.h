@@ -5,6 +5,15 @@
 #include "UtilString.h"
 
 namespace yanbo {
+struct AppCodePath {
+public:
+    AppCodePath();
+    mutable String instructPath;
+    mutable String entryCodePath;
+    mutable String stringTablePath;
+    mutable String symbolTablePath;
+};
+
 class AppInfo {
 public:
     AppInfo();
@@ -18,6 +27,7 @@ public:
     String name; // app name
     String url; // download url
     LBool isEntry;
+    AppCodePath appCodePath;
 };
 }
 #endif

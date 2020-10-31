@@ -14,6 +14,7 @@ public:
     UIView* view() const;
     boyia::BoyiaRuntime* runtime() const;
     LVoid init(const String& entryPage);
+    const AppInfo* appInfo() const;
 
 private:
     UIView* m_view;

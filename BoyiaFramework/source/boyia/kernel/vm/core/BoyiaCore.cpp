@@ -1443,7 +1443,7 @@ static LVoid DeleteExecutor(CommandTable* table)
 // 执行全局的调用
 static LVoid ExecuteCode(BoyiaVM* vm)
 {
-    vm->mEState->mContext = vm->mEState->mContext;
+    //vm->mEState->mContext = vm->mEState->mContext;
     vm->mEState->mPC = vm->mEState->mContext->mBegin;
     ExecInstruction(vm);
     // 删除执行体
@@ -2488,7 +2488,6 @@ LInt GetLocalSize(LVoid* vm)
 LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm)
 {
     BOYIA_LOG("callFunction=>%d \n", 1);
-    //gBoyiaVM->mEState->mProg = fun;
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     CompileState cs;
     cs.mProg = fun;
@@ -2527,11 +2526,33 @@ LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
     ExecInstruction(vmPtr);
 }
 
+LVoid ExecuteGlobalCode(LVoid* vm) 
+{
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+
+    vmPtr->mEState->mGValSize = 0;
+    vmPtr->mEState->mFunSize = 0;
+    vmPtr->mEState->mLoopSize = 0;
+    ResetScene(vmPtr);
+    CommandTable cmds;
+    for (LInt i = 0; i < vmPtr->mEntry->mSize; i++) {
+        cmds.mBegin = vmPtr->mVMCode->mCode + vmPtr->mEntry->mTable[i];
+        vmPtr->mEState->mContext = &cmds;
+        ExecuteCode(vmPtr);
+    }
+}
+
 LVoid CacheVMCode(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     CacheStringTable(vmPtr->mStrTable->mTable, vmPtr->mStrTable->mSize, vm);
+    CacheSymbolTable(vm);
     CacheInstuctionEntry(vmPtr->mEntry->mTable, sizeof(LInt) * vmPtr->mEntry->mSize);
+
+    // clear inline cache
+    for (LInt i = 0; i < vmPtr->mVMCode->mSize; i++) {
+        vmPtr->mVMCode->mCode[i].mCache = kBoyiaNull;
+    }
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);
 }
 
@@ -2559,6 +2580,7 @@ LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm)
     vmPtr->mEntry->mSize = size / sizeof(LInt);
     LMemcpy(vmPtr->mEntry->mTable, buffer, size);
 
+    /*
     vmPtr->mEState->mGValSize = 0;
     vmPtr->mEState->mFunSize = 0;
     vmPtr->mEState->mLoopSize = 0;
@@ -2566,6 +2588,9 @@ LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm)
     CommandTable cmds;
     for (LInt i = 0; i < vmPtr->mEntry->mSize; i++) {
         cmds.mBegin = vmPtr->mVMCode->mCode + vmPtr->mEntry->mTable[i];
+        vmPtr->mEState->mContext = &cmds;
         ExecuteCode(vmPtr);
     }
+    */
+    //ExecuteGlobalCode(vm);
 }

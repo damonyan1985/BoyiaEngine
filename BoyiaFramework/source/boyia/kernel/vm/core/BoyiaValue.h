@@ -93,6 +93,7 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* klass);
 LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size);
 LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm);
 LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size);
+LVoid CacheSymbolTable(LVoid* vm);
 
 LVoid LoadVMCode(LVoid* vm);
 
