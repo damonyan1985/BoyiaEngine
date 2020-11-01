@@ -132,19 +132,19 @@ LVoid UIOperation::execute()
             break;
         case UIOP_SETIMAGE_URL: {
             String url(_CS(msg->obj), LTrue, msg->arg0);
-            ImageView* view = (ImageView*)msg->arg1;
+            ImageView* view = reinterpret_cast<ImageView*>(msg->arg1);
             view->setUrl(url);
         } break;
         case UIOP_LOADIMAGE_URL: {
             String url(_CS(msg->obj), LTrue, msg->arg0);
-            ImageView* view = (ImageView*)msg->arg1;
+            ImageView* view = reinterpret_cast<ImageView*>(msg->arg1);
             view->loadImage(url);
         } break;
         case UIOP_DRAW: {
             viewDraw(msg);
         } break;
         case UIOP_APPLY_DOM_STYLE: {
-            HtmlView* root = (HtmlView*)msg->obj;
+            HtmlView* root = static_cast<HtmlView*>(msg->obj);
             ResourceLoader* loader = UIView::current()->getLoader();
             root->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
         } break;
@@ -168,12 +168,12 @@ LVoid UIOperation::viewSetInput(Message* msg)
 LVoid UIOperation::viewSetText(Message* msg)
 {
     String text(_CS(msg->obj), LTrue, msg->arg0);
-    HtmlView* view = (HtmlView*)msg->arg1;
+    HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg1);
 
     if (view->m_children.count()) {
         HtmlView* firstChild = *view->m_children.begin();
         if (firstChild && firstChild->isText()) {
-            TextView* item = (yanbo::TextView*)firstChild;
+            TextView* item = static_cast<yanbo::TextView*>(firstChild);
             item->setText(text);
         }
     } else {
@@ -189,7 +189,7 @@ LVoid UIOperation::viewSetText(Message* msg)
 LVoid UIOperation::viewAddChild(Message* msg)
 {
     HtmlView* view = static_cast<HtmlView*>(msg->obj);
-    HtmlView* child = (HtmlView*)msg->arg0;
+    HtmlView* child = reinterpret_cast<HtmlView*>(msg->arg0);
     if (view) {
         child->setParent(view);
         view->addChild(child);
@@ -198,7 +198,7 @@ LVoid UIOperation::viewAddChild(Message* msg)
 
 LVoid UIOperation::viewDraw(Message* msg)
 {
-    HtmlView* view = (HtmlView*)msg->obj;
+    HtmlView* view = static_cast<HtmlView*>(msg->obj);
     if (!view)
         return;
     view->layout();
