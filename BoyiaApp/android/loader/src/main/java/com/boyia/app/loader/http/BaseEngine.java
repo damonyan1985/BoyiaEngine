@@ -1,6 +1,7 @@
 package com.boyia.app.loader.http;
 
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 
 import java.io.File;
@@ -38,8 +39,8 @@ public abstract class BaseEngine {
         if (url.startsWith(BOYIA_SCHEMA)) {
             int length = BOYIA_SCHEMA.length();
             String path = url.substring(length);
-            File fileDir = BaseApplication.getInstance().getFilesDir();
-            File file = new File(fileDir, path);
+            String boyiaDir = BoyiaFileUtil.getAppRoot();
+            File file = new File(boyiaDir, path);
 
             BoyiaLog.d(TAG, "path=" + path);
             BoyiaLog.d(TAG, "file path=" + file.getPath());
