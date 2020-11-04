@@ -20,12 +20,28 @@ import android.view.View;
 import android.widget.TextView;
 
 public class BoyiaFileUtil {
+    private static final String TAG = "BoyiaFileUtil";
+
+    private static final String BOYIA_DIR = "boyia";
     private static final String ANDROID_SECURE = "/mnt/sdcard/.android_secure";
     private static String sBoyiaRootPath = null;
     public static final String PRIVATE_FILE_PATH = BaseApplication.getInstance().getFilesDir()
             .getAbsolutePath();
     public static final String PRIVATE_CACHE_PATH = BaseApplication.getInstance().getCacheDir()
             .getAbsolutePath();
+
+    public static String getAppRoot() {
+        BoyiaLog.i(TAG, "PlatformBridge---getAppRoot");
+        File appDir = BaseApplication.getInstance().getFilesDir();
+        String boyiaDirPath = appDir.getAbsolutePath() + File.separator + BOYIA_DIR + File.separator;
+        BoyiaLog.i(TAG, "PlatformBridge---boyiaDirPath = " + boyiaDirPath);
+        File boyiaDir = new File(boyiaDirPath);
+        if (!boyiaDir.exists()) {
+            boyiaDir.mkdirs();
+        }
+
+        return boyiaDirPath;
+    }
 
     public static String getFilePathRoot() {
         if (sBoyiaRootPath != null) {
