@@ -4,6 +4,7 @@
 #include "AppManager.h"
 #include "ArmFunction.h"
 #include "AutoObject.h"
+#include "BoyiaCore.h"
 #include "BoyiaExecution.h"
 #include "BoyiaSocket.h"
 #include "FileUtil.h"
@@ -179,6 +180,15 @@ static void nativeBoyiaSync(JNIEnv* env, jobject obj, jlong item)
 {
 }
 
+static void nativeCacheCode(JNIEnv* env, jobject obj)
+{
+    if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
+        return;
+    }
+
+    CacheVMCode(yanbo::AppManager::instance()->currentApp()->runtime()->vm());
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
@@ -196,6 +206,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeOnKeyboardShow", "(JI)V", (void*)nativeOnKeyboardShow },
     { "nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide },
     { "nativeBoyiaSync", "(J)V", (void*)nativeBoyiaSync },
+    { "nativeCacheCode", "()V", (void*)nativeCacheCode },
 };
 
 static JNINativeMethod sUtilMethods[] = {

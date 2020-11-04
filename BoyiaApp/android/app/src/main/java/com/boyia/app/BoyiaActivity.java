@@ -97,6 +97,7 @@ public class BoyiaActivity extends Activity {
 		mNeedExit = true;
 		BoyiaUtils.showToast("再按一次退出程序");
 		BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
+				BoyiaCoreJNI.nativeCacheCode();
 				mNeedExit = false;
 			}
 		, 3000);
