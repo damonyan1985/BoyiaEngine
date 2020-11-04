@@ -94,10 +94,11 @@ public class BoyiaActivity extends Activity {
 	}
 
 	public void backExit() {
+	    // 退出程序时将程序内存快照保存在本地
+        BoyiaCoreJNI.nativeCacheCode();
 		mNeedExit = true;
 		BoyiaUtils.showToast("再按一次退出程序");
 		BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
-				BoyiaCoreJNI.nativeCacheCode();
 				mNeedExit = false;
 			}
 		, 3000);
