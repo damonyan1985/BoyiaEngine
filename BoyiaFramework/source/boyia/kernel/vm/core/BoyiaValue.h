@@ -5,23 +5,24 @@
 
 enum KeyWord {
     BY_ARG = 0,
-	BY_CHAR,
-	BY_INT,
-	BY_STRING,
-	BY_FUNC,
-	BY_NAVCLASS,
-	BY_CLASS,
-	BY_EXTEND,
-	BY_VAR,
-	BY_PROP,
-	BY_IF,
+    BY_CHAR,
+    BY_INT,
+    BY_STRING,
+    BY_FUNC,
+    BY_NAVCLASS,
+    BY_CLASS,
+    BY_EXTEND,
+    BY_VAR,
+    BY_PROP,
+    BY_IF,
     BY_ELIF,
-	BY_ELSE,
-	BY_DO,
-	BY_WHILE,
-	BY_BREAK,
-	BY_RETURN,
-	BY_END, // 18
+    BY_ELSE,
+    BY_DO,
+    BY_WHILE,
+    BY_FOR,
+    BY_BREAK,
+    BY_RETURN,
+    BY_END, // 18
 };
 
 typedef struct {
