@@ -66,15 +66,14 @@ class MainActivity extends Activity {
 	    var detailList = categoryItem.detailList;
 	    size = detailList.size();
 			
-	    while (size > 0) {
-	        size = size - 1;
-	        var detailItem = detailList.get(size);
+	    for (var i=size-1; i>=0; i=i-1) {
+	        var detailItem = detailList.get(i);
 	        view = ViewDoc.createView(NewTextItem, "boyia://apps/contacts/view/news_text_item.boui");
 	        view.initView();
 	        detailContainer.appendView(view);
-	        view.setTitle(detailList.get(size).title);
-	        view.setInfo(detailList.get(size).info1);
-	        view.setImage(detailList.get(size).image1);
+	        view.setTitle(detailList.get(i).title);
+	        view.setInfo(detailList.get(i).info1);
+	        view.setImage(detailList.get(i).image1);
 	    }
 			
 	    this.draw();
