@@ -190,6 +190,7 @@ struct KeywordPair {
     { D_STR("else", 4), BY_ELSE },
     { D_STR("do", 2), BY_DO },
     { D_STR("while", 5), BY_WHILE },
+    { D_STR("for", 3), BY_FOR },
     { D_STR("break", 5), BY_BREAK },
     { D_STR("fun", 3), BY_FUNC },
     { D_STR("class", 5), BY_CLASS },
@@ -562,6 +563,12 @@ static Instruction* PutInstruction(
     CompileState* cs)
 {
     Instruction* newIns = AllocateInstruction(cs->mVm);
+    // Init member
+    newIns->mOPLeft.mType = 0;
+    newIns->mOPLeft.mValue = 0;
+    newIns->mOPRight.mType = 0;
+    newIns->mOPRight.mValue = 0;
+
     if (left) {
         newIns->mOPLeft.mType = left->mType;
         newIns->mOPLeft.mValue = left->mValue;
@@ -959,6 +966,59 @@ static LVoid ReturnStatement(CompileState* cs)
     PutInstruction(kBoyiaNull, kBoyiaNull, kCmdReturn, HandleReturn, cs);
 }
 
+static LVoid ForStatement(CompileState* cs)
+{   
+    // Such as, for (var i=0; i<10; i++)
+    NextToken(cs); // '('
+    if (cs->mToken.mTokenValue != LPTR) {
+        SntxErrorBuild(LPTR_EXPECTED, cs);
+    }
+
+    NextToken(cs);
+    // First expression
+    if (cs->mToken.mTokenValue == BY_VAR) {
+        LocalStatement(cs);
+    } else {
+        Putback(cs);
+        EvalExpression(cs);
+    }
+    
+    // Create loop instruction
+    Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin, cs);
+    
+    // Second expression
+    /* check the conditional expression => R0 */
+    EvalExpression(cs);
+
+    // If true, execute the block
+    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue, cs);
+
+    // Third expression
+    EvalExpression(cs);
+    if (cs->mToken.mTokenValue != RPTR) {
+        SntxErrorBuild(RPTR_EXPECTED, cs);
+    }
+    // i++ execute finished, then jmp to begin
+    Instruction* lastInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo, cs);
+    lastInst->mOPLeft.mType = OP_CONST_NUMBER;
+    lastInst->mOPLeft.mValue = (LIntPtr)(lastInst - beginInst);
+
+    logicInst->mOPLeft.mType = OP_CONST_NUMBER;
+    logicInst->mOPLeft.mValue = (LIntPtr)(lastInst - logicInst);
+
+    BlockStatement(cs);
+    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo, cs);
+    beginInst->mOPLeft.mType = OP_CONST_NUMBER;
+    beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
+    
+    logicInst->mOPRight.mType = OP_CONST_NUMBER;
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
+    
+    // execute i++
+    endInst->mOPLeft.mType = OP_CONST_NUMBER;
+    endInst->mOPLeft.mValue = (LIntPtr)(endInst - logicInst);
+}
+
 static LVoid BlockStatement(CompileState* cs)
 {
     LBool block = LFalse;
@@ -1007,6 +1067,9 @@ static LVoid BlockStatement(CompileState* cs)
                 break;
             case BY_DO: /* process a do-while loop */
                 DoStatement(cs);
+                break;
+            case BY_FOR:
+                ForStatement(cs);
                 break;
             case BY_BREAK:
                 BOYIA_LOG("BREAK BreakStatement %d \n", 1);
@@ -1750,6 +1813,11 @@ static LInt HandleLoopIfTrue(LVoid* ins, BoyiaVM* vm)
     if (!value->mValue.mIntVal) {
         vm->mEState->mPC = inst + inst->mOPRight.mValue;
         vm->mEState->mLoopSize--;
+        return 1;
+    }
+
+    if (inst->mOPLeft.mValue) {
+        vm->mEState->mPC = inst + inst->mOPLeft.mValue;
     }
 
     return 1;
@@ -1780,7 +1848,7 @@ static LVoid WhileStatement(CompileState* cs)
         SntxErrorBuild(RPTR_EXPECTED, cs);
     }
     //EngineStrLog("WhileStatement last inst name=%s", cs->mToken.mTokenName);
-    Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue, cs);
+    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue, cs);
     BlockStatement(cs); /* If true, execute block */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo, cs);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
@@ -1808,7 +1876,7 @@ static LVoid DoStatement(CompileState* cs)
     if (cs->mToken.mTokenValue != SEMI) {
         SntxErrorBuild(SEMI_EXPECTED, cs);
     }
-    Instruction* logicInst = PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue, cs);
+    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoopTrue, HandleLoopIfTrue, cs);
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo, cs);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
     //beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
