@@ -54,4 +54,19 @@ LVoid BoyiaAsyncEvent::removeObject(LIntPtr ptr)
         }
     }
 }
+
+BoyiaAsyncEvent::BoyiaAsyncEvent(BoyiaValue* obj)
+{
+    ValueCopy(&m_obj, obj);
+    BoyiaAsyncEvent::registerObject(obj);
+}
+
+LVoid BoyiaAsyncEvent::run()
+{
+    if (!BoyiaAsyncEvent::hasObject(&m_obj)) {
+        return;
+    }
+
+    callback();
+}
 }
