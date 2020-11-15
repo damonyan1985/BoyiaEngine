@@ -16,12 +16,8 @@ BoyiaAsyncMapTable BoyiaAsyncEvent::s_table;
 
 LVoid BoyiaAsyncEvent::registerObject(BoyiaValue* obj)
 {
-    BoyiaAsyncMapTable::Iterator iter = s_table.begin();
-    BoyiaAsyncMapTable::Iterator end = s_table.end();
-    for (; iter != end; ++iter) {
-        if (obj->mValue.mObj.mPtr == (*iter)->object) {
-            return;
-        }
+    if (hasObject(obj)) {
+        return;
     }
 
     // the address alloc in heap
