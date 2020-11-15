@@ -1,25 +1,28 @@
 /*
- * Boyia异步回调事件处理
+ * Boyia寮傛浜嬩欢鍥炶皟澶勭悊
  */
 #ifndef BoyiaAsyncEvent_h
 #define BoyiaAsyncEvent_h
 
 #include "BoyiaCore.h"
-#include "KVector.h"
+#include "KList.h"
 
 namespace boyia {
 class BoyiaAsyncMap;
+
+using BoyiaAsyncMapTable = KList<BoyiaAsyncMap*>;
 class BoyiaAsyncEvent {
 public:
     // Create async event and add to table
     BoyiaAsyncEvent(BoyiaValue* callback, BoyiaValue* obj);
 
+    // When remove the object, needs to remove all callback
+    static LVoid removeObject(LIntPtr ptr);
+
 private:
-    static KVector<BoyiaAsyncMap*> s_table;
+    static BoyiaAsyncMapTable s_table;
 };
 
 }
 
 #endif
-
-

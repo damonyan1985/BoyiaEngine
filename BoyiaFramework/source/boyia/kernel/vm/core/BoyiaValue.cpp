@@ -77,9 +77,19 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix)
     return total * sign;
 }
 
+static boyia::BoyiaRuntime* GetRuntime(LVoid* vm)
+{
+    return static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
+}
+
+LVoid* GetGabargeCollect(LVoid* vm)
+{
+    return GetRuntime(vm)->garbageCollect();
+}
+
 static LVoid SystemGC(LVoid* vm)
 {
-    if (GetUsedMemory(GetVmMemoryPool(vm)) >= MEMORY_SIZE / 2) {
+    if (GetRuntime(vm)->needCollect()) {
         GCollectGarbage(vm);
     }
 }
@@ -88,6 +98,23 @@ LVoid* BoyiaAlloc(LInt size, LVoid* vm)
 {
     SystemGC(vm);
     return BoyiaNew(size, vm);
+}
+
+// Alloc Data
+LVoid* BoyiaNew(LInt size, LVoid* vm)
+{
+    PrintPoolSize(GetRuntime(vm)->memoryPool());
+    return NewData(size, GetRuntime(vm)->memoryPool());
+}
+
+LVoid BoyiaPreDelete(LVoid* ptr, LVoid* vm)
+{
+    GetRuntime(vm)->prepareDelete(ptr);
+}
+
+LVoid BoyiaDelete(LVoid* data, LVoid* vm)
+{
+    return DeleteData(data, GetRuntime(vm)->memoryPool());
 }
 
 LVoid MStrcpy(BoyiaStr* dest, BoyiaStr* src)
@@ -132,7 +159,7 @@ LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest)
 
 extern LVoid NativeDelete(LVoid* data)
 {
-    delete (boyia::BoyiaBase*)data;
+    delete static_cast<boyia::BoyiaBase*>(data);
 }
 
 // "Hello" + "World"
@@ -173,12 +200,12 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
 
 LUintPtr GenIdentByStr(const LInt8* str, LInt len, LVoid* vm)
 {
-    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->genIdentByStr(str, len);
+    return GetRuntime(vm)->idCreator()->genIdentByStr(str, len);
 }
 
 LUintPtr GenIdentifier(BoyiaStr* str, LVoid* vm)
 {
-    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->genIdentifier(str);
+    return GetRuntime(vm)->idCreator()->genIdentifier(str);
 }
 
 InlineCache* CreateInlineCache(LVoid* vm)
@@ -246,7 +273,7 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 
 extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm)
 {
-    ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->getIdentName(key, str);
+    GetRuntime(vm)->idCreator()->getIdentName(key, str);
 }
 
 LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
@@ -297,7 +324,7 @@ LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size)
 
 LVoid CacheSymbolTable(LVoid* vm)
 {
-    util::IDCreator* idCreator = ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator();
+    util::IDCreator* idCreator = GetRuntime(vm)->idCreator();
 
     OwnerPtr<String> ownerString = idCreator->idsToString();
     FileUtil::writeFile(
@@ -316,7 +343,7 @@ static LVoid LoadSymbolTable(LVoid* vm)
     for (LInt i = 0; i < symbolTable->size(); i++) {
         OwnerPtr<KVector<String> > ids = StringUtils::split(symbolTable->elementAt(i), _CS(":"));
         LUint id = StringUtils::stringToInt(ids->elementAt(1));
-        ((boyia::BoyiaRuntime*)GetVMCreator(vm))->idCreator()->appendIdentify(ids->elementAt(0), id);
+        GetRuntime(vm)->idCreator()->appendIdentify(ids->elementAt(0), id);
     }
 }
 
@@ -350,10 +377,10 @@ LVoid LoadVMCode(LVoid* vm)
 
 LInt FindNativeFunc(LUintPtr key, LVoid* vm)
 {
-    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->findNativeFunc(key);
+    return GetRuntime(vm)->findNativeFunc(key);
 }
 
 LInt CallNativeFunction(LInt idx, LVoid* vm)
 {
-    return ((boyia::BoyiaRuntime*)GetVMCreator(vm))->callNativeFunction(idx);
+    return GetRuntime(vm)->callNativeFunction(idx);
 }
