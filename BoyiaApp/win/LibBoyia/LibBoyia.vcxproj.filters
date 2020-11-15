@@ -462,6 +462,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\WeakPtr.h">
       <Filter>boyia\kernel\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -787,6 +790,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.cpp">
       <Filter>boyia\kernel\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

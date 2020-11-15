@@ -78,10 +78,10 @@ class MainActivity extends Activity {
 			
 	    this.draw();
 
-			// test for program
-			for (var i=0;i<10; i=i+1) {
-				Util.log("test for i=" + i);
-			}
+		// test for program
+		for (var i=0;i<10; i=i+1) {
+			Util.log("test for i=" + i);
+		}
 	}
 }
 

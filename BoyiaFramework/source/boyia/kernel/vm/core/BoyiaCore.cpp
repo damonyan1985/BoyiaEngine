@@ -408,7 +408,7 @@ LVoid* BoyiaNew(LInt size, LVoid* vm)
 
 LVoid BoyiaDelete(LVoid* data, LVoid* vm)
 {
-    return DeleteData(data, ((BoyiaVM*)vm)->mPool);;
+    return DeleteData(data, ((BoyiaVM*)vm)->mPool);
 }
 
 LVoid* GetVmMemoryPool(LVoid* vm)
