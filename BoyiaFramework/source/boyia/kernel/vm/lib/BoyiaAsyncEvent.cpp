@@ -2,39 +2,45 @@
 #include "KVector.h"
 
 namespace boyia {
-class BoyiaAsyncMap {
+class AsyncObject {
 public:
-    BoyiaAsyncMap()
+    AsyncObject()
         : object(kBoyiaNull)
-        , callbacks(0, 5)
     {
     }
     // Save object address
     LIntPtr object;
-    // Save callback address
-    KVector<BoyiaValue*> callbacks;
 };
 
-KList<BoyiaAsyncMap*> BoyiaAsyncEvent::s_table;
-BoyiaAsyncEvent::BoyiaAsyncEvent(BoyiaValue* callback, BoyiaValue* obj)
-{
-    // the address alloc in heap
-    LIntPtr objPtr = obj->mValue.mObj.mPtr;
+BoyiaAsyncMapTable BoyiaAsyncEvent::s_table;
 
+LVoid BoyiaAsyncEvent::registerObject(BoyiaValue* obj)
+{
     BoyiaAsyncMapTable::Iterator iter = s_table.begin();
     BoyiaAsyncMapTable::Iterator end = s_table.end();
-
-    for (; iter != end; iter++) {
-        if (objPtr == (*iter)->object) {
-            (*iter)->callbacks.addElement(callback);
+    for (; iter != end; ++iter) {
+        if (obj->mValue.mObj.mPtr == (*iter)->object) {
             return;
         }
     }
 
-    BoyiaAsyncMap* map = new BoyiaAsyncMap();
-    map->object = objPtr;
-    map->callbacks.addElement(callback);
-    s_table.push(map);
+    // the address alloc in heap
+    AsyncObject* object = new AsyncObject();
+    object->object = obj->mValue.mObj.mPtr;
+    s_table.push(object);
+}
+
+LBool BoyiaAsyncEvent::hasObject(BoyiaValue* obj)
+{
+    BoyiaAsyncMapTable::Iterator iter = s_table.begin();
+    BoyiaAsyncMapTable::Iterator end = s_table.end();
+    for (; iter != end; ++iter) {
+        if (obj->mValue.mObj.mPtr == (*iter)->object) {
+            return LTrue;
+        }
+    }
+
+    return LFalse;
 }
 
 LVoid BoyiaAsyncEvent::removeObject(LIntPtr ptr)

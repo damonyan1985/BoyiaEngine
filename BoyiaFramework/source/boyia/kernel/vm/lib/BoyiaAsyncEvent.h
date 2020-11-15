@@ -8,13 +8,16 @@
 #include "KList.h"
 
 namespace boyia {
-class BoyiaAsyncMap;
+class AsyncObject;
+using BoyiaAsyncMapTable = KList<AsyncObject*>;
 
-using BoyiaAsyncMapTable = KList<BoyiaAsyncMap*>;
 class BoyiaAsyncEvent {
 public:
     // Create async event and add to table
-    BoyiaAsyncEvent(BoyiaValue* callback, BoyiaValue* obj);
+    static LVoid registerObject(BoyiaValue* obj);
+
+    // Judge the object is exist
+    static LBool hasObject(BoyiaValue* obj);
 
     // When remove the object, needs to remove all callback
     static LVoid removeObject(LIntPtr ptr);

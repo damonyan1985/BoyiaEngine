@@ -3,6 +3,7 @@
 #include "BaseThread.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
+#include "BoyiaAsyncEvent.h"
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
@@ -10,6 +11,8 @@ BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
 {
     ValueCopy(&m_callback, callback);
     ValueCopy(&m_obj, obj);
+
+    BoyiaAsyncEvent::registerObject(obj);
 }
 
 BoyiaNetwork::~BoyiaNetwork()
@@ -53,6 +56,10 @@ LVoid BoyiaNetwork::onLoadFinished()
 
 LVoid BoyiaNetwork::run()
 {
+    if (!BoyiaAsyncEvent::hasObject(&m_obj)) {
+        return;
+    }
+
     BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
     BoyiaValue value;
     value.mValueType = BY_STRING;
