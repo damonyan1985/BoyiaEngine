@@ -4,11 +4,11 @@
 #include "BoyiaCore.h"
 #include "NetworkBase.h"
 #include "StringBuilder.h"
-#include "UIThread.h"
+#include "BoyiaAsyncEvent.h"
 
 namespace boyia {
 // BoyiaNetwork会根据回调的情况，自动释放自己
-class BoyiaNetwork : public yanbo::NetworkClient, public yanbo::UIEvent {
+class BoyiaNetwork : public BoyiaAsyncEvent, public yanbo::NetworkClient {
 public:
     BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm);
     virtual ~BoyiaNetwork();
@@ -23,11 +23,11 @@ public:
     virtual LVoid onLoadError(LInt error);
     virtual LVoid onLoadFinished();
 
-    virtual LVoid run();
+    virtual LVoid callback();
 
 private:
     BoyiaValue m_callback;
-    BoyiaValue m_obj;
+    //BoyiaValue m_obj;
     yanbo::StringBuilder m_builder;
     OwnerPtr<String> m_data;
     LVoid* m_vm;

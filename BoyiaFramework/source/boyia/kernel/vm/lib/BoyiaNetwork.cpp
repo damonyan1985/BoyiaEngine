@@ -7,12 +7,10 @@
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
-    : m_vm(vm)
+    : BoyiaAsyncEvent(obj)
+    , m_vm(vm)
 {
     ValueCopy(&m_callback, callback);
-    ValueCopy(&m_obj, obj);
-
-    BoyiaAsyncEvent::registerObject(obj);
 }
 
 BoyiaNetwork::~BoyiaNetwork()
@@ -54,12 +52,8 @@ LVoid BoyiaNetwork::onLoadFinished()
     yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);
 }
 
-LVoid BoyiaNetwork::run()
+LVoid BoyiaNetwork::callback()
 {
-    if (!BoyiaAsyncEvent::hasObject(&m_obj)) {
-        return;
-    }
-
     BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
     BoyiaValue value;
     value.mValueType = BY_STRING;
