@@ -20,8 +20,6 @@ typedef struct BoyiaGC {
 } BoyiaGC;
 
 // 收集器
-//static BoyiaGC* sGc = kBoyiaNull;
-
 extern LVoid NativeDelete(LVoid* data);
 static LBool CheckValue(BoyiaValue* val, BoyiaRef* ref);
 
@@ -34,14 +32,6 @@ extern LVoid* CreateGC(LVoid* vm)
     gc->mBoyiaVM = vm;
     return gc;
 }
-
-/*
-static LVoid GCInit()
-{
-    if (!sGc) {
-        sGc = (BoyiaGC*)CreateGC();
-    }
-}*/
 
 static LBool GCCheckObject(BoyiaValue* value, BoyiaRef* ref)
 {
@@ -90,6 +80,7 @@ static LVoid DeleteRef(BoyiaRef* ref, BoyiaGC* gc)
     } break;
     case BY_CLASS: {
         BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+        BoyiaPreDelete(fun, gc->mBoyiaVM);
         VM_DELETE(fun->mParams, gc->mBoyiaVM);
         VM_DELETE(fun, gc->mBoyiaVM);
     } break;

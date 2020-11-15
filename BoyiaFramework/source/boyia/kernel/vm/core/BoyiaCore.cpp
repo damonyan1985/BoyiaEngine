@@ -39,8 +39,6 @@
 
 extern LInt Str2Int(LInt8* ptr, LInt len, LInt radix);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
-extern LVoid* CreateGC(LVoid* vm);
-extern LVoid ChangeGC(LVoid* gc);
 
 enum TokenType {
     DELIMITER = 1,
@@ -267,7 +265,6 @@ typedef struct {
  * 3, gBoyiaVM->mGlobals
  */
 typedef struct BoyiaVM {
-    LVoid* mPool;
     BoyiaFunction* mFunTable;
     BoyiaValue* mGlobals;
     BoyiaValue* mLocals;
@@ -280,7 +277,6 @@ typedef struct BoyiaVM {
     VMStrTable* mStrTable;
     VMEntryTable* mEntry;
     OPHandler* mHandlers;
-    LVoid* mGc;
     LVoid* mCreator; // 此处传入创建vm的外部对象
 } BoyiaVM;
 
@@ -399,23 +395,6 @@ static LInt HandleBreak(LVoid* ins, BoyiaVM* vm);
 static LInt HandleCreateProp(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
-// Alloc Data
-LVoid* BoyiaNew(LInt size, LVoid* vm)
-{
-    PrintPoolSize(((BoyiaVM*)vm)->mPool);
-    return NewData(size, ((BoyiaVM*)vm)->mPool);
-}
-
-LVoid BoyiaDelete(LVoid* data, LVoid* vm)
-{
-    return DeleteData(data, ((BoyiaVM*)vm)->mPool);
-}
-
-LVoid* GetVmMemoryPool(LVoid* vm)
-{
-    return ((BoyiaVM*)vm)->mPool;
-}
-
 // Reset scene of global execute state
 static LVoid ResetScene(BoyiaVM* vm)
 {
@@ -505,7 +484,7 @@ static VMEntryTable* CreateVMEntryTable(LVoid* vm)
 LVoid* InitVM(LVoid* creator)
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
-    vm->mPool = InitMemoryPool(MEMORY_SIZE);
+    vm->mCreator = creator;
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS, vm);
     vm->mLocals = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS, vm);
@@ -524,9 +503,7 @@ LVoid* InitVM(LVoid* creator)
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;
-    vm->mGc = CreateGC(vm);
-    vm->mCreator = creator;
-    //ChangeGC(vm->mGc);
+
     ResetScene(vm);
 
     return vm;
@@ -537,16 +514,9 @@ LVoid* GetVMCreator(LVoid* vm)
     return ((BoyiaVM*)vm)->mCreator;
 }
 
-LVoid* GetGabargeCollect(LVoid* vm)
-{
-    return ((BoyiaVM*)vm)->mGc;
-}
-
 LVoid DestroyVM(LVoid* vm)
 {
-    BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    FreeMemoryPool(vmPtr->mPool);
-    FAST_DELETE(vmPtr);
+    FAST_DELETE(vm);
 }
 
 static Instruction* AllocateInstruction(BoyiaVM* vm)
@@ -2647,18 +2617,4 @@ LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm)
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     vmPtr->mEntry->mSize = size / sizeof(LInt);
     LMemcpy(vmPtr->mEntry->mTable, buffer, size);
-
-    /*
-    vmPtr->mEState->mGValSize = 0;
-    vmPtr->mEState->mFunSize = 0;
-    vmPtr->mEState->mLoopSize = 0;
-    ResetScene(vmPtr);
-    CommandTable cmds;
-    for (LInt i = 0; i < vmPtr->mEntry->mSize; i++) {
-        cmds.mBegin = vmPtr->mVMCode->mCode + vmPtr->mEntry->mTable[i];
-        vmPtr->mEState->mContext = &cmds;
-        ExecuteCode(vmPtr);
-    }
-    */
-    //ExecuteGlobalCode(vm);
 }

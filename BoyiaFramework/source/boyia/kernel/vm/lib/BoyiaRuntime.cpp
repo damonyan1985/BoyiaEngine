@@ -2,23 +2,54 @@
 #include "BoyiaCore.h"
 #include "SalLog.h"
 #include "Application.h"
+#include "BoyiaMemory.h"
+#include "BoyiaAsyncEvent.h"
 
+const LInt kMemoryPoolSize = 1024 * 1024 * 6;
 const LInt kNativeFunctionCapacity = 40;
+
+extern LVoid* CreateGC(LVoid* vm);
+
 namespace boyia {
 BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     : m_app(app)
-    , m_vm(InitVM(this))
+    , m_memoryPool(InitMemoryPool(kMemoryPoolSize))
     , m_idCreator(new util::IDCreator())
     , m_nativeFunTable(new NativeFunction[kNativeFunctionCapacity])
     , m_nativeSize(0)
+    , m_vm(InitVM(this))
+    , m_gc(CreateGC(m_vm))
 {   
 }
 
 BoyiaRuntime::~BoyiaRuntime()
 {
+    FreeMemoryPool(m_memoryPool);
     DestroyVM(m_vm);
     delete[] m_nativeFunTable;
     delete m_idCreator;
+}
+
+LVoid* BoyiaRuntime::memoryPool() const
+{
+    return m_memoryPool;
+}
+
+LVoid* BoyiaRuntime::garbageCollect() const
+{
+    return m_gc;
+}
+
+LBool BoyiaRuntime::needCollect() const
+{
+    return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2;
+}
+
+// Prepare delete the object
+LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
+{
+    // Clear all callbacks which bind on object
+    BoyiaAsyncEvent::removeObject(reinterpret_cast<LIntPtr>(ptr));
 }
 
 LVoid BoyiaRuntime::init()

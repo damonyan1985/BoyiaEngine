@@ -23,15 +23,22 @@ public:
     util::IDCreator* idCreator() const;
     LInt findNativeFunc(LUintPtr key) const;
     LInt callNativeFunction(LInt idx) const;
+    LVoid* memoryPool() const;
+    LVoid* garbageCollect() const;
+    LBool needCollect() const;
+    LVoid prepareDelete(LVoid* ptr);
 
 private:
     LVoid initNativeFunction();
     LVoid appendNative(LUintPtr id, NativePtr ptr);
 
-    LVoid* m_vm;
     yanbo::Application* m_app;
+    LVoid* m_memoryPool;
     util::IDCreator* m_idCreator;
     NativeFunction* m_nativeFunTable;
+    // Last init vm
+    LVoid* m_vm;
+    LVoid* m_gc;
     LInt m_nativeSize;
 };
 }
