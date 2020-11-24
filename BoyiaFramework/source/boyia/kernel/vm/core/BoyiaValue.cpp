@@ -362,7 +362,7 @@ LVoid LoadVMCode(LVoid* vm)
     }
 
     LoadStringTable(strTable, stringTable->size(), vm);
-    delete strTable;
+    delete[] strTable;
 
     LoadSymbolTable(vm);
 
