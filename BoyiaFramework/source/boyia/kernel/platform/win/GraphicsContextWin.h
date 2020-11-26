@@ -61,6 +61,7 @@ private:
 
     LRgb m_brushColor;
     LRgb m_penColor;
+    LFont m_font;
     ULONG_PTR m_gdiplusToken;
     Gdiplus::Bitmap* m_cacheBitmap;
 };

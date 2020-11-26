@@ -146,7 +146,7 @@ LVoid GraphicsContextWin::drawImage(const LImage* image)
     }
 
     PaintImageResource* resource = static_cast<PaintImageResource*>(cmd->resource);
-    resource->image = ((ImageWin*)image)->image();
+    resource->image = static_cast<const ImageWin*>(image)->image();
     resource->color = m_brushColor;
     resource->rect = image->rect();
     painter->cmds.addElement(cmd);
@@ -176,6 +176,7 @@ LVoid GraphicsContextWin::setPenColor(const LRgb& aColor)
 
 LVoid GraphicsContextWin::setFont(const LFont& font)
 {
+    m_font = font;
 }
 
 LVoid GraphicsContextWin::drawVideo(const LRect& rect, const LMediaPlayer* mp)
@@ -199,6 +200,7 @@ LVoid GraphicsContextWin::drawText(const String& text, const LRect& rect, TextAl
     PaintTextResource* resource = static_cast<PaintTextResource*>(cmd->resource);
 
     resource->text = text;
+    resource->font = m_font;
     resource->color = m_penColor;
     resource->rect = rect;
     painter->cmds.addElement(cmd);

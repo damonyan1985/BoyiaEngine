@@ -92,7 +92,6 @@ BaseWindow::~BaseWindow()
 
 LRESULT CALLBACK BaseWindow::TWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    /*(BaseWindow*)::GeBaseWindowLong(hWnd, GWL_USERDATA);*/
     if (WM_CREATE == message || WM_INITDIALOG == message) {
         m_currWinPtr->m_hWnd = hWnd;
     }
@@ -100,20 +99,24 @@ LRESULT CALLBACK BaseWindow::TWndProc(HWND hWnd, UINT message, WPARAM wParam, LP
 
     if (_twnd) {
         const TCommandMessageItem* msg_item = _twnd->GetMessageEntries();
-        while ((NULL != msg_item)) {
+        while (msg_item) {
+            // index 0 is super class message map
             for (int i = 1; msg_item[i]._tfunc; i++) {
-                if (msg_item[i].message == message) {
-                    if (WM_COMMAND == message) {
-                        if (msg_item[i].id == LOWORD(wParam)) {
-                            (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
-                            return 0;
-                        }
-                    } else {
-                        (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
-                        return 0;
-                    }
+                if (msg_item[i].message != message) {
+                    continue;
+                }
+
+                if (WM_COMMAND != message) {
+                    (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
+                    return 0;
+                }
+                
+                if (msg_item[i].id == LOWORD(wParam)) {
+                    (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
+                    return 0;
                 }
             }
+
             msg_item = (const TCommandMessageItem*)msg_item[0].message;
         }
     }
@@ -134,18 +137,9 @@ BOOL BaseWindow::ShowTW(int show_cmd)
 void BaseWindow::MessageLoop()
 {
     MSG msg;
-    while (TRUE) {
-
-        if (::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-            if (::GetMessage(&msg, NULL, 0, 0)) {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-                continue;
-            }
-            break;
-        } else {
-            ProcessTick();
-        }
+    while (::GetMessage(&msg, NULL, 0, 0)) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
     }
 }
 
