@@ -44,14 +44,15 @@ public:
     {
         PaintTextResource* resource = static_cast<PaintTextResource*>(cmd->resource);
         wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(resource->text));
-        Gdiplus::Font font(L"Arial", resource->font.getFontSize() * 0.15);
+        Gdiplus::Font font(L"Arial", resource->font.getFontSize() * yanbo::PixelRatio::ratio(),
+            Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
         Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
         Gdiplus::RectF rect(
             resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
             resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
-            resource->rect.GetWidth() * yanbo::PixelRatio::ratio(),
-            resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
+            resource->rect.GetWidth(),
+            resource->rect.GetHeight()
         );
         
         Gdiplus::SolidBrush brush(Gdiplus::Color(
@@ -61,6 +62,7 @@ public:
             resource->color.m_blue
         ));
 
+        gc.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
         gc.DrawString(wtext.c_str(), wtext.length(), &font, rect, &format, &brush);
     }
 };

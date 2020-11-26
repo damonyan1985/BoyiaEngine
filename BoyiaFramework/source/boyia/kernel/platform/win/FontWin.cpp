@@ -2,6 +2,7 @@
 #include "AppManager.h"
 #include "GraphicsContextWin.h"
 #include "CharConvertor.h"
+#include "PixelRatio.h"
 #include <Windows.h>
 #include <GdiPlus.h>
 
@@ -93,9 +94,9 @@ LVoid FontWin::getLineText(LInt index, String& text)
 
 LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
 {
-    GraphicsPath path;
     FontFamily family;
-    Font font(L"Arial", m_size);
+    Font font(L"Arial", m_size, 
+        FontStyleRegular, UnitPixel);
     font.GetFamily(&family);
     StringFormat format(Gdiplus::StringAlignmentNear);
     Gdiplus::Rect rect;
@@ -107,6 +108,7 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     WString wstr((wchar_t)0, 100);
     for (LInt i = 0; i < wtext.length(); ++i) {
         wchar_t ch = wtext.at(i);
+        GraphicsPath path;
         path.AddString(&ch, 1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
         path.GetBounds(&rect);
         
