@@ -24,9 +24,6 @@ public:
     static int screenWidth();
     static int screenHeight();
 
-    static int viewX(int x);
-    static int viewY(int y);
-
 private:
     static int s_width;
     static int s_height;

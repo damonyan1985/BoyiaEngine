@@ -9,8 +9,8 @@
 #include "BoyiaCore.h"
 #include "BoyiaError.h"
 #include "BoyiaMemory.h"
-#include "SystemUtil.h"
 #include "SalLog.h"
+#include "SystemUtil.h"
 
 #define SntxErrorBuild(error, cs) SntxError(error, cs->mLineNum)
 
@@ -50,7 +50,7 @@ enum TokenType {
     STRING_VALUE,
 };
 
-enum LogicValue { 
+enum LogicValue {
     AND = BY_END + 1,
     OR,
     NOT,
@@ -59,27 +59,27 @@ enum LogicValue {
     GT,
     GE,
     EQ,
-    NE 
+    NE
 }; // 26
 
-enum MathValue { 
+enum MathValue {
     ADD = NE + 1,
     SUB,
     MUL,
     DIV,
     MOD,
     POW,
-    ASSIGN 
+    ASSIGN
 }; // 33
 // 标点符号
-enum DelimiValue { 
+enum DelimiValue {
     SEMI = ASSIGN + 1,
     COMMA,
     QUOTE,
-    DOT 
+    DOT
 }; // 37
 // 小括号，中括号，大括号
-enum BracketValue { 
+enum BracketValue {
     LPTR = DOT + 1,
     RPTR,
     ARRAY_BEGIN,
@@ -409,7 +409,7 @@ static LVoid ResetScene(BoyiaVM* vm)
 static VMCode* CreateVMCode(LVoid* vm)
 {
     VMCode* code = NEW(VMCode, vm);
-    code->mCode = NEW_ARRAY(Instruction, CODE_CAPACITY, vm);//new Instruction[CODE_CAPACITY];//
+    code->mCode = NEW_ARRAY(Instruction, CODE_CAPACITY, vm); //new Instruction[CODE_CAPACITY];//
     code->mSize = 0;
     return code;
 }
@@ -579,7 +579,8 @@ static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
     return 1;
 }
 
-static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm) {
+static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm)
+{
     if (instruction->mNext == kInvalidInstruction) {
         return kBoyiaNull;
     }
@@ -589,11 +590,13 @@ static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm) {
 
 static LVoid ExecPopFunction(BoyiaVM* vm)
 {
-    // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
+    // 指令为空，则判断是否处于函数范围中，是则pop，
+    // 从而取得调用之前的运行环境, 即之前指向的pc指令
+    // 如果不为空，就获取下一条指令，递归调用本函数
     if (!vm->mEState->mPC && vm->mEState->mFunctos > 0) {
         HandlePopScene(kBoyiaNull, vm);
         if (vm->mEState->mPC) {
-            vm->mEState->mPC = NextInstruction(vm->mEState->mPC, vm);// vm->mEState->mPC->mNext;
+            vm->mEState->mPC = NextInstruction(vm->mEState->mPC, vm); // vm->mEState->mPC->mNext;
             ExecPopFunction(vm);
         }
     }
@@ -603,13 +606,13 @@ static LVoid ExecInstruction(BoyiaVM* vm)
 {
     // 通过指令寄存器进行计算
     ExecState* es = vm->mEState;
+    if (!es->mPC) {
+        ExecPopFunction(vm);
+        return;
+    }
+
     while (es->mPC) {
-        //OPHandler handler = es->mPC->mOPCode >= 100 ? es->mPC->mHandler : gBoyiaVM->mHandlers[es->mPC->mOPCode];
         OPHandler handler = vm->mHandlers[es->mPC->mOPCode];
-        /*
-        if (!handler) {
-           handler = es->mPC->mHandler;
-        }*/
         if (handler) {
             LInt result = handler(es->mPC, vm);
             if (result == 0) { // 指令运行出错跳出循环
@@ -620,7 +623,7 @@ static LVoid ExecInstruction(BoyiaVM* vm)
         }
 
         if (es->mPC) {
-            es->mPC = NextInstruction(es->mPC, vm);//es->mPC->mNext;
+            es->mPC = NextInstruction(es->mPC, vm); //es->mPC->mNext;
         }
 
         ExecPopFunction(vm);
@@ -921,7 +924,7 @@ static LVoid ElseStatement(CompileState* cs)
     BlockStatement(cs);
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdElEnd, kBoyiaNull, cs);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    logicInst->mOPRight.mValue = (LIntPtr) (endInst - logicInst); // 最后地址值
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst); // 最后地址值
 }
 
 static LInt HandleReturn(LVoid* ins, BoyiaVM* vm)
@@ -937,7 +940,7 @@ static LVoid ReturnStatement(CompileState* cs)
 }
 
 static LVoid ForStatement(CompileState* cs)
-{   
+{
     // Such as, for (var i=0; i<10; i++)
     NextToken(cs); // '('
     if (cs->mToken.mTokenValue != LPTR) {
@@ -952,10 +955,10 @@ static LVoid ForStatement(CompileState* cs)
         Putback(cs);
         EvalExpression(cs);
     }
-    
+
     // Create loop instruction
     Instruction* beginInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoop, HandleLoopBegin, cs);
-    
+
     // Second expression
     /* check the conditional expression => R0 */
     EvalExpression(cs);
@@ -980,10 +983,10 @@ static LVoid ForStatement(CompileState* cs)
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, HandleJumpTo, cs);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
     beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
-    
+
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
     logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
-    
+
     // execute i++
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
     endInst->mOPLeft.mValue = (LIntPtr)(endInst - logicInst);
@@ -1339,10 +1342,15 @@ static LInt HandleCreateExecutor(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
 
     CommandTable* newTable = NEW(CommandTable, vm);
-    newTable->mBegin = &vm->mVMCode->mCode[inst->mOPLeft.mValue];
-    newTable->mEnd = &vm->mVMCode->mCode[inst->mOPRight.mValue];
+    if (inst->mOPLeft.mValue != -1) {
+        newTable->mBegin = &vm->mVMCode->mCode[inst->mOPLeft.mValue];
+        newTable->mEnd = &vm->mVMCode->mCode[inst->mOPRight.mValue];
+    } else {
+        newTable->mBegin = kBoyiaNull;
+        newTable->mEnd = kBoyiaNull;
+    }
 
-    vm->mFunTable[vm->mEState->mFunSize - 1].mFuncBody = (LIntPtr)newTable;//inst->mOPLeft.mValue;
+    vm->mFunTable[vm->mEState->mFunSize - 1].mFuncBody = (LIntPtr)newTable;
     return 1;
 }
 
@@ -1357,18 +1365,17 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction)
     Instruction* funInst = kBoyiaNull;
     if (isFunction) {
         // 类成员的创建在主体上下中进行
-        //CommandTable* funCmds = CreateExecutor();
-        //OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)funCmds };
-        funInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdExecCreate, HandleCreateExecutor, cs);
+        OpCommand cmd = { OP_CONST_NUMBER, -1 };
+        funInst = PutInstruction(&cmd, &cmd, kCmdExecCreate, HandleCreateExecutor, cs);
         cs->mVm->mEState->mContext = &tmpTable;
     }
 
     BlockStatement(cs);
-    // 拷贝tmpTable中的offset给instruction
-    if (funInst) {
+    // 拷贝tmpTable中的offset给instruction, 非空函数
+    if (funInst && tmpTable.mBegin) {
         funInst->mOPLeft.mType = OP_CONST_NUMBER;
-        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - cs->mVm->mVMCode->mCode);//(LIntPtr)es->mContext->mBegin;
-        
+        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - cs->mVm->mVMCode->mCode); //(LIntPtr)es->mContext->mBegin;
+
         funInst->mOPRight.mType = OP_CONST_NUMBER;
         funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - cs->mVm->mVMCode->mCode);
     }
@@ -1435,7 +1442,7 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass->mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = BY_FUNC;
-        func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr)& vm->mFunTable[vm->mEState->mFunSize];
+        func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
     } else {
@@ -1512,7 +1519,7 @@ static LVoid GlobalStatement(CompileState* cs)
     }
 }
 
-static LVoid AppendEntry(BoyiaVM* vm) 
+static LVoid AppendEntry(BoyiaVM* vm)
 {
     CommandTable* table = vm->mEState->mContext;
     // Entry的begin为空，证明没有指令
@@ -1604,6 +1611,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
 
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
     vm->mEState->mPC = vm->mEState->mContext->mBegin;
+
     return 2;
 }
 
@@ -1675,7 +1683,7 @@ static LVoid PushArgStatement(CompileState* cs)
         return;
     }
     Putback(cs);
-    
+
     do {
         // 参数值在R0中
         EvalExpression(cs); // => R0
@@ -1727,12 +1735,12 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
 static LInt HandleIfEnd(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = vm->mEState->mPC;
-    Instruction* tmpInst = NextInstruction(inst, vm);//inst->mNext;
+    Instruction* tmpInst = NextInstruction(inst, vm); //inst->mNext;
     // 查看下一个是否是elseif
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == kCmdElif || tmpInst->mOPCode == kCmdElse)) {
         inst = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
-        tmpInst = NextInstruction(inst, vm);//inst->mNext;
+        tmpInst = NextInstruction(inst, vm); //inst->mNext;
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
     if (inst) {
@@ -2269,7 +2277,7 @@ static LVoid Atom(CompileState* cs)
         // 从StringTable中分配常量字符串
         BoyiaStr* constStr = &cs->mVm->mStrTable->mTable[cs->mVm->mStrTable->mSize];
         CopyStringFromToken(cs, constStr);
-        OpCommand lCmd = { OP_CONST_NUMBER,  cs->mVm->mStrTable->mSize++ };
+        OpCommand lCmd = { OP_CONST_NUMBER, cs->mVm->mStrTable->mSize++ };
         //OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
         PutInstruction(&lCmd, kBoyiaNull, kCmdConstStr, HandleConstString, cs);
         NextToken(cs);
@@ -2359,8 +2367,8 @@ static LVoid EvalAddSub(CompileState* cs)
         PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
         // R0 + R1 => R0
         // R1 - R0 => R0
-        PutInstruction(&COMMAND_R1, &COMMAND_R0, 
-            op == ADD ? kCmdAdd : kCmdSub, 
+        PutInstruction(&COMMAND_R1, &COMMAND_R0,
+            op == ADD ? kCmdAdd : kCmdSub,
             op == ADD ? HandleAdd : HandleSub, cs);
     }
 }
@@ -2533,7 +2541,7 @@ LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm)
     cs.mVm = vmPtr;
     CommandTable* cmds = CreateExecutor(&cs);
     vmPtr->mEState->mContext = cmds;
-    
+
     EvalExpression(&cs); // 解析例如func(a,b,c);
     ExecuteCode(cs.mVm);
 
@@ -2564,7 +2572,7 @@ LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
     ExecInstruction(vmPtr);
 }
 
-LVoid ExecuteGlobalCode(LVoid* vm) 
+LVoid ExecuteGlobalCode(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
 

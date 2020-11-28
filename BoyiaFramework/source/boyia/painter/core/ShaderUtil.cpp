@@ -129,14 +129,4 @@ void ShaderUtil::setRealScreenSize(int width, int height)
     s_realHeight = height;
 }
 
-int ShaderUtil::viewX(int x)
-{
-    return x * (1.0f * s_width) / (1.0f * s_realWidth);
-}
-
-int ShaderUtil::viewY(int y)
-{
-    //return (y * (1.0f * s_height) / (1.0f * s_realHeight));
-    return viewX(y);
-}
 }

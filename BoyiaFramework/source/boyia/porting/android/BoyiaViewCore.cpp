@@ -176,12 +176,12 @@ static void nativeVideoTextureUpdate(JNIEnv* env, jobject obj, jlong item)
 
 static void nativeOnKeyboardShow(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
 {
-    yanbo::UIThread::instance()->onKeyboardShow(item, yanbo::ShaderUtil::viewY(keyboardHight));
+    yanbo::UIThread::instance()->onKeyboardShow(item, yanbo::PixelRatio::viewY(keyboardHight));
 }
 
 static void nativeOnKeyboardHide(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
 {
-    yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::ShaderUtil::viewY(keyboardHight));
+    yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::PixelRatio::viewY(keyboardHight));
 }
 
 static void nativeBoyiaSync(JNIEnv* env, jobject obj, jlong item)
