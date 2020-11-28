@@ -42,4 +42,21 @@ float PixelRatio::ratio()
         return 1;
     }
 }
+
+int PixelRatio::viewX(int x)
+{
+    switch (s_direction) {
+    case PixelRatio::kPixelHorizontal:
+        return x * s_logicWidth / s_width;
+    case PixelRatio::kPixelVertical:
+        return x * s_logicHeight / s_width;
+    default:
+        return x;
+    }
+}
+
+int PixelRatio::viewY(int y)
+{
+    return viewX(y);
+}
 }

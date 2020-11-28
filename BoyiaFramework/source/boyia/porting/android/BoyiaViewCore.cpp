@@ -14,6 +14,7 @@
 #include "LEvent.h"
 #include "LGdi.h"
 #include "LoaderAndroid.h"
+#include "PixelRatio.h"
 #include "PlatformBridge.h"
 #include "SalLog.h"
 #include "ShaderUtil.h"
@@ -73,8 +74,9 @@ static void nativeInitUIView(
     jint h,
     jboolean isDebug)
 {
-
     LInt logicHeight = (1.0f * 720 / w) * h;
+    yanbo::PixelRatio::setWindowSize(w, h);
+    yanbo::PixelRatio::setLogicWindowSize(720, h);
 
     BOYIA_LOG("nativeInitUIView height=%d and logicHeight=", h, logicHeight);
     //LInt logicHeight = h;

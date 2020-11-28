@@ -16,6 +16,9 @@ public:
     static float ratio();
     static float vhRatio();
 
+    static int viewX(int x);
+    static int viewY(int y);
+
 private:
     static float s_width;
     static float s_height;
