@@ -44,7 +44,8 @@ public:
         ALIGN_LEFT,
         ALIGN_RIGHT,
         ALIGN_BOTTOM,
-        ALIGN_CENTER
+        ALIGN_CENTER,
+        ALIGN_ALL
     } AlignType;
 
     typedef enum PositionType {

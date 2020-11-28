@@ -259,6 +259,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             rule->addProperty(cssTag, Style::ALIGN_BOTTOM);
         } else if (value.CompareNoCase(_CS("center"))) {
             rule->addProperty(cssTag, Style::ALIGN_CENTER);
+        } else if (value.CompareNoCase(_CS("all"))) {
+            rule->addProperty(cssTag, Style::ALIGN_ALL);
         }
     } break;
     case StyleTags::FONT_WEIGHT: {

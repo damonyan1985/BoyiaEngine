@@ -88,7 +88,7 @@
 .full{
 	position:absolute;
 	background-color:#FFFFFFFF;
-	height: 1280px;
+	align: all;
 	width: 720px;
 }
 .image_poster {

@@ -1,4 +1,5 @@
 #include "ShaderUtil.h"
+#include "PixelRatio.h"
 #include "SalLog.h"
 
 //#include <GLES2/gl2.h>
@@ -89,15 +90,9 @@ void ShaderUtil::screenToGlPoint(
     float* glY)
 {
     *glX = (1.0f * (androidX - s_width / 2)) / (s_width / 2);
-    *glY = (1.0f * (s_height / 2 - androidY)) / (s_height / 2);
-    //	*glX = (1.0f*androidX/s_width);
-    //	*glY = (1.0f*androidY/s_height);
-}
 
-void ShaderUtil::screenToGlPixel(int androidX, int androidY, int* glX, int* glY)
-{
-    *glX = androidX;
-    *glY = s_height - androidY;
+    //androidY = androidY * ((float)s_realWidth / s_width);
+    *glY = ((1.0f * (s_height / 2 - androidY)) / (s_height / 2));
 }
 
 void ShaderUtil::setScreenSize(int width, int height)
@@ -115,8 +110,7 @@ float ShaderUtil::screenToGlWidth(int width)
 
 float ShaderUtil::screenToGlHeight(int height)
 {
-    return (1.0f * height) / ((1.0f * s_height) / 2);
-    ;
+    return ((1.0f * height) / ((1.0f * s_height) / 2));
 }
 
 int ShaderUtil::screenWidth()
@@ -142,6 +136,7 @@ int ShaderUtil::viewX(int x)
 
 int ShaderUtil::viewY(int y)
 {
-    return y * (1.0f * s_height) / (1.0f * s_realHeight);
+    //return (y * (1.0f * s_height) / (1.0f * s_realHeight));
+    return viewX(y);
 }
 }
