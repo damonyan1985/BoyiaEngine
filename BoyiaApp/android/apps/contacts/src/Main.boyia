@@ -20,7 +20,7 @@ class MainActivity extends Activity {
 	    //var appBox = root.itemByID(ViewGroup, "AppBox");
 	    var appBox = ViewRoot.getRoot();
 
-        this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
+      this.main = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
 	    this.main.initView();
 	    
 	    appBox.appendView(this.main);
@@ -31,7 +31,8 @@ class MainActivity extends Activity {
 	    //appBox.commit();
 	    
 	    //Util.showToast("test boyia callstaticmethod");
-	    this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
+	    //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
+			this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback);
 
 	    Util.log("test super begin");
 	    super.test();
@@ -42,7 +43,12 @@ class MainActivity extends Activity {
 	    var obj = Util.json(data);
 	    //Util.log(obj.app_version.last);
 	    var categoryView = this.main.headerView.categoryView;
-	    var size = obj.data.categoryList.size();
+			
+			var dataObj = obj.data;
+			
+			var categoryList = obj.data.categoryList;
+	    var size = categoryList.size();
+			
 	    var view;
 	    while (size > 0) {
 	        size = size - 1;
@@ -54,24 +60,28 @@ class MainActivity extends Activity {
 	        categoryView.appendView(view);
 	    }
 	    
+			
 	    var detailContainer = this.main.detailContainer;
 	    var categoryItem = obj.data.categoryList.get(0);
 	    var detailList = categoryItem.detailList;
 	    size = detailList.size();
-	    while (size > 0) {
-	        size = size - 1;
-	        var detailItem = detailList.get(size);
+			
+	    for (var i=size-1; i>=0; i=i-1) {
+	        var detailItem = detailList.get(i);
 	        view = ViewDoc.createView(NewTextItem, "boyia://apps/contacts/view/news_text_item.boui");
 	        view.initView();
 	        detailContainer.appendView(view);
-	        view.setTitle(detailList.get(size).title);
-	        view.setInfo(detailList.get(size).info1);
-	        view.setImage(detailList.get(size).image1);
+	        view.setTitle(detailList.get(i).title);
+	        view.setInfo(detailList.get(i).info1);
+	        view.setImage(detailList.get(i).image1);
 	    }
+			
+	    this.draw();
 
-	    //this.main.draw();
-	    //this.main.commit();   
-	    this.draw(); 
+		// test for program
+		for (var i=0;i<10; i=i+1) {
+			Util.log("test for i=" + i);
+		}
 	}
 }
 
