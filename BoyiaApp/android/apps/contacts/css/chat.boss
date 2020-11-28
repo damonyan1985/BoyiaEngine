@@ -1,6 +1,6 @@
 .chat_window {
 	position: absolute;
-	height: 1280px;
+	align: all;
 	background-color: #FFFFFF;
 }
 
