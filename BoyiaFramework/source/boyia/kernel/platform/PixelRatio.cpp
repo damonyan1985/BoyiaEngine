@@ -49,7 +49,7 @@ int PixelRatio::viewX(int x)
     case PixelRatio::kPixelHorizontal:
         return x * s_logicWidth / s_width;
     case PixelRatio::kPixelVertical:
-        return x * s_logicHeight / s_width;
+        return x * s_logicHeight / s_height;
     default:
         return x;
     }
