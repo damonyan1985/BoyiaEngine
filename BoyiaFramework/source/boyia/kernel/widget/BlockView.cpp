@@ -59,6 +59,8 @@ LVoid BlockView::layout()
         m_height = m_style.height * m_style.scale;
     } else if (HtmlTags::BODY == m_type) {
         m_height = m_doc->getViewPort().GetHeight();
+    } else if (m_style.align == util::Style::ALIGN_ALL) {
+        m_height = getParent() ? getParent()->getHeight() : m_doc->getViewPort().GetHeight();
     }
 
     layoutBlock(LFalse);
@@ -100,10 +102,11 @@ LVoid BlockView::layoutBlockChildren(LBool relayoutChildren)
 
     previousLogicalHeight += m_style.topPadding;
 
-    if (!m_style.height && previousLogicalHeight > m_height) {
+    LBool useLogicHeight = m_style.align != util::Style::ALIGN_ALL
+        && !m_style.height;
+    if (useLogicHeight && previousLogicalHeight > m_height) {
         m_height = previousLogicalHeight;
     }
-    //m_height = absoluteLogicalHeight > previousLogicalHeight ? absoluteLogicalHeight : previousLogicalHeight;
 
     BOYIA_LOG("BlockView layoutBlockChildren m_height=%d", m_height);
 }
@@ -111,7 +114,7 @@ LVoid BlockView::layoutBlockChildren(LBool relayoutChildren)
 LVoid BlockView::layoutPositionChild(HtmlView* child)
 {
     child->layout();
-    if (m_style.height && child->getStyle()->align == util::Style::ALIGN_BOTTOM) {
+    if (m_height && child->getStyle()->align == util::Style::ALIGN_BOTTOM) {
         child->setXpos(child->getStyle()->left);
         child->setYpos(m_height - child->getHeight());
     } else if (m_style.width && child->getStyle()->align == util::Style::ALIGN_CENTER) {

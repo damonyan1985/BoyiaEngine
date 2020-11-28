@@ -20,11 +20,13 @@
 void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {
     yanbo::PixelRatio::setWindowSize(width, height);
+    yanbo::PixelRatio::setLogicWindowSize(720, 1280);
 	util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
 	static_cast<util::GraphicsContextWin*>(gc)->setContextWin(hwnd);
 	BOYIA_LOG("hello world apppath=%s\n", yanbo::PlatformBridge::getAppPath());
 
-    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, 1280));
+    LInt logicHeight = (1.0f * 720 / width) * height;
+    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
 }
 

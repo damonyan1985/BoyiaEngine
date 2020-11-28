@@ -429,9 +429,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PixelRatio.h">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
@@ -464,6 +461,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.h">
       <Filter>boyia\kernel\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PixelRatio.h">
+      <Filter>boyia\kernel\platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -761,9 +761,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PixelRatio.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PlatformBridgeWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
@@ -793,6 +790,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.cpp">
       <Filter>boyia\kernel\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PixelRatio.cpp">
+      <Filter>boyia\kernel\platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

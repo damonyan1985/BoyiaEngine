@@ -73,6 +73,12 @@ static void nativeInitUIView(
     jint h,
     jboolean isDebug)
 {
+
+    LInt logicHeight = (1.0f * 720 / w) * h;
+
+    BOYIA_LOG("nativeInitUIView height=%d and logicHeight=", h, logicHeight);
+    //LInt logicHeight = h;
+
     //mjs::BoyiaExecution exec;
     //exec.callCode();
     //android::CallStack callstack;
@@ -88,10 +94,10 @@ static void nativeInitUIView(
     }
     FileUtil::printAllFiles(yanbo::PlatformBridge::getAppRoot());
     KLOG("TaskThread::run nativeInitUIView");
-    w = 720;
-    h = 1280;
-    yanbo::ShaderUtil::setScreenSize(w, h);
-    yanbo::AppManager::instance()->setViewport(LRect(0, 0, w, h));
+    //w = 720;
+    //h = 1280;
+    yanbo::ShaderUtil::setScreenSize(720, logicHeight);
+    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
 }
 

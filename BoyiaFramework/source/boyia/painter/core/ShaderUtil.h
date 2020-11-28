@@ -14,8 +14,6 @@ public:
 
     static void screenToGlPoint(int androidX, int androidY, float* glX, float* glY);
 
-    static void screenToGlPixel(int androidX, int androidY, int* glX, int* glY);
-
     static void setScreenSize(int width, int height);
     static void setRealScreenSize(int width, int height);
 
