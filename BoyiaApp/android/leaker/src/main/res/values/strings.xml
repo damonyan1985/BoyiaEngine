@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">leaker</string>
+    <string name="leak_process">:leaker</string>
 </resources>
