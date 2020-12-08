@@ -19,9 +19,8 @@ jmethodID GetJMethod(JNIEnv* env, jclass clazz, const char name[], const char si
 }
 
 // C字符串转java字符串
-jstring strToJstring(JNIEnv* env, const char* s)
+jstring strToJstring(JNIEnv* env, const char* s, int strLen)
 {
-    int strLen = strlen(s);
     jclass jstrObj = yanbo::JNIUtil::getJavaClassID("java/lang/String"); //env->FindClass("java/lang/String");
     jmethodID methodId = env->GetMethodID(jstrObj, "<init>", "([BLjava/lang/String;)V");
     jbyteArray byteArray = env->NewByteArray(strLen);
@@ -37,6 +36,16 @@ jstring strToJstring(JNIEnv* env, const char* s)
     return str;
 }
 
+jstring strToJstring(JNIEnv* env, const char* s)
+{
+    return strToJstring(env, s, strlen(s));
+}
+
+jstring strToJstring(JNIEnv* env, const String& str)
+{
+    return strToJstring(env, GET_STR(str), str.GetLength());
+}
+
 LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result)
 {
     char* pStr = NULL;
@@ -48,12 +57,8 @@ LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result)
     jsize strLen = env->GetArrayLength(byteArray);
     jbyte* jBuf = env->GetByteArrayElements(byteArray, JNI_FALSE);
 
-    if (jBuf != NULL) {
-        pStr = new char[strLen + 1]; //(char*)malloc(strLen + 1);
-        if (!pStr) {
-            return;
-        }
-
+    if (jBuf) {
+        pStr = new char[strLen + 1];
         memcpy(pStr, jBuf, strLen);
         pStr[strLen] = 0;
     }

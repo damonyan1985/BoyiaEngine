@@ -199,7 +199,7 @@ const char* PlatformBridge::getBoyiaJsonUrl()
 const LInt PlatformBridge::getTextSize(const String& text)
 {
     JNIEnv* env = JNIUtil::getEnv();
-    jstring jtext = util::strToJstring(env, GET_STR(text));
+    jstring jtext = util::strToJstring(env, text);
     LInt result = JNIUtil::callStaticIntMethod(
         "com/boyia/app/core/BoyiaBridge",
         "getTextSize",

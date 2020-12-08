@@ -91,7 +91,7 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
     if (!javaObject.get())
         return;
 
-    jstring strUrl = util::strToJstring(env, (const char*)url.GetBuffer());
+    jstring strUrl = util::strToJstring(env, url);
     // beginRequest
     env->CallVoidMethod(javaObject.get(), m_privateLoader->m_beginRequest, (jint)method);
 
@@ -104,8 +104,8 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
             env->CallVoidMethod(
                 javaObject.get(),
                 m_privateLoader->m_putHeader,
-                util::strToJstring(env, (const char*)key.GetBuffer()),
-                util::strToJstring(env, (const char*)value.GetBuffer()));
+                util::strToJstring(env, key),
+                util::strToJstring(env, value));
         }
     }
 
@@ -113,7 +113,7 @@ LVoid LoaderAndroid::request(const String& url, NetworkClient* client, LBool isW
         env->CallVoidMethod(
             javaObject.get(),
             m_privateLoader->m_putParam,
-            util::strToJstring(env, (const char*)m_data->GetBuffer()));
+            util::strToJstring(env, *m_data.get()));
     }
 
     // endRequest

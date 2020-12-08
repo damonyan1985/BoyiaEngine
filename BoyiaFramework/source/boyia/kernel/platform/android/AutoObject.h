@@ -52,7 +52,11 @@ AutoJObject getRealObject(JNIEnv* env, jobject obj);
 
 jmethodID GetJMethod(JNIEnv* env, jclass clazz, const char name[], const char signature[]);
 
+jstring strToJstring(JNIEnv* env, const String& str);
+
 jstring strToJstring(JNIEnv* env, const char* s);
+
+jstring strToJstring(JNIEnv* env, const char* s, int strLen);
 
 LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result);
 }

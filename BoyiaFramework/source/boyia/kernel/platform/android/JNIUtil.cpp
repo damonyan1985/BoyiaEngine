@@ -54,10 +54,11 @@ void JNIUtil::callStaticMethod(
         for (; idx < argsLen; idx++) {
             BoyiaValue* val = stack + idx;
             if (val->mValueType == BY_STRING) {
-                char* pStr = convertMStr2Str(&val->mValue.mStrVal);
-                jstring str = util::strToJstring(env, pStr);
+                //char* pStr = convertMStr2Str(&val->mValue.mStrVal);
+                BoyiaStr* pStr = &val->mValue.mStrVal;
+                jstring str = util::strToJstring(env, pStr->mPtr, pStr->mLen);
                 args[idx].l = str;
-                delete[] pStr;
+                //delete[] pStr;
                 strVector.addElement(str);
             } else if (val->mValueType == BY_INT) {
                 args[idx].i = val->mValue.mIntVal;
@@ -141,18 +142,18 @@ void JNIUtil::callStaticVoidMethod(const char* className,
 }
 
 jint JNIUtil::callStaticIntMethod(const char* className,
-     const char* method,
-     const char* signature,
-     ...)
+    const char* method,
+    const char* signature,
+    ...)
 {
     JniMethodInfo methodInfo;
     if (getStaticMethodInfo(methodInfo, className, method, signature)) {
         va_list args;
         va_start(args, signature);
         jint result = methodInfo.env->CallStaticIntMethodV(
-                methodInfo.classID,
-                methodInfo.methodID,
-                args);
+            methodInfo.classID,
+            methodInfo.methodID,
+            args);
         va_end(args);
         methodInfo.env->DeleteLocalRef(methodInfo.classID);
         return result;
@@ -209,7 +210,7 @@ void JNIUtil::loadHTML(const String& url, String& stream)
 {
     JNIEnv* env = getEnv();
     // 将地址转为jstring
-    jstring strUrl = util::strToJstring(env, (const char*)url.GetBuffer());
+    jstring strUrl = util::strToJstring(env, url);
     jstring text = callStaticStringMethod(
         "com/boyia/app/core/BoyiaResLoader",
         "syncLoadResource",

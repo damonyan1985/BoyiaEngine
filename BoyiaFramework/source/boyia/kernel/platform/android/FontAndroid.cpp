@@ -79,7 +79,7 @@ LInt FontAndroid::getFontWidth(LUint8 ch, LInt size) const
     if (!javaObject.get())
         return 0;
 
-    jstring strText = strToJstring(env, (const char*)astr.GetBuffer());
+    jstring strText = strToJstring(env, astr);
     LInt width = env->CallIntMethod(javaObject.get(), m_privateFont->m_getFontWidth,
         strText, size);
     env->DeleteLocalRef(strText);
@@ -100,7 +100,7 @@ LInt FontAndroid::getTextWidth(const String& text, LInt size) const
         return 0;
 
     KLOG("FontAndroid::getTextWidth2");
-    jstring strText = strToJstring(env, (const char*)text.GetBuffer());
+    jstring strText = strToJstring(env, text);
     LInt width = env->CallIntMethod(javaObject.get(), m_privateFont->m_getTextWidth,
         strText, size);
     env->DeleteLocalRef(strText);
@@ -202,7 +202,7 @@ LInt FontAndroid::calcTextLine(const String& text, LInt maxWidth, LInt fontSize)
 
     KLOG("FontAndroid::calcTextLine3");
 
-    jstring strText = strToJstring(env, (const char*)text.GetBuffer());
+    jstring strText = strToJstring(env, text);
     LInt longestWidth = env->CallIntMethod(
         javaObject.get(),
         m_privateFont->m_calcTextLine,

@@ -159,7 +159,7 @@ LVoid GraphicsContextAndroid::drawText(const String& aText, const LRect& aRect)
     //String astr;
     //util::StringUtils::strWtoStr(aText, astr);
     env->CallVoidMethod(javaObject.get(), m_privateGc->m_drawTextSP,
-        strToJstring(env, (const char*)aText.GetBuffer()), aRect.iTopLeft.iX, aRect.iTopLeft.iY);
+        strToJstring(env, aText), aRect.iTopLeft.iX, aRect.iTopLeft.iY);
 }
 
 LVoid GraphicsContextAndroid::drawText(const String& aText, const LPoint& aPoint)
@@ -172,7 +172,7 @@ LVoid GraphicsContextAndroid::drawText(const String& aText, const LPoint& aPoint
     //String astr;
     //util::StringUtils::strWtoStr(aText, astr);
     env->CallVoidMethod(javaObject.get(), m_privateGc->m_drawTextSR,
-        strToJstring(env, (const char*)aText.GetBuffer()), aPoint.iX, aPoint.iY);
+        strToJstring(env, aText), aPoint.iX, aPoint.iY);
 }
 
 LVoid GraphicsContextAndroid::drawImage(const LPoint& aTopLeft, const LImage* aBitmap)
@@ -271,7 +271,7 @@ LVoid GraphicsContextAndroid::drawText(const String& text, const LRect& rect, Te
     //util::StringUtils::strWtoStr(text, astr);
     KFORMATLOG("GraphicsContextAndroid_drawText string=%s", (const char*)text.GetBuffer());
     env->CallVoidMethod(javaObject.get(), m_privateGc->m_drawTextSR,
-        strToJstring(env, (const char*)text.GetBuffer()),
+        strToJstring(env, text),
         rect.iTopLeft.iX,
         rect.iTopLeft.iY,
         rect.iBottomRight.iX,
