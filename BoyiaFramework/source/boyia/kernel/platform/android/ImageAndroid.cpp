@@ -91,7 +91,7 @@ LVoid ImageAndroid::load(const String& path, LVoid* image)
     // 多重继承下，子类指针转换成父类指针时，指针值会变化
     //ImageClient* client = static_cast<ImageClient*>(this);
     //KFORMATLOG("ImageAndroid::load this=%ld", (long)client);
-    jstring strPath = strToJstring(env, (const char*)path.GetBuffer());
+    jstring strPath = strToJstring(env, path);
     KFORMATLOG("Image::load path=%s imageItem width=%d height=%d", (const char*)path.GetBuffer(), item->getWidth(), item->getHeight());
     env->CallVoidMethod(javaObject.get(), m_privateBitmap->m_loadImage,
         strPath, (jlong)getClientId(), item->getWidth(), item->getHeight());
@@ -139,7 +139,7 @@ void ImageAndroid::drawText(const String& text,
 
     KFORMATLOG("BitmapAndroid drawText color=%x text=%s", value, (const char*)text.GetBuffer());
     KFORMATLOG("BitmapAndroid drawText text=%s width=%d height=%d", (const char*)text.GetBuffer(), rect.GetWidth(), rect.GetHeight());
-    jstring strText = strToJstring(env, (const char*)text.GetBuffer());
+    jstring strText = strToJstring(env, text);
     env->CallVoidMethod(
         javaObject.get(),
         m_privateBitmap->m_drawText,

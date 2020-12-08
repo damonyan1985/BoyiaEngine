@@ -102,7 +102,7 @@ LVoid MediaPlayerAndroid::start(const String& url)
     if (!javaObject.get())
         return;
 
-    jstring strPath = strToJstring(env, (const char*)url.GetBuffer());
+    jstring strPath = strToJstring(env, url);
     KFORMATLOG("MediaPlayerAndroid::start path=%s", (const char*)url.GetBuffer());
     env->CallVoidMethod(javaObject.get(), m_player->m_start,
         strPath);
