@@ -2,6 +2,7 @@ package com.boyia.app;
 
 import com.boyia.app.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.ipc.BoyiaIpcService;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaCoreJNI;
@@ -31,6 +32,8 @@ public class BoyiaActivity extends Activity {
         super.onCreate(icicle);
         BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
         initBroadcast();
+
+        startService(new Intent(this, BoyiaIpcService.class));
     }
 
     private void initBroadcast() {
