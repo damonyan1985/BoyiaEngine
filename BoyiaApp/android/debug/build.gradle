@@ -31,8 +31,8 @@ uploadArchives {
     repositories.mavenDeployer {
         repository(url:"file://${maven_dir}")
         pom.project {
-            groupId "com.boyia.app.leaker" // can write any name, but now we use library package name
-            artifactId "leaker" // can write any name, but now we use library name
+            groupId "com.boyia.app.debug" // can write any name, but now we use library package name
+            artifactId "debugger" // can write any name, but now we use library name
             version "1.0.0" // version name
         }
     }

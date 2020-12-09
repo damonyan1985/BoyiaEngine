@@ -123,7 +123,7 @@ dependencies {
     api gradle.library.boyia_loader
     api gradle.library.okhttp_lib
     api gradle.library.okio_lib
-    implementation gradle.library.boyia_leaker
+    implementation gradle.library.boyia_debugger
     implementation gradle.library.netty_lib
     // use protobuf begin
     implementation gradle.library.protobuf_lib

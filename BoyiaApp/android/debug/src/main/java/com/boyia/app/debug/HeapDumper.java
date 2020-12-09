@@ -1,4 +1,4 @@
-package com.boyia.app.leaker;
+package com.boyia.app.debug;
 
 import android.os.Debug;
 import java.text.SimpleDateFormat;

@@ -26,7 +26,7 @@ gradle.ext.library = [
     boyia_core: 'com.boyia.app.core:core:1.0.0',
     boyia_common: 'com.boyia.app.common:util:1.0.0',
     boyia_loader: 'com.boyia.app.loader:loader:1.0.0',
-    boyia_leaker: 'com.boyia.app.leaker:leaker:1.0.0',
+    boyia_debugger: 'com.boyia.app.debug:debugger:1.0.0',
     okhttp_lib: 'com.squareup.okhttp3:okhttp:3.6.0',
     okio_lib: 'com.squareup.okio:okio:1.11.0',
     netty_lib: 'io.netty:netty-all:5.0.0.Alpha2',

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Display;
 
+/**
+ * 参考flutter中platformview的实现
+ */
 public class PlatformPresentation extends Presentation {
     public PlatformPresentation(Context context,
                                 Display display) {
