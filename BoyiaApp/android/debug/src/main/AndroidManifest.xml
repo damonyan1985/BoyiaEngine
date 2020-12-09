@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.boyia.app">
+
+    <application>
+        <activity
+            android:name="com.boyia.app.debug.InspectorActivity"
+            android:process="@string/debugger_process"
+            android:launchMode="singleTask">
+        </activity>
+        <activity-alias
+            android:name="com.boyia.app.debug.InspectorActivity"
+            android:label="@string/debugger_app_name"
+            android:targetActivity="com.boyia.app.debug.InspectorActivity">
+            <intent-filter>
+                <action android:name="com.boyia.app.debugger.action" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    </application>
+
+</manifest>

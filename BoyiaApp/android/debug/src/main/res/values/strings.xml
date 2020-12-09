@@ -1,0 +1,4 @@
+<resources>
+    <string name="debugger_app_name">调试器</string>
+    <string name="debugger_process">:debugger</string>
+</resources>
