@@ -7,9 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
     String DESCRIPTOR = "com.boyia.app.common.ipc.IBoyiaSender";
     int SEND_MESSAGE_SYNC = IBinder.FIRST_CALL_TRANSACTION;

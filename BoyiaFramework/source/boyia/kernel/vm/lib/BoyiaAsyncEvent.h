@@ -7,10 +7,11 @@
 #include "BoyiaCore.h"
 #include "KList.h"
 #include "UIThread.h"
+#include "OwnerPtr.h"
 
 namespace boyia {
 class AsyncObject;
-using BoyiaAsyncMapTable = KList<AsyncObject*>;
+using BoyiaAsyncMapTable = KList<OwnerPtr<AsyncObject> >;
 
 class BoyiaAsyncEvent : public yanbo::UIEvent {
 public:
