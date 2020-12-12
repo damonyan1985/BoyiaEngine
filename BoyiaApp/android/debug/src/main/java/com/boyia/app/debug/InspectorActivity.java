@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 
 import com.boyia.app.common.ipc.BoyiaIpcData;
-import com.boyia.app.common.ipc.BoyiaIpcService;
+import com.boyia.app.common.ipc.BoyiaIpcHelper;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
@@ -18,7 +18,7 @@ public class InspectorActivity extends Activity {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        BoyiaIpcService.bindService(this, (sender) -> {
+        BoyiaIpcHelper.bindService(this, (sender) -> {
             mSender = sender;
             try {
                 mSender.sendMessageAsync(new BoyiaIpcData("test", new Bundle()), new IBoyiaIpcCallback() {

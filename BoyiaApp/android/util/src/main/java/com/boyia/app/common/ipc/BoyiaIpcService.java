@@ -48,22 +48,4 @@ public class BoyiaIpcService extends Service {
     public interface BoyiaIpcBindCallback {
         void callback(IBoyiaSender binder);
     }
-
-    /**
-     * 客户端调用，获取IBoyiaSender对象
-     * @param context
-     * @param callback
-     */
-    public static void bindService(Context context, BoyiaIpcBindCallback callback) {
-        context.bindService(new Intent(context, BoyiaIpcService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                callback.callback(IBoyiaIpcSender.BoyiaSenderStub.asInterface(binder));
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        }, Context.BIND_AUTO_CREATE);
-    }
 }
