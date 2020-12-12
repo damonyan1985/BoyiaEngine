@@ -1,22 +1,25 @@
 package com.boyia.app.common.ipc;
 
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
-
 import com.boyia.app.common.utils.BoyiaLog;
 
 public class BoyiaIpcService extends Service {
     private static final String TAG = "BoyiaIpcService";
+    private static IBoyiaSender sBoyiaSenderDependency;
+
+    private IBoyiaIpcSender.BoyiaSenderStub mBinder;
+
+    public static void setSenderDependency(IBoyiaSender sender) {
+        sBoyiaSenderDependency = sender;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         BoyiaLog.i(TAG, "BoyiaIpcService start");
+        mBinder = BoyiaIpcHelper.createSenderStub(sBoyiaSenderDependency);
     }
 
     @Override
@@ -30,20 +33,6 @@ public class BoyiaIpcService extends Service {
                 (intent != null ? intent.toString() : null));
         return mBinder;
     }
-
-    private IBoyiaIpcSender.BoyiaSenderStub mBinder = new IBoyiaIpcSender.BoyiaSenderStub() {
-        @Override
-        public BoyiaIpcData sendMessageSync(BoyiaIpcData message) throws RemoteException {
-            BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
-            return new BoyiaIpcData("method", new Bundle());
-        }
-
-        @Override
-        public void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException {
-            BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
-            callback.callback(new BoyiaIpcData("method", new Bundle()));
-        }
-    };
 
     public interface BoyiaIpcBindCallback {
         void callback(IBoyiaSender binder);
