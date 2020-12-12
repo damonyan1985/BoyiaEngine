@@ -8,10 +8,36 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.RemoteException;
 
 import com.boyia.app.common.ipc.IBoyiaIpcSender.BoyiaSenderStub;
+import com.boyia.app.common.utils.BoyiaLog;
 
 public class BoyiaIpcHelper {
+    private static final String TAG = "BoyiaIpcHelper";
+
+    public static BoyiaSenderStub createSenderStub(IBoyiaSender proxy) {
+        return new BoyiaSenderStub() {
+            @Override
+            public BoyiaIpcData sendMessageSync(BoyiaIpcData message) throws RemoteException {
+                BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
+                if (proxy != null) {
+                    return proxy.sendMessageSync(message);
+                }
+
+                return null;
+            }
+
+            @Override
+            public void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException {
+                BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
+                if (proxy != null) {
+                    proxy.sendMessageAsync(message, callback);
+                }
+            }
+        };
+    }
+
     /**
      * 客户端调用，获取IBoyiaSender对象
      * @param context

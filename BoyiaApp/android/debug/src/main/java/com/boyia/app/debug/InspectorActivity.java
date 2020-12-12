@@ -1,6 +1,7 @@
 package com.boyia.app.debug;
 
 import android.app.Activity;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.RemoteException;
 
@@ -15,10 +16,12 @@ import com.boyia.app.loader.job.JobScheduler;
 public class InspectorActivity extends Activity {
     private static final String TAG = "InspectorActivity";
     private IBoyiaSender mSender;
+    private ServiceConnection mConnection;
+
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        BoyiaIpcHelper.bindService(this, (sender) -> {
+        mConnection = BoyiaIpcHelper.bindService(this, (sender) -> {
             mSender = sender;
             try {
                 mSender.sendMessageAsync(new BoyiaIpcData("test", new Bundle()), new IBoyiaIpcCallback() {
@@ -38,5 +41,13 @@ public class InspectorActivity extends Activity {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mConnection != null) {
+            unbindService(mConnection);
+        }
     }
 }

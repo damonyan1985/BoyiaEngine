@@ -2,7 +2,10 @@ package com.boyia.app;
 
 import com.boyia.app.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.BoyiaIpcService;
+import com.boyia.app.common.ipc.IBoyiaIpcCallback;
+import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaCoreJNI;
@@ -17,6 +20,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.app.Activity;
 import android.os.Process;
@@ -32,6 +36,21 @@ public class BoyiaActivity extends Activity {
         super.onCreate(icicle);
         BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
         initBroadcast();
+        initService();
+    }
+
+    private void initService() {
+        BoyiaIpcService.setSenderDependency(new IBoyiaSender(){
+            @Override
+            public BoyiaIpcData sendMessageSync(BoyiaIpcData boyiaIpcData) throws RemoteException {
+                return new BoyiaIpcData("MainActivitySyncMethod", new Bundle());
+            }
+
+            @Override
+            public void sendMessageAsync(BoyiaIpcData boyiaIpcData, IBoyiaIpcCallback callback) throws RemoteException {
+                callback.callback(new BoyiaIpcData("MainActivityAsyncMethod", new Bundle()));
+            }
+        });
 
         startService(new Intent(this, BoyiaIpcService.class));
     }
