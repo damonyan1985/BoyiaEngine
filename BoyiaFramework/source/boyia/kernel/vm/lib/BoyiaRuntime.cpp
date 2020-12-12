@@ -49,7 +49,7 @@ LBool BoyiaRuntime::needCollect() const
 LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
 {
     // Clear all callbacks which bind on object
-    BoyiaAsyncEvent::removeObject(reinterpret_cast<LIntPtr>(ptr));
+    BoyiaAsyncEvent::removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
 }
 
 LVoid BoyiaRuntime::init()

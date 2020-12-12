@@ -10,21 +10,25 @@
 #include "OwnerPtr.h"
 
 namespace boyia {
-class AsyncObject;
-using BoyiaAsyncMapTable = KList<OwnerPtr<AsyncObject> >;
-
+class BoyiaAsyncEvent;
+class BoyiaAsyncMapTable;
 class BoyiaAsyncEvent : public yanbo::UIEvent {
 public:
     // Create async event and add to table
-    static LVoid registerObject(BoyiaValue* obj);
+    static LVoid registerEvent(BoyiaAsyncEvent* obj);
 
     // Judge the object is exist
     static LBool hasObject(BoyiaValue* obj);
 
-    // When remove the object, needs to remove all callback
-    static LVoid removeObject(LIntPtr ptr);
+    // When remove the object, needs to remove all event
+    static LVoid removeAllEvent(LIntPtr ptr);
+
+    // Remove Aysnc Event From Map
+    static LVoid removeEvent(BoyiaAsyncEvent* event);
 
     BoyiaAsyncEvent(BoyiaValue* obj);
+
+    virtual ~BoyiaAsyncEvent();
 
     virtual LVoid run();
 
@@ -35,6 +39,7 @@ private:
 
 protected:
     BoyiaValue m_obj;
+    friend class BoyiaAsyncMapTable;
 };
 
 }
