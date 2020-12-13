@@ -71,7 +71,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                         @Override
                         public void callback(BoyiaIpcData message) {
                             reply.writeNoException();
-                            if (reply != null) {
+                            if (message != null) {
                                 // 1表示数据不为null
                                 reply.writeInt(1);
                                 message.writeToParcel(reply,
