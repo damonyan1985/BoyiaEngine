@@ -59,4 +59,15 @@ int PixelRatio::viewY(int y)
 {
     return viewX(y);
 }
+
+int PixelRatio::logicWidth()
+{
+    return s_logicWidth;
+}
+
+int PixelRatio::logicHeight()
+{
+    return s_logicHeight;
+}
+
 }

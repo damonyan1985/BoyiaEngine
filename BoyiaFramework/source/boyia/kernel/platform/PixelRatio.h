@@ -19,6 +19,9 @@ public:
     static int viewX(int x);
     static int viewY(int y);
 
+    static int logicWidth();
+    static int logicHeight();
+
 private:
     static float s_width;
     static float s_height;

@@ -11,6 +11,11 @@ import android.view.Surface;
  */
 public class PlatformViewController {
     private Context mContext;
+
+    public PlatformViewController(Context context) {
+        mContext = context;
+    }
+
     // 创建VirtualDisplay
     public VirtualDisplay createVirtualDisplay(Context context, int texId, int width, int height) {
         SurfaceTexture texture = new SurfaceTexture(texId);
