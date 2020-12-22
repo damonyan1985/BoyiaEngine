@@ -76,7 +76,7 @@ static void nativeInitUIView(
 {
     LInt logicHeight = (1.0f * 720 / w) * h;
     yanbo::PixelRatio::setWindowSize(w, h);
-    yanbo::PixelRatio::setLogicWindowSize(720, h);
+    yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
 
     BOYIA_LOG("nativeInitUIView height=%d and logicHeight=", h, logicHeight);
     //LInt logicHeight = h;

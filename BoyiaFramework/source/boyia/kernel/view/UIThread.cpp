@@ -10,9 +10,7 @@
 #include "Mutex.h"
 #include "OwnerPtr.h"
 #include "SalLog.h"
-#if ENABLE(BOYIA_ANDROID)
-#include "ShaderUtil.h"
-#endif
+#include "PixelRatio.h"
 #include "UIOperation.h"
 #include "UIThreadClientMap.h"
 #include "UIView.h"
@@ -142,13 +140,15 @@ LVoid UIThread::handleMessage(Message* msg)
         flush();
     } break;
     case kUiOnKeyboardShow: {
-        //Editor* editor = reinterpret_cast<Editor*>(msg->arg0);
-#if ENABLE(BOYIA_ANDROID)
         InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
+        if (!view) {
+            return;
+        }
+
         LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
         LInt y = topLeft.iY + view->getYpos();
         KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
-        if (y < ShaderUtil::screenWidth() - msg->arg1) {
+        if (y < PixelRatio::logicHeight() - msg->arg1) {
             return;
         }
 
@@ -156,10 +156,8 @@ LVoid UIThread::handleMessage(Message* msg)
         rootView->setYpos(rootView->getYpos() - msg->arg1);
         rootView->paint(*m_gc);
         flush();
-#endif
     } break;
     case kUiOnKeyboardHide: {
-        //Editor* editor = reinterpret_cast<Editor*>(msg->arg0);
         InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
         if (!view) {
             return;
