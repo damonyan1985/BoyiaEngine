@@ -76,8 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ReferencePath>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm\x64\Debug;$(ReferencePath)</ReferencePath>
-    <LibraryPath>E:\Boyia\BoyiaUI\BoyiaApp\win\UIPlatorm\x64\Debug;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(BOYIA_UI_ROOT)\BoyiaApp\win\UIPlatorm\x64\Debug;$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(BOYIA_UI_ROOT)\BoyiaApp\win\UIPlatorm\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\Boyia\BoyiaFramework\BoyiaFramework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOYIA_UI_ROOT)\BoyiaFramework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
