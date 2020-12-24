@@ -13,23 +13,23 @@ pull_core_maven_cmd = (
 
 # add --rerun-tasks to resolute externalNativeBuild not exist
 upload_core_library_cmd = (
-    'cd core && gradle :core:uploadArchives --rerun-tasks'
+    'gradlew :core:uploadArchives --rerun-tasks'
 )
 
 upload_util_library_cmd = (
-    'cd util && gradle :util:uploadArchives'
+    'gradlew :util:uploadArchives'
 )
 
 upload_loader_library_cmd = (
-    'cd loader && gradle :loader:uploadArchives'
+    'gradlew :loader:uploadArchives'
 )
 
 upload_debugger_library_cmd = (
-    'cd debug && gradle :debug:uploadArchives'
+    'gradlew :debug:uploadArchives'
 )
 
 build_app_cmd = (
-    'cd app && gradle assembleDebug'
+    'gradlew assembleDebug'
 )
 
 install_apk_cmd = (
