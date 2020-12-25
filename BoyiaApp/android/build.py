@@ -6,6 +6,7 @@ maven_dir = os.path.join(android_dir, 'maven')
 maven_project_dir = os.path.join(maven_dir, 'BoyiaMaven')
 core_dir = os.path.join(android_dir, 'core')
 apk_build_dir = os.path.join(android_dir, 'app', 'build')
+gradle_cmd = os.path.join(android_dir, 'gradlew')
 
 pull_core_maven_cmd = (
     'cd maven && git clone git@github.com:damonyan1985/BoyiaMaven.git'
@@ -13,23 +14,23 @@ pull_core_maven_cmd = (
 
 # add --rerun-tasks to resolute externalNativeBuild not exist
 upload_core_library_cmd = (
-    'gradlew :core:uploadArchives --rerun-tasks'
+    f'{gradle_cmd} :core:uploadArchives --rerun-tasks'
 )
 
 upload_util_library_cmd = (
-    'gradlew :util:uploadArchives'
+    f'{gradle_cmd} :util:uploadArchives'
 )
 
 upload_loader_library_cmd = (
-    'gradlew :loader:uploadArchives'
+    f'{gradle_cmd} :loader:uploadArchives'
 )
 
 upload_debugger_library_cmd = (
-    'gradlew :debug:uploadArchives'
+    f'{gradle_cmd} :debug:uploadArchives'
 )
 
 build_app_cmd = (
-    'gradlew assembleDebug'
+    f'{gradle_cmd} assembleDebug'
 )
 
 install_apk_cmd = (
