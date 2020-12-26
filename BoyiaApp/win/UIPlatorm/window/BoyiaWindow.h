@@ -27,7 +27,7 @@ protected:
 	static BoyiaApp *m_pCurrApp;
 
 public:
-	BoyiaWindow * _ptwin;
+	BoyiaWindow * m_window;
 	void FreeWndPtr();
 	virtual BOOL InitInstance(HINSTANCE inst, int nCmdShow);
 	virtual BOOL run();

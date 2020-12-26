@@ -4,16 +4,15 @@ namespace yanbo {
 BaseWindow* BaseWindow::m_currWinPtr = NULL;
 HINSTANCE BaseWindow::m_hInst = NULL;
 
-const TCommandMessageItem BaseWindow::messageEntries[] = {
+const CommandMessageItem BaseWindow::messageEntries[] = {
     { (INT_PTR) nullptr, 0, 0 },
     WM_CLOSE_ITEM()
-    WM_DESTROY_ITEM()
-    { 0, 0, 0 }
+    WM_DESTROY_ITEM() { 0, 0, 0 }
 };
 
 BaseWindow::BaseWindow()
-	: m_hWnd(0)
-	, m_prevWinPtr(nullptr)
+    : m_hWnd(0)
+    , m_prevWinPtr(nullptr)
 {
 }
 
@@ -33,7 +32,7 @@ void BaseWindow::InitBaseWindow(HINSTANCE _thInstance)
     wndClass.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wndClass.hInstance = _thInstance;
-    wndClass.lpfnWndProc = BaseWindow::TWndProc;
+    wndClass.lpfnWndProc = BaseWindow::BaseWndProc;
     wndClass.lpszClassName = L"Boyia";
     wndClass.lpszMenuName = NULL;
     wndClass.style = CS_VREDRAW | CS_HREDRAW;
@@ -51,87 +50,87 @@ BOOL BaseWindow::CreateBaseWindow(LPCWSTR className, LPCWSTR name, DWORD style, 
     return TRUE;
 }
 
-BaseWindow* BaseWindow::CreateTChild(LPCWSTR classname, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent, DWORD id, HINSTANCE _thinstance)
+BaseWindow* BaseWindow::CreateChild(LPCWSTR classname, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent, DWORD id, HINSTANCE _thinstance)
 {
     HWND hwnd;
-    BaseWindow* childTW;
+    BaseWindow* child;
     hwnd = ::CreateWindow(classname, name, style | WS_VISIBLE | WS_CHILD, x, y, w, h, hWndParent, (HMENU)id, m_hInst, 0);
 
     if (!hwnd)
         return NULL;
-    childTW = new BaseWindow;
-    childTW->m_hWnd = hwnd;
-    AddChildTW(childTW);
-    return childTW;
+    child = new BaseWindow;
+    child->m_hWnd = hwnd;
+    AddChild(child);
+    return child;
 }
 
-void BaseWindow::AddChildTW(BaseWindow* childtw)
+void BaseWindow::AddChild(BaseWindow* childtw)
 {
-    childTWList.push_back(childtw);
+    m_childList.push_back(childtw);
 }
 
-void BaseWindow::RemoveAllChildTW()
+void BaseWindow::RemoveAllChild()
 {
     list<BaseWindow*>::iterator ipos;
-    list<BaseWindow*>::iterator ipos_begin = childTWList.begin();
-    list<BaseWindow*>::iterator ipos_end = childTWList.end();
+    list<BaseWindow*>::iterator ipos_begin = m_childList.begin();
+    list<BaseWindow*>::iterator ipos_end = m_childList.end();
     for (ipos = ipos_begin; ipos != ipos_end;) {
         list<BaseWindow*>::iterator ipos_tmp;
         ipos_tmp = ipos;
         delete *ipos_tmp;
         ipos++;
-        childTWList.erase(ipos_tmp);
+        m_childList.erase(ipos_tmp);
     }
 }
 
 BaseWindow::~BaseWindow()
 {
-    RemoveAllChildTW();
+    RemoveAllChild();
     DestroyWindow(m_hWnd);
 }
 
-LRESULT CALLBACK BaseWindow::TWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK BaseWindow::BaseWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (WM_CREATE == message || WM_INITDIALOG == message) {
         m_currWinPtr->m_hWnd = hWnd;
     }
-    BaseWindow* _twnd = m_currWinPtr;
+    BaseWindow* window = m_currWinPtr;
 
-    if (_twnd) {
-        const TCommandMessageItem* msg_item = _twnd->GetMessageEntries();
-        while (msg_item) {
+    if (window) {
+        const CommandMessageItem* msgItem = window->GetMessageEntries();
+        while (msgItem) {
             // index 0 is super class message map
-            for (int i = 1; msg_item[i]._tfunc; i++) {
-                if (msg_item[i].message != message) {
+            for (int i = 1; msgItem[i]._tfunc; i++) {
+                if (msgItem[i].message != message) {
                     continue;
                 }
 
                 if (WM_COMMAND != message) {
-                    (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
+                    (window->*(msgItem[i]._tfunc))(wParam, lParam);
                     return 0;
                 }
-                
-                if (msg_item[i].id == LOWORD(wParam)) {
-                    (_twnd->*(msg_item[i]._tfunc))(wParam, lParam);
+
+                if (msgItem[i].id == LOWORD(wParam)) {
+                    (window->*(msgItem[i]._tfunc))(wParam, lParam);
                     return 0;
                 }
             }
 
-            msg_item = (const TCommandMessageItem*)msg_item[0].message;
+            msgItem = (const CommandMessageItem*)msgItem[0].message;
         }
     }
 
     return ::DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-BOOL BaseWindow::UpdateTW()
+BOOL BaseWindow::UpdateWindow()
 {
-    return (::UpdateWindow(m_hWnd));
+    return ::UpdateWindow(m_hWnd);
 }
 
-BOOL BaseWindow::ShowTW(int show_cmd)
+BOOL BaseWindow::ShowWindow(int showCmd)
 {
-    return (::ShowWindow(m_hWnd, show_cmd));
+    return ::ShowWindow(m_hWnd, showCmd);
 }
 
 void BaseWindow::MessageLoop()
@@ -198,10 +197,6 @@ BOOL BaseWindow::ClientToScreen(LPRECT lpRect)
 BOOL BaseWindow::Invalidate(CONST RECT* lpRect, BOOL bErase)
 {
     return ::InvalidateRect(m_hWnd, lpRect, bErase);
-}
-
-void BaseWindow::ProcessTick()
-{
 }
 
 }

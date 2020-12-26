@@ -51,17 +51,17 @@ BoyiaApp::~BoyiaApp()
 BOOL BoyiaApp::InitInstance(HINSTANCE hIns, int nCmdShow)
 {
 	DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-	_ptwin = new BoyiaWindow;
-	_ptwin->InitBaseWindow(hIns);
-	_ptwin->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL);
-	_ptwin->ShowTW(nCmdShow);
-	_ptwin->UpdateTW();
+    m_window = new BoyiaWindow;
+    m_window->InitBaseWindow(hIns);
+    m_window->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL);
+    m_window->ShowWindow(nCmdShow);
+    m_window->UpdateWindow();
 	return TRUE;
 }
 
 BOOL BoyiaApp::run()
 {
-	_ptwin->MessageLoop();
+    m_window->MessageLoop();
 	return TRUE;
 }
 
@@ -72,10 +72,10 @@ BoyiaApp* BoyiaApp::GetCurrApp()
 
 void BoyiaApp::FreeWndPtr()
 {
-	if (_ptwin)
+	if (m_window)
 	{
-		delete _ptwin;
-		_ptwin = NULL;
+		delete m_window;
+        m_window = NULL;
 	}
 }
 
