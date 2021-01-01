@@ -2,6 +2,7 @@ package com.boyia.app.core.view;
 
 import android.app.Presentation;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Display;
@@ -10,13 +11,16 @@ import android.widget.FrameLayout;
 
 /**
  * 参考flutter中platformview的实现
+ * 一个viewId对应一个PlatformPresentation
  */
 public class PlatformPresentation extends Presentation {
     private FrameLayout mRootView;
-    private PlatformView mPlatformView;
+    private PlatformViewFactory mViewFactory;
+    private String mViewId;
 
     public PlatformPresentation(Context context,
-                                PlatformView view,
+                                String viewId,
+                                PlatformViewFactory viewFactory,
                                 Display display) {
         super(context, display);
         getWindow().setFlags(
@@ -24,15 +28,22 @@ public class PlatformPresentation extends Presentation {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
         getWindow().setType(WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION);
+
+        mViewFactory = viewFactory;
+        mViewId = viewId;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // This makes sure we preserve alpha for the VD's content.
-        getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         mRootView = new FrameLayout(getContext());
-        mRootView.addView(mPlatformView.getView());
+        PlatformView view = mViewFactory.createView(mViewId);
+        if (view != null && view.getView() != null) {
+            mRootView.addView(view.getView());
+        }
+        setContentView(mRootView);
     }
 }

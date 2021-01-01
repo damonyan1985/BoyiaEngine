@@ -8,5 +8,6 @@ import android.view.View;
  */
 public interface PlatformView {
     View getView();
-    String getName();
+    String getType();
+    String getId();
 }
