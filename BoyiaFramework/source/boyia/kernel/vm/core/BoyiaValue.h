@@ -65,7 +65,7 @@ typedef struct {
 
 #define NEW(type, vm) (type*)BoyiaAlloc(sizeof(type), vm)
 #define NEW_ARRAY(type, n, vm) (type*)BoyiaAlloc(n * sizeof(type), vm)
-#define VM_DELETE(ptr, vm) BoyiaDelete(ptr, vm);
+#define VM_DELETE(ptr, vm) BoyiaDelete(ptr, vm)
 #define D_STR(str, len)  \
     {                    \
         (LInt8*)str, len \
