@@ -117,8 +117,7 @@ dependencies {
     //implementation gradle.library.boyia_core
     //api project(':util')
     //api project(':loader')
-    debugImplementation gradle.library.boyia_core
-    releaseImplementation gradle.library.boyia_core
+    implementation gradle.library.boyia_core
     api gradle.library.boyia_common
     api gradle.library.boyia_loader
     api gradle.library.okhttp_lib

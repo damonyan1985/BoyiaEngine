@@ -30,6 +30,7 @@ public class PlatformViewController {
         VirtualDisplay display = createVirtualDisplay(mContext, request);
         mPresentation = new PlatformPresentation(
                 mContext, request.viewId, factory, display.getDisplay());
+        mPresentation.show();
     }
 
     // 创建VirtualDisplay

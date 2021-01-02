@@ -3,9 +3,9 @@
 
 #include "BoyiaPtr.h"
 
-namespace util{
-template<typename T>
-class WeakPtr{
+namespace util {
+template <typename T>
+class WeakPtr {
 public:
     WeakPtr(BoyiaPtr<T> ptr)
     {
@@ -17,13 +17,13 @@ public:
     }
 
     // if the pointer is expired
-    LBool expired()
+    LBool expired() const
     {
         return !m_refCount->shareCount();
     }
 
     // if ptr expired, reture null pointer
-    T* get() const 
+    T* get() const
     {
         return expired() ? kBoyiaNull : m_ptr;
     }
@@ -43,5 +43,7 @@ private:
     T* m_ptr;
 };
 }
+
+using util::WeakPtr;
 
 #endif
