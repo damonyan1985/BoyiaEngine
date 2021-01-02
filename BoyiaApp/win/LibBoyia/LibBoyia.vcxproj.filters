@@ -465,6 +465,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PixelRatio.h">
       <Filter>boyia\kernel\platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\VsyncWaiter.h">
+      <Filter>boyia\kernel\platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -793,6 +796,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PixelRatio.cpp">
       <Filter>boyia\kernel\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

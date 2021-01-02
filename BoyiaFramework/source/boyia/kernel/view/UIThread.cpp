@@ -9,12 +9,14 @@
 //#include "MatrixState.h"
 #include "Mutex.h"
 #include "OwnerPtr.h"
-#include "SalLog.h"
 #include "PixelRatio.h"
+#include "SalLog.h"
 #include "UIOperation.h"
 #include "UIThreadClientMap.h"
 #include "UIView.h"
 #include "VideoView.h"
+#include "VsyncWaiter.h"
+#include "WeakPtr.h"
 #include <functional>
 
 namespace yanbo {
@@ -191,6 +193,12 @@ LVoid UIThread::handleMessage(Message* msg)
         String entry(_CS(msg->obj), LFalse, msg->arg0);
         m_manager->currentApp()->init(entry);
     } break;
+    case kVsyncDraw: {
+        WeakPtr<VsyncWaiter>* waiter = reinterpret_cast<WeakPtr<VsyncWaiter>*>(msg->arg0);
+        if (waiter->get()) {
+        }
+        delete waiter;
+    } break;
     }
 }
 
@@ -327,6 +335,15 @@ LVoid UIThread::initApp(const String& entry)
     msg->obj = entry.GetBuffer();
     msg->arg0 = entry.GetLength();
 
+    m_queue->push(msg);
+    notify();
+}
+
+LVoid UIThread::vsyncDraw(LIntPtr vsyncWaiter)
+{
+    Message* msg = m_queue->obtain();
+    msg->type = kVsyncDraw;
+    msg->arg0 = vsyncWaiter;
     m_queue->push(msg);
     notify();
 }
