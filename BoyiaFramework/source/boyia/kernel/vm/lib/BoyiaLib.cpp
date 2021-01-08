@@ -670,33 +670,53 @@ LInt setViewVisible(LVoid* vm)
     return 1;
 }
 
-static cJSON* convertObjToJson(BoyiaValue* obj, LVoid* vm)
+static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
 {
     BoyiaFunction* props = (BoyiaFunction*)obj->mValue.mObj.mPtr;
-    cJSON* jsonObj = cJSON_CreateObject();
+    cJSON* jsonObj = isArray ? cJSON_CreateArray() : cJSON_CreateObject();
 
     for (LInt i = 0; i < props->mParamSize - 1; ++i) {
         BoyiaValue* prop = props->mParams + i;
         // Get key of object
-        BoyiaStr str;
-        GetIdentName(prop->mNameKey, &str, vm);
-        const char* key = convertMStr2Str(&str);
+        char* key = kBoyiaNull;
+        if (isArray) {
+            BoyiaStr str;
+            GetIdentName(prop->mNameKey, &str, vm);
+            key = convertMStr2Str(&str);
+        }
 
         switch (prop->mValueType)
         {
         case BY_STRING: {
             // add string item to json object
             const char* value = convertMStr2Str(&prop->mValue.mStrVal);
-            cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
+            if (isArray) {
+                cJSON_AddItemToArray(jsonObj, cJSON_CreateString(value));
+            } else {
+                cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
+            }
         } break;
         case BY_CLASS: {
-            // add object item to json object
-            cJSON_AddItemToObject(jsonObj, key, convertObjToJson(prop, vm));
+            // if the prop is array object
+            LBool isArrayProp = prop->mNameKey == GenIdentByStr("Array", 5, vm);
+            
+            if (isArray) {
+                cJSON_AddItemToArray(jsonObj, convertObjToJson(prop, isArrayProp, vm));
+            } else {
+                // add object item to json object
+                cJSON_AddItemToObject(jsonObj, key, convertObjToJson(prop, isArrayProp, vm));
+            }
         } break;
         case BY_INT: {
-            // add number item to json object
-            cJSON_AddItemToObject(jsonObj, key,
-                cJSON_CreateNumber(prop->mValue.mIntVal));
+            if (isArray) {
+                // add number item to json object
+                cJSON_AddItemToArray(jsonObj,
+                    cJSON_CreateNumber(prop->mValue.mIntVal));
+            } else {
+                // add number item to json object
+                cJSON_AddItemToObject(jsonObj, key,
+                    cJSON_CreateNumber(prop->mValue.mIntVal));
+            }
         } break;
         default:
             break;
@@ -711,17 +731,20 @@ LInt toJsonString(LVoid* vm)
 {
     cJSON* json = kBoyiaNull;
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(0, vm);
+
+    // only object can be convert to json string
     if (obj->mValueType == BY_CLASS) {
-        json = convertObjToJson(obj, vm);
+        LBool isArray = obj->mNameKey == GenIdentByStr("Array", 5, vm);
+        json = convertObjToJson(obj, isArray, vm);
     }
 
-    // find json error
+    // convert json error
     if (!json) {
         return 0;
     }
     
     char* out = cJSON_Print(json);
-    LInt len = strlen(out);
+    LInt len = LStrlen(_CS(out));
     cJSON_Delete(json);
     BOYIA_LOG("Boyia [info]: toJsonString %s, and length=%d", out, len);
 

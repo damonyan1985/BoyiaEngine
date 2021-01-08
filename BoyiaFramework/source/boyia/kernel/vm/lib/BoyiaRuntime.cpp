@@ -6,7 +6,7 @@
 #include "BoyiaAsyncEvent.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
-const LInt kNativeFunctionCapacity = 40;
+const LInt kNativeFunctionCapacity = 100;
 
 extern LVoid* CreateGC(LVoid* vm);
 
@@ -78,6 +78,7 @@ LVoid BoyiaRuntime::initNativeFunction()
     // Array Api End
     appendNative(m_idCreator->genIdentByStr("BY_Log", 6), logPrint);
     appendNative(m_idCreator->genIdentByStr("BY_Json", 7), jsonParseWithCJSON);
+    appendNative(m_idCreator->genIdentByStr("BY_toJson", 9), toJsonString);
     appendNative(m_idCreator->genIdentByStr("BY_CreateDocument", 17), createJSDocument);
     appendNative(m_idCreator->genIdentByStr("BY_AppendView", 13), appendView);
     appendNative(m_idCreator->genIdentByStr("BY_GetRootDocument", 18), getRootDocument);
