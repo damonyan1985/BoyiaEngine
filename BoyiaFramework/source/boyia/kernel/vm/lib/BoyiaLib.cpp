@@ -18,6 +18,7 @@
 
 //extern void BoyiaLog(const char* format, ...);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
+extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm);
 
 char* convertMStr2Str(BoyiaStr* str)
 {
@@ -666,5 +667,69 @@ LInt setViewVisible(LVoid* vm)
     view->item()->getStyle()->displayType = visibleArg->mValue.mIntVal;
     view->commit();
 
+    return 1;
+}
+
+static cJSON* convertObjToJson(BoyiaValue* obj, LVoid* vm)
+{
+    BoyiaFunction* props = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    cJSON* jsonObj = cJSON_CreateObject();
+
+    for (LInt i = 0; i < props->mParamSize - 1; ++i) {
+        BoyiaValue* prop = props->mParams + i;
+        // Get key of object
+        BoyiaStr str;
+        GetIdentName(prop->mNameKey, &str, vm);
+        const char* key = convertMStr2Str(&str);
+
+        switch (prop->mValueType)
+        {
+        case BY_STRING: {
+            // add string item to json object
+            const char* value = convertMStr2Str(&prop->mValue.mStrVal);
+            cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
+        } break;
+        case BY_CLASS: {
+            // add object item to json object
+            cJSON_AddItemToObject(jsonObj, key, convertObjToJson(prop, vm));
+        } break;
+        case BY_INT: {
+            // add number item to json object
+            cJSON_AddItemToObject(jsonObj, key,
+                cJSON_CreateNumber(prop->mValue.mIntVal));
+        } break;
+        default:
+            break;
+        }
+    }
+
+    return jsonObj;
+}
+
+// Object convert to json string
+LInt toJsonString(LVoid* vm)
+{
+    cJSON* json = kBoyiaNull;
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(0, vm);
+    if (obj->mValueType == BY_CLASS) {
+        json = convertObjToJson(obj, vm);
+    }
+
+    // find json error
+    if (!json) {
+        return 0;
+    }
+    
+    char* out = cJSON_Print(json);
+    LInt len = strlen(out);
+    cJSON_Delete(json);
+    BOYIA_LOG("Boyia [info]: toJsonString %s, and length=%d", out, len);
+
+    BoyiaValue val;
+    val.mValueType = BY_STRING;
+    val.mValue.mStrVal.mPtr = out;
+    val.mValue.mStrVal.mLen = len;
+
+    SetNativeResult(&val, vm);
     return 1;
 }

@@ -179,7 +179,7 @@ LVoid UIThread::handleMessage(Message* msg)
         m_continue = LFalse;
     }
     case kUiReset: {
-        resetGL(msg);
+        reset(msg);
     } break;
     case kUiRunAnimation: {
         std::function<void()>* callback = (std::function<void()>*)msg->obj;
@@ -305,7 +305,7 @@ LVoid UIThread::resetContext()
     postMessage(msg);
 }
 
-LVoid UIThread::resetGL(Message* msg)
+LVoid UIThread::reset(Message* msg)
 {
     m_gc->reset();
     UIView* view = (UIView*)msg->obj;

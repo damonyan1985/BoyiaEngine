@@ -79,4 +79,6 @@ LInt setImageUrl(LVoid* vm);
 
 LInt viewCommit(LVoid* vm);
 
+LInt toJsonString(LVoid* vm);
+
 #endif // !BoyiaLib_h

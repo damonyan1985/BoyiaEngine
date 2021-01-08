@@ -78,7 +78,7 @@ public:
     LVoid vsyncDraw(LIntPtr vsyncWaiter);
 
 private:
-    LVoid resetGL(Message* msg);
+    LVoid reset(Message* msg);
     LVoid flush();
 
     LGraphicsContext* m_gc;
