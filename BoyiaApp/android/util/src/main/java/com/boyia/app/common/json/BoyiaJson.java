@@ -1,4 +1,7 @@
-package com.boyia.app.common.utils;
+package com.boyia.app.common.json;
+
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.json.JsonAnnotation.JsonKey;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -10,7 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONUtil {
+/**
+ * author yanbo
+ * 全新小型Json解析库，可用于混淆的代码，使用org.json进行二次开发
+ * 注意，本解析库只对字段注解进行判断，不判断注解名
+ */
+public class BoyiaJson {
+    private static final String TAG = "BoyiaJson";
     public static final SimpleDateFormat DATE_FULL = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
@@ -29,12 +38,12 @@ public class JSONUtil {
         }
     }
 
-    public static <T> T parseJSON(String jsonStr, Class<T> cls) {
+    public static <T> T jsonParse(String jsonStr, Class<T> cls) {
         T object = null;
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             try {
-                object = jsonObjectToObject(jsonObject, cls);
+                object = jsonParseImpl(jsonObject, cls);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -45,26 +54,27 @@ public class JSONUtil {
         return object;
     }
 
-    private static <T> T jsonObjectToObject(JSONObject jsonObject,
+    private static <T> T jsonParseImpl(JSONObject jsonObject,
                                             Class<T> cls) throws Exception {
         if (null == jsonObject || null == cls) {
             return null;
         }
 
+        // 获取类的字段
         Field[] fields = cls.getDeclaredFields();
+        // 初始化一个实体类
         T newObject = cls.newInstance();
         for (int i = 0; i < jsonObject.names().length(); i++) {
-            String jsonName = String.valueOf(jsonObject.names().get(i));
-            Object value = jsonObject.opt(jsonName);
+            String key = String.valueOf(jsonObject.names().get(i));
+            Object value = jsonObject.opt(key);
             for (Field field : fields) {
-                BoyiaLog.d("hello=", "jsonName=" + jsonName.toUpperCase(Locale.getDefault())
-                        + " fieldName=" + field.getName().toUpperCase(Locale.getDefault()));
-                if (jsonName.toUpperCase(Locale.getDefault()).equals(
-                        field.getName().toUpperCase(Locale.getDefault()))) {
+                JsonKey jsonKey = field.getAnnotation(JsonKey.class);
+                // 如果jsonKey与key相等
+                if (key.equals(jsonKey.name())) {
                     field.setAccessible(true);
                     if (!normalValue(value, field, newObject)) {
                         // 是一个类的对象
-                        specialValue(jsonObject, jsonName, field, newObject);
+                        specialValue(value, field, newObject);
                     }
                     break;
                 }
@@ -75,29 +85,24 @@ public class JSONUtil {
         return newObject;
     }
 
-    private static <T> void specialValue(
-            JSONObject jsonObject,
-            String jsonName,
-            Field field,
-            T newObject) {
+    private static <T> void specialValue(Object value, Field field, T newObject) {
         try {
-            JSONObject jobject = jsonObject.optJSONObject(jsonName);
-            if (jobject != null) {
-                field.set(newObject, jsonObjectToObject(jobject, field.getType()));
-            } else if (field.getType().isArray()) {
-                JSONArray jarray = jsonObject.optJSONArray(jsonName);
-                if (jarray == null) {
-                    return;
-                }
-
+            if (value instanceof JSONObject) {
+                // 如果是类对象
+                field.set(newObject, jsonParseImpl((JSONObject) value, field.getType()));
+            } else if (value instanceof JSONArray) {
+                // 如果是数组
+                JSONArray jarray = (JSONArray) value;
                 Class<?> type = field.getType().getComponentType();
-                Object[] array = (Object[]) Array.newInstance(type, 2);
-                BoyiaLog.d("yanbo", "getComponentType = " + array.getClass().getSimpleName());
-                for (int i = 0; i < jarray.length(); i++) {
-                    array[i] = jsonObjectToObject(jarray.getJSONObject(i), type);
-                }
+                Object[] array = (Object[]) Array.newInstance(type, jarray.length());
 
-                //BoyiaLog.d("yanbo", "getComponentType = " + method.toString());
+                for (int i = 0; i < jarray.length(); i++) {
+                    array[i] = toNormalValue(jarray.get(i), type);
+                    // 如果不是普通类型
+                    if (array[i] == null) {
+                        array[i] = jsonParseImpl(jarray.getJSONObject(i), type);
+                    }
+                }
                 // 奇葩！数组竟然代表了多个参数，
                 // 例如数组长度为1代表一个参数，
                 // 数组长度为2代表两个参数。。。
@@ -105,31 +110,29 @@ public class JSONUtil {
                 field.set(newObject, array);
             }
         } catch (Exception e) {
+            BoyiaLog.e(TAG, "specialValue exec err=" + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private static <T> boolean normalValue(
-            Object value,
-            Field field,
-            T object) {
-        if (value instanceof String && field.getType() == int.class) {
+    private static Object toNormalValue(Object value, Class<?> type) {
+        if (!(value instanceof String)) {
+            return null;
+        }
+
+        if (type == int.class) {
             try {
                 value = Integer.valueOf(String.valueOf(value));
-
             } catch (Exception e) {
-                //value = 0;
                 e.printStackTrace();
             }
-        } else if (value instanceof String
-                && field.getType() == float.class) {
+        } else if (type == float.class) {
             try {
                 value = Float.valueOf(String.valueOf(value));
             } catch (Exception e) {
                 value = 0.0f;
             }
-        } else if (value instanceof String
-                && field.getType() == Date.class) {
+        } else if (type == Date.class) {
             try {
                 if ("".equals(value)) {
                     value = new Date(0);
@@ -143,8 +146,19 @@ public class JSONUtil {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (!(field.getType() == int.class
-                || field.getType() == String.class)) {
+        }
+
+        if (type != String.class) {
+            return null;
+        }
+
+        // 默认string类型
+        return value;
+    }
+
+    private static <T> boolean normalValue(Object value, Field field, T object) {
+        value = toNormalValue(value, field.getType());
+        if (value == null) {
             return false;
         }
 
@@ -152,6 +166,7 @@ public class JSONUtil {
             field.set(object, value);
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
 
         return true;
