@@ -1,0 +1,5 @@
+class UserInfo {
+  prop userId;
+  prop userName;
+  prop userImage;
+}
