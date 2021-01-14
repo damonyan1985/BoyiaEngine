@@ -82,6 +82,15 @@ class MainActivity extends Activity {
 		for (var i=0;i<10; i=i+1) {
 			Util.log("test for i=" + i);
 		}
+
+		// test toJson
+		var userInfo = new(UserInfo);
+		userInfo.userId = 1;
+		userInfo.userName = "boyia";
+		userInfo.userImage = "https://boyia.org/image1.png";
+
+		var infoJson = Util.toJson(userInfo);
+		Util.log("test toJson=" + infoJson);
 	}
 }
 

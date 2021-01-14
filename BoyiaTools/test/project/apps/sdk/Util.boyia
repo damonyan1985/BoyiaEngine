@@ -11,6 +11,10 @@ class Util {
     fun json(info) {
         BY_Json(info);
     }
+
+    fun toJson(obj) {
+        BY_toJson(obj);
+    }
     
     fun instanceof(obj, cls) {
         BY_InstanceOfClass(obj, cls);
