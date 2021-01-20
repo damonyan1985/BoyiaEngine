@@ -17,8 +17,7 @@
 #include <android/log.h>
 #endif
 
-#define LOG_TAG "libboyia"
-extern bool JNI_LOG_ON;
+
 
 #if ENABLE(BOYIA_KERNEL)
 #define INIT_KLOG(file_name, is_open)
@@ -31,6 +30,9 @@ extern bool JNI_LOG_ON;
 #define KSTRFORMAT(format_str, str)
 
 #elif ENABLE(BOYIA_ANDROID)
+extern bool JNI_LOG_ON;
+
+#define LOG_TAG "libboyia"
 #define INIT_KLOG(file_name, is_open)
 #define SHUT_KLOG()
 #define KLOG(...)   \
