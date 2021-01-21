@@ -26,12 +26,14 @@ typedef struct BoyiaMemoryPool {
 
 const LInt kMemoryHeaderLen = sizeof(MemoryBlockHeader);
 // 字节对齐数
-const LInt kMemoryAlignNum = sizeof(LIntPtr);
+const LInt kMemoryAlignNum = sizeof(LUintPtr);
 // 数据块尾部地址值
-#define DATA_TAIL(data) ((LIntPtr)data + data->mSize + kMemoryHeaderLen)
+#define DATA_TAIL(header) ((LUintPtr)header + kMemoryHeaderLen + header->mSize)
 // 字节对齐后的地址值
 //#define ADDR_ALIGN(addr) (addr % kMemoryAlignNum == 0 ? addr : (addr + (kMemoryAlignNum - addr % kMemoryAlignNum)))
-#define ADDR_ALIGN(addr) (((addr) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
+#define MEM_ALIGN(size) (((size) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
+#define ADDR_ALIGN(addr) (((LUintPtr)(addr) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
+#define ADDR_DELTA(addr1, addr2) ((LUintPtr)(addr1) - (LUintPtr)(addr2))
 
 LVoid* FastMalloc(LInt size)
 {
@@ -45,8 +47,8 @@ LVoid FastFree(LVoid* data)
 
 LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool)
 {
-    LIntPtr iAddr = (LIntPtr)addr;
-    return iAddr >= (LIntPtr)pool->mAddress && iAddr < ((LIntPtr)pool->mAddress + pool->mSize);
+    LUintPtr iAddr = (LUintPtr)addr;
+    return iAddr >= (LUintPtr)pool->mAddress && iAddr < ((LUintPtr)pool->mAddress + pool->mSize);
 }
 
 LVoid* InitMemoryPool(LInt size)
@@ -82,8 +84,8 @@ LVoid* NewData(LInt size, LVoid* mempool)
     MemoryBlockHeader* pHeader = kBoyiaNull;
     // 如果firstBlock不存在，则创建内存单元，然后完成
     if (!pool->mFirstBlock) {
-        pHeader = (MemoryBlockHeader*)ADDR_ALIGN((LIntPtr)pool->mAddress);
-        BOYIA_LOG("BoyiaMemory pool->address: %lx pHeader %lx constAlignNum %d", (LIntPtr)pool->mAddress, (LIntPtr)pHeader, kMemoryAlignNum);
+        pHeader = (MemoryBlockHeader*)ADDR_ALIGN(pool->mAddress);
+        BOYIA_LOG("BoyiaMemory pool->address: %lx pHeader %lx constAlignNum %d", (LUintPtr)pool->mAddress, (LUintPtr)pHeader, kMemoryAlignNum);
         pHeader->mSize = size;
         pHeader->mAddress = (LByte*)pHeader + kMemoryHeaderLen;
         pHeader->mNext = kBoyiaNull;
@@ -93,9 +95,8 @@ LVoid* NewData(LInt size, LVoid* mempool)
         MemoryBlockHeader* current = pool->mFirstBlock;
         // 如果第一个内存单元与内存池首地址之间存在一块空白区域
         // 该空白区域大小大于mallocSize，则尝试利用该区域进行分配
-        //if ((LIntPtr)current - (LIntPtr)pool->mAddress >= mallocSize) {
-        LIntPtr newAddr = ADDR_ALIGN((LIntPtr)pool->mAddress);
-        if ((LIntPtr)current - newAddr >= mallocSize) {
+        LUintPtr newAddr = ADDR_ALIGN(pool->mAddress);
+        if (ADDR_DELTA(current, newAddr) >= mallocSize) {
             pHeader = (MemoryBlockHeader*)newAddr;
             pHeader->mSize = size;
             pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
@@ -104,20 +105,18 @@ LVoid* NewData(LInt size, LVoid* mempool)
             pHeader->mPrevious = kBoyiaNull;
 
             pool->mFirstBlock = pHeader;
-            pool->mUsed += kMemoryHeaderLen + size;
+            pool->mUsed += mallocSize;
             return pHeader->mAddress;
         }
-        //}
 
         while (current) {
             // 如果当前单元没有下一个元素
             // 则直接利用剩余的空白空间
             // 如果当前单元存在下一个元素
             // 则尝试利用当前与下一个元素之间的空白区域进行分配
+            LUintPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
             if (!current->mNext) {
-                //if ((((LIntPtr)pool->mAddress + pool->mSize) - DATA_TAIL(current)) >= mallocSize) {
-                LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
-                if (((LIntPtr)pool->mAddress + pool->mSize) - newAddr >= mallocSize) {
+                if (ADDR_DELTA(((LUintPtr)pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
                     pHeader = (MemoryBlockHeader*)newAddr;
                     pHeader->mSize = size;
                     pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
@@ -126,15 +125,12 @@ LVoid* NewData(LInt size, LVoid* mempool)
                     current->mNext = pHeader;
                     break;
                 }
-                //}
                 BOYIA_LOG("%s: Boyia VM Out of Memory ", "NewData");
                 // Out Of Memory
                 return kBoyiaNull;
             }
 
-            //if ((LIntPtr)current->mNext - DATA_TAIL(current) >= mallocSize) {
-            LIntPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
-            if ((LIntPtr)current->mNext - newAddr >= mallocSize) {
+            if (ADDR_DELTA((current->mNext), newAddr) >= mallocSize) {
                 pHeader = (MemoryBlockHeader*)newAddr;
                 pHeader->mSize = size;
                 pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
@@ -144,22 +140,21 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 current->mNext = pHeader;
                 break;
             }
-            //}
 
             current = current->mNext;
         }
     }
 
-    pool->mUsed += pHeader ? (kMemoryHeaderLen + size) : 0;
+    pool->mUsed += pHeader ? mallocSize : 0;
     return pHeader ? pHeader->mAddress : kBoyiaNull;
 }
 
 LVoid DeleteData(LVoid* data, LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LIntPtr)data - kMemoryHeaderLen);
+    MemoryBlockHeader* pHeader = (MemoryBlockHeader*)((LUintPtr)data - kMemoryHeaderLen);
     // If error pointer, then return.
-    if ((LIntPtr)pHeader < (LIntPtr)pool->mAddress) {
+    if ((LUintPtr)pHeader < (LUintPtr)pool->mAddress) {
         return;
     }
 

@@ -17,6 +17,16 @@
 #define _WINDLL
 #endif
 
+class WindowRepaintEvent : public yanbo::UIEvent {
+public:
+    // Run In UIThread
+    virtual LVoid run() LOverride
+    {
+        util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
+        static_cast<util::GraphicsContextWin*>(gc)->repaint();
+    }
+};
+
 void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {
     yanbo::PixelRatio::setWindowSize(width, height);
@@ -32,8 +42,9 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 
 void BoyiaOnLoadWin::repaint()
 {
-    util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
-    static_cast<util::GraphicsContextWin*>(gc)->repaint();
+    yanbo::AppManager::instance()->uiThread()->sendUIEvent(new WindowRepaintEvent());
+    //util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
+    //static_cast<util::GraphicsContextWin*>(gc)->repaint();
     //yanbo::AppManager::instance()->currentApp()->view()->getLoader()->repaint();
 }
 
