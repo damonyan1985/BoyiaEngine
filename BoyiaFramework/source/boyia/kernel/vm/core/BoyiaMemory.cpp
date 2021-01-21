@@ -11,7 +11,7 @@
 
 typedef struct MemoryBlockHeader {
     LInt mSize;
-    LByte* mAddress;
+    //LByte* mAddress;
     MemoryBlockHeader* mNext;
     MemoryBlockHeader* mPrevious;
 } MemoryBlockHeader;
@@ -87,7 +87,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
         pHeader = (MemoryBlockHeader*)ADDR_ALIGN(pool->mAddress);
         BOYIA_LOG("BoyiaMemory pool->address: %lx pHeader %lx constAlignNum %d", (LUintPtr)pool->mAddress, (LUintPtr)pHeader, kMemoryAlignNum);
         pHeader->mSize = size;
-        pHeader->mAddress = (LByte*)pHeader + kMemoryHeaderLen;
+        //pHeader->mAddress = (LByte*)pHeader + kMemoryHeaderLen;
         pHeader->mNext = kBoyiaNull;
         pHeader->mPrevious = kBoyiaNull;
         pool->mFirstBlock = pHeader;
@@ -99,14 +99,15 @@ LVoid* NewData(LInt size, LVoid* mempool)
         if (ADDR_DELTA(current, newAddr) >= mallocSize) {
             pHeader = (MemoryBlockHeader*)newAddr;
             pHeader->mSize = size;
-            pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
+            //pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
             pHeader->mNext = current;
             current->mPrevious = pHeader;
             pHeader->mPrevious = kBoyiaNull;
 
             pool->mFirstBlock = pHeader;
             pool->mUsed += mallocSize;
-            return pHeader->mAddress;
+            //return pHeader->mAddress;
+            return (LByte*)(newAddr + kMemoryHeaderLen);
         }
 
         while (current) {
@@ -119,7 +120,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 if (ADDR_DELTA(((LUintPtr)pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
                     pHeader = (MemoryBlockHeader*)newAddr;
                     pHeader->mSize = size;
-                    pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
+                    //pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
                     pHeader->mPrevious = current;
                     pHeader->mNext = kBoyiaNull;
                     current->mNext = pHeader;
@@ -133,7 +134,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
             if (ADDR_DELTA((current->mNext), newAddr) >= mallocSize) {
                 pHeader = (MemoryBlockHeader*)newAddr;
                 pHeader->mSize = size;
-                pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
+                //pHeader->mAddress = (LByte*)(newAddr + kMemoryHeaderLen);
                 pHeader->mPrevious = current;
                 pHeader->mNext = current->mNext;
                 current->mNext->mPrevious = pHeader;
@@ -146,7 +147,8 @@ LVoid* NewData(LInt size, LVoid* mempool)
     }
 
     pool->mUsed += pHeader ? mallocSize : 0;
-    return pHeader ? pHeader->mAddress : kBoyiaNull;
+    //return pHeader ? pHeader->mAddress : kBoyiaNull;
+    return pHeader ? ((LByte*)pHeader + kMemoryHeaderLen) : kBoyiaNull;
 }
 
 LVoid DeleteData(LVoid* data, LVoid* mempool)
