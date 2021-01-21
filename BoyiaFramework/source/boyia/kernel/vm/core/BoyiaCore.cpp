@@ -810,12 +810,14 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
     }
 
     /* second, see if it's a local variable */
-    LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
-    LInt idx = vm->mEState->mLValSize - 1;
-    // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
-    for (; idx > start; --idx) {
-        if (vm->mLocals[idx].mNameKey == key)
-            return &vm->mLocals[idx];
+    if (vm->mEState->mFunctos > 0) {
+        LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
+        LInt idx = vm->mEState->mLValSize - 1;
+        // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
+        for (; idx > start; --idx) {
+            if (vm->mLocals[idx].mNameKey == key)
+                return &vm->mLocals[idx];
+        }
     }
 
     /* otherwise, try global vars */
