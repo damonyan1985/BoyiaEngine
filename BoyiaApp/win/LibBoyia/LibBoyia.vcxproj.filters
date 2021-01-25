@@ -468,6 +468,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\VsyncWaiter.h">
       <Filter>boyia\kernel\platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

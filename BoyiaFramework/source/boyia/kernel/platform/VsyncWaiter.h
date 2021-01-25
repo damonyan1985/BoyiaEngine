@@ -6,7 +6,8 @@
 namespace yanbo {
 class VsyncWaiter : public BoyiaRef {
 public:
-    virtual LVoid awaitVSync();
+    static VsyncWaiter* createVsyncWaiter();
+    virtual LVoid awaitVSync() = 0;
 };
 }
 #endif
