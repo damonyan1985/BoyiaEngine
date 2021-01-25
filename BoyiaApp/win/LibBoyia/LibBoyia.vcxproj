@@ -98,7 +98,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>wininet.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;gdiplus.lib;dwmapi.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>libboyia.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.h" />
