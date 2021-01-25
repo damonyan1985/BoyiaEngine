@@ -6,8 +6,7 @@
 
 namespace yanbo {
 
-class BoyiaAppWindow : public BoyiaWindow
-{
+class BoyiaAppWindow : public BoyiaWindow {
 public:
     BoyiaAppWindow();
     virtual ~BoyiaAppWindow();
@@ -15,8 +14,8 @@ public:
 public:
     HICON m_hIcon;
     HCURSOR m_hCursor;
-    virtual void OnPrepareDC(BoyiaDC *pDC);
-    virtual void OnDraw(BoyiaDC *pDC);
+    virtual void OnPrepareDC(BoyiaDC* pDC);
+    virtual void OnDraw(BoyiaDC* pDC);
 
 protected:
     HMENU m_hMenu;
@@ -31,8 +30,7 @@ protected:
     MESSAGE_MAP_TABLE()
 };
 
-class BoyiaAppImpl : public BoyiaApp
-{
+class BoyiaAppImpl : public BoyiaApp {
 public:
     virtual BOOL InitInstance(HINSTANCE hIns, int nCmdShow);
     BoyiaAppImpl();

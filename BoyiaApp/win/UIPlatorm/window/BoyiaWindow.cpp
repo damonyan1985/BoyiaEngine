@@ -21,68 +21,65 @@ BoyiaWindow::~BoyiaWindow()
 
 DWORD BoyiaWindow::OnClose(WPARAM wParam, LPARAM lParam)
 {
-	return BaseWindow::OnClose(wParam, lParam);
+    return BaseWindow::OnClose(wParam, lParam);
 }
 
 DWORD BoyiaWindow::OnDestroy(WPARAM wParam, LPARAM lParam)
 {
-	return BaseWindow::OnDestroy(wParam, lParam);
+    return BaseWindow::OnDestroy(wParam, lParam);
 }
 
 DWORD BoyiaWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
-	return 0;
+    return 0;
 }
-
 
 //app
 BoyiaApp* BoyiaApp::m_pCurrApp = NULL;
 
 BoyiaApp::BoyiaApp()
 {
-	m_pCurrApp = (BoyiaApp*)this;
+    m_pCurrApp = (BoyiaApp*)this;
 }
 
 BoyiaApp::~BoyiaApp()
 {
-	FreeWndPtr();
+    FreeWndPtr();
 }
 
 BOOL BoyiaApp::InitInstance(HINSTANCE hIns, int nCmdShow)
 {
-	DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
+    DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
     m_window = new BoyiaWindow;
     m_window->InitBaseWindow(hIns);
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL);
     m_window->ShowWindow(nCmdShow);
     m_window->UpdateWindow();
-	return TRUE;
+    return TRUE;
 }
 
 BOOL BoyiaApp::run()
 {
     m_window->MessageLoop();
-	return TRUE;
+    return TRUE;
 }
 
 BoyiaApp* BoyiaApp::GetCurrApp()
 {
-	return m_pCurrApp;
+    return m_pCurrApp;
 }
 
 void BoyiaApp::FreeWndPtr()
 {
-	if (m_window)
-	{
-		delete m_window;
+    if (m_window) {
+        delete m_window;
         m_window = NULL;
-	}
+    }
 }
 
 }
 
 extern yanbo::BoyiaApp* tfxGetApp()
 {
-	return yanbo::BoyiaApp::GetCurrApp();
+    return yanbo::BoyiaApp::GetCurrApp();
 }
-

@@ -5,33 +5,32 @@
 
 namespace yanbo {
 
-class BoyiaWindow : public BaseWindow
-{
+class BoyiaWindow : public BaseWindow {
 public:
-	BoyiaWindow();
-	virtual ~BoyiaWindow();
+    BoyiaWindow();
+    virtual ~BoyiaWindow();
 
 protected:
-	BoyiaMsg DWORD OnCreate(WPARAM, LPARAM);
-	BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
-	BoyiaMsg DWORD OnDestroy(WPARAM, LPARAM);
-	MESSAGE_MAP_TABLE()
+    BoyiaMsg DWORD OnCreate(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnDestroy(WPARAM, LPARAM);
+    MESSAGE_MAP_TABLE()
 };
 
-class BoyiaApp
-{
+class BoyiaApp {
 public:
-	BoyiaApp();
-	~BoyiaApp();
+    BoyiaApp();
+    ~BoyiaApp();
+
 protected:
-	static BoyiaApp *m_pCurrApp;
+    static BoyiaApp* m_pCurrApp;
 
 public:
-	BoyiaWindow * m_window;
-	void FreeWndPtr();
-	virtual BOOL InitInstance(HINSTANCE inst, int nCmdShow);
-	virtual BOOL run();
-	static BoyiaApp* GetCurrApp();
+    BoyiaWindow* m_window;
+    void FreeWndPtr();
+    virtual BOOL InitInstance(HINSTANCE inst, int nCmdShow);
+    virtual BOOL run();
+    static BoyiaApp* GetCurrApp();
 };
 
 }
