@@ -7,7 +7,7 @@ HINSTANCE BaseWindow::m_hInst = NULL;
 const CommandMessageItem BaseWindow::messageEntries[] = {
     { (INT_PTR) nullptr, 0, 0 },
     WM_CLOSE_ITEM()
-    WM_DESTROY_ITEM() { 0, 0, 0 }
+        WM_DESTROY_ITEM() { 0, 0, 0 }
 };
 
 BaseWindow::BaseWindow()

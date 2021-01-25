@@ -4,8 +4,8 @@
 namespace yanbo {
 class BoyiaConsole {
 public:
-	BoyiaConsole();
-	~BoyiaConsole();
+    BoyiaConsole();
+    ~BoyiaConsole();
 };
 }
 

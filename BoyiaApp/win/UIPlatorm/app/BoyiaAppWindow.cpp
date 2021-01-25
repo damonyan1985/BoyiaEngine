@@ -29,8 +29,8 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
     RECT rect;
     GetClientRect(&rect);
-    BoyiaOnLoadWin::setContextWin(m_hWnd, 
-        rect.right - rect.left, 
+    BoyiaOnLoadWin::setContextWin(m_hWnd,
+        rect.right - rect.left,
         rect.bottom - rect.top);
     BoyiaOnLoadWin::connectServer();
     /*
@@ -74,7 +74,7 @@ DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-void BoyiaAppWindow::OnDraw(BoyiaDC *pDC)
+void BoyiaAppWindow::OnDraw(BoyiaDC* pDC)
 {
 }
 
@@ -84,32 +84,31 @@ DWORD BoyiaAppWindow::OnSetCursor(WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-void BoyiaAppWindow::OnPrepareDC(BoyiaDC *pDC)
+void BoyiaAppWindow::OnPrepareDC(BoyiaDC* pDC)
 {
 }
 
 DWORD BoyiaAppWindow::OnKeyDown(WPARAM wParam, LPARAM lParam)
 {
-	switch (wParam)
-	{
-	case VK_UP:
-		break;
-	case VK_DOWN:
-		break;
-	case VK_LEFT:
-		break;
-	case VK_RIGHT:
-		break;
-	case VK_SPACE:
-		break;
-	}
+    switch (wParam) {
+    case VK_UP:
+        break;
+    case VK_DOWN:
+        break;
+    case VK_LEFT:
+        break;
+    case VK_RIGHT:
+        break;
+    case VK_SPACE:
+        break;
+    }
 
-	return 0;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
-	return 0;
+    return 0;
 }
 
 DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
