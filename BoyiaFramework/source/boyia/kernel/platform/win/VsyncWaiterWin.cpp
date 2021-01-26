@@ -3,8 +3,41 @@
 #include <dwmapi.h>
 
 namespace yanbo {
+ComPtr<IDXGIOutput> DXGIOutputFromMonitor(
+    HMONITOR monitor,
+    const ComPtr<ID3D11Device>& d3d11_device)
+{
+    ComPtr<IDXGIDevice> dxgi_device;
+    if (FAILED(d3d11_device.As(&dxgi_device))) {
+        return nullptr;
+    }
+
+    ComPtr<IDXGIAdapter> dxgi_adapter;
+    if (FAILED(dxgi_device->GetAdapter(&dxgi_adapter))) {
+        return nullptr;
+    }
+
+    size_t i = 0;
+    while (true) {
+        ComPtr<IDXGIOutput> output;
+        if (FAILED(dxgi_adapter->EnumOutputs(i++, &output)))
+            break;
+
+        DXGI_OUTPUT_DESC desc = {};
+        if (FAILED(output->GetDesc(&desc))) {
+            return nullptr;
+        }
+
+        if (desc.Monitor == monitor)
+            return output;
+    }
+
+    return nullptr;
+}
+
 VsyncWaiterWin::VsyncWaiterWin()
     : m_hwnd(nullptr)
+    , m_primaryMonitor(nullptr)
 {
 }
 
@@ -21,8 +54,7 @@ LBool VsyncWaiterWin::getVSyncParametersIfAvailable()
     if (result == S_OK) {
         // Calculate an interval value using the rateRefresh numerator and
         // denominator.
-        if (timing_info.rateRefresh.uiDenominator > 0 &&
-            timing_info.rateRefresh.uiNumerator > 0) {
+        if (timing_info.rateRefresh.uiDenominator > 0 && timing_info.rateRefresh.uiNumerator > 0) {
         }
     } else {
         // When DWM compositing is active all displays are normalized to the
@@ -41,7 +73,6 @@ LBool VsyncWaiterWin::getVSyncParametersIfAvailable()
             result = EnumDisplaySettings(monitor_info.szDevice, ENUM_CURRENT_SETTINGS,
                 &display_info);
             if (result && display_info.dmDisplayFrequency > 1) {
-
             }
         }
     }
@@ -52,6 +83,11 @@ LBool VsyncWaiterWin::getVSyncParametersIfAvailable()
 LVoid VsyncWaiterWin::awaitVSync()
 {
     const HMONITOR monitor = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
+    if (m_primaryMonitor != monitor) {
+        m_primaryMonitor = monitor;
+        // TODO m_d3d11Device需要初始化
+        m_primaryOutput = DXGIOutputFromMonitor(monitor, m_d3d11Device);
+    }
 }
 
 VsyncWaiter* VsyncWaiter::createVsyncWaiter()
