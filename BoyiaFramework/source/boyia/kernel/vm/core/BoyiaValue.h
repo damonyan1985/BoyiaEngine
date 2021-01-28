@@ -105,4 +105,7 @@ LVoid LoadVMCode(LVoid* vm);
 
 LInt FindNativeFunc(LUintPtr key, LVoid* vm);
 LInt CallNativeFunction(LInt idx, LVoid* vm);
+
+LVoid MarkNativeObject(LIntPtr address, LInt gcFlag);
+LInt NativeObjectFlag(LVoid* address);
 #endif

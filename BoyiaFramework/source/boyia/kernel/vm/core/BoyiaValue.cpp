@@ -87,6 +87,16 @@ LVoid* GetGabargeCollect(LVoid* vm)
     return GetRuntime(vm)->garbageCollect();
 }
 
+LVoid MarkNativeObject(LIntPtr address, LInt gcFlag)
+{
+    reinterpret_cast<boyia::BoyiaBase*>(address)->setGcFlag(gcFlag);
+}
+
+LInt NativeObjectFlag(LVoid* address)
+{
+    return static_cast<boyia::BoyiaBase*>(address)->gcFlag();
+}
+
 static LVoid SystemGC(LVoid* vm)
 {
     if (GetRuntime(vm)->needCollect()) {

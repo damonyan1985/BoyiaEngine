@@ -11,6 +11,7 @@ namespace boyia {
 BoyiaBase::BoyiaBase(BoyiaRuntime* runtime)
     : m_type(0)
     , m_runtime(runtime)
+    , m_gcFlag(0)
 {
     BoyiaValue value;
     value.mValueType = BY_NAVCLASS;
@@ -86,5 +87,15 @@ LVoid BoyiaBase::addListener(LInt type, BoyiaValue* callback)
 LVoid BoyiaBase::setBoyiaView(BoyiaValue* value)
 {
     ValueCopy(&m_boyiaView, value);
+}
+
+LVoid BoyiaBase::setGcFlag(LInt flag)
+{
+    m_gcFlag = flag;
+}
+
+LInt BoyiaBase::gcFlag() const
+{
+    return m_gcFlag;
 }
 }
