@@ -1,4 +1,3 @@
-#include "AutoLock.h"
 #include "BoyiaCore.h"
 #include "BoyiaLib.h"
 #include "BoyiaMemory.h"
@@ -21,11 +20,11 @@ typedef struct BoyiaGC {
 
 enum BoyiaGcColor {
     kBoyiaGcWhite = 0x0,
-    kBoyiaGcGray = 0x00010000,
-    kBoyiaGcBlack = 0x00020000
+    kBoyiaGcGray = 0x1,
+    kBoyiaGcBlack = 0x2
 };
 
-#define IS_OBJECT_INVALID(fun) ((fun->mParamCount & 0xFFFF0000) == kBoyiaGcWhite)
+#define IS_OBJECT_INVALID(fun) ((fun->mParamCount >> 16) == kBoyiaGcWhite)
 
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
@@ -214,24 +213,24 @@ static LVoid MarkObjectProps(BoyiaValue* value)
     BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mIntVal;
 
     // 标记为灰色
-    fun->mParamCount = GET_FUNCTION_COUNT(fun) | kBoyiaGcGray;
+    fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcGray << 16);
     LInt idx = 0;
     for (; idx < fun->mParamSize; ++idx) {
         MarkValue(&fun->mParams[idx]);
     }
 
     // 标记为黑色
-    fun->mParamCount = GET_FUNCTION_COUNT(fun) | kBoyiaGcBlack;
+    fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcBlack << 16);
 }
 
 // 标记对象
 static LVoid MarkValue(BoyiaValue* value)
 {
-    /*
-    if (value->mValueType == BY_NAVCLASS
-        && value->mValue.mIntVal) {
-        return LTrue;
-    }*/
+    // 标记native对象
+    if (value->mValueType == BY_NAVCLASS) {
+        MarkNativeObject(value->mValue.mIntVal, kBoyiaGcBlack);
+        return;
+    }
 
     /*
     if (value->mValueType == BY_STRING
@@ -239,6 +238,7 @@ static LVoid MarkValue(BoyiaValue* value)
         return LTrue;
     }*/
 
+    // 标记boyia对象
     if (value->mValueType == BY_CLASS) {
         MarkObjectProps(value);
     }
@@ -254,14 +254,46 @@ static LVoid MarkValueTable(BoyiaValue* table, LInt size)
     }
 }
 
+static LBool IsInValidObject(BoyiaRef* ref)
+{
+    if (ref->mType == BY_CLASS) {
+        BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+        return IS_OBJECT_INVALID(fun);
+    }
+
+    if (ref->mType != BY_NAVCLASS) {
+        return LFalse;
+    }
+
+    if (NativeObjectFlag(ref->mAddress) != kBoyiaGcWhite) {
+        // 重置为白色
+        MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
+        return LFalse;
+    }
+
+    return LTrue;
+}
+
+static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
+{
+    if (ref->mType == BY_NAVCLASS) {
+        NativeDelete(ref->mAddress);
+        return;
+    }
+
+    if (ref->mType == BY_CLASS) {
+        VM_DELETE(ref->mAddress, vm);
+    }
+}
+
+// 清除所有需要回收的对象
 static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 {
     BoyiaRef* prev = gc->mBegin;
     while (prev && prev->mType == BY_CLASS) {
-        BoyiaFunction* fun = (BoyiaFunction*)prev->mAddress;
-        if (IS_OBJECT_INVALID(fun)) {
+        if (IsInValidObject(prev)) {
             // 删除对象内存
-            VM_DELETE(prev->mAddress, vm);
+            DeleteObject(prev, vm);
             // begin标记置为下一个元素
             gc->mBegin = prev->mNext;
             // 删除链表中的元素
@@ -280,9 +312,8 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 
     BoyiaRef* current = prev->mNext;
     while (current) {
-        BoyiaFunction* fun = (BoyiaFunction*)current->mAddress;
-        if (current->mType == BY_CLASS && IS_OBJECT_INVALID(fun)) {
-            VM_DELETE(prev->mAddress, vm);
+        if (IsInValidObject(current)) {
+            DeleteObject(prev, vm);
             prev->mNext = current->mNext;
             FAST_DELETE(current);
             --gc->mSize;

@@ -24,12 +24,15 @@ public:
     LVoid setBoyiaView(BoyiaValue* value);
 
     BoyiaRuntime* runtime() const;
+    LVoid setGcFlag(LInt flag);
+    LInt gcFlag() const;
 
 protected:
     LInt m_type;
     BoyiaValue m_callbacks[EVENT_MAX_SIZE];
     BoyiaValue m_boyiaView;
     BoyiaRuntime* m_runtime;
+    LInt m_gcFlag;
 };
 }
 
