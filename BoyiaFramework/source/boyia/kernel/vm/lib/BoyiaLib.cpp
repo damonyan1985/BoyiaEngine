@@ -67,13 +67,13 @@ LInt addElementToVector(LVoid* vm)
     BoyiaValue* element = (BoyiaValue*)GetLocalValue(1, vm);
 
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
-    if (fun->mParamSize >= fun->mParamCount) {
+    if (fun->mParamSize >= GET_FUNCTION_COUNT(fun)) {
         BoyiaValue* value = fun->mParams;
         LInt count = fun->mParamCount;
         fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10), vm);
         fun->mParamCount = count + 10;
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
-		VM_DELETE(value, vm);
+        VM_DELETE(value, vm);
     }
     BOYIA_LOG("addElementToVector %d", 2);
     //fun->mParams[fun->mParamSize++] = *element;
@@ -129,7 +129,7 @@ LInt removeElementWidthIndex(LVoid* vm)
     }
 
     --fun->mParamSize;
-	return 1;
+    return 1;
 }
 
 LInt removeElementFromVector(LVoid* vm)
@@ -598,10 +598,10 @@ LInt createViewGroup(LVoid* vm)
 
     char* idStr = convertMStr2Str(&idVal->mValue.mStrVal);
     String strUrl(_CS(idStr), LTrue, idVal->mValue.mStrVal.mLen);
-    
+
     new boyia::BoyiaViewGroup(
-        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)), 
-        strUrl, 
+        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)),
+        strUrl,
         selectVal->mValue.mIntVal);
 
     return 1;
@@ -693,8 +693,7 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
             key = convertMStr2Str(&str);
         }
 
-        switch (prop->mValueType)
-        {
+        switch (prop->mValueType) {
         case BY_STRING: {
             // add string item to json object
             const char* value = convertMStr2Str(&prop->mValue.mStrVal);
@@ -707,7 +706,7 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
         case BY_CLASS: {
             // if the prop is array object
             LBool isArrayProp = isObjArray(prop, vm);
-            
+
             if (isArray) {
                 cJSON_AddItemToArray(jsonObj, convertObjToJson(prop, isArrayProp, vm));
             } else {
@@ -749,7 +748,7 @@ LInt toJsonString(LVoid* vm)
     if (!json) {
         return 0;
     }
-    
+
     char* out = cJSON_Print(json);
     LInt len = LStrlen(_CS(out));
     cJSON_Delete(json);

@@ -70,25 +70,17 @@ typedef int LIntPtr;
 typedef unsigned int LUint;
 typedef unsigned int LUintPtr;
 #endif
-//
+
 typedef void LVoid;
 
-//
 typedef float LReal32;
 typedef double LReal64;
 
 typedef LReal32 LReal;
-//
+
 typedef LInt LBool;
 
 typedef char LCharA;
-//typedef unsigned char LCharA;
-
-//#ifndef __WINS__
-//typedef wchar_t LCharW;
-//#else
-//typedef LUint16 LCharW;
-//#endif
 
 typedef LCharA LChar;
 
@@ -96,10 +88,7 @@ typedef enum Bool {
     LFalse = 0,
     LTrue
 } Bool;
-//const LBool LFalse = 0;
-//const LBool LTrue  = 1;
 
-//
 typedef LUint8 LByte;
 typedef LUint16 UChar;
 

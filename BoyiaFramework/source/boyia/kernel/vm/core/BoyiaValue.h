@@ -71,6 +71,10 @@ typedef struct {
         (LInt8*)str, len \
     }
 
+// function count最大不能超过65535
+// mParamCount的剩余高16位将用来做对象标记，如GC标记清除
+#define GET_FUNCTION_COUNT(function) (function->mParamCount & 0x0000FFFF)
+
 LVoid* BoyiaAlloc(LInt size, LVoid* vm);
 
 LVoid* BoyiaNew(LInt size, LVoid* vm);
