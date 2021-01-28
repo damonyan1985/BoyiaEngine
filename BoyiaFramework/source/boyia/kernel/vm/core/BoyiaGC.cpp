@@ -19,6 +19,14 @@ typedef struct BoyiaGC {
     LVoid* mBoyiaVM;
 } BoyiaGC;
 
+enum BoyiaGcColor {
+    kBoyiaGcWhite = 0x0,
+    kBoyiaGcGray = 0x00010000,
+    kBoyiaGcBlack = 0x00020000
+};
+
+#define IS_OBJECT_INVALID(fun) ((fun->mParamCount & 0xFFFF0000) == kBoyiaGcWhite)
+
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
 static LBool CheckValue(BoyiaValue* val, BoyiaRef* ref);
@@ -197,4 +205,116 @@ extern LVoid GCollectGarbage(LVoid* vm)
 
     KFORMATLOG("GCollect end Size=%d\n", gc->mSize);
     //KFORMATLOG("GCollect end CollectSize=%d\n", sGc->mSize);
+}
+
+static LVoid MarkValue(BoyiaValue* value);
+// 标记对象属性
+static LVoid MarkObjectProps(BoyiaValue* value)
+{
+    BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mIntVal;
+
+    // 标记为灰色
+    fun->mParamCount = GET_FUNCTION_COUNT(fun) | kBoyiaGcGray;
+    LInt idx = 0;
+    for (; idx < fun->mParamSize; ++idx) {
+        MarkValue(&fun->mParams[idx]);
+    }
+
+    // 标记为黑色
+    fun->mParamCount = GET_FUNCTION_COUNT(fun) | kBoyiaGcBlack;
+}
+
+// 标记对象
+static LVoid MarkValue(BoyiaValue* value)
+{
+    /*
+    if (value->mValueType == BY_NAVCLASS
+        && value->mValue.mIntVal) {
+        return LTrue;
+    }*/
+
+    /*
+    if (value->mValueType == BY_STRING
+        && (LIntPtr)value->mValue.mStrVal.mPtr == (LIntPtr)ref->mAddress) {
+        return LTrue;
+    }*/
+
+    if (value->mValueType == BY_CLASS) {
+        MarkObjectProps(value);
+    }
+}
+
+// 标记表中元素
+static LVoid MarkValueTable(BoyiaValue* table, LInt size)
+{
+    // 对引用的对象进行标记
+    LInt idx = 0;
+    for (; idx < size; idx++) {
+        MarkValue(table + idx);
+    }
+}
+
+static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
+{
+    BoyiaRef* prev = gc->mBegin;
+    while (prev && prev->mType == BY_CLASS) {
+        BoyiaFunction* fun = (BoyiaFunction*)prev->mAddress;
+        if (IS_OBJECT_INVALID(fun)) {
+            // 删除对象内存
+            VM_DELETE(prev->mAddress, vm);
+            // begin标记置为下一个元素
+            gc->mBegin = prev->mNext;
+            // 删除链表中的元素
+            FAST_DELETE(prev);
+            --gc->mSize;
+            prev = gc->mBegin;
+        } else {
+            break;
+        }
+    }
+
+    if (!prev) {
+        gc->mEnd = kBoyiaNull;
+        return;
+    }
+
+    BoyiaRef* current = prev->mNext;
+    while (current) {
+        BoyiaFunction* fun = (BoyiaFunction*)current->mAddress;
+        if (current->mType == BY_CLASS && IS_OBJECT_INVALID(fun)) {
+            VM_DELETE(prev->mAddress, vm);
+            prev->mNext = current->mNext;
+            FAST_DELETE(current);
+            --gc->mSize;
+            current = prev->mNext;
+        } else {
+            prev = current;
+            current = prev->mNext;
+        }
+    }
+
+    gc->mEnd = prev;
+}
+
+// 标记gcroots中引用的对象，垃圾回收标记清除
+extern LVoid GCollectGarbageV2(LVoid* vm)
+{
+    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
+    LInt stackAddr, size;
+
+    // 标记栈
+    GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
+    BoyiaValue* stack = (BoyiaValue*)stackAddr;
+    MarkValueTable(stack, size);
+
+    // 标记全局区
+    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
+    stack = (BoyiaValue*)stackAddr;
+    MarkValueTable(stack, size);
+
+    // 标记零时引用
+    BoyiaValue* val = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
+    MarkValue(val);
+
+    ClearAllGarbage(gc, vm);
 }

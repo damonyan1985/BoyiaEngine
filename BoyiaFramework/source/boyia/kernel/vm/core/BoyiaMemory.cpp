@@ -45,8 +45,9 @@ LVoid FastFree(LVoid* data)
     free(data);
 }
 
-LBool ContainAddress(LVoid* addr, BoyiaMemoryPool* pool)
+LBool ContainAddress(LVoid* addr, LVoid* mempool)
 {
+    BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     LUintPtr iAddr = (LUintPtr)addr;
     return iAddr >= (LUintPtr)pool->mAddress && iAddr < ((LUintPtr)pool->mAddress + pool->mSize);
 }
