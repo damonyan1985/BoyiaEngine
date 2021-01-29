@@ -1,9 +1,9 @@
 #include "BoyiaRuntime.h"
-#include "BoyiaCore.h"
-#include "SalLog.h"
 #include "Application.h"
-#include "BoyiaMemory.h"
 #include "BoyiaAsyncEvent.h"
+#include "BoyiaCore.h"
+#include "BoyiaMemory.h"
+#include "SalLog.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
 const LInt kNativeFunctionCapacity = 100;
@@ -19,7 +19,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_nativeSize(0)
     , m_vm(InitVM(this))
     , m_gc(CreateGC(m_vm))
-{   
+{
 }
 
 BoyiaRuntime::~BoyiaRuntime()
@@ -52,10 +52,13 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
     BoyiaAsyncEvent::removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
 }
 
+// Builtins Id
 LVoid BoyiaRuntime::init()
 {
     m_idCreator->genIdentByStr("this", 4);
     m_idCreator->genIdentByStr("super", 5);
+    m_idCreator->genIdentByStr("String", 6);
+    m_idCreator->genIdentByStr("Array", 5);
     initNativeFunction();
 }
 
@@ -130,7 +133,6 @@ LInt BoyiaRuntime::callNativeFunction(LInt idx) const
 {
     return (*m_nativeFunTable[idx].mAddr)(m_vm);
 }
-
 
 LVoid* BoyiaRuntime::vm() const
 {

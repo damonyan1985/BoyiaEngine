@@ -236,7 +236,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         value->mValueType = BY_CLASS;
 
         LInt size = cJSON_GetArraySize(json);
-        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(GenIdentByStr("Array", 5, vm), size, vm);
+        BoyiaFunction* fun = (BoyiaFunction*)CopyObject(kBoyiaArray, size, vm);
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS, vm);
@@ -674,8 +674,8 @@ static LBool isObjArray(BoyiaValue* obj, LVoid* vm)
 {
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
-    LUintPtr arrayKey = GenIdentByStr("Array", 5, vm);
-    return baseCls->mNameKey == arrayKey;
+    //LUintPtr arrayKey = GenIdentByStr("Array", 5, vm);
+    return baseCls->mNameKey == kBoyiaArray;
 }
 
 static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)

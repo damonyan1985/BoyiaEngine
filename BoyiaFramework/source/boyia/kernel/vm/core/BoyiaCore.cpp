@@ -287,13 +287,6 @@ typedef struct {
     BoyiaVM* mVm;
 } CompileState;
 
-//static NativeFunction* gNativeFunTable = kBoyiaNull;
-
-//static LUintPtr gThis = GenIdentByStr("this", 4);
-//static LUintPtr gSuper = GenIdentByStr("super", 5);
-static LUintPtr gThis = 1;
-static LUintPtr gSuper = 2;
-
 /* Global value define end */
 static LVoid LocalStatement(CompileState* cs);
 
@@ -505,7 +498,6 @@ LVoid* InitVM(LVoid* creator)
     vm->mEState->mFunSize = 0;
 
     ResetScene(vm);
-
     return vm;
 }
 
@@ -801,11 +793,11 @@ static BoyiaValue* FindGlobal(LUintPtr key, BoyiaVM* vm)
 static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
 {
     /* First, see if has obj scope */
-    if (key == gThis) {
+    if (key == kBoyiaThis) {
         return vm->mEState->mClass;
     }
 
-    if (key == gSuper) {
+    if (key == kBoyiaSuper) {
         return vm->mEState->mClass ? (BoyiaValue*)vm->mEState->mClass->mValue.mObj.mSuper : kBoyiaNull;
     }
 
@@ -910,7 +902,7 @@ static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
 
     if (inst->mOPLeft.mType == OP_VAR) {
         LUintPtr objKey = (LUintPtr)inst->mOPLeft.mValue;
-        if (objKey != gSuper) {
+        if (objKey != kBoyiaSuper) {
             vm->mEState->mClass = (BoyiaValue*)vm->mCpu->mReg0.mNameKey;
         }
     } else {
@@ -2234,8 +2226,9 @@ static LVoid CopyStringFromToken(CompileState* cs, BoyiaStr* str)
 static LInt HandleConstString(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    vm->mCpu->mReg0.mValueType = BY_STRING;
     BoyiaStr* constStr = &vm->mStrTable->mTable[inst->mOPLeft.mValue];
+
+    vm->mCpu->mReg0.mValueType = BY_STRING;
     vm->mCpu->mReg0.mValue.mStrVal.mPtr = constStr->mPtr;
     vm->mCpu->mReg0.mValue.mStrVal.mLen = constStr->mLen;
     return 1;
@@ -2627,4 +2620,11 @@ LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm)
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     vmPtr->mEntry->mSize = size / sizeof(LInt);
     LMemcpy(vmPtr->mEntry->mTable, buffer, size);
+}
+
+LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm)
+{
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    // 创建一个类对象
+    return CreateFunVal(key, BY_CLASS, vmPtr);
 }
