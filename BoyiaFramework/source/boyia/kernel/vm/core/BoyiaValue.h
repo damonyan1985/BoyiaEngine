@@ -25,6 +25,14 @@ enum KeyWord {
     BY_END, // 18
 };
 
+enum BuiltinId
+{
+    kBoyiaThis = 1,
+    kBoyiaSuper,
+    kBoyiaString,
+    kBoyiaArray
+};
+
 typedef struct {
     LInt8* mPtr;
     LInt mLen;
@@ -108,4 +116,6 @@ LInt CallNativeFunction(LInt idx, LVoid* vm);
 
 LVoid MarkNativeObject(LIntPtr address, LInt gcFlag);
 LInt NativeObjectFlag(LVoid* address);
+
+LVoid BuiltinStringClass(LVoid* vm);
 #endif

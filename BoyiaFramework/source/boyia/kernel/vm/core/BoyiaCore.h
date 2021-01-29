@@ -14,7 +14,7 @@
 
 #include "BoyiaValue.h"
 
-typedef LInt(*NativePtr)(LVoid* vm);
+typedef LInt (*NativePtr)(LVoid* vm);
 
 typedef struct {
     LUintPtr mNameKey;
@@ -49,5 +49,8 @@ LVoid LoadInstructions(LVoid* buffer, LInt size, LVoid* vm);
 LVoid LoadEntryTable(LVoid* buffer, LInt size, LVoid* vm);
 LVoid* GetVMCreator(LVoid* vm);
 LVoid ExecuteGlobalCode(LVoid* vm);
+
+// 创建全局类引用
+LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm);
 
 #endif

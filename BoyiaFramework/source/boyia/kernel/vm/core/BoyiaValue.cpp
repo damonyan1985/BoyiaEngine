@@ -394,3 +394,16 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 {
     return GetRuntime(vm)->callNativeFunction(idx);
 }
+
+// Boyia builtins
+// String class builtin
+LVoid BuiltinStringClass(LVoid* vm) {
+    BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaString, vm);
+
+    BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
+
+    classBody->mParams[0].mValueType = BY_STRING;
+    classBody->mParams[0].mNameKey = GenIdentByStr("buffer", 6, vm);
+    classBody->mParams[0].mValue.mStrVal.mPtr = kBoyiaNull;
+    classBody->mParams[0].mValue.mStrVal.mLen = 0;
+}
