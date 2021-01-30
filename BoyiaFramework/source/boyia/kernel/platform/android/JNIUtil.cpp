@@ -98,7 +98,7 @@ void JNIUtil::callStaticMethod(
 
             String strResult;
             util::jstringTostr(methodInfo.env, str, strResult);
-            CreateStringValue(result, (LInt8*)strResult.GetBuffer(),
+            CreateNativeString(result, (LInt8*)strResult.GetBuffer(),
                 strResult.GetLength(), vm);
             strResult.ReleaseBuffer();
         }
