@@ -25,12 +25,21 @@ enum KeyWord {
     BY_END, // 18
 };
 
-enum BuiltinId
-{
+enum BuiltinId {
     kBoyiaThis = 1,
     kBoyiaSuper,
     kBoyiaString,
     kBoyiaArray
+};
+
+// 一下字符串类型含义
+// kBoyiaStringBuffer表示Boyia内存池创建的buffer
+// kNativeStringBuffer表示String类创建的buffer
+// kConstStringBuffer表示是从Boyia常量表中获取的
+enum StringBufferType {
+    kBoyiaStringBuffer = 0,
+    kNativeStringBuffer,
+    kConstStringBuffer
 };
 
 typedef struct {
@@ -80,7 +89,8 @@ typedef struct {
     }
 
 // function count最大不能超过65535
-// mParamCount的剩余高16位将用来做对象标记，如GC标记清除
+// mParamCount的剩余高16位将用来做对象标记, 如GC标记清除, 字符串buffer不同标记
+// 其中高16位前两位表示GC标记清除状态
 #define GET_FUNCTION_COUNT(function) (function->mParamCount & 0x0000FFFF)
 
 LVoid* BoyiaAlloc(LInt size, LVoid* vm);
@@ -125,5 +135,8 @@ BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm);
 
 LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
+LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
+
+LVoid DeleteNativeString(LInt8* buffer, LInt len);
 #endif

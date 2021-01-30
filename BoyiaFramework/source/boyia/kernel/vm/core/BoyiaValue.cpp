@@ -172,6 +172,12 @@ extern LVoid NativeDelete(LVoid* data)
     delete static_cast<boyia::BoyiaBase*>(data);
 }
 
+// 从哪来回哪去
+LVoid DeleteNativeString(LInt8* buffer, LInt len)
+{
+    String(_CS(buffer), LTrue, len);
+}
+
 // "Hello" + "World"
 static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
 {
@@ -415,6 +421,7 @@ LVoid BuiltinStringClass(LVoid* vm)
 
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
+    // first prop is raw string
     classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
     classBody->mParams[classBody->mParamSize].mNameKey = GenIdentByStr("buffer", 6, vm);
     classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
@@ -442,15 +449,26 @@ LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm)
     SetNativeResult(&val, vm);
 }
 
-LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
+LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
-    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
-    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
-    objBody->mParams[0].mValue.mStrVal.mLen = len;
-
+    BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
     value->mValueType = BY_CLASS;
     value->mValue.mObj.mPtr = (LIntPtr)objBody;
     value->mValue.mObj.mSuper = kBoyiaNull;
+
+    // Mark native string
+    objBody->mParamCount = objBody->mParamCount | (kNativeStringBuffer << 18);
+}
+
+LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
+{
+    BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
+    value->mValueType = BY_CLASS;
+    value->mValue.mObj.mPtr = (LIntPtr)objBody;
+    value->mValue.mObj.mSuper = kBoyiaNull;
+
+    // Mark const string
+    objBody->mParamCount = objBody->mParamCount | (kConstStringBuffer << 18);
 }
 
 BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)

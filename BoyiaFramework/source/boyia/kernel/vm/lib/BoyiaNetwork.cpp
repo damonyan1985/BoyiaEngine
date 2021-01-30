@@ -1,9 +1,9 @@
 #include "BoyiaNetwork.h"
 #include "AppManager.h"
 #include "BaseThread.h"
+#include "BoyiaAsyncEvent.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
-#include "BoyiaAsyncEvent.h"
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
@@ -55,14 +55,9 @@ LVoid BoyiaNetwork::onLoadFinished()
 LVoid BoyiaNetwork::callback()
 {
     BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
-    BoyiaFunction* objBody = CreateStringObject(
-        (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_vm);
     BoyiaValue value;
-    value.mValueType = BY_CLASS;
-    value.mValue.mObj.mPtr = (LIntPtr)objBody;
-    value.mValue.mObj.mSuper = kBoyiaNull;
-    //value.mValue.mStrVal.mPtr = (LInt8*)m_data->GetBuffer();
-    //value.mValue.mStrVal.mLen = m_data->GetLength();
+    CreateNativeString(&value,
+        (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_vm);
     BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
     SaveLocalSize(m_vm);
     LocalPush(&m_callback, m_vm);
