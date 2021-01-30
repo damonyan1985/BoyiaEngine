@@ -15,7 +15,6 @@ LVoid Application::init(const String& entryPage)
     // if code entry cache exist, use cache to load program
     if (FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
         LoadVMCode(m_runtime->vm());
-        //return;
     }
 
     // init native function and special identify

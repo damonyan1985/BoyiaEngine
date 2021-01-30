@@ -117,5 +117,11 @@ LInt CallNativeFunction(LInt idx, LVoid* vm);
 LVoid MarkNativeObject(LIntPtr address, LInt gcFlag);
 LInt NativeObjectFlag(LVoid* address);
 
+// Builtins class
+LUintPtr GetBoyiaClassId(BoyiaValue* obj);
 LVoid BuiltinStringClass(LVoid* vm);
+BoyiaStr* GetStringBuffer(BoyiaValue* ref);
+BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm);
+LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
+LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 #endif

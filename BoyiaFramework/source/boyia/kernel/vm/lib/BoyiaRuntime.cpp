@@ -52,14 +52,19 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
     BoyiaAsyncEvent::removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
 }
 
-// Builtins Id
 LVoid BoyiaRuntime::init()
 {
+    // begin builtins id
     m_idCreator->genIdentByStr("this", 4);
     m_idCreator->genIdentByStr("super", 5);
     m_idCreator->genIdentByStr("String", 6);
     m_idCreator->genIdentByStr("Array", 5);
+    // end builtins id
+
     initNativeFunction();
+
+    // add builtin classes
+    BuiltinStringClass(m_vm);
 }
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)

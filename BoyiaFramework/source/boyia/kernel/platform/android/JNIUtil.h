@@ -23,6 +23,7 @@ public:
         const char retType,
         BoyiaValue* args,
         LInt argsLen,
+        LVoid* vm,
         BoyiaValue* result);
 
     static void callStaticVoidMethod(const char* className,
