@@ -194,7 +194,7 @@ LInt logPrint(LVoid* vm)
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     if (val->mValueType == BY_INT) {
         BOYIA_LOG("Boyia [info]: %d", (int)val->mValue.mIntVal);
-    } else if (val->mValueType == BY_STRING) {
+    } else if (val->mValueType == BY_CLASS && GetBoyiaClassId(val) == kBoyiaString) {
         //char* log = convertMStr2Str(&val->mValue.mStrVal);
         char* log = convertMStr2Str(GetStringBuffer(val));
         BOYIA_LOG("Boyia [info]: %s", (const char*)log);
@@ -695,14 +695,6 @@ LInt setViewVisible(LVoid* vm)
     return 1;
 }
 
-static LUintPtr getObjectId(BoyiaValue* obj, LVoid* vm)
-{
-    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
-    BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
-    //LUintPtr arrayKey = GenIdentByStr("Array", 5, vm);
-    return baseCls->mNameKey;
-}
-
 static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
 {
     BoyiaFunction* props = (BoyiaFunction*)obj->mValue.mObj.mPtr;
@@ -721,8 +713,7 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
         switch (prop->mValueType) {
         case BY_CLASS: {
             // if the prop is array object
-            LUintPtr objectId = getObjectId(prop, vm);
-
+            LUintPtr objectId = GetBoyiaClassId(prop);
             if (objectId == kBoyiaString) {
                 // add string item to json object
                 const char* value = convertMStr2Str(GetStringBuffer(prop));
@@ -768,7 +759,7 @@ LInt toJsonString(LVoid* vm)
 
     // only object can be convert to json string
     if (obj->mValueType == BY_CLASS) {
-        json = convertObjToJson(obj, getObjectId(obj, vm) == kBoyiaArray, vm);
+        json = convertObjToJson(obj, GetBoyiaClassId(obj) == kBoyiaArray, vm);
     }
 
     // convert json error
