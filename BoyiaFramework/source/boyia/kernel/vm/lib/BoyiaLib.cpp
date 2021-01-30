@@ -37,24 +37,30 @@ LInt getFileContent(LVoid* vm)
         return 0;
     }
 
-    char* fileName = convertMStr2Str(&value->mValue.mStrVal);
+    //char* fileName = convertMStr2Str(&value->mValue.mStrVal);
+    char* fileName = convertMStr2Str(GetStringBuffer(value));
     FILE* file = fopen(fileName, "r");
     delete[] fileName;
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = NEW_ARRAY(LInt8, (len + 1), vm);
-    GCAppendRef(buf, BY_STRING, vm);
+
+    //BoyiaFunction* obj = CreateStringObject(buf, len, vm);
+    //GCAppendRef(buf, BY_STRING, vm);
     LMemset(buf, 0, len + 1);
     rewind(file);
     fread(buf, sizeof(char), len, file);
     fclose(file);
 
-    BoyiaValue val;
-    val.mValueType = BY_STRING;
-    val.mValue.mStrVal.mPtr = buf;
-    val.mValue.mStrVal.mLen = len;
+    //BoyiaValue val;
+    //val.mNameKey = kBoyiaString;
+    //val.mValueType = BY_CLASS;
+    //val.mValue.mObj.mPtr = (LIntPtr)obj;
+    //val.mValue.mStrVal.mPtr = buf;
+    //val.mValue.mStrVal.mLen = len;
 
-    SetNativeResult(&val, vm);
+    //SetNativeResult(&val, vm);
+    SetStringResult(buf, len, vm);
 
     printf("getFileContent data=%s\n", buf);
     return 1;
@@ -189,7 +195,8 @@ LInt logPrint(LVoid* vm)
     if (val->mValueType == BY_INT) {
         BOYIA_LOG("Boyia [info]: %d", (int)val->mValue.mIntVal);
     } else if (val->mValueType == BY_STRING) {
-        char* log = convertMStr2Str(&val->mValue.mStrVal);
+        //char* log = convertMStr2Str(&val->mValue.mStrVal);
+        char* log = convertMStr2Str(GetStringBuffer(val));
         BOYIA_LOG("Boyia [info]: %s", (const char*)log);
         delete[] log;
     }
@@ -255,16 +262,19 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         LInt len = LStrlen(_CS(json->valuestring));
         LInt8* ptr = NEW_ARRAY(LInt8, len, vm);
         LMemcpy(ptr, json->valuestring, len);
-        value->mValue.mStrVal.mPtr = ptr;
-        value->mValue.mStrVal.mLen = len;
-        GCAppendRef(ptr, BY_STRING, vm);
+        //value->mValue.mStrVal.mPtr = ptr;
+        //value->mValue.mStrVal.mLen = len;
+        //GCAppendRef(ptr, BY_STRING, vm);
+        value->mValueType = BY_CLASS;
+        value->mValue.mObj.mPtr = (LIntPtr)CreateStringObject(ptr, len, vm);
+        value->mValue.mObj.mSuper = kBoyiaNull;
     }
 }
 
 LInt jsonParseWithCJSON(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
-    char* content = convertMStr2Str(&val->mValue.mStrVal);
+    char* content = convertMStr2Str(GetStringBuffer(val));
     cJSON* json = cJSON_Parse(content);
     delete[] content;
     BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
@@ -281,8 +291,9 @@ LInt createJSDocument(LVoid* vm)
         return 0;
     }
 
-    char* url = convertMStr2Str(&val->mValue.mStrVal);
-    String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
+    BoyiaStr* urlStr = GetStringBuffer(val);
+    char* url = convertMStr2Str(urlStr);
+    String strUrl(_CS(url), LTrue, urlStr->mLen);
     boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
     doc->loadHTML(strUrl);
     return 1;
@@ -416,10 +427,11 @@ LInt setViewStyle(LVoid* vm)
     BoyiaValue* style = (BoyiaValue*)GetLocalValue(1, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
 
-    char* styleText = convertMStr2Str(&style->mValue.mStrVal);
-    String styleStr(_CS(styleText), LTrue, style->mValue.mStrVal.mLen);
+    BoyiaStr* styleStr = GetStringBuffer(style);
+    //char* styleText = convertMStr2Str(styleStr);
+    String styleText(_CS(convertMStr2Str(styleStr)), LTrue, styleStr->mLen);
 
-    jsDoc->setStyle(styleStr);
+    jsDoc->setStyle(styleText);
 
     return 1;
 }
@@ -470,8 +482,9 @@ LInt loadDataFromNative(LVoid* vm)
     BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2, vm);
     boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(callback, obj, vm);
-    char* url = convertMStr2Str(&val->mValue.mStrVal);
-    String strUrl(_CS(url), LTrue, val->mValue.mStrVal.mLen);
+    BoyiaStr* urlStr = GetStringBuffer(val);
+    char* url = convertMStr2Str(urlStr);
+    String strUrl(_CS(url), LTrue, urlStr->mLen);
     network->load(strUrl);
 
     return 1;
@@ -484,10 +497,13 @@ LInt callStaticMethod(LVoid* vm)
     BoyiaValue* method = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* sign = (BoyiaValue*)GetLocalValue(2, vm);
 
-    char* strClzz = convertMStr2Str(&clzz->mValue.mStrVal);
-    char* strMethod = convertMStr2Str(&method->mValue.mStrVal);
-    char* strSign = convertMStr2Str(&sign->mValue.mStrVal);
-    char retFlag = strSign[sign->mValue.mStrVal.mLen - 1];
+    char* strClzz = convertMStr2Str(GetStringBuffer(clzz));
+
+    BoyiaStr* methodArgStr = GetStringBuffer(method);
+    BoyiaStr* signArgStr = GetStringBuffer(sign);
+    char* strMethod = convertMStr2Str(methodArgStr);
+    char* strSign = convertMStr2Str(signArgStr);
+    char retFlag = strSign[signArgStr->mLen - 1];
 
     BOYIA_LOG("Boyia [info]: callStaticMethod---strClzz=%s strMethod=%s strSign=%s", strClzz, strMethod, strSign);
     if (retFlag == 'S') {
@@ -500,10 +516,11 @@ LInt callStaticMethod(LVoid* vm)
         strClzz,
         strMethod,
         strSign,
-        method->mValue.mStrVal.mLen - 1,
+        methodArgStr->mLen - 1,
         retFlag,
         clzz + 3,
         size,
+        vm,
         &result);
 
     SetNativeResult(&result, vm);
@@ -520,10 +537,12 @@ LInt getHtmlItem(LVoid* vm)
     BoyiaValue* idArg = (BoyiaValue*)GetLocalValue(1, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
 
-    char* id = convertMStr2Str(&idArg->mValue.mStrVal);
-    String idStr(_CS(id), LTrue, idArg->mValue.mStrVal.mLen);
+    BoyiaStr* idStr = GetStringBuffer(idArg);
+    //char* id = convertMStr2Str(idStr);
+    String id(_CS(convertMStr2Str(idStr)),
+        LTrue, idStr->mLen);
 
-    jsDoc->getItemByID(idStr);
+    jsDoc->getItemByID(id);
 
     return 1;
 }
@@ -533,11 +552,13 @@ LInt loadImageByUrl(LVoid* vm)
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1, vm);
 
-    char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
-    String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
+    BoyiaStr* urlStr = GetStringBuffer(urlArg);
+    //char* url = convertMStr2Str(GetStringBuffer(urlArg));
+    String url(_CS(convertMStr2Str(urlStr)),
+        LTrue, urlStr->mLen);
 
     boyia::BoyiaImageView* image = reinterpret_cast<boyia::BoyiaImageView*>(itemArg->mValue.mIntVal);
-    image->loadImage(urlStr);
+    image->loadImage(url);
     return 1;
 }
 
@@ -546,12 +567,12 @@ LInt setViewGroupText(LVoid* vm)
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1, vm);
 
-    char* text = convertMStr2Str(&textArg->mValue.mStrVal);
-    String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
+    BoyiaStr* textStr = GetStringBuffer(textArg);
+    String text(_CS(convertMStr2Str(textStr)), LTrue, textStr->mLen);
 
     boyia::BoyiaViewGroup* view = (boyia::BoyiaViewGroup*)itemArg->mValue.mIntVal;
-    view->setText(textStr);
-    textStr.ReleaseBuffer();
+    view->setText(text);
+    text.ReleaseBuffer();
     return 1;
 }
 
@@ -560,11 +581,13 @@ LInt setInputViewText(LVoid* vm)
     BoyiaValue* input = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* textArg = (BoyiaValue*)GetLocalValue(1, vm);
 
-    char* text = convertMStr2Str(&textArg->mValue.mStrVal);
-    String textStr(_CS(text), LTrue, textArg->mValue.mStrVal.mLen);
+    BoyiaStr* textStr = GetStringBuffer(textArg);
+    //char* text = convertMStr2Str(GetStringBuffer(textArg));
+    String text(_CS(convertMStr2Str(GetStringBuffer(textArg))),
+        LTrue, textStr->mLen);
 
     boyia::BoyiaInputView* view = (boyia::BoyiaInputView*)input->mValue.mIntVal;
-    view->setText(textStr);
+    view->setText(text);
     return 1;
 }
 
@@ -596,8 +619,9 @@ LInt createViewGroup(LVoid* vm)
     BoyiaValue* idVal = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* selectVal = (BoyiaValue*)GetLocalValue(1, vm);
 
-    char* idStr = convertMStr2Str(&idVal->mValue.mStrVal);
-    String strUrl(_CS(idStr), LTrue, idVal->mValue.mStrVal.mLen);
+    BoyiaStr* buffer = GetStringBuffer(idVal);
+    char* idStr = convertMStr2Str(buffer);
+    String strUrl(_CS(idStr), LTrue, buffer->mLen);
 
     new boyia::BoyiaViewGroup(
         static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)),
@@ -640,12 +664,13 @@ LInt setImageUrl(LVoid* vm)
     BoyiaValue* itemArg = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* urlArg = (BoyiaValue*)GetLocalValue(1, vm);
 
-    char* url = convertMStr2Str(&urlArg->mValue.mStrVal);
-    String urlStr(_CS(url), LTrue, urlArg->mValue.mStrVal.mLen);
+    BoyiaStr* urlStr = GetStringBuffer(urlArg);
+    String url(_CS(convertMStr2Str(urlStr)),
+        LTrue, urlStr->mLen);
 
     boyia::BoyiaImageView* image = (boyia::BoyiaImageView*)itemArg->mValue.mIntVal;
-    image->setImageUrl(urlStr);
-    urlStr.ReleaseBuffer();
+    image->setImageUrl(url);
+    url.ReleaseBuffer();
     return 1;
 }
 
@@ -670,12 +695,12 @@ LInt setViewVisible(LVoid* vm)
     return 1;
 }
 
-static LBool isObjArray(BoyiaValue* obj, LVoid* vm)
+static LUintPtr getObjectId(BoyiaValue* obj, LVoid* vm)
 {
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
     //LUintPtr arrayKey = GenIdentByStr("Array", 5, vm);
-    return baseCls->mNameKey == kBoyiaArray;
+    return baseCls->mNameKey;
 }
 
 static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
@@ -694,24 +719,26 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
         }
 
         switch (prop->mValueType) {
-        case BY_STRING: {
-            // add string item to json object
-            const char* value = convertMStr2Str(&prop->mValue.mStrVal);
-            if (isArray) {
-                cJSON_AddItemToArray(jsonObj, cJSON_CreateString(value));
-            } else {
-                cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
-            }
-        } break;
         case BY_CLASS: {
             // if the prop is array object
-            LBool isArrayProp = isObjArray(prop, vm);
+            LUintPtr objectId = getObjectId(prop, vm);
 
-            if (isArray) {
-                cJSON_AddItemToArray(jsonObj, convertObjToJson(prop, isArrayProp, vm));
+            if (objectId == kBoyiaString) {
+                // add string item to json object
+                const char* value = convertMStr2Str(GetStringBuffer(prop));
+                if (isArray) {
+                    cJSON_AddItemToArray(jsonObj, cJSON_CreateString(value));
+                } else {
+                    cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
+                }
             } else {
-                // add object item to json object
-                cJSON_AddItemToObject(jsonObj, key, convertObjToJson(prop, isArrayProp, vm));
+                LBool isArrayProp = objectId == kBoyiaArray;
+                if (isArray) {
+                    cJSON_AddItemToArray(jsonObj, convertObjToJson(prop, isArrayProp, vm));
+                } else {
+                    // add object item to json object
+                    cJSON_AddItemToObject(jsonObj, key, convertObjToJson(prop, isArrayProp, vm));
+                }
             }
         } break;
         case BY_INT: {
@@ -741,7 +768,7 @@ LInt toJsonString(LVoid* vm)
 
     // only object can be convert to json string
     if (obj->mValueType == BY_CLASS) {
-        json = convertObjToJson(obj, isObjArray(obj, vm), vm);
+        json = convertObjToJson(obj, getObjectId(obj, vm) == kBoyiaArray, vm);
     }
 
     // convert json error
@@ -754,11 +781,12 @@ LInt toJsonString(LVoid* vm)
     cJSON_Delete(json);
     BOYIA_LOG("Boyia [info]: toJsonString %s, and length=%d", out, len);
 
-    BoyiaValue val;
-    val.mValueType = BY_STRING;
-    val.mValue.mStrVal.mPtr = out;
-    val.mValue.mStrVal.mLen = len;
+    //BoyiaValue val;
+    //val.mValueType = BY_STRING;
+    //val.mValue.mStrVal.mPtr = out;
+    //val.mValue.mStrVal.mLen = len;
 
-    SetNativeResult(&val, vm);
+    //SetNativeResult(&val, vm);
+    SetStringResult(out, len, vm);
     return 1;
 }

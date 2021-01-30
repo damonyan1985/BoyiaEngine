@@ -43,6 +43,7 @@ void JNIUtil::callStaticMethod(
     const char retType,
     BoyiaValue* stack,
     LInt argsLen,
+    LVoid* vm,
     BoyiaValue* result)
 {
     JNIEnv* env = getEnv();
@@ -53,9 +54,9 @@ void JNIUtil::callStaticMethod(
         LInt idx = 0;
         for (; idx < argsLen; idx++) {
             BoyiaValue* val = stack + idx;
-            if (val->mValueType == BY_STRING) {
+            if (val->mValueType == BY_CLASS) {
                 //char* pStr = convertMStr2Str(&val->mValue.mStrVal);
-                BoyiaStr* pStr = &val->mValue.mStrVal;
+                BoyiaStr* pStr = GetStringBuffer(val); //&val->mValue.mStrVal;
                 jstring str = util::strToJstring(env, pStr->mPtr, pStr->mLen);
                 args[idx].l = str;
                 //delete[] pStr;
@@ -97,9 +98,8 @@ void JNIUtil::callStaticMethod(
 
             String strResult;
             util::jstringTostr(methodInfo.env, str, strResult);
-            result->mValueType = BY_STRING;
-            result->mValue.mStrVal.mPtr = (LInt8*)strResult.GetBuffer();
-            result->mValue.mStrVal.mLen = strResult.GetLength();
+            CreateStringValue(result, (LInt8*)strResult.GetBuffer(),
+                strResult.GetLength(), vm);
             strResult.ReleaseBuffer();
         }
     } break;

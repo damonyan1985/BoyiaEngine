@@ -5,15 +5,15 @@
 #include "AutoLock.h"
 #include "BoyiaBase.h"
 #include "BoyiaMemory.h"
-#include "IDCreator.h"
-#include "PlatformLib.h"
-#include "SalLog.h"
-#include "SystemUtil.h"
-#include "FileUtil.h"
-#include "PlatformBridge.h"
-#include "StringUtils.h"
 #include "BoyiaPtr.h"
 #include "BoyiaRuntime.h"
+#include "FileUtil.h"
+#include "IDCreator.h"
+#include "PlatformBridge.h"
+#include "PlatformLib.h"
+#include "SalLog.h"
+#include "StringUtils.h"
+#include "SystemUtil.h"
 #include <stdio.h>
 #include <stdlib.h>
 #if ENABLE(BOYIA_WINDOWS)
@@ -180,8 +180,11 @@ static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
         LMemset(str->mPtr, 0, MAX_INT_LEN);
         LInt2StrWithLength(value->mValue.mIntVal, (LUint8*)str->mPtr, 10, &str->mLen);
     } else {
-        str->mPtr = value->mValue.mStrVal.mPtr;
-        str->mLen = value->mValue.mStrVal.mLen;
+        // String Object
+
+        BoyiaStr* buffer = GetStringBuffer(value);
+        str->mPtr = buffer->mPtr;
+        str->mLen = buffer->mLen;
     }
 }
 
@@ -200,11 +203,17 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
 
     LMemcpy(str, leftStr.mPtr, leftStr.mLen);
     LMemcpy(str + leftStr.mLen, rightStr.mPtr, rightStr.mLen);
-    right->mValue.mStrVal.mPtr = str;
-    right->mValue.mStrVal.mLen = len;
-    right->mValueType = BY_STRING;
 
-    GCAppendRef(str, BY_STRING, vm);
+    //right->mValue.mStrVal.mPtr = str;
+    //right->mValue.mStrVal.mLen = len;
+    //right->mValueType = BY_STRING;
+
+    right->mValueType = BY_CLASS;
+    right->mNameKey = kBoyiaString;
+    right->mValue.mObj.mPtr = (LIntPtr)CreateStringObject(str, len, vm);
+    right->mValue.mObj.mSuper = kBoyiaNull;
+
+    GCAppendRef(str, BY_CLASS, vm);
     KLOG("StringAdd End");
 }
 
@@ -290,8 +299,7 @@ LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
 {
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getInstructionCachePath()),
-        String(_CS(instructionBuffer), LFalse, size)
-    );
+        String(_CS(instructionBuffer), LFalse, size));
 }
 
 const LUint8* kStringTableSplitFlag = _CS("@boyia@stringtable@");
@@ -320,16 +328,14 @@ LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm)
     }
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getStringTableCachePath()),
-        String(buffer, LFalse, length)
-    );
+        String(buffer, LFalse, length));
 }
 
 LVoid CacheInstuctionEntry(LVoid* vmEntryBuffer, LInt size)
 {
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getInstructionEntryPath()),
-        String(_CS(vmEntryBuffer), LFalse, size)
-    );
+        String(_CS(vmEntryBuffer), LFalse, size));
 }
 
 LVoid CacheSymbolTable(LVoid* vm)
@@ -339,8 +345,7 @@ LVoid CacheSymbolTable(LVoid* vm)
     OwnerPtr<String> ownerString = idCreator->idsToString();
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getSymbolTablePath()),
-        *ownerString.get()
-    );
+        *ownerString.get());
 }
 
 static LVoid LoadSymbolTable(LVoid* vm)
@@ -348,10 +353,10 @@ static LVoid LoadSymbolTable(LVoid* vm)
     // Load SymbolTable
     String content;
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getSymbolTablePath()), content);
-    OwnerPtr<KVector<String> > symbolTable = StringUtils::split(content, _CS("\n"));
+    OwnerPtr<KVector<String>> symbolTable = StringUtils::split(content, _CS("\n"));
 
     for (LInt i = 0; i < symbolTable->size(); i++) {
-        OwnerPtr<KVector<String> > ids = StringUtils::split(symbolTable->elementAt(i), _CS(":"));
+        OwnerPtr<KVector<String>> ids = StringUtils::split(symbolTable->elementAt(i), _CS(":"));
         LUint id = StringUtils::stringToInt(ids->elementAt(1));
         GetRuntime(vm)->idCreator()->appendIdentify(ids->elementAt(0), id);
     }
@@ -362,7 +367,7 @@ LVoid LoadVMCode(LVoid* vm)
     // Load StringTable
     String content;
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getStringTableCachePath()), content);
-    OwnerPtr<KVector<String> > stringTable = StringUtils::split(content, kStringTableSplitFlag);
+    OwnerPtr<KVector<String>> stringTable = StringUtils::split(content, kStringTableSplitFlag);
 
     BoyiaStr* strTable = new BoyiaStr[stringTable->size()];
     for (LInt i = 0; i < stringTable->size(); i++) {
@@ -397,7 +402,14 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 
 // Boyia builtins
 // String class builtin
-LVoid BuiltinStringClass(LVoid* vm) {
+LUintPtr GetBoyiaClassId(BoyiaValue* obj) {
+    BoyiaFunction* objBody = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    BoyiaValue* clzz = (BoyiaValue*)objBody->mFuncBody;
+    return clzz->mNameKey;
+}
+
+LVoid BuiltinStringClass(LVoid* vm)
+{
     BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaString, vm);
 
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
@@ -406,4 +418,35 @@ LVoid BuiltinStringClass(LVoid* vm) {
     classBody->mParams[0].mNameKey = GenIdentByStr("buffer", 6, vm);
     classBody->mParams[0].mValue.mStrVal.mPtr = kBoyiaNull;
     classBody->mParams[0].mValue.mStrVal.mLen = 0;
+}
+
+BoyiaStr* GetStringBuffer(BoyiaValue* ref)
+{
+    BoyiaFunction* strObj = (BoyiaFunction*)ref->mValue.mObj.mPtr;
+    return &strObj->mParams[0].mValue.mStrVal;
+}
+
+LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
+{
+    BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
+    value->mValueType = BY_CLASS;
+    value->mValue.mObj.mPtr = (LIntPtr)objBody;
+    value->mValue.mObj.mSuper = kBoyiaNull;
+}
+
+LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm)
+{
+    BoyiaValue val;
+    CreateStringValue(&val, buffer, len, vm);
+    SetNativeResult(&val, vm);
+}
+
+BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
+{
+    BoyiaFunction* classBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
+    classBody->mParams[0].mValue.mStrVal.mPtr = buffer;
+    classBody->mParams[0].mValue.mStrVal.mLen = len;
+
+    GCAppendRef(classBody, BY_CLASS, vm);
+    return classBody;
 }

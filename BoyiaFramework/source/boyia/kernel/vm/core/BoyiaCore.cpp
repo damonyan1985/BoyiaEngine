@@ -1322,7 +1322,7 @@ static BoyiaValue* CreateFunVal(LUintPtr hashKey, LUint8 type, BoyiaVM* vm)
     val->mValueType = type;
     val->mNameKey = hashKey;
     val->mValue.mObj.mPtr = (LIntPtr)fun;
-    val->mValue.mObj.mSuper = 0;
+    val->mValue.mObj.mSuper = kBoyiaNull;
     if (type == BY_CLASS) {
         fun->mFuncBody = (LIntPtr)val;
     }
@@ -1877,7 +1877,11 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
         return 1;
     }
 
-    if (left->mValueType == BY_STRING || right->mValueType == BY_STRING) {
+    if (left->mValueType != BY_CLASS) {
+        return 0;
+    }
+
+    if (left->mNameKey == kBoyiaString || right->mNameKey == kBoyiaString) {
         BOYIA_LOG("StringAdd Begin %d", 1);
         StringAdd(left, right, vm);
         return 1;
@@ -2228,9 +2232,22 @@ static LInt HandleConstString(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaStr* constStr = &vm->mStrTable->mTable[inst->mOPLeft.mValue];
 
-    vm->mCpu->mReg0.mValueType = BY_STRING;
-    vm->mCpu->mReg0.mValue.mStrVal.mPtr = constStr->mPtr;
-    vm->mCpu->mReg0.mValue.mStrVal.mLen = constStr->mLen;
+    BoyiaFunction* classBody = (BoyiaFunction*)CopyObject(kBoyiaString, NUM_FUNC_PARAMS, vm);
+    GCAppendRef(classBody, BY_CLASS, vm);
+    
+    classBody->mParams[0].mValue.mStrVal.mPtr = constStr->mPtr;
+    classBody->mParams[0].mValue.mStrVal.mLen = constStr->mLen;
+
+    BoyiaValue* reg = &vm->mCpu->mReg0;
+    reg->mValueType = BY_CLASS;
+    reg->mNameKey = kBoyiaString;
+    reg->mValue.mObj.mPtr = (LIntPtr)classBody;
+    reg->mValue.mObj.mSuper = kBoyiaNull;
+
+
+    //vm->mCpu->mReg0.mValueType = BY_STRING;
+    //vm->mCpu->mReg0.mValue.mStrVal.mPtr = constStr->mPtr;
+    //vm->mCpu->mReg0.mValue.mStrVal.mLen = constStr->mLen;
     return 1;
 }
 
@@ -2571,8 +2588,8 @@ LVoid ExecuteGlobalCode(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
 
-    vmPtr->mEState->mGValSize = 0;
-    vmPtr->mEState->mFunSize = 0;
+    //vmPtr->mEState->mGValSize = 0;
+    //vmPtr->mEState->mFunSize = 0;
     vmPtr->mEState->mLoopSize = 0;
     ResetScene(vmPtr);
     CommandTable cmds;
