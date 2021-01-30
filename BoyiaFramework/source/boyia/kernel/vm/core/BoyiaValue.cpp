@@ -402,7 +402,8 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 
 // Boyia builtins
 // String class builtin
-LUintPtr GetBoyiaClassId(BoyiaValue* obj) {
+LUintPtr GetBoyiaClassId(BoyiaValue* obj)
+{
     BoyiaFunction* objBody = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     BoyiaValue* clzz = (BoyiaValue*)objBody->mFuncBody;
     return clzz->mNameKey;
@@ -414,10 +415,10 @@ LVoid BuiltinStringClass(LVoid* vm)
 
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
-    classBody->mParams[0].mValueType = BY_STRING;
-    classBody->mParams[0].mNameKey = GenIdentByStr("buffer", 6, vm);
-    classBody->mParams[0].mValue.mStrVal.mPtr = kBoyiaNull;
-    classBody->mParams[0].mValue.mStrVal.mLen = 0;
+    classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
+    classBody->mParams[classBody->mParamSize].mNameKey = GenIdentByStr("buffer", 6, vm);
+    classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
+    classBody->mParams[classBody->mParamSize++].mValue.mStrVal.mLen = 0;
 }
 
 BoyiaStr* GetStringBuffer(BoyiaValue* ref)
@@ -441,12 +442,23 @@ LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm)
     SetNativeResult(&val, vm);
 }
 
+LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
+{
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
+    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
+    objBody->mParams[0].mValue.mStrVal.mLen = len;
+
+    value->mValueType = BY_CLASS;
+    value->mValue.mObj.mPtr = (LIntPtr)objBody;
+    value->mValue.mObj.mSuper = kBoyiaNull;
+}
+
 BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
 {
-    BoyiaFunction* classBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
-    classBody->mParams[0].mValue.mStrVal.mPtr = buffer;
-    classBody->mParams[0].mValue.mStrVal.mLen = len;
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
+    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
+    objBody->mParams[0].mValue.mStrVal.mLen = len;
 
-    GCAppendRef(classBody, BY_CLASS, vm);
-    return classBody;
+    GCAppendRef(objBody, BY_CLASS, vm);
+    return objBody;
 }

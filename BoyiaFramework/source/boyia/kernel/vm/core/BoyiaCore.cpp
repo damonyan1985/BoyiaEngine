@@ -1881,7 +1881,7 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
         return 0;
     }
 
-    if (left->mNameKey == kBoyiaString || right->mNameKey == kBoyiaString) {
+    if (GetBoyiaClassId(left) == kBoyiaString || GetBoyiaClassId(right) == kBoyiaString) {
         BOYIA_LOG("StringAdd Begin %d", 1);
         StringAdd(left, right, vm);
         return 1;
@@ -2230,24 +2230,9 @@ static LVoid CopyStringFromToken(CompileState* cs, BoyiaStr* str)
 static LInt HandleConstString(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaStr* constStr = &vm->mStrTable->mTable[inst->mOPLeft.mValue];
+    BoyiaStr* str = &vm->mStrTable->mTable[inst->mOPLeft.mValue];
 
-    BoyiaFunction* classBody = (BoyiaFunction*)CopyObject(kBoyiaString, NUM_FUNC_PARAMS, vm);
-    GCAppendRef(classBody, BY_CLASS, vm);
-    
-    classBody->mParams[0].mValue.mStrVal.mPtr = constStr->mPtr;
-    classBody->mParams[0].mValue.mStrVal.mLen = constStr->mLen;
-
-    BoyiaValue* reg = &vm->mCpu->mReg0;
-    reg->mValueType = BY_CLASS;
-    reg->mNameKey = kBoyiaString;
-    reg->mValue.mObj.mPtr = (LIntPtr)classBody;
-    reg->mValue.mObj.mSuper = kBoyiaNull;
-
-
-    //vm->mCpu->mReg0.mValueType = BY_STRING;
-    //vm->mCpu->mReg0.mValue.mStrVal.mPtr = constStr->mPtr;
-    //vm->mCpu->mReg0.mValue.mStrVal.mLen = constStr->mLen;
+    CreateConstString(&vm->mCpu->mReg0, str->mPtr, str->mLen, vm);
     return 1;
 }
 

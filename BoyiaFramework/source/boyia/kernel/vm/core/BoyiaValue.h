@@ -122,6 +122,8 @@ LUintPtr GetBoyiaClassId(BoyiaValue* obj);
 LVoid BuiltinStringClass(LVoid* vm);
 BoyiaStr* GetStringBuffer(BoyiaValue* ref);
 BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm);
+
+LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 #endif
