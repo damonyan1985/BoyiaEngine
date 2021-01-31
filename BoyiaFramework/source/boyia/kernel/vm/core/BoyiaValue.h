@@ -138,5 +138,4 @@ LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 
-LVoid DeleteNativeString(LInt8* buffer, LInt len);
 #endif

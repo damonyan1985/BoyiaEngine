@@ -172,12 +172,6 @@ extern LVoid NativeDelete(LVoid* data)
     delete static_cast<boyia::BoyiaBase*>(data);
 }
 
-// 从哪来回哪去
-LVoid DeleteNativeString(LInt8* buffer, LInt len)
-{
-    String(_CS(buffer), LTrue, len);
-}
-
 // "Hello" + "World"
 static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
 {

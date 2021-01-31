@@ -4,6 +4,7 @@
 #include "PlatformLib.h"
 #include "SalLog.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct BoyiaRef {
     LVoid* mAddress;
@@ -141,7 +142,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
     if (classId == kBoyiaString) {
         BoyiaStr* buffer = &objBody->mParams[0].mValue.mStrVal;
         if (IS_NATIVE_STRING(objBody)) {
-            DeleteNativeString(buffer->mPtr, buffer->mLen);
+            free(buffer->mPtr);
         } else if (IS_BOYIA_STRING(objBody)) {
             VM_DELETE(buffer, vm);
         } // 常量字符串不做任何处理

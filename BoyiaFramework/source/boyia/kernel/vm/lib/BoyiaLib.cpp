@@ -778,6 +778,9 @@ LInt toJsonString(LVoid* vm)
     //val.mValue.mStrVal.mLen = len;
 
     //SetNativeResult(&val, vm);
-    SetStringResult(out, len, vm);
+    //SetStringResult(out, len, vm);
+    BoyiaValue val;
+    CreateNativeString(&val, out, len, vm);
+    SetNativeResult(&val, vm);
     return 1;
 }

@@ -153,6 +153,8 @@ typedef StringA String;
 
 #define GET_STR(str) ((const char*)str.GetBuffer())
 
+#define NEW_BUFFER(type, size) ((type*)malloc(sizeof(type) * size))
+
 template <class T>
 LString<T>::LString()
     : m_pchData(kBoyiaNull)
@@ -238,7 +240,8 @@ template <class T>
 LVoid LString<T>::ResetBuffer()
 {
     if (m_pchData && m_owner) {
-        delete[] m_pchData;
+        //delete[] m_pchData;
+        free(m_pchData);
     }
 
     m_pchData = kBoyiaNull;
@@ -333,7 +336,7 @@ template <class T>
 LVoid LString<T>::AllocBuffer(LInt nLen)
 {
     m_pchDataLen = nLen + 1;
-    m_pchData = new T[nLen + 1];
+    m_pchData = NEW_BUFFER(T, m_pchDataLen);//new T[nLen + 1];
     LMemset(m_pchData, 0, m_pchDataLen * sizeof(T));
 }
 
@@ -370,7 +373,8 @@ LVoid LString<T>::StrPlus(const T* lpsz, LInt len)
             AllocBuffer(nLen);
             LMemcpy(m_pchData, pOldData, nOldDataLen * sizeof(T));
             LMemcpy(m_pchData + nOldDataLen, lpsz, plusSize * sizeof(T));
-            delete[] pOldData;
+            //delete[] pOldData;
+            free(pOldData);
         } else {
             AllocBuffer(nLen);
             LMemcpy(m_pchData, lpsz, plusSize * sizeof(T));
