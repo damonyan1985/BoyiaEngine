@@ -50,7 +50,7 @@ LUint IDCreator::genIdentifier(BoyiaStr* str)
 
     id = new BoyiaId;
     id->mID = m_idLink->mEnd ? m_idLink->mEnd->mID + 1 : m_idCount + 1;
-    id->mStr.mPtr = new LInt8[str->mLen];
+    id->mStr.mPtr = NEW_BUFFER(LInt8, str->mLen);
     id->mStr.mLen = str->mLen;
     LMemcpy(id->mStr.mPtr, str->mPtr, str->mLen);
     id->mNext = kBoyiaNull;
@@ -103,7 +103,7 @@ OwnerPtr<String> IDCreator::idsToString()
 
         bid = bid->mNext;
     }
-    
+
     OwnerPtr<String> ownerString = new String(buffer.GetBuffer(), LFalse, buffer.GetLength());
     buffer.ReleaseBuffer();
     return ownerString;
@@ -119,7 +119,7 @@ LVoid IDCreator::appendIdentify(const String& str, LUint id)
 
     BoyiaId* bid = new BoyiaId;
     bid->mID = id;
-    bid->mStr.mPtr = new LInt8[str.GetLength()];
+    bid->mStr.mPtr = NEW_BUFFER(LInt8, str.GetLength());
     bid->mStr.mLen = str.GetLength();
     LMemcpy(bid->mStr.mPtr, str.GetBuffer(), str.GetLength());
     bid->mNext = kBoyiaNull;

@@ -1,6 +1,7 @@
 package com.boyia.app.common;
 
 import android.app.Application;
+import android.os.Looper;
 import android.os.Handler;
 import android.os.HandlerThread;
 
@@ -13,9 +14,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sApplication = this;
-        mAppThread = new HandlerThread("app_thread");
-        mAppThread.start();
-        mHandler = new Handler(mAppThread.getLooper());
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public static BaseApplication getInstance() {

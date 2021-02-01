@@ -73,7 +73,6 @@ void JNIUtil::callStaticMethod(
     JniMethodInfo methodInfo;
     switch (retType) {
     case 'V': {
-
         if (getStaticMethodInfo(methodInfo, className, method, signature)) {
 
             methodInfo.env->CallStaticVoidMethodA(

@@ -18,7 +18,7 @@ LVoid CharConvertor::WcharToChar(const wchar_t* wp, String& text, size_t encode)
 {
     //std::string str;
     int len = WideCharToMultiByte(encode, 0, wp, wcslen(wp), NULL, 0, NULL, NULL);
-    char* chs = new char[len + 1];
+    char* chs = NEW_BUFFER(char, len + 1);
     WideCharToMultiByte(encode, 0, wp, wcslen(wp), chs, len, NULL, NULL);
     chs[len] = '\0';
     //str = m_char;
