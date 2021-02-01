@@ -77,7 +77,7 @@ OwnerPtr<String> StringBuilder::toString() const
     }
 
     //KFORMATLOG("StringBuilder::append str m_length1=%d", m_length);
-    LByte* buffer = new LByte[m_length + 1];
+    LByte* buffer = NEW_BUFFER(LByte, m_length + 1);
     util::LMemset(buffer, 0, m_length + 1);
     BoyiaList<OwnerPtr<BufferItem>>::Iterator iter = m_buffer.begin();
     BoyiaList<OwnerPtr<BufferItem>>::Iterator iterEnd = m_buffer.end();

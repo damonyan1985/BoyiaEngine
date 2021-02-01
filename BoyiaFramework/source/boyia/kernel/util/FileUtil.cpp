@@ -31,7 +31,7 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
     }
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
-    LInt8* buf = new LInt8[len + 1];
+    LInt8* buf = NEW_BUFFER(LInt8, len + 1);
     LMemset(buf, 0, len + 1);
     rewind(file);
     fread(buf, sizeof(char), len, file);
@@ -108,9 +108,10 @@ bool FileUtil::isSpecialDir(const char* path)
 }
 
 #if ENABLE(BOYIA_WINDOWS)
-static LVoid deleteFileWin(const wstring& path) {
+static LVoid deleteFileWin(const wstring& path)
+{
     WIN32_FIND_DATA data;
-    
+
     HANDLE hFile = ::FindFirstFile(path.c_str(), &data);
     wstring fullPath = path;
     do {
@@ -119,7 +120,7 @@ static LVoid deleteFileWin(const wstring& path) {
         }
 
         fullPath += data.cFileName;
-        if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {   
+        if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
             deleteFileWin(fullPath);
         } else {
             ::DeleteFile(fullPath.c_str());

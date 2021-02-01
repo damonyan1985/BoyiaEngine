@@ -58,7 +58,7 @@ LVoid jstringTostr(JNIEnv* env, jstring jstr, String& result)
     jbyte* jBuf = env->GetByteArrayElements(byteArray, JNI_FALSE);
 
     if (jBuf) {
-        pStr = new char[strLen + 1];
+        pStr = NEW_BUFFER(char, strLen + 1);
         memcpy(pStr, jBuf, strLen);
         pStr[strLen] = 0;
     }

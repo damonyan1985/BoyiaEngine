@@ -228,7 +228,7 @@ void StringUtils::strTostrW(const String& src, StringW& dest)
 {
     int len = src.GetLength();
     KFORMATLOG("strTostrW d=%s", (const char*)src.GetBuffer());
-    LUint16* lpwsz = new LUint16[3 * len + 1];
+    LUint16* lpwsz = NEW_BUFFER(LUint16, 3 * len + 1);
     LMemset(lpwsz, 0, (3 * len + 1) * sizeof(LUint16));
     sU8xU(lpwsz, (char*)src.GetBuffer(), len);
     //lpwsz[len] = L'\0';
@@ -241,7 +241,7 @@ void StringUtils::strWtoStr(const StringW& src, String& dest)
 {
     KLOG("strWtoStr0");
     int len = src.GetLength();
-    LUint8* d = new LUint8[3 * len + 1];
+    LUint8* d = NEW_BUFFER(LUint8, 3 * len + 1);
     LMemset(d, 0, 3 * len + 1);
     KLOG("strWtoStr1");
     sUxU8((char*)d, (LUint16*)src.GetBuffer(), /*2*len*/ len);

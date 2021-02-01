@@ -10,11 +10,11 @@
 #include "KVector.h"
 #include "LColor.h"
 #include "LGdi.h"
+#include "OwnerPtr.h"
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "Style.h"
 #include "StyleTags.h"
-#include "OwnerPtr.h"
 
 namespace util {
 
@@ -227,7 +227,7 @@ LInt StyleParser::getCssColor(const String& colorValue)
     {
         KFORMATLOG("getCssColor = %s", (const char*)colorValue.GetBuffer());
 
-        LUint8* colorBuffer = new LUint8[7];
+        LUint8* colorBuffer = NEW_BUFFER(LUint8, 7);
         colorBuffer[0] = colorValue.CharAt(0);
         colorBuffer[1] = colorValue.CharAt(1);
         colorBuffer[2] = colorValue.CharAt(1);

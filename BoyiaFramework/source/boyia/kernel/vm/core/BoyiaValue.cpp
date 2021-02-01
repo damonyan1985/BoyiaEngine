@@ -315,7 +315,7 @@ LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm)
     // String should add flag size
     length += (size - 1) * flagLen;
 
-    LUint8* buffer = new LUint8[length];
+    LUint8* buffer = NEW_BUFFER(LUint8, length);
     // 添加StringTable数据
     LInt index = 0;
     for (LInt i = 0; i < size; i++) {

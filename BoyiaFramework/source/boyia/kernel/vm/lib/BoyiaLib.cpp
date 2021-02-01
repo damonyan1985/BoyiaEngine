@@ -22,7 +22,7 @@ extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm);
 
 char* convertMStr2Str(BoyiaStr* str)
 {
-    char* newStr = new char[str->mLen + 1];
+    char* newStr = NEW_BUFFER(char, str->mLen + 1);
     LMemset(newStr, 0, str->mLen + 1);
 
     LMemcpy(newStr, str->mPtr, str->mLen);
@@ -40,28 +40,18 @@ LInt getFileContent(LVoid* vm)
     //char* fileName = convertMStr2Str(&value->mValue.mStrVal);
     char* fileName = convertMStr2Str(GetStringBuffer(value));
     FILE* file = fopen(fileName, "r");
-    delete[] fileName;
+    FREE_BUFFER(fileName);
+
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = NEW_ARRAY(LInt8, (len + 1), vm);
 
-    //BoyiaFunction* obj = CreateStringObject(buf, len, vm);
-    //GCAppendRef(buf, BY_STRING, vm);
     LMemset(buf, 0, len + 1);
     rewind(file);
     fread(buf, sizeof(char), len, file);
     fclose(file);
 
-    //BoyiaValue val;
-    //val.mNameKey = kBoyiaString;
-    //val.mValueType = BY_CLASS;
-    //val.mValue.mObj.mPtr = (LIntPtr)obj;
-    //val.mValue.mStrVal.mPtr = buf;
-    //val.mValue.mStrVal.mLen = len;
-
-    //SetNativeResult(&val, vm);
     SetStringResult(buf, len, vm);
-
     printf("getFileContent data=%s\n", buf);
     return 1;
 }
@@ -198,7 +188,7 @@ LInt logPrint(LVoid* vm)
         //char* log = convertMStr2Str(&val->mValue.mStrVal);
         char* log = convertMStr2Str(GetStringBuffer(val));
         BOYIA_LOG("Boyia [info]: %s", (const char*)log);
-        delete[] log;
+        FREE_BUFFER(log);
     }
 
     return 1;
@@ -276,7 +266,8 @@ LInt jsonParseWithCJSON(LVoid* vm)
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     char* content = convertMStr2Str(GetStringBuffer(val));
     cJSON* json = cJSON_Parse(content);
-    delete[] content;
+    FREE_BUFFER(content);
+
     BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
     jsonParse(json, value, vm);
     cJSON_Delete(json);
@@ -524,9 +515,9 @@ LInt callStaticMethod(LVoid* vm)
         &result);
 
     SetNativeResult(&result, vm);
-    delete[] strClzz;
-    delete[] strMethod;
-    delete[] strSign;
+    FREE_BUFFER(strClzz);
+    FREE_BUFFER(strMethod);
+    FREE_BUFFER(strSign);
 #endif
     return 1;
 }
@@ -716,12 +707,14 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
             LUintPtr objectId = GetBoyiaClassId(prop);
             if (objectId == kBoyiaString) {
                 // add string item to json object
-                const char* value = convertMStr2Str(GetStringBuffer(prop));
+                char* value = convertMStr2Str(GetStringBuffer(prop));
                 if (isArray) {
                     cJSON_AddItemToArray(jsonObj, cJSON_CreateString(value));
                 } else {
                     cJSON_AddItemToObject(jsonObj, key, cJSON_CreateString(value));
                 }
+
+                FREE_BUFFER(value);
             } else {
                 LBool isArrayProp = objectId == kBoyiaArray;
                 if (isArray) {
@@ -745,6 +738,10 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
         } break;
         default:
             break;
+        }
+
+        if (key) {
+            FREE_BUFFER(key);
         }
     }
 
