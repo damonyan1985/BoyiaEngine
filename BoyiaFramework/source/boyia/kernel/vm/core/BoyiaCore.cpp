@@ -30,7 +30,6 @@
 #define FUNC_CALLS ((LInt)32)
 #define NUM_PARAMS ((LInt)32)
 #define LOOP_NEST ((LInt)32)
-#define MEMORY_SIZE ((LInt)1024 * 1024 * 6)
 #define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
 #define CONST_CAPACITY ((LInt)1024)
 #define ENTRY_CAPACITY ((LInt)1024)
