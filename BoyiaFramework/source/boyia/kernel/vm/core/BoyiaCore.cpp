@@ -1876,7 +1876,7 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
         return 1;
     }
 
-    if (left->mValueType != BY_CLASS) {
+    if (left->mValueType != BY_CLASS && right->mValueType != BY_CLASS) {
         return 0;
     }
 

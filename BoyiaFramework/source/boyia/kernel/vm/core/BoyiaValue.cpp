@@ -181,7 +181,6 @@ static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
         LInt2StrWithLength(value->mValue.mIntVal, (LUint8*)str->mPtr, 10, &str->mLen);
     } else {
         // String Object
-
         BoyiaStr* buffer = GetStringBuffer(value);
         str->mPtr = buffer->mPtr;
         str->mLen = buffer->mLen;
@@ -208,9 +207,11 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     //right->mValue.mStrVal.mLen = len;
     //right->mValueType = BY_STRING;
 
+    BoyiaFunction* objBody = CreateStringObject(str, len, vm);
+    // right其实就是R0
     right->mValueType = BY_CLASS;
     right->mNameKey = kBoyiaString;
-    right->mValue.mObj.mPtr = (LIntPtr)CreateStringObject(str, len, vm);
+    right->mValue.mObj.mPtr = (LIntPtr)objBody;
     right->mValue.mObj.mSuper = kBoyiaNull;
 
     GCAppendRef(str, BY_CLASS, vm);

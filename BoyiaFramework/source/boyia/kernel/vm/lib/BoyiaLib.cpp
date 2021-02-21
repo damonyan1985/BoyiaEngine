@@ -255,8 +255,9 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         //value->mValue.mStrVal.mPtr = ptr;
         //value->mValue.mStrVal.mLen = len;
         //GCAppendRef(ptr, BY_STRING, vm);
+        BoyiaFunction* objBody = CreateStringObject(ptr, len, vm);
         value->mValueType = BY_CLASS;
-        value->mValue.mObj.mPtr = (LIntPtr)CreateStringObject(ptr, len, vm);
+        value->mValue.mObj.mPtr = (LIntPtr)objBody;
         value->mValue.mObj.mSuper = kBoyiaNull;
     }
 }
@@ -268,8 +269,12 @@ LInt jsonParseWithCJSON(LVoid* vm)
     cJSON* json = cJSON_Parse(content);
     FREE_BUFFER(content);
 
-    BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
-    jsonParse(json, value, vm);
+    //BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
+    BoyiaValue value;
+    jsonParse(json, &value, vm);
+    // 设置给r0
+    SetNativeResult(&value, vm);
+    // 释放json
     cJSON_Delete(json);
     return 1;
 }
