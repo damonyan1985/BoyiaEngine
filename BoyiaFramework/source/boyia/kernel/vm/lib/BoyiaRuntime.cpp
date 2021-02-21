@@ -40,9 +40,12 @@ LVoid* BoyiaRuntime::garbageCollect() const
     return m_gc;
 }
 
+// TODO GC目前还有点问题，暂不执行gc
 LBool BoyiaRuntime::needCollect() const
 {
-    return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2;
+    //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2;
+    //return LTrue;
+    return LFalse;
 }
 
 // Prepare delete the object
