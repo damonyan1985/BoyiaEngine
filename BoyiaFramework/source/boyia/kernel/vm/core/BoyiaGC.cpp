@@ -68,7 +68,7 @@ static LVoid MarkValue(BoyiaValue* value);
 // 标记对象属性
 static LVoid MarkObjectProps(BoyiaValue* value)
 {
-    BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mIntVal;
+    BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
 
     // 标记为灰色
     fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcGray << 16);
