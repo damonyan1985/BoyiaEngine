@@ -400,15 +400,15 @@ static LVoid ResetScene(BoyiaVM* vm)
 
 static VMCode* CreateVMCode(LVoid* vm)
 {
-    VMCode* code = NEW(VMCode, vm);
-    code->mCode = NEW_ARRAY(Instruction, CODE_CAPACITY, vm); //new Instruction[CODE_CAPACITY];//
+    VMCode* code = FAST_NEW(VMCode);
+    code->mCode = FAST_NEW_ARRAY(Instruction, CODE_CAPACITY); //new Instruction[CODE_CAPACITY];//
     code->mSize = 0;
     return code;
 }
 
 static OPHandler* InitHandlers(LVoid* vm)
 {
-    OPHandler* handlers = NEW_ARRAY(OPHandler, 100, vm);
+    OPHandler* handlers = FAST_NEW_ARRAY(OPHandler, 100);
     LMemset(handlers, 0, sizeof(OPHandler) * 100);
     handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
     handlers[kCmdIfEnd] = HandleIfEnd;
@@ -461,14 +461,14 @@ static OPHandler* InitHandlers(LVoid* vm)
 
 static VMStrTable* CreateVMStringTable(LVoid* vm)
 {
-    VMStrTable* table = NEW(VMStrTable, vm);
+    VMStrTable* table = FAST_NEW(VMStrTable);
     table->mSize = 0;
     return table;
 }
 
 static VMEntryTable* CreateVMEntryTable(LVoid* vm)
 {
-    VMEntryTable* table = NEW(VMEntryTable, vm);
+    VMEntryTable* table = FAST_NEW(VMEntryTable);
     table->mSize = 0;
     return table;
 }
@@ -478,16 +478,16 @@ LVoid* InitVM(LVoid* creator)
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mCreator = creator;
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
-    vm->mGlobals = NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS, vm);
-    vm->mLocals = NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS, vm);
-    vm->mFunTable = NEW_ARRAY(BoyiaFunction, NUM_FUNC, vm);
+    vm->mGlobals = FAST_NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
+    vm->mLocals = FAST_NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
+    vm->mFunTable = FAST_NEW_ARRAY(BoyiaFunction, NUM_FUNC);
 
-    vm->mOpStack = NEW_ARRAY(BoyiaValue, NUM_RESULT, vm);
+    vm->mOpStack = FAST_NEW_ARRAY(BoyiaValue, NUM_RESULT);
 
-    vm->mExecStack = NEW_ARRAY(ExecScene, FUNC_CALLS, vm);
-    vm->mLoopStack = NEW_ARRAY(LIntPtr, LOOP_NEST, vm);
-    vm->mEState = NEW(ExecState, vm);
-    vm->mCpu = NEW(VMCpu, vm);
+    vm->mExecStack = FAST_NEW_ARRAY(ExecScene, FUNC_CALLS);
+    vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
+    vm->mEState = FAST_NEW(ExecState);
+    vm->mCpu = FAST_NEW(VMCpu);
     vm->mVMCode = CreateVMCode(vm);
     vm->mHandlers = InitHandlers(vm);
     vm->mStrTable = CreateVMStringTable(vm);
@@ -2484,14 +2484,19 @@ LVoid* GetNativeResult(LVoid* vm)
     return &((BoyiaVM*)vm)->mCpu->mReg0;
 }
 
-LVoid GetLocalStack(LInt* stack, LInt* size, LVoid* vm)
+LVoid* GetNativeHelperResult(LVoid* vm)
+{
+    return &((BoyiaVM*)vm)->mCpu->mReg1;
+}
+
+LVoid GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     *stack = (LIntPtr)vmPtr->mLocals;
     *size = vmPtr->mEState->mLValSize;
 }
 
-LVoid GetGlobalTable(LInt* table, LInt* size, LVoid* vm)
+LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     *table = (LIntPtr)vmPtr->mGlobals;

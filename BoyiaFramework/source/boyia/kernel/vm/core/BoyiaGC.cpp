@@ -155,7 +155,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
 static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 {
     BoyiaRef* prev = gc->mBegin;
-    while (prev && prev->mType == BY_CLASS) {
+    while (prev) {
         if (IsInValidObject(prev)) {
             // 删除对象内存
             DeleteObject(prev, vm);
@@ -196,7 +196,8 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 extern LVoid GCollectGarbage(LVoid* vm)
 {
     BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
-    LInt stackAddr, size;
+    LIntPtr stackAddr;
+    LInt size = 0;
 
     // 标记栈
     GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
@@ -209,8 +210,11 @@ extern LVoid GCollectGarbage(LVoid* vm)
     MarkValueTable(stack, size);
 
     // 标记零时引用
-    BoyiaValue* val = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
-    MarkValue(val);
+    BoyiaValue* r0 = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
+    MarkValue(r0);
+
+    BoyiaValue* r1 = (BoyiaValue*)GetNativeHelperResult(gc->mBoyiaVM);
+    MarkValue(r1);
 
     ClearAllGarbage(gc, vm);
 }
