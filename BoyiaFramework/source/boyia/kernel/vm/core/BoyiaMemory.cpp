@@ -157,6 +157,9 @@ LVoid DeleteData(LVoid* data, LVoid* mempool)
 
     if (pool->mFirstBlock == pHeader) {
         pool->mFirstBlock = pHeader->mNext;
+        if (pHeader->mNext) {
+            pHeader->mNext->mPrevious = kBoyiaNull;
+        }
     } else {
         if (pHeader->mNext) {
             pHeader->mPrevious->mNext = pHeader->mNext;

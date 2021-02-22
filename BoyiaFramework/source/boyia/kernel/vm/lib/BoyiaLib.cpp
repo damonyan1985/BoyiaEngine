@@ -215,11 +215,11 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
     }
 
     if (json->type == cJSON_Object) {
-        value->mValueType = BY_CLASS;
         cJSON* child = json->child;
         LInt index = 0;
 
         BoyiaFunction* fun = getObjFun(json, vm);
+        value->mValueType = BY_CLASS;
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS, vm);
@@ -230,10 +230,9 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
             child = child->next;
         }
     } else if (json->type == cJSON_Array) {
-        value->mValueType = BY_CLASS;
-
         LInt size = cJSON_GetArraySize(json);
         BoyiaFunction* fun = (BoyiaFunction*)CopyObject(kBoyiaArray, size, vm);
+        value->mValueType = BY_CLASS;
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
         GCAppendRef(fun, BY_CLASS, vm);
@@ -248,7 +247,7 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         value->mValueType = BY_INT;
         value->mValue.mIntVal = json->valueint;
     } else if (json->type == cJSON_String) {
-        value->mValueType = BY_STRING;
+        //value->mValueType = BY_STRING;
         LInt len = LStrlen(_CS(json->valuestring));
         LInt8* ptr = NEW_ARRAY(LInt8, len, vm);
         LMemcpy(ptr, json->valuestring, len);
@@ -269,11 +268,11 @@ LInt jsonParseWithCJSON(LVoid* vm)
     cJSON* json = cJSON_Parse(content);
     FREE_BUFFER(content);
 
-    //BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
-    BoyiaValue value;
-    jsonParse(json, &value, vm);
+    BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
+    //BoyiaValue value;
+    jsonParse(json, value, vm);
     // 设置给r0
-    SetNativeResult(&value, vm);
+    //SetNativeResult(&value, vm);
     // 释放json
     cJSON_Delete(json);
     return 1;
