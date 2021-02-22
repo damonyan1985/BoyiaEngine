@@ -144,7 +144,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
         if (IS_NATIVE_STRING(objBody)) {
             free(buffer->mPtr);
         } else if (IS_BOYIA_STRING(objBody)) {
-            VM_DELETE(buffer, vm);
+            VM_DELETE(buffer->mPtr, vm);
         } // 常量字符串不做任何处理
     }
 
@@ -178,14 +178,14 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     BoyiaRef* current = prev->mNext;
     while (current) {
         if (IsInValidObject(current)) {
-            DeleteObject(prev, vm);
+            DeleteObject(current, vm);
             prev->mNext = current->mNext;
             FAST_DELETE(current);
             --gc->mSize;
             current = prev->mNext;
         } else {
             prev = current;
-            current = prev->mNext;
+            current = current->mNext;
         }
     }
 
