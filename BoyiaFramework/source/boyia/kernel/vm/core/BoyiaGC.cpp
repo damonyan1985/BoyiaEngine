@@ -213,12 +213,5 @@ extern LVoid GCollectGarbage(LVoid* vm)
     stack = (BoyiaValue*)stackAddr;
     MarkValueTable(stack, size);
 
-    // 标记零时引用
-    //BoyiaValue* r0 = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
-    //MarkValue(r0);
-
-    //BoyiaValue* r1 = (BoyiaValue*)GetNativeHelperResult(gc->mBoyiaVM);
-    //MarkValue(r1);
-
     ClearAllGarbage(gc, vm);
 }
