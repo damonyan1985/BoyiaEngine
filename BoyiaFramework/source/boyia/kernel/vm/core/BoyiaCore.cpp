@@ -398,7 +398,7 @@ static LVoid ResetScene(BoyiaVM* vm)
     vm->mEState->mClass = kBoyiaNull;
 }
 
-static VMCode* CreateVMCode(LVoid* vm)
+static VMCode* CreateVMCode()
 {
     VMCode* code = FAST_NEW(VMCode);
     code->mCode = FAST_NEW_ARRAY(Instruction, CODE_CAPACITY); //new Instruction[CODE_CAPACITY];//
@@ -406,7 +406,7 @@ static VMCode* CreateVMCode(LVoid* vm)
     return code;
 }
 
-static OPHandler* InitHandlers(LVoid* vm)
+static OPHandler* InitHandlers()
 {
     OPHandler* handlers = FAST_NEW_ARRAY(OPHandler, 100);
     LMemset(handlers, 0, sizeof(OPHandler) * 100);
@@ -459,18 +459,29 @@ static OPHandler* InitHandlers(LVoid* vm)
     return handlers;
 }
 
-static VMStrTable* CreateVMStringTable(LVoid* vm)
+static VMStrTable* CreateVMStringTable()
 {
     VMStrTable* table = FAST_NEW(VMStrTable);
     table->mSize = 0;
     return table;
 }
 
-static VMEntryTable* CreateVMEntryTable(LVoid* vm)
+static VMEntryTable* CreateVMEntryTable()
 {
     VMEntryTable* table = FAST_NEW(VMEntryTable);
     table->mSize = 0;
     return table;
+}
+
+static VMCpu* CreateVMCpu()
+{
+    VMCpu* vmCpu = FAST_NEW(VMCpu);
+    vmCpu->mReg0.mValueType = BY_ARG;
+    vmCpu->mReg0.mValue.mIntVal = 0;
+
+    vmCpu->mReg1.mValueType = BY_ARG;
+    vmCpu->mReg1.mValue.mIntVal = 0;
+    return vmCpu;
 }
 
 LVoid* InitVM(LVoid* creator)
@@ -487,11 +498,11 @@ LVoid* InitVM(LVoid* creator)
     vm->mExecStack = FAST_NEW_ARRAY(ExecScene, FUNC_CALLS);
     vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
     vm->mEState = FAST_NEW(ExecState);
-    vm->mCpu = FAST_NEW(VMCpu);
-    vm->mVMCode = CreateVMCode(vm);
-    vm->mHandlers = InitHandlers(vm);
-    vm->mStrTable = CreateVMStringTable(vm);
-    vm->mEntry = CreateVMEntryTable(vm);
+    vm->mCpu = CreateVMCpu();
+    vm->mVMCode = CreateVMCode();
+    vm->mHandlers = InitHandlers();
+    vm->mStrTable = CreateVMStringTable();
+    vm->mEntry = CreateVMEntryTable();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;

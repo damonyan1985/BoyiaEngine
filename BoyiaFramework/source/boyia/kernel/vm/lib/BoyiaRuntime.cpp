@@ -44,8 +44,8 @@ LVoid* BoyiaRuntime::garbageCollect() const
 LBool BoyiaRuntime::needCollect() const
 {
     //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2;
-    //return LTrue;
-    return LFalse;
+    return LTrue;
+    //return LFalse;
 }
 
 // Prepare delete the object

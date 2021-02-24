@@ -5,15 +5,15 @@
  *      Author: yanbo
  */
 #include "ResourceLoader.h"
+#include "AppManager.h"
 #include "Application.h"
+#include "FileUtil.h"
+#include "PlatformBridge.h"
 #include "SalLog.h"
 #include "StringBuilder.h"
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include "AppManager.h"
-#include "FileUtil.h"
-#include "PlatformBridge.h"
 //#include <android/log.h>
 
 namespace yanbo {
@@ -197,6 +197,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 LVoid ResourceLoader::executeScript(const String& data)
 {
     m_view->application()->runtime()->compile(data);
+    SystemGC(m_view->application()->runtime()->vm());
 }
 
 LVoid ResourceLoader::repaint(HtmlView* item)

@@ -179,9 +179,13 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     while (current) {
         if (IsInValidObject(current)) {
             DeleteObject(current, vm);
+            // 指向下一个引用
             prev->mNext = current->mNext;
+            // 删除引用节点
             FAST_DELETE(current);
+            // gc中引用数量减一
             --gc->mSize;
+            // 切换当前指针
             current = prev->mNext;
         } else {
             prev = current;
@@ -210,11 +214,11 @@ extern LVoid GCollectGarbage(LVoid* vm)
     MarkValueTable(stack, size);
 
     // 标记零时引用
-    BoyiaValue* r0 = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
-    MarkValue(r0);
+    //BoyiaValue* r0 = (BoyiaValue*)GetNativeResult(gc->mBoyiaVM);
+    //MarkValue(r0);
 
-    BoyiaValue* r1 = (BoyiaValue*)GetNativeHelperResult(gc->mBoyiaVM);
-    MarkValue(r1);
+    //BoyiaValue* r1 = (BoyiaValue*)GetNativeHelperResult(gc->mBoyiaVM);
+    //MarkValue(r1);
 
     ClearAllGarbage(gc, vm);
 }

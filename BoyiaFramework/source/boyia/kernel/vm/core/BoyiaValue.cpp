@@ -97,7 +97,7 @@ LInt NativeObjectFlag(LVoid* address)
     return static_cast<boyia::BoyiaBase*>(address)->gcFlag();
 }
 
-static LVoid SystemGC(LVoid* vm)
+LVoid SystemGC(LVoid* vm)
 {
     if (GetRuntime(vm)->needCollect()) {
         GCollectGarbage(vm);
@@ -106,7 +106,7 @@ static LVoid SystemGC(LVoid* vm)
 
 LVoid* BoyiaAlloc(LInt size, LVoid* vm)
 {
-    SystemGC(vm);
+    //SystemGC(vm);
     return BoyiaNew(size, vm);
 }
 
@@ -203,10 +203,6 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     LMemcpy(str, leftStr.mPtr, leftStr.mLen);
     LMemcpy(str + leftStr.mLen, rightStr.mPtr, rightStr.mLen);
 
-    //right->mValue.mStrVal.mPtr = str;
-    //right->mValue.mStrVal.mLen = len;
-    //right->mValueType = BY_STRING;
-
     BoyiaFunction* objBody = CreateStringObject(str, len, vm);
     // right其实就是R0
     right->mValueType = BY_CLASS;
@@ -214,7 +210,7 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     right->mValue.mObj.mPtr = (LIntPtr)objBody;
     right->mValue.mObj.mSuper = kBoyiaNull;
 
-    GCAppendRef(str, BY_CLASS, vm);
+    //GCAppendRef(str, BY_CLASS, vm);
     KLOG("StringAdd End");
 }
 
@@ -457,7 +453,11 @@ LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 
 LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
-    BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
+    //BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
+    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
+    objBody->mParams[0].mValue.mStrVal.mLen = len;
+
     value->mValueType = BY_CLASS;
     value->mValue.mObj.mPtr = (LIntPtr)objBody;
     value->mValue.mObj.mSuper = kBoyiaNull;
