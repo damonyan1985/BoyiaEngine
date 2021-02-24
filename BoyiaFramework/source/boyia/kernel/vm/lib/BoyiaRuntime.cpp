@@ -1,4 +1,5 @@
 #include "BoyiaRuntime.h"
+#include "AppManager.h"
 #include "Application.h"
 #include "BoyiaAsyncEvent.h"
 #include "BoyiaCore.h"
@@ -6,11 +7,30 @@
 #include "SalLog.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
+const LInt kGcMemorySize = 1024 * 8;
 const LInt kNativeFunctionCapacity = 100;
 
 extern LVoid* CreateGC(LVoid* vm);
+extern LVoid GCollectGarbage(LVoid* vm);
 
 namespace boyia {
+class GCEvent : public yanbo::UIEvent {
+public:
+    GCEvent(BoyiaRuntime* runtime)
+        : m_runtime(runtime)
+    {
+    }
+
+    virtual LVoid run()
+    {
+        GCollectGarbage(m_runtime->vm());
+        m_runtime->setGcRuning(LFalse);
+    }
+
+private:
+    BoyiaRuntime* m_runtime;
+};
+
 BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     : m_app(app)
     , m_memoryPool(InitMemoryPool(kMemoryPoolSize))
@@ -19,6 +39,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_nativeSize(0)
     , m_vm(InitVM(this))
     , m_gc(CreateGC(m_vm))
+    , m_isGcRuning(LFalse)
 {
 }
 
@@ -40,12 +61,21 @@ LVoid* BoyiaRuntime::garbageCollect() const
     return m_gc;
 }
 
+LVoid BoyiaRuntime::collectGarbage()
+{
+    yanbo::AppManager::instance()->uiThread()->sendUIEvent(new GCEvent(this));
+}
+
+LVoid BoyiaRuntime::setGcRuning(LBool isRuning)
+{
+    m_isGcRuning = isRuning;
+}
+
 // TODO GC目前还有点问题，暂不执行gc
 LBool BoyiaRuntime::needCollect() const
 {
-    //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2;
-    return LTrue;
-    //return LFalse;
+    //return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
+    return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
 }
 
 // Prepare delete the object

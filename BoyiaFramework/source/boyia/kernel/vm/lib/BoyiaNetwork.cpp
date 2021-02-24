@@ -59,10 +59,16 @@ LVoid BoyiaNetwork::callback()
     CreateNativeString(&value,
         (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_vm);
     BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
+    // 释放字符串控制权
+    m_data->ReleaseBuffer();
+    // 保存当前栈
     SaveLocalSize(m_vm);
+    // callback函数压栈
     LocalPush(&m_callback, m_vm);
+    // 参数压栈
     LocalPush(&value, m_vm);
     BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_obj;
+    // 调用callback函数
     NativeCall(obj, m_vm);
 }
 }

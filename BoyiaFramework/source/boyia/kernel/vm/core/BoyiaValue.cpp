@@ -33,7 +33,6 @@ enum InlineCacheType {
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid GCollectGarbage(LVoid* vm);
-
 extern LVoid BoyiaLog(const char* format, ...)
 {
     va_list args;
@@ -100,13 +99,15 @@ LInt NativeObjectFlag(LVoid* address)
 LVoid SystemGC(LVoid* vm)
 {
     if (GetRuntime(vm)->needCollect()) {
-        GCollectGarbage(vm);
+        GetRuntime(vm)->setGcRuning(LTrue);
+        GetRuntime(vm)->collectGarbage();
     }
+    //GCollectGarbage(vm);
 }
 
 LVoid* BoyiaAlloc(LInt size, LVoid* vm)
 {
-    //SystemGC(vm);
+    SystemGC(vm);
     return BoyiaNew(size, vm);
 }
 

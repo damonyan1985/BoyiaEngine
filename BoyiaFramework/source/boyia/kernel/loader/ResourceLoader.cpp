@@ -197,7 +197,7 @@ LVoid ResourceLoader::executeStyleSheet(const String& data)
 LVoid ResourceLoader::executeScript(const String& data)
 {
     m_view->application()->runtime()->compile(data);
-    SystemGC(m_view->application()->runtime()->vm());
+    //SystemGC(m_view->application()->runtime()->vm());
 }
 
 LVoid ResourceLoader::repaint(HtmlView* item)

@@ -1,10 +1,10 @@
 #ifndef BoyiaRuntime_h
 #define BoyiaRuntime_h
 
-#include "UtilString.h"
-#include "UIView.h"
-#include "IDCreator.h"
 #include "BoyiaLib.h"
+#include "IDCreator.h"
+#include "UIView.h"
+#include "UtilString.h"
 
 namespace yanbo {
 class Application;
@@ -27,6 +27,8 @@ public:
     LVoid* garbageCollect() const;
     LBool needCollect() const;
     LVoid prepareDelete(LVoid* ptr);
+    LVoid setGcRuning(LBool isRuning);
+    LVoid collectGarbage();
 
 private:
     LVoid initNativeFunction();
@@ -40,6 +42,7 @@ private:
     LVoid* m_vm;
     LVoid* m_gc;
     LInt m_nativeSize;
+    LBool m_isGcRuning;
 };
 }
 
