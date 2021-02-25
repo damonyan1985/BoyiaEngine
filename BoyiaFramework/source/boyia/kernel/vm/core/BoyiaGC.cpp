@@ -138,7 +138,8 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
     }
 
     BoyiaFunction* objBody = (BoyiaFunction*)ref->mAddress;
-    LUintPtr classId = ((BoyiaValue*)objBody->mFuncBody)->mNameKey;
+    BoyiaValue* kclass = (BoyiaValue*)objBody->mFuncBody;
+    LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
     if (classId == kBoyiaString) {
         BoyiaStr* buffer = &objBody->mParams[0].mValue.mStrVal;
         if (IS_NATIVE_STRING(objBody)) {
