@@ -88,9 +88,9 @@ class ViewGroup extends View {
     
     fun appendView(view) {
         Util.log("ViewGroup appendView");
-        //if (this.children) {
+        if (this.children) {
             this.children.put(view);
-        //}
+        }
         BY_AppendView(this.nativeView, view.nativeView);
     }
 }

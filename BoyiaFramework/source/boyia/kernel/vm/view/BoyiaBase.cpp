@@ -1,9 +1,9 @@
 #include "BoyiaBase.h"
+#include "AppManager.h"
 #include "BoyiaLib.h"
 #include "LEvent.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
-#include "AppManager.h"
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 // C++对象垃圾回收基类

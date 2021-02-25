@@ -205,6 +205,7 @@ static BoyiaFunction* getObjFun(cJSON* json, LVoid* vm)
     LInt size = cJSON_GetArraySize(json);
     fun->mParams = NEW_ARRAY(BoyiaValue, size, vm);
     fun->mParamSize = size;
+    fun->mFuncBody = kBoyiaNull;
     return fun;
 }
 
@@ -268,11 +269,11 @@ LInt jsonParseWithCJSON(LVoid* vm)
     cJSON* json = cJSON_Parse(content);
     FREE_BUFFER(content);
 
-    BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
-    //BoyiaValue value;
-    jsonParse(json, value, vm);
+    //BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
+    BoyiaValue value;
+    jsonParse(json, &value, vm);
     // 设置给r0
-    //SetNativeResult(&value, vm);
+    SetNativeResult(&value, vm);
     // 释放json
     cJSON_Delete(json);
     return 1;
@@ -601,10 +602,10 @@ LInt addEventListener(LVoid* vm)
 LInt setToNativeView(LVoid* vm)
 {
     BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0, vm);
-    BoyiaValue* jsVal = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaValue* byVal = (BoyiaValue*)GetLocalValue(1, vm);
 
     boyia::BoyiaBase* navView = (boyia::BoyiaBase*)navVal->mValue.mIntVal;
-    navView->setBoyiaView(jsVal);
+    navView->setBoyiaView(byVal);
 
     return 1;
 }
