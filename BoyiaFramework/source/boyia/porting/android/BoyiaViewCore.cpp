@@ -38,7 +38,7 @@ bool JNI_LOG_ON = true;
 
 static LVoid boyiaSocketTest()
 {
-    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.10:6666"));
+    boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://192.168.0.10:6666"), kBoyiaNull);
 }
 
 extern void nativeUpdatePatch(

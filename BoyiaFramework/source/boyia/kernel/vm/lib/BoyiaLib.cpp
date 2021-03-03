@@ -6,6 +6,7 @@
 #include "BoyiaNetwork.h"
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
+#include "BoyiaSocket.h"
 #if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
 #endif
@@ -593,7 +594,7 @@ LInt addEventListener(LVoid* vm)
     BoyiaValue* type = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* callback = (BoyiaValue*)GetLocalValue(2, vm);
 
-    boyia::BoyiaBase* navView = (boyia::BoyiaBase*)navVal->mValue.mIntVal;
+    boyia::BoyiaView* navView = (boyia::BoyiaView*)navVal->mValue.mIntVal;
     navView->addListener(type->mValue.mIntVal, callback);
 
     return 1;
@@ -604,7 +605,7 @@ LInt setToNativeView(LVoid* vm)
     BoyiaValue* navVal = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* byVal = (BoyiaValue*)GetLocalValue(1, vm);
 
-    boyia::BoyiaBase* navView = (boyia::BoyiaBase*)navVal->mValue.mIntVal;
+    boyia::BoyiaView* navView = (boyia::BoyiaView*)navVal->mValue.mIntVal;
     navView->setBoyiaView(byVal);
 
     return 1;
@@ -785,4 +786,30 @@ LInt toJsonString(LVoid* vm)
     CreateNativeString(&val, out, len, vm);
     SetNativeResult(&val, vm);
     return 1;
+}
+
+LInt createSocket(LVoid* vm)
+{
+    BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
+
+    BoyiaStr* urlStr = GetStringBuffer(value);
+    char* url = convertMStr2Str(urlStr);
+    String strUrl(_CS(url), LTrue, urlStr->mLen);
+
+    new boyia::BoyiaSocket(strUrl, static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    return kOpResultSuccess;
+}
+
+LInt sendSocketMsg(LVoid* vm)
+{
+    BoyiaValue* socketVal = (BoyiaValue*)GetLocalValue(0, vm);
+    BoyiaValue* msgVal = (BoyiaValue*)GetLocalValue(1, vm);
+
+    BoyiaStr* msgStr = GetStringBuffer(msgVal);
+    String msg(_CS(convertMStr2Str(msgStr)), LTrue, msgStr->mLen);
+
+    boyia::BoyiaSocket* socket = (boyia::BoyiaSocket*)socketVal->mValue.mIntVal;
+    socket->send(msg);
+
+    return kOpResultSuccess;
 }

@@ -1,10 +1,12 @@
 #include "BoyiaSocket.h"
 #include "SalLog.h"
 
-namespace yanbo {
-BoyiaSocket::BoyiaSocket(const String& url)
-    : m_wsUrl(url)
+namespace boyia {
+BoyiaSocket::BoyiaSocket(const String& url, BoyiaRuntime* runtime)
+    : BoyiaBase(runtime)
+    , m_wsUrl(url)
     , m_listener(kBoyiaNull)
+    , m_socket(kBoyiaNull)
 {
     start();
 }
@@ -35,7 +37,7 @@ void BoyiaSocket::handleMessage(const String& message)
 
 LVoid BoyiaSocket::run()
 {
-    m_socket = WebSocket::create(m_wsUrl); 
+    m_socket = yanbo::WebSocket::create(m_wsUrl);
     if (!m_socket) {
         return;
     }

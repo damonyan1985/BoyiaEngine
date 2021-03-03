@@ -51,7 +51,7 @@ void BoyiaOnLoadWin::repaint()
 void BoyiaOnLoadWin::connectServer()
 {
     //yanbo::ThreadPool::getInstance()->sendTask(new SocketTask());
-    yanbo::BoyiaSocket* socket = new yanbo::BoyiaSocket(_CS("ws://192.168.0.7:6666"));
+    boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://192.168.0.7:6666"), kBoyiaNull);
 
     HashMap<HashString, String> map;
     map.put(HashString(_CS("key1")), _CS("value1"));

@@ -230,11 +230,11 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.h" />
@@ -343,11 +343,11 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaAsyncEvent.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaLib.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaNetwork.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaRuntime.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaSocket.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaInputView.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaView.cpp" />

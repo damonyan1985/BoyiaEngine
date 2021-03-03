@@ -216,9 +216,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h">
       <Filter>boyia\kernel\vm\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.h">
-      <Filter>boyia\kernel\vm\view</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.h">
       <Filter>boyia\kernel\vm\view</Filter>
     </ClInclude>
@@ -471,6 +468,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.h">
+      <Filter>boyia\kernel\vm\lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -586,9 +586,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp">
       <Filter>boyia\kernel\vm\json</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaBase.cpp">
-      <Filter>boyia\kernel\vm\view</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\view\BoyiaImageView.cpp">
       <Filter>boyia\kernel\vm\view</Filter>
@@ -802,6 +799,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.cpp">
+      <Filter>boyia\kernel\vm\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

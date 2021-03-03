@@ -81,4 +81,9 @@ LInt viewCommit(LVoid* vm);
 
 LInt toJsonString(LVoid* vm);
 
+// BoyiaSocket Api
+LInt createSocket(LVoid* vm);
+
+LInt sendSocketMsg(LVoid* vm);
+
 #endif // !BoyiaLib_h

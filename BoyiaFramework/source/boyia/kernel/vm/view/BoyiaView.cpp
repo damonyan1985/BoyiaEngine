@@ -19,6 +19,7 @@ static LVoid startAnimtion(Animation* anim)
 BoyiaView::BoyiaView(BoyiaRuntime* runtime)
     : BoyiaBase(runtime)
     , m_item(kBoyiaNull)
+    , m_type(0)
 {
 }
 
@@ -26,14 +27,6 @@ BoyiaView::~BoyiaView()
 {
     if (m_item) {
         m_item->setListener(kBoyiaNull);
-    }
-}
-
-LVoid BoyiaView::addListener(LInt type, BoyiaValue* callback)
-{
-    BoyiaBase::addListener(type, callback);
-    if (!m_item->getListener()) {
-        m_item->setListener(this);
     }
 }
 
@@ -130,5 +123,67 @@ LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
     anim->setDuration(duration);
     anim->setPosition(point);
     startAnimtion(anim);
+}
+
+LVoid BoyiaView::onPressDown(LVoid* view)
+{
+    if (m_type & LTouchEvent::ETOUCH_DOWN) {
+        KLOG("BoyiaBase::onPressDown");
+        // 处理touchdown
+        BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
+        SaveLocalSize(m_runtime->vm());
+        LocalPush(val, m_runtime->vm());
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+        NativeCall(obj, m_runtime->vm());
+    }
+}
+LVoid BoyiaView::onPressMove(LVoid* view)
+{
+    if (m_type & LTouchEvent::ETOUCH_MOVE) {
+        // 处理touchmove
+        BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_MOVE >> 1];
+
+        SaveLocalSize(m_runtime->vm());
+        LocalPush(val, m_runtime->vm());
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+        NativeCall(obj, m_runtime->vm());
+    }
+}
+
+LVoid BoyiaView::onPressUp(LVoid* view)
+{
+    BOYIA_LOG("BoyiaBase::onPressUp m_type=%d ETOUCH_UP=%d", m_type, LTouchEvent::ETOUCH_UP);
+    if (m_type & LTouchEvent::ETOUCH_UP) {
+        // 处理touchup
+        BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
+        SaveLocalSize(m_runtime->vm());
+        LocalPush(val, m_runtime->vm());
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+        NativeCall(obj, m_runtime->vm());
+    }
+}
+
+LVoid BoyiaView::onKeyDown(LInt keyCode, LVoid* view)
+{
+}
+
+LVoid BoyiaView::onKeyUp(LInt keyCode, LVoid* view)
+{
+}
+
+LVoid BoyiaView::addListener(LInt type, BoyiaValue* callback)
+{
+    m_type |= type;
+    KFORMATLOG("BoyiaBase::addListener m_type=%d", m_type);
+    ValueCopy(&m_callbacks[type >> 1], callback);
+
+    if (!m_item->getListener()) {
+        m_item->setListener(this);
+    }
+}
+
+LVoid BoyiaView::setBoyiaView(BoyiaValue* value)
+{
+    ValueCopy(&m_boyiaView, value);
 }
 }
