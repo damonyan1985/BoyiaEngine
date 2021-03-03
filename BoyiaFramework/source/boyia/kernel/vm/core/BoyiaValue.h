@@ -25,6 +25,15 @@ enum KeyWord {
     BY_END, // 18
 };
 
+enum OpHandleResult {
+    // Handle执行失败
+    kOpResultFail = 0,
+    // Handle执行成功
+    kOpResultSuccess,
+    // Handle跳转到函数进行执行
+    kOpResultJumpFun
+};
+
 enum BuiltinId {
     kBoyiaThis = 1,
     kBoyiaSuper,

@@ -4,8 +4,9 @@
 #include "WebSocket.h"
 #include "UtilString.h"
 #include "BaseThread.h"
+#include "BoyiaBase.h"
 
-namespace yanbo {
+namespace boyia {
 class BoyiaSocketListener {
 public:
     virtual LVoid onListen() = 0;
@@ -13,9 +14,9 @@ public:
     virtual LVoid onClose() = 0;
 };
 
-class BoyiaSocket : public BaseThread, public WebSocketHandler {
+class BoyiaSocket : public BoyiaBase, public yanbo::BaseThread, public yanbo::WebSocketHandler {
 public:
-    BoyiaSocket(const String& url);
+    BoyiaSocket(const String& url, BoyiaRuntime* runtime);
     ~BoyiaSocket();
 
     LVoid setSocketListener(BoyiaSocketListener* listener);
@@ -26,7 +27,7 @@ public:
     LVoid send(const String& message);
 
 private:
-    WebSocket* m_socket;
+    yanbo::WebSocket* m_socket;
     String m_wsUrl;
     BoyiaSocketListener* m_listener;
 };
