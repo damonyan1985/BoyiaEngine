@@ -18,7 +18,6 @@ typedef LInt (*NativePtr)(LVoid* vm);
 
 typedef struct {
     LUintPtr mNameKey;
-    //LInt (*mAddr)(LVoid* vm);
     NativePtr mAddr;
 } NativeFunction;
 
