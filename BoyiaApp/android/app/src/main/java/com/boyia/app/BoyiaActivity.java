@@ -1,5 +1,6 @@
 package com.boyia.app;
 
+import com.boyia.app.advert.platform.TTAdSplashManager;
 import com.boyia.app.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.ipc.BoyiaIpcData;
@@ -9,12 +10,9 @@ import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaCoreJNI;
+import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.loader.image.BoyiaImager;
-import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
-import com.boyia.app.loader.jober.MainScheduler;
-import com.boyia.app.loader.jober.Observable;
-import com.boyia.app.loader.jober.Subscriber;
 
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
@@ -24,17 +22,26 @@ import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.app.Activity;
 import android.os.Process;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 public class BoyiaActivity extends Activity {
-    private static final String TAG = BoyiaActivity.class.getSimpleName();
+    private static final String TAG = "BoyiaActivity";
     private static final String BOYIA_RECEIVE_ACTION = "com.boyia.app.broadcast";
     private boolean mNeedExit = false;
     private BoyiaBroadcast mBroadcast;
+    private FrameLayout mContainer;
+    private TTAdSplashManager mSplashManager;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
+        mContainer = new FrameLayout(this);
+        setContentView(mContainer);
+        mSplashManager = new TTAdSplashManager();
+        mSplashManager.loadSplashAd(this,
+                mContainer, () -> startBoyiaUI());
+        //BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
         initBroadcast();
         initService();
     }
@@ -134,5 +141,16 @@ public class BoyiaActivity extends Activity {
         if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
             BoyiaImager.getInstance().clearMemoryCache();
         }
+    }
+
+    private void startBoyiaUI() {
+        BoyiaCoreJNI.initLibrary(() -> {
+            mContainer.removeAllViews();
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+            mContainer.addView(new BoyiaUIView(BoyiaActivity.this), params);
+        });
     }
 }
