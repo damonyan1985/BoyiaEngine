@@ -160,6 +160,25 @@ Texture* TextureCache::updateTexture(const LImage* image)
 
 LVoid TextureCache::clear()
 {
+    m_imageCache.clear();
     m_texMap.clear();
+}
+
+Texture* TextureCache::findImage(const String& url)
+{
+    return m_imageCache.get(HashString(url, LFalse)).get();
+}
+
+Texture* TextureCache::putImage(const LImage* image)
+{
+    Texture* tex = findImage(image->url());
+    if (!tex) {
+        tex = new Texture();
+        tex->initWithData(image->pixels(), 0, image->width(), image->height());
+
+        m_imageCache.put(HashString(image->url()), tex);
+    }
+
+    return tex;
 }
 } // namespace yanbo

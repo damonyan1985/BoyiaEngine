@@ -2,6 +2,8 @@
 #define MiniTextureCache_h
 
 #include "BoyiaPtr.h"
+#include "HashMap.h"
+#include "HashUtil.h"
 #include "HtmlView.h"
 #include "KList.h"
 #include <GLES3/gl3.h>
@@ -30,6 +32,7 @@ public:
 };
 
 typedef KList<BoyiaPtr<TexturePair>> TextureMap;
+typedef HashMap<HashString, BoyiaPtr<Texture>> ImageTextureCache;
 class TextureCache {
 public:
     static TextureCache* getInst();
@@ -42,9 +45,13 @@ public:
     Texture* findText(const ViewPainter* item);
     Texture* fetchTexture(ViewPainter* item, const LImage* image, LUint key);
 
+    Texture* putImage(const LImage* image);
+    Texture* findImage(const String& url);
+
 private:
     Texture* find(HtmlView* item, LUint key);
 
+    ImageTextureCache m_imageCache;
     TextureMap m_texMap;
 };
 }

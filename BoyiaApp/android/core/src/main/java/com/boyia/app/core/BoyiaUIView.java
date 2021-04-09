@@ -134,9 +134,9 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         BoyiaLog.d(TAG, "surfaceCreated");
+        mHolder = holder;
         if (mIsUIViewDistroy) {
             BoyiaLog.d(TAG, "initUIView");
-            mHolder = holder;
             initUIView();
             mIsUIViewDistroy = false;
         } else {

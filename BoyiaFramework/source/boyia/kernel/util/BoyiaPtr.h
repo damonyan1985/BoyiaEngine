@@ -41,13 +41,9 @@ BoyiaPtr<T>::BoyiaPtr(T* ptr)
 template <class T>
 BoyiaPtr<T>::BoyiaPtr(const BoyiaPtr<T>& ptr)
 {
-    T* dptr = ptr.get();
+    m_ptr = ptr.get();
     // 新持有的指针进行加操作
-    refIfNotNull(dptr);
-    T* sptr = m_ptr;
-    m_ptr = dptr;
-    // 原来持有的指针进行减操作
-    defIfNotNull(sptr);
+    refIfNotNull(m_ptr);
 }
 
 template <class T>
