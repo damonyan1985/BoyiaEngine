@@ -139,7 +139,8 @@ LVoid GraphicsContextGL::drawImage(const LImage* image)
         return;
     }
 
-    yanbo::Texture* tex = yanbo::TextureCache::getInst()->put(image);
+    //yanbo::Texture* tex = yanbo::TextureCache::getInst()->put(image);
+    yanbo::Texture* tex = yanbo::TextureCache::getInst()->putImage(image);
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();

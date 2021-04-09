@@ -13,7 +13,6 @@ RefCount::~RefCount()
 
 LVoid RefCount::release()
 {
-    // 如果引用计数为0，则释放自己
     if (!shareCount() && !weakCount()) {
         delete this;
     }

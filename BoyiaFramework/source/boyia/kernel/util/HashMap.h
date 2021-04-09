@@ -57,6 +57,13 @@ public:
 
     ~HashMap()
     {
+        clear();
+        // 清除table
+        delete[] m_table;
+    }
+
+    LVoid clear()
+    {
         for (LInt i = 0; i < m_capacity; i++) {
             HashMapEntryPtr entry = m_table[i];
             while (entry) {
@@ -65,7 +72,11 @@ public:
                 entry = next;
             }
         }
-        delete[] m_table;
+
+        // 只修改size的值，不修改阈值和容量
+        m_size = 0;
+        // table指针指向空
+        LMemset(m_table, 0, m_capacity * sizeof(HashMapEntryPtr));
     }
 
     LVoid put(const K& key, const V& val)
@@ -74,7 +85,7 @@ public:
         if (++m_size > m_threshold) {
             resize();
         }
-        
+
         addEntry(genHash(key), key, val);
     }
 
@@ -153,7 +164,7 @@ private:
         }
     }
 
-    LVoid addEntry(LUint hash, const K& key, V value)
+    LVoid addEntry(LUint hash, const K& key, const V& value)
     {
         LInt index = indexHash(hash);
         if (m_table[index]) {
