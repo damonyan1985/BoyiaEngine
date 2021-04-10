@@ -5,11 +5,22 @@
 
 namespace util {
 
-struct GLWindow {
+class GLWindow {
+public:
+    GLWindow()
+        : win(kBoyiaNull)
+        , display(EGL_NO_DISPLAY)
+        , surface(EGL_NO_SURFACE)
+        , context(EGL_NO_CONTEXT)
+        , width(0)
+        , height(0)
+    {
+    }
     ANativeWindow* win;
     EGLDisplay display;
     EGLSurface surface;
     EGLContext context;
+    EGLConfig config;
     int type;
     int width;
     int height;
@@ -25,19 +36,28 @@ GLContext::GLContext()
 // when call eglCreateWindowSurface
 void GLContext::setWindow(void* win)
 {
-    if (m_window != NULL) {
+    if (!m_window) {
         //ANativeWindow_release(m_window->win);
         //delete m_window;
-        destroyGL();
+        //destroyGL();
+        m_window = new GLWindow;
     }
 
-    m_window = new GLWindow;
+    if (m_window->win) {
+        ANativeWindow_release(m_window->win);
+    }
+
     m_window->win = ANativeWindow_fromSurface(yanbo::JNIUtil::getEnv(), (jobject)win);
     KFORMATLOG("m_window win=%d", (LIntPtr)m_window->win);
 }
 
 void GLContext::initGL(EGLType type)
 {
+    if (m_window->surface != EGL_NO_SURFACE) {
+        resetGL(type);
+        return;
+    }
+
     EGLint attribs[] = {
         EGL_SURFACE_TYPE, type == EWindow ? EGL_WINDOW_BIT : EGL_PBUFFER_BIT,
         EGL_BLUE_SIZE, 8,
@@ -52,7 +72,7 @@ void GLContext::initGL(EGLType type)
     EGLint w, h, dummy, format;
     EGLint numConfigs;
     EGLConfig config;
-    EGLSurface surface;
+
     EGLContext context;
 
     EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -63,18 +83,6 @@ void GLContext::initGL(EGLType type)
 
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 
-    //ANativeWindow_setBuffersGeometry(m_window->win, 0, 0, format);
-
-    if (EWindow == type) {
-        surface = eglCreateWindowSurface(display, config, m_window->win, NULL);
-    } else {
-        const EGLint bufAttribs[] = {
-            EGL_WIDTH, 1,
-            EGL_HEIGHT, 1,
-            EGL_NONE
-        };
-        surface = eglCreatePbufferSurface(display, config, bufAttribs);
-    }
     const EGLint version[] = {
         EGL_CONTEXT_CLIENT_VERSION, 3,
         EGL_NONE
@@ -88,25 +96,41 @@ void GLContext::initGL(EGLType type)
             s_sharedWin ? s_sharedWin->context : NULL, version);
     }
 
-    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        KLOG("Unable to eglMakeCurrent");
-        return;
-    }
-
     if (EBuffer == type) {
         m_window = new GLWindow;
     }
 
     m_window->display = display;
     m_window->context = context;
-    m_window->surface = surface;
-    //m_window->config = config;
+    m_window->config = config;
     m_window->type = type;
 
-    if (EWindow == type) {
-        eglQuerySurface(display, surface, EGL_WIDTH, &m_window->width);
-        eglQuerySurface(display, surface, EGL_HEIGHT, &m_window->height);
+    resetGL(type);
+}
 
+void GLContext::resetGL(EGLType type)
+{
+    EGLSurface surface;
+    if (EWindow == type) {
+        surface = eglCreateWindowSurface(m_window->display, m_window->config, m_window->win, NULL);
+    } else {
+        const EGLint bufAttribs[] = {
+            EGL_WIDTH, 1,
+            EGL_HEIGHT, 1,
+            EGL_NONE
+        };
+        surface = eglCreatePbufferSurface(m_window->display, m_window->config, bufAttribs);
+    }
+
+    if (eglMakeCurrent(m_window->display, surface, surface, m_window->context) == EGL_FALSE) {
+        KLOG("Unable to eglMakeCurrent");
+        return;
+    }
+
+    m_window->surface = surface;
+    if (EWindow == type) {
+        eglQuerySurface(m_window->display, surface, EGL_WIDTH, &m_window->width);
+        eglQuerySurface(m_window->display, surface, EGL_HEIGHT, &m_window->height);
         s_sharedWin = m_window;
     }
 }
