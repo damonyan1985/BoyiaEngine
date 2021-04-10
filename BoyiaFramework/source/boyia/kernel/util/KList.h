@@ -56,7 +56,7 @@ public:
     {
         m_nodePtr = iter.m_nodePtr;
     }
-    ~ListIterator() {}
+    ~ListIterator() { }
 
 public:
     NodeValue& operator*()

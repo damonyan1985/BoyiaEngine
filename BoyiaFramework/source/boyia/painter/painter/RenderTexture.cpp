@@ -18,7 +18,7 @@ LVoid RenderTexture::initFBO(LInt width, LInt height)
 {
     // Generate Texture
     m_tex = new Texture();
-    m_tex->initWithData(NULL, 0, width, height);
+    m_tex->initWithData(NULL, width, height);
     // Generate FBO
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);

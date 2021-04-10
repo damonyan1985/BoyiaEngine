@@ -193,7 +193,7 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 
     yanbo::Texture* tex = yanbo::TextureCache::getInst()->findText((ViewPainter*)m_item);
     if (!tex) {
-        tex = yanbo::TextureCache::getInst()->createText((ViewPainter*)m_item, image.get(), 0);
+        tex = yanbo::TextureCache::getInst()->createText((ViewPainter*)m_item, image.get());
     } else {
         yanbo::TextureCache::getInst()->updateText(tex, image.get());
     }
