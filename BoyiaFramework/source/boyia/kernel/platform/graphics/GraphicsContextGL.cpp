@@ -185,6 +185,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
 LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAlign align)
 {
+    BOYIA_LOG("drawText text=%s", GET_STR(text));
     BoyiaPtr<ImageAndroid> image = new ImageAndroid();
     image->drawText(text, rect, m_font, m_penColor);
     image->unlockPixels();
@@ -193,14 +194,17 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 
     yanbo::Texture* tex = yanbo::TextureCache::getInst()->findText((ViewPainter*)m_item);
     if (!tex) {
+        BOYIA_LOG("drawText text1=%s", GET_STR(text));
         tex = yanbo::TextureCache::getInst()->createText((ViewPainter*)m_item, image.get());
     } else {
+        BOYIA_LOG("drawText text2=%s", GET_STR(text));
         yanbo::TextureCache::getInst()->updateText(tex, image.get());
     }
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(m_brushColor);
+    BOYIA_LOG("drawText text3 r=%d g=%d b=%d a=%d", m_brushColor.m_red, m_brushColor.m_green, m_brushColor.m_blue, m_brushColor.m_alpha);
     if (m_clipRect) {
         paint->setImage(tex, rect, *m_clipRect);
     } else {

@@ -22,6 +22,8 @@ public:
     void setWindow(void* win);
 
     void initGL(EGLType type);
+    void resetGL(EGLType type);
+
     void postBuffer();
     void destroyGL();
 
