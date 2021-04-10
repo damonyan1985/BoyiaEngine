@@ -13,12 +13,11 @@ namespace yanbo {
 class Texture : public BoyiaRef {
 public:
     Texture();
-    LVoid initWithData(LVoid* data, LUint key, LInt width, LInt height);
+    LVoid initWithData(LVoid* data, LInt width, LInt height);
 
     virtual ~Texture();
 
     GLuint texId;
-    LUint texKey;
     LInt width;
     LInt height;
 };
@@ -43,7 +42,7 @@ public:
     LVoid updateText(Texture* tex, const LImage* image);
     // 查找文本产生的纹理
     Texture* findText(const ViewPainter* item);
-    Texture* createText(ViewPainter* item, const LImage* image, LUint key);
+    Texture* createText(ViewPainter* item, const LImage* image);
 
     Texture* putImage(const LImage* image);
     Texture* findImage(const String& url);

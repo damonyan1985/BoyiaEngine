@@ -9,7 +9,6 @@ Texture::Texture()
     : texId(0)
     , width(0)
     , height(0)
-    , texKey(0)
 {
 }
 
@@ -18,9 +17,8 @@ Texture::~Texture()
     glDeleteTextures(1, &texId);
 }
 
-LVoid Texture::initWithData(LVoid* data, LUint key, LInt width, LInt height)
+LVoid Texture::initWithData(LVoid* data, LInt width, LInt height)
 {
-    texKey = key;
     glGenTextures(1, &texId);
 
     glBindTexture(GL_TEXTURE_2D, texId);
@@ -70,13 +68,13 @@ Texture* TextureCache::findText(const ViewPainter* item)
 }
 
 // 创建文字纹理
-Texture* TextureCache::createText(ViewPainter* item, const LImage* image, LUint key)
+Texture* TextureCache::createText(ViewPainter* item, const LImage* image)
 {
     TexturePair* pair = new TexturePair;
     pair->item = item;
 
     pair->tex = new Texture();
-    pair->tex->initWithData(image->pixels(), key, image->width(), image->height());
+    pair->tex->initWithData(image->pixels(), image->width(), image->height());
     m_textCache.push(pair);
 
     return pair->tex.get();
@@ -117,7 +115,7 @@ Texture* TextureCache::putImage(const LImage* image)
     Texture* tex = findImage(image->url());
     if (!tex) {
         tex = new Texture();
-        tex->initWithData(image->pixels(), 0, image->width(), image->height());
+        tex->initWithData(image->pixels(), image->width(), image->height());
 
         m_imageCache.put(HashString(image->url()), tex);
     }
