@@ -54,63 +54,11 @@ TextureCache* TextureCache::getInst()
     return &sCache;
 }
 
-Texture* TextureCache::find(LVoid* image)
-{
-    LUint key = 0;
-    HtmlView* item = (HtmlView*)image;
-    if (item->isImage()) {
-        ImageView* imgItem = (ImageView*)item;
-        key = StringUtils::hashCode(imgItem->url());
-    }
-
-    return find(item, key);
-}
-
-Texture* TextureCache::put(const LImage* image)
-{
-    LUint key = 0;
-    HtmlView* item = (HtmlView*)image->item();
-    KFORMATLOG("TextureCache::put isImage=%d", item->isImage());
-    if (item->isImage()) {
-        ImageView* imgItem = (ImageView*)item;
-        key = StringUtils::hashCode(imgItem->url());
-        KFORMATLOG("TextureCache::put tex=%x", key);
-    }
-
-    Texture* tex = find(item, key);
-
-    if (!tex) {
-        tex = fetchTexture(item, image, key);
-    }
-
-    return tex;
-}
-
-Texture* TextureCache::find(HtmlView* item, LUint key)
-{
-    TextureMap::Iterator iter = m_texMap.begin();
-    TextureMap::Iterator iterEnd = m_texMap.end();
-
-    for (; iter != iterEnd; ++iter) {
-        // 0表示是文本产生的纹理
-        if (key == 0) {
-            if (item == (*iter)->item) {
-                return (*iter)->tex.get();
-            }
-        } else {
-            if ((*iter)->tex->texKey == key) {
-                return (*iter)->tex.get();
-            }
-        }
-    }
-
-    return kBoyiaNull;
-}
-
+// 查找文字纹理
 Texture* TextureCache::findText(const ViewPainter* item)
 {
-    TextureMap::Iterator iter = m_texMap.begin();
-    TextureMap::Iterator iterEnd = m_texMap.end();
+    TextTextureCache::Iterator iter = m_textCache.begin();
+    TextTextureCache::Iterator iterEnd = m_textCache.end();
 
     for (; iter != iterEnd; ++iter) {
         if (item == (*iter)->item) {
@@ -121,19 +69,21 @@ Texture* TextureCache::findText(const ViewPainter* item)
     return kBoyiaNull;
 }
 
-Texture* TextureCache::fetchTexture(ViewPainter* item, const LImage* image, LUint key)
+// 创建文字纹理
+Texture* TextureCache::createText(ViewPainter* item, const LImage* image, LUint key)
 {
     TexturePair* pair = new TexturePair;
     pair->item = item;
 
     pair->tex = new Texture();
     pair->tex->initWithData(image->pixels(), key, image->width(), image->height());
-    m_texMap.push(pair);
+    m_textCache.push(pair);
 
     return pair->tex.get();
 }
 
-LVoid TextureCache::updateTexture(Texture* tex, const LImage* image)
+// 更新文字纹理
+LVoid TextureCache::updateText(Texture* tex, const LImage* image)
 {
     if (tex) {
         glBindTexture(GL_TEXTURE_2D, tex->texId);
@@ -151,17 +101,10 @@ LVoid TextureCache::updateTexture(Texture* tex, const LImage* image)
     }
 }
 
-Texture* TextureCache::updateTexture(const LImage* image)
-{
-    Texture* tex = find(image->item());
-    updateTexture(tex, image);
-    return tex;
-}
-
 LVoid TextureCache::clear()
 {
     m_imageCache.clear();
-    m_texMap.clear();
+    m_textCache.clear();
 }
 
 Texture* TextureCache::findImage(const String& url)

@@ -7,11 +7,12 @@ namespace util {
 class HashString {
 public:
     HashString(const HashString& str, LBool deep = LTrue)
+        : HashString(str.m_value, deep)
     {
-        Copy(str.m_value, deep);
     }
 
     HashString(const String& value, LBool deep = LTrue)
+        : m_hash(StringUtils::hashCode(value))
     {
         Copy(value, deep);
     }
@@ -32,11 +33,12 @@ public:
 
     LUint hash() const
     {
-        return StringUtils::hashCode(m_value);
+        return m_hash;
     }
 
 private:   
     String m_value;
+    LUint m_hash;
 };
 }
 

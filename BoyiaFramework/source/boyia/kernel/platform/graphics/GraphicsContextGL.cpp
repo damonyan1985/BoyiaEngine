@@ -139,7 +139,6 @@ LVoid GraphicsContextGL::drawImage(const LImage* image)
         return;
     }
 
-    //yanbo::Texture* tex = yanbo::TextureCache::getInst()->put(image);
     yanbo::Texture* tex = yanbo::TextureCache::getInst()->putImage(image);
 
     ItemPainter* painter = currentPainter();
@@ -194,9 +193,9 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
 
     yanbo::Texture* tex = yanbo::TextureCache::getInst()->findText((ViewPainter*)m_item);
     if (!tex) {
-        tex = yanbo::TextureCache::getInst()->fetchTexture((ViewPainter*)m_item, image.get(), 0);
+        tex = yanbo::TextureCache::getInst()->createText((ViewPainter*)m_item, image.get(), 0);
     } else {
-        yanbo::TextureCache::getInst()->updateTexture(tex, image.get());
+        yanbo::TextureCache::getInst()->updateText(tex, image.get());
     }
 
     ItemPainter* painter = currentPainter();

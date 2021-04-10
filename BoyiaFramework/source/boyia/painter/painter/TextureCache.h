@@ -31,28 +31,26 @@ public:
     BoyiaPtr<Texture> tex;
 };
 
-typedef KList<BoyiaPtr<TexturePair>> TextureMap;
+// 文本产生的纹理
+typedef KList<BoyiaPtr<TexturePair>> TextTextureCache;
+// 图片产生的纹理
 typedef HashMap<HashString, BoyiaPtr<Texture>> ImageTextureCache;
 class TextureCache {
 public:
     static TextureCache* getInst();
     LVoid clear();
-    Texture* put(const LImage* image);
-    Texture* find(LVoid* image);
-    Texture* updateTexture(const LImage* image);
-    LVoid updateTexture(Texture* tex, const LImage* image);
+
+    LVoid updateText(Texture* tex, const LImage* image);
     // 查找文本产生的纹理
     Texture* findText(const ViewPainter* item);
-    Texture* fetchTexture(ViewPainter* item, const LImage* image, LUint key);
+    Texture* createText(ViewPainter* item, const LImage* image, LUint key);
 
     Texture* putImage(const LImage* image);
     Texture* findImage(const String& url);
 
 private:
-    Texture* find(HtmlView* item, LUint key);
-
     ImageTextureCache m_imageCache;
-    TextureMap m_texMap;
+    TextTextureCache m_textCache;
 };
 }
 #endif

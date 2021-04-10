@@ -112,7 +112,7 @@ LVoid ImageView::loadImage(const String& url)
     if (!m_image->isLoaded() || !m_src.CompareCase(url)) {
         m_src = url;
 
-        KFORMATLOG("ImageView::loadImage path=%s", (const char*)m_src.GetBuffer());
+        BOYIA_LOG("ImageView::loadImage path=%s", GET_STR(m_src));
         m_image->load(url, this);
     }
 }
