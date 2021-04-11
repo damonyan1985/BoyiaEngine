@@ -308,8 +308,9 @@ LVoid UIThread::resetContext()
 LVoid UIThread::reset(Message* msg)
 {
     m_gc->reset();
-    UIView* view = (UIView*)msg->obj;
-    drawUI(view->getDocument()->getRenderTreeRoot());
+    m_gc->submit();
+    //UIView* view = (UIView*)msg->obj;
+    //drawUI(view->getDocument()->getRenderTreeRoot());
 }
 
 LVoid UIThread::runAnimation(LVoid* callback)
