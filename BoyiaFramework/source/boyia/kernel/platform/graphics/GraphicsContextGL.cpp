@@ -37,6 +37,7 @@ public:
 GraphicsContextGL::GraphicsContextGL()
     : m_item(kBoyiaNull)
     , m_clipRect(kBoyiaNull)
+    , m_hasGLInit(LFalse)
 {
 }
 
@@ -241,9 +242,15 @@ LVoid GraphicsContextGL::setFont(const LFont& font)
 
 LVoid GraphicsContextGL::reset()
 {
+    m_context.initGL(GLContext::EWindow);
+    if (m_hasGLInit) {
+        return;
+    }
+
+    m_hasGLInit = LTrue;
     yanbo::TextureCache::getInst()->clear();
     //GLContext::initGLContext(GLContext::EWindow);
-    m_context.initGL(GLContext::EWindow);
+
     glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());
     yanbo::ShaderUtil::setRealScreenSize(m_context.viewWidth(), m_context.viewHeight());
     yanbo::MatrixState::init();
