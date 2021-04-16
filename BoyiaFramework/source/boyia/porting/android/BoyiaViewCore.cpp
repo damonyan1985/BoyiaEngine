@@ -41,10 +41,6 @@ static LVoid boyiaSocketTest()
     boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://192.168.0.10:6666"), kBoyiaNull);
 }
 
-extern void nativeUpdatePatch(
-    JNIEnv* env, jobject object,
-    jstring oldApkPath, jstring newApkPath, jstring patchFilePath);
-
 static void nativeSetGLSurface(
     JNIEnv* env,
     jobject obj,
@@ -215,10 +211,6 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide },
     { "nativeBoyiaSync", "(J)V", (void*)nativeBoyiaSync },
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
-};
-
-static JNINativeMethod sUtilMethods[] = {
-    { "nativeUpdatePatch", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", (void*)nativeUpdatePatch },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,

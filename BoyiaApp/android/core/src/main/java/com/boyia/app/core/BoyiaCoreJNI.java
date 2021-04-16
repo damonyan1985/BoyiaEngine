@@ -9,14 +9,22 @@ import com.boyia.app.loader.jober.MainScheduler;
 import com.boyia.app.loader.jober.Observable;
 import com.boyia.app.loader.jober.Subscriber;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class BoyiaCoreJNI {
+    private static AtomicBoolean sHasInit = new AtomicBoolean(false);
     public interface LibraryInitCallback {
         void initOk();
     }
 
     public static void initLibrary(LibraryInitCallback callback) {
         Observable.create((Subscriber<String> subscriber) -> {
-            BoyiaUtils.loadLib();
+            /**
+             * 判断boyia内核是否已经初始化过
+             */
+            if (sHasInit.compareAndSet(false, true)) {
+                BoyiaUtils.loadLib();
+            }
             subscriber.onComplete();
         })
         .subscribeOn(JobScheduler.getInstance())

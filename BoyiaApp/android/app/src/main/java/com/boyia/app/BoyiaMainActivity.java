@@ -9,6 +9,7 @@ import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaActivity;
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.loader.image.BoyiaImager;
@@ -18,7 +19,6 @@ import android.annotation.TargetApi;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -30,27 +30,24 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-public class BoyiaActivity extends Activity {
-    private static final String TAG = "BoyiaActivity";
+public class BoyiaMainActivity extends BoyiaActivity {
+    private static final String TAG = "BoyiaMainActivity";
     private static final String BOYIA_RECEIVE_ACTION = "com.boyia.app.broadcast";
     private boolean mNeedExit = false;
     private BoyiaBroadcast mBroadcast;
-    private FrameLayout mContainer;
     private TTAdSplashManager mSplashManager;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mContainer = new FrameLayout(this);
-        setContentView(mContainer);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-        // 防止重新布局
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    }
 
+    @Override
+    protected void initBoyiaView() {
+        initContainer();
         mSplashManager = new TTAdSplashManager();
         mSplashManager.loadSplashAd(this,
-                mContainer, () -> startBoyiaUI());
+                getContainer(), () -> startBoyiaUI());
         //BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
         initBroadcast();
         initService();
@@ -121,7 +118,7 @@ public class BoyiaActivity extends Activity {
             Process.killProcess(Process.myPid());
         } else {
             mNeedExit = true;
-            BoyiaUtils.showToast("再按一次退出程序");
+            //BoyiaUtils.showToast("再按一次退出程序");
             BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
                         mNeedExit = false;
                     }
@@ -141,7 +138,7 @@ public class BoyiaActivity extends Activity {
 
     @Override
     public void onNewIntent(Intent intent) {
-        BoyiaUtils.showToast(intent.getAction());
+        //BoyiaUtils.showToast(intent.getAction());
     }
 
     @Override
@@ -151,60 +148,5 @@ public class BoyiaActivity extends Activity {
         if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
             BoyiaImager.getInstance().clearMemoryCache();
         }
-    }
-
-    private static void setRootView(Activity activity) {
-        ViewGroup parent = (ViewGroup) activity.findViewById(android.R.id.content);
-        for (int i = 0, count = parent.getChildCount(); i < count; i++) {
-            View childView = parent.getChildAt(i);
-            if (childView instanceof ViewGroup) {
-                childView.setFitsSystemWindows(true);
-                ((ViewGroup) childView).setClipToPadding(true);
-            }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static void transparentStatusBar(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //需要设置这个flag contentView才能延伸到状态栏
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            //状态栏覆盖在contentView上面，设置透明使contentView的背景透出来
-            activity.getWindow().setStatusBarColor(0xffed4040);
-        } else {
-            //让contentView延伸到状态栏并且设置状态栏颜色透明
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-    }
-
-    /**
-     * 设置状态栏全透明
-     *
-     * @param activity 需要设置的activity
-     */
-    public static void setTransparent(Activity activity) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return;
-        }
-        transparentStatusBar(activity);
-        setRootView(activity);
-    }
-
-
-    private void startBoyiaUI() {
-
-        setTransparent(this);
-        //getWindow().getDecorView().setFitsSystemWindows(true);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        BoyiaCoreJNI.initLibrary(() -> {
-            mContainer.removeAllViews();
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-            mContainer.addView(new BoyiaUIView(BoyiaActivity.this), params);
-        });
     }
 }

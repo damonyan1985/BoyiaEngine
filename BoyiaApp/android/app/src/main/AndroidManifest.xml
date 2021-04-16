@@ -37,7 +37,7 @@
         android:debuggable="true">
     <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" > -->
         <activity
-            android:name="com.boyia.app.BoyiaActivity"
+            android:name="com.boyia.app.BoyiaMainActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask">
