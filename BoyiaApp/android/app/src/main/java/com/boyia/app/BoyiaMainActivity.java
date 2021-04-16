@@ -118,7 +118,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
             Process.killProcess(Process.myPid());
         } else {
             mNeedExit = true;
-            //BoyiaUtils.showToast("再按一次退出程序");
+            BoyiaUtils.showToast("再按一次退出程序");
             BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
                         mNeedExit = false;
                     }
@@ -138,7 +138,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
 
     @Override
     public void onNewIntent(Intent intent) {
-        //BoyiaUtils.showToast(intent.getAction());
+        BoyiaUtils.showToast(intent.getAction());
     }
 
     @Override
