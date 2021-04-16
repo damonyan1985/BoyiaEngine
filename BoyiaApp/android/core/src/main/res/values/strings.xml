@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">boyialib</string>
+    <string name="boyia_process">:boyia</string>
 </resources>

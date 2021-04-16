@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 
 import com.boyia.app.common.BaseApplication;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -46,12 +47,15 @@ public class BoyiaUtils {
     // Sub Thread exec Toast needs Looper
     public static void showToast(final String info) {
         BoyiaLog.d("engine", "toast=" + info);
-        BaseApplication.getInstance().getAppHandler().post(()-> {
-                Toast.makeText(BaseApplication.getInstance(), info,
-                        Toast.LENGTH_SHORT).show();
-            }
-        );
-
+//        BaseApplication.getInstance().getAppHandler().post(()-> {
+//                Toast.makeText(BaseApplication.getInstance(), info,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        );
+        Intent intent = new Intent();
+        intent.setAction("com.boyia.app.sub.action");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        BaseApplication.getInstance().startActivity(intent);
     }
 
     // 得到文件MD5值
@@ -99,7 +103,4 @@ public class BoyiaUtils {
         paint.getTextWidths(chars, index, 1, width);
         return (int) Math.ceil(width[0]);
     }
-
-    // 处理patch
-    public static native void nativeUpdatePatch(String oldPath, String newPath, String patchPath);
 }
