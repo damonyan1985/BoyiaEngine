@@ -44,18 +44,21 @@ public class BoyiaUtils {
         }
     }
 
-    // Sub Thread exec Toast needs Looper
-    public static void showToast(final String info) {
-        BoyiaLog.d("engine", "toast=" + info);
-//        BaseApplication.getInstance().getAppHandler().post(()-> {
-//                Toast.makeText(BaseApplication.getInstance(), info,
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        );
+    public static void startApp(final String info) {
         Intent intent = new Intent();
         intent.setAction("com.boyia.app.sub.action");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.getInstance().startActivity(intent);
+    }
+
+    // Sub Thread exec Toast needs Looper
+    public static void showToast(final String info) {
+        BoyiaLog.d("engine", "toast=" + info);
+        BaseApplication.getInstance().getAppHandler().post(()-> {
+                Toast.makeText(BaseApplication.getInstance(), info,
+                        Toast.LENGTH_SHORT).show();
+            }
+        );
     }
 
     // 得到文件MD5值

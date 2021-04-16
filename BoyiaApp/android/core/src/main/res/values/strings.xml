@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">boyialib</string>
     <string name="boyia_process">:boyia</string>
+    <string name="boyia_task">com.boyia.app.subprocess</string>
 </resources>

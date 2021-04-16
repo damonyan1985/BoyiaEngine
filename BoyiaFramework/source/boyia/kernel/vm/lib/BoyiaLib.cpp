@@ -4,9 +4,9 @@
 #include "BoyiaInputView.h"
 #include "BoyiaMemory.h"
 #include "BoyiaNetwork.h"
+#include "BoyiaSocket.h"
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
-#include "BoyiaSocket.h"
 #if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
 #endif
@@ -525,7 +525,7 @@ LInt callStaticMethod(LVoid* vm)
     FREE_BUFFER(strMethod);
     FREE_BUFFER(strSign);
 #endif
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt getHtmlItem(LVoid* vm)
@@ -541,7 +541,7 @@ LInt getHtmlItem(LVoid* vm)
 
     jsDoc->getItemByID(id);
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt loadImageByUrl(LVoid* vm)
@@ -556,7 +556,7 @@ LInt loadImageByUrl(LVoid* vm)
 
     boyia::BoyiaImageView* image = reinterpret_cast<boyia::BoyiaImageView*>(itemArg->mValue.mIntVal);
     image->loadImage(url);
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt setViewGroupText(LVoid* vm)
@@ -570,7 +570,7 @@ LInt setViewGroupText(LVoid* vm)
     boyia::BoyiaViewGroup* view = (boyia::BoyiaViewGroup*)itemArg->mValue.mIntVal;
     view->setText(text);
     text.ReleaseBuffer();
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt setInputViewText(LVoid* vm)
@@ -585,7 +585,7 @@ LInt setInputViewText(LVoid* vm)
 
     boyia::BoyiaInputView* view = (boyia::BoyiaInputView*)input->mValue.mIntVal;
     view->setText(text);
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt addEventListener(LVoid* vm)
@@ -597,7 +597,7 @@ LInt addEventListener(LVoid* vm)
     boyia::BoyiaView* navView = (boyia::BoyiaView*)navVal->mValue.mIntVal;
     navView->addListener(type->mValue.mIntVal, callback);
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt setToNativeView(LVoid* vm)
@@ -608,7 +608,7 @@ LInt setToNativeView(LVoid* vm)
     boyia::BoyiaView* navView = (boyia::BoyiaView*)navVal->mValue.mIntVal;
     navView->setBoyiaView(byVal);
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt createViewGroup(LVoid* vm)
@@ -625,7 +625,7 @@ LInt createViewGroup(LVoid* vm)
         strUrl,
         selectVal->mValue.mIntVal);
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt instanceOfClass(LVoid* vm)
@@ -653,7 +653,7 @@ LInt instanceOfClass(LVoid* vm)
     value.mValueType = BY_INT;
     value.mValue.mIntVal = result;
     SetNativeResult(&value, vm);
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt setImageUrl(LVoid* vm)
@@ -668,7 +668,7 @@ LInt setImageUrl(LVoid* vm)
     boyia::BoyiaImageView* image = (boyia::BoyiaImageView*)itemArg->mValue.mIntVal;
     image->setImageUrl(url);
     url.ReleaseBuffer();
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt viewCommit(LVoid* vm)
@@ -677,7 +677,7 @@ LInt viewCommit(LVoid* vm)
     boyia::BoyiaView* view = (boyia::BoyiaView*)itemArg->mValue.mIntVal;
     view->commit();
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt setViewVisible(LVoid* vm)
@@ -689,7 +689,7 @@ LInt setViewVisible(LVoid* vm)
     view->item()->getStyle()->displayType = visibleArg->mValue.mIntVal;
     view->commit();
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
@@ -767,7 +767,7 @@ LInt toJsonString(LVoid* vm)
 
     // convert json error
     if (!json) {
-        return 0;
+        return kOpResultFail;
     }
 
     char* out = cJSON_Print(json);
@@ -785,7 +785,7 @@ LInt toJsonString(LVoid* vm)
     BoyiaValue val;
     CreateNativeString(&val, out, len, vm);
     SetNativeResult(&val, vm);
-    return 1;
+    return kOpResultSuccess;
 }
 
 LInt createSocket(LVoid* vm)

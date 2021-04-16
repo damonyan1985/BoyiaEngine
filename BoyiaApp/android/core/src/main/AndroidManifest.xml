@@ -4,6 +4,7 @@
         <activity
             android:name="com.boyia.app.core.BoyiaActivity"
             android:process="@string/boyia_process"
+            android:taskAffinity="@string/boyia_task"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.sub.action" />
