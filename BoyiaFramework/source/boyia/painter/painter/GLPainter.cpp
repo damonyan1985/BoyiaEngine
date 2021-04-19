@@ -6,8 +6,6 @@
 #include "StringUtils.h"
 
 namespace yanbo {
-#define GL_TEXTURE_EXTERNAL_OES 0x8D65
-
 BatchCommandBuffer GLPainter::s_buffer;
 
 RotateInfo::RotateInfo()
@@ -242,11 +240,8 @@ void GLPainter::paintCommand()
             glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
             // 绑定纹理
             glActiveTexture(GL_TEXTURE0);
-            // 为啥要用GL_TEXTURE_2D而不是GL_TEXTURE_EXTERNAL_OES，
-            // 作者表示自己也很晕
-            // 可能出错信息会驱动GLConsumer去创建EGLImage吧
-            // 纯JAVA实现的情况会不同，蛋疼，艹
-            glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+            // Set GL_TEXTURE_EXTERNAL_OES
+            glBindTexture(GL_TEXTURE_EXTERNAL_OES, s_buffer.buffer[i].texId);
         } break;
         case EShapeImage: {
             glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());

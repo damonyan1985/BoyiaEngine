@@ -1,0 +1,16 @@
+body {
+  background-color: #c9daf8;
+  align: all;
+	width: 720px;
+  position: absolute;
+}
+
+#search {
+  background-color: #FFFFFF;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  width: 450px;
+  height: 70px;
+}

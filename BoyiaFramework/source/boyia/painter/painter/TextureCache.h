@@ -8,11 +8,17 @@
 #include "KList.h"
 #include <GLES3/gl3.h>
 //#include <GLES2/gl2ext.h>
+#define GL_TEXTURE_EXTERNAL_OES 0x8D65
 
 namespace yanbo {
 class Texture : public BoyiaRef {
 public:
     Texture();
+
+    // For external texture
+    LVoid initWithData(LInt width, LInt height);
+
+    // For image texture
     LVoid initWithData(LVoid* data, LInt width, LInt height);
 
     virtual ~Texture();

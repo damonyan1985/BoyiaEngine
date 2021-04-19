@@ -2,8 +2,9 @@
 #include "AutoObject.h"
 #include "JNIUtil.h"
 #include "UIThread.h"
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include "VideoView.h"
+// #include <GLES2/gl2.h>
+// #include <GLES2/gl2ext.h>
 #include <jni.h>
 
 namespace util {
@@ -27,7 +28,6 @@ struct JMediaPlayer {
 
 MediaPlayerAndroid::MediaPlayerAndroid(LVoid* view)
     : m_view(view)
-    , m_texID(0)
 {
     JNIEnv* env = JNIUtil::getEnv();
     jclass clazz = JNIUtil::getJavaClassID("com/boyia/app/core/BoyiaPlayer");
@@ -67,15 +67,18 @@ bool MediaPlayerAndroid::canDraw()
     return env->CallBooleanMethod(javaObject.get(), m_player->m_canDraw);
 }
 
-void MediaPlayerAndroid::createTextureId()
+void MediaPlayerAndroid::createTexture()
 {
-    glGenTextures(1, &m_texID);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, m_texID);
+    yanbo::VideoView* view = static_cast<yanbo::VideoView*>(m_view);
+    m_texture = new yanbo::Texture();
+    m_texture->initWithData(view->getWidth(), view->getHeight());
+    // glGenTextures(1, &m_texID);
+    // glBindTexture(GL_TEXTURE_EXTERNAL_OES, m_texID);
 
-    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    // glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // 将textureID传给java层
     JNIEnv* env = JNIUtil::getEnv();
@@ -83,7 +86,7 @@ void MediaPlayerAndroid::createTextureId()
     if (!javaObject.get())
         return;
 
-    env->CallVoidMethod(javaObject.get(), m_player->m_setTextureId, m_texID);
+    env->CallVoidMethod(javaObject.get(), m_player->m_setTextureId, m_texture->texId);
 }
 
 MediaPlayerAndroid::~MediaPlayerAndroid()
@@ -94,8 +97,8 @@ MediaPlayerAndroid::~MediaPlayerAndroid()
 
 LVoid MediaPlayerAndroid::start(const String& url)
 {
-    if (!m_texID) {
-        createTextureId();
+    if (!texture()) {
+        createTexture();
     }
     JNIEnv* env = JNIUtil::getEnv();
     AutoJObject javaObject = m_player->object(env);
@@ -160,9 +163,9 @@ LVoid MediaPlayerAndroid::stop()
     env->CallVoidMethod(javaObject.get(), m_player->m_stop);
 }
 
-int MediaPlayerAndroid::texId()
+yanbo::Texture* MediaPlayerAndroid::texture()
 {
-    return m_texID;
+    return m_texture.get();
 }
 
 // Now in ui thread, can use ui thread method to paint

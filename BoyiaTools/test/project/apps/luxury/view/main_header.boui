@@ -1,0 +1,7 @@
+<view>
+  <div></div>
+  <div>
+  <div id="search" />
+  </div>
+  <div></div>
+</view>

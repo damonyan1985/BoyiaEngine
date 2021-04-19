@@ -17,8 +17,37 @@ Texture::~Texture()
     glDeleteTextures(1, &texId);
 }
 
+LVoid Texture::initWithData(LInt width, LInt height)
+{
+    this->width = width;
+    this->height = height;
+    glGenTextures(1, &texId);
+
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId);
+
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Must call this function to generate texture
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGB, // RGB 3, RGBA 4
+        this->width,
+        this->height,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        kBoyiaNull);
+}
+
 LVoid Texture::initWithData(LVoid* data, LInt width, LInt height)
 {
+    this->width = width;
+    this->height = height;
+
     glGenTextures(1, &texId);
 
     glBindTexture(GL_TEXTURE_2D, texId);
@@ -33,8 +62,8 @@ LVoid Texture::initWithData(LVoid* data, LInt width, LInt height)
         GL_TEXTURE_2D,
         0,
         GL_RGBA, // RGB 3, RGBA 4
-        width,
-        height,
+        this->width,
+        this->height,
         0,
         GL_RGBA,
         GL_UNSIGNED_BYTE,
