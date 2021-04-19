@@ -163,21 +163,14 @@ LVoid GraphicsContextGL::drawImage(const LRect& aDestRect, const LImage* aSource
 LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
     MediaPlayerAndroid* amp = (MediaPlayerAndroid*)mp;
-    if (!amp->texId())
+    if (!amp->texture())
         return;
-
-    BoyiaPtr<yanbo::Texture> tex = new yanbo::Texture();
-    tex->width = rect.GetWidth();
-    tex->height = rect.GetHeight();
-    tex->texId = amp->texId();
-
-    //KFORMATLOG("GraphicsContextGL drawVideo error=%d", glGetError());
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LRgb(0, 0, 0, 0xFF));
 
-    paint->setVideo(tex.get(), rect);
+    paint->setVideo(amp->texture(), rect);
     amp->updateTexture(paint->stMatrix());
     //KFORMATLOG("GraphicsContextGL drawVideo error=%d texId=%d", glGetError(), tex->texId);
 

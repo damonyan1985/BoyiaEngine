@@ -2,6 +2,7 @@
 #define MediaPlayerAndroid_h
 
 #include "LGdi.h"
+#include "TextureCache.h"
 #include "UIThreadClientMap.h"
 
 namespace util {
@@ -21,13 +22,14 @@ public:
     virtual LVoid onClientCallback();
 
     bool canDraw();
-    int texId();
+    yanbo::Texture* texture();
 
 private:
-    void createTextureId();
+    void createTexture();
 
     struct JMediaPlayer* m_player;
-    LUint32 m_texID;
+    //LUint32 m_texID;
+    BoyiaPtr<yanbo::Texture> m_texture;
     LVoid* m_view;
 };
 }
