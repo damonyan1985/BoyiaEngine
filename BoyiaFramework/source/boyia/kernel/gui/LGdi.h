@@ -11,9 +11,9 @@
 #ifndef LGdi_h
 #define LGdi_h
 
+#include "BoyiaPtr.h"
 #include "LGraphic.h"
 #include "UtilString.h"
-#include "BoyiaPtr.h"
 
 // software abstraction layer API
 // graphic abstract class
@@ -101,6 +101,10 @@ public:
 
     virtual LVoid drawVideo(const LRect& rect, const LMediaPlayer* mp) = 0;
 
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+    virtual LVoid drawPlatform(const LRect& rect, LVoid* platformView) = 0;
+#endif
+
     virtual LVoid setBrushStyle(BrushStyle style) = 0;
     virtual LVoid setPenStyle(PenStyle style) = 0;
 
@@ -147,7 +151,7 @@ public:
         set(rgb);
     }
 
-    ~LRgb() {}
+    ~LRgb() { }
 
 public:
     LVoid set(LUint8 aRed, LUint8 aGreen, LUint8 aBlue, LUint8 alpha)
@@ -187,7 +191,7 @@ public:
         , m_height(0)
     {
     }
-    virtual ~LImage() {}
+    virtual ~LImage() { }
 
 #if ENABLE(BOYIA_KERNEL)
     static LImage* create(LVoid* item)
@@ -199,8 +203,8 @@ public:
 #endif
 
 public:
-    virtual LVoid load(const String& path, LVoid* image) {}
-    virtual LVoid create(const String& aFileName) {}
+    virtual LVoid load(const String& path, LVoid* image) { }
+    virtual LVoid create(const String& aFileName) { }
 
     virtual LVoid setLoaded(LBool loaded) { m_loaded = loaded; }
     LBool isLoaded() { return m_loaded; }
@@ -251,7 +255,7 @@ public:
         , m_size(font.m_size)
     {
     }
-    virtual ~LFont() {}
+    virtual ~LFont() { }
 
 public:
     virtual LInt getFontHeight() const

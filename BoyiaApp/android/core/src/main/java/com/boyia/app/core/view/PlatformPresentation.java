@@ -17,6 +17,7 @@ public class PlatformPresentation extends Presentation {
     private FrameLayout mRootView;
     private PlatformViewFactory mViewFactory;
     private String mViewId;
+    private PlatformView mView;
 
     public PlatformPresentation(Context context,
                                 String viewId,
@@ -40,10 +41,14 @@ public class PlatformPresentation extends Presentation {
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         mRootView = new FrameLayout(getContext());
-        PlatformView view = mViewFactory.createView(mViewId);
-        if (view != null && view.getView() != null) {
-            mRootView.addView(view.getView());
+        mView = mViewFactory.createView(getContext(),  mViewId);
+        if (mView != null && mView.getView() != null) {
+            mRootView.addView(mView.getView());
         }
         setContentView(mRootView);
+    }
+
+    public PlatformView getPlatformView() {
+        return mView;
     }
 }

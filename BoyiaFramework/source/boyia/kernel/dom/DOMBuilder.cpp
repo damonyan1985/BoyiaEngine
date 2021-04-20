@@ -8,6 +8,10 @@
 #include "UIView.h"
 #include "VideoView.h"
 
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+#include "PlatformView.h"
+#endif
+
 using tinyxml2::XMLElement;
 using tinyxml2::XMLText;
 
@@ -132,18 +136,6 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             item = new LinkView(tagId, _CS(elem->Attribute("href")));
         } break;
         case HtmlTags::INPUT: {
-            // String tagValue = _CS(elem->Attribute("value"));
-            // String tagTitle = _CS(elem->Attribute("title"));
-            // String tagInputType = _CS(elem->Attribute("type"));
-            // String tagImageUrl = _CS(elem->Attribute("src"));
-            /*
-            item = new InputView(
-                tagId,
-                tagName,
-                _CS(elem->Attribute("value")),
-                _CS(elem->Attribute("title")),
-                _CS(elem->Attribute("type")),
-                _CS(elem->Attribute("src")));*/
             item = InputView::create(
                 tagId,
                 tagName,
@@ -154,6 +146,11 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
         } break;
         case HtmlTags::VIDEO: {
             item = new VideoView(tagId, LFalse, _CS(elem->Attribute("src")));
+        } break;
+        case HtmlTags::PLATFORM: {
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+            item = new PlatformView(tagId, LFalse, _CS(elem->Attribute("type")));
+#endif
         } break;
         default: {
             item = new InlineView(tagId, LFalse);
@@ -168,11 +165,11 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             if (parent) {
                 parent->addChild(item);
             }
-        }
 
-        if (tagId.GetLength() && m_htmlDoc) {
-            KFORMATLOG("HtmlView id %s", (const char*)tagId.GetBuffer());
-            m_htmlDoc->putItemID(tagId, item);
+            if (tagId.GetLength() && m_htmlDoc) {
+                BOYIA_LOG("HtmlView id %s", GET_STR(tagId));
+                m_htmlDoc->putItemID(tagId, item);
+            }
         }
     } else if (node->ToText()) { // Text parse
         XMLText* elem = node->ToText();
