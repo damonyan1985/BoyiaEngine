@@ -12,19 +12,25 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.lang.ref.WeakReference;
+
 public class BoyiaInputManager {
     private static final String TAG = "BoyiaInputManager";
-    private BoyiaUIView mView;
+    private WeakReference<BoyiaUIView> mViewRef;
     private long mItem = 0;
     private int mRootViewVisibleHeight = 0;
 
     public BoyiaInputManager(BoyiaUIView view) {
-        mView = view;
+        mViewRef = new WeakReference<>(view);
         initViewListener();
     }
 
     private void initViewListener() {
-        Activity activity = (Activity) mView.getContext();
+        if (mViewRef.get() == null) {
+            return;
+        }
+
+        Activity activity = (Activity) mViewRef.get().getContext();
         final View rootView = activity.getWindow().getDecorView();
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 Rect rect = new Rect();
@@ -56,18 +62,28 @@ public class BoyiaInputManager {
     }
 
     public void show(final long item, final String text) {
+        if (mViewRef.get() == null) {
+            return;
+        }
+
         MainScheduler.mainScheduler().sendJob(() -> {
             BoyiaUtils.showToast("show keyboard");
             mItem = item;
-            InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(mView, 0, null);
-            mView.resetCommitText(text);
+            InputMethodManager imm = (InputMethodManager) mViewRef.get()
+                    .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(mViewRef.get(), 0, null);
+            mViewRef.get().resetCommitText(text);
         });
     }
 
     public void hide() {
-        InputMethodManager imm = (InputMethodManager) mView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mView.getWindowToken(), 0);
+        if (mViewRef.get() == null) {
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) mViewRef.get().getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mViewRef.get().getWindowToken(), 0);
     }
 
     public long item() {

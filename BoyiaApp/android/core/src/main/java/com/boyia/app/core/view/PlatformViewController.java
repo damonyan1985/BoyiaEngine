@@ -5,25 +5,25 @@ import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.view.Surface;
+import android.view.View;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 同层渲染，本地view控制类
+ * 同层渲染，原生view控制类
  */
 public class PlatformViewController {
     private Context mContext;
     private PlatformPresentation mPresentation;
-    private Map<String, PlatformViewFactory> mFactoryRegistry;
 
     public PlatformViewController(Context context) {
         mContext = context;
-        mFactoryRegistry = new ConcurrentHashMap<>();
     }
 
     public void createPlatformView(PlatformViewCreationRequest request) {
-        PlatformViewFactory factory = mFactoryRegistry.get(request.viewType);
+        PlatformViewFactory factory = PlatformViewManager.getInstance()
+                .getViewFactory(request.viewType);
         if (factory == null) {
             return;
         }
@@ -47,6 +47,10 @@ public class PlatformViewController {
                 densityDpi,
                 surface,
                 0);
+    }
+
+    public PlatformView getView() {
+        return mPresentation.getPlatformView();
     }
 
     private int toPhysicalPixels(double logicalPixels) {

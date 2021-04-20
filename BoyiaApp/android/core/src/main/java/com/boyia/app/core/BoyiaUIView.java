@@ -5,6 +5,7 @@ package com.boyia.app.core;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -17,6 +18,8 @@ import android.view.inputmethod.InputConnection;
 import com.boyia.app.core.input.BoyiaInputConnection;
 import com.boyia.app.core.input.BoyiaInputManager;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.view.PlatformViewManager;
+import com.boyia.app.core.view.TestPlatformViewFactory;
 
 import android.app.Activity;
 
@@ -42,6 +45,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     private boolean mIsUIViewDistroy = true;
     private SurfaceHolder mHolder = null;
     private BoyiaInputConnection mInputConnect = null;
+    private GestureDetector mGestureDetector = null;
     private static BoyiaInputManager mInputManager = null;
 
     public BoyiaUIView(Context context) {
@@ -60,16 +64,54 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
         //setZOrderMediaOverlay(true);
         getHolder().addCallback(this);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
+
+        // TODO 为滚动动画做准备
+        mGestureDetector = new GestureDetector(getContext(),
+                new GestureDetector.OnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onShowPress(MotionEvent e) {
+                    }
+
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                            float distanceX, float distanceY) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                    }
+
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2,
+                                           float velocityX, float velocityY) {
+                        return false;
+                    }
+                });
+
         initEventListener();
+
+        PlatformViewManager.getInstance().registerFactory("test-view", new TestPlatformViewFactory());
     }
 
     private void initEventListener() {
         mInputManager = new BoyiaInputManager(this);
         setOnTouchListener((v, event) -> {
-                onTouchDown(event);
-                return true;
-            }
-        );
+            mGestureDetector.onTouchEvent(event);
+            onNativeTouch(event);
+            return true;
+        });
 
         setOnKeyListener((v, keyCode, event) -> {
                 if (event.getAction() == KeyEvent.ACTION_DOWN
@@ -101,7 +143,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
         mInputManager.show(callback, text);
     }
 
-    public void onTouchDown(MotionEvent event) {
+    public void onNativeTouch(MotionEvent event) {
         BoyiaCoreJNI.nativeHandleTouchEvent(event.getAction(), (int) event.getX(), (int) event.getY());
     }
 

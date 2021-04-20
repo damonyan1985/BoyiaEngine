@@ -11,6 +11,11 @@
 #include "TextView.h"
 #include "TextureCache.h"
 #include "UIView.h"
+
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+#include "PlatformView.h"
+#endif
+
 #include <GLES3/gl3.h>
 #include <android/bitmap.h>
 #include <stdlib.h>
@@ -176,6 +181,19 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
     painter->painters.push(paint);
 }
+
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+LVoid GraphicsContextGL::drawPlatform(const LRect& rect, LVoid* platformView)
+{
+    yanbo::PlatformView* view = static_cast<yanbo::PlatformView*>(platformView);
+    ItemPainter* painter = currentPainter();
+    BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+    paint->setColor(LRgb(0, 0, 0, 0xFF));
+
+    paint->setImage(view->texture(), rect);
+    painter->painters.push(paint);
+}
+#endif
 
 LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAlign align)
 {

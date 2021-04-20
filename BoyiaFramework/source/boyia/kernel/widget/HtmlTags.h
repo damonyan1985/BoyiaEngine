@@ -51,6 +51,7 @@ public:
         BASE,
         GAME,
         VIDEO,
+        PLATFORM,
         TAGEND
     } HtmlType;
 

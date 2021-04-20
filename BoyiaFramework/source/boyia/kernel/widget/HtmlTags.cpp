@@ -71,6 +71,8 @@ HtmlTags* HtmlTags::getInstance()
         m_htmlTags->defineInitialSymbol(_CS("link"), LINK);
         m_htmlTags->defineInitialSymbol(_CS("base"), BASE);
         m_htmlTags->defineInitialSymbol(_CS("video"), VIDEO);
+        // 同层渲染标签
+        m_htmlTags->defineInitialSymbol(_CS("platform"), PLATFORM);
     }
 
     return m_htmlTags;

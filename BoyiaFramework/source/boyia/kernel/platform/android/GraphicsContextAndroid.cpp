@@ -286,4 +286,10 @@ LVoid GraphicsContextAndroid::clipRect(const LRect& rect)
 LVoid GraphicsContextAndroid::submit()
 {
 }
+
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+LVoid GraphicsContextAndroid::drawPlatform(const LRect& rect, LVoid* platformView)
+{
+}
+#endif
 }

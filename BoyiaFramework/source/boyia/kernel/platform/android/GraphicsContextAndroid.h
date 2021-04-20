@@ -38,6 +38,10 @@ public:
     virtual LVoid drawImage(const LRect& aDestRect, const LImage* aSource, const LRect& aSourceRect);
 
     virtual LVoid drawVideo(const LRect& rect, const LMediaPlayer* mp);
+
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+    virtual LVoid drawPlatform(const LRect& rect, LVoid* platformView);
+#endif
     virtual LVoid drawText(const String& text, const LRect& rect, TextAlign align);
     virtual LVoid setBrushStyle(BrushStyle aBrushStyle);
     virtual LVoid setPenStyle(PenStyle aPenStyle);
