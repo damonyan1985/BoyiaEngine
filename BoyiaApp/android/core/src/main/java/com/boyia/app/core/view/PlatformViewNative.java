@@ -19,7 +19,8 @@ public class PlatformViewNative {
                             viewId, viewType, logicalWidth, logicalHeight, textureId
                     );
 
-            PlatformViewController controller = new PlatformViewController(manager.getContext());
+            PlatformViewController controller =
+                    new PlatformViewController(manager.getContext());
             controller.createPlatformView(request);
             manager.addPlatformView(viewId, controller);
         });

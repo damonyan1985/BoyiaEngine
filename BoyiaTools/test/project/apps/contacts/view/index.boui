@@ -15,6 +15,8 @@
 
 <video class="video" src="http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4" />
 
+<platform id="test" type="test-view" />
+
 </body>
 <script src="boyia://apps/sdk/Util.boyia" />
 <script src="boyia://apps/sdk/Array.boyia" />

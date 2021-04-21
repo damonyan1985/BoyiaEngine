@@ -42,7 +42,8 @@ public:
         kUiRunAnimation,
         kUiEvent,
         kUiInitApp,
-        kVsyncDraw
+        kVsyncDraw,
+        kPlatformViewUpdate
     };
     static UIThread* instance();
 
@@ -76,6 +77,8 @@ public:
     virtual LVoid handleMessage(Message* msg);
     LVoid drawUI(LVoid* view);
     LVoid vsyncDraw(LIntPtr vsyncWaiter);
+
+    LVoid platformViewUpdate(const String& id);
 
 private:
     LVoid reset(Message* msg);

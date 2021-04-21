@@ -66,4 +66,6 @@ public class BoyiaCoreJNI {
     public static native void nativeBoyiaSync(long item);
 
     public static native void nativeCacheCode();
+    
+    public static native void nativePlatformViewUpdate(String viewId);
 }

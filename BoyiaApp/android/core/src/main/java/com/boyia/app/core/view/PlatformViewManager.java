@@ -10,7 +10,7 @@ import java.util.Map;
 public class PlatformViewManager {
     private Map<String, PlatformViewFactory> mFactoryRegistry;
     private Map<String, PlatformViewController> mPlatformViews;
-    private WeakReference<Activity> mContext;
+    private WeakReference<Context> mContext;
 
     private static class PlatformViewManagerHolder {
         static final PlatformViewManager INSTANCE = new PlatformViewManager();
@@ -37,7 +37,7 @@ public class PlatformViewManager {
         mPlatformViews.put(viewId, controller);
     }
 
-    public void setContext(Activity activity) {
+    public void setContext(Context activity) {
         mContext = new WeakReference<>(activity);
     }
 
