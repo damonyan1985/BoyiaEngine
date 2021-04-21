@@ -193,6 +193,15 @@ static void nativeCacheCode(JNIEnv* env, jobject obj)
     CacheVMCode(yanbo::AppManager::instance()->currentApp()->runtime()->vm());
 }
 
+static void nativePlatformViewUpdate(JNIEnv* env, jobject obj, jstring id)
+{
+    String viewId;
+    util::jstringTostr(env, id, viewId);
+    BOYIA_LOG("nativePlatformViewUpdate viewId=%s", GET_STR(viewId));
+    yanbo::UIThread::instance()->platformViewUpdate(viewId);
+    viewId.ReleaseBuffer();
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
@@ -211,6 +220,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide },
     { "nativeBoyiaSync", "(J)V", (void*)nativeBoyiaSync },
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
+    { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,

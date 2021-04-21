@@ -199,6 +199,17 @@ LVoid UIThread::handleMessage(Message* msg)
         }
         delete waiter;
     } break;
+    case kPlatformViewUpdate: {
+#if ENABLE(BOYIA_PLATFORM_VIEW)
+        String id(_CS(msg->obj), LTrue, msg->arg0);
+        HtmlView* view = m_manager->currentApp()->view()->getDocument()->getItemByID(id);
+        if (!view) {
+            return;
+        }
+
+        drawUI(view);
+#endif
+    } break;
     }
 }
 
@@ -345,6 +356,16 @@ LVoid UIThread::vsyncDraw(LIntPtr vsyncWaiter)
     Message* msg = m_queue->obtain();
     msg->type = kVsyncDraw;
     msg->arg0 = vsyncWaiter;
+    m_queue->push(msg);
+    notify();
+}
+
+LVoid UIThread::platformViewUpdate(const String& id)
+{
+    Message* msg = m_queue->obtain();
+    msg->type = kPlatformViewUpdate;
+    msg->obj = id.GetBuffer();
+    msg->arg0 = id.GetLength();
     m_queue->push(msg);
     notify();
 }

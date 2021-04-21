@@ -58,6 +58,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void init(Context context) {
+        PlatformViewManager.getInstance().setContext(context);
         // 叠在其他surfaceview之上
         BoyiaCoreJNI.nativeInitJNIContext((Activity) context);
         setZOrderOnTop(true);

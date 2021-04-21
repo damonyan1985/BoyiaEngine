@@ -27,6 +27,7 @@ public class PlatformViewController {
         if (factory == null) {
             return;
         }
+
         VirtualDisplay display = createVirtualDisplay(mContext, request);
         mPresentation = new PlatformPresentation(
                 mContext, request.viewId, factory, display.getDisplay());

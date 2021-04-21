@@ -1,11 +1,14 @@
+#include "AutoObject.h"
+#include "JNIUtil.h"
 #include "PlatformView.h"
 #include "TextureCache.h"
 
 namespace yanbo {
 class ViewInfo {
 public:
-    ViewInfo(const String& type)
-        : viewType(type)
+    ViewInfo(const String& id, const String& type)
+        : viewId(id)
+        , viewType(type)
         , isInit(LFalse)
     {
     }
@@ -14,9 +17,18 @@ public:
     {
         texture = new Texture();
         texture->initWithData(width, height);
+
+        jstring id = util::strToJstring(JNIUtil::getEnv(), viewId);
+        jstring type = util::strToJstring(JNIUtil::getEnv(), viewType);
+        JNIUtil::callStaticVoidMethod(
+            "com/boyia/app/core/view/PlatformViewNative",
+            "createPlatformView",
+            "(Ljava/lang/String;Ljava/lang/String;III)V",
+            id, type, width, height, texture->texId);
         isInit = LTrue;
     }
 
+    String viewId;
     String viewType;
     BoyiaPtr<Texture> texture;
     LBool isInit;
@@ -27,7 +39,7 @@ PlatformView::PlatformView(
     LBool selectable,
     const String& viewType)
     : BlockView(id, selectable)
-    , m_viewInfo(new ViewInfo(viewType))
+    , m_viewInfo(new ViewInfo(id, viewType))
 {
 }
 

@@ -9,6 +9,8 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.boyia.app.core.BoyiaCoreJNI;
+
 /**
  * 参考flutter中platformview的实现
  * 一个viewId对应一个PlatformPresentation
@@ -46,6 +48,14 @@ public class PlatformPresentation extends Presentation {
             mRootView.addView(mView.getView());
         }
         setContentView(mRootView);
+
+        mView.getView().requestFocus();
+        mView.getView().setOnFocusChangeListener((view, focus) -> {
+            if (focus) {
+                // TODO notify native to draw platform view
+                BoyiaCoreJNI.nativePlatformViewUpdate(mViewId);
+            }
+        });
     }
 
     public PlatformView getPlatformView() {
