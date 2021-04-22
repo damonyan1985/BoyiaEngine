@@ -65,7 +65,7 @@ public:
         EShapeRect,
         EShapeString,
         EShapeImage,
-        EShapeVideo,
+        EShapeExternal,
     };
 
 public:
@@ -82,7 +82,7 @@ public:
     void setLine(const LPoint& p1, const LPoint& p2);
     void setImage(Texture* tex, const LRect& rect);
     void setImage(Texture* tex, const LRect& rect, const LRect& clipRect);
-    void setVideo(Texture* tex, const LRect& rect);
+    void setExternal(Texture* tex, const LRect& rect);
 
     static void init();
     static void paintCommand();

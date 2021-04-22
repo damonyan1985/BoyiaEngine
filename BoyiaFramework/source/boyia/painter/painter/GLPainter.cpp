@@ -116,14 +116,14 @@ float* GLPainter::stMatrix() const
     return m_stMatrix;
 }
 
-void GLPainter::setVideo(Texture* tex, const LRect& rect)
+void GLPainter::setExternal(Texture* tex, const LRect& rect)
 {
     if (!m_stMatrix) {
         m_stMatrix = new float[16];
     }
 
     m_cmd.top = rect.iTopLeft.iY;
-    m_cmd.type = EShapeVideo;
+    m_cmd.type = EShapeExternal;
     m_cmd.texId = tex->texId;
     m_cmd.matrix = m_stMatrix;
 
@@ -230,7 +230,7 @@ void GLPainter::paintCommand()
         KLOG("BaseShape::drawSelf()5");
 
         switch (s_buffer.buffer[i].type) {
-        case EShapeVideo: {
+        case EShapeExternal: {
             glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
             if (s_buffer.buffer[i].matrix) {
                 glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, s_buffer.buffer[i].matrix);

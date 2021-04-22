@@ -53,7 +53,6 @@ public class PlatformPresentation extends Presentation {
         mView.getView().setOnFocusChangeListener((view, focus) -> {
             if (focus) {
                 // TODO notify native to draw platform view
-                BoyiaCoreJNI.nativePlatformViewUpdate(mViewId);
             }
         });
     }

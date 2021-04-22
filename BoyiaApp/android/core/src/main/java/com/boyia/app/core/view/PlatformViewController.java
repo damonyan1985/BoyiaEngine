@@ -7,6 +7,9 @@ import android.hardware.display.VirtualDisplay;
 import android.view.Surface;
 import android.view.View;
 
+import com.boyia.app.core.BoyiaCoreJNI;
+import com.boyia.app.core.texture.BoyiaTexture;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlatformViewController {
     private Context mContext;
     private PlatformPresentation mPresentation;
+    private BoyiaTexture mTexture;
 
     public PlatformViewController(Context context) {
         mContext = context;
@@ -36,9 +40,13 @@ public class PlatformViewController {
 
     // 创建VirtualDisplay
     private VirtualDisplay createVirtualDisplay(Context context, PlatformViewCreationRequest request) {
-        SurfaceTexture texture = new SurfaceTexture(request.textureId);
-        texture.setDefaultBufferSize(request.logicalWidth, request.logicalHeight);
-        Surface surface = new Surface(texture);
+//        SurfaceTexture texture = new SurfaceTexture(request.textureId);
+        mTexture = new BoyiaTexture(request.textureId);
+        mTexture.getSurfaceTexture().setDefaultBufferSize(request.logicalWidth, request.logicalHeight);
+        mTexture.setTextureUpdateNotifier(() -> {
+            BoyiaCoreJNI.nativePlatformViewUpdate(request.viewId);
+        });
+
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
         return displayManager.createVirtualDisplay(
@@ -46,7 +54,7 @@ public class PlatformViewController {
                 request.logicalWidth,
                 request.logicalHeight,
                 densityDpi,
-                surface,
+                mTexture.getSurface(),
                 0);
     }
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.texture.BoyiaTexture;
 
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
@@ -26,18 +27,14 @@ import android.view.Surface;
 public class BoyiaPlayer implements OnBufferingUpdateListener,
         OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener,
         OnErrorListener, OnSeekCompleteListener, OnInfoListener,
-        OnFrameAvailableListener {
+        BoyiaTexture.TextureUpdateNotifier {
     private MediaPlayer mPlayer = null;
-    private SurfaceTexture mTexture = null;
-    //private int[] mTextureNames = null;
     private Uri mPlayerUri = null;
     private long mNativePtr = 0;
-    private float[] mSTMatrix = new float[16];
-    private boolean mUpdateSurface = false;
-    private HandlerThread mThread = null;
-    private Handler mHandler = null;
+    private HandlerThread mThread;
+    private Handler mHandler;
     private int mTextureID = 0;
-    private static long mLastPlayTime = 0;
+    private BoyiaTexture mTexture;
 
     private static class PlayerHandler extends Handler {
         public static final int GL_VIDEO_START = 0;
@@ -76,6 +73,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mHandler = new PlayerHandler(mThread.getLooper());
     }
 
+    // Call by native mediaplayer
     public void setNativePtr(long nativePtr) {
         mNativePtr = nativePtr;
     }
@@ -113,16 +111,16 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
     private void initPlayer() {
         if (mPlayer == null) {
-            mTexture = new SurfaceTexture(mTextureID);
-            mTexture.setOnFrameAvailableListener(this);
-            Surface surface = new Surface(mTexture);
+            mTexture = new BoyiaTexture(mTextureID);
+            mTexture.setTextureUpdateNotifier(this);
 
             mPlayer = new MediaPlayer();
-            mPlayer.setSurface(surface);
-            surface.release();
+            mPlayer.setSurface(mTexture.getSurface());
+            mTexture.getSurface().release();
         }
     }
 
+    // Call by native mediaplayer
     public void setTextureId(int id) {
         mTextureID = id;
     }
@@ -193,51 +191,25 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
     }
 
+    // Call by native mediaplayer
     public float[] updateTexture() {
-        try {
-            mTexture.updateTexImage();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            mTexture.getTransformMatrix(mSTMatrix);
-            BoyiaLog.d("libboyia", "BoyiaPlayer updateTexImage texId="
-                    + mTextureID + " threadId=" + Thread.currentThread().getId());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        synchronized (this) {
-            mUpdateSurface = false;
-        }
-
-        return mSTMatrix;
+        BoyiaLog.d("libboyia",
+                "BoyiaPlayer updateTexImage texId=" + mTextureID + " threadId=" + Thread.currentThread().getId());
+        return mTexture.updateTexture();
     }
 
+    // Call by native mediaplayer
     public boolean canDraw() {
-        return mUpdateSurface;
+        if (mTexture == null) {
+            return false;
+        }
+
+        return mTexture.canDraw();
     }
 
     @Override
-    public void onFrameAvailable(SurfaceTexture texture) {
-        //texture.updateTexImage();
-        BoyiaLog.d("libboyia",
-                "onFrameAvailable id=" + this.mTextureID + " threadId=" + Thread.currentThread().getId());
-        // Notify MiniYan Framework To Renderer
-        synchronized (this) {
-            mUpdateSurface = true;
-        }
-
-        if (0 == mLastPlayTime) {
-            mLastPlayTime = System.currentTimeMillis();
-        } else {
-            // 小于16毫秒再来一次，就放弃绘制
-            if (System.currentTimeMillis() - mLastPlayTime < 16) {
-                return;
-            }
-        }
-
+    public void onTextureUpdate() {
+        BoyiaLog.d("libboyia", "onFrameAvailable id=" + this.mTextureID + " threadId=" + Thread.currentThread().getId());
         BoyiaCoreJNI.nativeVideoTextureUpdate(mNativePtr);
     }
 }

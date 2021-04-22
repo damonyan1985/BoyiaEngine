@@ -175,7 +175,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LRgb(0, 0, 0, 0xFF));
 
-    paint->setVideo(amp->texture(), rect);
+    paint->setExternal(amp->texture(), rect);
     amp->updateTexture(paint->stMatrix());
     //KFORMATLOG("GraphicsContextGL drawVideo error=%d texId=%d", glGetError(), tex->texId);
 
@@ -186,6 +186,10 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 LVoid GraphicsContextGL::drawPlatform(const LRect& rect, LVoid* platformView)
 {
     yanbo::PlatformView* view = static_cast<yanbo::PlatformView*>(platformView);
+    if (!view->texture()) {
+        return;
+    }
+
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LRgb(0, 0, 0, 0xFF));

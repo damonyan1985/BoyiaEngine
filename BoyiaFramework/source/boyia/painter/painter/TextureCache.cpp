@@ -34,7 +34,7 @@ LVoid Texture::initWithData(LInt width, LInt height)
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGB, // RGB 3, RGBA 4
+        GL_RGBA, // RGB 3, RGBA 4
         this->width,
         this->height,
         0,
