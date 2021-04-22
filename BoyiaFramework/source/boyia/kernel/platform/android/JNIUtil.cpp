@@ -205,6 +205,28 @@ jstring JNIUtil::callStaticStringMethod(const char* className,
     return nullptr;
 }
 
+jobject JNIUtil::callStaticObjectMethod(const char* className,
+    const char* method,
+    const char* signature,
+    ...)
+{
+    JniMethodInfo methodInfo;
+    if (getStaticMethodInfo(methodInfo, className, method, signature)) {
+        va_list args;
+        va_start(args, signature);
+        jobject obj = methodInfo.env->CallStaticObjectMethodV(
+            methodInfo.classID,
+            methodInfo.methodID,
+            args);
+        va_end(args);
+
+        methodInfo.env->DeleteLocalRef(methodInfo.classID);
+        return obj;
+    }
+
+    return nullptr;
+}
+
 void JNIUtil::loadHTML(const String& url, String& stream)
 {
     JNIEnv* env = getEnv();
