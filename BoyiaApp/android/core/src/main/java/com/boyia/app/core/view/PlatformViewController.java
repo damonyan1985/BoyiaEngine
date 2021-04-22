@@ -58,6 +58,10 @@ public class PlatformViewController {
                 0);
     }
 
+    public float[] updateTexture() {
+        return mTexture.updateTexture();
+    }
+
     public PlatformView getView() {
         return mPresentation.getPlatformView();
     }

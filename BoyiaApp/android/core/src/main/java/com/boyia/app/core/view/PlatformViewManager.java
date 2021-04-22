@@ -6,6 +6,7 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlatformViewManager {
     private Map<String, PlatformViewFactory> mFactoryRegistry;
@@ -22,7 +23,7 @@ public class PlatformViewManager {
 
     private PlatformViewManager() {
         mFactoryRegistry = new HashMap<>();
-        mPlatformViews = new HashMap<>();
+        mPlatformViews = new ConcurrentHashMap<>();
     }
 
     public PlatformViewFactory getViewFactory(String viewType) {
@@ -35,6 +36,10 @@ public class PlatformViewManager {
 
     public void addPlatformView(String viewId, PlatformViewController controller) {
         mPlatformViews.put(viewId, controller);
+    }
+
+    public PlatformViewController getPlatformView(String viewId) {
+        return mPlatformViews.get(viewId);
     }
 
     public void setContext(Context activity) {

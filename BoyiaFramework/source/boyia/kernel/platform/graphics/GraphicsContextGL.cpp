@@ -190,11 +190,32 @@ LVoid GraphicsContextGL::drawPlatform(const LRect& rect, LVoid* platformView)
         return;
     }
 
+    JNIEnv* env = JNIUtil::getEnv();
+    jstring id = strToJstring(env, view->getId());
+
+    jfloatArray arr = (jfloatArray)JNIUtil::callStaticObjectMethod(
+        "com/boyia/app/core/view/PlatformViewNative",
+        "updateTexture",
+        "(Ljava/lang/String;)[F", id);
+
+    if (!arr) {
+        env->DeleteLocalRef(id);
+        return;
+    }
+
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LRgb(0, 0, 0, 0xFF));
+    paint->setExternal(view->texture(), rect);
 
-    paint->setImage(view->texture(), rect);
+    int count = env->GetArrayLength(arr);
+    jfloat* ptr = env->GetFloatArrayElements(arr, JNI_FALSE);
+
+    LMemcpy(paint->stMatrix(), ptr, sizeof(float) * count);
+    env->ReleaseFloatArrayElements(arr, ptr, 0);
+    env->DeleteLocalRef(arr);
+    env->DeleteLocalRef(id);
+
     painter->painters.push(paint);
 }
 #endif
