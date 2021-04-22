@@ -18,6 +18,8 @@ public:
         texture = new Texture();
         texture->initWithData(width, height);
 
+        JNIEnv* env = JNIUtil::getEnv();
+
         jstring id = util::strToJstring(JNIUtil::getEnv(), viewId);
         jstring type = util::strToJstring(JNIUtil::getEnv(), viewType);
         JNIUtil::callStaticVoidMethod(
@@ -26,6 +28,9 @@ public:
             "(Ljava/lang/String;Ljava/lang/String;III)V",
             id, type, width, height, texture->texId);
         isInit = LTrue;
+
+        env->DeleteLocalRef(id);
+        env->DeleteLocalRef(type);
     }
 
     String viewId;
@@ -53,9 +58,6 @@ PlatformView::~PlatformView()
 void PlatformView::layout()
 {
     BlockView::layout();
-    if (!m_viewInfo->isInit) {
-        m_viewInfo->initView(getWidth(), getHeight());
-    }
 }
 
 void PlatformView::paint(LGraphicsContext& gc)
@@ -63,6 +65,9 @@ void PlatformView::paint(LGraphicsContext& gc)
     BlockView::paint(gc);
 
     gc.drawPlatform(LRect(m_x, m_y, getWidth(), getHeight()), this);
+    if (!m_viewInfo->isInit) {
+        m_viewInfo->initView(getWidth(), getHeight());
+    }
 }
 
 Texture* PlatformView::texture()

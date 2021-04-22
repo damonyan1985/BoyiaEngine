@@ -42,7 +42,7 @@ import android.app.Activity;
  */
 public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     protected static final String TAG = "BoyiaUIView";
-    private boolean mIsUIViewDistroy = true;
+    private boolean mIsUIViewDestroy = true;
     private SurfaceHolder mHolder = null;
     private BoyiaInputConnection mInputConnect = null;
     private GestureDetector mGestureDetector = null;
@@ -164,7 +164,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void quitUIView() {
         BoyiaCoreJNI.nativeDistroyUIView();
-        mIsUIViewDistroy = true;
+        mIsUIViewDestroy = true;
     }
 
     public void initUIView() {
@@ -178,10 +178,10 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         BoyiaLog.d(TAG, "surfaceCreated");
         mHolder = holder;
-        if (mIsUIViewDistroy) {
+        if (mIsUIViewDestroy) {
             BoyiaLog.d(TAG, "initUIView");
             initUIView();
-            mIsUIViewDistroy = false;
+            mIsUIViewDestroy = false;
         } else {
             BoyiaCoreJNI.nativeResetGLSurface(mHolder.getSurface());
             BoyiaLog.d(TAG, "resetGLSurface");

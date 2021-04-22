@@ -80,7 +80,7 @@ void GLProgram::initShader()
 
 void GLProgram::use(int type)
 {
-    if (GLPainter::EShapeVideo == type) {
+    if (GLPainter::EShapeExternal == type) {
         glUseProgram(m_videoPrgm);
     } else {
         glUseProgram(m_normalPrgm);
