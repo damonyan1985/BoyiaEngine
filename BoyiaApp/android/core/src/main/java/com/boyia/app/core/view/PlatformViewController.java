@@ -49,10 +49,12 @@ public class PlatformViewController {
 
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
+        int physicalWidth = toPhysicalPixels(request.logicalWidth);
+        int physicalHeight = toPhysicalPixels(request.logicalHeight);
         return displayManager.createVirtualDisplay(
                 "boyia-vd",
-                request.logicalWidth,
-                request.logicalHeight,
+                physicalWidth,
+                physicalHeight,
                 densityDpi,
                 mTexture.getSurface(),
                 0);

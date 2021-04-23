@@ -45,19 +45,21 @@ float PixelRatio::ratio()
 
 int PixelRatio::viewX(int x)
 {
-    switch (s_direction) {
-    case PixelRatio::kPixelHorizontal:
-        return x * s_logicWidth / s_width;
-    case PixelRatio::kPixelVertical:
-        return x * s_logicHeight / s_height;
-    default:
-        return x;
-    }
+    // switch (s_direction) {
+    // case PixelRatio::kPixelHorizontal:
+    //     return x * s_logicWidth / s_width;
+    // case PixelRatio::kPixelVertical:
+    //     return x * s_logicHeight / s_height;
+    // default:
+    //     return x;
+    // }
+    return x / ratio();
 }
 
 int PixelRatio::viewY(int y)
 {
-    return viewX(y);
+    //return viewX(y);
+    return y / ratio();
 }
 
 int PixelRatio::logicWidth()

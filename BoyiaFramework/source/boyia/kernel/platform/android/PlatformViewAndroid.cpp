@@ -1,5 +1,6 @@
 #include "AutoObject.h"
 #include "JNIUtil.h"
+#include "PixelRatio.h"
 #include "PlatformView.h"
 #include "TextureCache.h"
 
@@ -26,7 +27,13 @@ public:
             "com/boyia/app/core/view/PlatformViewNative",
             "createPlatformView",
             "(Ljava/lang/String;Ljava/lang/String;III)V",
-            id, type, width, height, texture->texId);
+            id, type,
+            (jint)(width * PixelRatio::ratio()), // 屏幕真实宽度
+            (jint)(height * PixelRatio::ratio()), // 屏幕真实高度
+            // width,
+            // height,
+            texture->texId);
+
         isInit = LTrue;
 
         env->DeleteLocalRef(id);

@@ -38,13 +38,13 @@ public class TestPlatformViewFactory implements PlatformViewFactory {
             Paint paint1 = new Paint();
             paint1.setColor(Color.BLUE);
             canvas.drawRect(
-                    new Rect(0, 0, 300, 300),
+                    new Rect(0, 0, getWidth(), getHeight()),
                     paint1);
             Paint paint = new Paint();
             paint.setColor(Color.YELLOW);
-            paint.setTextSize(36);
+            paint.setTextSize(24);
             canvas.drawText("TestPlatformView",
-                    0, 0, paint);
+                    10, 100, paint);
         }
     }
 }

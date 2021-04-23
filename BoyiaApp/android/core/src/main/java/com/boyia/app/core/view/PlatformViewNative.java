@@ -14,6 +14,7 @@ public class PlatformViewNative {
             int logicalWidth,
             int logicalHeight,
             int textureId) {
+        BoyiaLog.i(TAG, "createPlatformView logicalWidth=" + logicalWidth + " logicalHeight=" + logicalHeight);
         BaseApplication.getInstance().getAppHandler().post(() -> {
             PlatformViewManager manager = PlatformViewManager.getInstance();
             PlatformViewController.PlatformViewCreationRequest request =
