@@ -1,15 +1,21 @@
 import os
 import operator
+import sys
+import shutil
 
 current_path = os.getcwd()
 # boyia project path
 project_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
 android_sdk_path = os.getenv('ANDROID_HOME')
 android_ndk_path = os.getenv('NDK_HOME')
+
+boyia_rust_sdk_path = os.path.join(
+    project_path, 'BoyiaFramework/source/thirdparty/sdk')
+
 boyia_app_android_path = os.path.join(project_path, 'BoyiaApp/android')
 
 # change the workspace
-os.chdir(boyia_app_android_path)
+# os.chdir(boyia_app_android_path)
 # android project local.properties path
 boyia_app_android_config_path = os.path.join(
     boyia_app_android_path, 'local.properties')
@@ -21,6 +27,8 @@ maven_project_dir = os.path.join(maven_dir, 'BoyiaMaven')
 core_dir = os.path.join(boyia_app_android_path, 'core')
 apk_build_dir = os.path.join(boyia_app_android_path, 'app', 'build')
 gradle_cmd = os.path.join(boyia_app_android_path, 'gradlew')
+
+boyia_rust_sdk_lib_path = os.path.join(core_dir, 'libs/arm64-v8a')
 
 # 写入sdk配置
 boyia_app_sdk_config = (
@@ -63,6 +71,10 @@ launch_app_cmd = (
     'adb shell am start -n com.boyia.app/com.boyia.app.BoyiaMainActivity'
 )
 
+boyia_rust_sdk_cmd = (
+    "cargo build --target aarch64-linux-android --release"
+)
+
 
 def add_boyia_app_android_config():
     print(boyia_app_sdk_config)
@@ -88,7 +100,36 @@ def del_file(path, isDel):
         os.rmdir(path)
 
 
+def do_build_boyia_rust_sdk():
+    os.chdir(boyia_rust_sdk_path)
+    os.system(boyia_rust_sdk_cmd)
+    # 创建libs/arm64-v8a目录
+    if os.path.exists(boyia_rust_sdk_lib_path) == False:
+        os.makedirs(boyia_rust_sdk_lib_path)
+    rust_build_lib_path = os.path.join(
+        boyia_rust_sdk_path, 'target/aarch64-linux-android/release/libsdk.so')
+    shutil.copy(rust_build_lib_path, os.path.join(
+        boyia_rust_sdk_lib_path, 'libsdk.so'))
+
+
+def do_single_cmd(cmd):
+    if cmd == "sdk":
+        do_build_boyia_rust_sdk()
+        return
+
+
 def main():
+    length = len(sys.argv)
+    print('arguments length=' + str(length))
+    if length >= 2:
+        do_single_cmd(sys.argv[1])
+        return
+
+    # 编译boyia rust库
+    do_build_boyia_rust_sdk()
+
+    # 切换编译目录
+    os.chdir(boyia_app_android_path)
     print('maven_dir=' + maven_dir)
     if os.path.exists(maven_dir) == False:
         os.mkdir(maven_dir)
