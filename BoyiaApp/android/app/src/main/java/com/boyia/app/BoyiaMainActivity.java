@@ -14,6 +14,7 @@ import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.job.JobScheduler;
+import com.umeng.analytics.MobclickAgent;
 
 import android.annotation.TargetApi;
 import android.content.ComponentCallbacks2;
@@ -79,11 +80,13 @@ public class BoyiaMainActivity extends BoyiaActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
     }
 
     @Override
