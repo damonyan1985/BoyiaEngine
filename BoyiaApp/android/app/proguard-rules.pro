@@ -88,3 +88,16 @@
 -keep class com.pgl.sys.ces.** {*;}
 -keep class com.bytedance.embed_dr.** {*;}
 -keep class com.bytedance.embedapplog.** {*;}
+
+# umeng
+-keep class com.umeng.** {*;}
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+-keep public class com.boyia.app.R$*{
+    public static final int *;
+}

@@ -26,8 +26,12 @@ public:
         }
     }
 
-    bool operator == (const HashString& str1) const
+    bool operator==(const HashString& str1) const
     {
+        if (m_hash != str1.m_hash) {
+            return false;
+        }
+
         return m_value.CompareCase(str1.m_value);
     }
 
@@ -36,7 +40,7 @@ public:
         return m_hash;
     }
 
-private:   
+private:
     String m_value;
     LUint m_hash;
 };
@@ -44,4 +48,3 @@ private:
 
 using util::HashString;
 #endif // !HashUtil_h
-

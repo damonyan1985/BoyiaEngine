@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 
 import com.boyia.app.advert.platform.TTAdManagerHolder;
 import com.boyia.app.common.BaseApplication;
+import com.umeng.commonsdk.UMConfigure;
 
 public class BoyiaApplication extends BaseApplication {
     @Override
@@ -17,5 +18,7 @@ public class BoyiaApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         TTAdManagerHolder.init(this);
+        UMConfigure.init(this, null, null,
+                UMConfigure.DEVICE_TYPE_PHONE, null);
     }
 }
