@@ -15,7 +15,6 @@ HtmlDocument::HtmlDocument()
     , m_url(_CS(""))
     , m_root(kBoyiaNull)
     , m_view(kBoyiaNull)
-    , m_idMap(20)
 {
 }
 
@@ -102,12 +101,12 @@ const LayoutRect& HtmlDocument::getViewPort() const
 
 void HtmlDocument::putItemID(String& id, HtmlView* item)
 {
-    m_idMap.put(id, (LIntPtr)item);
+    m_idMap.put(id, item);
 }
 
 HtmlView* HtmlDocument::getItemByID(const String& id)
 {
-    return (HtmlView*)m_idMap.get(id);
+    return (HtmlView*)m_idMap.get(HashString(id, LFalse));
 }
 
 void HtmlDocument::setView(UIView* view)
@@ -118,10 +117,5 @@ void HtmlDocument::setView(UIView* view)
 UIView* HtmlDocument::getView() const
 {
     return m_view;
-}
-
-void HtmlDocument::sortIds()
-{
-    m_idMap.sort();
 }
 }

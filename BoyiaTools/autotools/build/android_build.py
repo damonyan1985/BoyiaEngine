@@ -10,7 +10,7 @@ android_sdk_path = os.getenv('ANDROID_HOME')
 android_ndk_path = os.getenv('NDK_HOME')
 
 boyia_rust_sdk_path = os.path.join(
-    project_path, 'BoyiaFramework/source/thirdparty/sdk')
+    project_path, 'BoyiaFramework/source/thirdparty/sdk/main')
 
 boyia_app_android_path = os.path.join(project_path, 'BoyiaApp/android')
 

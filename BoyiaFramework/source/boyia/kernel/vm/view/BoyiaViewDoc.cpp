@@ -11,7 +11,7 @@
 namespace boyia {
 using namespace yanbo;
 
-IdentityMap BoyiaViewDoc::m_domMap(20);
+HashMap<HashString, yanbo::DOMBuilder*> BoyiaViewDoc::s_domMap;
 
 BoyiaViewDoc::BoyiaViewDoc(BoyiaRuntime* runtime)
     : BoyiaView(runtime)
@@ -35,18 +35,17 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
     // 获取文本
     String stream;
 
-    LUint key = StringUtils::hashCode(url);
-    DOMBuilder* dom = (DOMBuilder*)m_domMap.get(key);
+    //LUint key = StringUtils::hashCode(url);
+    DOMBuilder* dom = s_domMap.get(url);
     //LInt domPtr = m_domMap.get(url);
     if (!dom) {
         KFORMATLOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
         dom = new DOMBuilder();
-        m_domMap.put(key, (LIntPtr)dom);
-        m_domMap.sort();
+        s_domMap.put(url, dom);
 
         AppManager::instance()->network()->syncLoadUrl(url, stream);
         //fetchStream(url, stream);
-        KFORMATLOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());
+        BOYIA_LOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());
     }
 
     //dom->createDocument(stream, m_doc, NULL);

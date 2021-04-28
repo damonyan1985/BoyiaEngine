@@ -14,6 +14,9 @@
 #include "BoyiaView.h"
 #include "HtmlDocument.h"
 
+namespace yanbo {
+class DOMBuilder;
+}
 namespace boyia {
 class BoyiaViewDoc : public BoyiaView {
 public:
@@ -29,7 +32,7 @@ public:
     BoyiaView* getItemByID(const String& id) const;
 
 private:
-    static IdentityMap m_domMap;
+    static HashMap<HashString, yanbo::DOMBuilder*> s_domMap;
     yanbo::HtmlDocument* m_doc;
 };
 }

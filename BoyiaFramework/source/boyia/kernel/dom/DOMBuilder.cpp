@@ -54,8 +54,6 @@ LVoid DOMBuilder::build(const String& buffer)
     if (root) {
         createRenderTree(root, kBoyiaNull, kBoyiaNull);
     }
-
-    m_htmlDoc->sortIds();
 }
 
 void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* parent)
