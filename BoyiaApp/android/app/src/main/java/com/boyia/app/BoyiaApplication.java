@@ -18,6 +18,7 @@ public class BoyiaApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         TTAdManagerHolder.init(this);
+        UMConfigure.setLogEnabled(true);
         UMConfigure.init(this, null, null,
                 UMConfigure.DEVICE_TYPE_PHONE, null);
     }

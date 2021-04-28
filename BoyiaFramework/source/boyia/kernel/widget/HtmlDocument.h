@@ -9,7 +9,9 @@
 #define HtmlDocument_h
 
 #include "HtmlView.h"
-#include "IdentityMap.h"
+//#include "IdentityMap.h"
+#include "HashMap.h"
+#include "HashUtil.h"
 
 namespace yanbo {
 
@@ -46,8 +48,6 @@ public:
     void setView(UIView* loader);
     UIView* getView() const;
 
-    void sortIds();
-
 private:
     /**+
      * The URL of this page.
@@ -61,12 +61,10 @@ private:
 
     HtmlView* m_root;
 
-    //	HtmlView*                     m_currentItem;
-
     HtmlViewList m_itemList;
     HtmlViewList::Iterator m_currentItemIter; // control up, down key event display
     LayoutRect m_viewRect;
-    IdentityMap m_idMap;
+    HashMap<HashString, HtmlView*> m_idMap;
     UIView* m_view;
 };
 }

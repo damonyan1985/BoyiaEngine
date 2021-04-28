@@ -81,12 +81,14 @@ public class BoyiaMainActivity extends BoyiaActivity {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+        MobclickAgent.onEvent(this, "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        MobclickAgent.onEvent(this, "onResume");
     }
 
     @Override

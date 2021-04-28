@@ -1,7 +1,10 @@
 <view>
-  <div></div>
+  <div id="title">
+    <div class="main-title">优质生活平台</div>
+  </div>
   <div>
-  <div id="search" />
+    <div id="search">
+    </div>
   </div>
   <div></div>
 </view>
