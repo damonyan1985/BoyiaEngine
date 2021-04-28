@@ -35,25 +35,18 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
     // 获取文本
     String stream;
 
-    //LUint key = StringUtils::hashCode(url);
-    DOMBuilder* dom = s_domMap.get(url);
-    //LInt domPtr = m_domMap.get(url);
+    DOMBuilder* dom = s_domMap.get(HashString(url, LFalse));
     if (!dom) {
         KFORMATLOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
         dom = new DOMBuilder();
         s_domMap.put(url, dom);
 
         AppManager::instance()->network()->syncLoadUrl(url, stream);
-        //fetchStream(url, stream);
         BOYIA_LOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());
     }
 
-    //dom->createDocument(stream, m_doc, NULL);
     dom->with(m_doc).build(stream);
     m_item = m_doc->getRenderTreeRoot();
-
-    //	ResourceLoader* loader = UIView::getInstance()->getLoader();
-    //	m_item->setStyle(loader->render()->getCssManager(), NULL);
 
     runtime()->view()->operation()->opApplyDomStyle(m_item);
 }
