@@ -8,4 +8,8 @@
 ```
 naming constants with `_` is unstable
 ```
-这是由于rustc版本过低导致，更新rustc版本
+2. 无法混合编译c文件,例如rustls中依赖的ring
+```
+windows中需要设置环境变量CC=c:/xxx/clang90.exe
+同时需要将rust-tools中的编译器目录配置到path
+```
