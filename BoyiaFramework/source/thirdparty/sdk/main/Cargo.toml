@@ -9,9 +9,14 @@ edition = "2018"
 [dependencies]
 jni = {version = "0.10.2", default-features = false}
 log = "0.4"
-android_logger = "0.5"
-hyper = "0.13"
-tokio = { version = "0.2", features = ["full"] }
+android_logger = "0.10.1"
+hyper-rustls = "0.22.1"
+futures = "0.3.4"
+hyper = { version = "0.14", features = ["full"] }
+tokio = { version = "1.5.0", features = ["full"] }
 
 [lib]
 crate_type = ["dylib"]
+
+#[target.aarch64-linux-android.dependencies]
+#openssl = { version = "*", features = ["vendored"] }
