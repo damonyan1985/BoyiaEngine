@@ -16,12 +16,12 @@ class HtmlView;
 class RenderContext;
 class HtmlDocument;
 class BlockView;
-typedef BoyiaList<HtmlView*> HtmlViewList;
+typedef BoyiaList<BoyiaPtr<HtmlView>> HtmlViewList;
 typedef LRect LayoutRect;
 typedef LInt LayoutUnit;
 typedef LPoint LayoutPoint;
 
-class HtmlView : public LBaseView {
+class HtmlView : public LBaseView, public BoyiaRef {
 public:
     HtmlView(const String& id, LBool selectable);
     virtual ~HtmlView();

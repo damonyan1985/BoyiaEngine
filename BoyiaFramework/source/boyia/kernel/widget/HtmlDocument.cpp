@@ -55,7 +55,7 @@ const String& HtmlDocument::getPageUrl() const
 // use linear structure to deal with the up, down event draw can enhance efficiency
 HtmlView* HtmlDocument::getPreItem()
 {
-    HtmlViewList::Iterator iter = m_currentItemIter;
+    WeakHtmlViewList::Iterator iter = m_currentItemIter;
 
     if (--m_currentItemIter == m_itemList.end()) {
         m_currentItemIter = iter;
@@ -66,7 +66,7 @@ HtmlView* HtmlDocument::getPreItem()
 
 HtmlView* HtmlDocument::getNextItem()
 {
-    HtmlViewList::Iterator iter = m_currentItemIter;
+    WeakHtmlViewList::Iterator iter = m_currentItemIter;
 
     if (++m_currentItemIter == m_itemList.end()) {
         m_currentItemIter = iter;
