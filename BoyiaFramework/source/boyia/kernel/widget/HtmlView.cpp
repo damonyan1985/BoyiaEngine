@@ -33,14 +33,6 @@ HtmlView::HtmlView(const String& id, LBool selectable)
 
 HtmlView::~HtmlView()
 {
-    HtmlViewList::Iterator iter = m_children.begin();
-    HtmlViewList::Iterator endIter = m_children.end();
-
-    for (; iter != endIter; ++iter) {
-        delete *iter;
-    }
-
-    m_children.clear();
 }
 
 LVoid HtmlView::layout(RenderContext& rc)

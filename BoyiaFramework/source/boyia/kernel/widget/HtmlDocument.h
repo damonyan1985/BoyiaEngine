@@ -12,8 +12,10 @@
 //#include "IdentityMap.h"
 #include "HashMap.h"
 #include "HashUtil.h"
+#include "WeakPtr.h"
 
 namespace yanbo {
+typedef BoyiaList<WeakPtr<HtmlView>> WeakHtmlViewList;
 
 class UIView;
 class HtmlDocument {
@@ -59,12 +61,12 @@ private:
      */
     String m_title;
 
-    HtmlView* m_root;
+    BoyiaPtr<HtmlView> m_root;
 
-    HtmlViewList m_itemList;
-    HtmlViewList::Iterator m_currentItemIter; // control up, down key event display
+    WeakHtmlViewList m_itemList;
+    WeakHtmlViewList::Iterator m_currentItemIter; // control up, down key event display
     LayoutRect m_viewRect;
-    HashMap<HashString, HtmlView*> m_idMap;
+    HashMap<HashString, WeakPtr<HtmlView>> m_idMap;
     UIView* m_view;
 };
 }

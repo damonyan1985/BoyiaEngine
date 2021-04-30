@@ -21,6 +21,8 @@ public:
     BoyiaPtr<T>& operator=(T* ptr);
     LBool operator==(T* ptr) const;
     LBool operator!=(T* ptr) const;
+
+    operator T* () const;
     T* operator->() const;
 
 private:
@@ -115,6 +117,12 @@ template <class T>
 LBool BoyiaPtr<T>::operator!=(T* ptr) const
 {
     return m_ptr != ptr ? LTrue : LFalse;
+}
+
+template <class T>
+BoyiaPtr<T>::operator T* () const
+{
+    return m_ptr;
 }
 }
 
