@@ -3,8 +3,6 @@ package com.boyia.app.core.texture;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
-import com.boyia.app.common.utils.BoyiaLog;
-
 public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     private SurfaceTexture mTexture = null;
     private Surface mSurface = null;

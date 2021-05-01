@@ -1,6 +1,5 @@
 package com.boyia.app.core.view;
 
-import android.app.Activity;
 import android.content.Context;
 
 import java.lang.ref.WeakReference;
