@@ -8,8 +8,7 @@ const char* kVsyncWaiterClass = "com/boyia/app/core/BoyiaSync";
 
 LVoid VsyncWaiterAndroid::awaitVSync()
 {
-    WeakPtr<VsyncWaiter>* weakThis = new WeakPtr<VsyncWaiter>(BoyiaPtr<VsyncWaiter>(this));
-    JNIUtil::callStaticVoidMethod(kVsyncWaiterClass, "awaitSync", "(J)V", (jlong)weakThis);
+    JNIUtil::callStaticVoidMethod(kVsyncWaiterClass, "awaitSync", "()V");
 }
 
 VsyncWaiter* VsyncWaiter::createVsyncWaiter()

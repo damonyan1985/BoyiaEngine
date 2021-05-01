@@ -180,8 +180,9 @@ static void nativeOnKeyboardHide(JNIEnv* env, jobject obj, jlong item, jint keyb
     yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::PixelRatio::viewY(keyboardHight));
 }
 
-static void nativeBoyiaSync(JNIEnv* env, jobject obj, jlong item)
+static void nativeBoyiaSync(JNIEnv* env, jobject obj)
 {
+    yanbo::AppManager::instance()->uiThread()->vsyncDraw();
 }
 
 static void nativeCacheCode(JNIEnv* env, jobject obj)
@@ -218,7 +219,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeResetGLSurface", "(Landroid/view/Surface;)V", (void*)nativeResetGLSurface },
     { "nativeOnKeyboardShow", "(JI)V", (void*)nativeOnKeyboardShow },
     { "nativeOnKeyboardHide", "(JI)V", (void*)nativeOnKeyboardHide },
-    { "nativeBoyiaSync", "(J)V", (void*)nativeBoyiaSync },
+    { "nativeBoyiaSync", "()V", (void*)nativeBoyiaSync },
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
     { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
 };
