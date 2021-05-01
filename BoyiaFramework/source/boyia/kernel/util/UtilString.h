@@ -49,7 +49,7 @@ public:
 };
 
 template <class T>
-class LString : public BoyiaRef {
+class LString {
 public:
     typedef LStringPolicy<T> Policy;
 

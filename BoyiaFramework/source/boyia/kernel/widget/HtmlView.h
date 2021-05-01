@@ -26,7 +26,6 @@ public:
     HtmlView(const String& id, LBool selectable);
     virtual ~HtmlView();
 
-public:
     // layout时计算相对坐标
     virtual LVoid layout(RenderContext& rc);
     virtual LVoid layout();
