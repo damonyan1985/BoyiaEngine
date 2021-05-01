@@ -33,6 +33,7 @@ LVoid UIEvent::execute()
 UIThread::UIThread(AppManager* manager)
     : m_manager(manager)
     , m_gc(LGraphicsContext::create())
+    , m_vsyncWaiter(VsyncWaiter::createVsyncWaiter())
 {
     start();
 }
@@ -194,10 +195,9 @@ LVoid UIThread::handleMessage(Message* msg)
         m_manager->currentApp()->init(entry);
     } break;
     case kVsyncDraw: {
-        WeakPtr<VsyncWaiter>* waiter = reinterpret_cast<WeakPtr<VsyncWaiter>*>(msg->arg0);
-        if (waiter->get()) {
-        }
-        delete waiter;
+#if ENABLE(BOYIA_UI_VSYNC)
+        m_gc->submit();
+#endif
     } break;
     case kPlatformViewUpdate: {
 #if ENABLE(BOYIA_PLATFORM_VIEW)
@@ -215,7 +215,11 @@ LVoid UIThread::handleMessage(Message* msg)
 
 LVoid UIThread::flush()
 {
+#if ENABLE(BOYIA_UI_VSYNC)
+    m_vsyncWaiter->awaitVSync();
+#else
     m_gc->submit();
+#endif
 }
 
 LVoid UIThread::setInputText(const String& text, LIntPtr item)
@@ -319,9 +323,7 @@ LVoid UIThread::resetContext()
 LVoid UIThread::reset(Message* msg)
 {
     m_gc->reset();
-    m_gc->submit();
-    //UIView* view = (UIView*)msg->obj;
-    //drawUI(view->getDocument()->getRenderTreeRoot());
+    flush();
 }
 
 LVoid UIThread::runAnimation(LVoid* callback)
@@ -351,11 +353,10 @@ LVoid UIThread::initApp(const String& entry)
     notify();
 }
 
-LVoid UIThread::vsyncDraw(LIntPtr vsyncWaiter)
+LVoid UIThread::vsyncDraw()
 {
     Message* msg = m_queue->obtain();
     msg->type = kVsyncDraw;
-    msg->arg0 = vsyncWaiter;
     m_queue->push(msg);
     notify();
 }

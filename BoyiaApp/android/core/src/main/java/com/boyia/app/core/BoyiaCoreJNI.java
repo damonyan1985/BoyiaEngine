@@ -68,7 +68,7 @@ public class BoyiaCoreJNI {
 
     public static native void nativeOnKeyboardHide(long item, int keyboardHeight);
 
-    public static native void nativeBoyiaSync(long item);
+    public static native void nativeBoyiaSync();
 
     public static native void nativeCacheCode();
     

@@ -2,12 +2,14 @@
 #define UIThread_h
 
 //#include "GLContext.h"
+#include "BoyiaPtr.h"
 #include "LEvent.h"
 #include "LGdi.h"
 #include "MessageThread.h"
 
 namespace yanbo {
 class AppManager;
+class VsyncWaiter;
 
 class UIEvent {
 public:
@@ -76,7 +78,7 @@ public:
     LVoid initApp(const String& entry);
     virtual LVoid handleMessage(Message* msg);
     LVoid drawUI(LVoid* view);
-    LVoid vsyncDraw(LIntPtr vsyncWaiter);
+    LVoid vsyncDraw();
 
     LVoid platformViewUpdate(const String& id);
 
@@ -86,6 +88,7 @@ private:
 
     LGraphicsContext* m_gc;
     AppManager* m_manager;
+    BoyiaPtr<VsyncWaiter> m_vsyncWaiter;
 };
 }
 #endif
