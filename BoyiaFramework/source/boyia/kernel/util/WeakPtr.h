@@ -9,30 +9,12 @@ class WeakPtr {
 public:
     WeakPtr(BoyiaPtr<T> ptr)
     {
-        m_ptr = ptr.get();
-        if (m_ptr) {
-            m_refCount = static_cast<const BoyiaRef*>(m_ptr)->count();
-            m_refCount->attachWeak();
-        } else {
-            m_refCount = kBoyiaNull;
-        }
+        initPtr(ptr.get());
     }
 
-    WeakPtr(T* ptr)
+    WeakPtr(T* ptr = kBoyiaNull)
     {
-        m_ptr = ptr;
-        if (m_ptr) {
-            m_refCount = static_cast<const BoyiaRef*>(m_ptr)->count();
-            m_refCount->attachWeak();
-        } else {
-            m_refCount = kBoyiaNull;
-        }
-    }
-
-    WeakPtr()
-        : m_ptr(kBoyiaNull)
-        , m_refCount(kBoyiaNull)
-    {
+        initPtr(ptr);
     }
 
     // if the pointer is expired
@@ -63,6 +45,17 @@ public:
     }
 
 private:
+    inline LVoid initPtr(T* ptr)
+    {
+        m_ptr = ptr;
+        if (m_ptr) {
+            m_refCount = static_cast<const BoyiaRef*>(m_ptr)->count();
+            m_refCount->attachWeak();
+        } else {
+            m_refCount = kBoyiaNull;
+        }
+    }
+
     RefCount* m_refCount;
     T* m_ptr;
 };
