@@ -40,7 +40,7 @@ public:
         // 重设指针
         m_ptr = ownerPtr.m_ptr;
         // 外部指针归0
-        ownerPtr.m_ptr = nullptr;
+        ownerPtr.m_ptr = kBoyiaNull;
 
         return *this;
     }

@@ -1,17 +1,11 @@
 package com.boyia.app.core.view;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.view.Surface;
-import android.view.View;
 
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.texture.BoyiaTexture;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 同层渲染，原生view控制类
