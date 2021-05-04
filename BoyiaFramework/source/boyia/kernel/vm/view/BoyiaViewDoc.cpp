@@ -71,6 +71,11 @@ BoyiaView* BoyiaViewDoc::getItemByID(const String& id) const
     KFORMATLOG("BoyiaViewDoc::getItemByID id=%s", GET_STR(id));
     HtmlView* item = m_doc->getItemByID(id);
     KLOG("BoyiaViewDoc::getItemByID end");
+    if (!item) {
+        BOYIA_LOG("The view with id:%s is null", GET_STR(id));
+        return kBoyiaNull;
+    }
+
     switch (item->getTagType()) {
     case HtmlTags::IMG:
         return new BoyiaImageView(runtime(), item);

@@ -5,116 +5,99 @@
 #include "TextView.h"
 #include "UIThread.h"
 #include "UIView.h"
+#include "WeakPtr.h"
 
 namespace yanbo {
-#define MAX_OPMSG_SIZE 50
+#define kMaxOpMessageSize 50
 
 UIOperation::UIOperation()
-    : m_msgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
-//, m_swapMsgs(new KVector<Message*>(0, MAX_OPMSG_SIZE))
+    : m_msgs(new KVector<Message*>(0, kMaxOpMessageSize))
 {
 }
 
 UIOperation::~UIOperation()
 {
     delete m_msgs;
-    //delete m_swapMsgs;
 }
 
 Message* UIOperation::obtain()
 {
-    //AutoLock lock(&m_uiMutex);
     return MessageCache::obtain();
 }
 
-LVoid UIOperation::opSetText(LVoid* view, const String& text)
+LVoid UIOperation::opSetText(HtmlView* view, const String& text)
 {
     Message* msg = obtain();
     msg->type = UIOP_SETTEXT;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
-    msg->arg1 = (LIntPtr)view;
+    msg->arg1 = (LIntPtr)(new WeakPtr<HtmlView>(view));
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opSetInput(LVoid* view, const String& text)
+LVoid UIOperation::opSetInput(HtmlView* view, const String& text)
 {
     Message* msg = obtain();
     msg->type = UIOP_SETINPUT;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
-    msg->arg1 = (LIntPtr)view;
+    msg->arg1 = (LIntPtr)(new WeakPtr<HtmlView>(view));
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opAddChild(LVoid* view, LVoid* child)
+LVoid UIOperation::opAddChild(HtmlView* view, HtmlView* child)
 {
     Message* msg = obtain();
     msg->type = UIOP_ADDCHILD;
-    msg->obj = view;
-    msg->arg0 = (LIntPtr)child;
+    msg->obj = new WeakPtr<HtmlView>(view);
+    msg->arg0 = (LIntPtr)(new WeakPtr<HtmlView>(child));
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opSetImageUrl(LVoid* view, const String& url)
+LVoid UIOperation::opSetImageUrl(HtmlView* view, const String& url)
 {
     Message* msg = obtain();
     msg->type = UIOP_SETIMAGE_URL;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
-    msg->arg1 = (LIntPtr)view;
+    msg->arg1 = (LIntPtr)(new WeakPtr<HtmlView>(view));
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opLoadImageUrl(LVoid* view, const String& url)
+LVoid UIOperation::opLoadImageUrl(HtmlView* view, const String& url)
 {
     Message* msg = obtain();
     msg->type = UIOP_LOADIMAGE_URL;
     msg->obj = url.GetBuffer();
     msg->arg0 = url.GetLength();
-    msg->arg1 = (LIntPtr)view;
+    msg->arg1 = (LIntPtr)(new WeakPtr<HtmlView>(view));
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opViewDraw(LVoid* view)
+LVoid UIOperation::opViewDraw(HtmlView* view)
 {
     Message* msg = obtain();
     msg->type = UIOP_DRAW;
-    msg->obj = view;
+    msg->obj = new WeakPtr<HtmlView>(view);
     m_msgs->addElement(msg);
 }
 
-LVoid UIOperation::opApplyDomStyle(LVoid* view)
+LVoid UIOperation::opApplyDomStyle(HtmlView* view)
 {
     Message* msg = obtain();
     msg->type = UIOP_APPLY_DOM_STYLE;
-    msg->obj = view;
+    msg->obj = new WeakPtr<HtmlView>(view);
     m_msgs->addElement(msg);
 }
 
-/*
-LVoid UIOperation::swapBufferImpl()
-{
-    //AutoLock lock(&m_uiMutex);
-
-    KVector<Message*>* buffer = m_msgs;
-    m_msgs = m_swapMsgs;
-    m_swapMsgs = buffer;
-    m_msgs->clear();
-}
-*/
-
-// 交换buffer，m_swapMsgs指针作为绘制时使用
 LVoid UIOperation::swapBuffer()
 {
-    //swapBufferImpl();
     UIThread::instance()->uiExecute();
 }
 
 LVoid UIOperation::execute()
 {
     // 处理Widget DOM相关操作
-    //AutoLock lock(&m_uiMutex);
     LInt size = m_msgs->size();
     for (LInt index = 0; index < size; ++index) {
         Message* msg = m_msgs->elementAt(index);
@@ -132,21 +115,31 @@ LVoid UIOperation::execute()
             break;
         case UIOP_SETIMAGE_URL: {
             String url(_CS(msg->obj), LTrue, msg->arg0);
-            ImageView* view = reinterpret_cast<ImageView*>(msg->arg1);
-            view->setUrl(url);
+            WeakPtr<HtmlView>* view = reinterpret_cast<WeakPtr<HtmlView>*>(msg->arg1);
+            if (*view) {
+                static_cast<ImageView*>(view->get())->setUrl(url);
+            }
+            delete view;
         } break;
         case UIOP_LOADIMAGE_URL: {
             String url(_CS(msg->obj), LTrue, msg->arg0);
-            ImageView* view = reinterpret_cast<ImageView*>(msg->arg1);
-            view->loadImage(url);
+            WeakPtr<HtmlView>* view = reinterpret_cast<WeakPtr<HtmlView>*>(msg->arg1);
+            if (*view) {
+                static_cast<ImageView*>(view->get())->loadImage(url);
+            }
+            delete view;
         } break;
         case UIOP_DRAW: {
             viewDraw(msg);
         } break;
         case UIOP_APPLY_DOM_STYLE: {
-            HtmlView* root = static_cast<HtmlView*>(msg->obj);
-            ResourceLoader* loader = UIView::current()->getLoader();
-            root->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
+            WeakPtr<HtmlView>* root = static_cast<WeakPtr<HtmlView>*>(msg->obj);
+            if (*root) {
+                ResourceLoader* loader = UIView::current()->getLoader();
+                (*root)->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
+            }
+
+            delete root;
         } break;
         }
 
@@ -161,48 +154,64 @@ LVoid UIOperation::viewSetInput(Message* msg)
     if (!msg->arg1) {
         return;
     }
+
     String text(_CS(msg->obj), LTrue, msg->arg0);
-    reinterpret_cast<InputView*>(msg->arg1)->setInputValue(text);
+    WeakPtr<InputView>* inputView = reinterpret_cast<WeakPtr<InputView>*>(msg->arg1);
+    if (*inputView) {
+        (*inputView)->setInputValue(text);
+    }
+    delete inputView;
 }
 
 LVoid UIOperation::viewSetText(Message* msg)
 {
     String text(_CS(msg->obj), LTrue, msg->arg0);
-    HtmlView* view = reinterpret_cast<HtmlView*>(msg->arg1);
+    WeakPtr<HtmlView>* view = reinterpret_cast<WeakPtr<HtmlView>*>(msg->arg1);
+    if (!view->get()) {
+        delete view;
+        return;
+    }
 
-    if (view->m_children.count()) {
-        HtmlView* firstChild = *view->m_children.begin();
+    if ((*view)->m_children.count()) {
+        HtmlView* firstChild = (*(*view)->m_children.begin());
         if (firstChild && firstChild->isText()) {
             TextView* item = static_cast<yanbo::TextView*>(firstChild);
             item->setText(text);
         }
     } else {
         TextView* item = new TextView(_CS(""), text);
-        item->setParent(view);
-        view->addChild(item);
+        item->setParent(*view);
+        (*view)->addChild(item);
 
         ResourceLoader* loader = UIView::current()->getLoader();
-        view->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
+        (*view)->setStyle(loader->render()->getStyleManager(), kBoyiaNull);
     }
+
+    delete view;
 }
 
 LVoid UIOperation::viewAddChild(Message* msg)
 {
-    HtmlView* view = static_cast<HtmlView*>(msg->obj);
-    HtmlView* child = reinterpret_cast<HtmlView*>(msg->arg0);
-    if (view) {
-        child->setParent(view);
-        view->addChild(child);
+    WeakPtr<HtmlView>* view = static_cast<WeakPtr<HtmlView>*>(msg->obj);
+    WeakPtr<HtmlView>* child = reinterpret_cast<WeakPtr<HtmlView>*>(msg->arg0);
+    if (*view && *child) {
+        (*child)->setParent(*view);
+        (*view)->addChild(*child);
     }
+
+    delete view;
+    delete child;
 }
 
 LVoid UIOperation::viewDraw(Message* msg)
 {
-    HtmlView* view = static_cast<HtmlView*>(msg->obj);
-    if (!view)
-        return;
-    view->layout();
-    LGraphicsContext* gc = UIView::current()->getGraphicsContext();
-    view->paint(*gc);
+    WeakPtr<HtmlView>* view = static_cast<WeakPtr<HtmlView>*>(msg->obj);
+    if (*view) {
+        (*view)->layout();
+        LGraphicsContext* gc = UIView::current()->getGraphicsContext();
+        (*view)->paint(*gc);
+    }
+   
+    delete view;
 }
 }

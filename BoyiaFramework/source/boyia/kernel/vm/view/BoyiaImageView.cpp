@@ -11,13 +11,15 @@ BoyiaImageView::BoyiaImageView(BoyiaRuntime* runtime, yanbo::HtmlView* item)
 
 LVoid BoyiaImageView::loadImage(const String& url)
 {
-    //static_cast<yanbo::ImageView*>(m_item)->loadImage(url);
-    runtime()->view()->operation()->opLoadImageUrl(m_item, url);
+    if (m_item) {
+        runtime()->view()->operation()->opLoadImageUrl(m_item, url);
+    }
 }
 
 LVoid BoyiaImageView::setImageUrl(const String& url)
 {
-    //static_cast<yanbo::ImageView*>(m_item)->setUrl(url);
-    runtime()->view()->operation()->opSetImageUrl(m_item, url);
+    if (m_item) {
+        runtime()->view()->operation()->opSetImageUrl(m_item, url);
+    }
 }
 }

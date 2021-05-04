@@ -80,7 +80,7 @@ T& Stack<T>::top()
 template <class T>
 LBool Stack<T>::contains(const T& kv)
 {
-    return m_vector.count(kv);
+    return m_vector.contains(kv);
 }
 }
 

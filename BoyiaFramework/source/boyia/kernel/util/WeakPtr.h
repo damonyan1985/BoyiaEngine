@@ -34,6 +34,11 @@ public:
         return expired() ? kBoyiaNull : m_ptr;
     }
 
+    T* operator->() const
+    {
+        return m_ptr;
+    }
+
     ~WeakPtr()
     {
         if (m_refCount) {

@@ -14,11 +14,12 @@
 #include "BoyiaBase.h"
 #include "HtmlView.h"
 #include "KVector.h"
+#include "WeakPtr.h"
 
 namespace boyia {
 #define EVENT_MAX_SIZE 10
 
-class BoyiaView : public BoyiaBase, public yanbo::IViewListener{
+class BoyiaView : public BoyiaBase, public yanbo::IViewListener {
 public:
     BoyiaView(BoyiaRuntime* runtime);
     virtual ~BoyiaView();
@@ -57,7 +58,7 @@ protected:
     BoyiaValue m_callbacks[EVENT_MAX_SIZE];
     BoyiaValue m_boyiaView;
 
-    yanbo::HtmlView* m_item;
+    WeakPtr<yanbo::HtmlView> m_item;
 };
 }
 

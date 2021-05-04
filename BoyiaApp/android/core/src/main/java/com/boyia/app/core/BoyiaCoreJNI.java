@@ -76,4 +76,8 @@ public class BoyiaCoreJNI {
 
     // 此处初始化rust sdk
     public static native String nativeInitSdk();
+
+    // 滚动接口
+    public static native void nativeOnFling(int type1, int x1, int y1,
+        int type2, int x2, int y2, float velocityX, float velocityY);
 }

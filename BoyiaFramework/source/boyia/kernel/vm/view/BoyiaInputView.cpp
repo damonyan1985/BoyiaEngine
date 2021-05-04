@@ -11,8 +11,8 @@ BoyiaInputView::BoyiaInputView(BoyiaRuntime* runtime, yanbo::HtmlView* item)
 
 LVoid BoyiaInputView::setText(const String& text)
 {
-    //yanbo::InputView* item = static_cast<yanbo::InputView*>(m_item);
-    //item->setInputValue(text);
-    runtime()->view()->operation()->opSetInput(m_item, text);
+    if (m_item) {
+        runtime()->view()->operation()->opSetInput(m_item, text);
+    }
 }
 }

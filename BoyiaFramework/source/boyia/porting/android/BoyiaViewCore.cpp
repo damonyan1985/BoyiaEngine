@@ -203,6 +203,19 @@ static void nativePlatformViewUpdate(JNIEnv* env, jobject obj, jstring id)
     viewId.ReleaseBuffer();
 }
 
+static void nativeOnFling(JNIEnv* env, jobject obj,
+    int type1, int x1, int y1,
+    int type2, int x2, int y2,
+    jfloat velocityX, jfloat velocityY)
+{
+    if (velocityY > 0) {
+        return;
+    }
+
+    if (velocityX > 0) {
+    }
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
@@ -222,6 +235,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeBoyiaSync", "()V", (void*)nativeBoyiaSync },
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
     { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
+    { "nativeOnFling", "(IIIIIIFF)V", (void*)nativeOnFling },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,
