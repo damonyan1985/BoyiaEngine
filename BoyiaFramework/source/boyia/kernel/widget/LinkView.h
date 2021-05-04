@@ -14,17 +14,12 @@ namespace yanbo {
 
 class LinkView : public InlineView {
 public:
-    LinkView(
-        const String& id,
-        const String& url);
-
-    ~LinkView();
-
-public:
+    LinkView(const String& id, const String& url);
     virtual LBool isLink() const;
-
     virtual void execute();
-    void setLinkFocus(HtmlView* item, const LBool selected);
+
+protected:
+    ~LinkView();
 
 private:
     String m_url;

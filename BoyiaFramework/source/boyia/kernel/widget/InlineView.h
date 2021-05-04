@@ -15,12 +15,12 @@ namespace yanbo {
 class InlineView : public HtmlView {
 public:
     InlineView(const String& id, LBool selectable);
-    virtual ~InlineView();
-
+    
     virtual void addChild(HtmlView* child);
-
-public:
     virtual LBool isInline() const;
+
+protected:
+    virtual ~InlineView();
 
 private:
     void addChildToContinuation(HtmlView* child);

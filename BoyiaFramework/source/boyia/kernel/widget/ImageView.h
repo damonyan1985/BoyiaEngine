@@ -19,6 +19,7 @@ public:
         LBool selectable,
         const String& src);
 
+protected:
     ~ImageView();
 
 public:

@@ -21,8 +21,12 @@ public:
     // For image texture
     LVoid initWithData(LVoid* data, LInt width, LInt height);
 
-    virtual ~Texture();
+protected:
+    // avoid to use delete to free memory
+    // must be use boyia ptr to do that.
+    ~Texture();
 
+public:
     GLuint texId;
     LInt width;
     LInt height;

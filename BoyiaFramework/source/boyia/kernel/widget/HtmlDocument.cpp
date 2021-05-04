@@ -11,7 +11,7 @@
 namespace yanbo {
 
 HtmlDocument::HtmlDocument()
-    : m_title(_CS("yanbo"))
+    : m_title(_CS("boyia_ui"))
     , m_url(_CS(""))
     , m_root(kBoyiaNull)
     , m_view(kBoyiaNull)

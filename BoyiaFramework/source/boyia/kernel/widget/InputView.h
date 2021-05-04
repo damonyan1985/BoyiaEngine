@@ -45,8 +45,6 @@ public:
         const String& inputType,
         const String& imageUrl);
 
-    ~InputView();
-
 public:
     virtual LVoid execute();
 
@@ -54,6 +52,8 @@ public:
     LVoid setInputValue(const String& text);
 
 protected:
+    virtual ~InputView();
+
     LVoid initView();
     LVoid layoutBegin(RenderContext& rc);
     LVoid layoutEnd(RenderContext& rc);

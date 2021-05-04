@@ -24,7 +24,6 @@ typedef LPoint LayoutPoint;
 class HtmlView : public LBaseView, public BoyiaRef {
 public:
     HtmlView(const String& id, LBool selectable);
-    virtual ~HtmlView();
 
     // layout时计算相对坐标
     virtual LVoid layout(RenderContext& rc);
@@ -102,6 +101,9 @@ private:
     HtmlView* getNextItem(HtmlView* currentItem);
 
 protected:
+    // avoid to use delete to free memory
+    // must be use boyia ptr to do that.
+    virtual ~HtmlView();
     LVoid handleXYPos(RenderContext& rc);
 
 public:

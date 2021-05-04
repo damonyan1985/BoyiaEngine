@@ -524,6 +524,8 @@ LInt callStaticMethod(LVoid* vm)
     FREE_BUFFER(strClzz);
     FREE_BUFFER(strMethod);
     FREE_BUFFER(strSign);
+#elif ENABLE(BOYIA_WINDOWS)
+    printf("callStaticMethod");
 #endif
     return kOpResultSuccess;
 }

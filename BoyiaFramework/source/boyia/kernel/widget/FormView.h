@@ -19,8 +19,6 @@ public:
         const String& inValue,
         const String& inTitle);
 
-    virtual ~FormView();
-
 public:
     void setValue(const String& inValue);
     const String& getValue() const;
@@ -32,6 +30,8 @@ public:
     const String& getName() const;
 
 protected:
+    virtual ~FormView();
+
     String m_name;
     String m_value;
     String m_title;
