@@ -20,12 +20,14 @@ BoyiaViewGroup::BoyiaViewGroup(BoyiaRuntime* runtime, const String& id, LBool se
 
 LVoid BoyiaViewGroup::setText(const String& text)
 {
-    runtime()->view()->operation()->opSetText(m_item, text);
+    if (m_item) {
+        runtime()->view()->operation()->opSetText(m_item, text);
+    }
 }
 
 LVoid BoyiaViewGroup::appendView(BoyiaView* view)
 {
-    if (view && view->item()) {
+    if (m_item && view && view->item()) {
         BOYIA_LOG("BoyiaViewDoc::appendDocument begin %s", (const char*)m_item->getTagName().GetBuffer());
         runtime()->view()->operation()->opAddChild(m_item, view->item());
     }

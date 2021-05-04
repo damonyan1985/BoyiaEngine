@@ -4,11 +4,13 @@
 #include "KVector.h"
 #include "MessageQueue.h"
 #include "UtilString.h"
+#include "HtmlView.h"
 
 namespace yanbo {
 // UI线程一切操作【现有】Widget DOM必须走UIOperation
 // 最后将由PaintThread来执行UIOperation::execute()
 // 来完成绘制工作
+//class HtmlView;
 class UIOperation LFinal: public MessageCache {
 public:
     enum UIOpType {
@@ -29,13 +31,13 @@ public:
     LVoid swapBuffer();
 
     // operation
-    LVoid opSetText(LVoid* view, const String& text);
-    LVoid opAddChild(LVoid* view, LVoid* child);
-    LVoid opSetImageUrl(LVoid* view, const String& url);
-    LVoid opLoadImageUrl(LVoid* view, const String& url);
-    LVoid opViewDraw(LVoid* view);
-    LVoid opApplyDomStyle(LVoid* view);
-    LVoid opSetInput(LVoid* view, const String& text);
+    LVoid opSetText(HtmlView* view, const String& text);
+    LVoid opAddChild(HtmlView* view, HtmlView* child);
+    LVoid opSetImageUrl(HtmlView* view, const String& url);
+    LVoid opLoadImageUrl(HtmlView* view, const String& url);
+    LVoid opViewDraw(HtmlView* view);
+    LVoid opApplyDomStyle(HtmlView* view);
+    LVoid opSetInput(HtmlView* view, const String& text);
 
 private:
     LVoid viewAddChild(Message* msg);
@@ -43,11 +45,7 @@ private:
     LVoid viewDraw(Message* msg);
     LVoid viewSetInput(Message* msg);
 
-    //LVoid swapBufferImpl();
-
     KVector<Message*>* m_msgs;
-    //KVector<Message*>* m_swapMsgs;
-    //Mutex m_uiMutex;
 };
 }
 #endif

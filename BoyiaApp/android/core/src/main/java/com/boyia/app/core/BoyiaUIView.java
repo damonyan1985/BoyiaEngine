@@ -69,21 +69,24 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
         // TODO 为滚动动画做准备
         mGestureDetector = new GestureDetector(getContext(),
                 new GestureDetector.OnGestureListener() {
-
+                    // 按下屏幕就会触发
                     @Override
                     public boolean onDown(MotionEvent e) {
                         return false;
                     }
 
+                    // 按下超过时间的瞬间会触发
                     @Override
                     public void onShowPress(MotionEvent e) {
                     }
 
+                    // 按下弹起时会触发
                     @Override
                     public boolean onSingleTapUp(MotionEvent e) {
                         return false;
                     }
 
+                    // 屏幕上拖动事件
                     @Override
                     public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                             float distanceX, float distanceY) {
@@ -94,6 +97,7 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
                     public void onLongPress(MotionEvent e) {
                     }
 
+                    // 滚动
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2,
                                            float velocityX, float velocityY) {

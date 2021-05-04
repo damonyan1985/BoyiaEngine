@@ -32,41 +32,61 @@ BoyiaView::~BoyiaView()
 
 LVoid BoyiaView::setX(LInt x)
 {
-    m_item->getStyle()->left = x;
-    m_item->setXpos(x);
+    if (m_item) {
+        m_item->getStyle()->left = x;
+        m_item->setXpos(x);
+    }
 }
 
 LVoid BoyiaView::setY(LInt y)
 {
-    m_item->getStyle()->top = y;
-    m_item->setYpos(y);
+    if (m_item) {
+        m_item->getStyle()->top = y;
+        m_item->setYpos(y);
+    }
 }
 
 LInt BoyiaView::left() const
 {
-    return m_item->getXpos();
+    if (m_item) {
+        return m_item->getXpos();
+    }
+
+    return 0;
 }
 
 LInt BoyiaView::top() const
 {
-    return m_item->getYpos();
+    if (m_item) {
+        return m_item->getYpos();
+    }
+
+    return 0;
 }
 
 LInt BoyiaView::width() const
 {
-    return m_item->getWidth();
+    if (m_item) {
+        return m_item->getWidth();
+    }
+
+    return 0;
 }
 
 LInt BoyiaView::height() const
 {
-    return m_item->getHeight();
+    if (m_item) {
+        return m_item->getHeight();
+    }
+
+    return 0;
 }
 
 LVoid BoyiaView::drawView()
 {
-    //m_item->relayout();
-    //UIView::getInstance()->getLoader()->render()->paint(m_item);
-    runtime()->view()->operation()->opViewDraw(m_item);
+    if (m_item) {
+        runtime()->view()->operation()->opViewDraw(m_item);
+    }
 }
 
 LVoid BoyiaView::commit()
@@ -177,9 +197,9 @@ LVoid BoyiaView::addListener(LInt type, BoyiaValue* callback)
     KFORMATLOG("BoyiaBase::addListener m_type=%d", m_type);
     ValueCopy(&m_callbacks[type >> 1], callback);
 
-    if (!m_item->getListener()) {
+    if (m_item && !m_item->getListener()) {
         m_item->setListener(this);
-    }
+    }   
 }
 
 LVoid BoyiaView::setBoyiaView(BoyiaValue* value)
