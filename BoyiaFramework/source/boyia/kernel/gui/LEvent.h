@@ -31,7 +31,7 @@ public:
     {
     }
 
-    ~LKeyEvent() {}
+    ~LKeyEvent() { }
     LInt getType() const { return m_eventType; }
     LVoid setType(KeyEventType type) { m_eventType = type; }
 
@@ -88,7 +88,7 @@ public:
     {
     }
 
-    ~LMouseEvent() {}
+    ~LMouseEvent() { }
 
     LInt getType() const { return m_eventType; }
     LVoid setType(MouseEventType type) { m_eventType = type; }
@@ -100,8 +100,19 @@ private:
     MouseEventType m_eventType;
     LPoint m_position;
 };
+
+class LFlingEvent {
+public:
+    LFlingEvent() {};
+
+    LPoint pt1;
+    LPoint pt2;
+    LReal velocityX;
+    LReal velocityY;
+};
 }
 
+using util::LFlingEvent;
 using util::LKeyEvent;
 using util::LMouseEvent;
 using util::LTouchEvent;

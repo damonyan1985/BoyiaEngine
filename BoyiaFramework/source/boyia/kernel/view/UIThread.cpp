@@ -107,15 +107,13 @@ LVoid UIThread::handleMessage(Message* msg)
         }
     } break;
     case kUiTouchEvent: {
-        LTouchEvent* evt = static_cast<LTouchEvent*>(msg->obj);
+        OwnerPtr<LTouchEvent> evt = static_cast<LTouchEvent*>(msg->obj);
         reinterpret_cast<UIView*>(msg->arg0)->handleTouchEvent(*evt);
-        delete evt;
         flush();
     } break;
     case kUiKeyEvent: {
-        LKeyEvent* evt = static_cast<LKeyEvent*>(msg->obj);
+        OwnerPtr<LKeyEvent> evt = static_cast<LKeyEvent*>(msg->obj);
         reinterpret_cast<UIView*>(msg->arg0)->handleKeyEvent(*evt);
-        delete evt;
     } break;
     case kUiSetInput: {
         String text(_CS(msg->obj), LTrue, msg->arg0);
@@ -209,6 +207,11 @@ LVoid UIThread::handleMessage(Message* msg)
 
         drawUI(view);
 #endif
+    } break;
+    case kFlingEvent: {
+        // TODO handle fling event
+        OwnerPtr<LFlingEvent> evt = static_cast<LFlingEvent*>(msg->obj);
+        AppManager::instance()->currentApp()->view()->handleFlingEvent(*evt);
     } break;
     }
 }
@@ -367,6 +370,15 @@ LVoid UIThread::platformViewUpdate(const String& id)
     msg->type = kPlatformViewUpdate;
     msg->obj = id.GetBuffer();
     msg->arg0 = id.GetLength();
+    m_queue->push(msg);
+    notify();
+}
+
+LVoid UIThread::handleFlingEvent(LFlingEvent* evt)
+{
+    Message* msg = m_queue->obtain();
+    msg->type = kFlingEvent;
+    msg->obj = evt;
     m_queue->push(msg);
     notify();
 }

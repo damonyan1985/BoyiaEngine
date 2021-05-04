@@ -12,8 +12,8 @@
 #include "LEvent.h"
 #include "LGdi.h"
 #include "ResourceLoader.h"
-#include "UIViewController.h"
 #include "UIOperation.h"
+#include "UIViewController.h"
 
 namespace yanbo {
 class Application;
@@ -44,6 +44,7 @@ public:
     void handleMouseEvent(const LMouseEvent& evt);
     void handleKeyEvent(const LKeyEvent& evt);
     void handleTouchEvent(const LTouchEvent& evt);
+    void handleFlingEvent(const LFlingEvent& evt);
 
     bool canHit() const;
 

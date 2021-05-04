@@ -142,12 +142,12 @@ static void nativeHandleKeyEvent(JNIEnv* env, jobject obj, jint keyCode, jint is
     }
 
     LKeyEvent* evt = new LKeyEvent(code, isDown);
-    yanbo::UIThread::instance()->handleKeyEvent(evt);
+    yanbo::AppManager::instance()->uiThread()->handleKeyEvent(evt);
 }
 
 static void nativeImageLoaded(JNIEnv* env, jobject obj, jlong item)
 {
-    yanbo::UIThread::instance()->clientCallback(item);
+    yanbo::AppManager::instance()->uiThread()->clientCallback(item);
 }
 
 static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
@@ -159,25 +159,25 @@ static void nativeSetInputText(JNIEnv* env, jobject obj, jstring text, jlong ite
 {
     String result;
     util::jstringTostr(env, text, result);
-    KFORMATLOG("nativeSetInputText text=%s", (const char*)result.GetBuffer());
-    yanbo::UIThread::instance()->setInputText(result, item);
+    BOYIA_LOG("nativeSetInputText text=%s", (const char*)result.GetBuffer());
+
+    yanbo::AppManager::instance()->uiThread()->setInputText(result, item);
     result.ReleaseBuffer();
 }
 
 static void nativeVideoTextureUpdate(JNIEnv* env, jobject obj, jlong item)
 {
-    //yanbo::UIThread::instance()->videoUpdate(item);
-    yanbo::UIThread::instance()->clientCallback(item);
+    yanbo::AppManager::instance()->uiThread()->clientCallback(item);
 }
 
 static void nativeOnKeyboardShow(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
 {
-    yanbo::UIThread::instance()->onKeyboardShow(item, yanbo::PixelRatio::viewY(keyboardHight));
+    yanbo::AppManager::instance()->uiThread()->onKeyboardShow(item, yanbo::PixelRatio::viewY(keyboardHight));
 }
 
 static void nativeOnKeyboardHide(JNIEnv* env, jobject obj, jlong item, jint keyboardHight)
 {
-    yanbo::UIThread::instance()->onKeyboardHide(item, yanbo::PixelRatio::viewY(keyboardHight));
+    yanbo::AppManager::instance()->uiThread()->onKeyboardHide(item, yanbo::PixelRatio::viewY(keyboardHight));
 }
 
 static void nativeBoyiaSync(JNIEnv* env, jobject obj)
@@ -199,7 +199,7 @@ static void nativePlatformViewUpdate(JNIEnv* env, jobject obj, jstring id)
     String viewId;
     util::jstringTostr(env, id, viewId);
     BOYIA_LOG("nativePlatformViewUpdate viewId=%s", GET_STR(viewId));
-    yanbo::UIThread::instance()->platformViewUpdate(viewId);
+    yanbo::AppManager::instance()->uiThread()->platformViewUpdate(viewId);
     viewId.ReleaseBuffer();
 }
 
@@ -208,12 +208,17 @@ static void nativeOnFling(JNIEnv* env, jobject obj,
     int type2, int x2, int y2,
     jfloat velocityX, jfloat velocityY)
 {
-    if (velocityY > 0) {
-        return;
-    }
+    LFlingEvent* evt = new LFlingEvent();
+    evt->pt1.iX = x1;
+    evt->pt1.iY = y1;
 
-    if (velocityX > 0) {
-    }
+    evt->pt2.iX = x2;
+    evt->pt2.iY = y2;
+
+    evt->velocityX = velocityX;
+    evt->velocityY = velocityY;
+
+    yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }
 
 static JNINativeMethod sUIViewMethods[] = {
