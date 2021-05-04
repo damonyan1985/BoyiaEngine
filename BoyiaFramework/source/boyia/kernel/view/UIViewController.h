@@ -39,6 +39,15 @@ public:
 
     LBool hitTest(const LPoint& pt);
 
+    // pt1 手势按下时的坐标
+    // pt2 手势放开时的坐标
+    // velocityX x轴方向速度
+    // velocityY y轴方向速度
+    LVoid onFling(const LPoint& pt1,
+        const LPoint& pt2,
+        LReal velocityX,
+        LReal velocityY);
+
 protected:
     UIView* m_view;
     HtmlView* m_target;

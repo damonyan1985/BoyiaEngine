@@ -6,8 +6,8 @@
  */
 
 #include "UIViewController.h"
-#include "UIView.h"
 #include "BlockView.h"
+#include "UIView.h"
 
 namespace yanbo {
 
@@ -25,8 +25,8 @@ static HtmlView* findViewByPosition(const LPoint& pt, HtmlView* view)
         LInt x = child->getXpos() + topLeft.iX;
         LInt y = child->getYpos() + topLeft.iY;
 
-        KFORMATLOG("findViewByPosition x=%d, y=%d, w=%d, h=%d selectable=%d", x, y, child->getWidth(), child->getHeight(), child->isSelectable());
-        KFORMATLOG("findViewByPosition point x=%d, y=%d", pt.iX, pt.iY);
+        BOYIA_LOG("findViewByPosition x=%d, y=%d, w=%d, h=%d selectable=%d", x, y, child->getWidth(), child->getHeight(), child->isSelectable());
+        BOYIA_LOG("findViewByPosition point x=%d, y=%d", pt.iX, pt.iY);
 
         if (pt.iX > x
             && pt.iX < x + child->getWidth()
@@ -160,8 +160,8 @@ void UIViewController::onTouchDown(const LPoint& pt)
         LayoutPoint topLeft = m_target->getAbsoluteContainerTopLeft();
         LInt x = m_target->getXpos() + topLeft.iX;
         LInt y = m_target->getYpos() + topLeft.iY;
-        KFORMATLOG("m_target x=%d, y=%d, w=%d, h=%d", x, y, m_target->getWidth(), m_target->getHeight());
-        KFORMATLOG("point x=%d, y=%d", pt.iX, pt.iY);
+        BOYIA_LOG("m_target x=%d, y=%d, w=%d, h=%d", x, y, m_target->getWidth(), m_target->getHeight());
+        BOYIA_LOG("point x=%d, y=%d", pt.iX, pt.iY);
 
         m_target->getListener()->onPressDown(m_target);
     }
@@ -200,7 +200,7 @@ void UIViewController::onTouchMove(const LPoint& pt)
             || (scrollY == 0 && deltaY >= 0)
             || (scrollY == view->scrollHeight() && deltaY <= 0);
 
-        KFORMATLOG("onTouchMove canScroll=%d scrollY=%d deltaY=%d scrollHeight=%d height=%d", view->canScroll(), scrollY, deltaY, view->scrollHeight(), view->getHeight());
+        BOYIA_LOG("onTouchMove canScroll=%d scrollY=%d deltaY=%d scrollHeight=%d height=%d", view->canScroll(), scrollY, deltaY, view->scrollHeight(), view->getHeight());
         if (!cantScoll) {
             LInt newScrollY = scrollY + deltaY;
             if (newScrollY > 0) {
@@ -210,7 +210,7 @@ void UIViewController::onTouchMove(const LPoint& pt)
             }
 
             m_targetPoint = pt;
-            KFORMATLOG("onTouchMove scrollY=%d newScrollY=%d", scrollY, newScrollY);
+            BOYIA_LOG("onTouchMove scrollY=%d newScrollY=%d", scrollY, newScrollY);
             view->setScrollPos(0, newScrollY);
             view->paint(*m_view->getGraphicsContext());
         }
@@ -219,5 +219,10 @@ void UIViewController::onTouchMove(const LPoint& pt)
             m_target->getListener()->onPressMove(m_target);
         }
     }
+}
+
+LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velocityX, LReal velocityY)
+{
+    BOYIA_LOG("UIViewController::onFling velocityY=%f", velocityY);
 }
 }

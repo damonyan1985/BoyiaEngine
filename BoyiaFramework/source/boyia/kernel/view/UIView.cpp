@@ -154,4 +154,9 @@ UIOperation* UIView::operation() const
 {
     return m_operation;
 }
+
+void UIView::handleFlingEvent(const LFlingEvent& evt)
+{
+    m_controller->onFling(evt.pt1, evt.pt2, evt.velocityX, evt.velocityY);
+}
 }

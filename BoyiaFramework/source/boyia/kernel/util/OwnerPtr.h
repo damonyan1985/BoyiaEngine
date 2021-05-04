@@ -70,6 +70,11 @@ public:
         return m_ptr;
     }
 
+    operator T*() const
+    {
+        return m_ptr;
+    }
+
 private:
     void release()
     {

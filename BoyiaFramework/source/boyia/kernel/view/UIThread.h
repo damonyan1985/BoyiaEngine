@@ -45,7 +45,8 @@ public:
         kUiEvent,
         kUiInitApp,
         kVsyncDraw,
-        kPlatformViewUpdate
+        kPlatformViewUpdate,
+        kFlingEvent
     };
     static UIThread* instance();
 
@@ -81,6 +82,7 @@ public:
     LVoid vsyncDraw();
 
     LVoid platformViewUpdate(const String& id);
+    LVoid handleFlingEvent(LFlingEvent* evt);
 
 private:
     LVoid reset(Message* msg);

@@ -101,6 +101,8 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2,
                                            float velocityX, float velocityY) {
+                        BoyiaCoreJNI.nativeOnFling(e1.getAction(), (int) e1.getX(), (int) e1.getY(),
+                            e2.getAction(), (int) e2.getX(), (int) e2.getY(), velocityX, velocityY);                       
                         return false;
                     }
                 });
