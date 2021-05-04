@@ -17,8 +17,6 @@ class BlockView : public HtmlView {
 public:
     BlockView(const String& id, LBool selectable);
 
-    virtual ~BlockView();
-
 public:
     // layout method inline or block child
     LVoid setChildrenInline(LBool isInline);
@@ -52,8 +50,10 @@ public:
     virtual LInt getHeight() const;
     // Can scroll max height
     LInt scrollHeight() const;
-
     LVoid insertChild(HtmlViewList::Iterator& iter, HtmlView* child);
+
+protected:
+    virtual ~BlockView();
 
 private:
     LBool m_isChildrenInline;

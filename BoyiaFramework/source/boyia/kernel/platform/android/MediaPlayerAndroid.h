@@ -28,7 +28,6 @@ private:
     void createTexture();
 
     struct JMediaPlayer* m_player;
-    //LUint32 m_texID;
     BoyiaPtr<yanbo::Texture> m_texture;
     LVoid* m_view;
 };
