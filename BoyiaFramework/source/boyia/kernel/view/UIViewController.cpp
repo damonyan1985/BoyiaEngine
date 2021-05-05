@@ -6,6 +6,7 @@
  */
 
 #include "UIViewController.h"
+#include "Animation.h"
 #include "BlockView.h"
 #include "UIView.h"
 
@@ -224,5 +225,24 @@ void UIViewController::onTouchMove(const LPoint& pt)
 LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velocityX, LReal velocityY)
 {
     BOYIA_LOG("UIViewController::onFling velocityY=%f", velocityY);
+    // 获取目标view
+    HtmlView* target = findViewByPosition(pt1, m_view->getDocument()->getRenderTreeRoot());
+    if (!target) {
+        return;
+    }
+
+    BlockView* view = target->getContainingBlock();
+    if (!view) {
+        return;
+    }
+
+    // TODO 开始加速滚动动画
+    // velocityY > 0表示向下滑动
+    // velocityY < 0表示向上滑动
+    // VelocityAnimation* anim = new VelocityAnimation(view);
+    // anim->setDuration(2000);
+    // anim->setFriction(0.05);
+    // anim->setVelocity(velocityX, velocityY);
+    // Animator::instance()->startAnimation(anim);
 }
 }

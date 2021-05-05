@@ -29,9 +29,11 @@ const LInt kMemoryAlignNum = sizeof(LUintPtr);
 // 数据块尾部地址值
 #define DATA_TAIL(header) ((LUintPtr)header + kMemoryHeaderLen + header->mSize)
 // 字节对齐后的地址值
-//#define ADDR_ALIGN(addr) (addr % kMemoryAlignNum == 0 ? addr : (addr + (kMemoryAlignNum - addr % kMemoryAlignNum)))
+
 #define MEM_ALIGN(size) (((size) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
-#define ADDR_ALIGN(addr) (((LUintPtr)(addr) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
+//#define ADDR_ALIGN(addr) (((LUintPtr)(addr) + ((LUintPtr)kMemoryAlignNum - 1)) & ~((LUintPtr)kMemoryAlignNum - 1))
+#define ADDR_ALIGN(addr) (((LUintPtr)addr) % kMemoryAlignNum == 0 ? ((LUintPtr)addr) : (((LUintPtr)addr) + (kMemoryAlignNum - ((LUintPtr)addr) % kMemoryAlignNum)))
+
 #define ADDR_DELTA(addr1, addr2) ((LUintPtr)(addr1) - (LUintPtr)(addr2))
 
 LVoid* FastMalloc(LInt size)
@@ -110,8 +112,6 @@ LVoid* NewData(LInt size, LVoid* mempool)
         while (current) {
             // 如果当前单元没有下一个元素
             // 则直接利用剩余的空白空间
-            // 如果当前单元存在下一个元素
-            // 则尝试利用当前与下一个元素之间的空白区域进行分配
             LUintPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
             if (!current->mNext) {
                 if (ADDR_DELTA(((LUintPtr)pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
@@ -127,6 +127,8 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 return kBoyiaNull;
             }
 
+            // 如果当前单元存在下一个元素
+            // 则尝试利用当前与下一个元素之间的空白区域进行分配
             if (ADDR_DELTA((current->mNext), newAddr) >= mallocSize) {
                 pHeader = (MemoryBlockHeader*)newAddr;
                 pHeader->mSize = size;

@@ -22,6 +22,7 @@ Animation::~Animation()
 {
 }
 
+// 毫秒计算
 LVoid Animation::setDuration(float duration)
 {
     m_duration = duration;
@@ -126,6 +127,8 @@ LVoid OpacityAnimation::step()
 
 TranslateAnimation::TranslateAnimation(HtmlView* item)
     : Animation(item)
+    , m_point(0, 0)
+    , m_deltaPoint(0, 0)
 {
 }
 
@@ -145,6 +148,50 @@ LVoid TranslateAnimation::setPosition(const LPoint& point)
     m_point = point;
     m_deltaPoint.iX = (m_point.iX - m_item->getXpos()) / m_count;
     m_deltaPoint.iY = (m_point.iY - m_item->getYpos()) / m_count;
+}
+
+VelocityAnimation::VelocityAnimation(HtmlView* item)
+    : Animation(item)
+    , m_friction(0)
+    , m_velocityX(0)
+    , m_velocityY(0)
+{
+}
+
+LVoid VelocityAnimation::setFriction(LReal friction)
+{
+    m_friction = friction;
+}
+
+LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
+{
+    m_velocityX = velocityX;
+    m_velocityY = velocityY;
+}
+
+LVoid VelocityAnimation::step()
+{
+    // if (m_velocityX > 0) {
+    //     m_velocityX = m_velocityX * (1.0 - m_friction);
+    //     //m_velocityX = m_velocityX - m_friction * CONST_REFRESH_TIME;
+    //     if (m_velocityX > 0) {
+    //         m_item->setXpos(m_item->getXpos() + m_velocityX * CONST_REFRESH_TIME);
+    //         UIThread::instance()->drawOnly(m_item);
+    //     }
+    // }
+
+    if (m_velocityY > 0) {
+        m_velocityY = m_velocityY * (1.0 - m_friction);
+        if (m_velocityY > 0) {
+            m_item->setYpos(m_item->getYpos() + m_velocityY * CONST_REFRESH_TIME);
+            UIThread::instance()->drawOnly(m_item);
+        }
+    }
+}
+
+LBool VelocityAnimation::isFinish()
+{
+    return m_velocityY <= 0;
 }
 
 AnimationTask::~AnimationTask()
@@ -219,16 +266,25 @@ LVoid Animator::runTask(AnimationTask* task)
         msg->arg0 = (LIntPtr)&animCallback;
         msg->when = SystemUtil::getSystemTime();
 
+        // 执行动画任务
         this->runTasks();
         this->postMessage(msg);
     };
 
+    // 启动动画
     UIThread::instance()->runAnimation(&animCallback);
 }
 
 LBool Animator::hasAnimation()
 {
     return m_taskList.count() > 0;
+}
+
+LVoid Animator::startAnimation(Animation* anim)
+{
+    AnimationTask* task = new AnimationTask();
+    task->addAnimation(anim);
+    runTask(task);
 }
 
 LVoid Animator::runTasks()
@@ -247,7 +303,7 @@ LVoid Animator::runTasks()
         }
     }
 
-    //UIThread::instance()->submit();
+    UIThread::instance()->submit();
 }
 
 LVoid Animator::handleMessage(Message* msg)

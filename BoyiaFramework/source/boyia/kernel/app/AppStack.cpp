@@ -17,7 +17,7 @@ Application* AppStack::top()
 
 Application* AppStack::pop()
 {
-    return m_stack.size() > 0 ? m_stack.pop() : NULL;
+    return m_stack.size() > 0 ? m_stack.pop() : kBoyiaNull;
 }
 LVoid AppStack::push(Application* app)
 {
