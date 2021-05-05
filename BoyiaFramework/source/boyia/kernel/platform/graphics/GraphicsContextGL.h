@@ -15,8 +15,6 @@ public:
     virtual ~GraphicsContextGL();
 
 public:
-    //LVoid initGLEnvironment(LInt width, LInt height);
-
     virtual LVoid drawLine(const LPoint& p1, const LPoint& p2);
     virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1);
     virtual LVoid drawRect(const LRect& aRect);

@@ -209,14 +209,14 @@ static void nativeOnFling(JNIEnv* env, jobject obj,
     jfloat velocityX, jfloat velocityY)
 {
     LFlingEvent* evt = new LFlingEvent();
-    evt->pt1.iX = x1;
-    evt->pt1.iY = y1;
+    evt->pt1.Set(yanbo::PixelRatio::viewX(x1), yanbo::PixelRatio::viewY(y1));
+    evt->pt2.Set(yanbo::PixelRatio::viewX(x2), yanbo::PixelRatio::viewY(y2));
 
-    evt->pt2.iX = x2;
-    evt->pt2.iY = y2;
-
-    evt->velocityX = velocityX;
-    evt->velocityY = velocityY;
+    // 速度是秒级别的，换算成毫秒级别
+    velocityX = velocityX / 1000;
+    velocityY = velocityY / 1000;
+    evt->velocityX = yanbo::PixelRatio::viewX(velocityX);
+    evt->velocityY = yanbo::PixelRatio::viewY(velocityY);
 
     yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }

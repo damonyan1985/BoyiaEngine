@@ -6,10 +6,17 @@
 #include "KList.h"
 #include "LGraphic.h"
 #include "MessageThread.h"
+#include "WeakPtr.h"
 
 namespace yanbo {
 
 typedef LVoid (*AnimationCallback)();
+
+class Animation;
+class AnimationTask;
+
+using AnimList = KList<BoyiaPtr<Animation>>;
+using AnimTaskList = KList<BoyiaPtr<AnimationTask>>;
 
 class Animation : public BoyiaRef {
 public:
@@ -18,6 +25,7 @@ public:
         EScale,
         EOpacity,
         ETranslate,
+        EVelocity
     };
     Animation(HtmlView* item);
     virtual ~Animation();
@@ -28,7 +36,7 @@ public:
     virtual LInt type();
 
 protected:
-    HtmlView* m_item;
+    WeakPtr<HtmlView> m_item;
     LInt m_count;
     float m_duration;
 };
@@ -62,14 +70,27 @@ class TranslateAnimation : public Animation {
 public:
     TranslateAnimation(HtmlView* item);
     virtual LVoid step();
-    void setPosition(const LPoint& point);
+    LVoid setPosition(const LPoint& point);
 
 private:
     LPoint m_point;
     LPoint m_deltaPoint;
 };
 
-typedef KList<BoyiaPtr<Animation>> AnimList;
+class VelocityAnimation : public Animation {
+public:
+    VelocityAnimation(HtmlView* item);
+    LVoid setFriction(LReal friction);
+    LVoid setVelocity(LReal velocityX, LReal velocityY);
+    virtual LVoid step();
+    virtual LBool isFinish();
+
+private:
+    LReal m_velocityX;
+    LReal m_velocityY;
+    LReal m_friction;
+};
+
 class AnimationTask : public BoyiaRef {
 public:
     virtual ~AnimationTask();
@@ -81,7 +102,6 @@ private:
     AnimList m_animList;
 };
 
-typedef KList<BoyiaPtr<AnimationTask>> AnimTaskList;
 class Animator : public MessageThread {
 public:
     enum {
@@ -91,6 +111,7 @@ public:
     virtual ~Animator();
 
     LBool hasAnimation();
+    LVoid startAnimation(Animation* anim);
 
     LVoid runTask(AnimationTask* task);
     LVoid runTasks();
@@ -103,6 +124,7 @@ private:
 
     AnimTaskList m_taskList;
     LBool m_continue;
+    // 保护动画任务的添加
     Mutex m_lock;
 };
 }

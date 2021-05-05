@@ -9,12 +9,6 @@
 using namespace yanbo;
 
 namespace boyia {
-static LVoid startAnimtion(Animation* anim)
-{
-    AnimationTask* task = new AnimationTask();
-    task->addAnimation(anim);
-    Animator::instance()->runTask(task);
-}
 
 BoyiaView::BoyiaView(BoyiaRuntime* runtime)
     : BoyiaBase(runtime)
@@ -125,7 +119,7 @@ LVoid BoyiaView::startOpacity(LInt opacity, LInt duration)
     anim->setDuration(duration);
     anim->setOpacity(opacity);
 
-    startAnimtion(anim);
+    Animator::instance()->startAnimation(anim);
 }
 
 LVoid BoyiaView::startScale(LInt scale, LInt duration)
@@ -134,7 +128,7 @@ LVoid BoyiaView::startScale(LInt scale, LInt duration)
     anim->setDuration(duration);
     anim->setScale(((float)scale) / 100);
 
-    startAnimtion(anim);
+    Animator::instance()->startAnimation(anim);
 }
 
 LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
@@ -142,7 +136,7 @@ LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
     TranslateAnimation* anim = new TranslateAnimation(m_item);
     anim->setDuration(duration);
     anim->setPosition(point);
-    startAnimtion(anim);
+    Animator::instance()->startAnimation(anim);
 }
 
 LVoid BoyiaView::onPressDown(LVoid* view)
