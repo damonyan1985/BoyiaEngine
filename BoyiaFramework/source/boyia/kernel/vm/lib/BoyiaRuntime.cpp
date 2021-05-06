@@ -7,8 +7,8 @@
 #include "SalLog.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
-//const LInt kGcMemorySize = 1024 * 8;
-const LInt kGcMemorySize = 1024 * 1024 * 2;
+const LInt kGcMemorySize = 1024 * 8;
+//const LInt kGcMemorySize = 1024 * 1024 * 2;
 const LInt kNativeFunctionCapacity = 100;
 
 extern LVoid* CreateGC(LVoid* vm);
@@ -77,6 +77,7 @@ LBool BoyiaRuntime::needCollect() const
 {
     return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
     // GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
+    //return LFalse;
 }
 
 // Prepare delete the object

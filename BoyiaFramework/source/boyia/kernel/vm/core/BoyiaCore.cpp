@@ -656,7 +656,7 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm)
 
     BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
     BOYIA_LOG("HandleCallInternal CreateObject %d", 6);
-    newFunc->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS, vm);
+    newFunc->mParams = NEW_ARRAY(BoyiaValue, count, vm);
     //EngineLog("HandleCallInternal CreateObject %d", 7);
     newFunc->mParamSize = 0;
     newFunc->mFuncBody = func->mFuncBody;
