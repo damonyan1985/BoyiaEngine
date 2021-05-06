@@ -27,14 +27,14 @@ const LInt kMemoryHeaderLen = sizeof(MemoryBlockHeader);
 // 字节对齐数
 const LInt kMemoryAlignNum = sizeof(LUintPtr);
 // 数据块尾部地址值
-#define DATA_TAIL(header) ((LUintPtr)header + kMemoryHeaderLen + header->mSize)
+#define DATA_TAIL(header) ((LByte*)header + kMemoryHeaderLen + header->mSize)
 // 字节对齐后的地址值
 
 #define MEM_ALIGN(size) (((size) + (kMemoryAlignNum - 1)) & ~(kMemoryAlignNum - 1))
-//#define ADDR_ALIGN(addr) (((LUintPtr)(addr) + ((LUintPtr)kMemoryAlignNum - 1)) & ~((LUintPtr)kMemoryAlignNum - 1))
-#define ADDR_ALIGN(addr) (((LUintPtr)addr) % kMemoryAlignNum == 0 ? ((LUintPtr)addr) : (((LUintPtr)addr) + (kMemoryAlignNum - ((LUintPtr)addr) % kMemoryAlignNum)))
+#define ADDR_ALIGN(addr) (((LUintPtr)(addr) + ((LUintPtr)kMemoryAlignNum - 1)) & ~((LUintPtr)kMemoryAlignNum - 1))
+//#define ADDR_ALIGN(addr) (((LUintPtr)addr) % kMemoryAlignNum == 0 ? ((LUintPtr)addr) : (((LUintPtr)addr) + (kMemoryAlignNum - ((LUintPtr)addr) % kMemoryAlignNum)))
 
-#define ADDR_DELTA(addr1, addr2) ((LUintPtr)(addr1) - (LUintPtr)(addr2))
+#define ADDR_DELTA(addr1, addr2) ((LIntPtr)(addr1) - (LIntPtr)(addr2))
 
 LVoid* FastMalloc(LInt size)
 {
@@ -77,6 +77,7 @@ LVoid FreeMemoryPool(LVoid* mempool)
 
 LVoid* NewData(LInt size, LVoid* mempool)
 {
+    size = MEM_ALIGN(size);
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     LInt mallocSize = size + kMemoryHeaderLen;
     if (mallocSize > pool->mSize) {
@@ -112,9 +113,10 @@ LVoid* NewData(LInt size, LVoid* mempool)
         while (current) {
             // 如果当前单元没有下一个元素
             // 则直接利用剩余的空白空间
-            LUintPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+            newAddr = ADDR_ALIGN(DATA_TAIL(current));
+            //BOYIA_LOG("CURRENT PTR %llx %lld, curr.size=%d size=%d", (LUintPtr)current, (LIntPtr)current, (current->mSize), size);
             if (!current->mNext) {
-                if (ADDR_DELTA(((LUintPtr)pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
+                if (ADDR_DELTA((pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
                     pHeader = (MemoryBlockHeader*)newAddr;
                     pHeader->mSize = size;
                     pHeader->mPrevious = current;
