@@ -10,7 +10,7 @@ android_sdk_path = os.getenv('ANDROID_HOME')
 android_ndk_path = os.getenv('NDK_HOME')
 
 boyia_rust_sdk_path = os.path.join(
-    project_path, 'BoyiaFramework/source/thirdparty/sdk/main')
+    project_path, 'BoyiaFramework/source/thirdparty/sdk/sdk-main')
 
 boyia_app_android_path = os.path.join(project_path, 'BoyiaApp/android')
 
@@ -29,6 +29,7 @@ apk_build_dir = os.path.join(boyia_app_android_path, 'app', 'build')
 gradle_cmd = os.path.join(boyia_app_android_path, 'gradlew')
 
 boyia_rust_sdk_lib_path = os.path.join(core_dir, 'libs/arm64-v8a')
+boyia_rust_sdk_lib_name = 'libsdk_main.so'
 
 # 写入sdk配置
 boyia_app_sdk_config = (
@@ -107,9 +108,9 @@ def do_build_boyia_rust_sdk():
     if os.path.exists(boyia_rust_sdk_lib_path) == False:
         os.makedirs(boyia_rust_sdk_lib_path)
     rust_build_lib_path = os.path.join(
-        boyia_rust_sdk_path, 'target/aarch64-linux-android/release/libsdk.so')
+        boyia_rust_sdk_path, f'target/aarch64-linux-android/release/{boyia_rust_sdk_lib_name}')
     shutil.copy(rust_build_lib_path, os.path.join(
-        boyia_rust_sdk_lib_path, 'libsdk.so'))
+        boyia_rust_sdk_lib_path, boyia_rust_sdk_lib_name))
 
 
 def do_single_cmd(cmd):
