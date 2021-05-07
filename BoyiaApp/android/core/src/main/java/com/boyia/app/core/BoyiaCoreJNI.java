@@ -15,7 +15,7 @@ public class BoyiaCoreJNI {
     private static AtomicBoolean sHasInit = new AtomicBoolean(false);
 
     static {
-        System.loadLibrary("sdk");
+        System.loadLibrary("sdk_main");
     }
 
     public interface LibraryInitCallback {

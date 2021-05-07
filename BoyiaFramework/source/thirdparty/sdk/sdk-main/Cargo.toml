@@ -1,5 +1,5 @@
 [package]
-name = "sdk"
+name = "sdk-main"
 version = "0.1.0"
 authors = ["damonyan1985 <2512854007@qq.com>"]
 edition = "2018"
@@ -15,11 +15,16 @@ futures = "0.3.4"
 hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1.5.0", features = ["full"] }
 
-[dependencies.util]
-path = "../util"
+[dependencies.sdk-util]
+path = "../sdk-util"
+version = "0.1.0"
+
+[dependencies.sdk-gen]
+path = "../sdk-gen"
 version = "0.1.0"
 
 [lib]
+name = "sdk_main"
 crate_type = ["dylib"]
 
 #[target.aarch64-linux-android.dependencies]
