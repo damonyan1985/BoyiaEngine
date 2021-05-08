@@ -1,15 +1,17 @@
 #include "Animation.h"
+#include "AppManager.h"
 #include "AutoLock.h"
+#include "BlockView.h"
 #include "LColor.h"
+#include "OwnerPtr.h"
 #include "SystemUtil.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include <functional>
 #include <math.h>
 
 namespace yanbo {
 
-#define CONST_REFRESH_TIME 16 // ms
+#define CONST_REFRESH_TIME 10 // ms
 
 Animation::Animation(HtmlView* item)
     : m_item(item)
@@ -31,7 +33,7 @@ LVoid Animation::setDuration(float duration)
 
 LBool Animation::isFinish()
 {
-    return m_count == 0 ? LTrue : LFalse;
+    return m_count == 0;
 }
 
 LVoid Animation::step()
@@ -150,12 +152,56 @@ LVoid TranslateAnimation::setPosition(const LPoint& point)
     m_deltaPoint.iY = (m_point.iY - m_item->getYpos()) / m_count;
 }
 
+LReal* VelocityAnimation::SPLINE_POSITION = kBoyiaNull;
+const LReal VelocityAnimation::INFLEXION = 0.35f;
+const LReal VelocityAnimation::DECELERATION_RATE = (LReal)(log(0.78) / log(0.9));
+const LReal VelocityAnimation::GRAVITY_EARTH = 9.80665f;
+
 VelocityAnimation::VelocityAnimation(HtmlView* item)
     : Animation(item)
-    , m_friction(0)
-    , m_velocityX(0)
-    , m_velocityY(0)
+    , m_friction(0.015f)
+    , m_finalX(0)
+    , m_finalY(0)
+    , m_total(0)
+    , m_finished(LFalse)
 {
+    m_physicalCoeff = GRAVITY_EARTH * 39.37f * m_friction * 1;
+    if (!SPLINE_POSITION) {
+        init();
+    }
+}
+
+LVoid VelocityAnimation::init()
+{
+    SPLINE_POSITION = new LReal[NB_SAMPLES + 1];
+
+    float START_TENSION = 0.5f;
+    float END_TENSION = 1.0f;
+
+    float P1 = START_TENSION * INFLEXION;
+    float P2 = 1.0f - END_TENSION * (1.0f - INFLEXION);
+
+    float x_min = 0.0f;
+    float y_min = 0.0f;
+    for (int i = 0; i < NB_SAMPLES; i++) {
+        float alpha = (float)i / NB_SAMPLES;
+
+        float x_max = 1.0f;
+        float x, tx, coef;
+        while (true) {
+            x = x_min + (x_max - x_min) / 2.0f;
+            coef = 3.0f * x * (1.0f - x);
+            tx = coef * ((1.0f - x) * P1 + x * P2) + x * x * x;
+            if (abs(tx - alpha) < 1E-5)
+                break;
+            if (tx > alpha)
+                x_max = x;
+            else
+                x_min = x;
+        }
+        SPLINE_POSITION[i] = coef * ((1.0f - x) * START_TENSION + x) + x * x * x;
+    }
+    SPLINE_POSITION[NB_SAMPLES] = 1.0f;
 }
 
 LVoid VelocityAnimation::setFriction(LReal friction)
@@ -163,35 +209,109 @@ LVoid VelocityAnimation::setFriction(LReal friction)
     m_friction = friction;
 }
 
+LReal VelocityAnimation::getSplineDeceleration(LReal velocity)
+{
+    return log(INFLEXION * abs(m_velocity) / (m_friction * m_physicalCoeff));
+}
+
+LInt VelocityAnimation::getSplineFlingDuration(LReal velocity)
+{
+    LReal l = getSplineDeceleration(velocity);
+    LReal decelMinusOne = DECELERATION_RATE - 1.0;
+    return (LInt)(1000.0 * exp(l / decelMinusOne));
+}
+
+LReal VelocityAnimation::getSplineFlingDistance(LReal velocity)
+{
+    LReal l = getSplineDeceleration(velocity);
+    LReal decelMinusOne = DECELERATION_RATE - 1.0;
+    return m_friction * m_physicalCoeff * exp(DECELERATION_RATE / decelMinusOne * l);
+}
+
 LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
 {
-    m_velocityX = velocityX;
-    m_velocityY = velocityY;
+    m_velocity = hypot(velocityX, velocityY);
+    setDuration(getSplineFlingDuration(m_velocity));
+
+    LReal coeffX = m_velocity == 0 ? 1.0f : velocityX / m_velocity;
+    LReal coeffY = m_velocity == 0 ? 1.0f : velocityY / m_velocity;
+
+    LReal totalDistance = getSplineFlingDistance(m_velocity);
+
+    BlockView* view = static_cast<BlockView*>(m_item.get());
+    LInt startX = view->getScrollXPos();
+    LInt startY = view->getScrollYPos();
+
+    LInt maxX = view->getWidth();
+    LInt maxY = view->getHeight();
+
+    m_finalX = startX + (LInt)round(totalDistance * coeffX);
+
+    m_finalX = LMin(m_finalX, maxX);
+    m_finalX = LMax(m_finalX, 0);
+
+    m_finalY = startY + (LInt)round(totalDistance * coeffY);
+
+    m_finalY = LMin(m_finalY, maxY);
+    m_finalY = LMax(m_finalY, 0);
+}
+
+LVoid VelocityAnimation::setDuration(float duration)
+{
+    Animation::setDuration(duration);
+    m_total = m_count;
 }
 
 LVoid VelocityAnimation::step()
 {
-    // if (m_velocityX > 0) {
-    //     m_velocityX = m_velocityX * (1.0 - m_friction);
-    //     //m_velocityX = m_velocityX - m_friction * CONST_REFRESH_TIME;
-    //     if (m_velocityX > 0) {
-    //         m_item->setXpos(m_item->getXpos() + m_velocityX * CONST_REFRESH_TIME);
-    //         UIThread::instance()->drawOnly(m_item);
-    //     }
-    // }
+    LReal t = ((LReal)(m_total - m_count)) / m_total;
+    LInt index = (LInt)(NB_SAMPLES * t);
 
-    if (m_velocityY > 0) {
-        m_velocityY = m_velocityY * (1.0 - m_friction);
-        if (m_velocityY > 0) {
-            m_item->setYpos(m_item->getYpos() + m_velocityY * CONST_REFRESH_TIME);
-            UIThread::instance()->drawOnly(m_item);
-        }
+    LReal distanceCoef = 1.f;
+    LReal velocityCoef = 0.f;
+
+    if (index < NB_SAMPLES) {
+        LReal t_inf = (LReal)index / NB_SAMPLES;
+        LReal t_sup = (LReal)(index + 1) / NB_SAMPLES;
+        LReal d_inf = SPLINE_POSITION[index];
+        LReal d_sup = SPLINE_POSITION[index + 1];
+        velocityCoef = (d_sup - d_inf) / (t_sup - t_inf);
+        distanceCoef = d_inf + (t - t_inf) * velocityCoef;
     }
+
+    BlockView* view = static_cast<BlockView*>(m_item.get());
+    LInt startX = view->getScrollXPos();
+    LInt startY = view->getScrollYPos();
+
+    LInt maxX = view->getWidth();
+    LInt maxY = view->getHeight();
+
+    LInt currX = startX + round(distanceCoef * (m_finalX - startX));
+
+    currX = LMin(currX, maxX);
+    currX = LMax(currX, 0);
+
+    LInt currY = startY + round(distanceCoef * (m_finalY - startY));
+
+    currY = LMin(currY, maxY);
+    currY = LMax(currY, 0);
+
+    view->setScrollPos(0, currY);
+
+    //UIThread::instance()->drawOnly(view);
+    LGraphicsContext* gc = AppManager::instance()->uiThread()->graphics();
+    view->paint(*gc);
+
+    if (currX == m_finalX && currY == m_finalY) {
+        m_finished = LTrue;
+    }
+
+    Animation::step();
 }
 
 LBool VelocityAnimation::isFinish()
 {
-    return m_velocityY <= 0;
+    return m_finished || Animation::isFinish();
 }
 
 AnimationTask::~AnimationTask()
@@ -225,6 +345,16 @@ LBool AnimationTask::isFinish()
     return m_animList.count() > 0 ? LFalse : LTrue;
 }
 
+class ClosureTask {
+public:
+    ClosureTask(const closure& func)
+        : m_func(func)
+    {
+    }
+
+    closure m_func;
+};
+
 Animator::Animator()
     : m_continue(LTrue)
 {
@@ -247,32 +377,29 @@ LVoid Animator::addTask(AnimationTask* task)
     m_taskList.push(task);
 }
 
+LVoid Animator::postTimeout()
+{
+    long now = SystemUtil::getSystemTime();
+    postTask([self = this, now]() -> void {
+        long delta = SystemUtil::getSystemTime() - now;
+        if (delta && CONST_REFRESH_TIME - delta > 0) {
+            self->waitTimeOut(CONST_REFRESH_TIME - delta);
+        }
+    });
+}
+
+LVoid Animator::postTask(const closure& func)
+{
+    Message* msg = this->obtain();
+    msg->type = ANIM_TIMEOUT;
+    msg->obj = new ClosureTask(func);
+    msg->when = SystemUtil::getSystemTime();
+}
+
 LVoid Animator::runTask(AnimationTask* task)
 {
     addTask(task);
-    static std::function<void(long, void*)> timeoutCallback = [this](long now, void* callback) -> LVoid {
-        long delta = SystemUtil::getSystemTime() - now;
-        if (delta && CONST_REFRESH_TIME - delta > 0) {
-            this->waitTimeOut(CONST_REFRESH_TIME - delta);
-        }
-
-        UIThread::instance()->runAnimation(callback);
-    };
-
-    static std::function<void()> animCallback = [this]() -> LVoid {
-        Message* msg = this->obtain();
-        msg->type = ANIM_TIMEOUT;
-        msg->obj = &timeoutCallback;
-        msg->arg0 = (LIntPtr)&animCallback;
-        msg->when = SystemUtil::getSystemTime();
-
-        // 执行动画任务
-        this->runTasks();
-        this->postMessage(msg);
-    };
-
-    // 启动动画
-    UIThread::instance()->runAnimation(&animCallback);
+    postTimeout();
 }
 
 LBool Animator::hasAnimation()
@@ -303,6 +430,7 @@ LVoid Animator::runTasks()
         }
     }
 
+    // 提交进行渲染
     UIThread::instance()->submit();
 }
 
@@ -310,8 +438,17 @@ LVoid Animator::handleMessage(Message* msg)
 {
     switch (msg->type) {
     case Animator::ANIM_TIMEOUT: {
-        std::function<void(long, void*)>* callback = (std::function<void(long, void*)>*)msg->obj;
-        (*callback)(msg->when, (std::function<void()>*)msg->arg0);
+        OwnerPtr<ClosureTask> task = static_cast<ClosureTask*>(msg->obj);
+        task->m_func();
+
+        UIThread::instance()->postClosureTask([self = this]() -> void {
+            // 执行动画
+            self->runTasks();
+        });
+        // 如果还有动画存在
+        if (hasAnimation()) {
+            postTimeout();
+        }
     } break;
     }
 }
