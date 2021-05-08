@@ -7,6 +7,7 @@
 #include "LGraphic.h"
 #include "MessageThread.h"
 #include "WeakPtr.h"
+#include <functional>
 
 namespace yanbo {
 
@@ -30,7 +31,7 @@ public:
     Animation(HtmlView* item);
     virtual ~Animation();
 
-    LVoid setDuration(float duration);
+    virtual LVoid setDuration(float duration);
     virtual LBool isFinish();
     virtual LVoid step();
     virtual LInt type();
@@ -80,15 +81,33 @@ private:
 class VelocityAnimation : public Animation {
 public:
     VelocityAnimation(HtmlView* item);
+
     LVoid setFriction(LReal friction);
     LVoid setVelocity(LReal velocityX, LReal velocityY);
     virtual LVoid step();
     virtual LBool isFinish();
+    virtual LVoid setDuration(float duration);
 
 private:
-    LReal m_velocityX;
-    LReal m_velocityY;
+    LVoid init();
+    LReal getSplineDeceleration(LReal velocity);
+    LReal getSplineFlingDistance(LReal velocity);
+    LInt getSplineFlingDuration(LReal velocity);
+
+    static const LInt NB_SAMPLES = 100;
+    static const LReal INFLEXION;
+    static const LReal DECELERATION_RATE;
+    static const LReal GRAVITY_EARTH;
+
+    static LReal* SPLINE_POSITION;
+
+    LReal m_velocity;
     LReal m_friction;
+    LReal m_physicalCoeff;
+    LInt m_finalX;
+    LInt m_finalY;
+    LInt m_total;
+    LBool m_finished;
 };
 
 class AnimationTask : public BoyiaRef {
@@ -102,6 +121,7 @@ private:
     AnimList m_animList;
 };
 
+using closure = std::function<void()>;
 class Animator : public MessageThread {
 public:
     enum {
@@ -120,6 +140,9 @@ public:
 
 private:
     Animator();
+    LVoid postTask(const closure& func);
+    LVoid postTimeout();
+
     LVoid addTask(AnimationTask* task);
 
     AnimTaskList m_taskList;

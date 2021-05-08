@@ -4,6 +4,7 @@ package com.boyia.app.core;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.hardware.SensorManager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -12,6 +13,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 

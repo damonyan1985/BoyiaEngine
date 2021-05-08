@@ -239,10 +239,8 @@ LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velo
     // TODO 开始加速滚动动画
     // velocityY > 0表示向下滑动
     // velocityY < 0表示向上滑动
-    // VelocityAnimation* anim = new VelocityAnimation(view);
-    // anim->setDuration(2000);
-    // anim->setFriction(0.05);
-    // anim->setVelocity(velocityX, velocityY);
-    // Animator::instance()->startAnimation(anim);
+    VelocityAnimation* anim = new VelocityAnimation(view);
+    anim->setVelocity(velocityX, velocityY);
+    Animator::instance()->startAnimation(anim);
 }
 }

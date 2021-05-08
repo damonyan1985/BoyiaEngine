@@ -1,11 +1,11 @@
 #ifndef UIThread_h
 #define UIThread_h
 
-//#include "GLContext.h"
 #include "BoyiaPtr.h"
 #include "LEvent.h"
 #include "LGdi.h"
 #include "MessageThread.h"
+#include <functional>
 
 namespace yanbo {
 class AppManager;
@@ -23,6 +23,7 @@ private:
     friend class UIThread;
 };
 
+using UIClosure = std::function<void()>;
 class UIThread LFinal : public MessageThread {
 public:
     enum MessageType {
@@ -41,12 +42,12 @@ public:
         kUiOnKeyboardHide,
         kUiOperationExec,
         kUiDestory,
-        kUiRunAnimation,
+        kUiClosureTask,
         kUiEvent,
         kUiInitApp,
         kVsyncDraw,
         kPlatformViewUpdate,
-        kFlingEvent
+        kFlingEvent,
     };
     static UIThread* instance();
 
@@ -64,8 +65,8 @@ public:
     // Video渲染
     LVoid videoUpdate(LIntPtr item);
     LVoid clientCallback(LIntPtr item);
-    // Anim渲染
-    LVoid runAnimation(LVoid* callback);
+    // ui线程运行lambda表达式
+    LVoid postClosureTask(const UIClosure& func);
     // 回调处理
     LVoid sendUIEvent(UIEvent* event);
     LVoid destroy();

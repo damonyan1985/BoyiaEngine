@@ -30,6 +30,16 @@ LVoid UIEvent::execute()
     run();
 }
 
+class UIClosureEvent {
+public:
+    UIClosureEvent(const UIClosure& func)
+        : m_func(func)
+    {
+    }
+
+    UIClosure m_func;
+};
+
 UIThread::UIThread(AppManager* manager)
     : m_manager(manager)
     , m_gc(LGraphicsContext::create())
@@ -180,9 +190,9 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiReset: {
         reset(msg);
     } break;
-    case kUiRunAnimation: {
-        std::function<void()>* callback = (std::function<void()>*)msg->obj;
-        (*callback)();
+    case kUiClosureTask: {
+        OwnerPtr<UIClosureEvent> event = static_cast<UIClosureEvent*>(msg->obj);
+        event->m_func();
     } break;
     case kUiEvent: {
         OwnerPtr<UIEvent> event = static_cast<UIEvent*>(msg->obj);
@@ -329,11 +339,11 @@ LVoid UIThread::reset(Message* msg)
     flush();
 }
 
-LVoid UIThread::runAnimation(LVoid* callback)
+LVoid UIThread::postClosureTask(const UIClosure& func)
 {
     Message* msg = obtain();
-    msg->type = kUiRunAnimation;
-    msg->obj = callback;
+    msg->type = kUiClosureTask;
+    msg->obj = new UIClosureEvent(func);
     postMessage(msg);
 }
 
