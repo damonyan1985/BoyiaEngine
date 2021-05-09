@@ -159,7 +159,7 @@ void UIViewController::onTouchDown(const LPoint& pt)
     if (m_target) {
         BlockView* container = m_target->getContainingBlock();
         if (container) {
-            Animation* anim = m_scrollMap.get(HashPtr((LUintPtr)container));
+            WeakPtr<Animation> anim = m_scrollMap.get(HashPtr((LUintPtr)container));
             if (anim) {
                 anim->stop();
             }

@@ -17,6 +17,13 @@ public:
         initPtr(ptr);
     }
 
+    WeakPtr<T>& operator=(T* ptr)
+    {
+        detachWeak();
+        initPtr(ptr);
+        return *this;
+    }
+
     // if the pointer is expired
     LBool expired() const
     {
@@ -41,12 +48,7 @@ public:
 
     ~WeakPtr()
     {
-        if (m_refCount) {
-            // detch weak count
-            m_refCount->detchWeak();
-            // release reference count
-            m_refCount->release();
-        }
+        detachWeak();
     }
 
 private:
@@ -58,6 +60,16 @@ private:
             m_refCount->attachWeak();
         } else {
             m_refCount = kBoyiaNull;
+        }
+    }
+
+    LVoid detachWeak() 
+    {
+        if (m_refCount) {
+            // detch weak count
+            m_refCount->detchWeak();
+            // release reference count
+            m_refCount->release();
         }
     }
 
