@@ -231,12 +231,12 @@ LReal VelocityAnimation::getSplineFlingDistance(LReal velocity)
 LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
 {
     m_velocity = hypot(velocityX, velocityY);
-    setDuration(getSplineFlingDuration(m_velocity));
+    setDuration(getSplineFlingDuration(m_velocity) / 1000);
 
     LReal coeffX = m_velocity == 0 ? 1.0f : velocityX / m_velocity;
     LReal coeffY = m_velocity == 0 ? 1.0f : velocityY / m_velocity;
 
-    LReal totalDistance = getSplineFlingDistance(m_velocity);
+    LReal totalDistance = getSplineFlingDistance(m_velocity) /1000;
 
     BlockView* view = static_cast<BlockView*>(m_item.get());
     LInt startX = view->getScrollXPos();
@@ -247,13 +247,13 @@ LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
 
     m_finalX = startX + (LInt)round(totalDistance * coeffX);
 
-    m_finalX = LMin(m_finalX, maxX);
+    m_finalX = LMin(m_finalX, 0);
     m_finalX = LMax(m_finalX, 0);
 
     m_finalY = startY + (LInt)round(totalDistance * coeffY);
 
-    m_finalY = LMin(m_finalY, maxY);
-    m_finalY = LMax(m_finalY, 0);
+    m_finalY = LMin(m_finalY, 0);
+    m_finalY = LMax(m_finalY, -1 * view->scrollHeight());
 
     BOYIA_LOG("VelocityAnimation.setVelocity, maxY=%d totalDistance=%f m_duration=%f m_count=%d", maxY, totalDistance, m_duration, m_count);
 }
@@ -285,18 +285,18 @@ LVoid VelocityAnimation::step()
     LInt startX = view->getScrollXPos();
     LInt startY = view->getScrollYPos();
 
-    LInt maxX = view->getWidth();
-    LInt maxY = view->getHeight();
+    //LInt maxX = view->getWidth();
+    //LInt maxY = view->getHeight();
 
     LInt currX = startX + round(distanceCoef * (m_finalX - startX));
 
-    currX = LMin(currX, maxX);
+    currX = LMin(currX, 0);
     currX = LMax(currX, 0);
 
     LInt currY = startY + round(distanceCoef * (m_finalY - startY));
 
-    currY = LMin(currY, maxY);
-    currY = LMax(currY, 0);
+    currY = LMin(currY, 0);
+    currY = LMax(currY, -1 * view->scrollHeight());
 
     view->setScrollPos(0, currY);
 
