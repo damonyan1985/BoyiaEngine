@@ -228,13 +228,13 @@ LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velo
     // 获取目标view
     HtmlView* target = findViewByPosition(pt1, m_view->getDocument()->getRenderTreeRoot());
     if (!target) {
-        KLOG("UIViewController::onFling target is not null");
+        KLOG("UIViewController::onFling target is null");
         return;
     }
 
     BlockView* view = target->getContainingBlock();
     if (!view) {
-        KLOG("UIViewController::onFling container is not null");
+        KLOG("UIViewController::onFling container is null");
         return;
     }
 
