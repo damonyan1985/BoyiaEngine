@@ -254,6 +254,8 @@ LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
 
     m_finalY = LMin(m_finalY, maxY);
     m_finalY = LMax(m_finalY, 0);
+
+    BOYIA_LOG("VelocityAnimation.setVelocity, maxY=%d totalDistance=%f m_duration=%f m_count=%d", maxY, totalDistance, m_duration, m_count);
 }
 
 LVoid VelocityAnimation::setDuration(float duration)
@@ -356,8 +358,8 @@ public:
 };
 
 Animator::Animator()
-    : m_continue(LTrue)
 {
+    start();
 }
 
 Animator::~Animator()
@@ -394,6 +396,7 @@ LVoid Animator::postTask(const closure& func)
     msg->type = ANIM_TIMEOUT;
     msg->obj = new ClosureTask(func);
     msg->when = SystemUtil::getSystemTime();
+    postMessage(msg);
 }
 
 LVoid Animator::runTask(AnimationTask* task)
@@ -444,11 +447,13 @@ LVoid Animator::handleMessage(Message* msg)
         UIThread::instance()->postClosureTask([self = this]() -> void {
             // 执行动画
             self->runTasks();
+            // 如果还有动画存在
+            KLOG("VelocityAnimation.handleMessage, run tasks");
+            if (self->hasAnimation()) {
+                KLOG("VelocityAnimation.hasAnimation");
+                self->postTimeout();
+            }
         });
-        // 如果还有动画存在
-        if (hasAnimation()) {
-            postTimeout();
-        }
     } break;
     }
 }

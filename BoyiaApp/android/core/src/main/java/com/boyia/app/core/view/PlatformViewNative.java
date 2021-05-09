@@ -2,6 +2,7 @@ package com.boyia.app.core.view;
 
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.loader.jober.MainScheduler;
 
 // 提供给c++进行调用
 public class PlatformViewNative {
@@ -15,7 +16,7 @@ public class PlatformViewNative {
             int logicalHeight,
             int textureId) {
         BoyiaLog.i(TAG, "createPlatformView logicalWidth=" + logicalWidth + " logicalHeight=" + logicalHeight);
-        BaseApplication.getInstance().getAppHandler().post(() -> {
+        MainScheduler.mainScheduler().sendJob(() -> {
             PlatformViewManager manager = PlatformViewManager.getInstance();
             PlatformViewController.PlatformViewCreationRequest request =
                     new PlatformViewController.PlatformViewCreationRequest(
