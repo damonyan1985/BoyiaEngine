@@ -146,7 +146,6 @@ private:
     LVoid addTask(AnimationTask* task);
 
     AnimTaskList m_taskList;
-    LBool m_continue;
     // 保护动画任务的添加
     Mutex m_lock;
 };

@@ -213,8 +213,8 @@ static void nativeOnFling(JNIEnv* env, jobject obj,
     evt->pt2.Set(yanbo::PixelRatio::viewX(x2), yanbo::PixelRatio::viewY(y2));
 
     // 速度是秒级别的，换算成毫秒级别
-    velocityX = velocityX / 1000;
-    velocityY = velocityY / 1000;
+    //velocityX = velocityX / 1000;
+    //velocityY = velocityY / 1000;
     evt->velocityX = yanbo::PixelRatio::viewX(velocityX);
     evt->velocityY = yanbo::PixelRatio::viewY(velocityY);
 
