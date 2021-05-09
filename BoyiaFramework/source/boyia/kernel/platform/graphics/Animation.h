@@ -31,15 +31,16 @@ public:
     Animation(HtmlView* item);
     virtual ~Animation();
 
-    virtual LVoid setDuration(float duration);
+    virtual LVoid setDuration(LReal duration);
     virtual LBool isFinish();
     virtual LVoid step();
     virtual LInt type();
+    LVoid stop();
 
 protected:
     WeakPtr<HtmlView> m_item;
     LInt m_count;
-    float m_duration;
+    LReal m_duration;
 };
 
 class ScaleAnimation : public Animation {

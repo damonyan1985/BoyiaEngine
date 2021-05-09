@@ -6,7 +6,6 @@
  */
 
 #include "UIViewController.h"
-#include "Animation.h"
 #include "BlockView.h"
 #include "UIView.h"
 
@@ -157,14 +156,24 @@ void UIViewController::onTouchDown(const LPoint& pt)
     m_target = findViewByPosition(pt, m_view->getDocument()->getRenderTreeRoot());
     m_targetPoint = pt;
     //KFORMATLOG("m_target x=%d, y=%d, w=%d, h=%d", m_target->getXpos(), m_target->getYpos(), m_target->getWidth(), m_target->getHeight());
-    if (m_target && m_target->getListener()) {
+    if (m_target) {
+        BlockView* container = m_target->getContainingBlock();
+        if (container) {
+            Animation* anim = m_scrollMap.get(HashPtr((LUintPtr)container));
+            if (anim) {
+                anim->stop();
+            }
+        }
+
         LayoutPoint topLeft = m_target->getAbsoluteContainerTopLeft();
         LInt x = m_target->getXpos() + topLeft.iX;
         LInt y = m_target->getYpos() + topLeft.iY;
         BOYIA_LOG("m_target x=%d, y=%d, w=%d, h=%d", x, y, m_target->getWidth(), m_target->getHeight());
         BOYIA_LOG("point x=%d, y=%d", pt.iX, pt.iY);
 
-        m_target->getListener()->onPressDown(m_target);
+        if (m_target->getListener()) {
+            m_target->getListener()->onPressDown(m_target);
+        }
     }
 }
 
@@ -241,8 +250,10 @@ LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velo
     // TODO 开始加速滚动动画
     // velocityY > 0表示向下滑动
     // velocityY < 0表示向上滑动
-    VelocityAnimation* anim = new VelocityAnimation(view);
-    anim->setVelocity(velocityX, velocityY);
-    Animator::instance()->startAnimation(anim);
+    VelocityAnimation* velocityAnim = new VelocityAnimation(view);
+    velocityAnim->setVelocity(velocityX, velocityY);
+
+    m_scrollMap.put(HashPtr((LUintPtr)view), velocityAnim);
+    Animator::instance()->startAnimation(velocityAnim);
 }
 }

@@ -11,9 +11,12 @@
 #include "HtmlView.h"
 #include "LGraphic.h"
 #include "PlatformLib.h"
+#include "HashUtil.h"
+#include "HashMap.h"
+#include "Animation.h"
 
 namespace yanbo {
-
+using ScrollMap = HashMap<HashPtr, WeakPtr<Animation>>;
 class UIView;
 class UIViewController {
 public:
@@ -52,6 +55,7 @@ protected:
     UIView* m_view;
     HtmlView* m_target;
     LPoint m_targetPoint;
+    ScrollMap m_scrollMap;
 };
 }
 #endif /* UIViewCONTROLLER_H_ */
