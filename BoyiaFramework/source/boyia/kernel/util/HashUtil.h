@@ -44,7 +44,29 @@ private:
     String m_value;
     LUint m_hash;
 };
+
+class HashPtr {
+public:
+    HashPtr(LUintPtr ptr)
+        : m_ptr(ptr)
+    {
+    }
+
+    bool operator==(const HashPtr& ptr) const
+    {
+        return m_ptr == ptr.m_ptr;
+    }
+
+    LUint hash() const
+    {
+        return m_ptr;
+    }
+
+private:
+    LUintPtr m_ptr;
+};
 }
 
 using util::HashString;
+using util::HashPtr;
 #endif // !HashUtil_h

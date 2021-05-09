@@ -25,7 +25,7 @@ Animation::~Animation()
 }
 
 // 毫秒计算
-LVoid Animation::setDuration(float duration)
+LVoid Animation::setDuration(LReal duration)
 {
     m_duration = duration;
     m_count = ceil(duration / CONST_REFRESH_TIME);
@@ -36,9 +36,14 @@ LBool Animation::isFinish()
     return m_count == 0;
 }
 
+LVoid Animation::stop()
+{
+    m_count = 0;
+}
+
 LVoid Animation::step()
 {
-    --m_count;
+    m_count = m_count > 0 ? --m_count : 0;
 }
 
 LInt Animation::type()
@@ -344,7 +349,7 @@ LVoid AnimationTask::runTask()
 
 LBool AnimationTask::isFinish()
 {
-    return m_animList.count() > 0 ? LFalse : LTrue;
+    return m_animList.count() == 0;
 }
 
 class ClosureTask {
