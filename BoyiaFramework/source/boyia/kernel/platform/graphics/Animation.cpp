@@ -168,7 +168,7 @@ VelocityAnimation::VelocityAnimation(HtmlView* item)
     , m_finalX(0)
     , m_finalY(0)
     , m_total(0)
-    , m_finished(LFalse)
+    , m_velocity(0)
 {
     m_physicalCoeff = GRAVITY_EARTH * 39.37f * m_friction * 1;
     if (!SPLINE_POSITION) {
@@ -271,6 +271,10 @@ LVoid VelocityAnimation::setDuration(float duration)
 
 LVoid VelocityAnimation::step()
 {
+    if (!m_item) {
+        return;
+    }
+
     LReal t = ((LReal)(m_total - m_count)) / m_total;
     LInt index = (LInt)(NB_SAMPLES * t);
 
@@ -310,15 +314,10 @@ LVoid VelocityAnimation::step()
     view->paint(*gc);
 
     if (currX == m_finalX && currY == m_finalY) {
-        m_finished = LTrue;
+        m_count = 0;
     }
 
     Animation::step();
-}
-
-LBool VelocityAnimation::isFinish()
-{
-    return m_finished || Animation::isFinish();
 }
 
 AnimationTask::~AnimationTask()
