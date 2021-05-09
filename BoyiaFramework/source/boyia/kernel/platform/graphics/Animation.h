@@ -86,7 +86,6 @@ public:
     LVoid setFriction(LReal friction);
     LVoid setVelocity(LReal velocityX, LReal velocityY);
     virtual LVoid step();
-    virtual LBool isFinish();
     virtual LVoid setDuration(float duration);
 
 private:
@@ -108,7 +107,6 @@ private:
     LInt m_finalX;
     LInt m_finalY;
     LInt m_total;
-    LBool m_finished;
 };
 
 class AnimationTask : public BoyiaRef {
