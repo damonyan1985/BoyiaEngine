@@ -182,6 +182,11 @@ const char* PlatformBridge::getSymbolTablePath()
 
     return GET_STR(info->appCodePath.symbolTablePath);
 }
+
+const LReal PlatformBridge::getDisplayDensity()
+{
+    return 10.0f;
+}
 }
 
 #endif

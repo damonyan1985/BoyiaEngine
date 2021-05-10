@@ -208,6 +208,14 @@ const LInt PlatformBridge::getTextSize(const String& text)
     env->DeleteLocalRef(jtext);
     return result;
 }
+
+const LReal PlatformBridge::getDisplayDensity()
+{
+    return JNIUtil::callStaticFloatMethod(
+        "com/boyia/app/core/BoyiaBridge",
+        "getDisplayDensity",
+        "()F");
+}
 }
 
 #endif

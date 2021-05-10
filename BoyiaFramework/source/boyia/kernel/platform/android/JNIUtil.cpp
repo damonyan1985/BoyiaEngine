@@ -161,6 +161,27 @@ jint JNIUtil::callStaticIntMethod(const char* className,
     return 0;
 }
 
+jfloat JNIUtil::callStaticFloatMethod(const char* className,
+    const char* method,
+    const char* signature,
+    ...)
+{
+    JniMethodInfo methodInfo;
+    if (getStaticMethodInfo(methodInfo, className, method, signature)) {
+        va_list args;
+        va_start(args, signature);
+        jfloat result = methodInfo.env->CallStaticFloatMethodV(
+            methodInfo.classID,
+            methodInfo.methodID,
+            args);
+        va_end(args);
+        methodInfo.env->DeleteLocalRef(methodInfo.classID);
+        return result;
+    }
+
+    return 0;
+}
+
 bool JNIUtil::callStaticBooleanMethod(const char* className,
     const char* method,
     const char* signature,

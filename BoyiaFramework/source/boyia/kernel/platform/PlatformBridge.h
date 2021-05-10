@@ -18,6 +18,7 @@ public:
     static const char* getStringTableCachePath();
     static const char* getInstructionEntryPath();
     static const char* getSymbolTablePath();
+    static const LReal getDisplayDensity();
 };
 }
 

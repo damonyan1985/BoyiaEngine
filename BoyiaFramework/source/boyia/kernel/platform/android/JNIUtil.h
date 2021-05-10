@@ -46,6 +46,11 @@ public:
         const char* signature,
         ...);
 
+    static jfloat callStaticFloatMethod(const char* className,
+        const char* method,
+        const char* signature,
+        ...);
+
     static jobject callStaticObjectMethod(const char* className,
         const char* method,
         const char* signature,

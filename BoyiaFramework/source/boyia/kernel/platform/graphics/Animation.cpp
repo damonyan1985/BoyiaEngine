@@ -4,6 +4,7 @@
 #include "BlockView.h"
 #include "LColor.h"
 #include "OwnerPtr.h"
+#include "PlatformBridge.h"
 #include "SystemUtil.h"
 #include "UIThread.h"
 #include "UIView.h"
@@ -170,7 +171,11 @@ VelocityAnimation::VelocityAnimation(HtmlView* item)
     , m_total(0)
     , m_velocity(0)
 {
-    m_physicalCoeff = GRAVITY_EARTH * 39.37f * m_friction * 1;
+    m_physicalCoeff = GRAVITY_EARTH
+        * 39.37f
+        * m_friction
+        * 1;
+    //* PlatformBridge::getDisplayDensity() * 160.0f;
     if (!SPLINE_POSITION) {
         init();
     }
@@ -241,7 +246,7 @@ LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
     LReal coeffX = m_velocity == 0 ? 1.0f : velocityX / m_velocity;
     LReal coeffY = m_velocity == 0 ? 1.0f : velocityY / m_velocity;
 
-    LReal totalDistance = getSplineFlingDistance(m_velocity) /1000;
+    LReal totalDistance = getSplineFlingDistance(m_velocity) / 1000;
 
     BlockView* view = static_cast<BlockView*>(m_item.get());
     LInt startX = view->getScrollXPos();
