@@ -15,6 +15,7 @@ naming constants with `_` is unstable
 ```
 2. 无法混合编译c文件, 例如rustls中依赖的ring，找不到指定的C编译器
 ```
-windows中需要设置环境变量CC=c:/xxx/clang90.exe
+跨端编译需要设置CC环境变量如android
+CC_aarch64-linux-android=c:/xxx/clang90.exe
 同时需要将rust-tools中的编译器目录配置到path
 ```

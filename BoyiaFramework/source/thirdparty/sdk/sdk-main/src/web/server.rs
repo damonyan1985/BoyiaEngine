@@ -31,7 +31,7 @@ async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
   //Ok(Response::new("Just Test Hello, World!!!!\n".into()))
 }
 
-async fn start_server() {
+pub async fn start_server() {
   let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
   // 从handle创建一个服务

@@ -2,8 +2,8 @@ mod web;
 
 #[macro_use]
 extern crate log;
-use sdk_util::logger::logger_init;
 
+use sdk_util::logger::logger_init;
 use web::server::start_server_thread;
 
 // JNI import
