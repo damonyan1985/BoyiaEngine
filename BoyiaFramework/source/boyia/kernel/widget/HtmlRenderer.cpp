@@ -59,9 +59,9 @@ util::StyleParser* HtmlRenderer::getStyleParser() const
 
 void HtmlRenderer::layout()
 {
-    util::StyleManager* StyleManager = m_styleParser->getStyleManager();
-    if (StyleManager) {
-        m_htmlDoc->getRenderTreeRoot()->setStyle(StyleManager, kBoyiaNull);
+    util::StyleManager* styleManager = m_styleParser->getStyleManager();
+    if (styleManager) {
+        m_htmlDoc->getRenderTreeRoot()->setStyle(styleManager, kBoyiaNull);
     }
 
     m_htmlDoc->getRenderTreeRoot()->layout();
