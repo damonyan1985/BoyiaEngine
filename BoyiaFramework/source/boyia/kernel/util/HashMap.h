@@ -136,6 +136,36 @@ public:
         m_threshold = (LInt)m_capacity * HASH_TABLE_DEFAULT_FACTOR;
     }
 
+    LVoid remove(const K& key)
+    {
+        LUint hash = genHash(key);
+        // 利用hash找到索引
+        LUint index = indexHash(hash);
+
+        HashMapEntryPtr header = m_table[index];
+        // 如果链表头为空，则证明hash表中没有这个元素
+        if (!header) {
+            return;
+        }
+
+        // 如果第一个元素是目标元素，则把table[index]指向下一个元素
+        if (hash == header->hash && header->key == key) {
+            m_table[index] = header->next;
+            delete header;
+            return;
+        }
+
+        HashMapEntryPtr current = header;
+        while (current->next) {
+            HashMapEntryPtr ptr = current->next;
+            if (hash == ptr->hash && ptr->key == key) {
+                current->next = ptr->next;
+                delete ptr;
+                return;
+            }
+        }
+    }
+
 private:
     LUint genHash(const K& key)
     {
