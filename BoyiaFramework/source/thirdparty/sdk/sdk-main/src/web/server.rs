@@ -5,6 +5,12 @@ use std::{convert::Infallible, net::SocketAddr};
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 use hyper::service::{make_service_fn, service_fn};
 use tokio::runtime::Runtime;
+use sdk_service::manager::{ServiceManager};
+use std::sync::RwLock;
+
+// lazy_static! {
+//   pub static ref SERVICE_MANAGER: RwLock<ServiceManager<u32>> = RwLock::new(ServiceManager::new());
+// }
 
 async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
   info!("http handle respone");

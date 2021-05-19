@@ -3,6 +3,9 @@ mod web;
 #[macro_use]
 extern crate log;
 
+#[macro_use]
+extern crate lazy_static;
+
 use sdk_util::logger::logger_init;
 use web::server::start_server_thread;
 
