@@ -1,3 +1,3 @@
-pub trait IService {
-  fn register();
+pub trait IService : Sync + Send {
+  fn register(&self);
 }

@@ -7,7 +7,7 @@
 #include "InputView.h"
 #include "KList.h"
 //#include "MatrixState.h"
-#include "Mutex.h"
+#include "Lock.h"
 #include "OwnerPtr.h"
 #include "PixelRatio.h"
 #include "SalLog.h"

@@ -3,7 +3,7 @@
 
 #include "BoyiaPtr.h"
 #include "KList.h"
-#include "Mutex.h"
+#include "Lock.h"
 #include "TaskBase.h"
 
 namespace yanbo {
@@ -20,7 +20,7 @@ public:
 
 private:
     KList<BoyiaPtr<TaskBase>> m_list;
-    Mutex m_queueMutex;
+    Lock m_queueMutex;
 };
 }
 

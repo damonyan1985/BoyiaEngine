@@ -7,13 +7,13 @@
 #ifndef AutoLock_h
 #define AutoLock_h
 
-#include "Mutex.h"
+#include "Lock.h"
 
 namespace yanbo {
 
 class AutoLock {
 public:
-    AutoLock(Mutex* lock)
+    AutoLock(Lock* lock)
         : m_lock(lock)
     {
         m_lock->lock();
@@ -24,7 +24,7 @@ public:
     }
 
 private:
-    Mutex* m_lock;
+    Lock* m_lock;
 };
 }
 

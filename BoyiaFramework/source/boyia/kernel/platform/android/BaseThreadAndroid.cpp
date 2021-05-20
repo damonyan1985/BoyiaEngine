@@ -19,7 +19,7 @@ namespace yanbo {
 
 class Condition {
 public:
-    Condition() {}
+    Condition() { }
     pthread_t thread;
     pthread_cond_t condition;
 };
@@ -65,7 +65,7 @@ void* BaseThread::startThread(void* ptr)
 void BaseThread::waitOnNotify()
 {
     AutoLock lock(&m_lock);
-    pthread_cond_wait(&m_condition->condition, m_lock.getMutex());
+    pthread_cond_wait(&m_condition->condition, m_lock.getLock());
 }
 
 void BaseThread::notify()
@@ -88,7 +88,7 @@ void BaseThread::waitTimeOut(long timeout)
     outtime.tv_sec = now.tv_sec + nsec / (1000 * 1000 * 1000);
     //outtime.tv_nsec = now.tv_usec * 1000;
     outtime.tv_nsec = nsec % (1000 * 1000 * 1000);
-    pthread_cond_timedwait(&m_condition->condition, m_lock.getMutex(), &outtime);
+    pthread_cond_timedwait(&m_condition->condition, m_lock.getLock(), &outtime);
 }
 
 // milliseconds

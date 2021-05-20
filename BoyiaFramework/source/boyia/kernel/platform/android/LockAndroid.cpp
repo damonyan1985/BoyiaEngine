@@ -5,36 +5,36 @@
  *      Author: yanbo
  */
 
-#include "Mutex.h"
+#include "Lock.h"
 #if ENABLE(BOYIA_ANDROID)
 namespace yanbo {
 
-Mutex::Mutex()
+Lock::Lock()
 {
     pthread_mutex_init(&m_lock, NULL);
 }
 
-Mutex::~Mutex()
+Lock::~Lock()
 {
     pthread_mutex_destroy(&m_lock);
 }
 
-void Mutex::lock()
+void Lock::lock()
 {
     pthread_mutex_lock(&m_lock);
 }
 
-void Mutex::unlock()
+void Lock::unlock()
 {
     pthread_mutex_unlock(&m_lock);
 }
 
-void Mutex::tryLock()
+void Lock::tryLock()
 {
     pthread_mutex_trylock(&m_lock);
 }
 
-pthread_mutex_t* Mutex::getMutex()
+PlatformLock* Lock::getLock()
 {
     return &m_lock;
 }

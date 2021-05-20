@@ -53,7 +53,7 @@ Message* MessageCache::obtain()
 
 void MessageQueue::push(Message* msg)
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     m_list.push(msg);
 }
 
@@ -64,7 +64,7 @@ LInt MessageQueue::size()
 
 Message* MessageQueue::poll()
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     Message* msg = kBoyiaNull;
     if (!m_list.empty()) {
         MessageList::Iterator iter = m_list.begin();
@@ -77,13 +77,13 @@ Message* MessageQueue::poll()
 
 Message* MessageQueue::obtain()
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     return MessageCache::obtain();
 }
 
 LBool MessageQueue::hasMessage(LInt type)
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     MessageList::Iterator iter = m_list.begin();
     MessageList::Iterator iterEnd = m_list.end();
     while (iter != iterEnd) {
@@ -101,7 +101,7 @@ LBool MessageQueue::hasMessage(LInt type)
 // 删除所有type一样的消息
 LVoid MessageQueue::removeMessage(LInt type)
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     MessageList::Iterator iter = m_list.begin();
     MessageList::Iterator iterEnd = m_list.end();
     while (iter != iterEnd) {

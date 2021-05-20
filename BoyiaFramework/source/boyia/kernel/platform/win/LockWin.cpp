@@ -3,36 +3,36 @@
 * Author: yanbo
 */
 
-#include "Mutex.h"
+#include "Lock.h"
 
 #if ENABLE(BOYIA_WINDOWS)
 namespace yanbo {
-Mutex::Mutex()
+Lock::Lock()
 {
     InitializeCriticalSection(&m_lock);
 }
 
-Mutex::~Mutex()
+Lock::~Lock()
 {
     DeleteCriticalSection(&m_lock);
 }
 
-void Mutex::lock()
+void Lock::lock()
 {
     EnterCriticalSection(&m_lock);
 }
 
-void Mutex::unlock()
+void Lock::unlock()
 {
     LeaveCriticalSection(&m_lock);
 }
 
-void Mutex::tryLock()
+void Lock::tryLock()
 {
     TryEnterCriticalSection(&m_lock);
 }
 
-Lock* Mutex::getMutex()
+PlatformLock* Lock::getLock()
 {
     return &m_lock;
 }

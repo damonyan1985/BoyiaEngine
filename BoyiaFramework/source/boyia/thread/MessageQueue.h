@@ -43,7 +43,7 @@ public:
 
 private:
     MessageList m_list;
-    Mutex m_queueMutex;
+    Lock m_queueLock;
 };
 }
 #endif

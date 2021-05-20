@@ -7,7 +7,7 @@
 #ifndef BaseThread_h
 #define BaseThread_h
 
-#include "Mutex.h"
+#include "Lock.h"
 
 namespace yanbo {
 
@@ -34,7 +34,7 @@ protected:
     static void* startThread(void* ptr);
 
 protected:
-    Mutex m_lock;
+    Lock m_lock;
     Condition* m_condition;
 };
 }

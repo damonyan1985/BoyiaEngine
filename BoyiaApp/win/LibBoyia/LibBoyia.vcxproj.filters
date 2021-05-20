@@ -132,9 +132,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.h">
       <Filter>boyia\thread</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\Mutex.h">
-      <Filter>boyia\thread</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.h">
       <Filter>boyia\thread</Filter>
     </ClInclude>
@@ -471,6 +468,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.h">
       <Filter>boyia\kernel\vm\lib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\Lock.h">
+      <Filter>boyia\thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -758,9 +758,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MediaPlayerWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MutexWin.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
@@ -802,6 +799,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\lib\BoyiaBase.cpp">
       <Filter>boyia\kernel\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

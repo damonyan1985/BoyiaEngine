@@ -260,9 +260,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\AutoLock.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\Lock.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\Mutex.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.h" />
@@ -309,8 +309,8 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MediaPlayerWin.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MutexWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PlatformBridgeWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.cpp" />

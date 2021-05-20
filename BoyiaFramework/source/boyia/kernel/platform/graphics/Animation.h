@@ -146,7 +146,7 @@ private:
 
     AnimTaskList m_taskList;
     // 保护动画任务的添加
-    Mutex m_lock;
+    Lock m_lock;
 };
 }
 

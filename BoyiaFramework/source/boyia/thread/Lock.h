@@ -4,34 +4,34 @@
  *  Created on: 2015-7-29
  *      Author: yanbo
  */
-#ifndef Mutex_h
-#define Mutex_h
+#ifndef Lock_h
+#define Lock_h
 
 #include "PlatformLib.h"
 
 #if ENABLE(BOYIA_ANDROID)
 #include <pthread.h>
-typedef pthread_mutex_t Lock;
+typedef pthread_mutex_t PlatformLock;
 #elif ENABLE(BOYIA_WINDOWS)
 #include <windows.h>
-typedef CRITICAL_SECTION Lock;
+typedef CRITICAL_SECTION PlatformLock;
 #endif
 
 namespace yanbo {
 
-class Mutex {
+class Lock {
 public:
-    Mutex();
-    ~Mutex();
+    Lock();
+    ~Lock();
 
     void lock();
     void unlock();
     void tryLock();
 
-    Lock* getMutex();
+    PlatformLock* getLock();
 
 private:
-    Lock m_lock;
+    PlatformLock m_lock;
 };
 }
 
