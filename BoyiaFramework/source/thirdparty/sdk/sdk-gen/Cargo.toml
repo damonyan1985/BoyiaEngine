@@ -8,6 +8,7 @@ edition = "2018"
 
 [lib]
 name = "sdk_gen"
+path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]

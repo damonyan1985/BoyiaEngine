@@ -30,6 +30,26 @@ method_macro! {
     Patch,     patch,
 }
 
+// #[proc_macro_attribute]
+// pub fn get(args: TokenStream, input: TokenStream) -> TokenStream {
+//     route::with_method(Some(route::MethodType::Get), args, input)
+//     //input
+//     // let stream = quote! {
+//     //     #[allow(non_camel_case_types, missing_docs)]
+//     //     pub struct index;
+  
+//     //     impl IService for index {
+//     //       //#ast
+//     //       // fn register(&self, sm: &ServiceManager) {
+//     //       //   sm.register(resource_name, self);
+//     //       // }
+//     //       fn test() {}
+//     //     }
+//     //   };
+
+//     //   stream.parse().unwrap()
+// }
+
 // 本地服务端请求路由宏开发
 
 // args表示宏的参数

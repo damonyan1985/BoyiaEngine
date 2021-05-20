@@ -60,6 +60,8 @@ impl Route {
     args: AttributeArgs,
     input: TokenStream,
     method: Option<MethodType>,) -> syn::Result<Self> {
+      //println!("cargo:warning=Start Route.1");
+      println!("Start Route.");
       if args.is_empty() {
         return Err(syn::Error::new(
           Span::call_site(),
@@ -77,7 +79,7 @@ impl Route {
       let ast: syn::ItemFn = syn::parse(input)?;
       // 标识符名，即函数名
       let name = ast.sig.ident.clone();
-
+      println!("Start Route name={}", name);
       Ok(Self {
         name,
         args,
@@ -93,21 +95,23 @@ impl ToTokens for Route {
       args,
       ast,
     } = self;
-
+    println!("Start ToTokens");
     let resource_name = name.to_string();
-
+    println!("Start ToTokens {}", resource_name);
     let stream = quote! {
       #[allow(non_camel_case_types, missing_docs)]
       pub struct #name;
 
-      pub impl IService for #name {
-        #ast
-        fn register(&self, sm: &ServiceManager) {
-          sm.register(resource_name, self);
+      impl IService for #name {
+        // fn register(&self, sm: &ServiceManager) {
+        //   sm.register(resource_name, self);
+        // }
+        fn register(&self) {
         }
       }
     };
 
+    println!("Start ToTokens stream {}", stream);
     output.extend(stream);
   }
 }

@@ -6,11 +6,17 @@ extern crate log;
 #[macro_use]
 extern crate lazy_static;
 
+#[macro_use]
+extern crate sdk_gen;
+
 use std::thread;
 use tokio::runtime::Runtime;
 use sdk_util::logger::logger_init;
 use web::server::start_server;
 use std::collections::HashMap;
+use sdk_service::service::{IService};
+// 使用sdk_gen中的过程宏
+use sdk_gen::{get};
 
 trait Test {
  fn test(&self);
@@ -20,6 +26,10 @@ struct T1<T>
 where T: Test 
 {
   m: HashMap<String, Box<T>>,
+}
+
+#[get("/")]
+fn index() {
 }
 
 fn main() {
