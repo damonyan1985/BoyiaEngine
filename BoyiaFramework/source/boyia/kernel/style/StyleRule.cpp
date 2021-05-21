@@ -6,7 +6,7 @@
  */
 
 #include "StyleRule.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "LGdi.h"
 #include "SalLog.h"
 #include "StyleTags.h"
@@ -165,7 +165,7 @@ LBool CssPropertyValue::compareSpecificity(const PropertySpecificity& specificit
     KLOG("CssPropertyValue::compareSpecificity");
     if (specificity1.m_important > 0)
         return LTrue;
-    
+
     if (specificity2.m_important > 0)
         return LFalse;
 
@@ -173,21 +173,21 @@ LBool CssPropertyValue::compareSpecificity(const PropertySpecificity& specificit
     if (specificity1.m_id > specificity2.m_id) {
         KLOG("CssPropertyValue::compareSpecificity");
         return LTrue;
-    } 
-    
+    }
+
     if (specificity1.m_id == specificity2.m_id) {
         KLOG("CssPropertyValue::compareSpecificity");
         if (specificity1.m_classOrPseudo > specificity2.m_classOrPseudo) {
             return LTrue;
-        } 
-        
+        }
+
         if (specificity1.m_classOrPseudo == specificity2.m_classOrPseudo
             && specificity1.m_tag > specificity2.m_tag) {
             KLOG("CssPropertyValue::compareSpecificity");
             return LTrue;
-        }        
+        }
     }
-    
+
     return LFalse;
 }
 
@@ -335,7 +335,7 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.align = value.intVal;
     } break;
     case StyleTags::BACKGROUND_COLOR: {
-        style.bgColor = util::LColor::parseArgbInt(value.intVal);
+        style.bgColor = util::LColorUtil::parseArgbInt(value.intVal);
         style.transparent = LFalse;
         KFORMATLOG("style.m_bgColor=%x", value.intVal);
     } break;
@@ -345,7 +345,7 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     } break;
     case StyleTags::COLOR: {
         KFORMATLOG("style Color=%x", value.intVal);
-        style.color = util::LColor::parseArgbInt(value.intVal);
+        style.color = util::LColorUtil::parseArgbInt(value.intVal);
     } break;
     case StyleTags::FONT_STYLE: {
         style.font.setFontStyle((LFont::FontStyle)value.intVal);

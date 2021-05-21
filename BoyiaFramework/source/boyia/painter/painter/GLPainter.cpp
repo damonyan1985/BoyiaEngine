@@ -279,7 +279,7 @@ void GLPainter::appendToBuffer()
     }
 }
 
-void GLPainter::setColor(const LRgb& color)
+void GLPainter::setColor(const LColor& color)
 {
     m_cmd.quad.topLeft.color.set(color);
     m_cmd.quad.topRight.color.set(color);

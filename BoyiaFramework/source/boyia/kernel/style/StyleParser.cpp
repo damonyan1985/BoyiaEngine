@@ -8,7 +8,7 @@
 
 #include "StyleParser.h"
 #include "KVector.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "LGdi.h"
 #include "OwnerPtr.h"
 #include "SalLog.h"
@@ -238,10 +238,10 @@ LInt StyleParser::getCssColor(const String& colorValue)
 
         String colorStr(colorBuffer, LTrue, 7);
 
-        return LColor::parseRgbString(colorStr);
+        return LColorUtil::parseRgbString(colorStr);
     } else {
         BOYIA_LOG("getCssColor = %s", GET_STR(colorValue));
-        return LColor::parseRgbString(colorValue);
+        return LColorUtil::parseRgbString(colorValue);
     }
 }
 

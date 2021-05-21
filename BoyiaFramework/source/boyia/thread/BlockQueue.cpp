@@ -20,13 +20,13 @@ BlockQueue::~BlockQueue()
 
 void BlockQueue::addTask(TaskBase* task)
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     m_list.push(task);
 }
 
 BoyiaPtr<TaskBase> BlockQueue::pollTask()
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     BoyiaPtr<TaskBase> task = kBoyiaNull;
     if (!m_list.empty()) {
         KList<BoyiaPtr<TaskBase>>::Iterator iter = m_list.begin();
@@ -39,7 +39,7 @@ BoyiaPtr<TaskBase> BlockQueue::pollTask()
 
 void BlockQueue::clear()
 {
-    AutoLock lock(&m_queueMutex);
+    AutoLock lock(&m_queueLock);
     m_list.clear();
 }
 

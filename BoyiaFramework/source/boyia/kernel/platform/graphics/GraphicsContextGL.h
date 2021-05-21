@@ -40,8 +40,8 @@ public:
     virtual LVoid setBrushStyle(BrushStyle aBrushStyle);
     virtual LVoid setPenStyle(PenStyle aPenStyle);
 
-    virtual LVoid setBrushColor(const LRgb& aColor);
-    virtual LVoid setPenColor(const LRgb& aColor);
+    virtual LVoid setBrushColor(const LColor& aColor);
+    virtual LVoid setPenColor(const LColor& aColor);
     virtual LVoid setFont(const LFont& font);
 
     virtual LVoid reset();
@@ -57,8 +57,8 @@ private:
     ItemPainter* currentPainter();
     LVoid fillBuffer(LVoid* ptr);
 
-    LRgb m_brushColor;
-    LRgb m_penColor;
+    LColor m_brushColor;
+    LColor m_penColor;
     LFont m_font;
     LVoid* m_item;
     LRect* m_clipRect;

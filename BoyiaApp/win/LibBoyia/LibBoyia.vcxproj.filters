@@ -246,9 +246,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.h">
       <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.h">
-      <Filter>boyia\kernel\gui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LEvent.h">
       <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
@@ -471,6 +468,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\thread\Lock.h">
       <Filter>boyia\thread</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.h">
+      <Filter>boyia\kernel\gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -618,9 +618,6 @@
       <Filter>boyia\kernel\dom</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.cpp">
-      <Filter>boyia\kernel\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.cpp">
       <Filter>boyia\kernel\gui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.cpp">
@@ -802,6 +799,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.cpp">
+      <Filter>boyia\kernel\gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -24,8 +24,8 @@ public:
         const LRect& rect,
         LGraphicsContext::TextAlign align,
         const LFont& font,
-        const LRgb& penColor,
-        const LRgb& brushColor);
+        const LColor& penColor,
+        const LColor& brushColor);
 
     LVoid* item() const;
     LVoid setItem(yanbo::HtmlView* item);

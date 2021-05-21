@@ -28,7 +28,7 @@ public:
 
 struct Vertex {
     Vec3D vec3D;
-    LRgb color;
+    LColor color;
     TexVec texCoord;
 };
 

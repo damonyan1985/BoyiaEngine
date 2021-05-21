@@ -10,7 +10,7 @@
 #include "BoyiaPtr.h"
 #include "HtmlDocument.h"
 #include "KVector.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
@@ -119,7 +119,7 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         KLOG("not transparent");
         gc.setBrushStyle(LGraphicsContext::kSolidBrush);
 
-        LRgb bgColor = getStyle()->bgColor;
+        LColor bgColor = getStyle()->bgColor;
         bgColor.m_alpha = bgColor.m_alpha * ((float)getStyle()->drawOpacity / 255.0f);
 
         gc.setBrushColor(bgColor);
@@ -141,33 +141,33 @@ LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, La
 {
     if (border.topWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.topStyle);
-        gc.setPenColor(util::LColor::parseArgbInt(border.topColor));
+        gc.setPenColor(util::LColorUtil::parseArgbInt(border.topColor));
         gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(util::LColor::parseArgbInt(border.topColor));
+        gc.setBrushColor(util::LColorUtil::parseArgbInt(border.topColor));
         gc.drawRect(x, y, m_width, border.topWidth);
     }
 
     if (border.leftWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.leftStyle);
-        gc.setPenColor(util::LColor::parseArgbInt(border.leftColor));
+        gc.setPenColor(util::LColorUtil::parseArgbInt(border.leftColor));
         gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(util::LColor::parseArgbInt(border.leftColor));
+        gc.setBrushColor(util::LColorUtil::parseArgbInt(border.leftColor));
         gc.drawRect(x, y, border.leftWidth, m_height);
     }
 
     if (border.bottomWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.bottomStyle);
-        gc.setPenColor(util::LColor::parseArgbInt(border.bottomColor));
+        gc.setPenColor(util::LColorUtil::parseArgbInt(border.bottomColor));
         gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(util::LColor::parseArgbInt(border.bottomColor));
+        gc.setBrushColor(util::LColorUtil::parseArgbInt(border.bottomColor));
         gc.drawRect(x, y + m_height - border.bottomWidth, m_width, border.bottomWidth);
     }
 
     if (border.rightWidth > 0) {
         gc.setPenStyle((LGraphicsContext::PenStyle)border.rightStyle);
-        gc.setPenColor(util::LColor::parseArgbInt(border.rightColor));
+        gc.setPenColor(util::LColorUtil::parseArgbInt(border.rightColor));
         gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-        gc.setBrushColor(util::LColor::parseArgbInt(border.rightColor));
+        gc.setBrushColor(util::LColorUtil::parseArgbInt(border.rightColor));
         gc.drawRect(x + m_width - border.rightWidth, y, border.rightWidth, m_height);
     }
 }

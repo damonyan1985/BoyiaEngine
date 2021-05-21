@@ -1,7 +1,7 @@
 #include "ImageAndroid.h"
 #include "ImageView.h"
 #include "JNIUtil.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 //#include "TextureCache.h"
 #include "AppManager.h"
 #include "SalLog.h"
@@ -128,14 +128,14 @@ AutoJObject ImageAndroid::getBitmapObject() const
 void ImageAndroid::drawText(const String& text,
     const LRect& rect,
     const LFont& font,
-    const LRgb& penColor)
+    const LColor& penColor)
 {
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     AutoJObject javaObject = m_privateBitmap->object(env);
     if (!javaObject.get())
         return;
 
-    LUint value = LColor::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha);
+    LUint value = LColorUtil::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha);
 
     KFORMATLOG("BitmapAndroid drawText color=%x text=%s", value, (const char*)text.GetBuffer());
     KFORMATLOG("BitmapAndroid drawText text=%s width=%d height=%d", (const char*)text.GetBuffer(), rect.GetWidth(), rect.GetHeight());
@@ -147,7 +147,7 @@ void ImageAndroid::drawText(const String& text,
         rect.GetWidth(),
         rect.GetHeight(),
         font.getFontSize(),
-        (jint)LColor::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha),
+        (jint)LColorUtil::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha),
         (jint)font.getFontStyle());
     env->DeleteLocalRef(strText);
 }

@@ -20,7 +20,7 @@ public:
 
 private:
     KList<BoyiaPtr<TaskBase>> m_list;
-    Lock m_queueMutex;
+    Lock m_queueLock;
 };
 }
 

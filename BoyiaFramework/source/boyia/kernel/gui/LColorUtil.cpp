@@ -1,16 +1,16 @@
 /*
- * LColor.cpp
+ * LColorUtil.cpp
  *
  *  Created on: 2011-6-22
  *      Author: yanbo
  */
 
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "StringUtils.h"
 
 namespace util {
 
-LUint LColor::rgb(LInt red, LInt green, LInt blue, LInt alpha)
+LUint LColorUtil::rgb(LInt red, LInt green, LInt blue, LInt alpha)
 {
     if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255 || alpha < 0 || alpha > 255) {
         return 0;
@@ -22,24 +22,24 @@ LUint LColor::rgb(LInt red, LInt green, LInt blue, LInt alpha)
     //return (red << 16) | (green << 8) | blue;
 }
 
-LRgb LColor::parseRgbInt(LUint rgbValue)
+LColor LColorUtil::parseRgbInt(LUint rgbValue)
 {
     LUint8 r = LGetRValue(rgbValue);
     LUint8 g = LGetGValue(rgbValue);
     LUint8 b = LGetBValue(rgbValue);
-    return LRgb(r, g, b);
+    return LColor(r, g, b);
 }
 
-LRgb LColor::parseArgbInt(LUint argbValue)
+LColor LColorUtil::parseArgbInt(LUint argbValue)
 {
     LUint8 a = (argbValue >> 24) & 255;
     LUint8 r = (argbValue >> 16) & 255;
     LUint8 g = (argbValue >> 8) & 255;
     LUint8 b = argbValue & 255;
-    return LRgb(r, g, b, a);
+    return LColor(r, g, b, a);
 }
 
-LUint LColor::parseRgbString(const String& rgbString)
+LUint LColorUtil::parseRgbString(const String& rgbString)
 {
     LInt r = StringUtils::stringToInt(rgbString.Mid(1, 2), 16);
     LInt g = StringUtils::stringToInt(rgbString.Mid(3, 2), 16);

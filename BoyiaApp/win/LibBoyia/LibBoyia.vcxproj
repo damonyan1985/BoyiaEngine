@@ -170,7 +170,7 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LEvent.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LGdi.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LGraphic.h" />
@@ -294,7 +294,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\app\AppStack.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\dom\DOMBuilder.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LBaseView.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColor.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\AppLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\loader\ResourceLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\arm\ArmFunction.cpp" />

@@ -83,8 +83,8 @@ public:
     const Border& getBorder() const;
 
 public:
-    LRgb color; // foreground color
-    LRgb bgColor; // background color
+    LColor color; // foreground color
+    LColor bgColor; // background color
     String bgImageUrl;
     LFont font;
     LBool transparent; // if transparent

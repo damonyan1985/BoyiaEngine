@@ -6,7 +6,7 @@
  */
 
 #include "ImageView.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "RenderContext.h"
 #include "ResourceLoader.h"
 #include "SalLog.h"
@@ -48,7 +48,7 @@ LVoid ImageView::paint(LGraphicsContext& gc)
             KLOG("ImageView::paint drawBitmap begin");
             m_image->setRect(LRect(x, y, m_width, m_height));
 
-            LRgb bgColor = getStyle()->bgColor;
+            LColor bgColor = getStyle()->bgColor;
             bgColor.m_alpha = bgColor.m_alpha * ((float)getStyle()->drawOpacity / 255.0f);
 
             gc.setBrushColor(bgColor);

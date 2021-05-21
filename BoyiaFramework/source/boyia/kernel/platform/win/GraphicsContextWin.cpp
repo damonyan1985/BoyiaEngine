@@ -12,7 +12,7 @@ public:
     {
     }
 
-    LVoid clear() 
+    LVoid clear()
     {
         for (LInt i = 0; i < cmds.size(); i++) {
             cmds[i]->inUse = LFalse;
@@ -25,7 +25,7 @@ public:
 };
 
 GraphicsContextWin::GraphicsContextWin()
-	: m_hwnd(0)
+    : m_hwnd(0)
     , m_item(kBoyiaNull)
     , m_clipRect(kBoyiaNull)
     , m_cacheBitmap(kBoyiaNull)
@@ -44,7 +44,7 @@ GraphicsContextWin::~GraphicsContextWin()
 
 LVoid GraphicsContextWin::setContextWin(HWND hwnd)
 {
-	m_hwnd = hwnd;
+    m_hwnd = hwnd;
 }
 
 LVoid GraphicsContextWin::restore()
@@ -164,12 +164,12 @@ LVoid GraphicsContextWin::setPenStyle(PenStyle aPenStyle)
 {
 }
 
-LVoid GraphicsContextWin::setBrushColor(const LRgb& aColor)
+LVoid GraphicsContextWin::setBrushColor(const LColor& aColor)
 {
     m_brushColor = aColor;
 }
 
-LVoid GraphicsContextWin::setPenColor(const LRgb& aColor)
+LVoid GraphicsContextWin::setPenColor(const LColor& aColor)
 {
     m_penColor = aColor;
 }
@@ -208,13 +208,13 @@ LVoid GraphicsContextWin::drawText(const String& text, const LRect& rect, TextAl
 
 LVoid GraphicsContextWin::clipRect(const LRect& rect)
 {
-    m_clipRect = (LRect*)& rect;
+    m_clipRect = (LRect*)&rect;
 }
 
 LVoid GraphicsContextWin::paint(LVoid* ptr, Gdiplus::Graphics& gc)
 {
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
-    
+
     if (item->isText()) {
         yanbo::TextView* text = static_cast<yanbo::TextView*>(item);
         for (LInt i = 0; i < text->lineSize(); i++) {
@@ -253,7 +253,7 @@ LVoid GraphicsContextWin::submit()
 
     Gdiplus::Graphics cacheGc(m_cacheBitmap);
     paint(yanbo::UIView::current()->getDocument()->getRenderTreeRoot(), cacheGc);
-    
+
     HDC dc = ::GetDC(m_hwnd);
     Gdiplus::Graphics gc(m_hwnd);
     Gdiplus::CachedBitmap cachedBmp(m_cacheBitmap, &gc);
@@ -277,8 +277,8 @@ LVoid GraphicsContextWin::repaint() const
     }
 }
 
-LGraphicsContext* LGraphicsContext::create() 
+LGraphicsContext* LGraphicsContext::create()
 {
-	return new GraphicsContextWin();
+    return new GraphicsContextWin();
 }
 }

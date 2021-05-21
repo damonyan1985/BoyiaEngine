@@ -7,7 +7,7 @@
 
 #include "Style.h"
 
-#include "LColor.h"
+#include "LColorUtil.h"
 
 namespace util {
 
@@ -166,8 +166,8 @@ const Style& Style::operator=(const Style& style)
 
 void Style::init()
 {
-    color = LRgb(0x0, 0x0, 0x0, 0xFF);
-    bgColor = LRgb(0xFF, 0xFF, 0xFF, 0xFF);
+    color = LColor(0x0, 0x0, 0x0, 0xFF);
+    bgColor = LColor(0xFF, 0xFF, 0xFF, 0xFF);
     opacity = 255;
     drawOpacity = 255;
     positionType = STATICPOSITION;

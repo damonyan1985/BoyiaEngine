@@ -21,7 +21,7 @@ namespace util {
 
 class LImage;
 class LFont;
-class LRgb;
+class LColor;
 class LMediaPlayer;
 class ViewPainter {
 public:
@@ -108,8 +108,8 @@ public:
     virtual LVoid setBrushStyle(BrushStyle style) = 0;
     virtual LVoid setPenStyle(PenStyle style) = 0;
 
-    virtual LVoid setBrushColor(const LRgb& color) = 0;
-    virtual LVoid setPenColor(const LRgb& color) = 0;
+    virtual LVoid setBrushColor(const LColor& color) = 0;
+    virtual LVoid setPenColor(const LColor& color) = 0;
     virtual LVoid setFont(const LFont& font) = 0;
 
     virtual LVoid submit() = 0;
@@ -120,9 +120,9 @@ public:
     virtual LVoid restore() = 0;
 };
 
-class LRgb {
+class LColor {
 public:
-    LRgb()
+    LColor()
         : m_red(0)
         , m_green(0)
         , m_blue(0)
@@ -130,7 +130,7 @@ public:
     {
     }
 
-    LRgb(LUint8 aRed, LUint8 aGreen, LUint8 aBlue)
+    LColor(LUint8 aRed, LUint8 aGreen, LUint8 aBlue)
         : m_red(aRed)
         , m_green(aGreen)
         , m_blue(aBlue)
@@ -138,7 +138,7 @@ public:
     {
     }
 
-    LRgb(LUint8 aRed, LUint8 aGreen, LUint8 aBlue, LUint8 alpha)
+    LColor(LUint8 aRed, LUint8 aGreen, LUint8 aBlue, LUint8 alpha)
         : m_red(aRed)
         , m_green(aGreen)
         , m_blue(aBlue)
@@ -146,12 +146,12 @@ public:
     {
     }
 
-    LRgb(const LRgb& rgb)
+    LColor(const LColor& rgb)
     {
         set(rgb);
     }
 
-    ~LRgb() { }
+    ~LColor() { }
 
 public:
     LVoid set(LUint8 aRed, LUint8 aGreen, LUint8 aBlue, LUint8 alpha)
@@ -162,13 +162,13 @@ public:
         m_alpha = alpha;
     }
 
-    LRgb& operator=(const LRgb& rgb)
+    LColor& operator=(const LColor& rgb)
     {
         set(rgb);
         return *this;
     }
 
-    LVoid set(const LRgb& rgb)
+    LVoid set(const LColor& rgb)
     {
         m_red = rgb.m_red;
         m_green = rgb.m_green;
@@ -388,11 +388,11 @@ private:
 }
 
 using util::Editor;
+using util::LColor;
 using util::LFont;
 using util::LGraphicsContext;
 using util::LImage;
 using util::LMediaPlayer;
-using util::LRgb;
 using util::ViewPainter;
 
 #endif // LGDI_H

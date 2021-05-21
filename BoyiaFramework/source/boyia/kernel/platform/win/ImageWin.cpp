@@ -2,7 +2,7 @@
 #include "AppManager.h"
 #include "ImageLoader.h"
 #include "ImageView.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "LGdi.h"
 #include "SalLog.h"
 #include <Objidl.h>
@@ -38,8 +38,8 @@ void ImageWin::drawText(const String& text,
     const LRect& rect,
     LGraphicsContext::TextAlign align,
     const LFont& font,
-    const LRgb& penColor,
-    const LRgb& brushColor)
+    const LColor& penColor,
+    const LColor& brushColor)
 {
 }
 

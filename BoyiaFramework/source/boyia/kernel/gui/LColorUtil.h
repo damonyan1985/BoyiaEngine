@@ -1,5 +1,5 @@
-#ifndef LColor_h
-#define LColor_h
+#ifndef LColorUtil_h
+#define LColorUtil_h
 
 #include "LGdi.h"
 
@@ -21,12 +21,12 @@ namespace util {
 #define COLOR_RADIOGREEN (LUint)0xff169133
 #define COLOR_LIGHTGRAY (LUint)0xffc0c0c0
 
-class LColor {
+class LColorUtil {
 public:
     static LUint rgb(LInt red, LInt green, LInt blue, LInt alpha = 0xff);
     static LUint parseRgbString(const String& rgbString);
-    static LRgb parseRgbInt(LUint rgbValue);
-    static LRgb parseArgbInt(LUint argbValue);
+    static LColor parseRgbInt(LUint rgbValue);
+    static LColor parseArgbInt(LUint argbValue);
 };
 }
 #endif

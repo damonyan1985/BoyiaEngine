@@ -2,7 +2,7 @@
 #include "AppManager.h"
 #include "AutoLock.h"
 #include "BlockView.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "OwnerPtr.h"
 #include "PlatformBridge.h"
 #include "SystemUtil.h"

@@ -10,7 +10,7 @@
 #include "BlockView.h"
 #include "FlexLayout.h"
 #include "HtmlDocument.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "RenderContext.h"
 #include "SalLog.h"
 

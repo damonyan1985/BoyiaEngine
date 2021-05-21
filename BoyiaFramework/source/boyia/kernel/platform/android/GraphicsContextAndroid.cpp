@@ -11,7 +11,7 @@
 #include "FontAndroid.h"
 #include "ImageAndroid.h"
 #include "JNIUtil.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "SalLog.h"
 #include "StringUtils.h"
 
@@ -226,24 +226,24 @@ LVoid GraphicsContextAndroid::setPenStyle(PenStyle aPenStyle)
         (int)aPenStyle);
 }
 
-LVoid GraphicsContextAndroid::setBrushColor(const LRgb& aColor)
+LVoid GraphicsContextAndroid::setBrushColor(const LColor& aColor)
 {
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     AutoJObject javaObject = m_privateGc->object(env);
     if (!javaObject.get())
         return;
     env->CallVoidMethod(javaObject.get(), m_privateGc->m_setBrushColorI,
-        LColor::rgb(aColor.m_red, aColor.m_green, aColor.m_blue));
+        LColorUtil::rgb(aColor.m_red, aColor.m_green, aColor.m_blue));
 }
 
-LVoid GraphicsContextAndroid::setPenColor(const LRgb& aColor)
+LVoid GraphicsContextAndroid::setPenColor(const LColor& aColor)
 {
     JNIEnv* env = yanbo::JNIUtil::getEnv();
     AutoJObject javaObject = m_privateGc->object(env);
     if (!javaObject.get())
         return;
     env->CallVoidMethod(javaObject.get(), m_privateGc->m_setPenColorI,
-        LColor::rgb(aColor.m_red, aColor.m_green, aColor.m_blue));
+        LColorUtil::rgb(aColor.m_red, aColor.m_green, aColor.m_blue));
 }
 
 LVoid GraphicsContextAndroid::setFont(const LFont& font)

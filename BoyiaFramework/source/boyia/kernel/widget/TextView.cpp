@@ -8,7 +8,7 @@
 #include "TextView.h"
 #include "StringUtils.h"
 //#include "SalLog.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
@@ -184,7 +184,7 @@ LVoid TextView::paint(LGraphicsContext& gc)
             gc.setBrushStyle(LGraphicsContext::kSolidBrush);
             gc.setFont(*m_newFont);
 
-            LRgb color = m_style.color;
+            LColor color = m_style.color;
             color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
 
             gc.setPenColor(color);

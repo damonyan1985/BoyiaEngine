@@ -46,8 +46,8 @@ public:
     virtual LVoid setBrushStyle(BrushStyle aBrushStyle);
     virtual LVoid setPenStyle(PenStyle aPenStyle);
 
-    virtual LVoid setBrushColor(const LRgb& aColor);
-    virtual LVoid setPenColor(const LRgb& aColor);
+    virtual LVoid setBrushColor(const LColor& aColor);
+    virtual LVoid setPenColor(const LColor& aColor);
     virtual LVoid setFont(const LFont& font);
 
     virtual LVoid reset();

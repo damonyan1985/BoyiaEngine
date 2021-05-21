@@ -1,8 +1,8 @@
 #ifndef GraphicsContextWin_h
 #define GraphicsContextWin_h
 
-#include "LGdi.h"
 #include "KVector.h"
+#include "LGdi.h"
 #include "PaintCommandAllocator.h"
 #include <windows.h>
 #include <GdiPlus.h>
@@ -11,10 +11,10 @@ namespace util {
 class ItemPainter;
 class GraphicsContextWin : public LGraphicsContext {
 public:
-	GraphicsContextWin();
-	~GraphicsContextWin();
+    GraphicsContextWin();
+    ~GraphicsContextWin();
 
-	LVoid setContextWin(HWND hwnd);
+    LVoid setContextWin(HWND hwnd);
 
     virtual LVoid drawLine(const LPoint& p1, const LPoint& p2);
     virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1);
@@ -37,8 +37,8 @@ public:
     virtual LVoid setBrushStyle(BrushStyle aBrushStyle);
     virtual LVoid setPenStyle(PenStyle aPenStyle);
 
-    virtual LVoid setBrushColor(const LRgb& aColor);
-    virtual LVoid setPenColor(const LRgb& aColor);
+    virtual LVoid setBrushColor(const LColor& aColor);
+    virtual LVoid setPenColor(const LColor& aColor);
     virtual LVoid setFont(const LFont& font);
 
     virtual LVoid reset();
@@ -55,12 +55,12 @@ private:
     ItemPainter* currentPainter();
     LVoid paint(LVoid* ptr, Gdiplus::Graphics& gc);
 
-	HWND m_hwnd;
+    HWND m_hwnd;
     LVoid* m_item;
     LRect* m_clipRect;
 
-    LRgb m_brushColor;
-    LRgb m_penColor;
+    LColor m_brushColor;
+    LColor m_penColor;
     LFont m_font;
     ULONG_PTR m_gdiplusToken;
     Gdiplus::Bitmap* m_cacheBitmap;

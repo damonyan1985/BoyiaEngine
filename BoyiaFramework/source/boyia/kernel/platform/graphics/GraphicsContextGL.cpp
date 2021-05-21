@@ -173,7 +173,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
-    paint->setColor(LRgb(0, 0, 0, 0xFF));
+    paint->setColor(LColor(0, 0, 0, 0xFF));
 
     paint->setExternal(amp->texture(), rect);
     amp->updateTexture(paint->stMatrix());
@@ -205,7 +205,7 @@ LVoid GraphicsContextGL::drawPlatform(const LRect& rect, LVoid* platformView)
 
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
-    paint->setColor(LRgb(0, 0, 0, 0xFF));
+    paint->setColor(LColor(0, 0, 0, 0xFF));
     paint->setExternal(view->texture(), rect);
 
     int count = env->GetArrayLength(arr);
@@ -261,12 +261,12 @@ LVoid GraphicsContextGL::setPenStyle(PenStyle aPenStyle)
 {
 }
 
-LVoid GraphicsContextGL::setBrushColor(const LRgb& aColor)
+LVoid GraphicsContextGL::setBrushColor(const LColor& aColor)
 {
     m_brushColor = aColor;
 }
 
-LVoid GraphicsContextGL::setPenColor(const LRgb& aColor)
+LVoid GraphicsContextGL::setPenColor(const LColor& aColor)
 {
     m_penColor = aColor;
 }

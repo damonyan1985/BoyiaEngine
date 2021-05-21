@@ -76,7 +76,7 @@ public:
     static void unbindVBO();
 
 public:
-    void setColor(const LRgb& color);
+    void setColor(const LColor& color);
 
     void setRect(const LRect& rect);
     void setLine(const LPoint& p1, const LPoint& p2);

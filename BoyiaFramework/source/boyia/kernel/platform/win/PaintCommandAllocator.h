@@ -10,8 +10,7 @@ namespace util {
 class PaintResource;
 class PaintCommand {
 public:
-    enum PaintType
-    {
+    enum PaintType {
         kPaintRect,
         kPaintImage,
         kPaintCircle,
@@ -20,7 +19,7 @@ public:
 
     PaintCommand();
     ~PaintCommand();
-   
+
     LVoid paint(Gdiplus::Graphics& gc);
     Bool inUse;
     PaintResource* resource;
@@ -28,10 +27,10 @@ public:
 
 class PaintResource {
 public:
-    virtual ~PaintResource() {}
+    virtual ~PaintResource() { }
     virtual LInt type() const = 0;
 
-    LRgb color;
+    LColor color;
     LRect rect;
 };
 
@@ -42,7 +41,7 @@ public:
     {
     }
 
-    virtual LInt type() const 
+    virtual LInt type() const
     {
         return PaintCommand::kPaintImage;
     }

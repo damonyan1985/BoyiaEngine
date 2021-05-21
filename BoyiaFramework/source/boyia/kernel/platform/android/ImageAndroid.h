@@ -23,7 +23,7 @@ public:
         const String& text,
         const LRect& rect,
         const LFont& font,
-        const LRgb& penColor);
+        const LColor& penColor);
 
     AutoJObject getJavaBitmap() const;
     AutoJObject getBitmapObject() const;

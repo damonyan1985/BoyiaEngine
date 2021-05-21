@@ -6,7 +6,7 @@
  */
 
 #include "InputView.h"
-#include "LColor.h"
+#include "LColorUtil.h"
 #include "PlatformBridge.h"
 #include "RenderContext.h"
 #include "SalLog.h"
@@ -42,7 +42,7 @@ LVoid InputView::initView()
     case kInputSubmit:
     case kInputButton:
     case kInputReset:
-        m_style.bgColor = util::LColor::parseArgbInt(COLOR_LIGHTGRAY);
+        m_style.bgColor = util::LColorUtil::parseArgbInt(COLOR_LIGHTGRAY);
         break;
     }
     m_style.border.topColor = COLOR_BLACK;
@@ -125,7 +125,7 @@ LVoid InputView::paintBegin(LGraphicsContext& gc, LayoutPoint& point)
         m_newFont = LFont::create(getStyle()->font);
     }
     gc.setFont(*m_newFont);
-    LRgb color = m_style.color;
+    LColor color = m_style.color;
     color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
     gc.setPenColor(color);
 
@@ -271,10 +271,10 @@ public:
 
         if (getStyle()->bgColor.m_alpha == 0) {
             gc.setBrushStyle(LGraphicsContext::kSolidBrush);
-            gc.setBrushColor(util::LColor::parseArgbInt(COLOR_LIGHTGRAY));
+            gc.setBrushColor(util::LColorUtil::parseArgbInt(COLOR_LIGHTGRAY));
 
             gc.setPenStyle(LGraphicsContext::kSolidPen);
-            gc.setPenColor(util::LColor::parseArgbInt(COLOR_DARKGRAY));
+            gc.setPenColor(util::LColorUtil::parseArgbInt(COLOR_DARKGRAY));
             gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
         } else {
             gc.setBrushStyle(LGraphicsContext::kSolidBrush);
