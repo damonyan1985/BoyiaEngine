@@ -5,13 +5,55 @@ use std::{convert::Infallible, net::SocketAddr};
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 use hyper::service::{make_service_fn, service_fn};
 use tokio::runtime::Runtime;
-use sdk_service::manager::{ServiceManager};
+use sdk_service::manager::{ServiceManager, ServiceWrapper};
 use sdk_service::service::{IService};
 use std::sync::RwLock;
 
-lazy_static! {
-  pub static ref SERVICE_MANAGER: RwLock<ServiceManager> = RwLock::new(ServiceManager::new());
+pub struct BoyiaWebServer {
+  pub serviceManager: RwLock<ServiceManager>,
 }
+
+impl BoyiaWebServer {
+  pub fn new() -> Self {
+    Self {
+      serviceManager: RwLock::new(ServiceManager::new()),
+    }
+  }
+
+  pub fn service<S>(&mut self, service: S) -> &mut Self 
+  where
+    S: IService + 'static
+  {
+    self.serviceManager.write().unwrap().register(service.name(), Box::new(ServiceWrapper::new(service)));
+    self
+  }
+
+  pub fn start(&self) {
+    Runtime::new()
+      .expect("start tokio runtime error")
+      .block_on(self.start_server())
+  }
+
+  async fn start_server(&self) {
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+  
+    // 从handle创建一个服务
+    let make_svc = make_service_fn(|_conn| async {
+        Ok::<_, hyper::Error>(service_fn(handle))
+    });
+  
+    let server = Server::bind(&addr).serve(make_svc);
+  
+    // 运行server
+    if let Err(e) = server.await {
+      error!("start server error: {}", e);
+    }
+  }
+}
+
+// lazy_static! {
+//   pub static ref SERVICE_MANAGER: RwLock<ServiceManager> = RwLock::new(ServiceManager::new());
+// }
 
 async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
   info!("http handle respone");
@@ -38,28 +80,30 @@ async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
   //Ok(Response::new("Just Test Hello, World!!!!\n".into()))
 }
 
-pub async fn start_server() {
-  let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+// pub async fn start_server() {
+//   let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
-  // 从handle创建一个服务
-  let make_svc = make_service_fn(|_conn| async {
-      Ok::<_, hyper::Error>(service_fn(handle))
-  });
+//   // 从handle创建一个服务
+//   let make_svc = make_service_fn(|_conn| async {
+//       Ok::<_, hyper::Error>(service_fn(handle))
+//   });
 
-  let server = Server::bind(&addr).serve(make_svc);
+//   let server = Server::bind(&addr).serve(make_svc);
 
-  // 运行server
-  if let Err(e) = server.await {
-    error!("start server error: {}", e);
-  }
-}
+//   // 运行server
+//   if let Err(e) = server.await {
+//     error!("start server error: {}", e);
+//   }
+// }
 
 pub fn start_server_thread() {
   // start server
   thread::spawn(|| {
     info!("start boyia sdk server thread");
-    Runtime::new()
-      .expect("start tokio runtime error")
-      .block_on(start_server())
+    // Runtime::new()
+    //   .expect("start tokio runtime error")
+    //   .block_on(start_server())
+    BoyiaWebServer::new()
+      .start()
   });
 }

@@ -108,6 +108,10 @@ impl ToTokens for Route {
         // }
         fn register(&self) {
         }
+
+        fn name(&self) -> String {
+          return String::from(#resource_name);
+        }
       }
     };
 
