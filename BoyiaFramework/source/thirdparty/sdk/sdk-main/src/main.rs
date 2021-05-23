@@ -46,6 +46,7 @@ fn main() {
     //   .expect("start tokio runtime error")
     //   .block_on(start_server())
     BoyiaWebServer::new()
+      .service(index)
       .start()
   });
 
