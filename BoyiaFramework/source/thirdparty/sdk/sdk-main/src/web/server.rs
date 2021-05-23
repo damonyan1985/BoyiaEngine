@@ -38,8 +38,12 @@ impl BoyiaWebServer {
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
   
     // 从handle创建一个服务
-    let make_svc = make_service_fn(|_conn| async {
-        Ok::<_, hyper::Error>(service_fn(handle))
+    let make_svc = make_service_fn(move |_conn| async {
+        Ok::<_, hyper::Error>(service_fn(move |req: Request<Body>| async move {
+          Ok::<_, hyper::Error>(
+            handle(req)
+          )
+        }))
     });
   
     let server = Server::bind(&addr).serve(make_svc);
@@ -55,7 +59,7 @@ impl BoyiaWebServer {
 //   pub static ref SERVICE_MANAGER: RwLock<ServiceManager> = RwLock::new(ServiceManager::new());
 // }
 
-async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
+fn handle(req: Request<Body>) -> Response<Body> {
   info!("http handle respone");
   let mut response = Response::new(Body::empty());
   match (req.method(), req.uri().path()) {
@@ -76,7 +80,7 @@ async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     },
   }
 
-  Ok(response)
+  response
   //Ok(Response::new("Just Test Hello, World!!!!\n".into()))
 }
 
