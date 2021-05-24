@@ -65,8 +65,30 @@ public:
 private:
     LUintPtr m_ptr;
 };
+
+class HashInt {
+public:
+    HashInt(LInt ptr)
+        : m_value(ptr)
+    {
+    }
+
+    bool operator==(const HashInt& hashInt) const
+    {
+        return m_value == hashInt.m_value;
+    }
+
+    LUint hash() const
+    {
+        return (LUint)m_value;
+    }
+
+private:
+    LInt m_value;
+};
 }
 
 using util::HashString;
 using util::HashPtr;
+using util::HashInt;
 #endif // !HashUtil_h

@@ -18,7 +18,7 @@ public:
     static LVoid registerEvent(BoyiaAsyncEvent* obj);
 
     // Judge the object is exist
-    static LBool hasObject(BoyiaValue* obj);
+    static LBool hasObject(BoyiaValue* obj, LInt uniqueId);
 
     // When remove the object, needs to remove all event
     static LVoid removeAllEvent(LIntPtr ptr);
@@ -30,15 +30,19 @@ public:
 
     virtual ~BoyiaAsyncEvent();
 
+    LInt increment();
+
     virtual LVoid run();
 
     virtual LVoid callback() = 0;
 
 private:
     static BoyiaAsyncMapTable s_table;
+    static LInt s_uniqueId;
 
 protected:
     BoyiaValue m_obj;
+    LInt m_uniqueId;
     friend class BoyiaAsyncMapTable;
 };
 
