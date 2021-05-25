@@ -5,12 +5,14 @@
 #include "IDCreator.h"
 #include "UIView.h"
 #include "UtilString.h"
+#include "DOMBuilder.h"
 
 namespace yanbo {
 class Application;
 }
 
 namespace boyia {
+using BoyiaDomMap = HashMap<HashString, yanbo::DOMBuilder*>;
 class BoyiaAsyncEventManager;
 class BoyiaRuntime {
 public:
@@ -31,6 +33,7 @@ public:
     LVoid setGcRuning(LBool isRuning);
     LVoid collectGarbage();
     BoyiaAsyncEventManager* eventManager() const;
+    BoyiaDomMap* domMap() const;
 
 private:
     LVoid initNativeFunction();
@@ -45,6 +48,7 @@ private:
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
+    BoyiaDomMap* m_domMap;
     BoyiaAsyncEventManager* m_eventManager;
 };
 }

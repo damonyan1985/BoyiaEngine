@@ -3,16 +3,12 @@
 #include "BoyiaImageView.h"
 #include "BoyiaInputView.h"
 #include "BoyiaViewGroup.h"
-#include "DOMBuilder.h"
 #include "StringUtils.h"
 #include "UIOperation.h"
 #include "UIView.h"
 
 namespace boyia {
 using namespace yanbo;
-
-HashMap<HashString, yanbo::DOMBuilder*> BoyiaViewDoc::s_domMap;
-
 BoyiaViewDoc::BoyiaViewDoc(BoyiaRuntime* runtime)
     : BoyiaView(runtime)
     , m_doc(kBoyiaNull)
@@ -35,11 +31,11 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
     // 获取文本
     String stream;
 
-    DOMBuilder* dom = s_domMap.get(HashString(url, LFalse));
+    DOMBuilder* dom = runtime()->domMap()->get(HashString(url, LFalse));
     if (!dom) {
         KFORMATLOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
         dom = new DOMBuilder();
-        s_domMap.put(url, dom);
+        runtime()->domMap()->put(url, dom);
 
         AppManager::instance()->network()->syncLoadUrl(url, stream);
         BOYIA_LOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());

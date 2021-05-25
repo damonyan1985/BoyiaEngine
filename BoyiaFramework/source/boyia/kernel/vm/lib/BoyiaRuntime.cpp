@@ -42,6 +42,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_gc(CreateGC(m_vm))
     , m_isGcRuning(LFalse)
     , m_eventManager(new BoyiaAsyncEventManager())
+    , m_domMap(new BoyiaDomMap())
 {
 }
 
@@ -194,5 +195,10 @@ util::IDCreator* BoyiaRuntime::idCreator() const
 BoyiaAsyncEventManager* BoyiaRuntime::eventManager() const
 {
     return m_eventManager;
+}
+
+BoyiaDomMap* BoyiaRuntime::domMap() const
+{
+    return m_domMap;
 }
 }

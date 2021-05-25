@@ -32,7 +32,6 @@ public:
     BoyiaView* getItemByID(const String& id) const;
 
 private:
-    static HashMap<HashString, yanbo::DOMBuilder*> s_domMap;
     yanbo::HtmlDocument* m_doc;
 };
 }
