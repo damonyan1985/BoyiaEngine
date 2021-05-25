@@ -6,9 +6,8 @@
 #include "UIView.h"
 
 namespace boyia {
-BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, LVoid* vm)
-    : BoyiaAsyncEvent(obj)
-    , m_vm(vm)
+BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, BoyiaRuntime* runtime)
+    : BoyiaAsyncEvent(obj, runtime)
 {
     ValueCopy(&m_callback, callback);
 }
@@ -57,18 +56,18 @@ LVoid BoyiaNetwork::callback()
     BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
     BoyiaValue value;
     CreateNativeString(&value,
-        (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_vm);
+        (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_runtime->vm());
     BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
     // 释放字符串控制权
     m_data->ReleaseBuffer();
     // 保存当前栈
-    SaveLocalSize(m_vm);
+    SaveLocalSize(m_runtime->vm());
     // callback函数压栈
-    LocalPush(&m_callback, m_vm);
+    LocalPush(&m_callback, m_runtime->vm());
     // 参数压栈
-    LocalPush(&value, m_vm);
+    LocalPush(&value, m_runtime->vm());
     BoyiaValue* obj = m_obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_obj;
     // 调用callback函数
-    NativeCall(obj, m_vm);
+    NativeCall(obj, m_runtime->vm());
 }
 }

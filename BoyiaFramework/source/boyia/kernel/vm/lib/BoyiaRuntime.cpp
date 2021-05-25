@@ -1,10 +1,10 @@
 #include "BoyiaRuntime.h"
 #include "AppManager.h"
 #include "Application.h"
-#include "BoyiaAsyncEvent.h"
 #include "BoyiaCore.h"
 #include "BoyiaMemory.h"
 #include "SalLog.h"
+#include "BoyiaAsyncEvent.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
 const LInt kGcMemorySize = 1024 * 8;
@@ -41,6 +41,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_vm(InitVM(this))
     , m_gc(CreateGC(m_vm))
     , m_isGcRuning(LFalse)
+    , m_eventManager(new BoyiaAsyncEventManager())
 {
 }
 
@@ -50,6 +51,7 @@ BoyiaRuntime::~BoyiaRuntime()
     DestroyVM(m_vm);
     delete[] m_nativeFunTable;
     delete m_idCreator;
+    delete m_eventManager;
 }
 
 LVoid* BoyiaRuntime::memoryPool() const
@@ -84,7 +86,7 @@ LBool BoyiaRuntime::needCollect() const
 LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
 {
     // Clear all callbacks which bind on object
-    BoyiaAsyncEvent::removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
+    m_eventManager->removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
 }
 
 LVoid BoyiaRuntime::init()
@@ -187,5 +189,10 @@ yanbo::UIView* BoyiaRuntime::view() const
 util::IDCreator* BoyiaRuntime::idCreator() const
 {
     return m_idCreator;
+}
+
+BoyiaAsyncEventManager* BoyiaRuntime::eventManager() const
+{
+    return m_eventManager;
 }
 }

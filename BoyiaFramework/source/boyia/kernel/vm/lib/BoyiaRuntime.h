@@ -11,6 +11,7 @@ class Application;
 }
 
 namespace boyia {
+class BoyiaAsyncEventManager;
 class BoyiaRuntime {
 public:
     BoyiaRuntime(yanbo::Application* app);
@@ -29,6 +30,7 @@ public:
     LVoid prepareDelete(LVoid* ptr);
     LVoid setGcRuning(LBool isRuning);
     LVoid collectGarbage();
+    BoyiaAsyncEventManager* eventManager() const;
 
 private:
     LVoid initNativeFunction();
@@ -43,6 +45,7 @@ private:
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
+    BoyiaAsyncEventManager* m_eventManager;
 };
 }
 

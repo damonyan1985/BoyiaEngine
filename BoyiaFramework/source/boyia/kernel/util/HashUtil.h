@@ -68,8 +68,8 @@ private:
 
 class HashInt {
 public:
-    HashInt(LInt ptr)
-        : m_value(ptr)
+    HashInt(LInt value)
+        : m_value(value)
     {
     }
 

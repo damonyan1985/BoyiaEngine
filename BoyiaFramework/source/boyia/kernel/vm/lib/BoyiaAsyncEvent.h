@@ -8,42 +8,49 @@
 #include "KList.h"
 #include "UIThread.h"
 #include "OwnerPtr.h"
+#include "BoyiaRuntime.h"
 
 namespace boyia {
 class BoyiaAsyncEvent;
 class BoyiaAsyncMapTable;
 class BoyiaAsyncEvent : public yanbo::UIEvent {
 public:
-    // Create async event and add to table
-    static LVoid registerEvent(BoyiaAsyncEvent* obj);
-
-    // Judge the object is exist
-    static LBool hasObject(BoyiaValue* obj, LInt uniqueId);
-
-    // When remove the object, needs to remove all event
-    static LVoid removeAllEvent(LIntPtr ptr);
-
-    // Remove Aysnc Event From Map
-    static LVoid removeEvent(BoyiaAsyncEvent* event);
-
-    BoyiaAsyncEvent(BoyiaValue* obj);
+    BoyiaAsyncEvent(BoyiaValue* obj, BoyiaRuntime* runtime);
 
     virtual ~BoyiaAsyncEvent();
-
-    LInt increment();
 
     virtual LVoid run();
 
     virtual LVoid callback() = 0;
 
-private:
-    static BoyiaAsyncMapTable s_table;
-    static LInt s_uniqueId;
-
 protected:
     BoyiaValue m_obj;
     LInt m_uniqueId;
+    BoyiaRuntime* m_runtime;
     friend class BoyiaAsyncMapTable;
+};
+
+class BoyiaAsyncEventManager {
+public:
+    BoyiaAsyncEventManager();
+    ~BoyiaAsyncEventManager();
+    // Create async event and add to table
+    LVoid registerEvent(BoyiaAsyncEvent* obj);
+
+    // Judge the object is exist
+    LBool hasObject(BoyiaValue* obj, LInt uniqueId);
+
+    // When remove the object, needs to remove all event
+    LVoid removeAllEvent(LIntPtr ptr);
+
+    // Remove Aysnc Event From Map
+    LVoid removeEvent(BoyiaAsyncEvent* event);
+
+    LInt increment();
+
+private:
+    BoyiaAsyncMapTable* m_table;
+    LInt m_uniqueId;
 };
 
 }

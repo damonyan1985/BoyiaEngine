@@ -96,33 +96,50 @@ private:
     KVector<OwnerPtr<EventMapEntry>> m_eventMap;
 };
 
-BoyiaAsyncMapTable BoyiaAsyncEvent::s_table;
-LVoid BoyiaAsyncEvent::registerEvent(BoyiaAsyncEvent* event)
+//BoyiaAsyncMapTable BoyiaAsyncEvent::s_table;
+BoyiaAsyncEventManager::BoyiaAsyncEventManager()
+    : m_uniqueId(0)
+    , m_table(new BoyiaAsyncMapTable())
 {
-    return s_table.registerEvent(event);
 }
 
-LBool BoyiaAsyncEvent::hasObject(BoyiaValue* obj, LInt uniqueId)
+BoyiaAsyncEventManager::~BoyiaAsyncEventManager()
 {
-    return s_table.hasObject(obj, uniqueId);
+    delete m_table;
 }
 
-LVoid BoyiaAsyncEvent::removeAllEvent(LIntPtr ptr)
+LVoid BoyiaAsyncEventManager::registerEvent(BoyiaAsyncEvent* event)
 {
-    s_table.removeAllEvent(ptr);
+    return m_table->registerEvent(event);
 }
 
-LVoid BoyiaAsyncEvent::removeEvent(BoyiaAsyncEvent* event)
+LBool BoyiaAsyncEventManager::hasObject(BoyiaValue* obj, LInt uniqueId)
 {
-    s_table.removeEvent(event);
+    return m_table->hasObject(obj, uniqueId);
+}
+
+LVoid BoyiaAsyncEventManager::removeAllEvent(LIntPtr ptr)
+{
+    m_table->removeAllEvent(ptr);
+}
+
+LVoid BoyiaAsyncEventManager::removeEvent(BoyiaAsyncEvent* event)
+{
+    m_table->removeEvent(event);
+}
+
+LInt BoyiaAsyncEventManager::increment()
+{
+    return ++m_uniqueId;
 }
 
 // In UI thread
-BoyiaAsyncEvent::BoyiaAsyncEvent(BoyiaValue* obj)
-    : m_uniqueId(increment())
+BoyiaAsyncEvent::BoyiaAsyncEvent(BoyiaValue* obj, BoyiaRuntime* runtime)
+    : m_uniqueId(runtime->eventManager()->increment())
+    , m_runtime(runtime)
 {
     ValueCopy(&m_obj, obj);
-    BoyiaAsyncEvent::registerEvent(this);
+    runtime->eventManager()->registerEvent(this);
 }
 
 // In UI thread
@@ -134,17 +151,12 @@ BoyiaAsyncEvent::~BoyiaAsyncEvent()
 LVoid BoyiaAsyncEvent::run()
 {
     // If object is destroyed, dont callback to application
-    if (!BoyiaAsyncEvent::hasObject(&m_obj, m_uniqueId)) {
+    if (!m_runtime->eventManager()->hasObject(&m_obj, m_uniqueId)) {
         return;
     }
 
     callback();
     // Remove this on UI thread
-    BoyiaAsyncEvent::removeEvent(this);
-}
-
-LInt BoyiaAsyncEvent::increment()
-{
-    return ++m_uniqueId;
+    m_runtime->eventManager()->removeEvent(this);
 }
 }

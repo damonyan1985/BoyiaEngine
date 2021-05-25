@@ -478,7 +478,9 @@ LInt loadDataFromNative(LVoid* vm)
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2, vm);
-    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(callback, obj, vm);
+    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(
+        callback, obj, 
+        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
     BoyiaStr* urlStr = GetStringBuffer(val);
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
