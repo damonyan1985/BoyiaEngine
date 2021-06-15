@@ -22,6 +22,7 @@ public:
     LVoid parseApp(cJSON* appJson);
 
 public:
+    LInt id;
     LInt versionCode; // app version code
     String path; // download in local path
     String name; // app name

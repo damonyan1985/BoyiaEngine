@@ -14,9 +14,9 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "UIView.h"
 
 namespace yanbo {
-
 HtmlView::HtmlView(const String& id, LBool selectable)
     : m_id(id)
     , m_parent(kBoyiaNull)
@@ -27,6 +27,7 @@ HtmlView::HtmlView(const String& id, LBool selectable)
     , m_needLayout(LTrue)
     , m_itemListener(kBoyiaNull)
     , m_selected(LFalse)
+    , m_viewId(0)
 {
     m_style.focusable = selectable;
 }
@@ -490,6 +491,8 @@ LayoutPoint HtmlView::getAbsoluteContainerTopLeft() const
 LVoid HtmlView::setDocument(HtmlDocument* doc)
 {
     m_doc = doc;
+    // View Id必须与UIView进行绑定
+    m_viewId = doc->getView()->incrementViewId();
 }
 
 HtmlDocument* HtmlView::getDocument() const
@@ -596,5 +599,10 @@ LVoid HtmlView::relayout()
 const HtmlViewList& HtmlView::getChildren() const
 {
     return m_children;
+}
+
+LInt HtmlView::viewId() const
+{
+    return m_viewId;
 }
 }

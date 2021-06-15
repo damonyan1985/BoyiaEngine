@@ -103,6 +103,9 @@
     <Filter Include="boyia\kernel\platform\ws">
       <UniqueIdentifier>{293f42ec-9ea1-4ea0-8e22-846c48cc08da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\kernel\render">
+      <UniqueIdentifier>{24258d5f-42e4-4183-80ab-6f3a257a5d9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -471,6 +474,12 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.h">
       <Filter>boyia\kernel\gui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.h">
+      <Filter>boyia\kernel\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.h">
+      <Filter>boyia\kernel\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -802,6 +811,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\gui\LColorUtil.cpp">
       <Filter>boyia\kernel\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.cpp">
+      <Filter>boyia\kernel\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.cpp">
+      <Filter>boyia\kernel\render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -47,6 +47,7 @@ public:
     void handleFlingEvent(const LFlingEvent& evt);
 
     bool canHit() const;
+    LInt incrementViewId();
 
 private:
     ResourceLoader* m_loader;
@@ -56,6 +57,7 @@ private:
     UIViewController* m_controller;
     Application* m_app;
     UIOperation* m_operation;
+    LInt m_viewIdStart;
 };
 }
 #endif

@@ -59,7 +59,7 @@ public:
 
     LUint hash() const
     {
-        return m_ptr;
+        return (LUint)m_ptr;
     }
 
 private:

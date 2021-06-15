@@ -14,6 +14,7 @@ AppCodePath::AppCodePath()
 AppInfo::AppInfo()
     : isEntry(LFalse)
     , versionCode(0)
+    , id(0)
 {
 }
 
@@ -40,6 +41,9 @@ LVoid AppInfo::parseApp(cJSON* appJson)
         } else if (0 == strcmp(item->string, "isEntry")) {
             isEntry = item->type == cJSON_True ? LTrue : LFalse;
             BOYIA_LOG("boyia app isEntry=%d", item->type);
+        } else if (0 == strcmp(item->string, "id")) {
+            id = item->valueint;
+            BOYIA_LOG("boyia app id=%d", item->valueint);
         }
 
         item = item->next;

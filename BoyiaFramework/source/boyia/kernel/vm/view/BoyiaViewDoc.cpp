@@ -27,6 +27,7 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
 {
     KFORMATLOG("BoyiaViewDoc::loadHTML begin %d", 1);
     m_doc = new HtmlDocument();
+    m_doc->setView(runtime()->view());
 
     // 获取文本
     String stream;

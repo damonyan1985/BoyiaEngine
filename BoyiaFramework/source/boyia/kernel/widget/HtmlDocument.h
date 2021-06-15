@@ -47,7 +47,7 @@ public:
     void putItemID(String& id, HtmlView* item);
     HtmlView* getItemByID(const String& id);
 
-    void setView(UIView* loader);
+    void setView(UIView* view);
     UIView* getView() const;
 
 private:

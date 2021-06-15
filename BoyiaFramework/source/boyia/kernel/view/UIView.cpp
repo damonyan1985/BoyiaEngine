@@ -18,6 +18,7 @@ UIView::UIView(Application* app)
     , m_doc(kBoyiaNull)
     , m_controller(kBoyiaNull)
     , m_operation(kBoyiaNull)
+    , m_viewIdStart(0)
 {
     initComponents();
 }
@@ -158,5 +159,10 @@ UIOperation* UIView::operation() const
 void UIView::handleFlingEvent(const LFlingEvent& evt)
 {
     m_controller->onFling(evt.pt1, evt.pt2, evt.velocityX, evt.velocityY);
+}
+
+LInt UIView::incrementViewId()
+{
+    return ++m_viewIdStart;
 }
 }

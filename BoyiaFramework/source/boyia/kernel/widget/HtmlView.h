@@ -96,6 +96,8 @@ public:
     LVoid setViewIter(const HtmlViewList::Iterator& iter);
     const HtmlViewList& getChildren() const;
 
+    LInt viewId() const;
+
 private:
     HtmlView* getPreItem(HtmlView* currentItem);
     HtmlView* getNextItem(HtmlView* currentItem);
@@ -114,6 +116,7 @@ protected:
      * The listener who will receive event callbacks.
      */
     IViewListener* m_itemListener;
+    // 标签id属性
     String m_id;
 
     // html type
@@ -129,6 +132,8 @@ protected:
     LBool m_needLayout;
     HtmlViewList::Iterator m_iter; // 保留iter信息便于删除
     HtmlView* m_parent;
+    // 每个view的唯一编号
+    LInt m_viewId;
 };
 }
 
