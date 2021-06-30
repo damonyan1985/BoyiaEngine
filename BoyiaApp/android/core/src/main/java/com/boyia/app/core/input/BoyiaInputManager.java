@@ -3,7 +3,7 @@ package com.boyia.app.core.input;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaCoreJNI;
-import com.boyia.app.core.BoyiaUIView;
+import com.boyia.app.core.BoyiaView;
 import com.boyia.app.loader.jober.MainScheduler;
 
 import android.app.Activity;
@@ -16,11 +16,11 @@ import java.lang.ref.WeakReference;
 
 public class BoyiaInputManager {
     private static final String TAG = "BoyiaInputManager";
-    private WeakReference<BoyiaUIView> mViewRef;
+    private WeakReference<BoyiaView> mViewRef;
     private long mItem = 0;
     private int mRootViewVisibleHeight = 0;
 
-    public BoyiaInputManager(BoyiaUIView view) {
+    public BoyiaInputManager(BoyiaView view) {
         mViewRef = new WeakReference<>(view);
         initViewListener();
     }

@@ -1,15 +1,15 @@
 package com.boyia.app.core.input;
 
-import com.boyia.app.core.BoyiaUIView;
+import com.boyia.app.core.BoyiaView;
 import com.boyia.app.common.utils.BoyiaUtils;
 
 import android.view.inputmethod.BaseInputConnection;
 
 public class BoyiaInputConnection extends BaseInputConnection {
-    private BoyiaUIView mView;
+    private BoyiaView mView;
     private StringBuilder mBuilder;
 
-    public BoyiaInputConnection(BoyiaUIView view, boolean fullEditor) {
+    public BoyiaInputConnection(BoyiaView view, boolean fullEditor) {
         super(view, fullEditor);
         mView = view;
         mBuilder = new StringBuilder();

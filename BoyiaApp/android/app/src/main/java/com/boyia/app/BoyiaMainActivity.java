@@ -11,7 +11,6 @@ import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaActivity;
 import com.boyia.app.core.BoyiaCoreJNI;
-import com.boyia.app.core.BoyiaUIView;
 import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.job.JobScheduler;
 import com.umeng.analytics.MobclickAgent;

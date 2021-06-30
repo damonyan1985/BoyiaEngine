@@ -221,7 +221,9 @@ public class BoyiaImager {
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeStream(snapshot.getInputStream(0), null, options);
                     options.inJustDecodeBounds = false;
-                    options.inSampleSize = options.outWidth / image.getWidth();
+                    int inSampleSize = options.outWidth / image.getWidth();
+                    // 必须判断就散的inSampleSize是否为0，否则使用原图比例
+                    options.inSampleSize = inSampleSize > 0 ? inSampleSize : 1;
                     BoyiaLog.d(TAG, "Bitmap Size=" + options.inSampleSize + " Image url=" + image.getImageURL());
                     snapshot.close();
                     snapshot = mDiskCache.get(key);

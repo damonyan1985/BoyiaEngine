@@ -42,7 +42,7 @@ public class BoyiaActivity extends Activity {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             );
-            mContainer.addView(new BoyiaUIView(this), params);
+            mContainer.addView(new BoyiaView(this), params);
         });
     }
 

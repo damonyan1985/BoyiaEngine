@@ -44,6 +44,7 @@ public class BoyiaUtils {
         }
     }
 
+    // 必须搭配taskAffinity才能开启一个新的任务栈
     public static void startApp(final String info) {
         Intent intent = new Intent();
         intent.setAction("com.boyia.app.sub.action");

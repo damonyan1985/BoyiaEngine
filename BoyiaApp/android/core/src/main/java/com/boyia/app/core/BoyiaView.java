@@ -4,16 +4,13 @@ package com.boyia.app.core;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.hardware.SensorManager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
@@ -42,7 +39,7 @@ import android.app.Activity;
  * @Copyright Reserved
  * @Descrption OpenGL ES 3.0 Framework Construct By Yanbo
  */
-public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
+public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
     protected static final String TAG = "BoyiaUIView";
     private boolean mIsUIViewDestroy = true;
     private SurfaceHolder mHolder = null;
@@ -50,11 +47,11 @@ public class BoyiaUIView extends SurfaceView implements SurfaceHolder.Callback {
     private GestureDetector mGestureDetector = null;
     private static BoyiaInputManager mInputManager = null;
 
-    public BoyiaUIView(Context context) {
+    public BoyiaView(Context context) {
         this(context, null);
     }
 
-    public BoyiaUIView(Context context, AttributeSet set) {
+    public BoyiaView(Context context, AttributeSet set) {
         super(context, set);
         init(context);
     }
