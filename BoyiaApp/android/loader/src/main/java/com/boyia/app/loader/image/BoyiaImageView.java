@@ -1,6 +1,5 @@
 package com.boyia.app.loader.image;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,7 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.boyia.app.loader.jober.MainScheduler;
+import com.boyia.app.loader.mue.MainScheduler;
 
 /*
  * BoyiaImageView

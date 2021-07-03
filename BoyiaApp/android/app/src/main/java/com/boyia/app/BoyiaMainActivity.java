@@ -92,7 +92,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
 
     @Override
     public void onDestroy() {
-        JobScheduler.getInstance().stopAllThread();
+        JobScheduler.jobScheduler().stopAllThread();
         super.onDestroy();
     }
 

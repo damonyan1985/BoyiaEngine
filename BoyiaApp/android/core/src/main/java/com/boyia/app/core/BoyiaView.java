@@ -31,7 +31,7 @@ import android.app.Activity;
  * surfaceview的view属性默认是在surface之上，也就是
  * surfaceview中ondraw绘制的图像会覆盖在surface上
  *
- * BoyiaUIView, 只是为Opengl提供一个surface容器，具体
+ * BoyiaView, 只是为Opengl提供一个surface容器，具体
  * Opengl初始化，都是在C++，glcontext中进行，所有
  * 与Opengl实现的相关内容均在java层不可见
  * @Author Yan bo
@@ -40,7 +40,7 @@ import android.app.Activity;
  * @Descrption OpenGL ES 3.0 Framework Construct By Yanbo
  */
 public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
-    protected static final String TAG = "BoyiaUIView";
+    protected static final String TAG = "BoyiaView";
     private boolean mIsUIViewDestroy = true;
     private SurfaceHolder mHolder = null;
     private BoyiaInputConnection mInputConnect = null;
@@ -157,7 +157,7 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void onKeyDown(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
-            //BoyiaUtils.showToast("BoyiaUIView onKeyDown delete");
+            //BoyiaUtils.showToast("BoyiaView onKeyDown delete");
             if (mInputConnect != null) {
                 mInputConnect.deleteCommitText();
             }

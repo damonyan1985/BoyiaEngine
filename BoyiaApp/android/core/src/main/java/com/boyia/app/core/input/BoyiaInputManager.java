@@ -4,7 +4,7 @@ import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.BoyiaView;
-import com.boyia.app.loader.jober.MainScheduler;
+import com.boyia.app.loader.mue.MainScheduler;
 
 import android.app.Activity;
 import android.content.Context;

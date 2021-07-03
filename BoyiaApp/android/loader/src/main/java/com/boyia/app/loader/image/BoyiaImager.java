@@ -63,7 +63,7 @@ public class BoyiaImager {
             return;
         }
 
-        JobScheduler.getInstance().sendJob(() -> loadImage(url, image, needCached));
+        JobScheduler.jobScheduler().sendJob(() -> loadImage(url, image, needCached));
     }
 
     public void putBitmapCache(String url, Bitmap bitmap) {

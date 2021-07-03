@@ -13,7 +13,7 @@ LVoid EditorAndroid::showKeyboard(const String& text)
     jstring strText = strToJstring(yanbo::JNIUtil::getEnv(), text);
     Editor* editor = static_cast<Editor*>(this);
     JNIUtil::callStaticVoidMethod(
-        "com/boyia/app/core/BoyiaUIView",
+        "com/boyia/app/core/BoyiaView",
         "showKeyboard",
         "(JLjava/lang/String;)V",
         (jlong)editor, strText);

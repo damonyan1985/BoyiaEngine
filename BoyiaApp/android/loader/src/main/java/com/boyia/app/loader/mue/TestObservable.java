@@ -1,4 +1,4 @@
-package com.boyia.app.loader.jober;
+package com.boyia.app.loader.mue;
 
 import com.boyia.app.loader.job.JobScheduler;
 
@@ -7,7 +7,7 @@ public class TestObservable {
         Observable.create((Subscriber<String> subscriber) -> {
             subscriber.onNext("");
             subscriber.onComplete();
-        }).subscribeOn(JobScheduler.getInstance())
+        }).subscribeOn(JobScheduler.jobScheduler())
         .observeOn(MainScheduler.mainScheduler())
         .subscribe(new Subscriber<String>() {
             @Override

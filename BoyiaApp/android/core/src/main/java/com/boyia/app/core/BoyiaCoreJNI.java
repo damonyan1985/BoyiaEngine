@@ -5,9 +5,9 @@ import android.view.Surface;
 
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.loader.job.JobScheduler;
-import com.boyia.app.loader.jober.MainScheduler;
-import com.boyia.app.loader.jober.Observable;
-import com.boyia.app.loader.jober.Subscriber;
+import com.boyia.app.loader.mue.MainScheduler;
+import com.boyia.app.loader.mue.Observable;
+import com.boyia.app.loader.mue.Subscriber;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,7 +32,7 @@ public class BoyiaCoreJNI {
             }
             subscriber.onComplete();
         })
-        .subscribeOn(JobScheduler.getInstance())
+        .subscribeOn(JobScheduler.jobScheduler())
         .observeOn(MainScheduler.mainScheduler())
         .subscribe(() -> callback.initOk());
     }

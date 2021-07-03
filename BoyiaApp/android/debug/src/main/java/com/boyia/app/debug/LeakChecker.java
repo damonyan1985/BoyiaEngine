@@ -20,7 +20,7 @@ public class LeakChecker {
         final String key = UUID.randomUUID().toString();
         final BoyiaWeakReference ref = new BoyiaWeakReference(watchedRef, key, mQueue);
         mRetainedKeys.add(key);
-        JobScheduler.getInstance().sendJob(() -> {
+        JobScheduler.jobScheduler().sendJob(() -> {
             try {
                 // 延迟5秒
                 Thread.sleep(5000);

@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * @Time 2018-8-31
  * All Copyright Reserved
  */
-public class JobScheduler implements Scheduler {
+public class JobScheduler implements IScheduler {
     // Default size of threads
     public static final int DEFAULT_SCHEDULER_THREAD_SIZE = 3;
     // Execute cell implement with thread
@@ -19,7 +19,7 @@ public class JobScheduler implements Scheduler {
         static final JobScheduler INSTANCE = new JobScheduler();
     }
 
-    public static JobScheduler getInstance() {
+    public static JobScheduler jobScheduler() {
         return JobSchedulerHolder.INSTANCE;
     }
 

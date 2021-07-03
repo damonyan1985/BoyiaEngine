@@ -33,7 +33,7 @@ public class InspectorActivity extends Activity {
                     @Override
                     public IpcScheduler scheduler() {
                         return (runnable) -> {
-                                JobScheduler.getInstance().sendJob(() -> runnable.run());
+                                JobScheduler.jobScheduler().sendJob(() -> runnable.run());
                             };
                     }
                 });

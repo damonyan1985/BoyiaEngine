@@ -1,6 +1,6 @@
-package com.boyia.app.loader.jober;
+package com.boyia.app.loader.mue;
 
-import com.boyia.app.loader.job.Scheduler;
+import com.boyia.app.loader.job.IScheduler;
 
 /*
  * ObservableSubscribeOn
@@ -9,9 +9,9 @@ import com.boyia.app.loader.job.Scheduler;
  */
 public class ObservableSubscribeOn<T> extends Observable<T> {
     private final ObservableSource<T> mSource;
-    private final Scheduler mScheduler;
+    private final IScheduler mScheduler;
 
-    public ObservableSubscribeOn(ObservableSource<T> source, Scheduler scheduler) {
+    public ObservableSubscribeOn(ObservableSource<T> source, IScheduler scheduler) {
         mSource = source;
         mScheduler = scheduler;
     }

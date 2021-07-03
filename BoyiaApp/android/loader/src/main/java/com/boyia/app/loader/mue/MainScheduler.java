@@ -1,16 +1,16 @@
-package com.boyia.app.loader.jober;
+package com.boyia.app.loader.mue;
 
 import android.os.Looper;
 import android.os.Handler;
 import com.boyia.app.loader.job.IJob;
-import com.boyia.app.loader.job.Scheduler;
+import com.boyia.app.loader.job.IScheduler;
 
 /*
  * MainScheduler
  * Author yanbo.boyia
  * All Copyright reserved
  */
-public class MainScheduler implements Scheduler {
+public class MainScheduler implements IScheduler {
     private Handler mHandler;
 
     private static class MainSchedulerHolder {

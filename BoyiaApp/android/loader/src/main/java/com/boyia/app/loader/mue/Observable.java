@@ -1,6 +1,6 @@
-package com.boyia.app.loader.jober;
+package com.boyia.app.loader.mue;
 
-import com.boyia.app.loader.job.Scheduler;
+import com.boyia.app.loader.job.IScheduler;
 
 /*
  * Observable
@@ -36,11 +36,11 @@ public abstract class Observable<T> implements ObservableSource<T> {
         subscribe(Functions.emptyParamAction(), Functions.emptyParamAction(), complete);
     }
 
-    public final Observable<T> subscribeOn(Scheduler scheduler) {
+    public final Observable<T> subscribeOn(IScheduler scheduler) {
         return new ObservableSubscribeOn<>(this, scheduler);
     }
 
-    public final Observable<T> observeOn(Scheduler scheduler) {
+    public final Observable<T> observeOn(IScheduler scheduler) {
         return new ObservableObserveOn<>(this, scheduler);
     }
 }

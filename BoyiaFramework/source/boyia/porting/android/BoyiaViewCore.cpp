@@ -24,7 +24,7 @@
 #include "UIView.h"
 #include <jni.h>
 
-const char* kBoyiaUIViewClass = "com/boyia/app/core/BoyiaCoreJNI";
+const char* kBoyiaCoreJNIClass = "com/boyia/app/core/BoyiaCoreJNI";
 const char* kBoyiaUtilClass = "com/boyia/app/common/utils/BoyiaUtils";
 
 enum KeyEventType {
@@ -251,7 +251,7 @@ extern int registerNativeMethods(JNIEnv* env, const char* className,
 */
 int registerUIViewNatives(JNIEnv* env)
 {
-    if (!registerNativeMethods(env, kBoyiaUIViewClass, sUIViewMethods,
+    if (!registerNativeMethods(env, kBoyiaCoreJNIClass, sUIViewMethods,
             sizeof(sUIViewMethods) / sizeof(sUIViewMethods[0]))) {
         return JNI_FALSE;
     }

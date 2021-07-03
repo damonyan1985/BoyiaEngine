@@ -1,7 +1,7 @@
 package com.boyia.app.loader;
 
 import com.boyia.app.loader.http.Request;
-import com.boyia.app.loader.job.BoyiaLoadJob;
+import com.boyia.app.loader.http.BoyiaLoadJob;
 import com.boyia.app.loader.job.JobScheduler;
 
 import com.boyia.app.common.utils.BoyiaLog;
@@ -72,7 +72,7 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
         if (isWait) {
             BoyiaWorker.getWorker().sendJob(mLoadJob);
         } else {
-            JobScheduler.getInstance().sendJob(mLoadJob);
+            JobScheduler.jobScheduler().sendJob(mLoadJob);
         }
     }
 

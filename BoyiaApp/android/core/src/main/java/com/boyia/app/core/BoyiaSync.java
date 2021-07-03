@@ -2,7 +2,7 @@ package com.boyia.app.core;
 
 import android.view.Choreographer;
 
-import com.boyia.app.loader.jober.MainScheduler;
+import com.boyia.app.loader.mue.MainScheduler;
 
 /**
  * BoyiaSync use Android vsync to paint ui

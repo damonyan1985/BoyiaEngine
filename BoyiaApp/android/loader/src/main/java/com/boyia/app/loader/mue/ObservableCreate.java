@@ -1,4 +1,4 @@
-package com.boyia.app.loader.jober;
+package com.boyia.app.loader.mue;
 
 /*
  * ObservableCreate
@@ -34,6 +34,7 @@ public class ObservableCreate<T> extends Observable<T> {
             mObserver = observer;
         }
 
+        // 对应subscribe函数中对应的接口
         @Override
         public void onNext(T t) {
             mObserver.onNext(t);

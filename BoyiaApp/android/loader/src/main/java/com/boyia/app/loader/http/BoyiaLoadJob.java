@@ -1,4 +1,4 @@
-package com.boyia.app.loader.job;
+package com.boyia.app.loader.http;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import com.boyia.app.loader.http.Response;
 import com.boyia.app.loader.http.HTTPFactory;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.loader.job.IJob;
 
 /*
  * BoyiaLoadJob

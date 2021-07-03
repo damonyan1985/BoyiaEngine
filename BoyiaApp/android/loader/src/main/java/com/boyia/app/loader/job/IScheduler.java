@@ -5,6 +5,7 @@ package com.boyia.app.loader.job;
  * Author yanbo.boyia
  * All Copyright reserved
  */
-public interface Scheduler {
+public interface IScheduler {
+    // send a job to schedule
     void sendJob(IJob job);
 }

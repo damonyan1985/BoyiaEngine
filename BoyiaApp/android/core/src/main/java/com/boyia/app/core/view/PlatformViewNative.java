@@ -2,7 +2,7 @@ package com.boyia.app.core.view;
 
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.loader.jober.MainScheduler;
+import com.boyia.app.loader.mue.MainScheduler;
 
 // 提供给c++进行调用
 public class PlatformViewNative {
