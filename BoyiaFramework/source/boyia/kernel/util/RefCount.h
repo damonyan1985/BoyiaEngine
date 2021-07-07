@@ -19,6 +19,8 @@ public:
     LVoid release();
 
 private:
+    // 此处引用计数不是原子操作
+    // 简化程序开发，智能指针只在单线程上进行使用
     LInt m_shareCount;
     LInt m_weakCount;
 };

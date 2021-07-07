@@ -1,4 +1,4 @@
-class Activity extends Object {
+class ViewController extends Object {
     prop contentView = null;
    
     // Life Cycle onCreate();
@@ -32,6 +32,9 @@ class Activity extends Object {
         if (this.contentView) {
             this.contentView.setVisible(false);
         }
+    }
+
+    fun onStop() {        
     }
     
     fun onDestroy() {

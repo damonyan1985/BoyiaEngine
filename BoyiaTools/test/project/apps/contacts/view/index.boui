@@ -26,9 +26,8 @@
 <script src="boyia://apps/sdk/ViewDoc.boyia" />
 <script src="boyia://apps/sdk/InputView.boyia" />
 <script src="boyia://apps/sdk/ImageView.boyia" />
-<script src="boyia://apps/sdk/AppStack.boyia" />
 <script src="boyia://apps/sdk/App.boyia" />
-<script src="boyia://apps/sdk/Activity.boyia" />
+<script src="boyia://apps/sdk/ViewController.boyia" />
 <script src="boyia://apps/contacts/src/bean/UserInfo.boyia" />
 <script src="boyia://apps/contacts/src/ViewRoot.boyia" />
 <script src="boyia://apps/contacts/src/chat/ChatPage.boyia" />
