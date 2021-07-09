@@ -1,14 +1,15 @@
 package com.boyia.app.loader.mue;
 
 /*
- * ObservableCreate
+ * MueTaskCreate
  * Author yanbo.boyia
  * All Copyright reserved
+ * 第一次创建MueTask的实例
  */
-public class ObservableCreate<T> extends Observable<T> {
-    private final ObservableOnSubscribe<T> mSource;
+public class MueTaskCreate<T> extends MueTask<T> {
+    private final MueTaskOnSubscribe<T> mSource;
 
-    public ObservableCreate(ObservableOnSubscribe<T> source) {
+    public MueTaskCreate(MueTaskOnSubscribe<T> source) {
         mSource = source;
     }
 

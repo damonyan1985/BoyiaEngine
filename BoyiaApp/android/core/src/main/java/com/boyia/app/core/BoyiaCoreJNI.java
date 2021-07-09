@@ -6,7 +6,7 @@ import android.view.Surface;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.loader.mue.MainScheduler;
-import com.boyia.app.loader.mue.Observable;
+import com.boyia.app.loader.mue.MueTask;
 import com.boyia.app.loader.mue.Subscriber;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,7 +23,7 @@ public class BoyiaCoreJNI {
     }
 
     public static void initLibrary(LibraryInitCallback callback) {
-        Observable.create((Subscriber<String> subscriber) -> {
+        MueTask.create((Subscriber<String> subscriber) -> {
             /**
              * 判断boyia内核是否已经初始化过
              */

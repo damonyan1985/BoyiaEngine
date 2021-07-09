@@ -1,10 +1,10 @@
 package com.boyia.app.loader.mue;
 
 /*
- * ObservableSource
+ * IMueTask
  * Author yanbo.boyia
  * All Copyright reserved
  */
-public interface ObservableSource<T> {
+public interface IMueTask<T> {
     void subscribe(Subscriber<? super T> observer);
 }

@@ -4,7 +4,7 @@ import com.boyia.app.loader.job.JobScheduler;
 
 public class TestObservable {
     public static void test() {
-        Observable.create((Subscriber<String> subscriber) -> {
+        MueTask.create((Subscriber<String> subscriber) -> {
             subscriber.onNext("");
             subscriber.onComplete();
         }).subscribeOn(JobScheduler.jobScheduler())

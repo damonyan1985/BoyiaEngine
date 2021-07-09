@@ -3,19 +3,21 @@ package com.boyia.app.loader.mue;
 import com.boyia.app.loader.job.IScheduler;
 
 /*
- * ObservableSubscribeOn
+ * MueTaskSubscribeOn
  * Author yanbo.boyia
  * All Copyright reserved
+ * 发布所在的任务
  */
-public class ObservableSubscribeOn<T> extends Observable<T> {
-    private final ObservableSource<T> mSource;
+public class MueTaskSubscribeOn<T> extends MueTask<T> {
+    private final IMueTask<T> mSource;
     private final IScheduler mScheduler;
 
-    public ObservableSubscribeOn(ObservableSource<T> source, IScheduler scheduler) {
+    public MueTaskSubscribeOn(IMueTask<T> source, IScheduler scheduler) {
         mSource = source;
         mScheduler = scheduler;
     }
 
+    // 利用传递进来的schedule执行任务
     @Override
     void subscribeActual(Subscriber<? super T> observer) {
         mScheduler.sendJob(() -> mSource.subscribe(observer));

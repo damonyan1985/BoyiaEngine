@@ -3,13 +3,14 @@ package com.boyia.app.loader.mue;
 import com.boyia.app.loader.job.IScheduler;
 
 /*
- * Observable
+ * MueTask
+ * 链式任务包装类
  * Author yanbo.boyia
  * All Copyright reserved
  */
-public abstract class Observable<T> implements ObservableSource<T> {
-    public static <T> Observable<T> create(ObservableOnSubscribe<T> source) {
-        return new ObservableCreate<>(source);
+public abstract class MueTask<T> implements IMueTask<T> {
+    public static <T> MueTask<T> create(MueTaskOnSubscribe<T> source) {
+        return new MueTaskCreate<>(source);
     }
 
     abstract void subscribeActual(Subscriber<? super T> observer);
@@ -36,11 +37,11 @@ public abstract class Observable<T> implements ObservableSource<T> {
         subscribe(Functions.emptyParamAction(), Functions.emptyParamAction(), complete);
     }
 
-    public final Observable<T> subscribeOn(IScheduler scheduler) {
-        return new ObservableSubscribeOn<>(this, scheduler);
+    public final MueTask<T> subscribeOn(IScheduler scheduler) {
+        return new MueTaskSubscribeOn<>(this, scheduler);
     }
 
-    public final Observable<T> observeOn(IScheduler scheduler) {
-        return new ObservableObserveOn<>(this, scheduler);
+    public final MueTask<T> observeOn(IScheduler scheduler) {
+        return new MueTaskObserveOn<>(this, scheduler);
     }
 }
