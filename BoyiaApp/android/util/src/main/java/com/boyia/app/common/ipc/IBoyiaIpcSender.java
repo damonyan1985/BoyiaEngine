@@ -52,6 +52,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                 case SEND_MESSAGE_SYNC: {
                     data.enforceInterface(DESCRIPTOR);
                     BoyiaIpcData ipcData = BoyiaIpcData.CREATOR.createFromParcel(data);
+                    // 服务端需要实现sendMessageSync接口
                     BoyiaIpcData result = this.sendMessageSync(ipcData);
                     reply.writeNoException();
                     if (result != null) {
@@ -67,6 +68,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                 case SEND_MESSAGE_ASYNC: {
                     data.enforceInterface(DESCRIPTOR);
                     BoyiaIpcData ipcData = BoyiaIpcData.CREATOR.createFromParcel(data);
+                    // 服务端需要实现sendMessageAsync接口
                     this.sendMessageAsync(ipcData, new IBoyiaIpcCallback() {
                         @Override
                         public void callback(BoyiaIpcData message) {
@@ -121,6 +123,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
          */
         @Override
         public void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException {
+            // 使用callback所需要的scheduler执行
             callback.scheduler().run(() -> {
                 try {
                     callback.callback(sendMessageImpl(message, SEND_MESSAGE_ASYNC));

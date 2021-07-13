@@ -1,4 +1,4 @@
-package com.boyia.app.broadcast;
+package com.boyia.app.shell.broadcast;
 
 import android.content.Context;
 import android.content.Intent;

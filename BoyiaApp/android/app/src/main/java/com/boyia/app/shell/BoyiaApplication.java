@@ -1,4 +1,4 @@
-package com.boyia.app;
+package com.boyia.app.shell;
 
 import android.content.Context;
 import android.support.multidex.MultiDex;

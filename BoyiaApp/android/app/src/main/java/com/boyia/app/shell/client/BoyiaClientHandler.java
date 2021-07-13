@@ -1,4 +1,4 @@
-package com.boyia.app.client;
+package com.boyia.app.shell.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

@@ -106,6 +106,9 @@
     <Filter Include="boyia\kernel\render">
       <UniqueIdentifier>{24258d5f-42e4-4183-80ab-6f3a257a5d9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\kernel\render\layer">
+      <UniqueIdentifier>{56cd7618-190f-4e3d-b03f-9914a5a47fed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -477,8 +480,17 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.h">
       <Filter>boyia\kernel\render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.h">
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.h">
+      <Filter>boyia\kernel\render\layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.h">
       <Filter>boyia\kernel\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.h">
+      <Filter>boyia\kernel\render\layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.h">
+      <Filter>boyia\kernel\render\layer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -815,8 +827,17 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.cpp">
       <Filter>boyia\kernel\render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.cpp">
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.cpp">
+      <Filter>boyia\kernel\render\layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.cpp">
       <Filter>boyia\kernel\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.cpp">
+      <Filter>boyia\kernel\render\layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.cpp">
+      <Filter>boyia\kernel\render\layer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

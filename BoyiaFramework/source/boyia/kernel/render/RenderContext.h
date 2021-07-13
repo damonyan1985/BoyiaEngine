@@ -3,6 +3,7 @@
 
 #include "LGdi.h"
 #include "RenderThread.h"
+#include "RenderLayer.h"
 
 namespace yanbo {
 class RenderContext : public LGraphicsContext {
@@ -45,11 +46,9 @@ public:
     virtual LVoid restore();
 
 private:
-    RenderMessage* message();
-
-    RenderMessage* m_message;
     LVoid* m_item;
     LColor m_color;
+    RenderLayer* m_layer;
 };
 }
 

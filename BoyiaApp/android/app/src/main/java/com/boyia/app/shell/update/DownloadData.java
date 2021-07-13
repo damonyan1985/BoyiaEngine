@@ -1,4 +1,4 @@
-package com.boyia.app.update;
+package com.boyia.app.shell.update;
 
 import com.boyia.app.common.db.BoyiaData;
 import com.boyia.app.common.db.DBAnnotation.DBColumn;

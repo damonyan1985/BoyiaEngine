@@ -10,7 +10,7 @@ apply from: "$rootDir/library.gradle"
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.boyia.app"
+        applicationId "com.boyia.app.shell"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
@@ -34,7 +34,7 @@ android {
 
     productFlavors {
         boyia {
-            applicationId 'com.boyia.app'
+            applicationId 'com.boyia.app.shell'
             versionName "1.0"
             versionCode 1
             manifestPlaceholders = [

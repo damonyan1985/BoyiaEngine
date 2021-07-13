@@ -1,4 +1,4 @@
-package com.boyia.app;
+package com.boyia.app.shell;
 
 import java.io.IOException;
 import java.io.InputStream;

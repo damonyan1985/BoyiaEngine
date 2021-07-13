@@ -7,15 +7,6 @@ RenderContext::RenderContext()
 {
 }
 
-RenderMessage* RenderContext::message()
-{
-    if (!m_message) {
-        m_message = new RenderMessage();
-    }
-
-    return m_message;
-}
-
 LVoid RenderContext::drawLine(const LPoint& p1, const LPoint& p2)
 {
 }
@@ -26,8 +17,8 @@ LVoid RenderContext::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 
 LVoid RenderContext::drawRect(const LRect& aRect)
 {
-    HtmlView* view = static_cast<HtmlView*>(m_item);
-    RenderRectCommand* cmd = new RenderRectCommand(aRect, m_color);
+    //HtmlView* view = static_cast<HtmlView*>(m_item);
+    //RenderRectCommand* cmd = new RenderRectCommand(aRect, m_color);
     //message()->commandMap.put(view->viewId(), cmd);
 }
 
@@ -103,6 +94,7 @@ LVoid RenderContext::submit()
 LVoid RenderContext::setHtmlView(ViewPainter* item)
 {
     m_item = item;
+    m_layer = new RenderLayer();
 }
 
 LVoid RenderContext::save()

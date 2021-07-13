@@ -1,7 +1,7 @@
-package com.boyia.app;
+package com.boyia.app.shell;
 
 import com.boyia.app.advert.platform.TTAdSplashManager;
-import com.boyia.app.broadcast.BoyiaBroadcast;
+import com.boyia.app.shell.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.BoyiaIpcService;
@@ -15,20 +15,13 @@ import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.job.JobScheduler;
 import com.umeng.analytics.MobclickAgent;
 
-import android.annotation.TargetApi;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.KeyEvent;
-import android.app.Activity;
 import android.os.Process;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 public class BoyiaMainActivity extends BoyiaActivity {
     private static final String TAG = "BoyiaMainActivity";

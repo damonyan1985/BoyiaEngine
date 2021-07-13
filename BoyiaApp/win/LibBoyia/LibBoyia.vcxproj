@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>_DEBUG;LIBBOYIA_EXPORTS;_WINDOWS;_USRDLL;ENABLE_BOYIA_WINDOWS=1;_CRT_SECURE_NO_DEPRECATE;ZLIB_WINAPI;WIN32;__LP64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\util;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\core;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\arm;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\lib;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\view;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\json;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\view;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\widget;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\app;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\loader;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\dom;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\style;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\gui;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\widget\flex;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\thread;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\tinyxml;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\cjson;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\painter\utils;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\win;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\graphics;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\zip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\zip\minizip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\zip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\ws;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\render;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\util;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\core;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\arm;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\lib;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\view;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\json;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\view;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\widget;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\app;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\loader;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\dom;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\style;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\gui;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\widget\flex;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\thread;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\tinyxml;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\cjson;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\painter\utils;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\win;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\graphics;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\zip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\zip\minizip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\zip;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\ws;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\render;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\render\layer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
@@ -194,7 +194,10 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.h" />
@@ -319,7 +322,10 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\VsyncWaiterWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderCommand.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.cpp" />

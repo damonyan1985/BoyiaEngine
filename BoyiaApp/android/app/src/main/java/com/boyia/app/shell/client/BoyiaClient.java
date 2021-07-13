@@ -1,4 +1,4 @@
-package com.boyia.app.client;
+package com.boyia.app.shell.client;
 
 import java.net.InetAddress;
 

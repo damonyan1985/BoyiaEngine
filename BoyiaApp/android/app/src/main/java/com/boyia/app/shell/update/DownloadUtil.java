@@ -1,6 +1,6 @@
-package com.boyia.app.update;
+package com.boyia.app.shell.update;
 
-import com.boyia.app.AppDB;
+import com.boyia.app.shell.AppDB;
 import com.boyia.app.common.BaseApplication;
 
 import android.database.sqlite.SQLiteDatabase;

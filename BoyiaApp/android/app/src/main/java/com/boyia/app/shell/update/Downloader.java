@@ -1,4 +1,4 @@
-package com.boyia.app.update;
+package com.boyia.app.shell.update;
 
 import java.io.File;
 import java.io.IOException;
