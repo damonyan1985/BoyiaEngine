@@ -1,12 +1,11 @@
 package com.boyia.app.shell;
 
 import com.boyia.app.advert.platform.TTAdSplashManager;
+import com.boyia.app.common.ipc.BoyiaIpcData;
+import com.boyia.app.common.ipc.IBoyiaIpcCallback;
+import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.shell.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
-import com.boyia.app.common.ipc.BoyiaIpcData;
-import com.boyia.app.common.ipc.BoyiaIpcService;
-import com.boyia.app.common.ipc.IBoyiaIpcCallback;
-import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaActivity;
@@ -19,6 +18,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.os.Process;
@@ -29,6 +29,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
     private boolean mNeedExit = false;
     private BoyiaBroadcast mBroadcast;
     private TTAdSplashManager mSplashManager;
+    private IBinder mBinder;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -41,25 +42,25 @@ public class BoyiaMainActivity extends BoyiaActivity {
         mSplashManager = new TTAdSplashManager();
         mSplashManager.loadSplashAd(this,
                 getContainer(), () -> startBoyiaUI());
-        //BoyiaCoreJNI.initLibrary(() -> setContentView(R.layout.main));
+        initIpc();
         initBroadcast();
-        initService();
     }
 
-    private void initService() {
-        BoyiaIpcService.setSenderDependency(new IBoyiaSender(){
+    // 初始化主进程IPC服务
+    // 当主进程需要启动其他进程时，将binder传入即可跨进程通信
+    // 预留程序
+    private void initIpc() {
+        mBinder = new IBoyiaIpcSender.BoyiaSenderStub() {
             @Override
             public BoyiaIpcData sendMessageSync(BoyiaIpcData boyiaIpcData) throws RemoteException {
-                return new BoyiaIpcData("MainActivitySyncMethod", new Bundle());
+                return null;
             }
 
             @Override
-            public void sendMessageAsync(BoyiaIpcData boyiaIpcData, IBoyiaIpcCallback callback) throws RemoteException {
-                callback.callback(new BoyiaIpcData("MainActivityAsyncMethod", new Bundle()));
-            }
-        });
+            public void sendMessageAsync(BoyiaIpcData boyiaIpcData, IBoyiaIpcCallback iBoyiaIpcCallback) throws RemoteException {
 
-        startService(new Intent(this, BoyiaIpcService.class));
+            }
+        };
     }
 
     private void initBroadcast() {

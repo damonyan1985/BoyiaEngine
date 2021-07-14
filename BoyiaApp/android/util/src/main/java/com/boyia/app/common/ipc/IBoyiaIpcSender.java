@@ -25,11 +25,13 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                 return null;
             }
 
+            // 如果是同一进程存在该服务，则sender不为空
             IInterface sender = binder.queryLocalInterface(DESCRIPTOR);
             if (sender instanceof IBoyiaIpcSender) {
                 return (IBoyiaIpcSender) sender;
             }
 
+            // 如果是不同进程，则使用proxy
             return new BoyiaSenderProxy(binder);
         }
 

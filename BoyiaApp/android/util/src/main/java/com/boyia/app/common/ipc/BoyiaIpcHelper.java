@@ -15,59 +15,18 @@ import com.boyia.app.common.utils.BoyiaLog;
 
 public class BoyiaIpcHelper {
     private static final String TAG = "BoyiaIpcHelper";
-
-    public static BoyiaSenderStub createSenderStub(IBoyiaSender proxy) {
-        return new BoyiaSenderStub() {
-            @Override
-            public BoyiaIpcData sendMessageSync(BoyiaIpcData message) throws RemoteException {
-                BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
-                if (proxy != null) {
-                    return proxy.sendMessageSync(message);
-                }
-
-                return null;
-            }
-
-            @Override
-            public void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException {
-                BoyiaLog.i(TAG, "sendMessageSync method=" + message.getMethod());
-                if (proxy != null) {
-                    proxy.sendMessageAsync(message, callback);
-                }
-            }
-        };
-    }
-
-    /**
-     * 客户端调用，获取IBoyiaSender对象
-     * @param context
-     * @param callback
-     */
-    public static ServiceConnection bindService(Context context, BoyiaIpcService.BoyiaIpcBindCallback callback) {
-        ServiceConnection connection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                callback.callback(IBoyiaIpcSender.BoyiaSenderStub.asInterface(binder));
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        };
-        context.bindService(new Intent(context, BoyiaIpcService.class), connection, Context.BIND_AUTO_CREATE);
-
-        return connection;
-    }
+    public static final String BOYIA_IPC_SENDER = "BoyiaIpcSender";
 
     /**
      * 通过intent传递自己的binder对象，则无需创建service
      */
     public static void startActivityWithBoyiaSender(
-            Activity activity, String action,
-            String paramName, BoyiaSenderStub binder) {
+            Activity activity, String action, BoyiaSenderStub binder) {
         Intent intent = new Intent();
         intent.setAction(action);
-        intent.putExtra(paramName, new IpcIntentData(binder));
+        if (binder != null) {
+            intent.putExtra(BOYIA_IPC_SENDER, new IpcIntentData(binder));
+        }
         activity.startActivity(intent);
     }
 

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boyia.app.common" >
     <application>
-        <service android:name="com.boyia.app.common.ipc.BoyiaIpcService" />
     </application>
 </manifest>
 
