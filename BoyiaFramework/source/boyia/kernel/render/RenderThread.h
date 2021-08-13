@@ -1,9 +1,7 @@
 #ifndef RenderThread_h
 #define RenderThread_h
 
-#include "Stack.h"
 #include "MessageThread.h"
-#include "RenderCommandBuffer.h"
 
 namespace yanbo {
 // 渲染与UI逻辑进行分离
@@ -12,7 +10,7 @@ public:
     virtual LVoid handleMessage(Message* msg);
 
 private:
-    Stack<RenderCommandBuffer*> m_buffer;
+    
 };
 }
 

@@ -3,22 +3,20 @@
 
 #include "RenderCommand.h"
 #include "KVector.h"
+#include "OwnerPtr.h"
 
 namespace yanbo {
-// RenderLayer与HtmlView一一对应，表示渲染层面的节点
-// 每个RenderLayer保存一组由HtmlView paint时产生的渲染指令
+using RenderCommandBuffer = KVector<BoyiaPtr<RenderCommand>>;
 class RenderLayer : public BoyiaRef {
 public:
-    LInt layerId();
+    LInt layerId() const;
     LVoid addChild(RenderLayer* layer);
+    LVoid setCommand(RenderCommandBuffer* buffer);
 
 private:
     LInt m_layerId;
-    // layer的次序
-    LInt m_layerOrder;
-
     KVector<BoyiaPtr<RenderLayer>> m_children;
-    KVector<BoyiaPtr<RenderCommand>> m_buffer;
+    OwnerPtr<RenderCommandBuffer> m_buffer;
 };
 }
 

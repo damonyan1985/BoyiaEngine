@@ -1,14 +1,16 @@
-#ifndef RenderContext_h
-#define RenderContext_h
+#ifndef RenderGraphicsContext_h
+#define RenderGraphicsContext_h
 
 #include "LGdi.h"
 #include "RenderThread.h"
 #include "RenderLayer.h"
 
 namespace yanbo {
-class RenderContext : public LGraphicsContext {
+class ItemPainter;
+class RenderGraphicsContext : public LGraphicsContext {
 public:
-    RenderContext();
+    RenderGraphicsContext();
+    virtual ~RenderGraphicsContext();
     virtual LVoid drawLine(const LPoint& p1, const LPoint& p2);
     virtual LVoid drawLine(LInt x0, LInt y0, LInt x1, LInt y1);
     virtual LVoid drawRect(const LRect& aRect);
@@ -46,9 +48,11 @@ public:
     virtual LVoid restore();
 
 private:
+    LVoid submit(LVoid* view, RenderLayer* parentLayer);
+    ItemPainter* currentPainter();
+
     LVoid* m_item;
     LColor m_color;
-    RenderLayer* m_layer;
 };
 }
 

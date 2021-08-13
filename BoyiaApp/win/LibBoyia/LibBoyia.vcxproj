@@ -195,9 +195,8 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.h" />
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderGraphicsContext.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.h" />
@@ -323,9 +322,8 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommand.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderCommandBuffer.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\layer\RenderLayer.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderContext.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderGraphicsContext.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderThread.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\DoctreeNode.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\style\Style.cpp" />
