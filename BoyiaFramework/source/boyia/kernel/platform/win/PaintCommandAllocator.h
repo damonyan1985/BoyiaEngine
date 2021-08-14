@@ -46,7 +46,7 @@ public:
         return PaintCommand::kPaintImage;
     }
 
-    Gdiplus::Image* image;
+    LVoid* image;
 };
 
 class PaintRectResource : public PaintResource {

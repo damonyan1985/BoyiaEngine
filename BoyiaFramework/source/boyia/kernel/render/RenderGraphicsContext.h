@@ -54,7 +54,8 @@ private:
     LRect* m_clipRect;
     LFont m_font;
     LVoid* m_item;
-    LColor m_color;
+    LColor m_brushColor;
+    LColor m_penColor;
 };
 }
 

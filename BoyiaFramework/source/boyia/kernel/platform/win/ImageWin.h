@@ -33,7 +33,6 @@ public:
     LVoid setData(const OwnerPtr<String>& data);
 
     virtual LVoid onClientCallback();
-    Gdiplus::Image* image() const;
 
 private:
     yanbo::HtmlView* m_image;

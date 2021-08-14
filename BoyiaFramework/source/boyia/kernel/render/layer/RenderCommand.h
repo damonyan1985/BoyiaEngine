@@ -8,7 +8,7 @@ namespace yanbo {
 class RenderCommand : public BoyiaRef {
 public:
     enum CommandType {
-        kRenderRect,
+        kRenderRect = 0,
         kRenderText,
         kRenderImage,
         kRenderVideo,
@@ -42,10 +42,10 @@ public:
 
 class RenderImageCommand : public RenderCommand {
 public:
-    RenderImageCommand(const LRect& rect, const LColor& color, const LImage* image);
+    RenderImageCommand(const LRect& rect, const LColor& color, LVoid* image);
     virtual LInt type();
 
-    const LImage* image;
+    LVoid* image;
 };
 
 class RenderVideoCommand : public RenderCommand {

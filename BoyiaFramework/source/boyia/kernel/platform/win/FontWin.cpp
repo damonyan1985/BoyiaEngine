@@ -1,6 +1,5 @@
 #include "LGdi.h"
 #include "AppManager.h"
-#include "GraphicsContextWin.h"
 #include "CharConvertor.h"
 #include "PixelRatio.h"
 #include <Windows.h>

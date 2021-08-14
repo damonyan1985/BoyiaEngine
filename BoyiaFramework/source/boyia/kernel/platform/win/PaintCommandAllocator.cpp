@@ -78,7 +78,7 @@ public:
             resource->rect.GetWidth() * yanbo::PixelRatio::ratio(),
             resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
         );
-        gc.DrawImage(resource->image, rect);
+        gc.DrawImage(static_cast<Gdiplus::Image*>(resource->image), rect);
     }
 };
 

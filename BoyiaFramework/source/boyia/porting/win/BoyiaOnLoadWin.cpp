@@ -9,6 +9,8 @@
 #include "HashUtil.h"
 #include "BoyiaCore.h"
 #include "FileUtil.h"
+#include "RenderThread.h"
+#include "RenderEngineWin.h"
 #include <stdio.h>
 //#include <WinSock2.h>
 #pragma comment(lib, "ws2_32")
@@ -17,13 +19,19 @@
 #define _WINDLL
 #endif
 
+#define OLD_RENDER_FEATURE 0
+
 class WindowRepaintEvent : public yanbo::UIEvent {
 public:
     // Run In UIThread
     virtual LVoid run() LOverride
     {
+#if OLD_RENDER_FEATURE
         util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
         static_cast<util::GraphicsContextWin*>(gc)->repaint();
+#else
+        yanbo::RenderThread::instance()->renderReset();
+#endif
     }
 };
 
@@ -31,9 +39,15 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {
     yanbo::PixelRatio::setWindowSize(width, height);
     yanbo::PixelRatio::setLogicWindowSize(720, 1280);
+#if OLD_RENDER_FEATURE
 	util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
 	static_cast<util::GraphicsContextWin*>(gc)->setContextWin(hwnd);
-	BOYIA_LOG("hello world apppath=%s\n", yanbo::PlatformBridge::getAppPath());
+#else
+    yanbo::IRenderEngine* engine = yanbo::RenderThread::instance()->getRenderer();
+    static_cast<yanbo::RenderEngineWin*>(engine)->setContextWin(hwnd);
+#endif
+    
+    BOYIA_LOG("hello world apppath=%s\n", yanbo::PlatformBridge::getAppPath());
 
     LInt logicHeight = (1.0f * 720 / width) * height;
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
@@ -42,10 +56,11 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 
 void BoyiaOnLoadWin::repaint()
 {
+#if OLD_RENDER_FEATURE
     yanbo::AppManager::instance()->uiThread()->sendUIEvent(new WindowRepaintEvent());
-    //util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
-    //static_cast<util::GraphicsContextWin*>(gc)->repaint();
-    //yanbo::AppManager::instance()->currentApp()->view()->getLoader()->repaint();
+#else
+    yanbo::RenderThread::instance()->renderReset();
+#endif
 }
 
 void BoyiaOnLoadWin::connectServer()

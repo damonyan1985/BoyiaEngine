@@ -146,7 +146,7 @@ LVoid GraphicsContextWin::drawImage(const LImage* image)
     }
 
     PaintImageResource* resource = static_cast<PaintImageResource*>(cmd->resource);
-    resource->image = static_cast<const ImageWin*>(image)->image();
+    resource->image = static_cast<const ImageWin*>(image)->pixels();
     resource->color = m_brushColor;
     resource->rect = image->rect();
     painter->cmds.addElement(cmd);
@@ -277,8 +277,10 @@ LVoid GraphicsContextWin::repaint() const
     }
 }
 
+#if 0
 LGraphicsContext* LGraphicsContext::create()
 {
     return new GraphicsContextWin();
 }
+#endif
 }

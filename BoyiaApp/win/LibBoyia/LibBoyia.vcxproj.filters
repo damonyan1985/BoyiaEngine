@@ -734,9 +734,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\TextView.cpp">
       <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.cpp">
-      <Filter>boyia\kernel\widget</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\flex\FlexLayout.cpp">
       <Filter>boyia\kernel\widget\flex</Filter>
     </ClCompile>
@@ -841,6 +838,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\RenderEngineWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.cpp">
+      <Filter>boyia\porting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

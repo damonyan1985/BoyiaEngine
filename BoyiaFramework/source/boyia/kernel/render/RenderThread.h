@@ -13,8 +13,16 @@ public:
         kRenderReset,
         kRenderLayerTree,
     };
+    static RenderThread* instance();
+
     RenderThread();
     virtual LVoid handleMessage(Message* msg);
+    
+    LVoid renderInit();
+    LVoid renderReset();
+    LVoid renderLayerTree(RenderLayer* rootLayer);
+
+    IRenderEngine* getRenderer() const;
 
 private:
     IRenderEngine* m_renderer;

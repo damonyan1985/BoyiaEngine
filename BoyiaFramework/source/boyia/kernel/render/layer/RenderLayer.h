@@ -13,10 +13,11 @@ public:
     LVoid addChild(RenderLayer* layer);
     LVoid setCommand(RenderCommandBuffer* buffer);
 
-private:
+public:
     LInt m_layerId;
     KVector<BoyiaPtr<RenderLayer>> m_children;
-    OwnerPtr<RenderCommandBuffer> m_buffer;
+    //OwnerPtr<RenderCommandBuffer> m_buffer;
+    RenderCommandBuffer* m_buffer;
 };
 }
 
