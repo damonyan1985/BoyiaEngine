@@ -20,6 +20,7 @@ public:
 };
 
 RenderGraphicsContext::RenderGraphicsContext()
+    : m_clipRect(kBoyiaNull)
 {
 }
 
@@ -78,9 +79,14 @@ LVoid RenderGraphicsContext::drawText(const String& aText, const LPoint& aPoint)
 LVoid RenderGraphicsContext::drawImage(const LPoint& aTopLeft, const LImage* aBitmap)
 {
 }
+
 LVoid RenderGraphicsContext::drawImage(const LImage* image)
 {
+    ItemPainter* painter = currentPainter();
+    RenderImageCommand* cmd = new RenderImageCommand(image->rect(), m_color, image);
+    painter->buffer->addElement(cmd);
 }
+
 LVoid RenderGraphicsContext::drawImage(const LRect& aDestRect, const LImage* aSource, const LRect& aSourceRect)
 {
 }
@@ -88,6 +94,7 @@ LVoid RenderGraphicsContext::drawImage(const LRect& aDestRect, const LImage* aSo
 LVoid RenderGraphicsContext::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
 }
+
 #if ENABLE(BOYIA_PLATFORM_VIEW)
 LVoid RenderGraphicsContext::drawPlatform(const LRect& rect, LVoid* platformView)
 {
@@ -96,7 +103,12 @@ LVoid RenderGraphicsContext::drawPlatform(const LRect& rect, LVoid* platformView
 
 LVoid RenderGraphicsContext::drawText(const String& text, const LRect& rect, TextAlign align)
 {
+    ItemPainter* painter = currentPainter();
+    
+    RenderTextCommand* cmd = new RenderTextCommand(rect, m_color, m_font, text);
+    painter->buffer->addElement(cmd);
 }
+
 LVoid RenderGraphicsContext::setBrushStyle(BrushStyle aBrushStyle)
 {
 }
@@ -108,12 +120,15 @@ LVoid RenderGraphicsContext::setBrushColor(const LColor& aColor)
 {
     m_color = aColor;
 }
+
 LVoid RenderGraphicsContext::setPenColor(const LColor& aColor)
 {
+    m_color = aColor;
 }
 
 LVoid RenderGraphicsContext::setFont(const LFont& font)
 {
+    m_font = font;
 }
 
 LVoid RenderGraphicsContext::reset()
@@ -169,10 +184,14 @@ LVoid RenderGraphicsContext::setHtmlView(ViewPainter* item)
 LVoid RenderGraphicsContext::save()
 {
 }
+
 LVoid RenderGraphicsContext::clipRect(const LRect& rect)
 {
+    m_clipRect = (LRect*)& rect;
 }
+
 LVoid RenderGraphicsContext::restore()
 {
+    m_clipRect = kBoyiaNull;
 }
 }

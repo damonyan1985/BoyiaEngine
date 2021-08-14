@@ -42,10 +42,10 @@ public:
 
 class RenderImageCommand : public RenderCommand {
 public:
-    RenderImageCommand(const LRect& rect, const LColor& color, LImage* image);
+    RenderImageCommand(const LRect& rect, const LColor& color, const LImage* image);
     virtual LInt type();
 
-    LImage* image;
+    const LImage* image;
 };
 
 class RenderVideoCommand : public RenderCommand {

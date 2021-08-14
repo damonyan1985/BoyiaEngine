@@ -2,15 +2,22 @@
 #define RenderThread_h
 
 #include "MessageThread.h"
+#include "IRenderEngine.h"
 
 namespace yanbo {
 // 渲染与UI逻辑进行分离
 class RenderThread : public MessageThread {
 public:
+    enum MessageType {
+        kRenderInit = 1,
+        kRenderReset,
+        kRenderLayerTree,
+    };
+    RenderThread();
     virtual LVoid handleMessage(Message* msg);
 
 private:
-    
+    IRenderEngine* m_renderer;
 };
 }
 

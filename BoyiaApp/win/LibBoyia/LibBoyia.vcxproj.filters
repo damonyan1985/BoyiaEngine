@@ -489,6 +489,12 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderGraphicsContext.h">
       <Filter>boyia\kernel\render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\IRenderEngine.h">
+      <Filter>boyia\kernel\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\RenderEngineWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -832,6 +838,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderGraphicsContext.cpp">
       <Filter>boyia\kernel\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\RenderEngineWin.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,7 @@ LInt RenderTextCommand::type()
     return RenderCommand::kRenderText;
 }
 
-RenderImageCommand::RenderImageCommand(const LRect& rect, const LColor& color, LImage* commandImage)
+RenderImageCommand::RenderImageCommand(const LRect& rect, const LColor& color, const LImage* commandImage)
     : RenderCommand(rect, color)
     , image(commandImage)
 {

@@ -51,6 +51,8 @@ private:
     LVoid submit(LVoid* view, RenderLayer* parentLayer);
     ItemPainter* currentPainter();
 
+    LRect* m_clipRect;
+    LFont m_font;
     LVoid* m_item;
     LColor m_color;
 };
