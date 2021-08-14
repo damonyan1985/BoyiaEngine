@@ -7,7 +7,7 @@
 
 namespace yanbo {
 using RenderCommandBuffer = KVector<BoyiaPtr<RenderCommand>>;
-class RenderLayer : public BoyiaRef {
+class RenderLayer {
 public:
     LInt layerId() const;
     LVoid addChild(RenderLayer* layer);
@@ -15,7 +15,7 @@ public:
 
 public:
     LInt m_layerId;
-    KVector<BoyiaPtr<RenderLayer>> m_children;
+    KVector<OwnerPtr<RenderLayer>> m_children;
     //OwnerPtr<RenderCommandBuffer> m_buffer;
     RenderCommandBuffer* m_buffer;
 };
