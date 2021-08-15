@@ -1,6 +1,26 @@
 #include "RenderLayer.h"
 
 namespace yanbo {
+CollectBufferMap RenderLayer::s_collectBufferMap;
+
+LVoid RenderLayer::clearBuffer(KVector<LUintPtr>* buffers)
+{
+    if (!buffers) {
+        return;
+    }
+
+    for (LInt i = 0; i < buffers->size(); i++) {
+        s_collectBufferMap.remove(HashPtr(buffers->elementAt(i)));
+    }
+
+    delete buffers;
+}
+
+RenderLayer::~RenderLayer()
+{
+    s_collectBufferMap.put(HashPtr((LUintPtr)m_buffer), m_buffer);
+}
+
 LInt RenderLayer::layerId() const
 {
     return m_layerId;

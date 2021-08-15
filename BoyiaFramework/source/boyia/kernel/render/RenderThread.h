@@ -20,7 +20,7 @@ public:
     
     LVoid renderInit();
     LVoid renderReset();
-    LVoid renderLayerTree(RenderLayer* rootLayer);
+    LVoid renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector);
 
     IRenderEngine* getRenderer() const;
 

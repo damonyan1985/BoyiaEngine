@@ -26,6 +26,7 @@ LVoid RenderThread::handleMessage(Message* msg)
     case kRenderLayerTree: {
         OwnerPtr<RenderLayer> layer = static_cast<RenderLayer*>(msg->obj);
         m_renderer->render(layer);
+        RenderLayer::clearBuffer(reinterpret_cast<KVector<LUintPtr>*>(msg->arg0));
     } break;
     default: {
     } break;
@@ -50,11 +51,12 @@ LVoid RenderThread::renderReset()
     notify();
 }
 
-LVoid RenderThread::renderLayerTree(RenderLayer* rootLayer)
+LVoid RenderThread::renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector)
 {
     Message* msg = m_queue->obtain();
     msg->type = kRenderLayerTree;
     msg->obj = rootLayer;
+    msg->arg0 = (LIntPtr)collector;
 
     m_queue->push(msg);
     notify();

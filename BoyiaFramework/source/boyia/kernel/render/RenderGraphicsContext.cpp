@@ -12,8 +12,11 @@ public:
 
     // 每次重新创建RenderCommandBuffer
     // RenderCommandBuffer的释放由渲染线程管理
-    LVoid clear()
+    LVoid clear(KVector<LUintPtr>* collector)
     {
+        if (collector) {
+            collector->addElement((LUintPtr)buffer);
+        }
         buffer = new RenderCommandBuffer(0, 20);
     }
 
@@ -22,6 +25,7 @@ public:
 
 RenderGraphicsContext::RenderGraphicsContext()
     : m_clipRect(kBoyiaNull)
+    , m_collectBuffers(new KVector<LUintPtr>(0, 20))
 {
 }
 
@@ -174,13 +178,16 @@ LVoid RenderGraphicsContext::submit()
      // 生成RenderLayer树，并提交给渲染线程
     RenderLayer* layer = new RenderLayer();
     submit(yanbo::UIView::current()->getDocument()->getRenderTreeRoot(), layer);
-    RenderThread::instance()->renderLayerTree(layer);
+    RenderThread::instance()->renderLayerTree(layer, m_collectBuffers);
+    // 每次提交后重置回收器
+    m_collectBuffers = new KVector<LUintPtr>(0, 20);
 }
 
+// 设置setHtmlView表示需要重新绘制，因而需要清空buffer
 LVoid RenderGraphicsContext::setHtmlView(ViewPainter* item)
 {
     m_item = item;
-    currentPainter()->clear();
+    currentPainter()->clear(m_collectBuffers);
 }
 
 LVoid RenderGraphicsContext::save()

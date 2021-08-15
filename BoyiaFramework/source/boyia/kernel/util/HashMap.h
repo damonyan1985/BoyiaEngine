@@ -163,6 +163,8 @@ public:
                 delete ptr;
                 return;
             }
+
+            current = current->next;
         }
     }
 

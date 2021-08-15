@@ -56,6 +56,7 @@ private:
     LVoid* m_item;
     LColor m_brushColor;
     LColor m_penColor;
+    KVector<LUintPtr>* m_collectBuffers;
 };
 }
 
