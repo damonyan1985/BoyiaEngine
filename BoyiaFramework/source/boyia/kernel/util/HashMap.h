@@ -201,7 +201,7 @@ private:
         LInt index = indexHash(hash);
         if (m_table[index]) {
             // 遍历hash碰撞链表，比较key值
-            // 如果key值相同，则直接复制，否则
+            // 如果key值相同，则直接赋值，否则
             HashMapEntryPtr entry = m_table[index];
             for (; entry; entry = entry->next) {
                 if (hash == entry->hash && entry->key == key) {
