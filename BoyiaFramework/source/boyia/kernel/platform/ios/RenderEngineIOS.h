@@ -9,6 +9,7 @@
 #define RenderEngineIOS_h
 
 #include "IRenderEngine.h"
+#include "ShaderType.h"
 
 @class IOSRenderer;
 
@@ -28,7 +29,10 @@ public:
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
     
+    LVoid setBuffer();
+    
 private:
+    KVector<VertexAttributes> m_vertexs;
     IOSRenderer* m_renderer;
 };
 }

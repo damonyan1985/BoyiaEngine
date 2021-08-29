@@ -7,7 +7,7 @@
 #include "RenderEngineIOS.h"
 #include "ShaderType.h"
 #include "PixelRatio.h"
-#include "ShaderType.h"
+
 
 // Need set xcode build settings Preprocessing
 namespace yanbo {
@@ -33,6 +33,7 @@ static LVoid screenToMetalPoint(
 // TODO
 RenderEngineIOS::RenderEngineIOS()
     : m_renderer(kBoyiaNull)
+    , m_vertexs(0, 256)
 {
 }
 
@@ -63,40 +64,77 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     LColor& color = cmd->color;
     
     float x, y;
-    VertexAttributes attr[6];
     
+    
+    VertexAttributes attr;
     // right, bottom
     screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr[0].aPosition = {x, y, 0, 1};
-    attr[0].aColor = METAL_COLOR(color);
-    
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
     // left, bottom
     screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
-    attr[1].aPosition = {x, y, 0, 1};
-    attr[1].aColor = METAL_COLOR(color);
-    
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
     // left, top
     screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr[2].aPosition = {x, y, 0, 1};
-    attr[2].aColor = METAL_COLOR(color);
-    
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
     // right, bottom
     screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr[3].aPosition = {x, y, 0, 1};
-    attr[3].aColor = METAL_COLOR(color);
-    
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
     // left, top
     screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr[4].aPosition = {x, y, 0, 1};
-    attr[4].aColor = METAL_COLOR(color);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
+    // right, top
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+    
+    
+#if 0
+    // left, bottom
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
     
     // right, top
     screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
-    attr[5].aPosition = {x, y, 0, 1};
-    attr[5].aColor = METAL_COLOR(color);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
     
-   
-    [m_renderer setBuffer:&attr size:sizeof(attr)];
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    m_vertexs.addElement(attr);
+#endif
+}
+
+LVoid RenderEngineIOS::setBuffer()
+{
+    NSLog(@"setBuffer() size=%d", m_vertexs.size());
+    [m_renderer setBuffer:m_vertexs.getBuffer() size:(m_vertexs.size() * sizeof(VertexAttributes))];
 }
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)

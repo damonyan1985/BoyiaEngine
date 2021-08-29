@@ -21,7 +21,9 @@ class Client : public yanbo::NetworkClient {
 public:
     virtual LVoid onDataReceived(const LByte* data, LInt size)
     {
-        m_builder.append(data);
+        LByte* destData = new LByte[size];
+        util::LMemcpy(destData, data, size);
+        m_builder.append(destData, 0, size, LFalse);
     }
     
     virtual LVoid onStatusCode(LInt statusCode)
@@ -102,6 +104,7 @@ private:
     return self;
 }
 
+// 初始化metal环境
 -(void)initMetal:(CAMetalLayer*)layer {
     self.metalLayer = layer;
     id device = MTLCreateSystemDefaultDevice();
@@ -152,12 +155,15 @@ private:
 
 -(void)render {
     CGFloat statusBar = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    LRect rect(100, 100 + statusBar, 300, 300);
-    yanbo::RenderRectCommand* cmd = new yanbo::RenderRectCommand(rect, LColor(0, 255, 0, 255));
-    //yanbo::RenderCommandBuffer* buffer = new yanbo::RenderCommandBuffer;
-    //buffer->addElement(cmd);
-    //yanbo::RenderLayer* layer = new yanbo::RenderLayer();
-    _engine->renderRect(cmd);
+    LRect rect1(100, 100 + statusBar, 300, 300);
+    yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
+    _engine->renderRect(cmd1);
+    
+    LRect rect2(100, 600 + statusBar, 300, 300);
+    yanbo::RenderRectCommand* cmd2 = new yanbo::RenderRectCommand(rect2, LColor(0, 0, 255, 255));
+    _engine->renderRect(cmd2);
+    
+    _engine->setBuffer();
     
     id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
     
@@ -181,11 +187,28 @@ private:
                             offset:0
                            atIndex:0];
     
+//    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+//                      vertexStart:0
+//                      vertexCount:6];
     
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0
-                      vertexCount:6];
+                      vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
+
     
+// 如果使用索引
+//    id<MTLBuffer> indexBuffer = [self.metalLayer.device newBufferWithBytes:index length:sizeof(index) options:MTLResourceStorageModeShared];
+//    UInt16 index[12] = {
+//        0, 1, 2, 2, 3, 0,
+//        0 + 4, 1 + 4, 2 + 4, 2 + 4, 3 + 4, 0 + 4,
+//        //6, 7, 8, 9, 10, 11
+//    };
+//
+//    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+//                              indexCount:indexBuffer.length/sizeof(UInt16)
+//                               indexType:MTLIndexTypeUInt16
+//                             indexBuffer:indexBuffer
+//                       indexBufferOffset:0];
     
     [renderEncoder endEncoding];
     
