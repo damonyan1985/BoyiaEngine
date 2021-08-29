@@ -135,7 +135,7 @@ dependencies {
     debugImplementation gradle.library.leakcanary_debug
     releaseImplementation gradle.library.leakcanary_release
 
-    implementation project(':advert')
+    //implementation project(':advert')
     implementation gradle.library.multidexLib
     implementation "com.android.support:appcompat-v7:28.0.0"
     implementation "com.android.support:support-annotations:28.0.0"

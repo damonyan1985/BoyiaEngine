@@ -23,7 +23,7 @@ public:
     void waitOnNotify();
     void notify();
     void waitTimeOut(long time);
-    int getId();
+    LUint64 getId();
 
     static void sleepMS(long time);
     virtual void stop();

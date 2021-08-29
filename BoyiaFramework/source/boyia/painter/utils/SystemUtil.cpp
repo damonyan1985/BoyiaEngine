@@ -5,6 +5,8 @@
 #include <time.h>
 #elif ENABLE(BOYIA_WINDOWS)
 #include <sys/timeb.h>
+#elif ENABLE(BOYIA_IOS)
+#include <sys/time.h>
 #endif
 
 extern LVoid BoyiaLog(const char* format, ...);
@@ -12,7 +14,7 @@ extern LVoid BoyiaLog(const char* format, ...);
 namespace yanbo {
 long SystemUtil::getSystemTime()
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     struct timeval nowTimeval;
     gettimeofday(&nowTimeval, NULL);
     long f = nowTimeval.tv_sec * 1000 + (nowTimeval.tv_usec / 1000);
@@ -26,7 +28,7 @@ long SystemUtil::getSystemTime()
 
 long SystemUtil::getSystemMicroTime()
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     struct timeval nowTimeval;
     gettimeofday(&nowTimeval, NULL);
     long f = nowTimeval.tv_sec * 1000 * 1000 + nowTimeval.tv_usec;

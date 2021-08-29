@@ -1,6 +1,6 @@
 package com.boyia.app.shell;
 
-import com.boyia.app.advert.platform.TTAdSplashManager;
+//import com.boyia.app.advert.platform.TTAdSplashManager;
 import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
@@ -28,7 +28,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
     private static final String BOYIA_RECEIVE_ACTION = "com.boyia.app.broadcast";
     private boolean mNeedExit = false;
     private BoyiaBroadcast mBroadcast;
-    private TTAdSplashManager mSplashManager;
+    //private TTAdSplashManager mSplashManager;
     private IBinder mBinder;
 
     @Override
@@ -39,9 +39,10 @@ public class BoyiaMainActivity extends BoyiaActivity {
     @Override
     protected void initBoyiaView() {
         initContainer();
-        mSplashManager = new TTAdSplashManager();
-        mSplashManager.loadSplashAd(this,
-                getContainer(), () -> startBoyiaUI());
+        // mSplashManager = new TTAdSplashManager();
+        // mSplashManager.loadSplashAd(this,
+        //         getContainer(), () -> startBoyiaUI());
+        startBoyiaUI();
         initIpc();
         initBroadcast();
     }

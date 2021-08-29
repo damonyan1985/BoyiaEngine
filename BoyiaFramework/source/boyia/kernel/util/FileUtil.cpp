@@ -5,7 +5,7 @@
 #include "UtilString.h"
 #include <stdio.h>
 #include <string.h>
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -67,6 +67,8 @@ bool FileUtil::isExist(const char* path)
     return access(path, F_OK) == 0;
 #elif ENABLE(BOYIA_WINDOWS)
     return _access(path, _A_NORMAL) != -1;
+#elif ENABLE(BOYIA_IOS)
+    return access(path, 0) == 0;
 #endif
 }
 
@@ -90,7 +92,7 @@ bool FileUtil::isDir(const char* path)
 
 bool FileUtil::isFile(const char* path)
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) {
         return S_ISREG(statbuf.st_mode) != 0; //判断文件是否为常规文件
@@ -99,6 +101,8 @@ bool FileUtil::isFile(const char* path)
     return false;
 #elif ENABLE(BOYIA_WINDOWS)
     return !isDir(path);
+//#elif ENABLE(BOYIA_IOS)
+//    return false;
 #endif
 }
 
@@ -180,7 +184,7 @@ LVoid FileUtil::deleteFile(const char* path)
 
 LInt FileUtil::createDir(const char* path)
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     return mkdir(path, S_IRWXU);
 #elif ENABLE(BOYIA_WINDOWS)
     wstring wpath = yanbo::CharConvertor::CharToWchar(path);

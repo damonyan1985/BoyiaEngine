@@ -1,5 +1,5 @@
-#ifndef FunshionUtil_h
-#define FunshionUtil_h
+#ifndef SystemUtil_h
+#define SystemUtil_h
 
 #include "PlatformLib.h"
 

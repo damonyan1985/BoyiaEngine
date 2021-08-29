@@ -130,6 +130,8 @@ UIThreadItem* UIThreadClientMap::getUIThreadItem(LInt id)
         item = next;
         next = next->next;
     }
+    
+    return kBoyiaNull;
 }
 
 LVoid UIThreadClientMap::removeItem(LInt id)

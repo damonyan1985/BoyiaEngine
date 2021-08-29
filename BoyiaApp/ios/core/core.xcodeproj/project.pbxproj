@@ -7,54 +7,493 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C28B83126CF9BB500953864 /* HttpEngineIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B83026CF9BB500953864 /* HttpEngineIOS.mm */; };
-		4C28B83226CF9C5E00953864 /* HttpEngineIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C7AE81526CF84D700946197 /* HttpEngineIOS.h */; };
-		4C28B83426CF9CAC00953864 /* ImageIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C28B83326CF9CAC00953864 /* ImageIOS.h */; };
-		4C28B83626CFA68400953864 /* ImageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B83526CFA68400953864 /* ImageIOS.mm */; };
-		4C28B83826CFCE2C00953864 /* BoyiaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B83726CFCE2B00953864 /* BoyiaViewController.m */; };
-		4C28B83B26CFCFD200953864 /* boyia.metal in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B83A26CFCFD200953864 /* boyia.metal */; };
-		4C28B83F26D09E7F00953864 /* ImageLoaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B83E26D09E7F00953864 /* ImageLoaderIOS.mm */; };
-		4C28B84226D1E40B00953864 /* BoyiaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B84126D1E40B00953864 /* BoyiaView.m */; };
 		4C28B84526D1F17C00953864 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C28B84426D1F17C00953864 /* MetalKit.framework */; };
-		4C28B87D26D2081500953864 /* ShaderType.h in Resources */ = {isa = PBXBuildFile; fileRef = 4C28B83C26CFD30500953864 /* ShaderType.h */; };
-		4C28B87E26D2081500953864 /* boyia.metal in Resources */ = {isa = PBXBuildFile; fileRef = 4C28B83A26CFCFD200953864 /* boyia.metal */; };
 		4C7AE80926CF837300946197 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C7AE80726CF837300946197 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CFDE41D26D490ED00A01683 /* BoyiaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE41926D490ED00A01683 /* BoyiaViewController.m */; };
+		4CFDE41E26D490ED00A01683 /* BoyiaViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE41A26D490ED00A01683 /* BoyiaViewController.h */; };
+		4CFDE41F26D490ED00A01683 /* BoyiaView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE41B26D490ED00A01683 /* BoyiaView.h */; };
+		4CFDE42026D490ED00A01683 /* BoyiaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE41C26D490ED00A01683 /* BoyiaView.m */; };
+		4CFDE42C26D493E200A01683 /* HttpEngineIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE42626D493E200A01683 /* HttpEngineIOS.mm */; };
+		4CFDE42D26D493E200A01683 /* ImageIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE42726D493E200A01683 /* ImageIOS.h */; };
+		4CFDE42E26D493E200A01683 /* ImageLoaderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE42826D493E200A01683 /* ImageLoaderIOS.h */; };
+		4CFDE42F26D493E200A01683 /* ImageLoaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE42926D493E200A01683 /* ImageLoaderIOS.mm */; };
+		4CFDE43026D493E200A01683 /* HttpEngineIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE42A26D493E200A01683 /* HttpEngineIOS.h */; };
+		4CFDE43126D493E200A01683 /* ImageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE42B26D493E200A01683 /* ImageIOS.mm */; };
+		4CFDE44D26D4ABEE00A01683 /* IdentityMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43226D4ABED00A01683 /* IdentityMap.h */; };
+		4CFDE44E26D4ABEF00A01683 /* RefCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43326D4ABED00A01683 /* RefCount.h */; };
+		4CFDE44F26D4ABEF00A01683 /* IDCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE43426D4ABEE00A01683 /* IDCreator.cpp */; };
+		4CFDE45026D4ABEF00A01683 /* BoyiaRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43526D4ABEE00A01683 /* BoyiaRef.h */; };
+		4CFDE45126D4ABEF00A01683 /* OwnerPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43626D4ABEE00A01683 /* OwnerPtr.h */; };
+		4CFDE45226D4ABEF00A01683 /* KList.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43726D4ABEE00A01683 /* KList.h */; };
+		4CFDE45326D4ABEF00A01683 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43826D4ABEE00A01683 /* WeakPtr.h */; };
+		4CFDE45426D4ABEF00A01683 /* InputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE43926D4ABEE00A01683 /* InputStream.cpp */; };
+		4CFDE45526D4ABEF00A01683 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43A26D4ABEE00A01683 /* HashMap.h */; };
+		4CFDE45626D4ABEF00A01683 /* BoyiaRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE43B26D4ABEE00A01683 /* BoyiaRef.cpp */; };
+		4CFDE45726D4ABEF00A01683 /* StringUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE43C26D4ABEE00A01683 /* StringUtils.cpp */; };
+		4CFDE45826D4ABEF00A01683 /* Stack.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43D26D4ABEE00A01683 /* Stack.h */; };
+		4CFDE45926D4ABEF00A01683 /* StringUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43E26D4ABEE00A01683 /* StringUtils.h */; };
+		4CFDE45A26D4ABEF00A01683 /* FileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE43F26D4ABEE00A01683 /* FileUtil.h */; };
+		4CFDE45B26D4ABEF00A01683 /* FileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE44026D4ABEE00A01683 /* FileUtil.cpp */; };
+		4CFDE45C26D4ABEF00A01683 /* UtilString.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44126D4ABEE00A01683 /* UtilString.h */; };
+		4CFDE45D26D4ABEF00A01683 /* HashUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44226D4ABEE00A01683 /* HashUtil.h */; };
+		4CFDE45E26D4ABEF00A01683 /* IDCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44326D4ABEE00A01683 /* IDCreator.h */; };
+		4CFDE45F26D4ABEF00A01683 /* PlatformLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44426D4ABEE00A01683 /* PlatformLib.h */; };
+		4CFDE46026D4ABEF00A01683 /* RefCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE44526D4ABEE00A01683 /* RefCount.cpp */; };
+		4CFDE46126D4ABEF00A01683 /* KListMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44626D4ABEE00A01683 /* KListMap.h */; };
+		4CFDE46226D4ABEF00A01683 /* InputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44726D4ABEE00A01683 /* InputStream.h */; };
+		4CFDE46326D4ABEF00A01683 /* KSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44826D4ABEE00A01683 /* KSet.h */; };
+		4CFDE46426D4ABEF00A01683 /* BoyiaPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44926D4ABEE00A01683 /* BoyiaPtr.h */; };
+		4CFDE46526D4ABEF00A01683 /* KVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE44A26D4ABEE00A01683 /* KVector.h */; };
+		4CFDE46626D4ABEF00A01683 /* PlatformLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE44B26D4ABEE00A01683 /* PlatformLib.cpp */; };
+		4CFDE46726D4ABEF00A01683 /* IdentityMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE44C26D4ABEE00A01683 /* IdentityMap.cpp */; };
+		4CFDE47526D4C2FE00A01683 /* BoyiaError.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE46C26D4C2FD00A01683 /* BoyiaError.h */; };
+		4CFDE47626D4C2FE00A01683 /* BoyiaMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE46D26D4C2FE00A01683 /* BoyiaMemory.h */; };
+		4CFDE47726D4C2FE00A01683 /* BoyiaCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE46E26D4C2FE00A01683 /* BoyiaCore.h */; };
+		4CFDE47826D4C2FE00A01683 /* BoyiaError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE46F26D4C2FE00A01683 /* BoyiaError.cpp */; };
+		4CFDE47926D4C2FE00A01683 /* BoyiaMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE47026D4C2FE00A01683 /* BoyiaMemory.cpp */; };
+		4CFDE47A26D4C2FE00A01683 /* BoyiaGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE47126D4C2FE00A01683 /* BoyiaGC.cpp */; };
+		4CFDE47B26D4C2FE00A01683 /* BoyiaValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE47226D4C2FE00A01683 /* BoyiaValue.h */; };
+		4CFDE47C26D4C2FE00A01683 /* BoyiaValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE47326D4C2FE00A01683 /* BoyiaValue.cpp */; };
+		4CFDE47D26D4C2FE00A01683 /* BoyiaCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE47426D4C2FE00A01683 /* BoyiaCore.cpp */; };
+		4CFDE48B26D4C35200A01683 /* BoyiaView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE48126D4C35200A01683 /* BoyiaView.h */; };
+		4CFDE48C26D4C35200A01683 /* BoyiaImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE48226D4C35200A01683 /* BoyiaImageView.h */; };
+		4CFDE48D26D4C35200A01683 /* BoyiaViewDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE48326D4C35200A01683 /* BoyiaViewDoc.cpp */; };
+		4CFDE48E26D4C35200A01683 /* BoyiaImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE48426D4C35200A01683 /* BoyiaImageView.cpp */; };
+		4CFDE48F26D4C35200A01683 /* BoyiaView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE48526D4C35200A01683 /* BoyiaView.cpp */; };
+		4CFDE49026D4C35200A01683 /* BoyiaViewGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE48626D4C35200A01683 /* BoyiaViewGroup.cpp */; };
+		4CFDE49126D4C35200A01683 /* BoyiaInputView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE48726D4C35200A01683 /* BoyiaInputView.h */; };
+		4CFDE49226D4C35200A01683 /* BoyiaInputView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE48826D4C35200A01683 /* BoyiaInputView.cpp */; };
+		4CFDE49326D4C35200A01683 /* BoyiaViewDoc.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE48926D4C35200A01683 /* BoyiaViewDoc.h */; };
+		4CFDE49426D4C35200A01683 /* BoyiaViewGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE48A26D4C35200A01683 /* BoyiaViewGroup.h */; };
+		4CFDE4A126D4C3A200A01683 /* BoyiaNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE49526D4C3A200A01683 /* BoyiaNetwork.h */; };
+		4CFDE4A226D4C3A200A01683 /* BoyiaAsyncEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE49626D4C3A200A01683 /* BoyiaAsyncEvent.h */; };
+		4CFDE4A326D4C3A200A01683 /* BoyiaRuntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49726D4C3A200A01683 /* BoyiaRuntime.cpp */; };
+		4CFDE4A426D4C3A200A01683 /* BoyiaLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49826D4C3A200A01683 /* BoyiaLib.cpp */; };
+		4CFDE4A526D4C3A200A01683 /* BoyiaSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE49926D4C3A200A01683 /* BoyiaSocket.h */; };
+		4CFDE4A626D4C3A200A01683 /* BoyiaSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49A26D4C3A200A01683 /* BoyiaSocket.cpp */; };
+		4CFDE4A726D4C3A200A01683 /* BoyiaAsyncEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49B26D4C3A200A01683 /* BoyiaAsyncEvent.cpp */; };
+		4CFDE4A826D4C3A200A01683 /* BoyiaBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49C26D4C3A200A01683 /* BoyiaBase.cpp */; };
+		4CFDE4A926D4C3A200A01683 /* BoyiaRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE49D26D4C3A200A01683 /* BoyiaRuntime.h */; };
+		4CFDE4AA26D4C3A200A01683 /* BoyiaNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE49E26D4C3A200A01683 /* BoyiaNetwork.cpp */; };
+		4CFDE4AB26D4C3A200A01683 /* BoyiaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE49F26D4C3A200A01683 /* BoyiaBase.h */; };
+		4CFDE4AC26D4C3A200A01683 /* BoyiaLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4A026D4C3A200A01683 /* BoyiaLib.h */; };
+		4CFDE4AF26D4C3B200A01683 /* JSONParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4AD26D4C3B200A01683 /* JSONParser.cpp */; };
+		4CFDE4B026D4C3B200A01683 /* JSONParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4AE26D4C3B200A01683 /* JSONParser.h */; };
+		4CFDE4BA26D4C45000A01683 /* cJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4B826D4C45000A01683 /* cJSON.h */; };
+		4CFDE4BB26D4C45000A01683 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4B926D4C45000A01683 /* cJSON.c */; };
+		4CFDE4D726D4C46C00A01683 /* crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4BD26D4C46B00A01683 /* crc32.h */; };
+		4CFDE4D826D4C46C00A01683 /* deflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4BE26D4C46B00A01683 /* deflate.h */; };
+		4CFDE4D926D4C46C00A01683 /* inffast.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4BF26D4C46B00A01683 /* inffast.h */; };
+		4CFDE4DA26D4C46C00A01683 /* inffixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4C026D4C46B00A01683 /* inffixed.h */; };
+		4CFDE4DB26D4C46C00A01683 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C126D4C46B00A01683 /* zutil.c */; };
+		4CFDE4DC26D4C46C00A01683 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C226D4C46B00A01683 /* compress.c */; };
+		4CFDE4DD26D4C46C00A01683 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C326D4C46B00A01683 /* gzlib.c */; };
+		4CFDE4DE26D4C46C00A01683 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C426D4C46B00A01683 /* gzread.c */; };
+		4CFDE4DF26D4C46C00A01683 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C526D4C46B00A01683 /* inflate.c */; };
+		4CFDE4E026D4C46C00A01683 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C626D4C46B00A01683 /* gzwrite.c */; };
+		4CFDE4E126D4C46C00A01683 /* inftrees.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4C726D4C46B00A01683 /* inftrees.h */; };
+		4CFDE4E226D4C46C00A01683 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4C826D4C46B00A01683 /* inffast.c */; };
+		4CFDE4E326D4C46C00A01683 /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4C926D4C46B00A01683 /* zlib.h */; };
+		4CFDE4E426D4C46C00A01683 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4CA26D4C46B00A01683 /* trees.c */; };
+		4CFDE4E526D4C46C00A01683 /* zconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4CB26D4C46B00A01683 /* zconf.h */; };
+		4CFDE4E626D4C46C00A01683 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4CC26D4C46B00A01683 /* infback.c */; };
+		4CFDE4E726D4C46C00A01683 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4CD26D4C46B00A01683 /* crc32.c */; };
+		4CFDE4E826D4C46C00A01683 /* trees.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4CE26D4C46B00A01683 /* trees.h */; };
+		4CFDE4E926D4C46C00A01683 /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4CF26D4C46B00A01683 /* zutil.h */; };
+		4CFDE4EA26D4C46C00A01683 /* gzguts.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4D026D4C46B00A01683 /* gzguts.h */; };
+		4CFDE4EB26D4C46C00A01683 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4D126D4C46B00A01683 /* deflate.c */; };
+		4CFDE4EC26D4C46C00A01683 /* inflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4D226D4C46B00A01683 /* inflate.h */; };
+		4CFDE4ED26D4C46C00A01683 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4D326D4C46B00A01683 /* adler32.c */; };
+		4CFDE4EE26D4C46C00A01683 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4D426D4C46B00A01683 /* gzclose.c */; };
+		4CFDE4EF26D4C46C00A01683 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4D526D4C46B00A01683 /* inftrees.c */; };
+		4CFDE4F026D4C46C00A01683 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4D626D4C46C00A01683 /* uncompr.c */; };
+		4CFDE4F826D4C48F00A01683 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4F126D4C48E00A01683 /* zip.c */; };
+		4CFDE4F926D4C48F00A01683 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4F226D4C48E00A01683 /* crypt.h */; };
+		4CFDE4FA26D4C48F00A01683 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4F326D4C48E00A01683 /* unzip.c */; };
+		4CFDE4FB26D4C48F00A01683 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4F426D4C48E00A01683 /* zip.h */; };
+		4CFDE4FC26D4C48F00A01683 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4F526D4C48E00A01683 /* ioapi.c */; };
+		4CFDE4FD26D4C48F00A01683 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4F626D4C48F00A01683 /* unzip.h */; };
+		4CFDE4FE26D4C48F00A01683 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE4F726D4C48F00A01683 /* ioapi.h */; };
+		4CFDE50126D4C4B000A01683 /* TinyXml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE4FF26D4C4B000A01683 /* TinyXml2.cpp */; };
+		4CFDE50226D4C4B000A01683 /* TinyXml2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE50026D4C4B000A01683 /* TinyXml2.h */; };
+		4CFDE50E26D4C54C00A01683 /* AppStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE50626D4C54C00A01683 /* AppStack.cpp */; };
+		4CFDE50F26D4C54C00A01683 /* AppManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE50726D4C54C00A01683 /* AppManager.cpp */; };
+		4CFDE51026D4C54C00A01683 /* AppManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE50826D4C54C00A01683 /* AppManager.h */; };
+		4CFDE51126D4C54C00A01683 /* AppStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE50926D4C54C00A01683 /* AppStack.h */; };
+		4CFDE51226D4C54C00A01683 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE50A26D4C54C00A01683 /* Application.h */; };
+		4CFDE51326D4C54C00A01683 /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE50B26D4C54C00A01683 /* Application.cpp */; };
+		4CFDE51426D4C54C00A01683 /* AppInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE50C26D4C54C00A01683 /* AppInfo.h */; };
+		4CFDE51526D4C54C00A01683 /* AppInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE50D26D4C54C00A01683 /* AppInfo.cpp */; };
+		4CFDE51926D4C55F00A01683 /* DOMBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE51726D4C55F00A01683 /* DOMBuilder.h */; };
+		4CFDE51A26D4C55F00A01683 /* DOMBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE51826D4C55F00A01683 /* DOMBuilder.cpp */; };
+		4CFDE52326D4C57000A01683 /* LBaseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE51C26D4C57000A01683 /* LBaseView.h */; };
+		4CFDE52426D4C57000A01683 /* LBaseView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE51D26D4C57000A01683 /* LBaseView.cpp */; };
+		4CFDE52526D4C57000A01683 /* LEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE51E26D4C57000A01683 /* LEvent.h */; };
+		4CFDE52626D4C57000A01683 /* LColorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE51F26D4C57000A01683 /* LColorUtil.h */; };
+		4CFDE52726D4C57000A01683 /* LGdi.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE52026D4C57000A01683 /* LGdi.h */; };
+		4CFDE52826D4C57000A01683 /* LColorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE52126D4C57000A01683 /* LColorUtil.cpp */; };
+		4CFDE52926D4C57000A01683 /* LGraphic.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE52226D4C57000A01683 /* LGraphic.h */; };
+		4CFDE53026D4C58200A01683 /* NetworkBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE52B26D4C58200A01683 /* NetworkBase.h */; };
+		4CFDE53126D4C58200A01683 /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE52C26D4C58200A01683 /* ResourceLoader.h */; };
+		4CFDE53226D4C58200A01683 /* ResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE52D26D4C58200A01683 /* ResourceLoader.cpp */; };
+		4CFDE53326D4C58200A01683 /* AppLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE52E26D4C58200A01683 /* AppLoader.cpp */; };
+		4CFDE53426D4C58200A01683 /* AppLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE52F26D4C58200A01683 /* AppLoader.h */; };
+		4CFDE53C26D4C5B300A01683 /* IRenderEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE53726D4C5B300A01683 /* IRenderEngine.h */; };
+		4CFDE53D26D4C5B300A01683 /* RenderGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE53826D4C5B300A01683 /* RenderGraphicsContext.h */; };
+		4CFDE53E26D4C5B300A01683 /* RenderThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE53926D4C5B300A01683 /* RenderThread.cpp */; };
+		4CFDE53F26D4C5B300A01683 /* RenderThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE53A26D4C5B300A01683 /* RenderThread.h */; };
+		4CFDE54026D4C5B300A01683 /* RenderGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE53B26D4C5B300A01683 /* RenderGraphicsContext.cpp */; };
+		4CFDE54526D4C5C000A01683 /* RenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE54126D4C5C000A01683 /* RenderLayer.h */; };
+		4CFDE54626D4C5C000A01683 /* RenderLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE54226D4C5C000A01683 /* RenderLayer.cpp */; };
+		4CFDE54726D4C5C000A01683 /* RenderCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE54326D4C5C000A01683 /* RenderCommand.h */; };
+		4CFDE54826D4C5C000A01683 /* RenderCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE54426D4C5C000A01683 /* RenderCommand.cpp */; };
+		4CFDE55626D4C5F200A01683 /* DoctreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE54A26D4C5F200A01683 /* DoctreeNode.cpp */; };
+		4CFDE55726D4C5F200A01683 /* StyleParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE54B26D4C5F200A01683 /* StyleParser.cpp */; };
+		4CFDE55826D4C5F200A01683 /* DoctreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE54C26D4C5F200A01683 /* DoctreeNode.h */; };
+		4CFDE55926D4C5F200A01683 /* StyleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE54D26D4C5F200A01683 /* StyleParser.h */; };
+		4CFDE55A26D4C5F200A01683 /* StyleManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE54E26D4C5F200A01683 /* StyleManager.cpp */; };
+		4CFDE55B26D4C5F200A01683 /* Style.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE54F26D4C5F200A01683 /* Style.h */; };
+		4CFDE55C26D4C5F200A01683 /* StyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE55026D4C5F200A01683 /* StyleRule.h */; };
+		4CFDE55D26D4C5F200A01683 /* StyleTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE55126D4C5F200A01683 /* StyleTags.h */; };
+		4CFDE55E26D4C5F200A01683 /* Style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE55226D4C5F200A01683 /* Style.cpp */; };
+		4CFDE55F26D4C5F200A01683 /* StyleTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE55326D4C5F200A01683 /* StyleTags.cpp */; };
+		4CFDE56026D4C5F200A01683 /* StyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE55426D4C5F200A01683 /* StyleRule.cpp */; };
+		4CFDE56126D4C5F200A01683 /* StyleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE55526D4C5F200A01683 /* StyleManager.h */; };
+		4CFDE56E26D4C61D00A01683 /* UIViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE56426D4C61C00A01683 /* UIViewController.h */; };
+		4CFDE56F26D4C61D00A01683 /* UIThreadClientMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE56526D4C61C00A01683 /* UIThreadClientMap.h */; };
+		4CFDE57026D4C61D00A01683 /* UIOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE56626D4C61C00A01683 /* UIOperation.cpp */; };
+		4CFDE57126D4C61D00A01683 /* UIThreadClientMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE56726D4C61C00A01683 /* UIThreadClientMap.cpp */; };
+		4CFDE57226D4C61D00A01683 /* UIThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE56826D4C61C00A01683 /* UIThread.cpp */; };
+		4CFDE57326D4C61D00A01683 /* UIView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE56926D4C61C00A01683 /* UIView.cpp */; };
+		4CFDE57426D4C61D00A01683 /* UIOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE56A26D4C61C00A01683 /* UIOperation.h */; };
+		4CFDE57526D4C61D00A01683 /* UIView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE56B26D4C61D00A01683 /* UIView.h */; };
+		4CFDE57626D4C61D00A01683 /* UIViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE56C26D4C61D00A01683 /* UIViewController.cpp */; };
+		4CFDE57726D4C61D00A01683 /* UIThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE56D26D4C61D00A01683 /* UIThread.h */; };
+		4CFDE59426D4C63200A01683 /* HtmlRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE57926D4C63200A01683 /* HtmlRenderer.h */; };
+		4CFDE59526D4C63200A01683 /* BlockView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE57A26D4C63200A01683 /* BlockView.cpp */; };
+		4CFDE59626D4C63200A01683 /* HtmlDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE57B26D4C63200A01683 /* HtmlDocument.h */; };
+		4CFDE59726D4C63200A01683 /* InputView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE57C26D4C63200A01683 /* InputView.cpp */; };
+		4CFDE59826D4C63200A01683 /* RenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE57D26D4C63200A01683 /* RenderContext.h */; };
+		4CFDE59926D4C63200A01683 /* FormView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE57E26D4C63200A01683 /* FormView.h */; };
+		4CFDE59A26D4C63200A01683 /* VideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE57F26D4C63200A01683 /* VideoView.h */; };
+		4CFDE59B26D4C63200A01683 /* HtmlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58026D4C63200A01683 /* HtmlView.h */; };
+		4CFDE59C26D4C63200A01683 /* InlineView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58126D4C63200A01683 /* InlineView.cpp */; };
+		4CFDE59D26D4C63200A01683 /* LinkView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58226D4C63200A01683 /* LinkView.cpp */; };
+		4CFDE59E26D4C63200A01683 /* TextView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58326D4C63200A01683 /* TextView.cpp */; };
+		4CFDE59F26D4C63200A01683 /* VideoView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58426D4C63200A01683 /* VideoView.cpp */; };
+		4CFDE5A026D4C63200A01683 /* IViewListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58526D4C63200A01683 /* IViewListener.h */; };
+		4CFDE5A126D4C63200A01683 /* RenderContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58626D4C63200A01683 /* RenderContext.cpp */; };
+		4CFDE5A226D4C63200A01683 /* HtmlTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58726D4C63200A01683 /* HtmlTags.cpp */; };
+		4CFDE5A326D4C63300A01683 /* InputView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58826D4C63200A01683 /* InputView.h */; };
+		4CFDE5A426D4C63300A01683 /* TextView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58926D4C63200A01683 /* TextView.h */; };
+		4CFDE5A526D4C63300A01683 /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58A26D4C63200A01683 /* ImageView.h */; };
+		4CFDE5A626D4C63300A01683 /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58B26D4C63200A01683 /* ImageView.cpp */; };
+		4CFDE5A726D4C63300A01683 /* HtmlView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58C26D4C63200A01683 /* HtmlView.cpp */; };
+		4CFDE5A826D4C63300A01683 /* InlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58D26D4C63200A01683 /* InlineView.h */; };
+		4CFDE5A926D4C63300A01683 /* HtmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE58E26D4C63200A01683 /* HtmlDocument.cpp */; };
+		4CFDE5AA26D4C63300A01683 /* LinkView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE58F26D4C63200A01683 /* LinkView.h */; };
+		4CFDE5AB26D4C63300A01683 /* HtmlTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE59026D4C63200A01683 /* HtmlTags.h */; };
+		4CFDE5AC26D4C63300A01683 /* BlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE59126D4C63200A01683 /* BlockView.h */; };
+		4CFDE5AD26D4C63300A01683 /* FormView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE59226D4C63200A01683 /* FormView.cpp */; };
+		4CFDE5AE26D4C63300A01683 /* HtmlRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE59326D4C63200A01683 /* HtmlRenderer.cpp */; };
+		4CFDE5B126D4C63F00A01683 /* FlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5AF26D4C63F00A01683 /* FlexLayout.h */; };
+		4CFDE5B226D4C63F00A01683 /* FlexLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5B026D4C63F00A01683 /* FlexLayout.cpp */; };
+		4CFDE5C526D4C68A00A01683 /* ThreadPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5B426D4C68900A01683 /* ThreadPool.h */; };
+		4CFDE5C626D4C68A00A01683 /* MessageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5B526D4C68900A01683 /* MessageThread.cpp */; };
+		4CFDE5C726D4C68A00A01683 /* Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5B626D4C68900A01683 /* Lock.h */; };
+		4CFDE5C826D4C68A00A01683 /* TaskThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5B726D4C68900A01683 /* TaskThread.cpp */; };
+		4CFDE5C926D4C68A00A01683 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5B826D4C68900A01683 /* MessageQueue.cpp */; };
+		4CFDE5CA26D4C68A00A01683 /* ThreadPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5B926D4C68900A01683 /* ThreadPool.cpp */; };
+		4CFDE5CB26D4C68A00A01683 /* TaskThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5BA26D4C68900A01683 /* TaskThread.h */; };
+		4CFDE5CC26D4C68A00A01683 /* BaseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5BB26D4C68900A01683 /* BaseThread.h */; };
+		4CFDE5CD26D4C68A00A01683 /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5BC26D4C68A00A01683 /* MessageQueue.h */; };
+		4CFDE5CE26D4C68A00A01683 /* TaskBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5BD26D4C68A00A01683 /* TaskBase.h */; };
+		4CFDE5CF26D4C68A00A01683 /* BlockQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5BE26D4C68A00A01683 /* BlockQueue.cpp */; };
+		4CFDE5D026D4C68A00A01683 /* TaskBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5BF26D4C68A00A01683 /* TaskBase.cpp */; };
+		4CFDE5D126D4C68A00A01683 /* MessageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5C026D4C68A00A01683 /* MessageThread.h */; };
+		4CFDE5D226D4C68A00A01683 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5C126D4C68A00A01683 /* StringBuilder.cpp */; };
+		4CFDE5D326D4C68A00A01683 /* BlockQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5C226D4C68A00A01683 /* BlockQueue.h */; };
+		4CFDE5D426D4C68A00A01683 /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5C326D4C68A00A01683 /* StringBuilder.h */; };
+		4CFDE5D526D4C68A00A01683 /* AutoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5C426D4C68A00A01683 /* AutoLock.h */; };
+		4CFDE5D926D4CA0800A01683 /* SystemUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5D726D4CA0800A01683 /* SystemUtil.h */; };
+		4CFDE5DA26D4CA0800A01683 /* SystemUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5D826D4CA0800A01683 /* SystemUtil.cpp */; };
+		4CFDE5E326D4CB1200A01683 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5E126D4CB1200A01683 /* WebSocket.h */; };
+		4CFDE5E426D4CB1200A01683 /* WebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5E226D4CB1200A01683 /* WebSocket.cpp */; };
+		4CFDE5E826D4CB2200A01683 /* ZipEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5E626D4CB2200A01683 /* ZipEntry.cpp */; };
+		4CFDE5E926D4CB2200A01683 /* ZipEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5E726D4CB2200A01683 /* ZipEntry.h */; };
+		4CFDE5EF26D4D4FB00A01683 /* EditorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5ED26D4D4FB00A01683 /* EditorIOS.mm */; };
+		4CFDE5F726D4D78400A01683 /* PixelRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5F526D4D78400A01683 /* PixelRatio.cpp */; };
+		4CFDE5F826D4D78400A01683 /* PixelRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5F626D4D78400A01683 /* PixelRatio.h */; };
+		4CFDE5FA26D516AE00A01683 /* LockAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */; };
+		4CFDE5FC26D516DD00A01683 /* BaseThreadAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */; };
+		4CFDE5FE26D5184200A01683 /* PlatformBridgeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */; };
+		4CFDE60026D51A3E00A01683 /* MediaPlayerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */; };
+		4CFDE60226D51AA500A01683 /* FontIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60126D51AA500A01683 /* FontIOS.mm */; };
+		4CFDE60426D51B1C00A01683 /* LoaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60326D51B1C00A01683 /* LoaderIOS.mm */; };
+		4CFDE60626D51BBC00A01683 /* VsyncWaiterIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60526D51BBC00A01683 /* VsyncWaiterIOS.mm */; };
+		4CFDE60826D51C4F00A01683 /* RenderEngineIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60726D51C4F00A01683 /* RenderEngineIOS.mm */; };
+		4CFDE60B26D51E3200A01683 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60926D51E3200A01683 /* Animation.cpp */; };
+		4CFDE60C26D51E3200A01683 /* Animation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE60A26D51E3200A01683 /* Animation.h */; };
+		4CFDE60E26D51E3D00A01683 /* VsyncWaiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE60D26D51E3D00A01683 /* VsyncWaiter.h */; };
+		4CFDE65D26D8CE1C00A01683 /* metal.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4CFDE65626D8CC2100A01683 /* metal.bundle */; };
+		4CFDE66026D8FA7700A01683 /* ShaderType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE65E26D8FA7700A01683 /* ShaderType.h */; };
+		4CFDE66126D8FA7700A01683 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE65F26D8FA7700A01683 /* shaders.metal */; };
+		4CFDE66426D9DB1B00A01683 /* IOSRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE66326D9DB1B00A01683 /* IOSRenderer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4C28B83026CF9BB500953864 /* HttpEngineIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HttpEngineIOS.mm; sourceTree = "<group>"; };
-		4C28B83326CF9CAC00953864 /* ImageIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageIOS.h; sourceTree = "<group>"; };
-		4C28B83526CFA68400953864 /* ImageIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageIOS.mm; sourceTree = "<group>"; };
-		4C28B83726CFCE2B00953864 /* BoyiaViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BoyiaViewController.m; sourceTree = "<group>"; };
-		4C28B83926CFCE8000953864 /* BoyiaViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoyiaViewController.h; sourceTree = "<group>"; };
-		4C28B83A26CFCFD200953864 /* boyia.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = boyia.metal; sourceTree = "<group>"; };
-		4C28B83C26CFD30500953864 /* ShaderType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderType.h; sourceTree = "<group>"; };
-		4C28B83D26D09E4D00953864 /* ImageLoaderIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageLoaderIOS.h; sourceTree = "<group>"; };
-		4C28B83E26D09E7F00953864 /* ImageLoaderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageLoaderIOS.mm; sourceTree = "<group>"; };
-		4C28B84026D1E3FA00953864 /* BoyiaView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoyiaView.h; sourceTree = "<group>"; };
-		4C28B84126D1E40B00953864 /* BoyiaView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BoyiaView.m; sourceTree = "<group>"; };
 		4C28B84426D1F17C00953864 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
-		4C28B87526D203F700953864 /* bundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C28B87726D203F700953864 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C7AE80426CF837300946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE80726CF837300946197 /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		4C7AE80826CF837300946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4C7AE81526CF84D700946197 /* HttpEngineIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HttpEngineIOS.h; sourceTree = "<group>"; };
+		4CFDE41926D490ED00A01683 /* BoyiaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BoyiaViewController.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaViewController.m; sourceTree = "<group>"; };
+		4CFDE41A26D490ED00A01683 /* BoyiaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaViewController.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaViewController.h; sourceTree = "<group>"; };
+		4CFDE41B26D490ED00A01683 /* BoyiaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaView.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaView.h; sourceTree = "<group>"; };
+		4CFDE41C26D490ED00A01683 /* BoyiaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BoyiaView.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaView.m; sourceTree = "<group>"; };
+		4CFDE42626D493E200A01683 /* HttpEngineIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HttpEngineIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/HttpEngineIOS.mm; sourceTree = "<group>"; };
+		4CFDE42726D493E200A01683 /* ImageIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageIOS.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/ImageIOS.h; sourceTree = "<group>"; };
+		4CFDE42826D493E200A01683 /* ImageLoaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageLoaderIOS.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/ImageLoaderIOS.h; sourceTree = "<group>"; };
+		4CFDE42926D493E200A01683 /* ImageLoaderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ImageLoaderIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/ImageLoaderIOS.mm; sourceTree = "<group>"; };
+		4CFDE42A26D493E200A01683 /* HttpEngineIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HttpEngineIOS.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/HttpEngineIOS.h; sourceTree = "<group>"; };
+		4CFDE42B26D493E200A01683 /* ImageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ImageIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/ImageIOS.mm; sourceTree = "<group>"; };
+		4CFDE43226D4ABED00A01683 /* IdentityMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentityMap.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/IdentityMap.h; sourceTree = "<group>"; };
+		4CFDE43326D4ABED00A01683 /* RefCount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefCount.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/RefCount.h; sourceTree = "<group>"; };
+		4CFDE43426D4ABEE00A01683 /* IDCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDCreator.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/IDCreator.cpp; sourceTree = "<group>"; };
+		4CFDE43526D4ABEE00A01683 /* BoyiaRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaRef.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/BoyiaRef.h; sourceTree = "<group>"; };
+		4CFDE43626D4ABEE00A01683 /* OwnerPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OwnerPtr.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/OwnerPtr.h; sourceTree = "<group>"; };
+		4CFDE43726D4ABEE00A01683 /* KList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KList.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/KList.h; sourceTree = "<group>"; };
+		4CFDE43826D4ABEE00A01683 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WeakPtr.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/WeakPtr.h; sourceTree = "<group>"; };
+		4CFDE43926D4ABEE00A01683 /* InputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputStream.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/InputStream.cpp; sourceTree = "<group>"; };
+		4CFDE43A26D4ABEE00A01683 /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HashMap.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/HashMap.h; sourceTree = "<group>"; };
+		4CFDE43B26D4ABEE00A01683 /* BoyiaRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaRef.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/BoyiaRef.cpp; sourceTree = "<group>"; };
+		4CFDE43C26D4ABEE00A01683 /* StringUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringUtils.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/StringUtils.cpp; sourceTree = "<group>"; };
+		4CFDE43D26D4ABEE00A01683 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stack.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/Stack.h; sourceTree = "<group>"; };
+		4CFDE43E26D4ABEE00A01683 /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringUtils.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/StringUtils.h; sourceTree = "<group>"; };
+		4CFDE43F26D4ABEE00A01683 /* FileUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileUtil.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/FileUtil.h; sourceTree = "<group>"; };
+		4CFDE44026D4ABEE00A01683 /* FileUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileUtil.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/FileUtil.cpp; sourceTree = "<group>"; };
+		4CFDE44126D4ABEE00A01683 /* UtilString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UtilString.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/UtilString.h; sourceTree = "<group>"; };
+		4CFDE44226D4ABEE00A01683 /* HashUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HashUtil.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/HashUtil.h; sourceTree = "<group>"; };
+		4CFDE44326D4ABEE00A01683 /* IDCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDCreator.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/IDCreator.h; sourceTree = "<group>"; };
+		4CFDE44426D4ABEE00A01683 /* PlatformLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformLib.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/PlatformLib.h; sourceTree = "<group>"; };
+		4CFDE44526D4ABEE00A01683 /* RefCount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RefCount.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/RefCount.cpp; sourceTree = "<group>"; };
+		4CFDE44626D4ABEE00A01683 /* KListMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KListMap.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/KListMap.h; sourceTree = "<group>"; };
+		4CFDE44726D4ABEE00A01683 /* InputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputStream.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/InputStream.h; sourceTree = "<group>"; };
+		4CFDE44826D4ABEE00A01683 /* KSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KSet.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/KSet.h; sourceTree = "<group>"; };
+		4CFDE44926D4ABEE00A01683 /* BoyiaPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaPtr.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/BoyiaPtr.h; sourceTree = "<group>"; };
+		4CFDE44A26D4ABEE00A01683 /* KVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVector.h; path = ../../../BoyiaFramework/source/boyia/kernel/util/KVector.h; sourceTree = "<group>"; };
+		4CFDE44B26D4ABEE00A01683 /* PlatformLib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformLib.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/PlatformLib.cpp; sourceTree = "<group>"; };
+		4CFDE44C26D4ABEE00A01683 /* IdentityMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdentityMap.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/util/IdentityMap.cpp; sourceTree = "<group>"; };
+		4CFDE46C26D4C2FD00A01683 /* BoyiaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaError.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaError.h; sourceTree = "<group>"; };
+		4CFDE46D26D4C2FE00A01683 /* BoyiaMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaMemory.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaMemory.h; sourceTree = "<group>"; };
+		4CFDE46E26D4C2FE00A01683 /* BoyiaCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaCore.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaCore.h; sourceTree = "<group>"; };
+		4CFDE46F26D4C2FE00A01683 /* BoyiaError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaError.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaError.cpp; sourceTree = "<group>"; };
+		4CFDE47026D4C2FE00A01683 /* BoyiaMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaMemory.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaMemory.cpp; sourceTree = "<group>"; };
+		4CFDE47126D4C2FE00A01683 /* BoyiaGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaGC.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaGC.cpp; sourceTree = "<group>"; };
+		4CFDE47226D4C2FE00A01683 /* BoyiaValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaValue.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaValue.h; sourceTree = "<group>"; };
+		4CFDE47326D4C2FE00A01683 /* BoyiaValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaValue.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaValue.cpp; sourceTree = "<group>"; };
+		4CFDE47426D4C2FE00A01683 /* BoyiaCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaCore.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/core/BoyiaCore.cpp; sourceTree = "<group>"; };
+		4CFDE48126D4C35200A01683 /* BoyiaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaView.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaView.h; sourceTree = "<group>"; };
+		4CFDE48226D4C35200A01683 /* BoyiaImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaImageView.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaImageView.h; sourceTree = "<group>"; };
+		4CFDE48326D4C35200A01683 /* BoyiaViewDoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaViewDoc.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaViewDoc.cpp; sourceTree = "<group>"; };
+		4CFDE48426D4C35200A01683 /* BoyiaImageView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaImageView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaImageView.cpp; sourceTree = "<group>"; };
+		4CFDE48526D4C35200A01683 /* BoyiaView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaView.cpp; sourceTree = "<group>"; };
+		4CFDE48626D4C35200A01683 /* BoyiaViewGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaViewGroup.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaViewGroup.cpp; sourceTree = "<group>"; };
+		4CFDE48726D4C35200A01683 /* BoyiaInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaInputView.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaInputView.h; sourceTree = "<group>"; };
+		4CFDE48826D4C35200A01683 /* BoyiaInputView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaInputView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaInputView.cpp; sourceTree = "<group>"; };
+		4CFDE48926D4C35200A01683 /* BoyiaViewDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaViewDoc.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaViewDoc.h; sourceTree = "<group>"; };
+		4CFDE48A26D4C35200A01683 /* BoyiaViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaViewGroup.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/view/BoyiaViewGroup.h; sourceTree = "<group>"; };
+		4CFDE49526D4C3A200A01683 /* BoyiaNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaNetwork.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaNetwork.h; sourceTree = "<group>"; };
+		4CFDE49626D4C3A200A01683 /* BoyiaAsyncEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaAsyncEvent.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaAsyncEvent.h; sourceTree = "<group>"; };
+		4CFDE49726D4C3A200A01683 /* BoyiaRuntime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaRuntime.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaRuntime.cpp; sourceTree = "<group>"; };
+		4CFDE49826D4C3A200A01683 /* BoyiaLib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaLib.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaLib.cpp; sourceTree = "<group>"; };
+		4CFDE49926D4C3A200A01683 /* BoyiaSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaSocket.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaSocket.h; sourceTree = "<group>"; };
+		4CFDE49A26D4C3A200A01683 /* BoyiaSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaSocket.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaSocket.cpp; sourceTree = "<group>"; };
+		4CFDE49B26D4C3A200A01683 /* BoyiaAsyncEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaAsyncEvent.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaAsyncEvent.cpp; sourceTree = "<group>"; };
+		4CFDE49C26D4C3A200A01683 /* BoyiaBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaBase.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaBase.cpp; sourceTree = "<group>"; };
+		4CFDE49D26D4C3A200A01683 /* BoyiaRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaRuntime.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaRuntime.h; sourceTree = "<group>"; };
+		4CFDE49E26D4C3A200A01683 /* BoyiaNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoyiaNetwork.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaNetwork.cpp; sourceTree = "<group>"; };
+		4CFDE49F26D4C3A200A01683 /* BoyiaBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaBase.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaBase.h; sourceTree = "<group>"; };
+		4CFDE4A026D4C3A200A01683 /* BoyiaLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaLib.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/lib/BoyiaLib.h; sourceTree = "<group>"; };
+		4CFDE4AD26D4C3B200A01683 /* JSONParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSONParser.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/vm/json/JSONParser.cpp; sourceTree = "<group>"; };
+		4CFDE4AE26D4C3B200A01683 /* JSONParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParser.h; path = ../../../BoyiaFramework/source/boyia/kernel/vm/json/JSONParser.h; sourceTree = "<group>"; };
+		4CFDE4B826D4C45000A01683 /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cJSON.h; path = ../../../BoyiaFramework/source/thirdparty/cjson/cJSON.h; sourceTree = "<group>"; };
+		4CFDE4B926D4C45000A01683 /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cJSON.c; path = ../../../BoyiaFramework/source/thirdparty/cjson/cJSON.c; sourceTree = "<group>"; };
+		4CFDE4BD26D4C46B00A01683 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = ../../../BoyiaFramework/source/thirdparty/zip/crc32.h; sourceTree = "<group>"; };
+		4CFDE4BE26D4C46B00A01683 /* deflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = deflate.h; path = ../../../BoyiaFramework/source/thirdparty/zip/deflate.h; sourceTree = "<group>"; };
+		4CFDE4BF26D4C46B00A01683 /* inffast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inffast.h; path = ../../../BoyiaFramework/source/thirdparty/zip/inffast.h; sourceTree = "<group>"; };
+		4CFDE4C026D4C46B00A01683 /* inffixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inffixed.h; path = ../../../BoyiaFramework/source/thirdparty/zip/inffixed.h; sourceTree = "<group>"; };
+		4CFDE4C126D4C46B00A01683 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = ../../../BoyiaFramework/source/thirdparty/zip/zutil.c; sourceTree = "<group>"; };
+		4CFDE4C226D4C46B00A01683 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compress.c; path = ../../../BoyiaFramework/source/thirdparty/zip/compress.c; sourceTree = "<group>"; };
+		4CFDE4C326D4C46B00A01683 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = ../../../BoyiaFramework/source/thirdparty/zip/gzlib.c; sourceTree = "<group>"; };
+		4CFDE4C426D4C46B00A01683 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzread.c; path = ../../../BoyiaFramework/source/thirdparty/zip/gzread.c; sourceTree = "<group>"; };
+		4CFDE4C526D4C46B00A01683 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inflate.c; path = ../../../BoyiaFramework/source/thirdparty/zip/inflate.c; sourceTree = "<group>"; };
+		4CFDE4C626D4C46B00A01683 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzwrite.c; path = ../../../BoyiaFramework/source/thirdparty/zip/gzwrite.c; sourceTree = "<group>"; };
+		4CFDE4C726D4C46B00A01683 /* inftrees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inftrees.h; path = ../../../BoyiaFramework/source/thirdparty/zip/inftrees.h; sourceTree = "<group>"; };
+		4CFDE4C826D4C46B00A01683 /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inffast.c; path = ../../../BoyiaFramework/source/thirdparty/zip/inffast.c; sourceTree = "<group>"; };
+		4CFDE4C926D4C46B00A01683 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = ../../../BoyiaFramework/source/thirdparty/zip/zlib.h; sourceTree = "<group>"; };
+		4CFDE4CA26D4C46B00A01683 /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trees.c; path = ../../../BoyiaFramework/source/thirdparty/zip/trees.c; sourceTree = "<group>"; };
+		4CFDE4CB26D4C46B00A01683 /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zconf.h; path = ../../../BoyiaFramework/source/thirdparty/zip/zconf.h; sourceTree = "<group>"; };
+		4CFDE4CC26D4C46B00A01683 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = infback.c; path = ../../../BoyiaFramework/source/thirdparty/zip/infback.c; sourceTree = "<group>"; };
+		4CFDE4CD26D4C46B00A01683 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = ../../../BoyiaFramework/source/thirdparty/zip/crc32.c; sourceTree = "<group>"; };
+		4CFDE4CE26D4C46B00A01683 /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trees.h; path = ../../../BoyiaFramework/source/thirdparty/zip/trees.h; sourceTree = "<group>"; };
+		4CFDE4CF26D4C46B00A01683 /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zutil.h; path = ../../../BoyiaFramework/source/thirdparty/zip/zutil.h; sourceTree = "<group>"; };
+		4CFDE4D026D4C46B00A01683 /* gzguts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gzguts.h; path = ../../../BoyiaFramework/source/thirdparty/zip/gzguts.h; sourceTree = "<group>"; };
+		4CFDE4D126D4C46B00A01683 /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = deflate.c; path = ../../../BoyiaFramework/source/thirdparty/zip/deflate.c; sourceTree = "<group>"; };
+		4CFDE4D226D4C46B00A01683 /* inflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inflate.h; path = ../../../BoyiaFramework/source/thirdparty/zip/inflate.h; sourceTree = "<group>"; };
+		4CFDE4D326D4C46B00A01683 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = ../../../BoyiaFramework/source/thirdparty/zip/adler32.c; sourceTree = "<group>"; };
+		4CFDE4D426D4C46B00A01683 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../../BoyiaFramework/source/thirdparty/zip/gzclose.c; sourceTree = "<group>"; };
+		4CFDE4D526D4C46B00A01683 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inftrees.c; path = ../../../BoyiaFramework/source/thirdparty/zip/inftrees.c; sourceTree = "<group>"; };
+		4CFDE4D626D4C46C00A01683 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = uncompr.c; path = ../../../BoyiaFramework/source/thirdparty/zip/uncompr.c; sourceTree = "<group>"; };
+		4CFDE4F126D4C48E00A01683 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/zip.c; sourceTree = "<group>"; };
+		4CFDE4F226D4C48E00A01683 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/crypt.h; sourceTree = "<group>"; };
+		4CFDE4F326D4C48E00A01683 /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/unzip.c; sourceTree = "<group>"; };
+		4CFDE4F426D4C48E00A01683 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/zip.h; sourceTree = "<group>"; };
+		4CFDE4F526D4C48E00A01683 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/ioapi.c; sourceTree = "<group>"; };
+		4CFDE4F626D4C48F00A01683 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/unzip.h; sourceTree = "<group>"; };
+		4CFDE4F726D4C48F00A01683 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = ../../../BoyiaFramework/source/thirdparty/zip/minizip/ioapi.h; sourceTree = "<group>"; };
+		4CFDE4FF26D4C4B000A01683 /* TinyXml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TinyXml2.cpp; path = ../../../BoyiaFramework/source/thirdparty/tinyxml/TinyXml2.cpp; sourceTree = "<group>"; };
+		4CFDE50026D4C4B000A01683 /* TinyXml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TinyXml2.h; path = ../../../BoyiaFramework/source/thirdparty/tinyxml/TinyXml2.h; sourceTree = "<group>"; };
+		4CFDE50626D4C54C00A01683 /* AppStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppStack.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppStack.cpp; sourceTree = "<group>"; };
+		4CFDE50726D4C54C00A01683 /* AppManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppManager.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppManager.cpp; sourceTree = "<group>"; };
+		4CFDE50826D4C54C00A01683 /* AppManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppManager.h; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppManager.h; sourceTree = "<group>"; };
+		4CFDE50926D4C54C00A01683 /* AppStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppStack.h; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppStack.h; sourceTree = "<group>"; };
+		4CFDE50A26D4C54C00A01683 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Application.h; path = ../../../BoyiaFramework/source/boyia/kernel/app/Application.h; sourceTree = "<group>"; };
+		4CFDE50B26D4C54C00A01683 /* Application.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Application.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/app/Application.cpp; sourceTree = "<group>"; };
+		4CFDE50C26D4C54C00A01683 /* AppInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppInfo.h; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppInfo.h; sourceTree = "<group>"; };
+		4CFDE50D26D4C54C00A01683 /* AppInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppInfo.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/app/AppInfo.cpp; sourceTree = "<group>"; };
+		4CFDE51726D4C55F00A01683 /* DOMBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMBuilder.h; path = ../../../BoyiaFramework/source/boyia/kernel/dom/DOMBuilder.h; sourceTree = "<group>"; };
+		4CFDE51826D4C55F00A01683 /* DOMBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMBuilder.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/dom/DOMBuilder.cpp; sourceTree = "<group>"; };
+		4CFDE51C26D4C57000A01683 /* LBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LBaseView.h; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LBaseView.h; sourceTree = "<group>"; };
+		4CFDE51D26D4C57000A01683 /* LBaseView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LBaseView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LBaseView.cpp; sourceTree = "<group>"; };
+		4CFDE51E26D4C57000A01683 /* LEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LEvent.h; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LEvent.h; sourceTree = "<group>"; };
+		4CFDE51F26D4C57000A01683 /* LColorUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LColorUtil.h; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LColorUtil.h; sourceTree = "<group>"; };
+		4CFDE52026D4C57000A01683 /* LGdi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGdi.h; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LGdi.h; sourceTree = "<group>"; };
+		4CFDE52126D4C57000A01683 /* LColorUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LColorUtil.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LColorUtil.cpp; sourceTree = "<group>"; };
+		4CFDE52226D4C57000A01683 /* LGraphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGraphic.h; path = ../../../BoyiaFramework/source/boyia/kernel/gui/LGraphic.h; sourceTree = "<group>"; };
+		4CFDE52B26D4C58200A01683 /* NetworkBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkBase.h; path = ../../../BoyiaFramework/source/boyia/kernel/loader/NetworkBase.h; sourceTree = "<group>"; };
+		4CFDE52C26D4C58200A01683 /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoader.h; path = ../../../BoyiaFramework/source/boyia/kernel/loader/ResourceLoader.h; sourceTree = "<group>"; };
+		4CFDE52D26D4C58200A01683 /* ResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoader.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/loader/ResourceLoader.cpp; sourceTree = "<group>"; };
+		4CFDE52E26D4C58200A01683 /* AppLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppLoader.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/loader/AppLoader.cpp; sourceTree = "<group>"; };
+		4CFDE52F26D4C58200A01683 /* AppLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppLoader.h; path = ../../../BoyiaFramework/source/boyia/kernel/loader/AppLoader.h; sourceTree = "<group>"; };
+		4CFDE53726D4C5B300A01683 /* IRenderEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IRenderEngine.h; path = ../../../BoyiaFramework/source/boyia/kernel/render/IRenderEngine.h; sourceTree = "<group>"; };
+		4CFDE53826D4C5B300A01683 /* RenderGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderGraphicsContext.h; path = ../../../BoyiaFramework/source/boyia/kernel/render/RenderGraphicsContext.h; sourceTree = "<group>"; };
+		4CFDE53926D4C5B300A01683 /* RenderThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderThread.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/render/RenderThread.cpp; sourceTree = "<group>"; };
+		4CFDE53A26D4C5B300A01683 /* RenderThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderThread.h; path = ../../../BoyiaFramework/source/boyia/kernel/render/RenderThread.h; sourceTree = "<group>"; };
+		4CFDE53B26D4C5B300A01683 /* RenderGraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderGraphicsContext.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/render/RenderGraphicsContext.cpp; sourceTree = "<group>"; };
+		4CFDE54126D4C5C000A01683 /* RenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderLayer.h; path = ../../../BoyiaFramework/source/boyia/kernel/render/layer/RenderLayer.h; sourceTree = "<group>"; };
+		4CFDE54226D4C5C000A01683 /* RenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderLayer.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/render/layer/RenderLayer.cpp; sourceTree = "<group>"; };
+		4CFDE54326D4C5C000A01683 /* RenderCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderCommand.h; path = ../../../BoyiaFramework/source/boyia/kernel/render/layer/RenderCommand.h; sourceTree = "<group>"; };
+		4CFDE54426D4C5C000A01683 /* RenderCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderCommand.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/render/layer/RenderCommand.cpp; sourceTree = "<group>"; };
+		4CFDE54A26D4C5F200A01683 /* DoctreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DoctreeNode.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/DoctreeNode.cpp; sourceTree = "<group>"; };
+		4CFDE54B26D4C5F200A01683 /* StyleParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleParser.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleParser.cpp; sourceTree = "<group>"; };
+		4CFDE54C26D4C5F200A01683 /* DoctreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DoctreeNode.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/DoctreeNode.h; sourceTree = "<group>"; };
+		4CFDE54D26D4C5F200A01683 /* StyleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleParser.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleParser.h; sourceTree = "<group>"; };
+		4CFDE54E26D4C5F200A01683 /* StyleManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleManager.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleManager.cpp; sourceTree = "<group>"; };
+		4CFDE54F26D4C5F200A01683 /* Style.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Style.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/Style.h; sourceTree = "<group>"; };
+		4CFDE55026D4C5F200A01683 /* StyleRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleRule.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleRule.h; sourceTree = "<group>"; };
+		4CFDE55126D4C5F200A01683 /* StyleTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleTags.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleTags.h; sourceTree = "<group>"; };
+		4CFDE55226D4C5F200A01683 /* Style.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Style.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/Style.cpp; sourceTree = "<group>"; };
+		4CFDE55326D4C5F200A01683 /* StyleTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleTags.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleTags.cpp; sourceTree = "<group>"; };
+		4CFDE55426D4C5F200A01683 /* StyleRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleRule.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleRule.cpp; sourceTree = "<group>"; };
+		4CFDE55526D4C5F200A01683 /* StyleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleManager.h; path = ../../../BoyiaFramework/source/boyia/kernel/style/StyleManager.h; sourceTree = "<group>"; };
+		4CFDE56426D4C61C00A01683 /* UIViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIViewController.h; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIViewController.h; sourceTree = "<group>"; };
+		4CFDE56526D4C61C00A01683 /* UIThreadClientMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIThreadClientMap.h; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIThreadClientMap.h; sourceTree = "<group>"; };
+		4CFDE56626D4C61C00A01683 /* UIOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIOperation.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIOperation.cpp; sourceTree = "<group>"; };
+		4CFDE56726D4C61C00A01683 /* UIThreadClientMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIThreadClientMap.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIThreadClientMap.cpp; sourceTree = "<group>"; };
+		4CFDE56826D4C61C00A01683 /* UIThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIThread.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIThread.cpp; sourceTree = "<group>"; };
+		4CFDE56926D4C61C00A01683 /* UIView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIView.cpp; sourceTree = "<group>"; };
+		4CFDE56A26D4C61C00A01683 /* UIOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIOperation.h; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIOperation.h; sourceTree = "<group>"; };
+		4CFDE56B26D4C61D00A01683 /* UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIView.h; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIView.h; sourceTree = "<group>"; };
+		4CFDE56C26D4C61D00A01683 /* UIViewController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIViewController.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIViewController.cpp; sourceTree = "<group>"; };
+		4CFDE56D26D4C61D00A01683 /* UIThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIThread.h; path = ../../../BoyiaFramework/source/boyia/kernel/view/UIThread.h; sourceTree = "<group>"; };
+		4CFDE57926D4C63200A01683 /* HtmlRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HtmlRenderer.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlRenderer.h; sourceTree = "<group>"; };
+		4CFDE57A26D4C63200A01683 /* BlockView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlockView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/BlockView.cpp; sourceTree = "<group>"; };
+		4CFDE57B26D4C63200A01683 /* HtmlDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HtmlDocument.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlDocument.h; sourceTree = "<group>"; };
+		4CFDE57C26D4C63200A01683 /* InputView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/InputView.cpp; sourceTree = "<group>"; };
+		4CFDE57D26D4C63200A01683 /* RenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderContext.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/RenderContext.h; sourceTree = "<group>"; };
+		4CFDE57E26D4C63200A01683 /* FormView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/FormView.h; sourceTree = "<group>"; };
+		4CFDE57F26D4C63200A01683 /* VideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/VideoView.h; sourceTree = "<group>"; };
+		4CFDE58026D4C63200A01683 /* HtmlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HtmlView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlView.h; sourceTree = "<group>"; };
+		4CFDE58126D4C63200A01683 /* InlineView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InlineView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/InlineView.cpp; sourceTree = "<group>"; };
+		4CFDE58226D4C63200A01683 /* LinkView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/LinkView.cpp; sourceTree = "<group>"; };
+		4CFDE58326D4C63200A01683 /* TextView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/TextView.cpp; sourceTree = "<group>"; };
+		4CFDE58426D4C63200A01683 /* VideoView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/VideoView.cpp; sourceTree = "<group>"; };
+		4CFDE58526D4C63200A01683 /* IViewListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IViewListener.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/IViewListener.h; sourceTree = "<group>"; };
+		4CFDE58626D4C63200A01683 /* RenderContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderContext.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/RenderContext.cpp; sourceTree = "<group>"; };
+		4CFDE58726D4C63200A01683 /* HtmlTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HtmlTags.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlTags.cpp; sourceTree = "<group>"; };
+		4CFDE58826D4C63200A01683 /* InputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/InputView.h; sourceTree = "<group>"; };
+		4CFDE58926D4C63200A01683 /* TextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/TextView.h; sourceTree = "<group>"; };
+		4CFDE58A26D4C63200A01683 /* ImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/ImageView.h; sourceTree = "<group>"; };
+		4CFDE58B26D4C63200A01683 /* ImageView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/ImageView.cpp; sourceTree = "<group>"; };
+		4CFDE58C26D4C63200A01683 /* HtmlView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HtmlView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlView.cpp; sourceTree = "<group>"; };
+		4CFDE58D26D4C63200A01683 /* InlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InlineView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/InlineView.h; sourceTree = "<group>"; };
+		4CFDE58E26D4C63200A01683 /* HtmlDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HtmlDocument.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlDocument.cpp; sourceTree = "<group>"; };
+		4CFDE58F26D4C63200A01683 /* LinkView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/LinkView.h; sourceTree = "<group>"; };
+		4CFDE59026D4C63200A01683 /* HtmlTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HtmlTags.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlTags.h; sourceTree = "<group>"; };
+		4CFDE59126D4C63200A01683 /* BlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlockView.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/BlockView.h; sourceTree = "<group>"; };
+		4CFDE59226D4C63200A01683 /* FormView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FormView.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/FormView.cpp; sourceTree = "<group>"; };
+		4CFDE59326D4C63200A01683 /* HtmlRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HtmlRenderer.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/HtmlRenderer.cpp; sourceTree = "<group>"; };
+		4CFDE5AF26D4C63F00A01683 /* FlexLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlexLayout.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/flex/FlexLayout.h; sourceTree = "<group>"; };
+		4CFDE5B026D4C63F00A01683 /* FlexLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlexLayout.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/flex/FlexLayout.cpp; sourceTree = "<group>"; };
+		4CFDE5B426D4C68900A01683 /* ThreadPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadPool.h; path = ../../../BoyiaFramework/source/boyia/thread/ThreadPool.h; sourceTree = "<group>"; };
+		4CFDE5B526D4C68900A01683 /* MessageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageThread.cpp; path = ../../../BoyiaFramework/source/boyia/thread/MessageThread.cpp; sourceTree = "<group>"; };
+		4CFDE5B626D4C68900A01683 /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lock.h; path = ../../../BoyiaFramework/source/boyia/thread/Lock.h; sourceTree = "<group>"; };
+		4CFDE5B726D4C68900A01683 /* TaskThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TaskThread.cpp; path = ../../../BoyiaFramework/source/boyia/thread/TaskThread.cpp; sourceTree = "<group>"; };
+		4CFDE5B826D4C68900A01683 /* MessageQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageQueue.cpp; path = ../../../BoyiaFramework/source/boyia/thread/MessageQueue.cpp; sourceTree = "<group>"; };
+		4CFDE5B926D4C68900A01683 /* ThreadPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadPool.cpp; path = ../../../BoyiaFramework/source/boyia/thread/ThreadPool.cpp; sourceTree = "<group>"; };
+		4CFDE5BA26D4C68900A01683 /* TaskThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskThread.h; path = ../../../BoyiaFramework/source/boyia/thread/TaskThread.h; sourceTree = "<group>"; };
+		4CFDE5BB26D4C68900A01683 /* BaseThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseThread.h; path = ../../../BoyiaFramework/source/boyia/thread/BaseThread.h; sourceTree = "<group>"; };
+		4CFDE5BC26D4C68A00A01683 /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageQueue.h; path = ../../../BoyiaFramework/source/boyia/thread/MessageQueue.h; sourceTree = "<group>"; };
+		4CFDE5BD26D4C68A00A01683 /* TaskBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskBase.h; path = ../../../BoyiaFramework/source/boyia/thread/TaskBase.h; sourceTree = "<group>"; };
+		4CFDE5BE26D4C68A00A01683 /* BlockQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlockQueue.cpp; path = ../../../BoyiaFramework/source/boyia/thread/BlockQueue.cpp; sourceTree = "<group>"; };
+		4CFDE5BF26D4C68A00A01683 /* TaskBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TaskBase.cpp; path = ../../../BoyiaFramework/source/boyia/thread/TaskBase.cpp; sourceTree = "<group>"; };
+		4CFDE5C026D4C68A00A01683 /* MessageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageThread.h; path = ../../../BoyiaFramework/source/boyia/thread/MessageThread.h; sourceTree = "<group>"; };
+		4CFDE5C126D4C68A00A01683 /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringBuilder.cpp; path = ../../../BoyiaFramework/source/boyia/thread/StringBuilder.cpp; sourceTree = "<group>"; };
+		4CFDE5C226D4C68A00A01683 /* BlockQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlockQueue.h; path = ../../../BoyiaFramework/source/boyia/thread/BlockQueue.h; sourceTree = "<group>"; };
+		4CFDE5C326D4C68A00A01683 /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuilder.h; path = ../../../BoyiaFramework/source/boyia/thread/StringBuilder.h; sourceTree = "<group>"; };
+		4CFDE5C426D4C68A00A01683 /* AutoLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoLock.h; path = ../../../BoyiaFramework/source/boyia/thread/AutoLock.h; sourceTree = "<group>"; };
+		4CFDE5D726D4CA0800A01683 /* SystemUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemUtil.h; path = ../../../BoyiaFramework/source/boyia/painter/utils/SystemUtil.h; sourceTree = "<group>"; };
+		4CFDE5D826D4CA0800A01683 /* SystemUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SystemUtil.cpp; path = ../../../BoyiaFramework/source/boyia/painter/utils/SystemUtil.cpp; sourceTree = "<group>"; };
+		4CFDE5E126D4CB1200A01683 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocket.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ws/WebSocket.h; sourceTree = "<group>"; };
+		4CFDE5E226D4CB1200A01683 /* WebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocket.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ws/WebSocket.cpp; sourceTree = "<group>"; };
+		4CFDE5E626D4CB2200A01683 /* ZipEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipEntry.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/zip/ZipEntry.cpp; sourceTree = "<group>"; };
+		4CFDE5E726D4CB2200A01683 /* ZipEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipEntry.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/zip/ZipEntry.h; sourceTree = "<group>"; };
+		4CFDE5ED26D4D4FB00A01683 /* EditorIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/EditorIOS.mm; sourceTree = "<group>"; };
+		4CFDE5F526D4D78400A01683 /* PixelRatio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelRatio.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/PixelRatio.cpp; sourceTree = "<group>"; };
+		4CFDE5F626D4D78400A01683 /* PixelRatio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelRatio.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/PixelRatio.h; sourceTree = "<group>"; };
+		4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LockAndroid.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/android/LockAndroid.cpp; sourceTree = "<group>"; };
+		4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseThreadAndroid.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/android/BaseThreadAndroid.cpp; sourceTree = "<group>"; };
+		4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformBridgeIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/PlatformBridgeIOS.mm; sourceTree = "<group>"; };
+		4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlayerIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/MediaPlayerIOS.mm; sourceTree = "<group>"; };
+		4CFDE60126D51AA500A01683 /* FontIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = FontIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/FontIOS.mm; sourceTree = "<group>"; };
+		4CFDE60326D51B1C00A01683 /* LoaderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = LoaderIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/LoaderIOS.mm; sourceTree = "<group>"; };
+		4CFDE60526D51BBC00A01683 /* VsyncWaiterIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = VsyncWaiterIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/VsyncWaiterIOS.mm; sourceTree = "<group>"; };
+		4CFDE60726D51C4F00A01683 /* RenderEngineIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = RenderEngineIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/RenderEngineIOS.mm; sourceTree = "<group>"; };
+		4CFDE60926D51E3200A01683 /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Animation.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/graphics/Animation.cpp; sourceTree = "<group>"; };
+		4CFDE60A26D51E3200A01683 /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Animation.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/graphics/Animation.h; sourceTree = "<group>"; };
+		4CFDE60D26D51E3D00A01683 /* VsyncWaiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VsyncWaiter.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/VsyncWaiter.h; sourceTree = "<group>"; };
+		4CFDE60F26D8839A00A01683 /* RenderEngineIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenderEngineIOS.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/RenderEngineIOS.h; sourceTree = "<group>"; };
+		4CFDE65626D8CC2100A01683 /* metal.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = metal.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CFDE65826D8CC2100A01683 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CFDE65E26D8FA7700A01683 /* ShaderType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderType.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/ShaderType.h; sourceTree = "<group>"; };
+		4CFDE65F26D8FA7700A01683 /* shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = shaders.metal; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/shaders.metal; sourceTree = "<group>"; };
+		4CFDE66226D9DAE800A01683 /* IOSRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOSRenderer.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/IOSRenderer.h; sourceTree = "<group>"; };
+		4CFDE66326D9DB1B00A01683 /* IOSRenderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = IOSRenderer.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/IOSRenderer.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4C28B87226D203F700953864 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4C7AE80126CF837300946197 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				4C28B84526D1F17C00953864 /* MetalKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CFDE65326D8CC2100A01683 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,23 +508,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4C28B87626D203F700953864 /* bundle */ = {
-			isa = PBXGroup;
-			children = (
-				4C28B83C26CFD30500953864 /* ShaderType.h */,
-				4C28B83A26CFCFD200953864 /* boyia.metal */,
-				4C28B87726D203F700953864 /* Info.plist */,
-			);
-			path = bundle;
-			sourceTree = "<group>";
-		};
 		4C7AE7FA26CF837300946197 = {
 			isa = PBXGroup;
 			children = (
-				4C7AE81226CF83E300946197 /* kernel */,
-				4C7AE81326CF83F500946197 /* port */,
+				4CFDE50426D4C4E400A01683 /* boyia */,
+				4CFDE4B326D4C40800A01683 /* thirdparty */,
 				4C7AE80626CF837300946197 /* core */,
-				4C28B87626D203F700953864 /* bundle */,
+				4CFDE65726D8CC2100A01683 /* metal */,
 				4C7AE80526CF837300946197 /* Products */,
 				4C28B84326D1F17C00953864 /* Frameworks */,
 			);
@@ -95,7 +524,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7AE80426CF837300946197 /* core.framework */,
-				4C28B87526D203F700953864 /* bundle.bundle */,
+				4CFDE65626D8CC2100A01683 /* metal.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,36 +538,497 @@
 			path = core;
 			sourceTree = "<group>";
 		};
-		4C7AE81226CF83E300946197 /* kernel */ = {
+		4CFDE40826D4905100A01683 /* kernel */ = {
 			isa = PBXGroup;
 			children = (
-				4C7AE81426CF84B800946197 /* platform */,
+				4CFDE56326D4C60E00A01683 /* widget */,
+				4CFDE56226D4C60800A01683 /* view */,
+				4CFDE54926D4C5DB00A01683 /* style */,
+				4CFDE53526D4C59500A01683 /* render */,
+				4CFDE52A26D4C57800A01683 /* loader */,
+				4CFDE51B26D4C56600A01683 /* gui */,
+				4CFDE51626D4C55500A01683 /* dom */,
+				4CFDE50526D4C53E00A01683 /* app */,
+				4CFDE46A26D4C2DB00A01683 /* vm */,
+				4CFDE42526D492CE00A01683 /* platform */,
+				4CFDE41726D490C300A01683 /* util */,
 			);
-			path = kernel;
+			name = kernel;
 			sourceTree = "<group>";
 		};
-		4C7AE81326CF83F500946197 /* port */ = {
+		4CFDE41726D490C300A01683 /* util */ = {
 			isa = PBXGroup;
 			children = (
-				4C28B83726CFCE2B00953864 /* BoyiaViewController.m */,
-				4C28B83926CFCE8000953864 /* BoyiaViewController.h */,
-				4C28B84026D1E3FA00953864 /* BoyiaView.h */,
-				4C28B84126D1E40B00953864 /* BoyiaView.m */,
+				4CFDE44926D4ABEE00A01683 /* BoyiaPtr.h */,
+				4CFDE43B26D4ABEE00A01683 /* BoyiaRef.cpp */,
+				4CFDE43526D4ABEE00A01683 /* BoyiaRef.h */,
+				4CFDE44026D4ABEE00A01683 /* FileUtil.cpp */,
+				4CFDE43F26D4ABEE00A01683 /* FileUtil.h */,
+				4CFDE43A26D4ABEE00A01683 /* HashMap.h */,
+				4CFDE44226D4ABEE00A01683 /* HashUtil.h */,
+				4CFDE43426D4ABEE00A01683 /* IDCreator.cpp */,
+				4CFDE44326D4ABEE00A01683 /* IDCreator.h */,
+				4CFDE44C26D4ABEE00A01683 /* IdentityMap.cpp */,
+				4CFDE43226D4ABED00A01683 /* IdentityMap.h */,
+				4CFDE43926D4ABEE00A01683 /* InputStream.cpp */,
+				4CFDE44726D4ABEE00A01683 /* InputStream.h */,
+				4CFDE43726D4ABEE00A01683 /* KList.h */,
+				4CFDE44626D4ABEE00A01683 /* KListMap.h */,
+				4CFDE44826D4ABEE00A01683 /* KSet.h */,
+				4CFDE44A26D4ABEE00A01683 /* KVector.h */,
+				4CFDE43626D4ABEE00A01683 /* OwnerPtr.h */,
+				4CFDE44B26D4ABEE00A01683 /* PlatformLib.cpp */,
+				4CFDE44426D4ABEE00A01683 /* PlatformLib.h */,
+				4CFDE44526D4ABEE00A01683 /* RefCount.cpp */,
+				4CFDE43326D4ABED00A01683 /* RefCount.h */,
+				4CFDE43D26D4ABEE00A01683 /* Stack.h */,
+				4CFDE43C26D4ABEE00A01683 /* StringUtils.cpp */,
+				4CFDE43E26D4ABEE00A01683 /* StringUtils.h */,
+				4CFDE44126D4ABEE00A01683 /* UtilString.h */,
+				4CFDE43826D4ABEE00A01683 /* WeakPtr.h */,
 			);
-			path = port;
+			name = util;
 			sourceTree = "<group>";
 		};
-		4C7AE81426CF84B800946197 /* platform */ = {
+		4CFDE41826D490D100A01683 /* porting */ = {
 			isa = PBXGroup;
 			children = (
-				4C7AE81526CF84D700946197 /* HttpEngineIOS.h */,
-				4C28B83026CF9BB500953864 /* HttpEngineIOS.mm */,
-				4C28B83326CF9CAC00953864 /* ImageIOS.h */,
-				4C28B83526CFA68400953864 /* ImageIOS.mm */,
-				4C28B83D26D09E4D00953864 /* ImageLoaderIOS.h */,
-				4C28B83E26D09E7F00953864 /* ImageLoaderIOS.mm */,
+				4CFDE41B26D490ED00A01683 /* BoyiaView.h */,
+				4CFDE41C26D490ED00A01683 /* BoyiaView.m */,
+				4CFDE41A26D490ED00A01683 /* BoyiaViewController.h */,
+				4CFDE41926D490ED00A01683 /* BoyiaViewController.m */,
 			);
-			path = platform;
+			name = porting;
+			sourceTree = "<group>";
+		};
+		4CFDE42526D492CE00A01683 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5F426D4D75D00A01683 /* pixel */,
+				4CFDE5F226D4D71B00A01683 /* vsync */,
+				4CFDE5F326D4D73700A01683 /* animation */,
+				4CFDE5E026D4CB0800A01683 /* ws */,
+				4CFDE5E526D4CB1B00A01683 /* zip */,
+				4CFDE42A26D493E200A01683 /* HttpEngineIOS.h */,
+				4CFDE42626D493E200A01683 /* HttpEngineIOS.mm */,
+				4CFDE42726D493E200A01683 /* ImageIOS.h */,
+				4CFDE42B26D493E200A01683 /* ImageIOS.mm */,
+				4CFDE42826D493E200A01683 /* ImageLoaderIOS.h */,
+				4CFDE42926D493E200A01683 /* ImageLoaderIOS.mm */,
+				4CFDE5ED26D4D4FB00A01683 /* EditorIOS.mm */,
+				4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */,
+				4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */,
+				4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */,
+				4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */,
+				4CFDE60126D51AA500A01683 /* FontIOS.mm */,
+				4CFDE65F26D8FA7700A01683 /* shaders.metal */,
+				4CFDE65E26D8FA7700A01683 /* ShaderType.h */,
+				4CFDE60326D51B1C00A01683 /* LoaderIOS.mm */,
+				4CFDE60526D51BBC00A01683 /* VsyncWaiterIOS.mm */,
+				4CFDE60726D51C4F00A01683 /* RenderEngineIOS.mm */,
+				4CFDE60F26D8839A00A01683 /* RenderEngineIOS.h */,
+				4CFDE66226D9DAE800A01683 /* IOSRenderer.h */,
+				4CFDE66326D9DB1B00A01683 /* IOSRenderer.mm */,
+			);
+			name = platform;
+			sourceTree = "<group>";
+		};
+		4CFDE46A26D4C2DB00A01683 /* vm */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE46B26D4C2F000A01683 /* core */,
+				4CFDE48026D4C33800A01683 /* view */,
+				4CFDE47F26D4C33300A01683 /* lib */,
+				4CFDE47E26D4C32D00A01683 /* json */,
+			);
+			name = vm;
+			sourceTree = "<group>";
+		};
+		4CFDE46B26D4C2F000A01683 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE47426D4C2FE00A01683 /* BoyiaCore.cpp */,
+				4CFDE46E26D4C2FE00A01683 /* BoyiaCore.h */,
+				4CFDE46F26D4C2FE00A01683 /* BoyiaError.cpp */,
+				4CFDE46C26D4C2FD00A01683 /* BoyiaError.h */,
+				4CFDE47126D4C2FE00A01683 /* BoyiaGC.cpp */,
+				4CFDE47026D4C2FE00A01683 /* BoyiaMemory.cpp */,
+				4CFDE46D26D4C2FE00A01683 /* BoyiaMemory.h */,
+				4CFDE47326D4C2FE00A01683 /* BoyiaValue.cpp */,
+				4CFDE47226D4C2FE00A01683 /* BoyiaValue.h */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		4CFDE47E26D4C32D00A01683 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4AD26D4C3B200A01683 /* JSONParser.cpp */,
+				4CFDE4AE26D4C3B200A01683 /* JSONParser.h */,
+			);
+			name = json;
+			sourceTree = "<group>";
+		};
+		4CFDE47F26D4C33300A01683 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE49B26D4C3A200A01683 /* BoyiaAsyncEvent.cpp */,
+				4CFDE49626D4C3A200A01683 /* BoyiaAsyncEvent.h */,
+				4CFDE49C26D4C3A200A01683 /* BoyiaBase.cpp */,
+				4CFDE49F26D4C3A200A01683 /* BoyiaBase.h */,
+				4CFDE49826D4C3A200A01683 /* BoyiaLib.cpp */,
+				4CFDE4A026D4C3A200A01683 /* BoyiaLib.h */,
+				4CFDE49E26D4C3A200A01683 /* BoyiaNetwork.cpp */,
+				4CFDE49526D4C3A200A01683 /* BoyiaNetwork.h */,
+				4CFDE49726D4C3A200A01683 /* BoyiaRuntime.cpp */,
+				4CFDE49D26D4C3A200A01683 /* BoyiaRuntime.h */,
+				4CFDE49A26D4C3A200A01683 /* BoyiaSocket.cpp */,
+				4CFDE49926D4C3A200A01683 /* BoyiaSocket.h */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+		4CFDE48026D4C33800A01683 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE48426D4C35200A01683 /* BoyiaImageView.cpp */,
+				4CFDE48226D4C35200A01683 /* BoyiaImageView.h */,
+				4CFDE48826D4C35200A01683 /* BoyiaInputView.cpp */,
+				4CFDE48726D4C35200A01683 /* BoyiaInputView.h */,
+				4CFDE48526D4C35200A01683 /* BoyiaView.cpp */,
+				4CFDE48126D4C35200A01683 /* BoyiaView.h */,
+				4CFDE48326D4C35200A01683 /* BoyiaViewDoc.cpp */,
+				4CFDE48926D4C35200A01683 /* BoyiaViewDoc.h */,
+				4CFDE48626D4C35200A01683 /* BoyiaViewGroup.cpp */,
+				4CFDE48A26D4C35200A01683 /* BoyiaViewGroup.h */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		4CFDE4B326D4C40800A01683 /* thirdparty */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4B726D4C43C00A01683 /* tinyxml */,
+				4CFDE4B526D4C42100A01683 /* zip */,
+				4CFDE4B426D4C41700A01683 /* cjson */,
+			);
+			name = thirdparty;
+			sourceTree = "<group>";
+		};
+		4CFDE4B426D4C41700A01683 /* cjson */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4B926D4C45000A01683 /* cJSON.c */,
+				4CFDE4B826D4C45000A01683 /* cJSON.h */,
+			);
+			name = cjson;
+			sourceTree = "<group>";
+		};
+		4CFDE4B526D4C42100A01683 /* zip */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4D326D4C46B00A01683 /* adler32.c */,
+				4CFDE4C226D4C46B00A01683 /* compress.c */,
+				4CFDE4CD26D4C46B00A01683 /* crc32.c */,
+				4CFDE4BD26D4C46B00A01683 /* crc32.h */,
+				4CFDE4D126D4C46B00A01683 /* deflate.c */,
+				4CFDE4BE26D4C46B00A01683 /* deflate.h */,
+				4CFDE4D426D4C46B00A01683 /* gzclose.c */,
+				4CFDE4D026D4C46B00A01683 /* gzguts.h */,
+				4CFDE4C326D4C46B00A01683 /* gzlib.c */,
+				4CFDE4C426D4C46B00A01683 /* gzread.c */,
+				4CFDE4C626D4C46B00A01683 /* gzwrite.c */,
+				4CFDE4CC26D4C46B00A01683 /* infback.c */,
+				4CFDE4C826D4C46B00A01683 /* inffast.c */,
+				4CFDE4BF26D4C46B00A01683 /* inffast.h */,
+				4CFDE4C026D4C46B00A01683 /* inffixed.h */,
+				4CFDE4C526D4C46B00A01683 /* inflate.c */,
+				4CFDE4D226D4C46B00A01683 /* inflate.h */,
+				4CFDE4D526D4C46B00A01683 /* inftrees.c */,
+				4CFDE4C726D4C46B00A01683 /* inftrees.h */,
+				4CFDE4CA26D4C46B00A01683 /* trees.c */,
+				4CFDE4CE26D4C46B00A01683 /* trees.h */,
+				4CFDE4D626D4C46C00A01683 /* uncompr.c */,
+				4CFDE4CB26D4C46B00A01683 /* zconf.h */,
+				4CFDE4C926D4C46B00A01683 /* zlib.h */,
+				4CFDE4C126D4C46B00A01683 /* zutil.c */,
+				4CFDE4CF26D4C46B00A01683 /* zutil.h */,
+				4CFDE4BC26D4C45D00A01683 /* minizip */,
+			);
+			name = zip;
+			sourceTree = "<group>";
+		};
+		4CFDE4B726D4C43C00A01683 /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4FF26D4C4B000A01683 /* TinyXml2.cpp */,
+				4CFDE50026D4C4B000A01683 /* TinyXml2.h */,
+			);
+			name = tinyxml;
+			sourceTree = "<group>";
+		};
+		4CFDE4BC26D4C45D00A01683 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE4F226D4C48E00A01683 /* crypt.h */,
+				4CFDE4F526D4C48E00A01683 /* ioapi.c */,
+				4CFDE4F726D4C48F00A01683 /* ioapi.h */,
+				4CFDE4F326D4C48E00A01683 /* unzip.c */,
+				4CFDE4F626D4C48F00A01683 /* unzip.h */,
+				4CFDE4F126D4C48E00A01683 /* zip.c */,
+				4CFDE4F426D4C48E00A01683 /* zip.h */,
+			);
+			name = minizip;
+			sourceTree = "<group>";
+		};
+		4CFDE50426D4C4E400A01683 /* boyia */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE40826D4905100A01683 /* kernel */,
+				4CFDE5B326D4C67B00A01683 /* thread */,
+				4CFDE5D626D4C9B400A01683 /* utils */,
+				4CFDE41826D490D100A01683 /* porting */,
+			);
+			name = boyia;
+			sourceTree = "<group>";
+		};
+		4CFDE50526D4C53E00A01683 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE50D26D4C54C00A01683 /* AppInfo.cpp */,
+				4CFDE50C26D4C54C00A01683 /* AppInfo.h */,
+				4CFDE50B26D4C54C00A01683 /* Application.cpp */,
+				4CFDE50A26D4C54C00A01683 /* Application.h */,
+				4CFDE50726D4C54C00A01683 /* AppManager.cpp */,
+				4CFDE50826D4C54C00A01683 /* AppManager.h */,
+				4CFDE50626D4C54C00A01683 /* AppStack.cpp */,
+				4CFDE50926D4C54C00A01683 /* AppStack.h */,
+			);
+			name = app;
+			sourceTree = "<group>";
+		};
+		4CFDE51626D4C55500A01683 /* dom */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE51826D4C55F00A01683 /* DOMBuilder.cpp */,
+				4CFDE51726D4C55F00A01683 /* DOMBuilder.h */,
+			);
+			name = dom;
+			sourceTree = "<group>";
+		};
+		4CFDE51B26D4C56600A01683 /* gui */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE51D26D4C57000A01683 /* LBaseView.cpp */,
+				4CFDE51C26D4C57000A01683 /* LBaseView.h */,
+				4CFDE52126D4C57000A01683 /* LColorUtil.cpp */,
+				4CFDE51F26D4C57000A01683 /* LColorUtil.h */,
+				4CFDE51E26D4C57000A01683 /* LEvent.h */,
+				4CFDE52026D4C57000A01683 /* LGdi.h */,
+				4CFDE52226D4C57000A01683 /* LGraphic.h */,
+			);
+			name = gui;
+			sourceTree = "<group>";
+		};
+		4CFDE52A26D4C57800A01683 /* loader */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE52E26D4C58200A01683 /* AppLoader.cpp */,
+				4CFDE52F26D4C58200A01683 /* AppLoader.h */,
+				4CFDE52B26D4C58200A01683 /* NetworkBase.h */,
+				4CFDE52D26D4C58200A01683 /* ResourceLoader.cpp */,
+				4CFDE52C26D4C58200A01683 /* ResourceLoader.h */,
+			);
+			name = loader;
+			sourceTree = "<group>";
+		};
+		4CFDE53526D4C59500A01683 /* render */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE53626D4C5A700A01683 /* layer */,
+				4CFDE53726D4C5B300A01683 /* IRenderEngine.h */,
+				4CFDE53B26D4C5B300A01683 /* RenderGraphicsContext.cpp */,
+				4CFDE53826D4C5B300A01683 /* RenderGraphicsContext.h */,
+				4CFDE53926D4C5B300A01683 /* RenderThread.cpp */,
+				4CFDE53A26D4C5B300A01683 /* RenderThread.h */,
+			);
+			name = render;
+			sourceTree = "<group>";
+		};
+		4CFDE53626D4C5A700A01683 /* layer */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE54426D4C5C000A01683 /* RenderCommand.cpp */,
+				4CFDE54326D4C5C000A01683 /* RenderCommand.h */,
+				4CFDE54226D4C5C000A01683 /* RenderLayer.cpp */,
+				4CFDE54126D4C5C000A01683 /* RenderLayer.h */,
+			);
+			name = layer;
+			sourceTree = "<group>";
+		};
+		4CFDE54926D4C5DB00A01683 /* style */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE54A26D4C5F200A01683 /* DoctreeNode.cpp */,
+				4CFDE54C26D4C5F200A01683 /* DoctreeNode.h */,
+				4CFDE55226D4C5F200A01683 /* Style.cpp */,
+				4CFDE54F26D4C5F200A01683 /* Style.h */,
+				4CFDE54E26D4C5F200A01683 /* StyleManager.cpp */,
+				4CFDE55526D4C5F200A01683 /* StyleManager.h */,
+				4CFDE54B26D4C5F200A01683 /* StyleParser.cpp */,
+				4CFDE54D26D4C5F200A01683 /* StyleParser.h */,
+				4CFDE55426D4C5F200A01683 /* StyleRule.cpp */,
+				4CFDE55026D4C5F200A01683 /* StyleRule.h */,
+				4CFDE55326D4C5F200A01683 /* StyleTags.cpp */,
+				4CFDE55126D4C5F200A01683 /* StyleTags.h */,
+			);
+			name = style;
+			sourceTree = "<group>";
+		};
+		4CFDE56226D4C60800A01683 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE56626D4C61C00A01683 /* UIOperation.cpp */,
+				4CFDE56A26D4C61C00A01683 /* UIOperation.h */,
+				4CFDE56826D4C61C00A01683 /* UIThread.cpp */,
+				4CFDE56D26D4C61D00A01683 /* UIThread.h */,
+				4CFDE56726D4C61C00A01683 /* UIThreadClientMap.cpp */,
+				4CFDE56526D4C61C00A01683 /* UIThreadClientMap.h */,
+				4CFDE56926D4C61C00A01683 /* UIView.cpp */,
+				4CFDE56B26D4C61D00A01683 /* UIView.h */,
+				4CFDE56C26D4C61D00A01683 /* UIViewController.cpp */,
+				4CFDE56426D4C61C00A01683 /* UIViewController.h */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		4CFDE56326D4C60E00A01683 /* widget */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE57826D4C62600A01683 /* flex */,
+				4CFDE57A26D4C63200A01683 /* BlockView.cpp */,
+				4CFDE59126D4C63200A01683 /* BlockView.h */,
+				4CFDE59226D4C63200A01683 /* FormView.cpp */,
+				4CFDE57E26D4C63200A01683 /* FormView.h */,
+				4CFDE58E26D4C63200A01683 /* HtmlDocument.cpp */,
+				4CFDE57B26D4C63200A01683 /* HtmlDocument.h */,
+				4CFDE59326D4C63200A01683 /* HtmlRenderer.cpp */,
+				4CFDE57926D4C63200A01683 /* HtmlRenderer.h */,
+				4CFDE58726D4C63200A01683 /* HtmlTags.cpp */,
+				4CFDE59026D4C63200A01683 /* HtmlTags.h */,
+				4CFDE58C26D4C63200A01683 /* HtmlView.cpp */,
+				4CFDE58026D4C63200A01683 /* HtmlView.h */,
+				4CFDE58B26D4C63200A01683 /* ImageView.cpp */,
+				4CFDE58A26D4C63200A01683 /* ImageView.h */,
+				4CFDE58126D4C63200A01683 /* InlineView.cpp */,
+				4CFDE58D26D4C63200A01683 /* InlineView.h */,
+				4CFDE57C26D4C63200A01683 /* InputView.cpp */,
+				4CFDE58826D4C63200A01683 /* InputView.h */,
+				4CFDE58526D4C63200A01683 /* IViewListener.h */,
+				4CFDE58226D4C63200A01683 /* LinkView.cpp */,
+				4CFDE58F26D4C63200A01683 /* LinkView.h */,
+				4CFDE58626D4C63200A01683 /* RenderContext.cpp */,
+				4CFDE57D26D4C63200A01683 /* RenderContext.h */,
+				4CFDE58326D4C63200A01683 /* TextView.cpp */,
+				4CFDE58926D4C63200A01683 /* TextView.h */,
+				4CFDE58426D4C63200A01683 /* VideoView.cpp */,
+				4CFDE57F26D4C63200A01683 /* VideoView.h */,
+			);
+			name = widget;
+			sourceTree = "<group>";
+		};
+		4CFDE57826D4C62600A01683 /* flex */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5B026D4C63F00A01683 /* FlexLayout.cpp */,
+				4CFDE5AF26D4C63F00A01683 /* FlexLayout.h */,
+			);
+			name = flex;
+			sourceTree = "<group>";
+		};
+		4CFDE5B326D4C67B00A01683 /* thread */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5C426D4C68A00A01683 /* AutoLock.h */,
+				4CFDE5BB26D4C68900A01683 /* BaseThread.h */,
+				4CFDE5BE26D4C68A00A01683 /* BlockQueue.cpp */,
+				4CFDE5C226D4C68A00A01683 /* BlockQueue.h */,
+				4CFDE5B626D4C68900A01683 /* Lock.h */,
+				4CFDE5B826D4C68900A01683 /* MessageQueue.cpp */,
+				4CFDE5BC26D4C68A00A01683 /* MessageQueue.h */,
+				4CFDE5B526D4C68900A01683 /* MessageThread.cpp */,
+				4CFDE5C026D4C68A00A01683 /* MessageThread.h */,
+				4CFDE5C126D4C68A00A01683 /* StringBuilder.cpp */,
+				4CFDE5C326D4C68A00A01683 /* StringBuilder.h */,
+				4CFDE5BF26D4C68A00A01683 /* TaskBase.cpp */,
+				4CFDE5BD26D4C68A00A01683 /* TaskBase.h */,
+				4CFDE5B726D4C68900A01683 /* TaskThread.cpp */,
+				4CFDE5BA26D4C68900A01683 /* TaskThread.h */,
+				4CFDE5B926D4C68900A01683 /* ThreadPool.cpp */,
+				4CFDE5B426D4C68900A01683 /* ThreadPool.h */,
+			);
+			name = thread;
+			sourceTree = "<group>";
+		};
+		4CFDE5D626D4C9B400A01683 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5D826D4CA0800A01683 /* SystemUtil.cpp */,
+				4CFDE5D726D4CA0800A01683 /* SystemUtil.h */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		4CFDE5E026D4CB0800A01683 /* ws */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5E226D4CB1200A01683 /* WebSocket.cpp */,
+				4CFDE5E126D4CB1200A01683 /* WebSocket.h */,
+			);
+			name = ws;
+			sourceTree = "<group>";
+		};
+		4CFDE5E526D4CB1B00A01683 /* zip */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5E626D4CB2200A01683 /* ZipEntry.cpp */,
+				4CFDE5E726D4CB2200A01683 /* ZipEntry.h */,
+			);
+			name = zip;
+			sourceTree = "<group>";
+		};
+		4CFDE5F226D4D71B00A01683 /* vsync */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE60D26D51E3D00A01683 /* VsyncWaiter.h */,
+			);
+			name = vsync;
+			sourceTree = "<group>";
+		};
+		4CFDE5F326D4D73700A01683 /* animation */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE60926D51E3200A01683 /* Animation.cpp */,
+				4CFDE60A26D51E3200A01683 /* Animation.h */,
+			);
+			name = animation;
+			sourceTree = "<group>";
+		};
+		4CFDE5F426D4D75D00A01683 /* pixel */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE5F526D4D78400A01683 /* PixelRatio.cpp */,
+				4CFDE5F626D4D78400A01683 /* PixelRatio.h */,
+			);
+			name = pixel;
+			sourceTree = "<group>";
+		};
+		4CFDE65726D8CC2100A01683 /* metal */ = {
+			isa = PBXGroup;
+			children = (
+				4CFDE65826D8CC2100A01683 /* Info.plist */,
+			);
+			path = metal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,32 +1038,131 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C28B83226CF9C5E00953864 /* HttpEngineIOS.h in Headers */,
-				4C28B83426CF9CAC00953864 /* ImageIOS.h in Headers */,
+				4CFDE4FE26D4C48F00A01683 /* ioapi.h in Headers */,
+				4CFDE5A526D4C63300A01683 /* ImageView.h in Headers */,
+				4CFDE4D726D4C46C00A01683 /* crc32.h in Headers */,
+				4CFDE45226D4ABEF00A01683 /* KList.h in Headers */,
+				4CFDE52326D4C57000A01683 /* LBaseView.h in Headers */,
+				4CFDE5B126D4C63F00A01683 /* FlexLayout.h in Headers */,
+				4CFDE59B26D4C63200A01683 /* HtmlView.h in Headers */,
+				4CFDE53C26D4C5B300A01683 /* IRenderEngine.h in Headers */,
+				4CFDE42D26D493E200A01683 /* ImageIOS.h in Headers */,
+				4CFDE59826D4C63200A01683 /* RenderContext.h in Headers */,
+				4CFDE48C26D4C35200A01683 /* BoyiaImageView.h in Headers */,
+				4CFDE55B26D4C5F200A01683 /* Style.h in Headers */,
+				4CFDE52926D4C57000A01683 /* LGraphic.h in Headers */,
+				4CFDE5C726D4C68A00A01683 /* Lock.h in Headers */,
+				4CFDE5A026D4C63200A01683 /* IViewListener.h in Headers */,
+				4CFDE50226D4C4B000A01683 /* TinyXml2.h in Headers */,
+				4CFDE56E26D4C61D00A01683 /* UIViewController.h in Headers */,
+				4CFDE5CC26D4C68A00A01683 /* BaseThread.h in Headers */,
+				4CFDE5D526D4C68A00A01683 /* AutoLock.h in Headers */,
+				4CFDE53426D4C58200A01683 /* AppLoader.h in Headers */,
+				4CFDE53F26D4C5B300A01683 /* RenderThread.h in Headers */,
+				4CFDE5E326D4CB1200A01683 /* WebSocket.h in Headers */,
+				4CFDE51026D4C54C00A01683 /* AppManager.h in Headers */,
+				4CFDE53126D4C58200A01683 /* ResourceLoader.h in Headers */,
+				4CFDE51126D4C54C00A01683 /* AppStack.h in Headers */,
+				4CFDE4A226D4C3A200A01683 /* BoyiaAsyncEvent.h in Headers */,
+				4CFDE46426D4ABEF00A01683 /* BoyiaPtr.h in Headers */,
+				4CFDE45E26D4ABEF00A01683 /* IDCreator.h in Headers */,
+				4CFDE49126D4C35200A01683 /* BoyiaInputView.h in Headers */,
+				4CFDE46326D4ABEF00A01683 /* KSet.h in Headers */,
+				4CFDE5D926D4CA0800A01683 /* SystemUtil.h in Headers */,
+				4CFDE4DA26D4C46C00A01683 /* inffixed.h in Headers */,
+				4CFDE55826D4C5F200A01683 /* DoctreeNode.h in Headers */,
+				4CFDE49326D4C35200A01683 /* BoyiaViewDoc.h in Headers */,
+				4CFDE4B026D4C3B200A01683 /* JSONParser.h in Headers */,
+				4CFDE66026D8FA7700A01683 /* ShaderType.h in Headers */,
+				4CFDE5AC26D4C63300A01683 /* BlockView.h in Headers */,
+				4CFDE4E926D4C46C00A01683 /* zutil.h in Headers */,
+				4CFDE49426D4C35200A01683 /* BoyiaViewGroup.h in Headers */,
+				4CFDE5C526D4C68A00A01683 /* ThreadPool.h in Headers */,
+				4CFDE54726D4C5C000A01683 /* RenderCommand.h in Headers */,
+				4CFDE4E126D4C46C00A01683 /* inftrees.h in Headers */,
+				4CFDE5A426D4C63300A01683 /* TextView.h in Headers */,
+				4CFDE4A926D4C3A200A01683 /* BoyiaRuntime.h in Headers */,
+				4CFDE4BA26D4C45000A01683 /* cJSON.h in Headers */,
+				4CFDE47626D4C2FE00A01683 /* BoyiaMemory.h in Headers */,
+				4CFDE47726D4C2FE00A01683 /* BoyiaCore.h in Headers */,
+				4CFDE59626D4C63200A01683 /* HtmlDocument.h in Headers */,
+				4CFDE55926D4C5F200A01683 /* StyleParser.h in Headers */,
+				4CFDE4E826D4C46C00A01683 /* trees.h in Headers */,
+				4CFDE5D126D4C68A00A01683 /* MessageThread.h in Headers */,
+				4CFDE4E526D4C46C00A01683 /* zconf.h in Headers */,
+				4CFDE4D826D4C46C00A01683 /* deflate.h in Headers */,
+				4CFDE57526D4C61D00A01683 /* UIView.h in Headers */,
+				4CFDE5D326D4C68A00A01683 /* BlockQueue.h in Headers */,
+				4CFDE4EA26D4C46C00A01683 /* gzguts.h in Headers */,
+				4CFDE57426D4C61D00A01683 /* UIOperation.h in Headers */,
+				4CFDE45326D4ABEF00A01683 /* WeakPtr.h in Headers */,
+				4CFDE5F826D4D78400A01683 /* PixelRatio.h in Headers */,
+				4CFDE4A126D4C3A200A01683 /* BoyiaNetwork.h in Headers */,
+				4CFDE51226D4C54C00A01683 /* Application.h in Headers */,
+				4CFDE51426D4C54C00A01683 /* AppInfo.h in Headers */,
+				4CFDE45D26D4ABEF00A01683 /* HashUtil.h in Headers */,
+				4CFDE45826D4ABEF00A01683 /* Stack.h in Headers */,
+				4CFDE4F926D4C48F00A01683 /* crypt.h in Headers */,
+				4CFDE4EC26D4C46C00A01683 /* inflate.h in Headers */,
+				4CFDE5E926D4CB2200A01683 /* ZipEntry.h in Headers */,
+				4CFDE45526D4ABEF00A01683 /* HashMap.h in Headers */,
+				4CFDE55D26D4C5F200A01683 /* StyleTags.h in Headers */,
+				4CFDE45C26D4ABEF00A01683 /* UtilString.h in Headers */,
+				4CFDE45F26D4ABEF00A01683 /* PlatformLib.h in Headers */,
+				4CFDE54526D4C5C000A01683 /* RenderLayer.h in Headers */,
+				4CFDE47B26D4C2FE00A01683 /* BoyiaValue.h in Headers */,
+				4CFDE5D426D4C68A00A01683 /* StringBuilder.h in Headers */,
+				4CFDE5AB26D4C63300A01683 /* HtmlTags.h in Headers */,
+				4CFDE56F26D4C61D00A01683 /* UIThreadClientMap.h in Headers */,
+				4CFDE5AA26D4C63300A01683 /* LinkView.h in Headers */,
+				4CFDE4FB26D4C48F00A01683 /* zip.h in Headers */,
+				4CFDE59426D4C63200A01683 /* HtmlRenderer.h in Headers */,
+				4CFDE5CB26D4C68A00A01683 /* TaskThread.h in Headers */,
 				4C7AE80926CF837300946197 /* core.h in Headers */,
+				4CFDE60C26D51E3200A01683 /* Animation.h in Headers */,
+				4CFDE5A826D4C63300A01683 /* InlineView.h in Headers */,
+				4CFDE5A326D4C63300A01683 /* InputView.h in Headers */,
+				4CFDE46126D4ABEF00A01683 /* KListMap.h in Headers */,
+				4CFDE60E26D51E3D00A01683 /* VsyncWaiter.h in Headers */,
+				4CFDE4E326D4C46C00A01683 /* zlib.h in Headers */,
+				4CFDE44D26D4ABEE00A01683 /* IdentityMap.h in Headers */,
+				4CFDE52626D4C57000A01683 /* LColorUtil.h in Headers */,
+				4CFDE43026D493E200A01683 /* HttpEngineIOS.h in Headers */,
+				4CFDE4AB26D4C3A200A01683 /* BoyiaBase.h in Headers */,
+				4CFDE55C26D4C5F200A01683 /* StyleRule.h in Headers */,
+				4CFDE56126D4C5F200A01683 /* StyleManager.h in Headers */,
+				4CFDE4A526D4C3A200A01683 /* BoyiaSocket.h in Headers */,
+				4CFDE4AC26D4C3A200A01683 /* BoyiaLib.h in Headers */,
+				4CFDE45A26D4ABEF00A01683 /* FileUtil.h in Headers */,
+				4CFDE42E26D493E200A01683 /* ImageLoaderIOS.h in Headers */,
+				4CFDE44E26D4ABEF00A01683 /* RefCount.h in Headers */,
+				4CFDE52726D4C57000A01683 /* LGdi.h in Headers */,
+				4CFDE4D926D4C46C00A01683 /* inffast.h in Headers */,
+				4CFDE53D26D4C5B300A01683 /* RenderGraphicsContext.h in Headers */,
+				4CFDE47526D4C2FE00A01683 /* BoyiaError.h in Headers */,
+				4CFDE48B26D4C35200A01683 /* BoyiaView.h in Headers */,
+				4CFDE45926D4ABEF00A01683 /* StringUtils.h in Headers */,
+				4CFDE5CD26D4C68A00A01683 /* MessageQueue.h in Headers */,
+				4CFDE5CE26D4C68A00A01683 /* TaskBase.h in Headers */,
+				4CFDE59A26D4C63200A01683 /* VideoView.h in Headers */,
+				4CFDE45126D4ABEF00A01683 /* OwnerPtr.h in Headers */,
+				4CFDE45026D4ABEF00A01683 /* BoyiaRef.h in Headers */,
+				4CFDE4FD26D4C48F00A01683 /* unzip.h in Headers */,
+				4CFDE46226D4ABEF00A01683 /* InputStream.h in Headers */,
+				4CFDE41F26D490ED00A01683 /* BoyiaView.h in Headers */,
+				4CFDE41E26D490ED00A01683 /* BoyiaViewController.h in Headers */,
+				4CFDE59926D4C63200A01683 /* FormView.h in Headers */,
+				4CFDE53026D4C58200A01683 /* NetworkBase.h in Headers */,
+				4CFDE51926D4C55F00A01683 /* DOMBuilder.h in Headers */,
+				4CFDE46526D4ABEF00A01683 /* KVector.h in Headers */,
+				4CFDE57726D4C61D00A01683 /* UIThread.h in Headers */,
+				4CFDE52526D4C57000A01683 /* LEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		4C28B87426D203F700953864 /* bundle */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4C28B87826D203F700953864 /* Build configuration list for PBXNativeTarget "bundle" */;
-			buildPhases = (
-				4C28B87126D203F700953864 /* Sources */,
-				4C28B87226D203F700953864 /* Frameworks */,
-				4C28B87326D203F700953864 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = bundle;
-			productName = bundle;
-			productReference = 4C28B87526D203F700953864 /* bundle.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 		4C7AE80326CF837300946197 /* core */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C7AE80C26CF837300946197 /* Build configuration list for PBXNativeTarget "core" */;
@@ -192,6 +1181,23 @@
 			productReference = 4C7AE80426CF837300946197 /* core.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4CFDE65526D8CC2100A01683 /* metal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CFDE65926D8CC2100A01683 /* Build configuration list for PBXNativeTarget "metal" */;
+			buildPhases = (
+				4CFDE65226D8CC2100A01683 /* Sources */,
+				4CFDE65326D8CC2100A01683 /* Frameworks */,
+				4CFDE65426D8CC2100A01683 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = metal;
+			productName = metal;
+			productReference = 4CFDE65626D8CC2100A01683 /* metal.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -200,10 +1206,10 @@
 			attributes = {
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
-					4C28B87426D203F700953864 = {
+					4C7AE80326CF837300946197 = {
 						CreatedOnToolsVersion = 12.5.1;
 					};
-					4C7AE80326CF837300946197 = {
+					4CFDE65526D8CC2100A01683 = {
 						CreatedOnToolsVersion = 12.5.1;
 					};
 				};
@@ -222,22 +1228,21 @@
 			projectRoot = "";
 			targets = (
 				4C7AE80326CF837300946197 /* core */,
-				4C28B87426D203F700953864 /* bundle */,
+				4CFDE65526D8CC2100A01683 /* metal */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		4C28B87326D203F700953864 /* Resources */ = {
+		4C7AE80226CF837300946197 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C28B87D26D2081500953864 /* ShaderType.h in Resources */,
-				4C28B87E26D2081500953864 /* boyia.metal in Resources */,
+				4CFDE65D26D8CE1C00A01683 /* metal.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4C7AE80226CF837300946197 /* Resources */ = {
+		4CFDE65426D8CC2100A01683 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -247,66 +1252,134 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4C28B87126D203F700953864 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4C7AE80026CF837300946197 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C28B83B26CFCFD200953864 /* boyia.metal in Sources */,
-				4C28B84226D1E40B00953864 /* BoyiaView.m in Sources */,
-				4C28B83F26D09E7F00953864 /* ImageLoaderIOS.mm in Sources */,
-				4C28B83826CFCE2C00953864 /* BoyiaViewController.m in Sources */,
-				4C28B83126CF9BB500953864 /* HttpEngineIOS.mm in Sources */,
-				4C28B83626CFA68400953864 /* ImageIOS.mm in Sources */,
+				4CFDE4E026D4C46C00A01683 /* gzwrite.c in Sources */,
+				4CFDE52426D4C57000A01683 /* LBaseView.cpp in Sources */,
+				4CFDE4A726D4C3A200A01683 /* BoyiaAsyncEvent.cpp in Sources */,
+				4CFDE4A626D4C3A200A01683 /* BoyiaSocket.cpp in Sources */,
+				4CFDE4EE26D4C46C00A01683 /* gzclose.c in Sources */,
+				4CFDE5C826D4C68A00A01683 /* TaskThread.cpp in Sources */,
+				4CFDE4E426D4C46C00A01683 /* trees.c in Sources */,
+				4CFDE4DE26D4C46C00A01683 /* gzread.c in Sources */,
+				4CFDE46626D4ABEF00A01683 /* PlatformLib.cpp in Sources */,
+				4CFDE53226D4C58200A01683 /* ResourceLoader.cpp in Sources */,
+				4CFDE66426D9DB1B00A01683 /* IOSRenderer.mm in Sources */,
+				4CFDE49226D4C35200A01683 /* BoyiaInputView.cpp in Sources */,
+				4CFDE53E26D4C5B300A01683 /* RenderThread.cpp in Sources */,
+				4CFDE4F826D4C48F00A01683 /* zip.c in Sources */,
+				4CFDE48D26D4C35200A01683 /* BoyiaViewDoc.cpp in Sources */,
+				4CFDE45626D4ABEF00A01683 /* BoyiaRef.cpp in Sources */,
+				4CFDE47826D4C2FE00A01683 /* BoyiaError.cpp in Sources */,
+				4CFDE48F26D4C35200A01683 /* BoyiaView.cpp in Sources */,
+				4CFDE5C626D4C68A00A01683 /* MessageThread.cpp in Sources */,
+				4CFDE5A726D4C63300A01683 /* HtmlView.cpp in Sources */,
+				4CFDE4EF26D4C46C00A01683 /* inftrees.c in Sources */,
+				4CFDE5A226D4C63200A01683 /* HtmlTags.cpp in Sources */,
+				4CFDE5F726D4D78400A01683 /* PixelRatio.cpp in Sources */,
+				4CFDE55A26D4C5F200A01683 /* StyleManager.cpp in Sources */,
+				4CFDE42F26D493E200A01683 /* ImageLoaderIOS.mm in Sources */,
+				4CFDE5FC26D516DD00A01683 /* BaseThreadAndroid.cpp in Sources */,
+				4CFDE44F26D4ABEF00A01683 /* IDCreator.cpp in Sources */,
+				4CFDE4AA26D4C3A200A01683 /* BoyiaNetwork.cpp in Sources */,
+				4CFDE60226D51AA500A01683 /* FontIOS.mm in Sources */,
+				4CFDE4DB26D4C46C00A01683 /* zutil.c in Sources */,
+				4CFDE4DC26D4C46C00A01683 /* compress.c in Sources */,
+				4CFDE4EB26D4C46C00A01683 /* deflate.c in Sources */,
+				4CFDE46026D4ABEF00A01683 /* RefCount.cpp in Sources */,
+				4CFDE57226D4C61D00A01683 /* UIThread.cpp in Sources */,
+				4CFDE5CF26D4C68A00A01683 /* BlockQueue.cpp in Sources */,
+				4CFDE5EF26D4D4FB00A01683 /* EditorIOS.mm in Sources */,
+				4CFDE5D226D4C68A00A01683 /* StringBuilder.cpp in Sources */,
+				4CFDE59C26D4C63200A01683 /* InlineView.cpp in Sources */,
+				4CFDE4ED26D4C46C00A01683 /* adler32.c in Sources */,
+				4CFDE5FA26D516AE00A01683 /* LockAndroid.cpp in Sources */,
+				4CFDE4A326D4C3A200A01683 /* BoyiaRuntime.cpp in Sources */,
+				4CFDE5CA26D4C68A00A01683 /* ThreadPool.cpp in Sources */,
+				4CFDE4FC26D4C48F00A01683 /* ioapi.c in Sources */,
+				4CFDE4AF26D4C3B200A01683 /* JSONParser.cpp in Sources */,
+				4CFDE42026D490ED00A01683 /* BoyiaView.m in Sources */,
+				4CFDE4DD26D4C46C00A01683 /* gzlib.c in Sources */,
+				4CFDE50E26D4C54C00A01683 /* AppStack.cpp in Sources */,
+				4CFDE57326D4C61D00A01683 /* UIView.cpp in Sources */,
+				4CFDE57126D4C61D00A01683 /* UIThreadClientMap.cpp in Sources */,
+				4CFDE55726D4C5F200A01683 /* StyleParser.cpp in Sources */,
+				4CFDE43126D493E200A01683 /* ImageIOS.mm in Sources */,
+				4CFDE54826D4C5C000A01683 /* RenderCommand.cpp in Sources */,
+				4CFDE48E26D4C35200A01683 /* BoyiaImageView.cpp in Sources */,
+				4CFDE60026D51A3E00A01683 /* MediaPlayerIOS.mm in Sources */,
+				4CFDE60B26D51E3200A01683 /* Animation.cpp in Sources */,
+				4CFDE4A426D4C3A200A01683 /* BoyiaLib.cpp in Sources */,
+				4CFDE55F26D4C5F200A01683 /* StyleTags.cpp in Sources */,
+				4CFDE60826D51C4F00A01683 /* RenderEngineIOS.mm in Sources */,
+				4CFDE5D026D4C68A00A01683 /* TaskBase.cpp in Sources */,
+				4CFDE56026D4C5F200A01683 /* StyleRule.cpp in Sources */,
+				4CFDE50126D4C4B000A01683 /* TinyXml2.cpp in Sources */,
+				4CFDE59E26D4C63200A01683 /* TextView.cpp in Sources */,
+				4CFDE55E26D4C5F200A01683 /* Style.cpp in Sources */,
+				4CFDE47D26D4C2FE00A01683 /* BoyiaCore.cpp in Sources */,
+				4CFDE45B26D4ABEF00A01683 /* FileUtil.cpp in Sources */,
+				4CFDE4F026D4C46C00A01683 /* uncompr.c in Sources */,
+				4CFDE57626D4C61D00A01683 /* UIViewController.cpp in Sources */,
+				4CFDE59D26D4C63200A01683 /* LinkView.cpp in Sources */,
+				4CFDE53326D4C58200A01683 /* AppLoader.cpp in Sources */,
+				4CFDE4BB26D4C45000A01683 /* cJSON.c in Sources */,
+				4CFDE46726D4ABEF00A01683 /* IdentityMap.cpp in Sources */,
+				4CFDE59526D4C63200A01683 /* BlockView.cpp in Sources */,
+				4CFDE54026D4C5B300A01683 /* RenderGraphicsContext.cpp in Sources */,
+				4CFDE54626D4C5C000A01683 /* RenderLayer.cpp in Sources */,
+				4CFDE51326D4C54C00A01683 /* Application.cpp in Sources */,
+				4CFDE47A26D4C2FE00A01683 /* BoyiaGC.cpp in Sources */,
+				4CFDE5DA26D4CA0800A01683 /* SystemUtil.cpp in Sources */,
+				4CFDE66126D8FA7700A01683 /* shaders.metal in Sources */,
+				4CFDE5E826D4CB2200A01683 /* ZipEntry.cpp in Sources */,
+				4CFDE50F26D4C54C00A01683 /* AppManager.cpp in Sources */,
+				4CFDE5A926D4C63300A01683 /* HtmlDocument.cpp in Sources */,
+				4CFDE51526D4C54C00A01683 /* AppInfo.cpp in Sources */,
+				4CFDE5B226D4C63F00A01683 /* FlexLayout.cpp in Sources */,
+				4CFDE5E426D4CB1200A01683 /* WebSocket.cpp in Sources */,
+				4CFDE4FA26D4C48F00A01683 /* unzip.c in Sources */,
+				4CFDE57026D4C61D00A01683 /* UIOperation.cpp in Sources */,
+				4CFDE60426D51B1C00A01683 /* LoaderIOS.mm in Sources */,
+				4CFDE4E626D4C46C00A01683 /* infback.c in Sources */,
+				4CFDE55626D4C5F200A01683 /* DoctreeNode.cpp in Sources */,
+				4CFDE4E226D4C46C00A01683 /* inffast.c in Sources */,
+				4CFDE52826D4C57000A01683 /* LColorUtil.cpp in Sources */,
+				4CFDE5FE26D5184200A01683 /* PlatformBridgeIOS.mm in Sources */,
+				4CFDE59F26D4C63200A01683 /* VideoView.cpp in Sources */,
+				4CFDE4DF26D4C46C00A01683 /* inflate.c in Sources */,
+				4CFDE51A26D4C55F00A01683 /* DOMBuilder.cpp in Sources */,
+				4CFDE4E726D4C46C00A01683 /* crc32.c in Sources */,
+				4CFDE47C26D4C2FE00A01683 /* BoyiaValue.cpp in Sources */,
+				4CFDE59726D4C63200A01683 /* InputView.cpp in Sources */,
+				4CFDE5AE26D4C63300A01683 /* HtmlRenderer.cpp in Sources */,
+				4CFDE42C26D493E200A01683 /* HttpEngineIOS.mm in Sources */,
+				4CFDE5AD26D4C63300A01683 /* FormView.cpp in Sources */,
+				4CFDE45426D4ABEF00A01683 /* InputStream.cpp in Sources */,
+				4CFDE47926D4C2FE00A01683 /* BoyiaMemory.cpp in Sources */,
+				4CFDE60626D51BBC00A01683 /* VsyncWaiterIOS.mm in Sources */,
+				4CFDE41D26D490ED00A01683 /* BoyiaViewController.m in Sources */,
+				4CFDE49026D4C35200A01683 /* BoyiaViewGroup.cpp in Sources */,
+				4CFDE5C926D4C68A00A01683 /* MessageQueue.cpp in Sources */,
+				4CFDE5A626D4C63300A01683 /* ImageView.cpp in Sources */,
+				4CFDE4A826D4C3A200A01683 /* BoyiaBase.cpp in Sources */,
+				4CFDE45726D4ABEF00A01683 /* StringUtils.cpp in Sources */,
+				4CFDE5A126D4C63200A01683 /* RenderContext.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CFDE65226D8CC2100A01683 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		4C28B87926D203F700953864 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = bundle/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.boyia.bundle;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
-		4C28B87A26D203F700953864 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = bundle/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.boyia.bundle;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
 		4C7AE80A26CF837300946197 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -445,6 +1518,40 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"ENABLE_BOYIA_IOS=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/util",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/arm",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/porting/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/view",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/dom",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/widget",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/style",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/render",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/render/layer",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/loader",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/gui",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/app",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/core",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/view",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/lib",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/json",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/tinyxml",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/zip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/zip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/minizip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/cjson",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/thread",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/painter/utils",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/graphics",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ws",
+				);
 				INFOPLIST_FILE = core/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -467,6 +1574,36 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = "ENABLE_BOYIA_IOS=1";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/util",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/arm",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/porting/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/view",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/dom",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/widget",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/style",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/render",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/render/layer",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/loader",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/gui",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/app",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/core",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/view",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/lib",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/vm/json",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/tinyxml",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/zip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/zip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/minizip",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/thirdparty/cjson",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/thread",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/painter/utils",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/graphics",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ws",
+				);
 				INFOPLIST_FILE = core/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -481,18 +1618,44 @@
 			};
 			name = Release;
 		};
+		4CFDE65A26D8CC2100A01683 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = metal/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boyia.metal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		4CFDE65B26D8CC2100A01683 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = metal/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boyia.metal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4C28B87826D203F700953864 /* Build configuration list for PBXNativeTarget "bundle" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4C28B87926D203F700953864 /* Debug */,
-				4C28B87A26D203F700953864 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4C7AE7FE26CF837300946197 /* Build configuration list for PBXProject "core" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -507,6 +1670,15 @@
 			buildConfigurations = (
 				4C7AE80D26CF837300946197 /* Debug */,
 				4C7AE80E26CF837300946197 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CFDE65926D8CC2100A01683 /* Build configuration list for PBXNativeTarget "metal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CFDE65A26D8CC2100A01683 /* Debug */,
+				4CFDE65B26D8CC2100A01683 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

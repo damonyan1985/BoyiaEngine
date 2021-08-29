@@ -6,7 +6,7 @@
  */
 
 #include "Lock.h"
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
 namespace yanbo {
 
 Lock::Lock()

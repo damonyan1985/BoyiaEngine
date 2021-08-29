@@ -7,27 +7,26 @@
 
 #import <Foundation/Foundation.h>
 
+#import "PlatformLib.h"
 #import "HttpEngineIOS.h"
 
 // 实现请求代理
-@interface HttpEngineIOS ()<NSURLSessionDataDelegate>
+@interface HttpEngineDelegate : NSObject<NSURLSessionDataDelegate>
+
+@property (strong) id<HttpCallback> callback;
+
+@end
+
+@interface HttpEngineIOS()
 
 @property (nonatomic, assign) NSString* postData;
-@property (strong) NSMutableData* receiveData;
-@property (strong) id<HttpCallback> callback;
 
 @end
 
 @implementation HttpEngineIOS
 
-@synthesize callback;
-
--(void)setHttpCallback:(id<HttpCallback>)cb {
-    self.callback = cb;
-}
-
--(void) loadUrl: (HttpMethod) method andUrl: (NSString*) url {
-    self.receiveData = [NSMutableData new];
+-(void) loadUrl: (HttpMethod) method url: (NSString*) url callback:(id<HttpCallback>)cb {
+    //self.receiveData = [NSMutableData new];
     NSURL *reqUrl = [NSURL URLWithString:url];
     // 初始化请求对象
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:reqUrl cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
@@ -51,11 +50,16 @@
     // 创建操作队列
     NSOperationQueue *queue = [NSOperationQueue new];
     
+    HttpEngineDelegate* delegate = [HttpEngineDelegate new];
+    delegate.callback = cb;
+    
     // 创建Session, 设置代理
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:queue];
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:config delegate:delegate delegateQueue:queue];
     
     // 创建任务对象
     NSURLSessionTask* task = [session dataTaskWithRequest:request];
+    
+    //[task setValue:cb forKey:@"haha"];
 //    NSURLSessionTask *task = [session dataTaskWithRequest: request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 //        // 此处网络请求成功
 //        if (data && !error) {
@@ -70,9 +74,9 @@
     [task resume];
 }
 
--(void)loadUrlWithData: (HttpMethod) method andUrl:(const char *)url {
+-(void)loadUrlWithData: (HttpMethod) method url:(const char *)url callback:(id<HttpCallback>)cb{
     NSString* nsUrl = [[NSString alloc] initWithUTF8String: url];
-    [self loadUrl:method andUrl:nsUrl];
+    [self loadUrl:method url:nsUrl callback:cb];
 }
 
 -(void)setData: (const char*)data {
@@ -80,20 +84,23 @@
     self.postData = postData;
 }
 
+@end
+
+@implementation HttpEngineDelegate
+
 #pragma mark --NSURLSessionDownloadDelegate
 
 // 接受网络数据
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
-    [self.receiveData appendData:data];
+- (void)URLSession:(NSURLSession*)session dataTask:(NSURLSessionDataTask*)dataTask didReceiveData:(NSData*)data {
     if (self.callback != nil) {
         [self.callback onDataReceive:data];
     }
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+- (void)URLSession:(NSURLSession*)session task:(NSURLSessionTask*)task
 didCompleteWithError:(nullable NSError *)error {
-    NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
-    NSLog(@"Result New data = %@",json);
+    //NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
+    //NSLog(@"Result New data = %@",json);
     if (self.callback != nil) {
         [self.callback onLoadFinished];
     }

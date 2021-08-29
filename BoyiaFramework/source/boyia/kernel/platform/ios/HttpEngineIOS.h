@@ -27,10 +27,10 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 // IOS http请求类
 @interface HttpEngineIOS : NSObject
 
--(void)setHttpCallback:(id<HttpCallback>)cb;
+//-(void)setHttpCallback:(id<HttpCallback>)cb;
 -(void)setData: (const char*)data;
--(void)loadUrl: (HttpMethod) method andUrl: (NSString*) url;
--(void)loadUrlWithData: (HttpMethod) method andUrl:(const char *)url;
+-(void)loadUrl: (HttpMethod) method url: (NSString*) url callback:(id<HttpCallback>)cb;
+-(void)loadUrlWithData: (HttpMethod) method url:(const char *)url callback:(id<HttpCallback>)cb;
 
 @end
 

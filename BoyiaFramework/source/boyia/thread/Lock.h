@@ -9,7 +9,7 @@
 
 #include "PlatformLib.h"
 
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
 #include <pthread.h>
 typedef pthread_mutex_t PlatformLock;
 #elif ENABLE(BOYIA_WINDOWS)

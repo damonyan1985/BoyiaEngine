@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C28B84726D1F7C500953864 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 4C28B84626D1F7C500953864 /* shaders.metal */; };
 		4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E226CF835700946197 /* AppDelegate.m */; };
 		4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E526CF835700946197 /* SceneDelegate.m */; };
 		4C7AE7E926CF835700946197 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E826CF835700946197 /* ViewController.m */; };
@@ -16,11 +15,10 @@
 		4C7AE7F126CF835B00946197 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C7AE7EF26CF835B00946197 /* LaunchScreen.storyboard */; };
 		4C7AE7F426CF835B00946197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7F326CF835B00946197 /* main.m */; };
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
+		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4C28B84626D1F7C500953864 /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
-		4C28B84826D1F7FA00953864 /* ShaderType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderType.h; sourceTree = "<group>"; };
 		4C7AE7DE26CF835700946197 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE7E126CF835700946197 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4C7AE7E226CF835700946197 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -34,6 +32,7 @@
 		4C7AE7F226CF835B00946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C7AE7F326CF835B00946197 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C7AE81026CF83D000946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */,
 				4C7AE81126CF83D000946197 /* core.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,8 +79,6 @@
 				4C7AE7EF26CF835B00946197 /* LaunchScreen.storyboard */,
 				4C7AE7F226CF835B00946197 /* Info.plist */,
 				4C7AE7F326CF835B00946197 /* main.m */,
-				4C28B84626D1F7C500953864 /* shaders.metal */,
-				4C28B84826D1F7FA00953864 /* ShaderType.h */,
 			);
 			path = app;
 			sourceTree = "<group>";
@@ -88,6 +86,7 @@
 		4C7AE80F26CF83D000946197 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4CFDE3FB26D48C9500A01683 /* MetalKit.framework */,
 				4C7AE81026CF83D000946197 /* core.framework */,
 			);
 			name = Frameworks;
@@ -163,7 +162,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C7AE7E926CF835700946197 /* ViewController.m in Sources */,
-				4C28B84726D1F7C500953864 /* shaders.metal in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
@@ -320,6 +318,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/porting/ios",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -337,6 +339,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/kernel/platform/ios",
+					"$(PROJECT_DIR)/../../../BoyiaFramework/source/boyia/porting/ios",
+				);
 				INFOPLIST_FILE = app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

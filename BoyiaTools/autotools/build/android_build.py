@@ -2,8 +2,11 @@ import os
 import operator
 import sys
 import shutil
+import platform
 
 current_path = os.getcwd()
+# 用户目录
+user_path = os.environ['HOME']
 # boyia project path
 project_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
 android_sdk_path = os.getenv('ANDROID_HOME')
@@ -28,19 +31,40 @@ core_dir = os.path.join(boyia_app_android_path, 'core')
 apk_build_dir = os.path.join(boyia_app_android_path, 'app', 'build')
 gradle_cmd = os.path.join(boyia_app_android_path, 'gradlew')
 
+boyia_rust_tools_path = os.path.join(project_path, 'BoyiaTools/rust-tools')
+boyia_rust_tools_ndk_path = os.path.join(boyia_rust_tools_path, 'ndk')
+boyia_rust_tools_config_path = os.path.join(user_path, '.cargo/config')
 boyia_rust_sdk_lib_path = os.path.join(core_dir, 'libs/arm64-v8a')
 boyia_rust_sdk_lib_name = 'libsdk_main.so'
 
-# 写入sdk配置
+# write in sdk config
 boyia_app_sdk_config = (
     f'sdk.dir={android_sdk_path}\n'
     f'ndk.dir={android_ndk_path}\n'
-    f'maven_dir={boyia_app_maven_path}\n'
+    f'maven_dir={maven_project_dir}\n'
     f'library_dir={boyia_app_library_path}\n'
+)
+
+# rust sdk config not in windows
+boyia_rust_sdk_config = (
+    f'[source.crates-io]\n'
+    f'registry = "https://github.com/rust-lang/crates.io-index"\n'
+    f'replace-with = \'ustc\'\n'
+    f'\n'
+    f'[source.ustc]\n'
+    f'registry = "https://mirrors.ustc.edu.cn/crates.io-index/"\n'
+    f'\n'
+    f'[target.aarch64-linux-android]\n'
+    f'ar="{boyia_rust_tools_ndk_path}/arm64/bin/aarch64-linux-android-ar"\n'
+    f'linker="{boyia_rust_tools_ndk_path}/arm64/bin/aarch64-linux-android-clang"\n'
 )
 
 pull_core_maven_cmd = (
     'cd maven && git clone git@github.com:damonyan1985/BoyiaMaven.git'
+)
+
+permission_gradlew_cmd = (
+    f'chmod +x {gradle_cmd}'
 )
 
 # add --rerun-tasks to resolute externalNativeBuild not exist
@@ -72,17 +96,25 @@ launch_app_cmd = (
     'adb shell am start -n com.boyia.app.shell/com.boyia.app.shell.BoyiaMainActivity'
 )
 
+create_rust_environment = (
+    f'python3 {android_ndk_path}/build/tools/make_standalone_toolchain.py --api 28 --arch arm64 --install-dir {boyia_rust_tools_ndk_path}/arm64'
+)
+
 boyia_rust_sdk_cmd = (
     "cargo build --target aarch64-linux-android --release"
 )
 
+boyia_install_ndk_cmd = (
+    'rustup target add aarch64-linux-android'
+)
 
+# 为android工程添加配置，即local.properities
 def add_boyia_app_android_config():
     print(boyia_app_sdk_config)
     if os.path.exists(boyia_app_android_config_path) == False:
         open(boyia_app_android_config_path, 'w').write(boyia_app_sdk_config)
 
-
+# 删除目录下所以文件
 def del_file(path, isDel):
     ls = os.listdir(path)
     for i in ls:
@@ -100,7 +132,7 @@ def del_file(path, isDel):
     if isDel:
         os.rmdir(path)
 
-
+# 编译boyia工程中的rust子工程
 def do_build_boyia_rust_sdk():
     os.chdir(boyia_rust_sdk_path)
     os.system(boyia_rust_sdk_cmd)
@@ -118,7 +150,32 @@ def do_single_cmd(cmd):
         do_build_boyia_rust_sdk()
         return
 
+# 安装boyia工程中的rust ndk环境
+def install_boyia_rust_environment():
+    if os.path.exists(boyia_rust_tools_path) == True:
+        return   
+    os.makedirs(boyia_rust_tools_ndk_path)
+    print(create_rust_environment)
+    os.system(create_rust_environment)
 
+# 安装boyia工程中rust配置
+def install_boyia_rust_config():
+    if os.path.exists(boyia_rust_tools_config_path) == True:
+        return
+    print(boyia_rust_sdk_config)    
+    # 非windows系统添加配置
+    if platform.system().lower() != 'windows':
+        open(boyia_rust_tools_config_path, 'w').write(boyia_rust_sdk_config)
+    os.system(boyia_install_ndk_cmd)
+
+# 前提是系统已经安装了rust开发环境
+def install_and_build_rust():
+    install_boyia_rust_environment()
+    print(user_path)
+    install_boyia_rust_config()
+    do_build_boyia_rust_sdk()
+
+# 启动入口
 def main():
     length = len(sys.argv)
     print('arguments length=' + str(length))
@@ -127,18 +184,33 @@ def main():
         return
 
     # 编译boyia rust库
-    do_build_boyia_rust_sdk()
+    install_and_build_rust()
 
-    # 切换编译目录
+    # 切换编译目录编译Android工程
     os.chdir(boyia_app_android_path)
+    # 判断local.properties是否存在
+    if os.path.exists(boyia_app_android_config_path) == False:
+        add_boyia_app_android_config()
+
     print('maven_dir=' + maven_dir)
     if os.path.exists(maven_dir) == False:
         os.mkdir(maven_dir)
-        os.system(pull_core_maven_cmd)
+        #os.system(pull_core_maven_cmd)
+
+    if os.path.exists(maven_project_dir) == False:
+        os.mkdir(maven_project_dir)    
 
     del_file(maven_project_dir, False)
+
+    # 删除编译目录
     if os.path.exists(apk_build_dir) == True:
         del_file(apk_build_dir, True)
+
+    print('system=' + platform.system().lower())
+    # 如果不是windows系统, gradlew需要添加权限
+    if platform.system().lower() != 'windows':
+        os.system(permission_gradlew_cmd)
+
     os.system(upload_util_library_cmd)
     os.system(upload_loader_library_cmd)
     # os.system(upload_core_native_sync_cmd)

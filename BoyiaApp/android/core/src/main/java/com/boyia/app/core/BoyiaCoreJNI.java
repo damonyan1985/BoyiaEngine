@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BoyiaCoreJNI {
     private static AtomicBoolean sHasInit = new AtomicBoolean(false);
 
-    static {
-        System.loadLibrary("sdk_main");
-    }
+   static {
+       System.loadLibrary("sdk_main");
+   }
 
     public interface LibraryInitCallback {
         void initOk();

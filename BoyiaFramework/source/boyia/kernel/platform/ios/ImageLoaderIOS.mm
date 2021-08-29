@@ -25,6 +25,15 @@
 // 实现ImageClient
 @implementation ImageClient
 
+-(instancetype)init {
+    self = [super init];
+    if (self != nil) {
+        self.receiveData = [NSMutableData new];
+    }
+    
+    return self;
+}
+
 -(void)onDataReceive:(NSData*)data {
     [self.receiveData appendData:data];
 }
@@ -69,10 +78,10 @@ static ImageLoaderIOS* _instance = nil;
     return self;
 }
 
+// 开始加载图片
 -(void)loadImage:(NSString *)url clientId:(int)cid {
     ImageClient* client = [ImageClient new];
-    [self.engine setHttpCallback:client];
-    [self.engine loadUrl:kHttpGet andUrl:url];
+    [self.engine loadUrl:kHttpGet url:url callback:client];
 }
 
 @end

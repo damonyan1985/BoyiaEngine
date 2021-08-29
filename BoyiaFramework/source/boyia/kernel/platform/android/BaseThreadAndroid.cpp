@@ -7,11 +7,18 @@
 #include "AutoLock.h"
 #include "BaseThread.h"
 #include "SalLog.h"
+
 #if ENABLE(BOYIA_ANDROID)
 #include <time.h>
 #include <unistd.h>
+#elif ENABLE(BOYIA_IOS)
+#include <sys/time.h>
+#include <unistd.h>
+#endif
 
 #define TAG "BaseThread"
+
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
 
 const LInt kThreadStackSize = 256 * 1024;
 
@@ -106,9 +113,9 @@ void BaseThread::sleepMS(long time)
     nanosleep(&ts, NULL);
 }
 
-int BaseThread::getId()
+LUint64 BaseThread::getId()
 {
-    return (int)pthread_self();
+    return (LUint64)pthread_self();
 }
 
 void BaseThread::stop()

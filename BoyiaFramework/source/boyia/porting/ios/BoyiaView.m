@@ -23,6 +23,7 @@
     return [CAMetalLayer class];
 }
 
+// 返回CAMetalLayer对象
 -(CAMetalLayer*)metalLayer {
     return (CAMetalLayer*)self.layer;
 }

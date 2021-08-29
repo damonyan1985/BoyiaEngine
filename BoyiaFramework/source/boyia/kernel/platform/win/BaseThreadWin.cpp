@@ -87,9 +87,9 @@ void BaseThread::sleepMS(long time)
     ::Sleep(time);
 }
 
-int BaseThread::getId()
+LUint64 BaseThread::getId()
 {
-    return m_condition->threadId;
+    return (LUint64)m_condition->threadId;
 }
 
 void BaseThread::stop()
