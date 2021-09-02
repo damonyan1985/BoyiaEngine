@@ -139,12 +139,59 @@ LVoid RenderEngineIOS::setBuffer()
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 {
+    RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
+    // 从普通指针转为OC ARC指针，使用完之后释放
+    UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
     
 }
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 {
+    RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
+    NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
+    UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];
     
+    int width = textCmd->rect.GetWidth();
+    int height = textCmd->rect.GetWidth();
+    Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
+    memset(data, 0, width * height * 4);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
+                                                       colorSpace,
+                                                       kCGImageAlphaPremultipliedLast);
+    // push context之后才能绘制文字
+    UIGraphicsPushContext(context);
+    
+    CGContextTranslateCTM(context, 0, 480);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    // 转成OC字体
+    NSString* text = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
+    // 文字颜色
+    UIColor* color = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
+                                    green:METAL_COLOR_BIT(textCmd->color.m_green)
+                                     blue:METAL_COLOR_BIT(textCmd->color.m_blue)
+                                    alpha:METAL_COLOR_BIT(textCmd->color.m_alpha)];
+    // 设置文字绘制属性
+    NSMutableDictionary* textAttributes = [NSMutableDictionary new];
+    [textAttributes setValue:font forKey:NSFontAttributeName];
+    [textAttributes setValue:color forKey:NSForegroundColorAttributeName];
+    
+    // 开始绘制文字
+    [text drawInRect:CGRectMake(textCmd->rect.iTopLeft.iX, textCmd->rect.iTopLeft.iY, width, height)
+      withAttributes:textAttributes];
+
+    UIGraphicsPopContext();
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    
+    [m_renderer setTextureData:@"" data:data width:width height:height];
+    
+    // 释放data
+    if (data) {
+        free(data);
+    }
 }
 
 IRenderEngine* IRenderEngine::create()

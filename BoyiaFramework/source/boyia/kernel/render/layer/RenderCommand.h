@@ -45,6 +45,7 @@ public:
     RenderImageCommand(const LRect& rect, const LColor& color, LVoid* image);
     virtual LInt type();
 
+    String url;
     LVoid* image;
 };
 

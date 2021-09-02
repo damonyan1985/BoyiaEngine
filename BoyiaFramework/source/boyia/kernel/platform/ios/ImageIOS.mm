@@ -67,6 +67,7 @@ LVoid ImageIOS::setData(const OwnerPtr<String>& data)
     NSData* buffer = [[NSData alloc] initWithBytesNoCopy:data->GetBuffer() length:data->GetLength()];
     // 使用非拷贝方式转移data内部buffer的控制权
     data->ReleaseBuffer();
+    // 生成UIImage
     m_uimage = [UIImage imageWithData:buffer];
 }
 
@@ -78,6 +79,7 @@ const String& ImageIOS::url() const
 LVoid* ImageIOS::pixels() const
 {
     // 从ARC指针转换为普通指针，释放交由开发者自己释放
+    // ImageIOS不管理m_uimage的释放问题，交给render线程处理
     return (__bridge_retained void*)m_uimage;
 }
 

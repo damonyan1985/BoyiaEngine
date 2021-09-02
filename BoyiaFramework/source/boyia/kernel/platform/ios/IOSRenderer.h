@@ -16,7 +16,10 @@
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
 -(CAMetalLayer*)layer;
+
 -(void)setBuffer:(const void*)buffer size:(NSUInteger)size;
+-(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;
+-(id<MTLTexture>)getTexture:(NSString*)key;
 
 @end
 

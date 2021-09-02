@@ -57,6 +57,8 @@ private:
     yanbo::StringBuilder m_builder;
 };
 
+// 对于熟悉IOS中nonatomic与atomic互斥
+// strong,copy,weak,assign互斥
 @interface IOSRenderer()
 
 @property (nonatomic, strong) CAMetalLayer* metalLayer;
@@ -71,6 +73,9 @@ private:
 // 顶点缓冲
 @property (nonatomic, strong) id<MTLBuffer> verticeBuffer;
 
+// 纹理缓存
+@property (nonatomic, strong) NSMutableDictionary* textureCache;
+
 @end
 
 @implementation IOSRenderer {
@@ -80,9 +85,12 @@ private:
 -(instancetype)initWithLayer:(CAMetalLayer*)layer {
     self = [super init];
     if (self != nil) {
+        self.metalLayer = layer;
         
-        [self initMetal:layer];
+        // TODO 后期需要移到engine中
+        [self initMetal];
         
+        self.textureCache = [NSMutableDictionary new];
         int w = [UIScreen mainScreen].bounds.size.width;
         int h = [UIScreen mainScreen].bounds.size.height;
         
@@ -105,8 +113,8 @@ private:
 }
 
 // 初始化metal环境
--(void)initMetal:(CAMetalLayer*)layer {
-    self.metalLayer = layer;
+-(void)initMetal {
+    
     id device = MTLCreateSystemDefaultDevice();
     
     self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -124,6 +132,16 @@ private:
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.vertexFunction = vertexFunction;
     pipelineStateDescriptor.fragmentFunction = fragmentFunction;
+    
+    // 透明必须设置以下
+    pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
+    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    // 透明设置
     
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
     //pipelineStateDescriptor.depthAttachmentPixelFormat =  MTLPixelFormatDepth32Float_Stencil8;
@@ -149,17 +167,43 @@ private:
     self.verticeBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
 }
 
+-(id<MTLTexture>)getTexture:(NSString*)key {
+    return self.textureCache[key];
+}
+
+-(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height {
+    if (!data) {
+        return;
+    }
+    MTLTextureDescriptor *textureDescriptor = [[MTLTextureDescriptor alloc] init];
+    textureDescriptor.pixelFormat = MTLPixelFormatRGBA8Unorm;
+    textureDescriptor.width = width;
+    textureDescriptor.height = height;
+    
+    id texture = [self.metalLayer.device newTextureWithDescriptor:textureDescriptor]; // 创建纹理
+    if (texture == nil) {
+        return;
+    }
+    [self.textureCache setObject:key forKey:texture];
+    MTLRegion region = {{ 0, 0, 0 }, {width, height, 1}}; // 纹理上传的范围
+    // UIImage的数据需要转成二进制才能上传，且不用jpg、png的NSData
+    [texture replaceRegion:region
+                mipmapLevel:0
+                  withBytes:data
+                bytesPerRow:4 * width];
+}
+
 -(CAMetalLayer*)layer {
     return self.metalLayer;
 }
 
 -(void)render {
     CGFloat statusBar = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    LRect rect1(100, 100 + statusBar, 300, 300);
+    LRect rect1(100, 100 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
     _engine->renderRect(cmd1);
     
-    LRect rect2(100, 600 + statusBar, 300, 300);
+    LRect rect2(100, 600 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd2 = new yanbo::RenderRectCommand(rect2, LColor(0, 0, 255, 255));
     _engine->renderRect(cmd2);
     
@@ -196,6 +240,19 @@ private:
                       vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
 
     
+    LRect rect3(100, 300 + statusBar, 100, 100);
+    yanbo::RenderRectCommand* cmd3 = new yanbo::RenderRectCommand(rect3, LColor(0, 0, 255, 255));
+    _engine->renderRect(cmd3);
+    
+    _engine->setBuffer();
+    
+    [renderEncoder setVertexBuffer:self.verticeBuffer
+                            offset:0
+                           atIndex:0];
+    
+    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                      vertexStart:0
+                      vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
 // 如果使用索引
 //    id<MTLBuffer> indexBuffer = [self.metalLayer.device newBufferWithBytes:index length:sizeof(index) options:MTLResourceStorageModeShared];
 //    UInt16 index[12] = {

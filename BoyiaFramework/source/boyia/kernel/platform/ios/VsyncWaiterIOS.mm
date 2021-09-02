@@ -54,6 +54,7 @@ VsyncWaiter* VsyncWaiter::createVsyncWaiter()
 }
 
 - (void)onDisplayLink:(CADisplayLink*)link {
+    // TODO do something
     displayLink.paused = YES;
 }
 @end
