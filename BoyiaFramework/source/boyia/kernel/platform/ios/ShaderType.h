@@ -17,7 +17,7 @@ typedef struct
     vector_float2 aTexCoord;
 } VertexAttributes;
 
-
+// uType, 0表示普通图形，1表示图片，2表示视频，3表示nativeview
 typedef struct
 {
     uint uType;

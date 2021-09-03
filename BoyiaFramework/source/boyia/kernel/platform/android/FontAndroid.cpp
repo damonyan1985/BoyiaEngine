@@ -4,6 +4,7 @@
 #include "LGdi.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "PixelRatio.h"
 
 namespace util {
 

@@ -147,10 +147,14 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 {
-    m_vertexs.clear();
+    //m_vertexs.clear();
     RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
     LRect& rect = textCmd->rect;
     LColor& color = textCmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
     
     float x, y;
     
@@ -206,7 +210,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     int width = textCmd->rect.GetWidth();
     int height = textCmd->rect.GetHeight();
     Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
-    memset(data, 0, width * height * 4);
+    memset(data, 255, width * height * 4);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
                                                        colorSpace,
@@ -218,7 +222,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     CGContextScaleCTM(context, 1.0, -1.0);
     CGContextSetShouldAntialias(context, YES);
     
-    // 转成OC字体
+    // 转成OC字符串
     NSString* text = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
     // 文字颜色
     UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)

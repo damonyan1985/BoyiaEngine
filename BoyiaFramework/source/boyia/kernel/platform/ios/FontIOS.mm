@@ -83,17 +83,61 @@ LVoid FontIOS::getLineText(LInt index, String& text)
 
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
-    // TODO
+//    float radio = yanbo::PixelRatio::ratio();
+//    maxWidth = maxWidth * radio;
     // String换NSString
-    NSString* nsText = [[NSString alloc] initWithUTF8String:GET_STR(text)];
+    NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR(text)];
     
-    NSDictionary *dict = @{NSFontAttributeName:m_font};
-
+    NSDictionary* dict = @{NSFontAttributeName:m_font};
     //设置文本能占用的最大宽高
-    CGSize maxSize = CGSizeMake(maxWidth, MAXFLOAT);
-    CGRect rect =  [nsText boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil];
+    CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
+    
 
-    return 0;
+    LInt currentLineWidth = 0;
+    LInt maxLineWidth = 0;
+    
+    LInt start = 0;
+    LInt end = 0;
+    for (LInt i = 0; i < nsText.length; ++i) {
+        end = i+1;
+        NSString* rangeString = [nsText substringWithRange:NSMakeRange(start, end - start)];
+        CGRect rect =  [rangeString boundingRectWithSize:maxSize
+                                                 options:NSStringDrawingUsesLineFragmentOrigin
+                                              attributes:dict context:nil];
+        
+        if (rect.size.width <= maxWidth) {
+            currentLineWidth = rect.size.width;
+        } else {
+            maxLineWidth = maxLineWidth < currentLineWidth ?
+                currentLineWidth : maxLineWidth;
+            
+            NSString* target = [nsText substringWithRange:NSMakeRange(start, end - start)];
+            //const char* buffer = [target UTF8String];
+            NSData* nsData = [target dataUsingEncoding:NSUTF8StringEncoding];
+            //OwnerPtr<String> lineText = new String((const LUint8*)buffer, (LInt)strlen(buffer));
+            OwnerPtr<String> lineText = new String((const LUint8*)nsData.bytes, (LInt)nsData.length);
+            //yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
+            m_lines.addElement(new LineText(lineText, currentLineWidth));
+            currentLineWidth = 0;
+
+            start = end;
+        }
+
+        m_height = m_height < rect.size.height ? rect.size.height : m_height;
+    }
+
+    if (currentLineWidth > 0) {
+        maxLineWidth = maxLineWidth < currentLineWidth ?
+            currentLineWidth : maxLineWidth;
+
+        NSString* target = [nsText substringWithRange:NSMakeRange(start, end - start)];
+        NSData* nsData = [target dataUsingEncoding:NSUTF8StringEncoding];
+        
+        OwnerPtr<String> lineText = new String((const LUint8*)nsData.bytes, (LInt)nsData.length);
+        m_lines.addElement(new LineText(lineText, currentLineWidth));
+    }
+
+    return maxLineWidth;
 }
 
 LFont* LFont::create(const LFont& font)
