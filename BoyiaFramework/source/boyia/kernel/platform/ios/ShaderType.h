@@ -17,5 +17,11 @@ typedef struct
     vector_float2 aTexCoord;
 } VertexAttributes;
 
+
+typedef struct
+{
+    uint uType;
+} Uniforms;
+
 #endif /* ShaderType_h */
 

@@ -39,18 +39,31 @@ typedef struct {
 
 // 片元shader实现
 struct FragmentShader {
-  FragmentShader(thread VertexVaryings& varyings)
-    : mVaryings(varyings) {}
+    FragmentShader(thread VertexVaryings& varyings, constant Uniforms& uniforms, texture2d<half> texture)
+        : mVaryings(varyings)
+        , mUniforms(uniforms)
+        , mTexture(texture) {}
 
-  // 对标opengles2中的gl_FragColor全局变量
-  float4 gl_FragColor;
+    // 对标opengles2中的gl_FragColor全局变量
+    float4 gl_FragColor;
+    Uniforms mUniforms;
+    texture2d<half> mTexture;
 
-  // 接收顶点着色器中传入的易变变量
-  thread VertexVaryings mVaryings;
+    // 接收顶点着色器中传入的易变变量
+    thread VertexVaryings mVaryings;
 
-  void main() {
-    gl_FragColor = mVaryings.vColor;
-  }
+    void main() {
+        // 颜色
+        if (mUniforms.uType == 0) {
+            gl_FragColor = mVaryings.vColor;
+        } else { // 纹理
+            constexpr sampler textureSampler(mag_filter::linear,
+                                              min_filter::linear); // sampler是采样器
+            half4 colorSample = mTexture.sample(textureSampler, mVaryings.vTexCoord); // 得到纹理对应位置的颜色
+            gl_FragColor = float4(colorSample);
+        }
+        
+    }
 };
 
 // 顶点着色器对外接口
@@ -63,8 +76,10 @@ vertex VertexVaryings vertexMain(uint vertexID [[vertex_id]], constant VertexAtt
 }
 
 // 片元着色器对外接口
-fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]]) {
-  FragmentShader shader(varyings);
+fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]],
+                             constant Uniforms& uniforms[[buffer(0)]],
+                             texture2d<half> colorTexture [[texture(0)]]) {
+  FragmentShader shader(varyings, uniforms, colorTexture);
   shader.main();
   return shader.gl_FragColor;
 }

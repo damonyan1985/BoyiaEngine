@@ -147,12 +147,64 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 {
+    m_vertexs.clear();
     RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
-    NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
-    UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];
+    LRect& rect = textCmd->rect;
+    LColor& color = textCmd->color;
     
+    float x, y;
+    
+    
+    VertexAttributes attr;
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    m_vertexs.addElement(attr);
+
+    // left, bottom
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 1 };
+    m_vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    m_vertexs.addElement(attr);
+
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    m_vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    m_vertexs.addElement(attr);
+
+    // right, top
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 0 };
+    m_vertexs.addElement(attr);
+    
+    
+    
+    //NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
+    //UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];
+    UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()];
     int width = textCmd->rect.GetWidth();
-    int height = textCmd->rect.GetWidth();
+    int height = textCmd->rect.GetHeight();
     Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
     memset(data, 0, width * height * 4);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -162,23 +214,24 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     // push context之后才能绘制文字
     UIGraphicsPushContext(context);
     
-    CGContextTranslateCTM(context, 0, 480);
+    CGContextTranslateCTM(context, 0, height);
     CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextSetShouldAntialias(context, YES);
     
     // 转成OC字体
     NSString* text = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
     // 文字颜色
-    UIColor* color = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
+    UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
                                     green:METAL_COLOR_BIT(textCmd->color.m_green)
                                      blue:METAL_COLOR_BIT(textCmd->color.m_blue)
                                     alpha:METAL_COLOR_BIT(textCmd->color.m_alpha)];
     // 设置文字绘制属性
     NSMutableDictionary* textAttributes = [NSMutableDictionary new];
     [textAttributes setValue:font forKey:NSFontAttributeName];
-    [textAttributes setValue:color forKey:NSForegroundColorAttributeName];
+    [textAttributes setValue:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
     
     // 开始绘制文字
-    [text drawInRect:CGRectMake(textCmd->rect.iTopLeft.iX, textCmd->rect.iTopLeft.iY, width, height)
+    [text drawInRect:CGRectMake(0, 0, width, height)
       withAttributes:textAttributes];
 
     UIGraphicsPopContext();
@@ -186,7 +239,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     CGContextRelease(context);
     CGColorSpaceRelease(colorSpace);
     
-    [m_renderer setTextureData:@"" data:data width:width height:height];
+    [m_renderer setTextureData:text data:data width:width height:height];
     
     // 释放data
     if (data) {

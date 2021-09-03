@@ -16,6 +16,7 @@
 #include "PixelRatio.h"
 #include "NetworkBase.h"
 #include "StringBuilder.h"
+#include "ShaderType.h"
 
 class Client : public yanbo::NetworkClient {
 public:
@@ -75,6 +76,8 @@ private:
 
 // 纹理缓存
 @property (nonatomic, strong) NSMutableDictionary* textureCache;
+
+@property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
 
 @end
 
@@ -161,6 +164,10 @@ private:
     self.renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     
     self.commandQueue = [device newCommandQueue];
+    
+    Uniforms uniforms = { 0 };
+    self.uniformsBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+    memcpy([self.uniformsBuffer contents], &uniforms, sizeof(Uniforms));
 }
 
 -(void)setBuffer:(const void*)buffer size:(NSUInteger)size {
@@ -184,7 +191,7 @@ private:
     if (texture == nil) {
         return;
     }
-    [self.textureCache setObject:key forKey:texture];
+    [self.textureCache setObject:texture forKey:key];
     MTLRegion region = {{ 0, 0, 0 }, {width, height, 1}}; // 纹理上传的范围
     // UIImage的数据需要转成二进制才能上传，且不用jpg、png的NSData
     [texture replaceRegion:region
@@ -234,11 +241,13 @@ private:
 //    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
 //                      vertexStart:0
 //                      vertexCount:6];
+    [renderEncoder setFragmentBuffer:self.uniformsBuffer offset:0 atIndex:0];
     
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0
                       vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
 
+    
     
     LRect rect3(100, 300 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd3 = new yanbo::RenderRectCommand(rect3, LColor(0, 0, 255, 255));
@@ -250,9 +259,40 @@ private:
                             offset:0
                            atIndex:0];
     
+    [renderEncoder setFragmentBuffer:self.uniformsBuffer offset:0 atIndex:0];
+    
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0
                       vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
+    
+    
+    LRect rect4(260, 260, 200, 50);
+    LFont font;
+    font.setFontSize(24);
+    
+    yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 0, 0, 255), font, _CS("只是测试"));
+    _engine->renderText(cmd4);
+
+    _engine->setBuffer();
+
+    [renderEncoder setVertexBuffer:self.verticeBuffer
+                            offset:0
+                           atIndex:0];
+    
+    Uniforms uniforms = { 1 };
+    id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+    memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+    
+    [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
+    
+    [renderEncoder setFragmentTexture:self.textureCache[@"只是测试"] atIndex:0];
+    
+    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                      vertexStart:0
+                      vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
+    
+    
+    //_engine->setBuffer();
 // 如果使用索引
 //    id<MTLBuffer> indexBuffer = [self.metalLayer.device newBufferWithBytes:index length:sizeof(index) options:MTLResourceStorageModeShared];
 //    UInt16 index[12] = {
