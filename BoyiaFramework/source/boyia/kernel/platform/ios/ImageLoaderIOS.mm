@@ -10,6 +10,10 @@
 #import "ImageLoaderIOS.h"
 #import "HttpEngineIOS.h"
 
+#include "UIThreadClientMap.h"
+#include "UIThread.h"
+#include "ImageIOS.h"
+
 @interface ImageLoaderIOS()
 
 @property (nonatomic, strong) HttpEngineIOS* engine;
@@ -19,16 +23,18 @@
 @interface ImageClient : NSObject<HttpCallback>
 
 @property (strong) NSMutableData* receiveData;
+@property (nonatomic, assign) int clientId;
 
 @end
 
 // 实现ImageClient
 @implementation ImageClient
 
--(instancetype)init {
+-(instancetype)initWithClientId:(int)cid {
     self = [super init];
     if (self != nil) {
         self.receiveData = [NSMutableData new];
+        self.clientId = cid;
     }
     
     return self;
@@ -39,8 +45,16 @@
 }
 
 -(void)onLoadFinished {
-    NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
-    NSLog(@"Result New data = %@",json);
+    //NSLog(@"Result New data = %@",json);
+    yanbo::UIThread::instance()->postClosureTask([self] {
+        //NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
+        OwnerPtr<String> data = new String((const LUint8*)self.receiveData.bytes, (int)self.receiveData.length);
+        util::ImageIOS* image = static_cast<util::ImageIOS*>(yanbo::UIThreadClientMap::instance()->findUIThreadClient(self.clientId));
+        if (image) {
+            image->setData(data);
+            image->onClientCallback();
+        }
+    });
 }
 
 @end
@@ -80,7 +94,7 @@ static ImageLoaderIOS* _instance = nil;
 
 // 开始加载图片
 -(void)loadImage:(NSString *)url clientId:(int)cid {
-    ImageClient* client = [ImageClient new];
+    ImageClient* client = [[ImageClient alloc]initWithClientId:cid];
     [self.engine loadUrl:kHttpGet url:url callback:client];
 }
 

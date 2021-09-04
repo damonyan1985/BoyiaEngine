@@ -231,12 +231,12 @@ private:
     font->setFontSize(24);
     font->calcTextLine(text, 200);
     
-    LRect rect4(260, 260, font->getLineWidth(0), 50);
+    LRect rect4(260, 260, font->getLineWidth(0), font->getFontHeight());
     
     String key;
     font->getLineText(0, key);
     
-    yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 0, 0, 255), *font, key);
+    yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 255, 0, 255), *font, key);
     _engine->renderText(cmd4);
 
     _engine->setBuffer();
@@ -295,14 +295,15 @@ private:
 //                           atIndex:0];
     
     NSString* str = STR_TO_OCSTR(key);
-    if (self.textureCache[str]) {
+    id tex = self.textureCache[str];
+    if (tex) {
         Uniforms uniforms = { 1 };
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
         memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
         
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
-        [renderEncoder setFragmentTexture:self.textureCache[@"只是测试"] atIndex:0];
+        [renderEncoder setFragmentTexture:tex atIndex:0];
         
         // 纹理与普通图形类型不一样，必须再次drawPrimitives，绘制的第四个图形就是问题图形
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle

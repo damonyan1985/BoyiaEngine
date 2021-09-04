@@ -10,3 +10,5 @@ Cargo.lock
 libs
 .DS_Store
 xcuserdata
+UserInterfaceState.xcuserstate
+/xcdebugger

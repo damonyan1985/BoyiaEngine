@@ -37,14 +37,12 @@ public:
 private:
     mutable KVector<OwnerPtr<LineText>> m_lines;
     mutable LInt m_height;
-    UIFont* m_font;
 };
 
 FontIOS::FontIOS(const LFont& font)
     : LFont(font)
     , m_height(0)
 {
-    m_font = [UIFont fontWithName:@"HoeflerText-Regular" size:font.getFontSize()];
 }
 
 FontIOS::~FontIOS()
@@ -53,7 +51,8 @@ FontIOS::~FontIOS()
 
 LInt FontIOS::getFontHeight() const
 {
-    return (LInt)m_font.lineHeight;
+    //return (LInt)m_font.lineHeight;
+    return m_height;
 }
 
 LInt FontIOS::getFontWidth(LUint8 ch) const
@@ -83,12 +82,13 @@ LVoid FontIOS::getLineText(LInt index, String& text)
 
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
+    UIFont* font = [UIFont fontWithName:@"HoeflerText-Regular" size:getFontSize()];
 //    float radio = yanbo::PixelRatio::ratio();
 //    maxWidth = maxWidth * radio;
     // String换NSString
     NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR(text)];
     
-    NSDictionary* dict = @{NSFontAttributeName:m_font};
+    NSDictionary* dict = @{NSFontAttributeName:font};
     //设置文本能占用的最大宽高
     CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
     
@@ -102,7 +102,7 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
         end = i+1;
         NSString* rangeString = [nsText substringWithRange:NSMakeRange(start, end - start)];
         CGRect rect =  [rangeString boundingRectWithSize:maxSize
-                                                 options:NSStringDrawingUsesLineFragmentOrigin
+                                                 options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                               attributes:dict context:nil];
         
         if (rect.size.width <= maxWidth) {
@@ -111,7 +111,7 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
             maxLineWidth = maxLineWidth < currentLineWidth ?
                 currentLineWidth : maxLineWidth;
             
-            NSString* target = [nsText substringWithRange:NSMakeRange(start, end - start)];
+            NSString* target = [nsText substringWithRange:NSMakeRange(start, end - start - 1)];
             //const char* buffer = [target UTF8String];
             NSData* nsData = [target dataUsingEncoding:NSUTF8StringEncoding];
             //OwnerPtr<String> lineText = new String((const LUint8*)buffer, (LInt)strlen(buffer));

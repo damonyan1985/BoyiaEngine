@@ -206,11 +206,12 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     
     //NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
     //UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];
-    UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()];
-    int width = textCmd->rect.GetWidth();
-    int height = textCmd->rect.GetHeight();
+    int scale = 1;
+    UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
+    int width = textCmd->rect.GetWidth() * scale;
+    int height = textCmd->rect.GetHeight() * scale;
     Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
-    memset(data, 255, width * height * 4);
+    memset(data, 0, width * height * 4);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
                                                        colorSpace,
@@ -229,14 +230,18 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
                                     green:METAL_COLOR_BIT(textCmd->color.m_green)
                                      blue:METAL_COLOR_BIT(textCmd->color.m_blue)
                                     alpha:METAL_COLOR_BIT(textCmd->color.m_alpha)];
+    
     // 设置文字绘制属性
     NSMutableDictionary* textAttributes = [NSMutableDictionary new];
     [textAttributes setValue:font forKey:NSFontAttributeName];
-    [textAttributes setValue:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+    //[textAttributes setValue:[UIColor redColor] forKey:NSForegroundColorAttributeName];
+    [textAttributes setValue:uiColor forKey:NSForegroundColorAttributeName];
+    //[textAttributes setValue:@3 forKey:NSStrokeWidthAttributeName];
     
     // 开始绘制文字
-    [text drawInRect:CGRectMake(0, 0, width, height)
-      withAttributes:textAttributes];
+//    [text drawInRect:CGRectMake(0, 0, width * 2, height)
+//      withAttributes:textAttributes];
+    [text drawAtPoint:CGPointMake(0, 0) withAttributes:textAttributes];
 
     UIGraphicsPopContext();
     
