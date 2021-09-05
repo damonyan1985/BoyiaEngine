@@ -30,11 +30,59 @@ static LVoid screenToMetalPoint(
     *metalY = ((1.0f * (PixelRatio::logicHeight() / 2 - y)) / (PixelRatio::logicHeight() / 2));
 }
 
+static LVoid createVertexAttr(const LRect& rect, const LColor& color, KVector<VertexAttributes>& vertexs)
+{
+    VertexAttributes attr;
+    float x, y;
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    vertexs.addElement(attr);
+
+    // left, bottom
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 1 };
+    vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    vertexs.addElement(attr);
+
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    vertexs.addElement(attr);
+
+    // right, top
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 0 };
+    vertexs.addElement(attr);
+}
+
 // TODO
 RenderEngineIOS::RenderEngineIOS()
     : m_renderer(kBoyiaNull)
     , m_vertexs(0, 256)
 {
+    init();
 }
 
 RenderEngineIOS::~RenderEngineIOS()
@@ -43,14 +91,35 @@ RenderEngineIOS::~RenderEngineIOS()
 }
 LVoid RenderEngineIOS::init()
 {
+    // 初始化渲染函数
+    m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineIOS::renderRect;
+    m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineIOS::renderText;
+    m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineIOS::renderImage;
 }
+
 LVoid RenderEngineIOS::reset()
 {
     
 }
 LVoid RenderEngineIOS::render(RenderLayer* layer)
 {
-        
+    if (!layer) {
+        return;
+    }
+
+    // 先渲染当前layer
+    if (layer->m_buffer) {
+        LInt commandSize = layer->m_buffer->size();
+        for (LInt i = 0; i < commandSize; i++) {
+            RenderCommand* cmd = layer->m_buffer->elementAt(i).get();
+            (this->*(m_functions[cmd->type()]))(cmd);
+        }
+    }
+    
+    // 再渲染子layer
+    for (LInt i = 0; i < layer->m_children.size(); i++) {
+        render(layer->m_children[i]);
+    }
 }
 
 LVoid RenderEngineIOS::setContextIOS(IOSRenderer* renderer)
@@ -63,45 +132,11 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     LRect& rect = cmd->rect;
     LColor& color = cmd->color;
     
-    float x, y;
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
     
-    
-    VertexAttributes attr;
-    // right, bottom
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // left, bottom
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // left, top
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // right, bottom
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // left, top
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // right, top
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
+    createVertexAttr(rect, color, m_vertexs);
     
     
 #if 0
@@ -140,8 +175,40 @@ LVoid RenderEngineIOS::setBuffer()
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 {
     RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
+    RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
+    LRect& rect = textCmd->rect;
+    LColor& color = textCmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
+    
+    createVertexAttr(rect, color, m_vertexs);
+    
     // 从普通指针转为OC ARC指针，使用完之后释放
     UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
+    CGImageRef imageRef = image.CGImage;
+    
+    // 读取图片的宽高
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    
+    Byte* data = (Byte*) calloc(width * height * 4, sizeof(Byte)); //rgba共4个byte
+    
+    CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
+                                                       CGImageGetColorSpace(imageRef), kCGImageAlphaPremultipliedLast);
+    
+    // 3在CGContextRef上绘图
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    
+    CGContextRelease(context);
+    
+    [m_renderer setTextureData:STR_TO_OCSTR(imageCmd->url) data:data width:width height:height];
+    
+    // 释放data
+    if (data) {
+        free(data);
+    }
     
 }
 
@@ -156,53 +223,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         return;
     }
     
-    float x, y;
-    
-    
-    VertexAttributes attr;
-    // right, bottom
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 1, 1 };
-    m_vertexs.addElement(attr);
-
-    // left, bottom
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 0, 1 };
-    m_vertexs.addElement(attr);
-
-    // left, top
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 0, 0 };
-    m_vertexs.addElement(attr);
-
-    // right, bottom
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 1, 1 };
-    m_vertexs.addElement(attr);
-
-    // left, top
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 0, 0 };
-    m_vertexs.addElement(attr);
-
-    // right, top
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    attr.aTexCoord = { 1, 0 };
-    m_vertexs.addElement(attr);
-    
-    
+    createVertexAttr(rect, color, m_vertexs);
     
     //NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
     //UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];

@@ -15,6 +15,8 @@
 
 namespace yanbo {
 // TODO
+class RenderEngineIOS;
+typedef LVoid (RenderEngineIOS::*RenderFunction)(RenderCommand* cmd);
 class RenderEngineIOS : public IRenderEngine {
 public:
     RenderEngineIOS();
@@ -32,8 +34,10 @@ public:
     LVoid setBuffer();
     
 private:
+    
     KVector<VertexAttributes> m_vertexs;
     IOSRenderer* m_renderer;
+    RenderFunction m_functions[5];
 };
 }
 #endif /* RenderEngineIOS_h */

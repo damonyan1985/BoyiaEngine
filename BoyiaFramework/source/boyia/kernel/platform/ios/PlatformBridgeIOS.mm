@@ -5,6 +5,7 @@
 #if ENABLE(BOYIA_IOS)
 #include "AppManager.h"
 #include "FileUtil.h"
+#include "IOSRenderer.h"
 
 namespace yanbo {
 // TODO
@@ -64,8 +65,20 @@ const char* PlatformBridge::getSdkPath()
 
 const char* PlatformBridge::getAppRoot()
 {
+    if (sAppRootPath.GetLength()) {
+        return GET_STR(sAppRootPath);
+    }
+    
+    NSArray*paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString* docDir = [paths objectAtIndex:0];
+    NSString* appDir = [docDir stringByAppendingString:@"/boyia/"];
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:appDir]) {
+        [fileManager createDirectoryAtPath:appDir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    sAppRootPath = (const LUint8*)([appDir UTF8String]);
     return GET_STR(sAppRootPath);
-    //return "/data/data/com.boyia.app/files/";
 }
 
 const char* PlatformBridge::getInstructionCachePath()
@@ -166,8 +179,8 @@ const char* PlatformBridge::getBoyiaJsonUrl()
 
 const LInt PlatformBridge::getTextSize(const String& text)
 {
-    // TODO
-    return 0;
+    NSString* str = STR_TO_OCSTR(text);
+    return (LInt)str.length;
 }
 
 const LReal PlatformBridge::getDisplayDensity()

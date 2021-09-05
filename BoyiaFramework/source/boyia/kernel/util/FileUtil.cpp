@@ -74,7 +74,7 @@ bool FileUtil::isExist(const char* path)
 
 bool FileUtil::isDir(const char* path)
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     struct stat statbuf;
     if (0 == lstat(path, &statbuf)) // lstat返回文件的信息，文件信息存放在stat结构中
     {
@@ -139,7 +139,7 @@ static LVoid deleteFileWin(const wstring& path)
 
 LVoid FileUtil::deleteFile(const char* path)
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     DIR* dir;
     dirent* dirInfo;
     if (isFile(path)) {
@@ -194,7 +194,7 @@ LInt FileUtil::createDir(const char* path)
 
 LInt FileUtil::createDirs(const char* path)
 {
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     CString dirName = path;
     LInt len = dirName.GetLength();
     if ('/' != dirName[len - 1]) {
@@ -221,7 +221,7 @@ LInt FileUtil::createDirs(const char* path)
 LVoid FileUtil::printAllFiles(const char* path)
 {
     BOYIA_LOG("FileUtil::printAllFiles filePath=%s", path);
-#if ENABLE(BOYIA_ANDROID)
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     DIR* d;
     struct dirent* file;
     struct stat sb;

@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#define STR_TO_OCSTR(str) ([[NSString alloc] initWithUTF8String: GET_STR(str)])
+
 @interface IOSRenderer : NSObject
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;

@@ -17,8 +17,9 @@
 #include "NetworkBase.h"
 #include "StringBuilder.h"
 #include "ShaderType.h"
+#include "PlatformBridge.h"
 
-#define STR_TO_OCSTR(str) ([[NSString alloc] initWithUTF8String: GET_STR(str)])
+
 
 class Client : public yanbo::NetworkClient {
 public:
@@ -113,6 +114,9 @@ private:
         yanbo::NetworkBase* loader = yanbo::NetworkBase::create();
         
         loader->loadUrl(_CS("https://www.baidu.com"), new Client());
+        
+        
+        printf("boyia dir=%s\n", yanbo::PlatformBridge::getAppRoot());
     }
     
     return self;
