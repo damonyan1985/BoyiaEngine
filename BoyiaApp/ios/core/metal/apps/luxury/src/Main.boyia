@@ -1,0 +1,23 @@
+class LuxuryMain extends Activity {
+  prop main;
+  fun onCreate() {
+    var rootView = ViewDoc.rootView().itemByID(ViewGroup, "root");
+    
+    this.main = ViewDoc.createView(MainView, "boyia://apps/luxury/view/main.boui");
+    this.main.initView();
+
+    rootView.appendView(this.main);
+    this.setContent(rootView);
+  }
+}
+
+class LuxuryApp extends App {
+  fun run() {
+    var act = new(LuxuryMain);
+    var app = new(LuxuryApp);
+    app.initApp();
+    app.startAct(act);
+  }
+}
+
+LuxuryApp.run();

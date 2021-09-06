@@ -1,0 +1,440 @@
+{
+	"retcode": 200,
+	"retmsg": "成功",
+	"data": {
+		"app_version": {
+			"last": "0.8",
+			"force_upgrade": false
+		},
+		"categoryList": [
+			{
+				"title": "关注",
+				"detailList": [
+					{
+						"type": 1,
+						"title": "测试标题数据进行中，布局引擎测试中",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题2",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题3",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题4",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题5",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题6",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题7",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/7c40843de2fb452da6aaec388c751138",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 1,
+						"title": "标题8",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/list/190x124/pgc-image/d46dac49759d4336aef2361037602889",
+						"image2": "image2",
+						"src": "image3"
+					},
+					{
+						"type": 2,
+						"title": "测试标题数据进行中，布局引擎测试中",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题9",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题10",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题11",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题12",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题13",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题14",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题15",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题16",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题17",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题18",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题19",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题20",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题21",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题22",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题23",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题24",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题25",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题26",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题27",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题28",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题29",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题30",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "测试标题数据进行中，布局引擎测试中",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题31",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题32",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题33",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题34",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					},
+					{
+						"type": 2,
+						"title": "标题35",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p1.pstatp.com/list/190x124/pgc-image/563ae258afbf4945853f719e4cb36be5",
+						"image2": "image2",
+						"src": "http://221.228.226.23/11/t/j/v/b/tjvbwspwhqdmgouolposcsfafpedmb/sh.yinyuetai.com/691201536EE4912BF7E4F1E2C67B8119.mp4"
+					}
+				]
+			},
+			{
+				"title": "推荐",
+				"detailList": [
+					{
+						"type": "NEWS_TEXT_ITEM",
+						"title": "测试标题数据进行中，布局引擎测试中",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"image3": "image3"
+					},
+					{
+						"type": "NEWS_TEXT_ITEM",
+						"title": "标题2",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "image1",
+						"image2": "image2",
+						"image3": "image3"
+					}
+				]
+			},
+			{
+				"title": "热点",
+				"detailList": [
+					{
+						"type": "NEWS_TEXT_ITEM",
+						"title": "测试标题数据进行中，布局引擎测试中",
+						"info1": "测试XXXXXXX网，计算文字布局等问题",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "http://p3.pstatp.com/large/5d4f0003e2e8ff984bb5",
+						"image2": "image2",
+						"image3": "image3"
+					},
+					{
+						"type": "NEWS_TEXT_ITEM",
+						"title": "标题2",
+						"info1": "YY网",
+						"info2": "评论数",
+						"info3": "时间",
+						"image1": "image1",
+						"image2": "image2",
+						"image3": "image3"
+					}
+				]
+			}
+		]
+	},
+	"server_info": {
+		"timestamp": -1
+	}
+}

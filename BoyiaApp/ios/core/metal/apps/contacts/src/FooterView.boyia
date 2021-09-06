@@ -1,0 +1,38 @@
+class FooterView extends ViewDoc {
+	prop mytab = null;
+    prop newsTab = null;
+    prop appTab = null;
+    prop videoTab = null;
+    //prop chatPage = null;
+
+    prop listener = null;
+    
+    fun initView() {
+        if (!this.mytab) {
+        	this.mytab = this.itemByID(ViewGroup, "my_tab");
+            this.mytab.addEventListener(TOUCH_UP, this.myTabClick);
+        }
+        if (!this.newsTab) {
+        	this.newsTab = this.itemByID(ViewGroup, "news_tab");
+        }
+        if (!this.appTab) {
+            this.appTab = this.itemByID(ViewGroup, "app_tab");
+        }
+        
+        if (!this.videoTab) {
+            this.videoTab = this.itemByID(ViewGroup, "video_tab");
+        }
+    }
+
+    fun myTabClick() {
+        Util.showToast("My Tab Show");
+
+        var chatPage = ViewDoc.createView(ChatPage, "boyia://apps/contacts/view/chat_page.boui");
+        chatPage.initView();
+
+        var rootView = ViewRoot.getRoot();
+        rootView.appendView(chatPage);
+        rootView.draw();
+        rootView.commit();
+    }
+}

@@ -27,6 +27,7 @@ public:
     
     LVoid setContextIOS(IOSRenderer* metalLayer);
     
+    LVoid renderImpl(RenderLayer* layer);
     LVoid renderRect(RenderCommand* cmd);
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);

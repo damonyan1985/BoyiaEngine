@@ -1,0 +1,109 @@
+// 尝试开发一个新闻资讯界面
+fun jsNew(cls) {
+    var obj = new(cls);
+    obj.ctor();
+    return obj;
+}
+
+class MainViewController extends ViewController {
+    // 主View设计
+    prop mainView;
+    fun onCreate() {
+        var a = 9; 
+        var b = 5;
+        var c = a % b;
+        //log(c);
+        Util.showToast("MainViewController dev="+c);
+
+        Util.log("main function begin");
+
+        //var root = ViewDoc.rootView();
+        //var appBox = root.itemByID(ViewGroup, "AppBox");
+        var appBox = ViewRoot.getRoot();
+
+        this.mainView = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
+        this.mainView.initView();
+
+        appBox.appendView(this.mainView);
+
+        this.setContent(appBox);
+
+        //Util.showToast("test boyia callstaticmethod");
+        //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
+        this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback);
+
+        Util.log("test super begin");
+        super.test();
+    }
+
+    fun loadCallback(data) {
+        Util.log("test loadCallback");
+        var obj = Util.json(data);
+        Util.log("test loadCallback5");
+        //Util.log(obj.app_version.last);
+        Util.log("test loadCallback6");
+        var categoryView = this.mainView.headerView.categoryView;
+        Util.log("test loadCallback7");
+        var dataObj = obj.data;
+
+        var categoryList = obj.data.categoryList;
+        var size = categoryList.size();
+
+        var view;
+        while (size > 0) {
+            size = size - 1;
+            var categoryItem = obj.data.categoryList.get(size);
+
+            view = ViewDoc.createView(CategoryItem, "boyia://apps/contacts/view/category_item.boui");
+            view.initView();
+            view.setTitle(categoryItem.title);
+            categoryView.appendView(view);
+        }
+
+        Util.log("test loadCallback1");
+        var detailContainer = this.mainView.detailContainer;
+        Util.log("test loadCallback3");
+        var categoryItem = obj.data.categoryList.get(0);
+        var detailList = categoryItem.detailList;
+        size = detailList.size();
+
+        for (var i=size-1; i>=0; i=i-1) {
+            var detailItem = detailList.get(i);
+            view = ViewDoc.createView(NewTextItem, "boyia://apps/contacts/view/news_text_item.boui");
+            view.initView();
+            detailContainer.appendView(view);
+            view.setTitle(detailList.get(i).title);
+            view.setInfo(detailList.get(i).info1);
+            view.setImage(detailList.get(i).image1);
+        }
+        Util.log("test loadCallback2");
+        this.draw();
+
+        // test for program
+        for (var i=0;i<10; i=i+1) {
+            Util.log("test for i=" + i);
+        }
+
+        // test toJson
+        var userInfo = new(UserInfo);
+        userInfo.userId = 1;
+        userInfo.userName = "boyia";
+        userInfo.userImage = "https://boyia.org/image1.png";
+
+        var infoJson = Util.toJson(userInfo);
+        Util.log("test toJson=" + infoJson);
+    }
+}
+
+fun getArea(data) {
+    Util.log("getArea");
+    var app_version = data.app_version;
+    var area = data.startup_info.area_list.get(0);
+    //var area_list = startup_info.area_list;
+    //var area = area_list.get(0);
+    Util.log(app_version.last);
+    Util.log(area.name);
+}
+
+// 启动ViewController
+App.start(MainViewController);

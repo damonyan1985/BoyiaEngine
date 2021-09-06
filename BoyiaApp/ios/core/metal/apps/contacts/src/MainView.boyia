@@ -1,0 +1,37 @@
+class MainView extends ViewDoc {
+    prop headerContainer;
+    prop footerContainer;
+    prop detailContainer;
+    
+    prop headerView;
+    prop footerView;
+    
+    fun initView() {
+        if (!this.headerContainer) {
+            this.headerContainer = this.itemByID(ViewGroup, "header");
+        }
+        
+        if (!this.detailContainer) {
+            this.detailContainer = this.itemByID(ViewGroup, "category_detail");
+        }
+
+        if (!this.footerContainer) {
+            this.footerContainer = this.itemByID(ViewGroup, "footer");
+        }
+        
+        this.appendHeader();
+        this.appendFooter();
+    }
+    
+    fun appendHeader() {
+        this.headerView = ViewDoc.createView(SearchHeader, "boyia://apps/contacts/view/search_header.boui");
+        this.headerView.initView();
+        this.headerContainer.appendView(this.headerView);
+    }
+
+    fun appendFooter() {
+        this.footerView = ViewDoc.createView(FooterView, "boyia://apps/contacts/view/footer_tabs.boui");
+        this.footerView.initView();
+        this.footerContainer.appendView(this.footerView);
+    }
+}

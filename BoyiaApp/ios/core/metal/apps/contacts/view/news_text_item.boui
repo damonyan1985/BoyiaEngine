@@ -1,0 +1,11 @@
+<view class="underline">
+<div class="new_text">
+<div id="title">
+测试
+</div>
+<div id="info" />
+</div>
+<div>
+<img id="hot" />
+</div>
+</view>

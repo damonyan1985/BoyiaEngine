@@ -1,0 +1,26 @@
+body {
+  background-color: #c9daf8;
+  align: all;
+	width: 720px;
+  position: absolute;
+}
+
+#title {
+  height: 100px;
+}
+
+.main-title {
+  font-size: 30px;
+  margin-left: 20px;
+}
+
+#search {
+  background-color: #FFFFFF;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  width: 450px;
+  height: 70px;
+  margin-left: 20px;
+}

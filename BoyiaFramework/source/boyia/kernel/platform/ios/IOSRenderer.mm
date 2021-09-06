@@ -18,6 +18,7 @@
 #include "StringBuilder.h"
 #include "ShaderType.h"
 #include "PlatformBridge.h"
+#include "FileUtil.h"
 
 
 
@@ -116,7 +117,13 @@ private:
         loader->loadUrl(_CS("https://www.baidu.com"), new Client());
         
         
-        printf("boyia dir=%s\n", yanbo::PlatformBridge::getAppRoot());
+    
+        String content;
+        String appPath = _DSTR(_CS(yanbo::PlatformBridge::getAppPath())) + _CS("contacts/app.json");
+        FileUtil::readFile(appPath, content);
+        printf("boyia json=%s\n", GET_STR(content));
+        
+        printf("boyia dir=%s\n", yanbo::PlatformBridge::getBoyiaJsonPath());
     }
     
     return self;
@@ -130,9 +137,9 @@ private:
     self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
     self.metalLayer.device = device;
     
-    // 从当前framework bundle中获取dmetal
+    // 从当前framework bundle中获取metal
     NSBundle* bundle = [NSBundle bundleForClass:[self class]];
-    NSError *error = nil;
+    NSError* error = nil;
     id<MTLLibrary> defaultLibrary = [device newDefaultLibraryWithBundle:bundle error:&error];
     
     id<MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"vertexMain"];

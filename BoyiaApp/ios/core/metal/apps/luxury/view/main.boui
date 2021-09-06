@@ -1,0 +1,5 @@
+<view>
+  <div id="header"></div>
+  <div id="content"></div>
+  <div id="footer"></div>
+</view>
