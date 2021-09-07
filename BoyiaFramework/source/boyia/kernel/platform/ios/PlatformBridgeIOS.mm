@@ -177,7 +177,7 @@ const char* PlatformBridge::getSymbolTablePath()
 
 const char* PlatformBridge::getBoyiaJsonUrl()
 {
-    return "boyia_assets://boyia.json";
+    return "boyia://net_boyia.json";
     //return "https://damonyan1985.github.io/app/boyia.json";
 }
 

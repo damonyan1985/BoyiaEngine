@@ -21,10 +21,11 @@ allprojects {
         mavenCentral()
         google()
         jcenter()
+        maven { url uri("$rootDir/maven/BoyiaMaven") } // 优先读本地仓库
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         maven { url "http://maven.oschina.net/content/groups/public/" }
         maven { url 'https://dl.bintray.com/umsdk/release' } // umeng sdk maven
-        maven { url uri("$rootDir/maven/BoyiaMaven") }
+        
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaMaven/master/" }
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/maven/" }
     }

@@ -107,11 +107,11 @@ LVoid RenderEngineIOS::render(RenderLayer* layer)
     // 清空缓冲区
     m_vertexs.clear();
     // 开始渲染
-    renderImpl(layer);
-    // 刷新缓冲区
-    setBuffer();
-    
-    [m_renderer render];
+//    renderImpl(layer);
+//    // 刷新缓冲区
+//    setBuffer();
+//
+//    [m_renderer render];
 }
 
 LVoid RenderEngineIOS::renderImpl(RenderLayer* layer)
@@ -131,10 +131,8 @@ LVoid RenderEngineIOS::renderImpl(RenderLayer* layer)
     
     // 再渲染子layer
     for (LInt i = 0; i < layer->m_children.size(); i++) {
-        render(layer->m_children[i]);
+        renderImpl(layer->m_children[i]);
     }
-    
-    
 }
 
 LVoid RenderEngineIOS::setContextIOS(IOSRenderer* renderer)

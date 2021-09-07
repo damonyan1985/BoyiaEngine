@@ -153,18 +153,24 @@ private:
 //        HttpEngineIOS* engine = [HttpEngineIOS alloc];
 //        String url = _CS("https://www.baidu.com");
 //        [engine loadUrlWithData:kHttpGet url:GET_STR(url) callback:[HttpClient new]];
-        yanbo::NetworkBase* loader = yanbo::NetworkBase::create();
-        
-        loader->loadUrl(_CS("https://www.baidu.com"), new Client());
         
         
-    
+        
+//        yanbo::NetworkBase* loader = yanbo::NetworkBase::create();
+//        
+//        loader->loadUrl(_CS("https://www.baidu.com"), new Client());
+        
+        
+        
         String content;
-        String appPath = _DSTR(_CS(yanbo::PlatformBridge::getAppPath())) + _CS("contacts/app.json");
+        //String appPath = _DSTR(_CS(yanbo::PlatformBridge::getAppPath())) + _CS("contacts/app.json");
+        String appPath = _CS(yanbo::PlatformBridge::getBoyiaJsonPath());
         FileUtil::readFile(appPath, content);
         printf("boyia json=%s\n", GET_STR(content));
         
-        printf("boyia dir=%s\n", yanbo::PlatformBridge::getBoyiaJsonPath());
+        printf("boyia dir=%s\n", GET_STR(appPath));
+        
+        printf("intptr size=%ld\n", sizeof(LIntPtr));
     }
     
     return self;
@@ -293,29 +299,29 @@ private:
     LRect rect1(100, 100 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
     _engine->renderRect(cmd1);
-    
+
     LRect rect2(100, 600 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd2 = new yanbo::RenderRectCommand(rect2, LColor(0, 0, 255, 255));
     _engine->renderRect(cmd2);
-    
+
     LRect rect3(100, 300 + statusBar, 100, 100);
     yanbo::RenderRectCommand* cmd3 = new yanbo::RenderRectCommand(rect3, LColor(0, 0, 255, 255));
     _engine->renderRect(cmd3);
-        
-    
-    
-    
-    
+
+
+
+
+
     String text = _CS("只是测试而已哈哈哈哈哈");
     LFont* font = LFont::create(LFont());
     font->setFontSize(24);
     font->calcTextLine(text, 200);
-    
+
     LRect rect4(260, 260, font->getLineWidth(0), font->getFontHeight());
-    
+
     String key;
     font->getLineText(0, key);
-    
+
     yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 255, 0, 255), *font, key);
     _engine->renderText(cmd4);
 
@@ -356,8 +362,10 @@ private:
         Uniforms uniforms;
         uniforms.uType = (cmd.cmdType == BatchCommandNormal ? 0 : 1);
         
+        // 设置uniforms，告知shader所需要渲染的图形的类型
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
         memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+        
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
         if (cmd.cmdType ==  BatchCommandTexture) {
