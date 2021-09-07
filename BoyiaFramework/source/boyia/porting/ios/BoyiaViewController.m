@@ -47,7 +47,9 @@
     self.view = self.boyiaView;
     
     CAMetalLayer* layer = [self.boyiaView metalLayer];
-    self.renderer = [[IOSRenderer alloc] initWithLayer:layer];
+    //self.renderer = [[IOSRenderer alloc] initWithLayer:layer];
+    
+    self.renderer = [IOSRenderer initRenderer:layer];
         
     self.displayLink = [CADisplayLink displayLinkWithTarget:self
                                                    selector:@selector(render:)];

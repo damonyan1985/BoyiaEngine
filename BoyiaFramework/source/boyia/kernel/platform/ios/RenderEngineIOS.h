@@ -25,7 +25,7 @@ public:
     virtual LVoid reset();
     virtual LVoid render(RenderLayer* layer);
     
-    LVoid setContextIOS(IOSRenderer* metalLayer);
+    LVoid setContextIOS(IOSRenderer* renderer);
     
     LVoid renderImpl(RenderLayer* layer);
     LVoid renderRect(RenderCommand* cmd);

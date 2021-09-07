@@ -19,8 +19,8 @@
 #include "ShaderType.h"
 #include "PlatformBridge.h"
 #include "FileUtil.h"
-
-
+#include "RenderThread.h"
+#include "AppManager.h"
 
 class Client : public yanbo::NetworkClient {
 public:
@@ -62,6 +62,30 @@ private:
     yanbo::StringBuilder m_builder;
 };
 
+
+@interface BatchCommand : NSObject
+
+@property (nonatomic, assign) NSInteger cmdType;
+@property (nonatomic, assign) NSInteger size;
+@property (nonatomic, strong) NSString* textureKey;
+
+@end
+
+@implementation BatchCommand
+
+-(instancetype)initWithParams:(NSInteger)cmdType size:(NSInteger)size key:(NSString*)key {
+    self = [super init];
+    if (self != nil) {
+        self.cmdType = cmdType;
+        self.size = size;
+        self.textureKey = key;
+    }
+    
+    return self;
+}
+
+@end
+
 // 对于熟悉IOS中nonatomic与atomic互斥
 // strong,copy,weak,assign互斥
 @interface IOSRenderer()
@@ -84,10 +108,30 @@ private:
 // 常量buffer判断图像类型
 @property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
 
+@property (nonatomic, strong) NSMutableArray* cmdBuffer;
+
 @end
 
 @implementation IOSRenderer {
     yanbo::RenderEngineIOS* _engine;
+}
+
++(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
+    int w = [UIScreen mainScreen].bounds.size.width;
+    int h = [UIScreen mainScreen].bounds.size.height;
+    
+    // 720*1080
+    LInt logicHeight = (1.0f * 720 / w) * h;
+    yanbo::PixelRatio::setWindowSize(w, h);
+    yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
+    
+    IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];
+    yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
+    engine->setContextIOS(renderer);
+    
+//    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
+//    yanbo::AppManager::instance()->start();
+    return renderer;
 }
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer {
@@ -98,16 +142,13 @@ private:
         // TODO 后期需要移到engine中
         [self initMetal];
         
+        self.cmdBuffer = [[NSMutableArray alloc] initWithCapacity:1024];
         self.textureCache = [NSMutableDictionary new];
-        int w = [UIScreen mainScreen].bounds.size.width;
-        int h = [UIScreen mainScreen].bounds.size.height;
         
-        // 720*1080
-        LInt logicHeight = (1.0f * 720 / w) * h;
-        yanbo::PixelRatio::setWindowSize(w, h);
-        yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
-        _engine = new yanbo::RenderEngineIOS();
-        _engine->setContextIOS(self);
+//        _engine = new yanbo::RenderEngineIOS();
+//        _engine->setContextIOS(self);
+        
+        _engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
         
 //        HttpEngineIOS* engine = [HttpEngineIOS alloc];
 //        String url = _CS("https://www.baidu.com");
@@ -184,6 +225,34 @@ private:
     memcpy([self.uniformsBuffer contents], &uniforms, sizeof(Uniforms));
 }
 
+-(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
+    // 属性一致，无需新增cmd
+    // 都是普通类型，属性一致
+    // 都是纹理类型，且使用相同纹理，属性一致
+    if (self.cmdBuffer.count > 0) {
+        // 如果都是普通类型，即非纹理
+        BatchCommand* lastCmd = [self.cmdBuffer lastObject];
+        if (lastCmd.cmdType == cmdType && cmdType == BatchCommandNormal) {
+            lastCmd.size += size;
+            return;
+        }
+        
+        // 如果都是纹理类型，且使用的纹理都是一样的
+        if (lastCmd.cmdType == cmdType
+            && cmdType == BatchCommandTexture
+            && key != nil
+            && key.length > 0
+            && [key isEqualToString:lastCmd.textureKey]) {
+            lastCmd.size += size;
+            return;
+        }
+    }
+    
+    // 属性不一致，新增cmd
+    id cmd = [[BatchCommand alloc]initWithParams:cmdType size:size key:key];
+    [self.cmdBuffer addObject:cmd];
+}
+
 -(void)setBuffer:(const void*)buffer size:(NSUInteger)size {
     self.verticeBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
 }
@@ -252,11 +321,15 @@ private:
 
     _engine->setBuffer();
     
-    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
-    
     if (self.renderPassDescriptor == nil) {
         return;
     }
+    
+    if (self.cmdBuffer.count <= 0) {
+        return;
+    }
+    
+    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
     
     CAMetalLayer* layer = self.metalLayer;
     id drawable = layer.nextDrawable;
@@ -270,73 +343,39 @@ private:
     [renderEncoder setViewport:(MTLViewport){0.0, 0.0, layer.drawableSize.width, layer.drawableSize.height, -1.0, 1.0 }];
     [renderEncoder setRenderPipelineState:self.pipelineState];
     
+    // 设置缓冲区
     [renderEncoder setVertexBuffer:self.verticeBuffer
                             offset:0
                            atIndex:0];
     
-//    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-//                      vertexStart:0
-//                      vertexCount:6];
-    [renderEncoder setFragmentBuffer:self.uniformsBuffer offset:0 atIndex:0];
     
-    // 3个普通图形
-    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                      vertexStart:0
-                      vertexCount:6 * 3];
-
-    
-    
-    
-    
-//    [renderEncoder setVertexBuffer:self.verticeBuffer
-//                            offset:0
-//                           atIndex:0];
-//
-//    [renderEncoder setFragmentBuffer:self.uniformsBuffer offset:0 atIndex:0];
-//
-//    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-//                      vertexStart:0
-//                      vertexCount:(self.verticeBuffer.length/sizeof(VertexAttributes))];
-    
-    
-    
-
-//    [renderEncoder setVertexBuffer:self.verticeBuffer
-//                            offset:0
-//                           atIndex:0];
-    
-    NSString* str = STR_TO_OCSTR(key);
-    id tex = self.textureCache[str];
-    if (tex) {
-        Uniforms uniforms = { 1 };
+    NSUInteger index = 0;
+    for (NSUInteger i = 0; i < self.cmdBuffer.count; i++) {
+        BatchCommand* cmd = [self.cmdBuffer objectAtIndex:i];
+        
+        Uniforms uniforms;
+        uniforms.uType = (cmd.cmdType == BatchCommandNormal ? 0 : 1);
+        
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
         memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
-        
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
-        [renderEncoder setFragmentTexture:tex atIndex:0];
+        if (cmd.cmdType ==  BatchCommandTexture) {
+            id tex = self.textureCache[cmd.textureKey];
+            if (tex) {
+                [renderEncoder setFragmentTexture:tex atIndex:0];
+            }
+        }
         
-        // 纹理与普通图形类型不一样，必须再次drawPrimitives，绘制的第四个图形就是问题图形
+        // 3个普通图形
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                          vertexStart:6 * 3
-                          vertexCount:6];
+                          vertexStart:index
+                          vertexCount:index + cmd.size];
+        
+        index += cmd.size;
     }
     
-    
-    //_engine->setBuffer();
-// 如果使用索引
-//    id<MTLBuffer> indexBuffer = [self.metalLayer.device newBufferWithBytes:index length:sizeof(index) options:MTLResourceStorageModeShared];
-//    UInt16 index[12] = {
-//        0, 1, 2, 2, 3, 0,
-//        0 + 4, 1 + 4, 2 + 4, 2 + 4, 3 + 4, 0 + 4,
-//        //6, 7, 8, 9, 10, 11
-//    };
-//
-//    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
-//                              indexCount:indexBuffer.length/sizeof(UInt16)
-//                               indexType:MTLIndexTypeUInt16
-//                             indexBuffer:indexBuffer
-//                       indexBufferOffset:0];
+
     
     [renderEncoder endEncoding];
     

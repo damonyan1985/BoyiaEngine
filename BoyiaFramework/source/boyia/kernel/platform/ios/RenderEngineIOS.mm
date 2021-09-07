@@ -110,7 +110,10 @@ LVoid RenderEngineIOS::render(RenderLayer* layer)
     renderImpl(layer);
     // 刷新缓冲区
     setBuffer();
+    
+    [m_renderer render];
 }
+
 LVoid RenderEngineIOS::renderImpl(RenderLayer* layer)
 {
     if (!layer) {
@@ -149,6 +152,7 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     }
     
     createVertexAttr(rect, color, m_vertexs);
+    [m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil];
     
     
 #if 0
@@ -215,13 +219,15 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     
     CGContextRelease(context);
     
-    [m_renderer setTextureData:STR_TO_OCSTR(imageCmd->url) data:data width:width height:height];
+    NSString* key = STR_TO_OCSTR(imageCmd->url);
+    [m_renderer setTextureData:key data:data width:width height:height];
+    
+    [m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key];
     
     // 释放data
     if (data) {
         free(data);
     }
-    
 }
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
@@ -282,6 +288,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     CGColorSpaceRelease(colorSpace);
     
     [m_renderer setTextureData:text data:data width:width height:height];
+    [m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text];
     
     // 释放data
     if (data) {

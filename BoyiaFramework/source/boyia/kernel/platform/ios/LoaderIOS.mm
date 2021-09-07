@@ -111,6 +111,8 @@ public:
     LoaderIOS()
     {
         m_engine = [HttpEngineIOS new];
+        // 启动消息线程
+        start();
     };
     virtual ~LoaderIOS() {};
 

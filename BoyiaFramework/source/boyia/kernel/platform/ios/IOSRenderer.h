@@ -13,12 +13,20 @@
 
 #define STR_TO_OCSTR(str) ([[NSString alloc] initWithUTF8String: GET_STR(str)])
 
+typedef NS_ENUM(NSInteger, BatchCommandType) {
+    BatchCommandNormal,
+    BatchCommandTexture
+};
+
 @interface IOSRenderer : NSObject
+
++(IOSRenderer*)initRenderer:(CAMetalLayer*)layer;
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
 -(CAMetalLayer*)layer;
 
+-(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
 -(void)setBuffer:(const void*)buffer size:(NSUInteger)size;
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;
 -(id<MTLTexture>)getTexture:(NSString*)key;
