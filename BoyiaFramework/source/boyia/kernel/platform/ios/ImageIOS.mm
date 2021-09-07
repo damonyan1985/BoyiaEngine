@@ -22,8 +22,9 @@ ImageIOS::~ImageIOS()
 LVoid ImageIOS::load(const String& path, LVoid* image)
 {
     yanbo::UIThreadClientMap::instance()->registerClient(this);
-    NSString* nsUrl = [[NSString alloc] initWithUTF8String:GET_STR(path)];
-    [[ImageLoaderIOS shareInstance] loadImage:nsUrl clientId:getClientId()];
+    //NSString* nsUrl = [[NSString alloc] initWithUTF8String:GET_STR(path)];
+    //[[ImageLoaderIOS shareInstance] loadImage:nsUrl clientId:getClientId()];
+    yanbo::ImageLoaderIOS::instance()->loadImage(path, getClientId());
 }
 
 LImage* LImage::create(LVoid* item)

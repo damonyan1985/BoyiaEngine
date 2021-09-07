@@ -129,8 +129,8 @@ private:
     yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
     engine->setContextIOS(renderer);
     
-//    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
-//    yanbo::AppManager::instance()->start();
+    yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
+    yanbo::AppManager::instance()->start();
     return renderer;
 }
 
@@ -231,6 +231,10 @@ private:
     memcpy([self.uniformsBuffer contents], &uniforms, sizeof(Uniforms));
 }
 
+-(void)clearBatchCommandBuffer {
+    [self.cmdBuffer removeAllObjects];
+}
+
 -(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
     // 属性一致，无需新增cmd
     // 都是普通类型，属性一致
@@ -242,7 +246,7 @@ private:
             lastCmd.size += size;
             return;
         }
-        
+
         // 如果都是纹理类型，且使用的纹理都是一样的
         if (lastCmd.cmdType == cmdType
             && cmdType == BatchCommandTexture
@@ -295,37 +299,37 @@ private:
 }
 
 -(void)render {
-    CGFloat statusBar = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    LRect rect1(100, 100 + statusBar, 100, 100);
-    yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
-    _engine->renderRect(cmd1);
-
-    LRect rect2(100, 600 + statusBar, 100, 100);
-    yanbo::RenderRectCommand* cmd2 = new yanbo::RenderRectCommand(rect2, LColor(0, 0, 255, 255));
-    _engine->renderRect(cmd2);
-
-    LRect rect3(100, 300 + statusBar, 100, 100);
-    yanbo::RenderRectCommand* cmd3 = new yanbo::RenderRectCommand(rect3, LColor(0, 0, 255, 255));
-    _engine->renderRect(cmd3);
-
-
-
-
-
-    String text = _CS("只是测试而已哈哈哈哈哈");
-    LFont* font = LFont::create(LFont());
-    font->setFontSize(24);
-    font->calcTextLine(text, 200);
-
-    LRect rect4(260, 260, font->getLineWidth(0), font->getFontHeight());
-
-    String key;
-    font->getLineText(0, key);
-
-    yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 255, 0, 255), *font, key);
-    _engine->renderText(cmd4);
-
-    _engine->setBuffer();
+//    CGFloat statusBar = [[UIApplication sharedApplication] statusBarFrame].size.height;
+//    LRect rect1(100, 100 + statusBar, 100, 100);
+//    yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
+//    _engine->renderRect(cmd1);
+//
+//    LRect rect2(100, 600 + statusBar, 100, 100);
+//    yanbo::RenderRectCommand* cmd2 = new yanbo::RenderRectCommand(rect2, LColor(0, 0, 255, 255));
+//    _engine->renderRect(cmd2);
+//
+//    LRect rect3(100, 300 + statusBar, 100, 100);
+//    yanbo::RenderRectCommand* cmd3 = new yanbo::RenderRectCommand(rect3, LColor(0, 0, 255, 255));
+//    _engine->renderRect(cmd3);
+//
+//
+//
+//
+//
+//    String text = _CS("只是测试而已哈哈哈哈哈");
+//    LFont* font = LFont::create(LFont());
+//    font->setFontSize(24);
+//    font->calcTextLine(text, 200);
+//
+//    LRect rect4(260, 260, font->getLineWidth(0), font->getFontHeight());
+//
+//    String key;
+//    font->getLineText(0, key);
+//
+//    yanbo::RenderTextCommand* cmd4 = new yanbo::RenderTextCommand(rect4, LColor(0, 255, 0, 255), *font, key);
+//    _engine->renderText(cmd4);
+//
+//    _engine->setBuffer();
     
     if (self.renderPassDescriptor == nil) {
         return;
@@ -372,13 +376,14 @@ private:
             id tex = self.textureCache[cmd.textureKey];
             if (tex) {
                 [renderEncoder setFragmentTexture:tex atIndex:0];
+            } else {
+                //
             }
         }
         
-        // 3个普通图形
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                           vertexStart:index
-                          vertexCount:index + cmd.size];
+                          vertexCount:cmd.size];
         
         index += cmd.size;
     }

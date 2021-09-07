@@ -104,14 +104,15 @@ LVoid RenderEngineIOS::reset()
 
 LVoid RenderEngineIOS::render(RenderLayer* layer)
 {
+    [m_renderer clearBatchCommandBuffer];
     // 清空缓冲区
     m_vertexs.clear();
     // 开始渲染
-//    renderImpl(layer);
-//    // 刷新缓冲区
-//    setBuffer();
-//
-//    [m_renderer render];
+    renderImpl(layer);
+    // 刷新缓冲区
+    setBuffer();
+
+    [m_renderer render];
 }
 
 LVoid RenderEngineIOS::renderImpl(RenderLayer* layer)
@@ -188,10 +189,12 @@ LVoid RenderEngineIOS::setBuffer()
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 {
+//    if (cmd) {
+//        return;
+//    }
     RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
-    RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
-    LRect& rect = textCmd->rect;
-    LColor& color = textCmd->color;
+    LRect& rect = imageCmd->rect;
+    LColor& color = imageCmd->color;
     
     if (!rect.GetWidth() || !rect.GetHeight()) {
         return;
@@ -230,7 +233,10 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 {
-    //m_vertexs.clear();
+//    if (cmd) {
+//        return;
+//    }
+
     RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
     LRect& rect = textCmd->rect;
     LColor& color = textCmd->color;

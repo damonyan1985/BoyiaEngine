@@ -1,4 +1,5 @@
-#ifndef  ImageLoader_h
+#ifndef ImageLoader_h
+#define ImageLoader_h
 
 #include "UtilString.h"
 

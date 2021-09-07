@@ -59,7 +59,7 @@
 // 收到vsync信号之后进行渲染
 -(void)render:(CADisplayLink*)link {
 
-    [self.renderer render];
+    //[self.renderer render];
     // 避免一直渲染造成性能损耗
     self.displayLink.paused = YES;
 }

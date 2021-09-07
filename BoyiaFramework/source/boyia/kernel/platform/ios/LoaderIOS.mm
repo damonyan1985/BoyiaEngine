@@ -117,9 +117,17 @@ public:
     virtual ~LoaderIOS() {};
 
 public:
-    virtual LVoid syncLoadUrl(const String& url, String& content) {};
+    virtual LVoid syncLoadUrl(const String& url, String& content)
+    {
+        FileUtil::syncLoadUrl(url, content);
+    };
     
     virtual LVoid loadUrl(const String& url, NetworkClient* client)
+    {
+        loadUrl(url, client, LTrue);
+    }
+    
+    virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait)
     {
         // schema如果是boyia://, 则进行文件请求
         FileTask* task = loadBoyiaUrl(url, client);
@@ -135,8 +143,6 @@ public:
         // 网络请求
         [m_engine loadUrlWithData:kHttpGet url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];
     }
-    
-    virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait) {}
 
     virtual LVoid postData(const String& url, NetworkClient* client) {}
     virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait) {}

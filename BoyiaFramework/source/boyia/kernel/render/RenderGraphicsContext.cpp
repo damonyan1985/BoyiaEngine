@@ -89,6 +89,7 @@ LVoid RenderGraphicsContext::drawImage(const LImage* image)
 {
     ItemPainter* painter = currentPainter();
     RenderImageCommand* cmd = new RenderImageCommand(image->rect(), m_brushColor, image->pixels());
+    cmd->url = image->url();
     painter->buffer->addElement(cmd);
 }
 
