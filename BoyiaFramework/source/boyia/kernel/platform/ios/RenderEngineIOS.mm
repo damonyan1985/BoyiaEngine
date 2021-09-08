@@ -7,18 +7,11 @@
 #include "RenderEngineIOS.h"
 #include "ShaderType.h"
 #include "PixelRatio.h"
+#include "AppManager.h"
 
 
 // Need set xcode build settings Preprocessing
 namespace yanbo {
-
-#define METAL_COLOR_BIT(bit) ((float)bit/255)
-#define METAL_COLOR(color) {\
-    METAL_COLOR_BIT(color.m_red),\
-    METAL_COLOR_BIT(color.m_green),\
-    METAL_COLOR_BIT(color.m_blue),\
-    METAL_COLOR_BIT(color.m_alpha)\
-}
 
 static LVoid screenToMetalPoint(
     int x,

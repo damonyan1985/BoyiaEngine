@@ -110,6 +110,8 @@ private:
 
 @property (nonatomic, strong) NSMutableArray* cmdBuffer;
 
+@property (nonatomic, assign) CGFloat statusBarHeight;
+
 @end
 
 @implementation IOSRenderer {
@@ -117,28 +119,39 @@ private:
 }
 
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
+    CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     int w = [UIScreen mainScreen].bounds.size.width;
-    int h = [UIScreen mainScreen].bounds.size.height;
+    int h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
     
     // 720*1080
     LInt logicHeight = (1.0f * 720 / w) * h;
     yanbo::PixelRatio::setWindowSize(w, h);
     yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
     
-    IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];
+    IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];\
+    renderer.statusBarHeight = statusBarHeight;
     yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
     engine->setContextIOS(renderer);
     
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
+    
     return renderer;
+}
+
++(void)runOnUiThead:(dispatch_block_t)block {
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
+-(void)handleTouchEvent:(int)type x:(int)x y:(int)y {
+    y -= self.statusBarHeight;
+    yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
 }
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer {
     self = [super init];
     if (self != nil) {
         self.metalLayer = layer;
-        
         // TODO 后期需要移到engine中
         [self initMetal];
         
@@ -220,7 +233,7 @@ private:
     self.depthStencilState = [device newDepthStencilStateWithDescriptor:depthStencilDescriptor];
     
     self.renderPassDescriptor = [MTLRenderPassDescriptor new];
-    self.renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 0.0, 1.0);
+    self.renderPassDescriptor.colorAttachments[0].clearColor = METAL_COLOR(LColor(0xed, 0x40, 0x40, 0xFF));//MTLClearColorMake(1.0, 1.0, 0.0, 1.0);
     self.renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     self.renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     
@@ -350,7 +363,7 @@ private:
     id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:self.renderPassDescriptor];
     // 设置显示区域大小
     NSLog(@"width=%f height=%f", layer.drawableSize.width, layer.drawableSize.height);
-    [renderEncoder setViewport:(MTLViewport){0.0, 0.0, layer.drawableSize.width, layer.drawableSize.height, -1.0, 1.0 }];
+    [renderEncoder setViewport:(MTLViewport){0.0, self.statusBarHeight, layer.drawableSize.width, layer.drawableSize.height - self.statusBarHeight, -1.0, 1.0 }];
     [renderEncoder setRenderPipelineState:self.pipelineState];
     
     // 设置缓冲区
@@ -377,7 +390,7 @@ private:
             if (tex) {
                 [renderEncoder setFragmentTexture:tex atIndex:0];
             } else {
-                //
+                // Error
             }
         }
         
@@ -387,8 +400,6 @@ private:
         
         index += cmd.size;
     }
-    
-
     
     [renderEncoder endEncoding];
     
