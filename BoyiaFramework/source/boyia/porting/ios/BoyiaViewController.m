@@ -25,11 +25,11 @@
 
 @implementation BoyiaViewController
 
-- (instancetype)init {
+-(instancetype)init {
   return [self initWithMetal:nil bundle:nil];
 }
 
-- (instancetype)initWithMetal:(NSString*)nibName
+-(instancetype)initWithMetal:(NSString*)nibName
                          bundle:(NSBundle*)nibBundle {
   self = [super initWithNibName:nibName bundle:nibBundle];
 //  if (self) {
@@ -39,10 +39,9 @@
   return self;
 }
 
-- (void)viewDidLoad {
+-(void)viewDidLoad {
     [super viewDidLoad];
     NSLog(@"Hello BoyiaViewController");
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     self.boyiaView = [[BoyiaView alloc] initWithFrame:self.view.bounds];
     
