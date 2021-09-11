@@ -82,7 +82,8 @@ LVoid FontIOS::getLineText(LInt index, String& text)
 
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
-    UIFont* font = [UIFont fontWithName:@"HoeflerText-Regular" size:getFontSize()];
+    UIFont* font = [UIFont systemFontOfSize:getFontSize()];
+    //UIFont* font = [UIFont fontWithName:@"HoeflerText-Regular" size:getFontSize()];
 //    float radio = yanbo::PixelRatio::ratio();
 //    maxWidth = maxWidth * radio;
     // String换NSString
