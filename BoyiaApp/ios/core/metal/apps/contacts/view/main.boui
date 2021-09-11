@@ -1,7 +1,0 @@
-<view class="full">
-<div class="items">
-<div id="category_detail" />
-</div>
-<div id="header" />
-<div id="footer" />
-</view>

@@ -119,7 +119,9 @@ private:
 }
 
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
-    CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    //CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
+    CGFloat statusBarHeight = statusBarManager.statusBarFrame.size.height;
     int w = [UIScreen mainScreen].bounds.size.width;
     int h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
     
@@ -141,6 +143,10 @@ private:
 
 +(void)runOnUiThead:(dispatch_block_t)block {
     dispatch_async(dispatch_get_main_queue(), block);
+    
+    // NSOperationQueue来切换回主线程
+//    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//    }];
 }
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y {
