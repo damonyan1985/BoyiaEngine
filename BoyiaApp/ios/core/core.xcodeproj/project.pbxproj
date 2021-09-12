@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4C28B84526D1F17C00953864 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C28B84426D1F17C00953864 /* MetalKit.framework */; };
 		4C7AE80926CF837300946197 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C7AE80726CF837300946197 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CB3239F26EE1490005568CD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB3239E26EE1490005568CD /* AVFoundation.framework */; };
+		4CB323A126EE14EA005568CD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB323A026EE14EA005568CD /* CoreMedia.framework */; };
 		4CB46AAB26E751E8002407C1 /* SalLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB46AAA26E751E8002407C1 /* SalLog.h */; };
 		4CB46AAC26E7587A002407C1 /* metal.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4CFDE65626D8CC2100A01683 /* metal.bundle */; };
 		4CB46AB026EB46EC002407C1 /* net_boyia.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CB46AAF26EB46EC002407C1 /* net_boyia.json */; };
@@ -250,6 +252,8 @@
 		4C7AE80426CF837300946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE80726CF837300946197 /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		4C7AE80826CF837300946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CB3239E26EE1490005568CD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		4CB323A026EE14EA005568CD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		4CB46AAA26E751E8002407C1 /* SalLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SalLog.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/SalLog.h; sourceTree = "<group>"; };
 		4CB46AAF26EB46EC002407C1 /* net_boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = net_boyia.json; path = ../../../../BoyiaTools/test/project/net_boyia.json; sourceTree = "<group>"; };
 		4CB46AB126EB46F4002407C1 /* boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = boyia.json; path = ../../../../BoyiaTools/test/project/boyia.json; sourceTree = "<group>"; };
@@ -494,6 +498,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CB323A126EE14EA005568CD /* CoreMedia.framework in Frameworks */,
+				4CB3239F26EE1490005568CD /* AVFoundation.framework in Frameworks */,
 				4C28B84526D1F17C00953864 /* MetalKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,6 +517,8 @@
 		4C28B84326D1F17C00953864 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4CB323A026EE14EA005568CD /* CoreMedia.framework */,
+				4CB3239E26EE1490005568CD /* AVFoundation.framework */,
 				4C28B84426D1F17C00953864 /* MetalKit.framework */,
 			);
 			name = Frameworks;
