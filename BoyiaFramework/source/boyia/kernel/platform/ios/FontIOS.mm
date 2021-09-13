@@ -99,7 +99,8 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
     
     LInt start = 0;
     LInt end = 0;
-    for (LInt i = 0; i < nsText.length; ++i) {
+    LInt i = 0;
+    while (i < nsText.length) {
         end = i+1;
         NSString* rangeString = [nsText substringWithRange:NSMakeRange(start, end - start)];
         CGRect rect =  [rangeString boundingRectWithSize:maxSize
@@ -108,6 +109,7 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
         
         if (rect.size.width <= maxWidth) {
             currentLineWidth = rect.size.width;
+            i++;
         } else {
             maxLineWidth = maxLineWidth < currentLineWidth ?
                 currentLineWidth : maxLineWidth;
@@ -120,8 +122,8 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
             //yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
             m_lines.addElement(new LineText(lineText, currentLineWidth));
             currentLineWidth = 0;
-
-            start = end;
+            
+            start = i;
         }
 
         m_height = m_height < rect.size.height ? rect.size.height : m_height;

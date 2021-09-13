@@ -5,6 +5,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
 
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,30 +55,52 @@ public class BoyiaFont {
         mFontPaint.setTextSize(fontSize);
         mList.clear();
 
-        char[] charArray = text.toCharArray();
+        //char[] charArray = text.toCharArray();
         int currentLineWidth = 0;
         int maxLineWidth = 0;
-        StringBuilder builder = new StringBuilder();
+        //StringBuilder builder = new StringBuilder();
+        int start = 0;
+        int end = 0;
         BoyiaLog.d("libboyia", "java text=" + text);
-        for (int index = 0; index < charArray.length; ++index) {
-            int width = BoyiaUtils.getFontWidth(mFontPaint, charArray, index);
-            BoyiaLog.d("libboyia", "text=" + charArray[index] + " and width=" + width);
-            if (currentLineWidth + width <= maxWidth) {
-                builder.append(charArray[index]);
-                currentLineWidth += width;
+        Rect rect = new Rect();
+        //for (int index = 0; index < text.length(); ++index) {
+        int index = 0;
+        while (index < text.length()) {
+            end = index+1;
+            String subText = text.substring(start, end);
+            //mFontPaint.getTextBounds(subText, 0, subText.length(), rect);
+            int width = (int)Math.ceil(mFontPaint.measureText(subText));
+            //int width = BoyiaUtils.getFontWidth(mFontPaint, charArray, index);
+            //BoyiaLog.d("libboyia", "text=" + charArray[index] + " and width=" + width);
+//            if (currentLineWidth + width <= maxWidth) {
+//                builder.append(charArray[index]);
+//                currentLineWidth += width;
+//            } else {
+//                maxLineWidth = maxLineWidth < currentLineWidth ?
+//                        currentLineWidth : maxLineWidth;
+//                mList.add(new LineText(builder.toString(), currentLineWidth));
+//                currentLineWidth = 0;
+//                builder.delete(0, builder.length());
+//            }
+            if (width <= maxWidth) {
+                currentLineWidth = width;
+                ++index;
             } else {
                 maxLineWidth = maxLineWidth < currentLineWidth ?
                         currentLineWidth : maxLineWidth;
-                mList.add(new LineText(builder.toString(), currentLineWidth));
+
+                String resultText = text.substring(start, end-1);
+                mList.add(new LineText(resultText, currentLineWidth));
                 currentLineWidth = 0;
-                builder.delete(0, builder.length());
+                start = index;
             }
         }
 
         if (currentLineWidth > 0) {
+            String resultText = text.substring(start, end);
             maxLineWidth = maxLineWidth < currentLineWidth ?
                     currentLineWidth : maxLineWidth;
-            mList.add(new LineText(builder.toString(), currentLineWidth));
+            mList.add(new LineText(resultText, currentLineWidth));
         }
 
         return maxLineWidth;
