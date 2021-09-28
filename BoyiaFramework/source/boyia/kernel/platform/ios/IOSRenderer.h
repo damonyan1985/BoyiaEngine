@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(id<MTLTexture>)getTexture:(NSString*)key;
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y;
-
+-(void)onFling:(CGPoint)point;
 @end
 
 

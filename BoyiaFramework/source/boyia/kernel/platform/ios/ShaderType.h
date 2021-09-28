@@ -17,10 +17,20 @@ typedef struct
     vector_float2 aTexCoord;
 } VertexAttributes;
 
-// uType, 0表示普通图形，1表示图片，2表示视频，3表示nativeview
+typedef struct {
+    vector_float2 topLeft;
+    vector_float2 topRight;
+    vector_float2 bottomLeft;
+    vector_float2 bottomRight;
+    float radius;
+} Radius;
+
+// uType, 0表示普通图形，1表示图片，2表示视频，3表示nativeview, 4圆角矩形
+// uRadius, 圆角半径
 typedef struct
 {
-    uint uType;
+    float uType;
+    Radius uRadius;
 } Uniforms;
 
 #endif /* ShaderType_h */

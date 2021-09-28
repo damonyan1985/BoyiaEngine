@@ -8,14 +8,13 @@
 #ifndef BoyiaView_h
 #define BoyiaView_h
 
-//@import MetalKit;
-//@import GLKit;
-
 #import <UIKit/UIKit.h>
 
 @interface BoyiaView : UIView
 
 -(CAMetalLayer*)metalLayer;
+
+//@property (nonatomic, strong) UIView *inputView;
 
 @end
 

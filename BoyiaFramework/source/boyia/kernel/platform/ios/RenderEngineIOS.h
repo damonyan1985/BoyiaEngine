@@ -14,6 +14,7 @@
 @class IOSRenderer;
 
 namespace yanbo {
+LVoid screenToMetalPoint(int x, int y, float* metalX, float* metalY);
 // TODO
 class RenderEngineIOS;
 typedef LVoid (RenderEngineIOS::*RenderFunction)(RenderCommand* cmd);
@@ -21,6 +22,7 @@ class RenderEngineIOS : public IRenderEngine {
 public:
     RenderEngineIOS();
     virtual ~RenderEngineIOS();
+
     virtual LVoid init();
     virtual LVoid reset();
     virtual LVoid render(RenderLayer* layer);
@@ -32,10 +34,11 @@ public:
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
     
+    LVoid renderRectEx(RenderCommand* cmd);
+    
     LVoid setBuffer();
     
 private:
-    
     KVector<VertexAttributes> m_vertexs;
     IOSRenderer* m_renderer;
     RenderFunction m_functions[5];

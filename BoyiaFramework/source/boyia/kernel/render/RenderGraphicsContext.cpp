@@ -197,7 +197,7 @@ LVoid RenderGraphicsContext::save()
 
 LVoid RenderGraphicsContext::clipRect(const LRect& rect)
 {
-    m_clipRect = (LRect*)& rect;
+    m_clipRect = (LRect*)&rect;
 }
 
 LVoid RenderGraphicsContext::restore()

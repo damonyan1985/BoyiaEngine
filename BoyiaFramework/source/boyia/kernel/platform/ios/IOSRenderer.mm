@@ -149,6 +149,20 @@ private:
 //    }];
 }
 
+-(void)onFling:(CGPoint)point{
+//    LFlingEvent* evt = new LFlingEvent();
+//    evt->pt1.Set(yanbo::PixelRatio::viewX(x1), yanbo::PixelRatio::viewY(y1));
+//    evt->pt2.Set(yanbo::PixelRatio::viewX(x2), yanbo::PixelRatio::viewY(y2));
+//
+//    // 速度是秒级别的，换算成毫秒级别
+//    //velocityX = velocityX / 1000;
+//    //velocityY = velocityY / 1000;
+//    evt->velocityX = yanbo::PixelRatio::viewX(velocityX);
+//    evt->velocityY = yanbo::PixelRatio::viewY(velocityY);
+//
+//    yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
+}
+
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y {
     y -= self.statusBarHeight;
     yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
@@ -245,7 +259,7 @@ private:
     
     self.commandQueue = [device newCommandQueue];
     
-    Uniforms uniforms = { 0 };
+    Uniforms uniforms = { 0, 0 };
     self.uniformsBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
     memcpy([self.uniformsBuffer contents], &uniforms, sizeof(Uniforms));
 }
@@ -384,6 +398,7 @@ private:
         
         Uniforms uniforms;
         uniforms.uType = (cmd.cmdType == BatchCommandNormal ? 0 : 1);
+        //uniforms.uRadius = (cmd.cmdType == BatchCommandNormal ? 0 : 20.0f/(yanbo::PixelRatio::logicWidth() / 2));
         
         // 设置uniforms，告知shader所需要渲染的图形的类型
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
@@ -406,6 +421,50 @@ private:
         
         index += cmd.size;
     }
+    
+    {
+        LRect rect1(100, 100, 200, 200);
+        yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
+        _engine->renderRectEx(cmd1);
+
+       
+
+        // 设置缓冲区
+        [renderEncoder setVertexBuffer:self.verticeBuffer
+                                offset:0
+                               atIndex:0];
+
+        // 例如半径20
+        //float one = (yanbo::PixelRatio::logicWidth() / 2);
+        //float radius = 20.0f/one;
+        
+        float x, y;
+        x = (428.0f/720.f) * 140;
+        y = self.statusBarHeight + (428.0f/720.f) * 140;
+        //yanbo::screenToMetalPoint(120, 120, &x, &y);
+        //vector_float2 topLeft = {x, y};
+        
+        Uniforms uniforms;
+        uniforms.uType = 4;
+        uniforms.uRadius.topLeft = {x, y};
+        uniforms.uRadius.radius = (428.0f/720.f)*40;
+        printf("new rect x1=%f y1=%f\n", x, y);
+        
+        //float x, y;
+        //yanbo::screenToMetalPoint(100, 100, &x, &y);
+        
+        //printf("new rect x2=%f\n", x);
+        
+        id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+        memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+
+        [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
+
+        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:0
+                          vertexCount:self.verticeBuffer.length];
+    }
+    
     
     [renderEncoder endEncoding];
     

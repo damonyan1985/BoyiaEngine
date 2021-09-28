@@ -13,7 +13,7 @@
 // Need set xcode build settings Preprocessing
 namespace yanbo {
 
-static LVoid screenToMetalPoint(
+LVoid screenToMetalPoint(
     int x,
     int y,
     float* metalX,
@@ -291,6 +291,21 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     if (data) {
         free(data);
     }
+}
+
+LVoid RenderEngineIOS::renderRectEx(RenderCommand* cmd)
+{
+    m_vertexs.clear();
+    
+    LRect& rect = cmd->rect;
+    LColor& color = cmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
+    
+    createVertexAttr(rect, color, m_vertexs);
+    setBuffer();
 }
 
 IRenderEngine* IRenderEngine::create()
