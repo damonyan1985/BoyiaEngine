@@ -128,14 +128,14 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         gc.drawRect(x, y, m_width, m_height);
     }
 
-    paintBorder(gc, m_style.border, x, y);
-
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
 
     for (; iter != iterEnd; ++iter) {
         (*iter)->paint(gc);
     }
+    
+    paintBorder(gc, m_style.border, x, y);
 }
 
 LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)

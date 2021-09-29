@@ -130,7 +130,7 @@ private:
     yanbo::PixelRatio::setWindowSize(w, h);
     yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
     
-    IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];\
+    IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];
     renderer.statusBarHeight = statusBarHeight;
     yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
     engine->setContextIOS(renderer);

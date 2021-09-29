@@ -368,10 +368,10 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     } break;
     case StyleTags::BORDER_STYLE: {
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.topWidth = 1;
-            style.border.leftWidth = 1;
-            style.border.bottomWidth = 1;
-            style.border.rightWidth = 1;
+            style.border.topWidth = style.border.topWidth > 1 ? style.border.topWidth : 1;
+            style.border.leftWidth = style.border.leftWidth > 1 ? style.border.leftWidth : 1;
+            style.border.bottomWidth = style.border.bottomWidth > 1 ? style.border.bottomWidth : 1;
+            style.border.rightWidth = style.border.rightWidth > 1 ? style.border.rightWidth : 1;
         }
     } break;
     case StyleTags::TEXT_ALIGN: {

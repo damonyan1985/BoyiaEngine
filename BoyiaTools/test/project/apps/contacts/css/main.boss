@@ -98,7 +98,7 @@ body {
     background-color:#FFFFFFFF;
 }
 .underline {
-	border-bottom: #e8e8e8 solid 1;
+	border-bottom: #e8e8e8 solid 1px;
 	flex-direction: row;
 	focusable: true; 
 }
@@ -162,7 +162,7 @@ body {
 }
 #category {
     height: 70px;
-    border-bottom: #e8e8e8 solid 1;
+    border-bottom: #e8e8e8 solid 1px;
     background-color: #FFF;
     flex-direction: row;
 }

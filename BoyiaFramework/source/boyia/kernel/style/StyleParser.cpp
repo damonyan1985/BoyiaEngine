@@ -427,7 +427,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
-                LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+                LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, intValue);
             }
         }
@@ -442,7 +442,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.StartWithNoCase(_CS("px"))) {
-                LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+                LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
             }
         }
