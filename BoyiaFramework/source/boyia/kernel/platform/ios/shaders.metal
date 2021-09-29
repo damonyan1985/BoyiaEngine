@@ -66,6 +66,10 @@ typedef struct {
 //    }
 //};
 
+// 圆角绘制
+// radius半径以及圆心传入不能和顶点一样传入-1，1之间的数值
+// 必须是屏幕实际坐标点和实际长度，可通过PixelRatio进行换算
+// 顶点传入到shader中后会变成屏幕坐标
 float opacity(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
     float r = uniforms.uRadius.radius;
     // 圆心
@@ -76,9 +80,10 @@ float opacity(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
     float py = varyings.gl_Position.y;
     
     if (px <= rx && py <= ry) {
-        //return 1;
-        //return distance(uniforms.uRadius.topLeft, float2(px, py)) > uniforms.uRadius.radius ? 0 : 1;
-        return (rx - px)*(rx - px) + (ry - py)*(ry - py) > r * r ? 0 : 1;
+        // 抗锯齿处理
+        float dist = distance(uniforms.uRadius.topLeft, float2(px, py));
+        float delta = smoothstep(r-1, r+1, dist);
+        return 1-delta;
     }
 
     return 1;
@@ -110,7 +115,7 @@ fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]],
         float op = opacity(varyings, uniforms);
         //float op = varyings.gl_Position.x < uniforms.uRadius.topLeft.x ? 1 : 0;
         //varyings.gl_Position.x = varyings.gl_Position.x * 0.3;
-        gl_FragColor = op * varyings.vColor;
+        gl_FragColor = float4(varyings.vColor.rgb, varyings.vColor.a * op); //op * varyings.vColor;
     } else { // 纹理
         constexpr sampler textureSampler(mag_filter::linear,
                                           min_filter::linear); // sampler是采样器

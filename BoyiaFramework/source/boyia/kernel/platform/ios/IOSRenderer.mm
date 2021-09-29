@@ -258,10 +258,6 @@ private:
     self.renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     
     self.commandQueue = [device newCommandQueue];
-    
-    Uniforms uniforms = { 0, 0 };
-    self.uniformsBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
-    memcpy([self.uniformsBuffer contents], &uniforms, sizeof(Uniforms));
 }
 
 -(void)clearBatchCommandBuffer {
@@ -421,7 +417,7 @@ private:
         
         index += cmd.size;
     }
-    
+#if 1
     {
         LRect rect1(100, 100, 200, 200);
         yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
@@ -439,15 +435,15 @@ private:
         //float radius = 20.0f/one;
         
         float x, y;
-        x = (428.0f/720.f) * 140;
-        y = self.statusBarHeight + (428.0f/720.f) * 140;
+        x = yanbo::PixelRatio::ratio() * 140;
+        y = self.statusBarHeight + yanbo::PixelRatio::ratio() * 140;
         //yanbo::screenToMetalPoint(120, 120, &x, &y);
         //vector_float2 topLeft = {x, y};
         
         Uniforms uniforms;
         uniforms.uType = 4;
         uniforms.uRadius.topLeft = {x, y};
-        uniforms.uRadius.radius = (428.0f/720.f)*40;
+        uniforms.uRadius.radius = yanbo::PixelRatio::ratio()*40;
         printf("new rect x1=%f y1=%f\n", x, y);
         
         //float x, y;
@@ -464,7 +460,7 @@ private:
                           vertexStart:0
                           vertexCount:self.verticeBuffer.length];
     }
-    
+#endif
     
     [renderEncoder endEncoding];
     
