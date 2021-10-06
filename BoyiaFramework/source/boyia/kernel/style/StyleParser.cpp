@@ -441,7 +441,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
                 rule->addProperty(StyleTags::BORDER_TOP_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::kSolidPen);
-            } else if (oneValue.StartWithNoCase(_CS("px"))) {
+            } else if (oneValue.EndWithNoCase(_CS("px"))) {
                 LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
             }

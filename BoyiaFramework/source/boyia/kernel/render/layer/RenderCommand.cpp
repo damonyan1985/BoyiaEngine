@@ -67,4 +67,18 @@ LInt RenderPlatformCommand::type()
 {
     return RenderCommand::kRenderPlatform;
 }
+
+RenderRoundRectCommand::RenderRoundRectCommand(const LRect& rect, const LColor& color, LInt tlRadius, LInt trRadius, LInt brRadius, LInt blRadius)
+    : RenderCommand(rect, color)
+    , topLeftRadius(tlRadius)
+    , topRightRadius(trRadius)
+    , bottomRightRadius(brRadius)
+    , bottomLeftRadius(blRadius)
+{
+}
+
+LInt RenderRoundRectCommand::type()
+{
+    return kRenderRoundRect;
+}
 }

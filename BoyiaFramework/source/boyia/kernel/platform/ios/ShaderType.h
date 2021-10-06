@@ -22,7 +22,10 @@ typedef struct {
     vector_float2 topRight;
     vector_float2 bottomLeft;
     vector_float2 bottomRight;
-    float radius;
+    float topLeftRadius;
+    float topRightRadius;
+    float bottomLeftRadius;
+    float bottomRightRadius;
 } Radius;
 
 // uType, 0表示普通图形，1表示图片，2表示视频，3表示nativeview, 4圆角矩形

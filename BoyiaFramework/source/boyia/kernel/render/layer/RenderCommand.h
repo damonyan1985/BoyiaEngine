@@ -9,6 +9,7 @@ class RenderCommand : public BoyiaRef {
 public:
     enum CommandType {
         kRenderRect = 0,
+        kRenderRoundRect,
         kRenderText,
         kRenderImage,
         kRenderVideo,
@@ -64,6 +65,17 @@ public:
 
     // 加载外界纹理
     LImage* image;
+};
+
+class RenderRoundRectCommand : public RenderCommand {
+public:
+    RenderRoundRectCommand(const LRect& rect, const LColor& color, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius);
+    virtual LInt type();
+    
+    LInt topLeftRadius;
+    LInt topRightRadius;
+    LInt bottomRightRadius;
+    LInt bottomLeftRadius;
 };
 }
 #endif

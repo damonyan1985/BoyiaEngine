@@ -19,6 +19,9 @@ public:
     virtual LVoid drawEllipse(const LRect& aRect);
 
     virtual LVoid drawRoundRect(const LRect& aRect, const LSize& aCornerSize);
+    
+    // 虚函数的默认形参根据指针类型来决定
+    virtual LVoid drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius);
 
     virtual LVoid drawText(const String& aText, const LRect& aRect);
     virtual LVoid drawText(const String& aText, const LPoint& aPoint);

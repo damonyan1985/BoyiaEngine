@@ -74,6 +74,14 @@ LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, const LSize& aCor
 {
 }
 
+LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
+{
+    ItemPainter* painter = currentPainter();
+    RenderRectCommand* cmd = new RenderRectCommand(aRect, m_brushColor);
+
+    painter->buffer->addElement(cmd);
+}
+
 LVoid RenderGraphicsContext::drawText(const String& aText, const LRect& aRect)
 {
 }

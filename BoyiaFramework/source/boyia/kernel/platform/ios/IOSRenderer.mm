@@ -327,6 +327,10 @@ private:
     return self.metalLayer;
 }
 
+-(float)getRenderStatusBarHight {
+    return self.statusBarHeight;
+}
+
 -(void)render {
 //    CGFloat statusBar = [[UIApplication sharedApplication] statusBarFrame].size.height;
 //    LRect rect1(100, 100 + statusBar, 100, 100);
@@ -443,7 +447,17 @@ private:
         Uniforms uniforms;
         uniforms.uType = 4;
         uniforms.uRadius.topLeft = {x, y};
-        uniforms.uRadius.radius = yanbo::PixelRatio::ratio()*40;
+        uniforms.uRadius.topLeftRadius = yanbo::PixelRatio::ratio()*40;
+        
+        uniforms.uRadius.topRight = {0, 0};
+        uniforms.uRadius.topRightRadius = 0;
+        
+        uniforms.uRadius.bottomRight = {0, 0};
+        uniforms.uRadius.bottomRightRadius = 0;
+        
+        uniforms.uRadius.bottomLeft = {0, 0};
+        uniforms.uRadius.bottomLeftRadius = 0;
+        
         printf("new rect x1=%f y1=%f\n", x, y);
         
         //float x, y;
@@ -461,6 +475,36 @@ private:
                           vertexCount:self.verticeBuffer.length];
     }
 #endif
+    
+#if 1
+    {
+        LRect rect1(100, 400, 200, 200);
+        yanbo::RenderRoundRectCommand* cmd1 = new yanbo::RenderRoundRectCommand(rect1, LColor(0, 255, 0, 120), 40, 40, 40, 40);
+        _engine->renderRoundRect(cmd1);
+
+       
+
+        // 设置缓冲区
+        [renderEncoder setVertexBuffer:self.verticeBuffer
+                                offset:0
+                               atIndex:0];
+        
+        Uniforms uniforms;
+        uniforms.uType = 4;
+        uniforms.uRadius = _engine->radius()[0];
+        
+        id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+        memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+
+        [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
+
+        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:0
+                          vertexCount:self.verticeBuffer.length];
+    }
+#endif
+    
+    
     
     [renderEncoder endEncoding];
     

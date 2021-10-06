@@ -71,7 +71,7 @@ typedef struct {
 // 必须是屏幕实际坐标点和实际长度，可通过PixelRatio进行换算
 // 顶点传入到shader中后会变成屏幕坐标
 float opacity(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
-    float r = uniforms.uRadius.radius;
+    float r = uniforms.uRadius.topLeftRadius;
     // 圆心
     float rx = uniforms.uRadius.topLeft.x;
     float ry = uniforms.uRadius.topLeft.y;
@@ -82,6 +82,70 @@ float opacity(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
     if (px <= rx && py <= ry) {
         // 抗锯齿处理
         float dist = distance(uniforms.uRadius.topLeft, float2(px, py));
+        float delta = smoothstep(r-1, r+1, dist);
+        return 1-delta;
+    }
+
+    return 1;
+}
+
+
+
+
+float circle(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
+    // 坐标
+    float px = varyings.gl_Position.x;
+    float py = varyings.gl_Position.y;
+    
+    // 左上角
+    float r = uniforms.uRadius.topLeftRadius;
+    
+    // 圆心
+    float rx = uniforms.uRadius.topLeft.x;
+    float ry = uniforms.uRadius.topLeft.y;
+    
+    if (px <= rx && py <= ry && r > 0) {
+        // 抗锯齿处理
+        float dist = distance(uniforms.uRadius.topLeft, float2(px, py));
+        float delta = smoothstep(r-1, r+1, dist);
+        return 1-delta;
+    }
+    
+    // 右上角
+    r = uniforms.uRadius.topRightRadius;
+    // 圆心
+    rx = uniforms.uRadius.topRight.x;
+    ry = uniforms.uRadius.topRight.y;
+    
+    if (px >= rx && py <= ry && r > 0) {
+        // 抗锯齿处理
+        float dist = distance(uniforms.uRadius.topRight, float2(px, py));
+        float delta = smoothstep(r-1, r+1, dist);
+        return 1-delta;
+    }
+    
+    // 右下角
+    r = uniforms.uRadius.bottomRightRadius;
+    // 圆心
+    rx = uniforms.uRadius.bottomRight.x;
+    ry = uniforms.uRadius.bottomRight.y;
+    
+    if (px >= rx && py >= ry && r > 0) {
+        // 抗锯齿处理
+        float dist = distance(uniforms.uRadius.bottomRight, float2(px, py));
+        float delta = smoothstep(r-1, r+1, dist);
+        return 1-delta;
+    }
+    
+    // 左下角
+    r = uniforms.uRadius.bottomLeftRadius;
+    // 圆心
+    rx = uniforms.uRadius.bottomLeft.x;
+    ry = uniforms.uRadius.bottomLeft.y;
+    
+    if (px <= rx && py >= ry && r > 0) {
+        // 抗锯齿处理
+        float dist = distance(uniforms.uRadius.bottomLeft, float2(px, py));
         float delta = smoothstep(r-1, r+1, dist);
         return 1-delta;
     }
@@ -112,7 +176,7 @@ fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]],
     if (uniforms.uType == 0) {
         gl_FragColor = varyings.vColor;
     } else if (uniforms.uType == 4) {
-        float op = opacity(varyings, uniforms);
+        float op = circle(varyings, uniforms);
         //float op = varyings.gl_Position.x < uniforms.uRadius.topLeft.x ? 1 : 0;
         //varyings.gl_Position.x = varyings.gl_Position.x * 0.3;
         gl_FragColor = float4(varyings.vColor.rgb, varyings.vColor.a * op); //op * varyings.vColor;

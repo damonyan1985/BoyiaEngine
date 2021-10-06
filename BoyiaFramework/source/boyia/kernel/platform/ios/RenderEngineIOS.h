@@ -34,12 +34,17 @@ public:
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
     
+    LVoid renderRoundRect(RenderCommand* cmd);
     LVoid renderRectEx(RenderCommand* cmd);
     
     LVoid setBuffer();
     
+    const KVector<Radius>& radius() const;
+    
 private:
     KVector<VertexAttributes> m_vertexs;
+    KVector<Radius> m_radius;
+    
     IOSRenderer* m_renderer;
     RenderFunction m_functions[5];
 };

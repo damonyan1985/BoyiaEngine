@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
 -(CAMetalLayer*)layer;
+-(float)getRenderStatusBarHight;
 
 -(void)clearBatchCommandBuffer;
 -(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;

@@ -70,10 +70,16 @@ static LVoid createVertexAttr(const LRect& rect, const LColor& color, KVector<Ve
     vertexs.addElement(attr);
 }
 
+inline static float realLength(LInt length)
+{
+    return yanbo::PixelRatio::ratio() * length;
+}
+
 // TODO
 RenderEngineIOS::RenderEngineIOS()
     : m_renderer(kBoyiaNull)
     , m_vertexs(0, 256)
+    , m_radius(0, 256)
 {
     init();
 }
@@ -291,6 +297,56 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     if (data) {
         free(data);
     }
+}
+
+LVoid RenderEngineIOS::renderRoundRect(RenderCommand* cmd)
+{
+    RenderRoundRectCommand* roundCmd = static_cast<RenderRoundRectCommand*>(cmd);
+    // later remove
+    m_vertexs.clear();
+    
+    LRect& rect = roundCmd->rect;
+    LColor& color = roundCmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
+    
+    createVertexAttr(rect, color, m_vertexs);
+    
+    Radius radius;
+    radius.topLeftRadius = realLength(roundCmd->topRightRadius);
+    radius.topRightRadius = realLength(roundCmd->topRightRadius);
+    radius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
+    radius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+    
+    radius.topLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    radius.topRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    radius.bottomLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    radius.bottomRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    
+    m_radius.addElement(radius);
+    // later remove
+    setBuffer();
+}
+
+const KVector<Radius>& RenderEngineIOS::radius() const
+{
+    return m_radius;
 }
 
 LVoid RenderEngineIOS::renderRectEx(RenderCommand* cmd)
