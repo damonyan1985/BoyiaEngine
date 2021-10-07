@@ -555,7 +555,7 @@ template <class T>
 LString<T>& LString<T>::ToUpper()
 {
     LInt nLen = GetLength();
-    for (LInt i = 0; i < GetLength(); ++i) {
+    for (LInt i = 0; i < nLen; ++i) {
         if (m_pchData[i] >= T('a') && m_pchData[i] <= T('z')) {
             m_pchData[i] += T('A') - T('a');
         }

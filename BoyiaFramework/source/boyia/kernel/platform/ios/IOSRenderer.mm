@@ -288,12 +288,21 @@ private:
     }
     
     // 属性不一致，新增cmd
+    _engine->appendUniforms((LInt)cmdType);
+    
     id cmd = [[BatchCommand alloc]initWithParams:cmdType size:size key:key];
     [self.cmdBuffer addObject:cmd];
 }
 
--(void)setBuffer:(const void*)buffer size:(NSUInteger)size {
+-(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size {
     self.verticeBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
+}
+
+-(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size {
+//    self.uniformsBuffer = [self.metalLayer.device newBufferWithLength:size options:MTLResourceOptionCPUCacheModeDefault];
+//    memcpy([self.uniformsBuffer contents], buffer, size);
+    
+    self.uniformsBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
 }
 
 -(id<MTLTexture>)getTexture:(NSString*)key {
@@ -391,22 +400,22 @@ private:
                             offset:0
                            atIndex:0];
     
-    
     NSUInteger index = 0;
+    NSUInteger uniformIndex = 0;
     for (NSUInteger i = 0; i < self.cmdBuffer.count; i++) {
         BatchCommand* cmd = [self.cmdBuffer objectAtIndex:i];
         
         Uniforms uniforms;
         uniforms.uType = (cmd.cmdType == BatchCommandNormal ? 0 : 1);
         //uniforms.uRadius = (cmd.cmdType == BatchCommandNormal ? 0 : 20.0f/(yanbo::PixelRatio::logicWidth() / 2));
-        
+
         // 设置uniforms，告知shader所需要渲染的图形的类型
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
         memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
         
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
-        if (cmd.cmdType ==  BatchCommandTexture) {
+        if (cmd.cmdType == BatchCommandTexture) {
             id tex = self.textureCache[cmd.textureKey];
             if (tex) {
                 [renderEncoder setFragmentTexture:tex atIndex:0];
@@ -421,66 +430,12 @@ private:
         
         index += cmd.size;
     }
-#if 1
-    {
-        LRect rect1(100, 100, 200, 200);
-        yanbo::RenderRectCommand* cmd1 = new yanbo::RenderRectCommand(rect1, LColor(0, 255, 0, 255));
-        _engine->renderRectEx(cmd1);
-
-       
-
-        // 设置缓冲区
-        [renderEncoder setVertexBuffer:self.verticeBuffer
-                                offset:0
-                               atIndex:0];
-
-        // 例如半径20
-        //float one = (yanbo::PixelRatio::logicWidth() / 2);
-        //float radius = 20.0f/one;
-        
-        float x, y;
-        x = yanbo::PixelRatio::ratio() * 140;
-        y = self.statusBarHeight + yanbo::PixelRatio::ratio() * 140;
-        //yanbo::screenToMetalPoint(120, 120, &x, &y);
-        //vector_float2 topLeft = {x, y};
-        
-        Uniforms uniforms;
-        uniforms.uType = 4;
-        uniforms.uRadius.topLeft = {x, y};
-        uniforms.uRadius.topLeftRadius = yanbo::PixelRatio::ratio()*40;
-        
-        uniforms.uRadius.topRight = {0, 0};
-        uniforms.uRadius.topRightRadius = 0;
-        
-        uniforms.uRadius.bottomRight = {0, 0};
-        uniforms.uRadius.bottomRightRadius = 0;
-        
-        uniforms.uRadius.bottomLeft = {0, 0};
-        uniforms.uRadius.bottomLeftRadius = 0;
-        
-        printf("new rect x1=%f y1=%f\n", x, y);
-        
-        //float x, y;
-        //yanbo::screenToMetalPoint(100, 100, &x, &y);
-        
-        //printf("new rect x2=%f\n", x);
-        
-        id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
-        memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
-
-        [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
-
-        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                          vertexStart:0
-                          vertexCount:self.verticeBuffer.length];
-    }
-#endif
     
 #if 1
     {
         LRect rect1(100, 400, 200, 200);
         yanbo::RenderRoundRectCommand* cmd1 = new yanbo::RenderRoundRectCommand(rect1, LColor(0, 255, 0, 120), 40, 40, 40, 40);
-        _engine->renderRoundRect(cmd1);
+        _engine->renderRoundRectEx(cmd1);
 
        
 
@@ -488,15 +443,12 @@ private:
         [renderEncoder setVertexBuffer:self.verticeBuffer
                                 offset:0
                                atIndex:0];
+    
         
-        Uniforms uniforms;
-        uniforms.uType = 4;
-        uniforms.uRadius = _engine->radius()[0];
-        
-        id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
-        memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+//        id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+//        memcpy([uniformsBuffer contents], _engine->uniforms().getBuffer(), sizeof(Uniforms));
 
-        [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
+        [renderEncoder setFragmentBuffer:self.uniformsBuffer offset:0 atIndex:0];
 
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                           vertexStart:0

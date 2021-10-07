@@ -79,7 +79,7 @@ inline static float realLength(LInt length)
 RenderEngineIOS::RenderEngineIOS()
     : m_renderer(kBoyiaNull)
     , m_vertexs(0, 256)
-    , m_radius(0, 256)
+    , m_uniforms(0, 256)
 {
     init();
 }
@@ -92,6 +92,7 @@ LVoid RenderEngineIOS::init()
 {
     // 初始化渲染函数
     m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineIOS::renderRect;
+    m_functions[RenderCommand::kRenderRoundRect] = (RenderFunction)&RenderEngineIOS::renderRoundRect;
     m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineIOS::renderText;
     m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineIOS::renderImage;
 }
@@ -106,6 +107,7 @@ LVoid RenderEngineIOS::render(RenderLayer* layer)
     [m_renderer clearBatchCommandBuffer];
     // 清空缓冲区
     m_vertexs.clear();
+    m_uniforms.clear();
     // 开始渲染
     renderImpl(layer);
     // 刷新缓冲区
@@ -150,6 +152,7 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     }
     
     createVertexAttr(rect, color, m_vertexs);
+    
     [m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil];
     
     
@@ -183,7 +186,13 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
 LVoid RenderEngineIOS::setBuffer()
 {
     NSLog(@"setBuffer() size=%d", m_vertexs.size());
-    [m_renderer setBuffer:m_vertexs.getBuffer() size:(m_vertexs.size() * sizeof(VertexAttributes))];
+    if (m_vertexs.size()) {
+        [m_renderer setVerticeBuffer:m_vertexs.getBuffer() size:(m_vertexs.size() * sizeof(VertexAttributes))];
+    }
+    
+    if (m_uniforms.size()) {
+        [m_renderer setUniformBuffer:m_uniforms.getBuffer() size:(m_uniforms.size() * sizeof(Uniforms))];
+    }
 }
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
@@ -302,8 +311,6 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 LVoid RenderEngineIOS::renderRoundRect(RenderCommand* cmd)
 {
     RenderRoundRectCommand* roundCmd = static_cast<RenderRoundRectCommand*>(cmd);
-    // later remove
-    m_vertexs.clear();
     
     LRect& rect = roundCmd->rect;
     LColor& color = roundCmd->color;
@@ -314,41 +321,102 @@ LVoid RenderEngineIOS::renderRoundRect(RenderCommand* cmd)
     
     createVertexAttr(rect, color, m_vertexs);
     
-    Radius radius;
-    radius.topLeftRadius = realLength(roundCmd->topRightRadius);
-    radius.topRightRadius = realLength(roundCmd->topRightRadius);
-    radius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
-    radius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+    Uniforms uniforms;
+    uniforms.uType = 4;
     
-    radius.topLeft = {
+    uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
+    uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+    
+    uniforms.uRadius.topLeft = {
         realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
         realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
     };
-    radius.topRight = {
+    
+    uniforms.uRadius.topRight = {
         realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
         realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
     };
     
-    radius.bottomLeft = {
+    uniforms.uRadius.bottomLeft = {
         realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
         realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
     };
-    radius.bottomRight = {
+    
+    uniforms.uRadius.bottomRight = {
         realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
         realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
     };
     
+    m_uniforms.addElement(uniforms);
+}
+
+LVoid RenderEngineIOS::appendUniforms(LInt type)
+{
+    Uniforms uniforms;
+    uniforms.uType = type;
+    m_uniforms.addElement(uniforms);
+}
+
+// Test Api
+LVoid RenderEngineIOS::renderRoundRectEx(RenderCommand* cmd)
+{
+    // later remove
+    m_vertexs.clear();
+    m_uniforms.clear();
     
-    m_radius.addElement(radius);
+    RenderRoundRectCommand* roundCmd = static_cast<RenderRoundRectCommand*>(cmd);
+    
+    LRect& rect = roundCmd->rect;
+    LColor& color = roundCmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
+    
+    createVertexAttr(rect, color, m_vertexs);
+    
+    Uniforms uniforms;
+    uniforms.uType = 4;
+    
+    uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
+    uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+    
+    uniforms.uRadius.topLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.topRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.bottomLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.bottomRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    m_uniforms.addElement(uniforms);
+    
     // later remove
     setBuffer();
 }
 
-const KVector<Radius>& RenderEngineIOS::radius() const
+const KVector<Uniforms>& RenderEngineIOS::uniforms() const
 {
-    return m_radius;
+    return m_uniforms;
 }
 
+// Test Api
 LVoid RenderEngineIOS::renderRectEx(RenderCommand* cmd)
 {
     m_vertexs.clear();

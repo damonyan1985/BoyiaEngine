@@ -33,20 +33,23 @@ public:
     LVoid renderRect(RenderCommand* cmd);
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
-    
     LVoid renderRoundRect(RenderCommand* cmd);
+    
+    // Just for test
+    LVoid renderRoundRectEx(RenderCommand* cmd);
     LVoid renderRectEx(RenderCommand* cmd);
     
     LVoid setBuffer();
     
-    const KVector<Radius>& radius() const;
+    LVoid appendUniforms(LInt type);
+    const KVector<Uniforms>& uniforms() const;
     
 private:
     KVector<VertexAttributes> m_vertexs;
-    KVector<Radius> m_radius;
+    KVector<Uniforms> m_uniforms;
     
     IOSRenderer* m_renderer;
-    RenderFunction m_functions[5];
+    RenderFunction m_functions[6];
 };
 }
 #endif /* RenderEngineIOS_h */

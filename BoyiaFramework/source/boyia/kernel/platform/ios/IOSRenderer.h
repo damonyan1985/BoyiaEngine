@@ -22,7 +22,7 @@
 }
 
 typedef NS_ENUM(NSInteger, BatchCommandType) {
-    BatchCommandNormal,
+    BatchCommandNormal = 0,
     BatchCommandTexture
 };
 
@@ -40,7 +40,10 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 
 -(void)clearBatchCommandBuffer;
 -(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
--(void)setBuffer:(const void*)buffer size:(NSUInteger)size;
+-(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size;
+-(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size;
+
+
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;
 -(id<MTLTexture>)getTexture:(NSString*)key;
 

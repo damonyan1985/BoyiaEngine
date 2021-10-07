@@ -28,7 +28,7 @@ private:
     HWND m_hwnd;
     ULONG_PTR m_gdiplusToken;
     Gdiplus::Bitmap* m_cacheBitmap;
-    RenderFunction m_functions[5];
+    RenderFunction m_functions[6];
 };
 }
 #endif
