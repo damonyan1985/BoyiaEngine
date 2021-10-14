@@ -41,7 +41,7 @@ enum BuiltinId {
     kBoyiaArray
 };
 
-// 一下字符串类型含义
+// 字符串类型含义
 // kBoyiaStringBuffer表示Boyia内存池创建的buffer
 // kNativeStringBuffer表示String类创建的buffer
 // kConstStringBuffer表示是从Boyia常量表中获取的

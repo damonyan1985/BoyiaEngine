@@ -106,4 +106,4 @@ fun getArea(data) {
 }
 
 // 启动ViewController
-App.start(MainViewController);
+App.push(MainViewController);

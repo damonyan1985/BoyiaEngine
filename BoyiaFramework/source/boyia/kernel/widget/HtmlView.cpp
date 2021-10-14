@@ -605,4 +605,14 @@ LInt HtmlView::viewId() const
 {
     return m_viewId;
 }
+
+// 根据标签类型判断显示状态
+LVoid HtmlView::setVisible(LBool visible)
+{
+    if (isInline()) {
+        m_style.displayType = visible ? util::Style::DISPLAY_INLINE : util::Style::DISPLAY_NONE;
+    } else if (isBlockView()) {
+        LBaseView::setVisible(visible);
+    }
+}
 }

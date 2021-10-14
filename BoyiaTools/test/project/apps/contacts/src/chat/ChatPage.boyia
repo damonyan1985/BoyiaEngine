@@ -8,3 +8,9 @@ class ChatPage extends ViewDoc {
 		}
 	}
 }
+
+class ChatViewController extends ViewController {
+    fun onCreate() {
+       var appBox = ViewRoot.getRoot();
+    }
+}

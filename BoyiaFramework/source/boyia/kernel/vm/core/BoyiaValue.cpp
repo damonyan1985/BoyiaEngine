@@ -118,6 +118,7 @@ LVoid* BoyiaNew(LInt size, LVoid* vm)
     return NewData(size, GetRuntime(vm)->memoryPool());
 }
 
+// 删除挂载在对象上的所有事件
 LVoid BoyiaPreDelete(LVoid* ptr, LVoid* vm)
 {
     GetRuntime(vm)->prepareDelete(ptr);
@@ -125,6 +126,9 @@ LVoid BoyiaPreDelete(LVoid* ptr, LVoid* vm)
 
 LVoid BoyiaDelete(LVoid* data, LVoid* vm)
 {
+    // 先清除挂载在对象上的所有事件
+    BoyiaPreDelete(data, vm);
+    // 然后再清除对象
     return DeleteData(data, GetRuntime(vm)->memoryPool());
 }
 
@@ -290,7 +294,7 @@ BoyiaValue* GetInlineCache(InlineCache* cache, BoyiaValue* obj)
 
 extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm)
 {
-    GetRuntime(vm)->idCreator()->getIdentName(key, str);
+    GetRuntime(vm)->idCreator()->getIdentName((LUint)key, str);
 }
 
 LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
@@ -400,6 +404,7 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 
 // Boyia builtins
 // String class builtin
+// 获取唯一标识class的class id
 LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 {
     BoyiaFunction* objBody = (BoyiaFunction*)obj->mValue.mObj.mPtr;
@@ -407,6 +412,7 @@ LUintPtr GetBoyiaClassId(BoyiaValue* obj)
     return clzz->mNameKey;
 }
 
+// 内置Boyia的String类
 LVoid BuiltinStringClass(LVoid* vm)
 {
     BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaString, vm);

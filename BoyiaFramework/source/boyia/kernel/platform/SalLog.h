@@ -62,14 +62,14 @@ extern bool JNI_LOG_ON;
 #define KSTRFORMAT(format_str, str)
 #define BOYIA_LOG KFORMATLOG
 #elif ENABLE(BOYIA_IOS)
-
+#include <stdio.h>
 #define INIT_KLOG(file_name, is_open)
 #define SHUT_KLOG()
 #define KLOG(log_str)
 #define KDESLOG(log_str)
 #define KSTRLOG(log_str)
 #define KSTRLOG8(log_str)
-#define KFORMATLOG(format_str, ...)
+#define KFORMATLOG(format_str, ...) fprintf(stdout, format_str, __VA_ARGS__);printf("\n")
 #define KSTRFORMAT(format_str, str)
 #define BOYIA_LOG KFORMATLOG
 #else

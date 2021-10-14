@@ -690,7 +690,7 @@ LInt setViewVisible(LVoid* vm)
     BoyiaValue* visibleArg = (BoyiaValue*)GetLocalValue(1, vm);
     boyia::BoyiaView* view = (boyia::BoyiaView*)itemArg->mValue.mIntVal;
 
-    view->item()->getStyle()->displayType = visibleArg->mValue.mIntVal;
+    view->item()->setVisible((LInt)visibleArg->mValue.mIntVal);
     view->commit();
 
     return kOpResultSuccess;

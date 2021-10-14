@@ -11,8 +11,7 @@
 namespace util {
 
 LBaseView::LBaseView()
-    : m_visible(LTrue)
-    , m_x(0)
+    : m_x(0)
     , m_y(0)
     , m_width(0)
     , m_height(0)
@@ -101,7 +100,12 @@ void LBaseView::setPadding(LInt leftPadding, LInt topPadding)
 
 void LBaseView::setVisible(LBool visible)
 {
-    m_visible = visible;
+    m_style.displayType = visible ? Style::DISPLAY_BLOCK : Style::DISPLAY_NONE;
+}
+
+LBool LBaseView::isVisible() const
+{
+    return m_style.displayType == Style::DISPLAY_NONE;
 }
 
 int LBaseView::getEndX()

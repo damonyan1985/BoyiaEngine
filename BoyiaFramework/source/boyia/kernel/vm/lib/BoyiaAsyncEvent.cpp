@@ -151,6 +151,7 @@ BoyiaAsyncEvent::~BoyiaAsyncEvent()
 LVoid BoyiaAsyncEvent::run()
 {
     // If object is destroyed, dont callback to application
+    // 指针地址和uniqueId双保险，确定event的唯一性
     if (!m_runtime->eventManager()->hasObject(&m_obj, m_uniqueId)) {
         return;
     }

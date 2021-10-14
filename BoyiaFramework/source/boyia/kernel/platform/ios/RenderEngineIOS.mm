@@ -86,8 +86,8 @@ RenderEngineIOS::RenderEngineIOS()
 
 RenderEngineIOS::~RenderEngineIOS()
 {
-    
 }
+
 LVoid RenderEngineIOS::init()
 {
     // 初始化渲染函数

@@ -52,7 +52,8 @@ public:
 
     LVoid setPadding(LInt leftPadding, LInt topPadding);
 
-    LVoid setVisible(LBool visible);
+    virtual LVoid setVisible(LBool visible);
+    LBool isVisible() const;
 
     virtual LInt getEndX();
     virtual LInt getBottomY();
@@ -61,8 +62,6 @@ public:
     const String& getTagName() const;
 
 protected:
-    LBool m_visible;
-
     /** The x position of this item */
     LInt m_x;
 

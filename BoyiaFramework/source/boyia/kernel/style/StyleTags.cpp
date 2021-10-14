@@ -70,6 +70,13 @@ StyleTags* StyleTags::getInstance()
         s_tags->defineInitialSymbol(_CS("z-index"), Z_INDEX);
         s_tags->defineInitialSymbol(_CS("focusable"), FOCUSABLE);
         s_tags->defineInitialSymbol(_CS("flex-direction"), FLEX_DIRECTION);
+        
+        // 圆角
+        s_tags->defineInitialSymbol(_CS("border-radius"), BORDER_RADIUS);
+        s_tags->defineInitialSymbol(_CS("border-top-left-radius"), BORDER_TOP_LEFT_RADIUS);
+        s_tags->defineInitialSymbol(_CS("border-top-right-radius"), BORDER_TOP_RIGHT_RADIUS);
+        s_tags->defineInitialSymbol(_CS("border-bottom-left-radius"), BORDER_BOTTOM_LEFT_RADIUS);
+        s_tags->defineInitialSymbol(_CS("border-bottom-right-radius"), BORDER_BOTTOM_RIGHT_RADIUS);
     }
 
     return s_tags;

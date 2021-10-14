@@ -28,13 +28,18 @@ class ViewController extends Object {
         }
     }
 
+    // 如果上一个ViewController的content是半透明状态下
+    // 则只调用onPause，而不调用onStop
     fun onPause() {
+        
+    }
+
+    // 只有onStop时才设置不可见
+    // 底层将不会为不可见的contentView创建渲染指令
+    fun onStop() {
         if (this.contentView) {
             this.contentView.setVisible(false);
         }
-    }
-
-    fun onStop() {        
     }
     
     fun onDestroy() {

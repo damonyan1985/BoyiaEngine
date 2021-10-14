@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div id="AppBox" class="full" />
+<div id="root" class="full" />
 
 
 <video class="video" src="http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4" />
@@ -28,8 +28,9 @@
 <script src="boyia://apps/sdk/ImageView.boyia" />
 <script src="boyia://apps/sdk/App.boyia" />
 <script src="boyia://apps/sdk/ViewController.boyia" />
+<script src="boyia://apps/sdk/ViewRoot.boyia" />
+
 <script src="boyia://apps/contacts/src/bean/UserInfo.boyia" />
-<script src="boyia://apps/contacts/src/ViewRoot.boyia" />
 <script src="boyia://apps/contacts/src/chat/ChatPage.boyia" />
 <script src="boyia://apps/contacts/src/NewTextItem.boyia" />
 <script src="boyia://apps/contacts/src/CategoryItem.boyia" />

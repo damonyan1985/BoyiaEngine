@@ -20,6 +20,15 @@ namespace util {
 
 const LInt kStringBufferLen = 30;
 
+static inline LInt GetPropertyPixel(const String& value)
+{
+    if (value.GetLength() <= 2) {
+        return 0;
+    }
+
+    return StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+}
+
 StyleParser::StyleParser()
     : m_styleManager(kBoyiaNull)
 {
@@ -290,8 +299,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
     case StyleTags::PADDING_RIGHT:
     case StyleTags::PADDING_TOP: {
         if (value.EndWithNoCase(_CS("px"))) {
-            LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
-            rule->addProperty(cssTag, intValue);
+            //LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+            rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;
     case StyleTags::POSITION: {
@@ -344,8 +353,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
     case StyleTags::BORDER_LEFT_WIDTH:
     case StyleTags::BORDER_RIGHT_WIDTH: {
         if (value.EndWithNoCase(_CS("px"))) {
-            LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
-            rule->addProperty(cssTag, intValue);
+            //LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+            rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;
     case StyleTags::BACKGROUND: {
@@ -404,8 +413,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         } else if (value.CompareNoCase(_CS("small"))) {
             rule->addProperty(cssTag, 24);
         } else if (value.EndWithNoCase(_CS("px"))) {
-            LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
-            rule->addProperty(cssTag, intValue);
+            //LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
+            rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;
     case StyleTags::TEXT_ALIGN: {
@@ -427,8 +436,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
-                LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
-                rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, intValue);
+                //LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
+                rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, GetPropertyPixel(oneValue));
             }
         }
     } break;
@@ -442,8 +451,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_TOP_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
-                LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
-                rule->addProperty(StyleTags::BORDER_TOP_WIDTH, intValue);
+                //LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
+                rule->addProperty(StyleTags::BORDER_TOP_WIDTH, GetPropertyPixel(oneValue));
             }
         }
     } break;
@@ -492,7 +501,14 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_COLUMN_REVERSE);
         }
     } break;
-    default: {
+    case StyleTags::BORDER_RADIUS:
+    case StyleTags::BORDER_TOP_LEFT_RADIUS:
+    case StyleTags::BORDER_TOP_RIGHT_RADIUS:
+    case StyleTags::BORDER_BOTTOM_LEFT_RADIUS:
+    case StyleTags::BORDER_BOTTOM_RIGHT_RADIUS: {
+        if (value.EndWithNoCase(_CS("px"))) {
+            rule->addProperty(cssTag, GetPropertyPixel(value));
+        }
     } break;
     }
 }

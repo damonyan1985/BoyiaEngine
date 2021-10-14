@@ -35,6 +35,17 @@ public:
     LInt bottomStyle;
 };
 
+class BorderRadius {
+public:
+    BorderRadius();
+    BorderRadius(const BorderRadius& radius);
+    
+    LInt topLeftRadius;
+    LInt topRightRadius;
+    LInt bottomLeftRadius;
+    LInt bottomRightRadius;
+};
+
 class Style {
 public:
     // must be used with absolute or fixed
@@ -108,6 +119,7 @@ public:
     LUint8 opacity;
     LUint8 drawOpacity;
     Border border;
+    BorderRadius radius;
     LBool focusable;
     LInt flexDirection;
     LInt align;

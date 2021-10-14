@@ -200,4 +200,9 @@ LVoid BoyiaView::setBoyiaView(BoyiaValue* value)
 {
     ValueCopy(&m_boyiaView, value);
 }
+
+LVoid BoyiaView::setVisible(bool visible)
+{
+    m_item->setVisible(visible);
+}
 }

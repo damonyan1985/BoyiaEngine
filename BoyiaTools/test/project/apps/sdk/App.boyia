@@ -9,18 +9,34 @@ class App {
     }
     
     // 启动一个view controller
-    fun start(controllerClass) {
+    fun push(controllerClass) {
+        var size = this.controllerStack.size();
+        if (size) {
+            var controller = this.controllerStack.get(size - 1);
+            // 调用界面onStop回调
+            controller.onStop();
+        }
+    
         var controller = new(controllerClass);
         this.controllerStack.put(controller);
         controller.init();
     }
 
-    fun stop() {
+    fun pop() {
         var size = this.controllerStack.size();
+        // 当只有一个时证明在首页，不再执行pop
+        if (size <= 1) {
+            return;
+        }
+        
+        // 只有size大于1的情况下才能执行pop
         var controller = this.controllerStack.get(size - 1);
         // 调用界面onStop回调
         controller.onStop();
         this.controllerStack.remove(size - 1);
+        
+        //var root = ViewRoot.getRoot();
+        //root.removeView(controller.contentView);
 
         // 唤醒之前的页面
         var size = this.controllerStack.size();

@@ -81,6 +81,22 @@ const Border& Border::operator=(const Border& border)
     return *this;
 }
 
+BorderRadius::BorderRadius()
+    : topLeftRadius(0)
+    , topRightRadius(0)
+    , bottomLeftRadius(0)
+    , bottomRightRadius(0)
+{
+}
+
+BorderRadius::BorderRadius(const BorderRadius& radius)
+    : topLeftRadius(radius.topLeftRadius)
+    , topRightRadius(radius.topRightRadius)
+    , bottomLeftRadius(radius.bottomLeftRadius)
+    , bottomRightRadius(radius.bottomRightRadius)
+{
+}
+
 Style::Style()
 {
     init();

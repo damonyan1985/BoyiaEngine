@@ -1,4 +1,4 @@
-class LuxuryMain extends Activity {
+class LuxuryMain extends ViewController {
   prop main;
   fun onCreate() {
     var rootView = ViewDoc.rootView().itemByID(ViewGroup, "root");
@@ -11,13 +11,5 @@ class LuxuryMain extends Activity {
   }
 }
 
-class LuxuryApp extends App {
-  fun run() {
-    var act = new(LuxuryMain);
-    var app = new(LuxuryApp);
-    app.initApp();
-    app.startAct(act);
-  }
-}
-
-LuxuryApp.run();
+// 启动ViewController
+App.start(LuxuryMain);

@@ -97,6 +97,8 @@ public:
     const HtmlViewList& getChildren() const;
 
     LInt viewId() const;
+    
+    virtual LVoid setVisible(LBool visible);
 
 private:
     HtmlView* getPreItem(HtmlView* currentItem);

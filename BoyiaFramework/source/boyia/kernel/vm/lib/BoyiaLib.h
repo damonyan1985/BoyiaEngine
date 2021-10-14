@@ -86,4 +86,6 @@ LInt createSocket(LVoid* vm);
 
 LInt sendSocketMsg(LVoid* vm);
 
+LInt setViewVisible(LVoid* vm);
+
 #endif // !BoyiaLib_h

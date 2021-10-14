@@ -52,6 +52,7 @@ public:
 
     virtual LVoid addListener(LInt type, BoyiaValue* callback);
     LVoid setBoyiaView(BoyiaValue* value);
+    LVoid setVisible(bool visible);
 
 protected:
     LInt m_type;

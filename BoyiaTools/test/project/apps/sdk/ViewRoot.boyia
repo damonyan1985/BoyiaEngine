@@ -2,7 +2,7 @@ class ViewRoot {
 	prop root = null;
 	fun getRoot() {
 		if (!this.root) {
-	    	this.root = ViewDoc.rootView().itemByID(ViewGroup, "AppBox");
+	    	this.root = ViewDoc.rootView().itemByID(ViewGroup, "root");
 	    }
 
 	    return this.root;
