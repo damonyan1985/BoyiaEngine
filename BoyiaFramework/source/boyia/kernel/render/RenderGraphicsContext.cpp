@@ -77,7 +77,8 @@ LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, const LSize& aCor
 LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
 {
     ItemPainter* painter = currentPainter();
-    RenderRectCommand* cmd = new RenderRectCommand(aRect, m_brushColor);
+    RenderRoundRectCommand* cmd =
+        new RenderRoundRectCommand(aRect, m_brushColor, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
 
     painter->buffer->addElement(cmd);
 }

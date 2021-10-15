@@ -264,7 +264,7 @@ private:
     [self.cmdBuffer removeAllObjects];
 }
 
--(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
+-(bool)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
     // 属性一致，无需新增cmd
     // 都是普通类型，属性一致
     // 都是纹理类型，且使用相同纹理，属性一致
@@ -273,7 +273,7 @@ private:
         BatchCommand* lastCmd = [self.cmdBuffer lastObject];
         if (lastCmd.cmdType == cmdType && cmdType == BatchCommandNormal) {
             lastCmd.size += size;
-            return;
+            return NO;
         }
 
         // 如果都是纹理类型，且使用的纹理都是一样的
@@ -283,15 +283,15 @@ private:
             && key.length > 0
             && [key isEqualToString:lastCmd.textureKey]) {
             lastCmd.size += size;
-            return;
+            return NO;
         }
     }
     
     // 属性不一致，新增cmd
-    _engine->appendUniforms((LInt)cmdType);
-    
     id cmd = [[BatchCommand alloc]initWithParams:cmdType size:size key:key];
     [self.cmdBuffer addObject:cmd];
+    
+    return YES;
 }
 
 -(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size {
@@ -401,17 +401,14 @@ private:
                            atIndex:0];
     
     NSUInteger index = 0;
-    NSUInteger uniformIndex = 0;
+    LInt uniformIndex = 0;
     for (NSUInteger i = 0; i < self.cmdBuffer.count; i++) {
         BatchCommand* cmd = [self.cmdBuffer objectAtIndex:i];
         
-        Uniforms uniforms;
-        uniforms.uType = (cmd.cmdType == BatchCommandNormal ? 0 : 1);
-        //uniforms.uRadius = (cmd.cmdType == BatchCommandNormal ? 0 : 20.0f/(yanbo::PixelRatio::logicWidth() / 2));
-
+        //Uniforms uniforms = _engine->uniforms()[uniformIndex++];
         // 设置uniforms，告知shader所需要渲染的图形的类型
         id<MTLBuffer> uniformsBuffer = [self.metalLayer.device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
-        memcpy([uniformsBuffer contents], &uniforms, sizeof(Uniforms));
+        memcpy([uniformsBuffer contents], &_engine->uniforms()[uniformIndex++], sizeof(Uniforms));
         
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
@@ -431,7 +428,7 @@ private:
         index += cmd.size;
     }
     
-#if 1
+#if 0
     {
         LRect rect1(100, 400, 200, 200);
         yanbo::RenderRoundRectCommand* cmd1 = new yanbo::RenderRoundRectCommand(rect1, LColor(0, 255, 0, 120), 40, 40, 40, 40);

@@ -17,6 +17,8 @@
 
 <platform id="test" type="test-view" />
 
+<div id="round" />
+
 </body>
 <script src="boyia://apps/sdk/Util.boyia" />
 <script src="boyia://apps/sdk/Array.boyia" />

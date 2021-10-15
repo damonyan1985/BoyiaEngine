@@ -125,7 +125,20 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
 
         gc.setBrushColor(bgColor);
         gc.setPenStyle(LGraphicsContext::kNullPen);
-        gc.drawRect(x, y, m_width, m_height);
+        
+        if (getStyle()->radius.topLeftRadius
+            || getStyle()->radius.topRightRadius
+            || getStyle()->radius.bottomLeftRadius
+            || getStyle()->radius.bottomRightRadius) {
+            gc.drawRoundRect(LRect(x, y, m_width, m_height),
+                             getStyle()->radius.topLeftRadius,
+                             getStyle()->radius.topRightRadius,
+                             getStyle()->radius.bottomRightRadius,
+                             getStyle()->radius.bottomLeftRadius);
+        } else {
+            gc.drawRect(x, y, m_width, m_height);
+        }
+        
     }
 
     HtmlViewList::Iterator iter = m_children.begin();

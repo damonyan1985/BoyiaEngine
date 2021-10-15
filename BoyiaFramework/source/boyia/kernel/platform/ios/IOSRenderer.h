@@ -23,7 +23,8 @@
 
 typedef NS_ENUM(NSInteger, BatchCommandType) {
     BatchCommandNormal = 0,
-    BatchCommandTexture
+    BatchCommandTexture,
+    BatchCommandRound,
 };
 
 // IOSRenderer除了作为renderer使用，
@@ -39,7 +40,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(float)getRenderStatusBarHight;
 
 -(void)clearBatchCommandBuffer;
--(void)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
+-(bool)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
 -(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size;
 -(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size;
 

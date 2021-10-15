@@ -153,9 +153,13 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     
     createVertexAttr(rect, color, m_vertexs);
     
-    [m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil];
+    //[m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil];
     
-    
+    if ([m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil]) {
+        Uniforms uniforms;
+        uniforms.uType = 0;
+        m_uniforms.addElement(uniforms);
+    }
 #if 0
     // left, bottom
     screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
@@ -231,7 +235,12 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     NSString* key = STR_TO_OCSTR(imageCmd->url);
     [m_renderer setTextureData:key data:data width:width height:height];
     
-    [m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key];
+    //[m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key];
+    if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key]) {
+        Uniforms uniforms;
+        uniforms.uType = 1;
+        m_uniforms.addElement(uniforms);
+    }
     
     // 释放data
     if (data) {
@@ -300,7 +309,12 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     CGColorSpaceRelease(colorSpace);
     
     [m_renderer setTextureData:text data:data width:width height:height];
-    [m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text];
+    //[m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text];
+    if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text]) {
+        Uniforms uniforms;
+        uniforms.uType = 1;
+        m_uniforms.addElement(uniforms);
+    }
     
     // 释放data
     if (data) {
@@ -321,35 +335,37 @@ LVoid RenderEngineIOS::renderRoundRect(RenderCommand* cmd)
     
     createVertexAttr(rect, color, m_vertexs);
     
-    Uniforms uniforms;
-    uniforms.uType = 4;
-    
-    uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
-    uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
-    uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
-    uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
-    
-    uniforms.uRadius.topLeft = {
-        realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
-        realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
-    };
-    
-    uniforms.uRadius.topRight = {
-        realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
-        realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
-    };
-    
-    uniforms.uRadius.bottomLeft = {
-        realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
-        realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
-    };
-    
-    uniforms.uRadius.bottomRight = {
-        realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
-        realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
-    };
-    
-    m_uniforms.addElement(uniforms);
+    if ([m_renderer appendBatchCommand:BatchCommandRound size:6 key:nil]) {
+        Uniforms uniforms;
+        uniforms.uType = 4;
+        
+        uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
+        uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
+        uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
+        uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+        
+        uniforms.uRadius.topLeft = {
+            realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
+            realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
+        };
+        
+        uniforms.uRadius.topRight = {
+            realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
+            realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
+        };
+        
+        uniforms.uRadius.bottomLeft = {
+            realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
+            realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
+        };
+        
+        uniforms.uRadius.bottomRight = {
+            realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
+            realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
+        };
+        
+        m_uniforms.addElement(uniforms);
+    }
 }
 
 LVoid RenderEngineIOS::appendUniforms(LInt type)

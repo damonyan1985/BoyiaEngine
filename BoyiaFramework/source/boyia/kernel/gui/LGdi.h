@@ -90,6 +90,8 @@ public:
 
     // 弧形角的方框
     virtual LVoid drawRoundRect(const LRect& rect, const LSize& cornerSize) = 0;
+    
+    virtual LVoid drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius) {}
 
     virtual LVoid drawText(const String& text, const LRect& rect) = 0;
     virtual LVoid drawText(const String& text, const LRect& rect, TextAlign align) = 0;
