@@ -24,6 +24,7 @@ private:
     LVoid renderRect(RenderCommand* cmd, Gdiplus::Graphics& gc);
     LVoid renderImage(RenderCommand* cmd, Gdiplus::Graphics& gc);
     LVoid renderText(RenderCommand* cmd, Gdiplus::Graphics& gc);
+    LVoid renderRoundRect(RenderCommand* cmd, Gdiplus::Graphics& gc);
 
     HWND m_hwnd;
     ULONG_PTR m_gdiplusToken;

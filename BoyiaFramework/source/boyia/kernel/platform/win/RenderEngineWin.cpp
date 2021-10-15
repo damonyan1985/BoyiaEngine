@@ -27,6 +27,7 @@ LVoid RenderEngineWin::init()
     m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineWin::renderRect;
     m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineWin::renderText;
     m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineWin::renderImage;
+    m_functions[RenderCommand::kRenderRoundRect] = (RenderFunction)& RenderEngineWin::renderRoundRect;
 }
 
 LVoid RenderEngineWin::reset()
@@ -146,6 +147,11 @@ LVoid RenderEngineWin::renderImage(RenderCommand* cmd, Gdiplus::Graphics& gc)
         resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
     );
     gc.DrawImage(static_cast<Gdiplus::Image*>(resource->image), rect);
+}
+
+LVoid RenderEngineWin::renderRoundRect(RenderCommand* cmd, Gdiplus::Graphics& gc)
+{
+    
 }
 
 IRenderEngine* IRenderEngine::create()
