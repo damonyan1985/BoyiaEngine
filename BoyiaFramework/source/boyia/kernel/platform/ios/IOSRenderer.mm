@@ -264,7 +264,7 @@ private:
     [self.cmdBuffer removeAllObjects];
 }
 
--(bool)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
+-(BOOL)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key {
     // 属性一致，无需新增cmd
     // 都是普通类型，属性一致
     // 都是纹理类型，且使用相同纹理，属性一致

@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(float)getRenderStatusBarHight;
 
 -(void)clearBatchCommandBuffer;
--(bool)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
+-(BOOL)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
 -(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size;
 -(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size;
 
