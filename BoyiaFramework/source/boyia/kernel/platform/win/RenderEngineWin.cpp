@@ -3,6 +3,63 @@
 #include "PixelRatio.h"
 
 namespace yanbo {
+static inline LInt RealLength(LInt length) 
+{
+    return (LInt)(length * yanbo::PixelRatio::ratio());
+}
+
+class RenderRoundRectPath : public Gdiplus::GraphicsPath {
+public:
+    RenderRoundRectPath(RenderRoundRectCommand* cmd)
+        : Gdiplus::GraphicsPath()
+    {
+        LInt x = RealLength(cmd->rect.iTopLeft.iX);
+        LInt y = RealLength(cmd->rect.iTopLeft.iY);
+        LInt w = RealLength(cmd->rect.GetWidth());
+        LInt h = RealLength(cmd->rect.GetHeight());
+        // the rect contain a whole circle with AddArc
+        // the rect length is twice of radius
+        // top left
+        AddArc(x, y, 
+            RealLength(cmd->topLeftRadius) * 2,
+            RealLength(cmd->topLeftRadius) * 2, 
+            180, 90);
+        AddLine(x + RealLength(cmd->topLeftRadius),
+            y, x + w - RealLength(cmd->topRightRadius), y);
+
+        // top right
+        AddArc(x + w - RealLength(cmd->topRightRadius) * 2,
+            y, 
+            RealLength(cmd->topRightRadius) * 2,
+            RealLength(cmd->topRightRadius) * 2,
+            270, 90);
+        AddLine(x + w,
+            y + RealLength(cmd->topRightRadius), 
+            x + w, 
+            y + h - RealLength(cmd->bottomRightRadius));
+
+        // bottom right
+        AddArc(x + w - RealLength(cmd->topRightRadius) * 2, 
+            y + h - RealLength(cmd->bottomRightRadius) * 2, 
+            RealLength(cmd->bottomRightRadius) * 2, 
+            RealLength(cmd->bottomRightRadius) * 2, 0, 90);
+        AddLine(
+            x + w - RealLength(cmd->bottomRightRadius),
+            y + h, 
+            x + RealLength(cmd->bottomLeftRadius), y + h);
+
+        // bottom left
+        AddArc(x, 
+            y + h - RealLength(cmd->bottomLeftRadius) * 2, 
+            RealLength(cmd->bottomLeftRadius) * 2, 
+            RealLength(cmd->bottomLeftRadius) * 2, 90, 90);
+        AddLine(x,
+            y + h - RealLength(cmd->bottomLeftRadius), 
+            x,
+            y + RealLength(cmd->topLeftRadius));
+    }
+};
+
 RenderEngineWin::RenderEngineWin()
     : m_cacheBitmap(kBoyiaNull)
 {
@@ -151,7 +208,16 @@ LVoid RenderEngineWin::renderImage(RenderCommand* cmd, Gdiplus::Graphics& gc)
 
 LVoid RenderEngineWin::renderRoundRect(RenderCommand* cmd, Gdiplus::Graphics& gc)
 {
-    
+    RenderRoundRectCommand* roundCmd = static_cast<RenderRoundRectCommand*>(cmd);
+    RenderRoundRectPath path(roundCmd);
+
+    Gdiplus::SolidBrush brush(Gdiplus::Color(
+        roundCmd->color.m_alpha,
+        roundCmd->color.m_red,
+        roundCmd->color.m_green,
+        roundCmd->color.m_blue
+    ));
+    gc.FillPath(&brush, &path);
 }
 
 IRenderEngine* IRenderEngine::create()
