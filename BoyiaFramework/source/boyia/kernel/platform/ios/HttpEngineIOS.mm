@@ -101,6 +101,11 @@
 didCompleteWithError:(nullable NSError *)error {
     //NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
     //NSLog(@"Result New data = %@",json);
+    if (error) {
+        NSLog(@"HttpEngine finished error: %@", [error localizedDescription]);
+        return;
+    }
+    
     if (self.callback != nil) {
         [self.callback onLoadFinished];
     }
