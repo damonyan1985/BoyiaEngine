@@ -254,8 +254,6 @@
 		4C7AE80826CF837300946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CB3239E26EE1490005568CD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		4CB323A026EE14EA005568CD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
-		4CB323A326FB0EFE005568CD /* ViewScroller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewScroller.h; path = ../../../BoyiaFramework/source/boyia/kernel/widget/scroll/ViewScroller.h; sourceTree = "<group>"; };
-		4CB323A426FB121A005568CD /* ViewScroller.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ViewScroller.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/widget/scroll/ViewScroller.cpp; sourceTree = "<group>"; };
 		4CB46AAA26E751E8002407C1 /* SalLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SalLog.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/SalLog.h; sourceTree = "<group>"; };
 		4CB46AAF26EB46EC002407C1 /* net_boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = net_boyia.json; path = ../../../../BoyiaTools/test/project/net_boyia.json; sourceTree = "<group>"; };
 		4CB46AB126EB46F4002407C1 /* boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = boyia.json; path = ../../../../BoyiaTools/test/project/boyia.json; sourceTree = "<group>"; };
@@ -554,15 +552,6 @@
 				4C7AE80826CF837300946197 /* Info.plist */,
 			);
 			path = core;
-			sourceTree = "<group>";
-		};
-		4CB323A226FB0EA1005568CD /* scroll */ = {
-			isa = PBXGroup;
-			children = (
-				4CB323A326FB0EFE005568CD /* ViewScroller.h */,
-				4CB323A426FB121A005568CD /* ViewScroller.cpp */,
-			);
-			name = scroll;
 			sourceTree = "<group>";
 		};
 		4CB46AA926E751B9002407C1 /* log */ = {
@@ -941,7 +930,6 @@
 		4CFDE56326D4C60E00A01683 /* widget */ = {
 			isa = PBXGroup;
 			children = (
-				4CB323A226FB0EA1005568CD /* scroll */,
 				4CFDE57826D4C62600A01683 /* flex */,
 				4CFDE57A26D4C63200A01683 /* BlockView.cpp */,
 				4CFDE59126D4C63200A01683 /* BlockView.h */,

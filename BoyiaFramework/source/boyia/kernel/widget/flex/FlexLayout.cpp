@@ -7,6 +7,8 @@ namespace yanbo {
 // 而W3C中设置元素的width，height只包含了内容宽高，
 // W3C真实的盒子宽高需要加上margin+border+padding+内容宽高
 // 本引擎内容宽高是需要计算才能得出的
+
+
 LVoid FlexLayout::flexRowLayout(HtmlView* view)
 {
     const HtmlViewList& list = view->getChildren();
@@ -26,6 +28,11 @@ LVoid FlexLayout::flexRowLayout(HtmlView* view)
         if (view->getHeight() < child->getHeight() + y) {
             view->setHeight(child->getHeight() + y);
         }
+    }
+    
+    // 如果style中没有设置宽度，则flex布局宽高根据元素自己的宽高来限定
+    if (!view->getStyle()->width) {
+        view->setWidth(x);
     }
 }
 
