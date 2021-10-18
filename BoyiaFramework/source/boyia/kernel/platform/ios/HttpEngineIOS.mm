@@ -19,7 +19,7 @@
 
 @interface HttpEngineIOS()
 
-@property (nonatomic, assign) NSString* postData;
+@property (nonatomic, strong) NSString* postData;
 
 @end
 
@@ -79,9 +79,9 @@
     [self loadUrl:method url:nsUrl callback:cb];
 }
 
--(void)setData: (const char*)data {
-    NSString* postData = [[NSString alloc] initWithUTF8String: data];
-    self.postData = postData;
+-(void)setData: (const char*)data size:(NSInteger)size {
+    //self.postData = [[NSString alloc] initWithUTF8String: data];
+    self.postData = [[NSString alloc]initWithBytes:data length:size encoding:NSUTF8StringEncoding];
 }
 
 @end

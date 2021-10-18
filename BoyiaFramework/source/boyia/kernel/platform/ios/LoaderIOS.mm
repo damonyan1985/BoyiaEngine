@@ -144,8 +144,18 @@ public:
         [m_engine loadUrlWithData:kHttpGet url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];
     }
 
-    virtual LVoid postData(const String& url, NetworkClient* client) {}
-    virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait) {}
+    virtual LVoid postData(const String& url, NetworkClient* client)
+    {
+        postData(url, client, LFalse);
+    }
+    
+    virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait)
+    {
+        [m_engine setData:(const char*)m_data->GetBuffer() size:m_data->GetLength()];
+        // 网络请求
+        [m_engine loadUrlWithData:kHttpPost url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];
+    }
+    
     virtual LVoid cancel() {};
     
     // 只处理文件加载
