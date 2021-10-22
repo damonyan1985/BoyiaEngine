@@ -42,6 +42,8 @@ public:
     BorderRadius();
     BorderRadius(const BorderRadius& radius);
     
+    LVoid copy(const BorderRadius& radius);
+    
     LInt topLeftRadius;
     LInt topRightRadius;
     LInt bottomLeftRadius;
@@ -92,6 +94,7 @@ public:
     void copyStyle(Style* style);
     
     Border& border() const;
+    BorderRadius& radius() const;
 
 public:
     LColor color; // foreground color
@@ -120,13 +123,13 @@ public:
     LUint8 drawOpacity;
     //Border border;
     
-    BorderRadius radius;
     LBool focusable;
     LInt flexDirection;
     LInt align;
     
 private:
     mutable Border* m_border;
+    mutable BorderRadius* m_radius;
 };
 }
 #endif

@@ -90,6 +90,14 @@ BorderRadius::BorderRadius(const BorderRadius& radius)
 {
 }
 
+LVoid BorderRadius::copy(const BorderRadius& radius)
+{
+    topLeftRadius = radius.topLeftRadius;
+    topRightRadius = radius.topRightRadius;
+    bottomLeftRadius = radius.bottomLeftRadius;
+    bottomRightRadius = radius.bottomRightRadius;
+}
+
 Style::Style()
 {
     init();
@@ -132,6 +140,7 @@ Style::Style(const Style& style)
     align = style.align;
     //border = style.getBorder();
     border().copy(style.border());
+    radius().copy(style.radius());
 }
 
 const Style& Style::operator=(const Style& style)
@@ -161,6 +170,7 @@ const Style& Style::operator=(const Style& style)
     flexDirection = style.flexDirection;
     align = style.align;
     border().copy(style.border());
+    radius().copy(style.radius());
     return *this;
 }
 
@@ -191,6 +201,7 @@ void Style::init()
     flexDirection = FLEX_NONE;
     align = ALIGN_NONE;
     m_border = kBoyiaNull;
+    m_radius = kBoyiaNull;
 }
 
 Border& Style::border() const
@@ -200,5 +211,14 @@ Border& Style::border() const
     }
     
     return *m_border;
+}
+
+BorderRadius& Style::radius() const
+{
+    if (!m_radius) {
+        m_radius = new BorderRadius();
+    }
+    
+    return *m_radius;
 }
 }

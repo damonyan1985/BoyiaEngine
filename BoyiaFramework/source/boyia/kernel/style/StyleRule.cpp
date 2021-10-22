@@ -475,22 +475,22 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.flexDirection = value.intVal;
     } break;
     case StyleTags::BORDER_RADIUS: {
-        style.radius.topLeftRadius = value.intVal;
-        style.radius.topRightRadius = value.intVal;
-        style.radius.bottomLeftRadius = value.intVal;
-        style.radius.bottomRightRadius = value.intVal;
+        style.radius().topLeftRadius = value.intVal;
+        style.radius().topRightRadius = value.intVal;
+        style.radius().bottomLeftRadius = value.intVal;
+        style.radius().bottomRightRadius = value.intVal;
     } break;
     case StyleTags::BORDER_TOP_LEFT_RADIUS: {
-        style.radius.topLeftRadius = value.intVal;
+        style.radius().topLeftRadius = value.intVal;
     } break;
     case StyleTags::BORDER_TOP_RIGHT_RADIUS: {
-        style.radius.topRightRadius = value.intVal;
+        style.radius().topRightRadius = value.intVal;
     } break;
     case StyleTags::BORDER_BOTTOM_LEFT_RADIUS: {
-        style.radius.bottomLeftRadius = value.intVal;
+        style.radius().bottomLeftRadius = value.intVal;
     } break;
     case StyleTags::BORDER_BOTTOM_RIGHT_RADIUS: {
-        style.radius.bottomRightRadius = value.intVal;
+        style.radius().bottomRightRadius = value.intVal;
     } break;
     default:
         break;
