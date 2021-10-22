@@ -6,9 +6,11 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#include <Metal/Metal.h>
+#import <Metal/Metal.h>
+#import <CoreText/CoreText.h>
 
 #import "IOSRenderer.h"
+
 //#import "ImageLoaderIOS.h"
 
 #include "RenderEngineIOS.h"
@@ -106,11 +108,13 @@ private:
 @property (nonatomic, strong) NSMutableDictionary* textureCache;
 
 // 常量buffer判断图像类型
-@property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
+//@property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
 
 @property (nonatomic, strong) NSMutableArray* cmdBuffer;
 
 @property (nonatomic, assign) CGFloat statusBarHeight;
+
+@property (nonatomic, strong) NSString* iconFontName;
 
 @end
 
@@ -298,12 +302,12 @@ private:
     self.verticeBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
 }
 
--(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size {
-//    self.uniformsBuffer = [self.metalLayer.device newBufferWithLength:size options:MTLResourceOptionCPUCacheModeDefault];
-//    memcpy([self.uniformsBuffer contents], buffer, size);
-    
-    self.uniformsBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
-}
+//-(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size {
+////    self.uniformsBuffer = [self.metalLayer.device newBufferWithLength:size options:MTLResourceOptionCPUCacheModeDefault];
+////    memcpy([self.uniformsBuffer contents], buffer, size);
+//
+//    self.uniformsBuffer = [self.metalLayer.device newBufferWithBytes:buffer length:size options:MTLResourceStorageModeShared];
+//}
 
 -(id<MTLTexture>)getTexture:(NSString*)key {
     return self.textureCache[key];
@@ -460,5 +464,25 @@ private:
     [commandBuffer presentDrawable:drawable];
     
     [commandBuffer commit];
+}
+
+// 获取图标字体
+-(UIFont*)getIconFont:(CGFloat)size {
+    if (!self.iconFontName) {
+        NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
+        NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
+        NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
+        NSString* fontPath = [appBundle.bundlePath stringByAppendingString:@"/apps/font/icon.ttf"];
+        
+        NSURL* fontUrl = [NSURL fileURLWithPath:fontPath];
+        CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);
+        CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProvider);
+        CGDataProviderRelease(fontDataProvider);
+        
+        CTFontManagerRegisterGraphicsFont(fontRef, NULL);
+        self.iconFontName = CFBridgingRelease(CGFontCopyPostScriptName(fontRef));
+    }
+    
+    return [UIFont fontWithName:self.iconFontName size:size];
 }
 @end

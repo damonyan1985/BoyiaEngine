@@ -19,8 +19,8 @@ LVoid screenToMetalPoint(
     float* metalX,
     float* metalY)
 {
-    *metalX = (1.0f * (x - PixelRatio::logicWidth() / 2)) / (PixelRatio::logicWidth() / 2);
-    *metalY = ((1.0f * (PixelRatio::logicHeight() / 2 - y)) / (PixelRatio::logicHeight() / 2));
+    *metalX = (1.0f * (x - PixelRatio::logicWidth() / 2.0f)) / (PixelRatio::logicWidth() / 2.0f);
+    *metalY = ((1.0f * (PixelRatio::logicHeight() / 2.0f - y)) / (PixelRatio::logicHeight() / 2.0f));
 }
 
 static LVoid createVertexAttr(const LRect& rect, const LColor& color, KVector<VertexAttributes>& vertexs)
@@ -193,10 +193,6 @@ LVoid RenderEngineIOS::setBuffer()
     if (m_vertexs.size()) {
         [m_renderer setVerticeBuffer:m_vertexs.getBuffer() size:(m_vertexs.size() * sizeof(VertexAttributes))];
     }
-    
-    if (m_uniforms.size()) {
-        [m_renderer setUniformBuffer:m_uniforms.getBuffer() size:(m_uniforms.size() * sizeof(Uniforms))];
-    }
 }
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
@@ -207,6 +203,10 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
     LRect& rect = imageCmd->rect;
     LColor& color = imageCmd->color;
+    
+    if (!imageCmd->image) {
+        return;
+    }
     
     if (!rect.GetWidth() || !rect.GetHeight()) {
         return;
@@ -264,10 +264,10 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     
     createVertexAttr(rect, color, m_vertexs);
     
-    //NSString* nsText = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
-    //UIFont* font = [UIFont fontWithName:nsText size:textCmd->font.getFontSize()];
     int scale = 1;
     UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
+    //UIFont* font = [m_renderer getIconFont:textCmd->font.getFontSize()*scale];
+    
     int width = textCmd->rect.GetWidth() * scale;
     int height = textCmd->rect.GetHeight() * scale;
     Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
@@ -285,6 +285,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     
     // 转成OC字符串
     NSString* text = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
+    //NSString* text = @"\U0000e800";
     // 文字颜色
     UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
                                     green:METAL_COLOR_BIT(textCmd->color.m_green)
@@ -294,9 +295,8 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     // 设置文字绘制属性
     NSMutableDictionary* textAttributes = [NSMutableDictionary new];
     [textAttributes setValue:font forKey:NSFontAttributeName];
-    //[textAttributes setValue:[UIColor redColor] forKey:NSForegroundColorAttributeName];
     [textAttributes setValue:uiColor forKey:NSForegroundColorAttributeName];
-    //[textAttributes setValue:@3 forKey:NSStrokeWidthAttributeName];
+    //[textAttributes setValue:UIColor.blueColor forKey:NSForegroundColorAttributeName];
     
     // 开始绘制文字
 //    [text drawInRect:CGRectMake(0, 0, width * 2, height)

@@ -161,6 +161,7 @@ body {
     height: 70px;
 }
 #category {
+    width: 720px;
     height: 70px;
     border-bottom: #e8e8e8 solid 1px;
     background-color: #FFF;

@@ -45,18 +45,18 @@ LVoid InputView::initView()
         m_style.bgColor = util::LColorUtil::parseArgbInt(COLOR_LIGHTGRAY);
         break;
     }
-    m_style.border.topColor = COLOR_BLACK;
-    m_style.border.leftColor = COLOR_BLACK;
-    m_style.border.rightColor = COLOR_BLACK;
-    m_style.border.bottomColor = COLOR_BLACK;
-    m_style.border.topWidth = kDefaultInputBorderWidth;
-    m_style.border.leftWidth = kDefaultInputBorderWidth;
-    m_style.border.rightWidth = kDefaultInputBorderWidth;
-    m_style.border.bottomWidth = kDefaultInputBorderWidth;
-    m_style.border.topStyle = LGraphicsContext::kSolidPen;
-    m_style.border.leftStyle = LGraphicsContext::kSolidPen;
-    m_style.border.rightStyle = LGraphicsContext::kSolidPen;
-    m_style.border.bottomStyle = LGraphicsContext::kSolidPen;
+    m_style.border().topColor = COLOR_BLACK;
+    m_style.border().leftColor = COLOR_BLACK;
+    m_style.border().rightColor = COLOR_BLACK;
+    m_style.border().bottomColor = COLOR_BLACK;
+    m_style.border().topWidth = kDefaultInputBorderWidth;
+    m_style.border().leftWidth = kDefaultInputBorderWidth;
+    m_style.border().rightWidth = kDefaultInputBorderWidth;
+    m_style.border().bottomWidth = kDefaultInputBorderWidth;
+    m_style.border().topStyle = LGraphicsContext::kSolidPen;
+    m_style.border().leftStyle = LGraphicsContext::kSolidPen;
+    m_style.border().rightStyle = LGraphicsContext::kSolidPen;
+    m_style.border().bottomStyle = LGraphicsContext::kSolidPen;
 }
 
 InputView::~InputView()
@@ -194,7 +194,7 @@ public:
             gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
         }
 
-        paintBorder(gc, getStyle()->border, point.iX + m_leftPadding, point.iY);
+        paintBorder(gc, getStyle()->border(), point.iX + m_leftPadding, point.iY);
     }
 
     virtual LVoid setSelected(const LBool selected)
@@ -286,7 +286,7 @@ public:
             gc.setPenStyle(LGraphicsContext::kSolidPen);
         }
 
-        paintBorder(gc, getStyle()->border, point.iX, point.iY);
+        paintBorder(gc, getStyle()->border(), point.iX, point.iY);
 
         if (m_value.GetLength() > 0) {
             gc.setPenStyle(LGraphicsContext::kSolidPen);

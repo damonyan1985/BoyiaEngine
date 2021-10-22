@@ -96,6 +96,10 @@ LVoid RenderGraphicsContext::drawImage(const LPoint& aTopLeft, const LImage* aBi
 
 LVoid RenderGraphicsContext::drawImage(const LImage* image)
 {
+    if (!image->pixels()) {
+        return;
+    }
+    
     ItemPainter* painter = currentPainter();
     RenderImageCommand* cmd = new RenderImageCommand(image->rect(), m_brushColor, image->pixels());
     cmd->url = image->url();

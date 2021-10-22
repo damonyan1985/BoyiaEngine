@@ -38,11 +38,12 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(void)render;
 -(CAMetalLayer*)layer;
 -(float)getRenderStatusBarHight;
+-(UIFont*)getIconFont:(CGFloat)size;
 
 -(void)clearBatchCommandBuffer;
 -(BOOL)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;
 -(void)setVerticeBuffer:(const void*)buffer size:(NSUInteger)size;
--(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size;
+//-(void)setUniformBuffer:(const void*)buffer size:(NSUInteger)size;
 
 
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;

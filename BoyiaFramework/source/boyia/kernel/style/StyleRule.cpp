@@ -289,7 +289,7 @@ void StyleRule::copyPropertiesFrom(const StyleRule* rule)
         AttributeMap::Iterator iter = rule->getProperties().begin();
         AttributeMap::Iterator iterEnd = rule->getProperties().end();
         for (; iter != iterEnd; ++iter) {
-            KFORMATLOG("StyleRule::copyPropertiesFrom key=%d prop size=%d", (*iter)->getKey(), m_properties.size());
+            BOYIA_LOG("StyleRule::copyPropertiesFrom key=%d prop size=%d", (*iter)->getKey(), m_properties.size());
             m_properties[(*iter)->getKey()].getSpecificity();
             KLOG("StyleRule::copyPropertiesFrom 1");
             (*iter)->getValue().getSpecificity();
@@ -337,15 +337,15 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     case StyleTags::BACKGROUND_COLOR: {
         style.bgColor = util::LColorUtil::parseArgbInt(value.intVal);
         style.transparent = LFalse;
-        KFORMATLOG("style.m_bgColor=%x", value.intVal);
+        BOYIA_LOG("style.m_bgColor=%x", value.intVal);
     } break;
     case StyleTags::BACKGROUND_IMAGE: {
         style.bgImageUrl = value.strVal;
         style.transparent = LFalse;
     } break;
     case StyleTags::COLOR: {
-        KFORMATLOG("style Color=%x", value.intVal);
-        style.color = util::LColorUtil::parseArgbInt(value.intVal);
+        BOYIA_LOG("style Color=%x", value.intVal);
+        style.color = LColorUtil::parseArgbInt(value.intVal);
     } break;
     case StyleTags::FONT_STYLE: {
         style.font.setFontStyle((LFont::FontStyle)value.intVal);
@@ -353,8 +353,11 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     case StyleTags::FONT_WEIGHT: {
         style.font.setFontStyle((LFont::FontStyle)value.intVal);
     } break;
+    case StyleTags::FONT_FAMILY: {
+        style.font.setFamily(value.strVal);
+    } break;
     case StyleTags::LEFT: {
-        KFORMATLOG("ImageItem::layout style.m_left=%d", value.intVal);
+        BOYIA_LOG("ImageItem::layout style.m_left=%d", value.intVal);
         style.left = value.intVal;
     } break;
     case StyleTags::TOP: {
@@ -368,10 +371,10 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     } break;
     case StyleTags::BORDER_STYLE: {
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.topWidth = style.border.topWidth > 1 ? style.border.topWidth : 1;
-            style.border.leftWidth = style.border.leftWidth > 1 ? style.border.leftWidth : 1;
-            style.border.bottomWidth = style.border.bottomWidth > 1 ? style.border.bottomWidth : 1;
-            style.border.rightWidth = style.border.rightWidth > 1 ? style.border.rightWidth : 1;
+            style.border().topWidth = style.border().topWidth > 1 ? style.border().topWidth : 1;
+            style.border().leftWidth = style.border().leftWidth > 1 ? style.border().leftWidth : 1;
+            style.border().bottomWidth = style.border().bottomWidth > 1 ? style.border().bottomWidth : 1;
+            style.border().rightWidth = style.border().rightWidth > 1 ? style.border().rightWidth : 1;
         }
     } break;
     case StyleTags::TEXT_ALIGN: {
@@ -402,52 +405,52 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.bottomPadding = value.intVal;
     } break;
     case StyleTags::BORDER_BOTTOM_WIDTH: {
-        style.border.bottomWidth = value.intVal;
+        style.border().bottomWidth = value.intVal;
     } break;
     case StyleTags::BORDER_TOP_WIDTH: {
-        style.border.topWidth = value.intVal;
+        style.border().topWidth = value.intVal;
     } break;
     case StyleTags::BORDER_TOP_STYLE: {
-        style.border.topStyle = value.intVal;
+        style.border().topStyle = value.intVal;
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.topWidth = 1;
+            style.border().topWidth = 1;
         }
     } break;
     case StyleTags::BORDER_BOTTOM_STYLE: {
-        style.border.bottomStyle = value.intVal;
+        style.border().bottomStyle = value.intVal;
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.bottomWidth = 1;
+            style.border().bottomWidth = 1;
         }
     } break;
     case StyleTags::BORDER_LEFT_STYLE: {
-        style.border.leftStyle = value.intVal;
+        style.border().leftStyle = value.intVal;
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.leftWidth = 1;
+            style.border().leftWidth = 1;
         }
     } break;
     case StyleTags::BORDER_RIGHT_STYLE: {
-        style.border.rightStyle = value.intVal;
+        style.border().rightStyle = value.intVal;
         if (value.intVal == LGraphicsContext::kSolidPen) {
-            style.border.rightWidth = 1;
+            style.border().rightWidth = 1;
         }
     } break;
     case StyleTags::BORDER_COLOR: {
-        style.border.leftColor = value.intVal;
-        style.border.topColor = value.intVal;
-        style.border.bottomColor = value.intVal;
-        style.border.rightColor = value.intVal;
+        style.border().leftColor = value.intVal;
+        style.border().topColor = value.intVal;
+        style.border().bottomColor = value.intVal;
+        style.border().rightColor = value.intVal;
     } break;
     case StyleTags::BORDER_LEFT_COLOR: {
-        style.border.leftColor = value.intVal;
+        style.border().leftColor = value.intVal;
     } break;
     case StyleTags::BORDER_TOP_COLOR: {
-        style.border.topColor = value.intVal;
+        style.border().topColor = value.intVal;
     } break;
     case StyleTags::BORDER_BOTTOM_COLOR: {
-        style.border.bottomColor = value.intVal;
+        style.border().bottomColor = value.intVal;
     } break;
     case StyleTags::BORDER_RIGHT_COLOR: {
-        style.border.rightColor = value.intVal;
+        style.border().rightColor = value.intVal;
     } break;
     case StyleTags::DISPLAY: {
         style.displayType = value.intVal;
@@ -465,7 +468,7 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.zindex = value.intVal;
     } break;
     case StyleTags::FOCUSABLE: {
-        KFORMATLOG("StyleTags::FOCUSABLE result=%d", value.intVal);
+        BOYIA_LOG("StyleTags::FOCUSABLE result=%d", value.intVal);
         style.focusable = value.intVal;
     } break;
     case StyleTags::FLEX_DIRECTION: {

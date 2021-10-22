@@ -49,21 +49,16 @@ LVoid Border::init()
 
 Border::Border(const Border& border)
 {
-    topColor = border.topColor;
-    leftColor = border.leftColor;
-    rightColor = border.rightColor;
-    bottomColor = border.bottomColor;
-    topWidth = border.topWidth;
-    leftWidth = border.leftWidth;
-    rightWidth = border.rightWidth;
-    bottomWidth = border.bottomWidth;
-    topStyle = border.topStyle;
-    leftStyle = border.leftStyle;
-    rightStyle = border.rightStyle;
-    bottomStyle = border.bottomStyle;
+    copy(border);
 }
 
 const Border& Border::operator=(const Border& border)
+{
+    copy(border);
+    return *this;
+}
+
+LVoid Border::copy(const Border& border)
 {
     topColor = border.topColor;
     leftColor = border.leftColor;
@@ -77,8 +72,6 @@ const Border& Border::operator=(const Border& border)
     leftStyle = border.leftStyle;
     rightStyle = border.rightStyle;
     bottomStyle = border.bottomStyle;
-
-    return *this;
 }
 
 BorderRadius::BorderRadius()
@@ -100,14 +93,14 @@ BorderRadius::BorderRadius(const BorderRadius& radius)
 Style::Style()
 {
     init();
-    border.init();
+    //border.init();
 }
 
 Style::Style(LFont::FontStyle style)
 {
     font.setFontStyle(style);
     init();
-    border.init();
+    //border.init();
 }
 
 Style::Style(const Style& style)
@@ -137,17 +130,8 @@ Style::Style(const Style& style)
     focusable = style.focusable;
     flexDirection = style.flexDirection;
     align = style.align;
-    border = style.getBorder();
-}
-
-void Style::setBorder(const Border& styleBorder)
-{
-    border = styleBorder;
-}
-
-const Border& Style::getBorder() const
-{
-    return border;
+    //border = style.getBorder();
+    border().copy(style.border());
 }
 
 const Style& Style::operator=(const Style& style)
@@ -176,7 +160,7 @@ const Style& Style::operator=(const Style& style)
     focusable = style.focusable;
     flexDirection = style.flexDirection;
     align = style.align;
-    border = style.getBorder();
+    border().copy(style.border());
     return *this;
 }
 
@@ -206,5 +190,15 @@ void Style::init()
     scale = 1;
     flexDirection = FLEX_NONE;
     align = ALIGN_NONE;
+    m_border = kBoyiaNull;
+}
+
+Border& Style::border() const
+{
+    if (!m_border) {
+        m_border = new Border();
+    }
+    
+    return *m_border;
 }
 }

@@ -286,6 +286,9 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             rule->addProperty(cssTag, LFont::FONT_STYLE_UNDERLINE);
         }
     } break;
+    case StyleTags::FONT_FAMILY: {
+        rule->addProperty(cssTag, value);
+    } break;
     case StyleTags::WIDTH:
     case StyleTags::HEIGHT:
     case StyleTags::TOP:

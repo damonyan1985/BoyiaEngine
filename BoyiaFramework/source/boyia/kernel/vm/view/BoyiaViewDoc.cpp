@@ -40,11 +40,15 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
 
         AppManager::instance()->network()->syncLoadUrl(url, stream);
         BOYIA_LOG("BoyiaViewDoc::loadHTML string=%s", stream.GetBuffer());
+        
+        if (!stream.GetLength()) {
+            return;
+        }
     }
-
+    
     dom->with(m_doc).build(stream);
+    
     m_item = m_doc->getRenderTreeRoot();
-
     runtime()->view()->operation()->opApplyDomStyle(m_item);
 }
 
@@ -80,6 +84,8 @@ BoyiaView* BoyiaViewDoc::getItemByID(const String& id) const
         return new BoyiaViewGroup(runtime(), item);
     case HtmlTags::INPUT:
         return new BoyiaInputView(runtime(), item);
+    default:
+        return kBoyiaNull;
     }
 
     return kBoyiaNull;

@@ -50,6 +50,7 @@ StyleTags* StyleTags::getInstance()
         s_tags->defineInitialSymbol(_CS("font-size"), FONT_SIZE);
         s_tags->defineInitialSymbol(_CS("font-style"), FONT_STYLE);
         s_tags->defineInitialSymbol(_CS("font-weight"), FONT_WEIGHT);
+        s_tags->defineInitialSymbol(_CS("font-family"), FONT_FAMILY);
         s_tags->defineInitialSymbol(_CS("text-align"), TEXT_ALIGN);
         s_tags->defineInitialSymbol(_CS("border-bottom"), BORDER_BOTTOM);
         s_tags->defineInitialSymbol(_CS("border-bottom-width"), BORDER_BOTTOM_WIDTH);

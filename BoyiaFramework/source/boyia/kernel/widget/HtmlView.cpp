@@ -148,7 +148,7 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         (*iter)->paint(gc);
     }
     
-    paintBorder(gc, m_style.border, x, y);
+    paintBorder(gc, m_style.border(), x, y);
 }
 
 LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)

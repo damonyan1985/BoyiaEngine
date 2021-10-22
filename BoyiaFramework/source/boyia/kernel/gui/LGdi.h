@@ -255,6 +255,7 @@ public:
     LFont(const LFont& font)
         : m_fontStyle(font.m_fontStyle)
         , m_size(font.m_size)
+        , m_family(font.m_family)
     {
     }
     virtual ~LFont() { }
@@ -289,6 +290,16 @@ public:
     {
         m_fontStyle = style;
     }
+    
+    virtual void setFamily(const String& family)
+    {
+        m_family = family;
+    }
+    
+    const String& getFamily() const
+    {
+        return m_family;
+    }
 
     FontStyle getFontStyle() const
     {
@@ -322,6 +333,7 @@ private:
     }
 
 protected:
+    String m_family;
     FontStyle m_fontStyle;
     LInt m_size;
 };

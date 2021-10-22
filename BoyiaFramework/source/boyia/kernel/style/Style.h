@@ -18,6 +18,8 @@ public:
     Border(const Border& border);
     ~Border();
     const Border& operator=(const Border& border);
+    
+    LVoid copy(const Border& border);
     LVoid init();
 
 public:
@@ -88,10 +90,8 @@ public:
     const Style& operator=(const Style& style);
     void init();
     void copyStyle(Style* style);
-
-public:
-    void setBorder(const Border& border);
-    const Border& getBorder() const;
+    
+    Border& border() const;
 
 public:
     LColor color; // foreground color
@@ -118,11 +118,15 @@ public:
     LInt zindex;
     LUint8 opacity;
     LUint8 drawOpacity;
-    Border border;
+    //Border border;
+    
     BorderRadius radius;
     LBool focusable;
     LInt flexDirection;
     LInt align;
+    
+private:
+    mutable Border* m_border;
 };
 }
 #endif

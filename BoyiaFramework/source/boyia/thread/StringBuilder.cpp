@@ -71,7 +71,7 @@ void StringBuilder::append(const LByte* buffer, LInt pos, LInt len, LBool isCons
 
 OwnerPtr<String> StringBuilder::toString() const
 {
-    KFORMATLOG("StringBuilder::append str m_length=%d", m_length);
+    BOYIA_LOG("StringBuilder::append str m_length=%d", m_length);
     if (!m_length) {
         return kBoyiaNull;
     }
