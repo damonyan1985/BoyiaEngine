@@ -46,7 +46,7 @@ void RenderContext::newLine(HtmlView* item)
 
     HtmlView* containerItem = item->getContainingBlock();
     if (containerItem) {
-        m_x = containerItem->getStyle()->leftPadding;
+        m_x = containerItem->getStyle()->padding().leftPadding;
     } else {
         m_x = m_newLineXStart;
     }

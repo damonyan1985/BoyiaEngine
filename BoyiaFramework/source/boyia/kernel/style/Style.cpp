@@ -98,6 +98,38 @@ LVoid BorderRadius::copy(const BorderRadius& radius)
     bottomRightRadius = radius.bottomRightRadius;
 }
 
+Margin::Margin()
+    : topMargin(0)
+    , bottomMargin(0)
+    , leftMargin(0)
+    , rightMargin(0)
+{
+}
+
+LVoid Margin::copy(const Margin& margin)
+{
+    topMargin = margin.topMargin;
+    bottomMargin = margin.bottomMargin;
+    leftMargin = margin.leftMargin;
+    rightMargin = margin.rightMargin;
+}
+
+Padding::Padding()
+    : topPadding(0)
+    , bottomPadding(0)
+    , leftPadding(0)
+    , rightPadding(0)
+{
+}
+
+LVoid Padding::copy(const Padding &padding)
+{
+    topPadding = padding.topPadding;
+    bottomPadding = padding.bottomPadding;
+    leftPadding = padding.leftPadding;
+    rightPadding = padding.rightPadding;
+}
+
 Style::Style()
 {
     init();
@@ -123,16 +155,8 @@ Style::Style(const Style& style)
     top = style.top;
     width = style.width;
     height = style.height;
-    leftMargin = style.leftMargin;
-    rightMargin = style.rightMargin;
-    topMargin = style.topMargin;
-    bottomMargin = style.bottomMargin;
     transparent = style.transparent;
     textAlignement = style.textAlignement;
-    topPadding = style.topPadding;
-    bottomPadding = style.bottomPadding;
-    leftPadding = style.leftPadding;
-    rightPadding = style.rightPadding;
     displayType = style.displayType;
     scale = style.scale;
     focusable = style.focusable;
@@ -141,6 +165,8 @@ Style::Style(const Style& style)
     //border = style.getBorder();
     border().copy(style.border());
     radius().copy(style.radius());
+    margin().copy(style.margin());
+    padding().copy(style.padding());
 }
 
 const Style& Style::operator=(const Style& style)
@@ -155,22 +181,16 @@ const Style& Style::operator=(const Style& style)
     top = style.top;
     width = style.width;
     height = style.height;
-    leftMargin = style.leftMargin;
-    rightMargin = style.rightMargin;
-    topMargin = style.topMargin;
-    bottomMargin = style.bottomMargin;
     transparent = style.transparent;
     textAlignement = style.textAlignement;
-    topPadding = style.topPadding;
-    bottomPadding = style.bottomPadding;
-    leftPadding = style.leftPadding;
-    rightPadding = style.rightPadding;
     displayType = style.displayType;
     focusable = style.focusable;
     flexDirection = style.flexDirection;
     align = style.align;
     border().copy(style.border());
     radius().copy(style.radius());
+    margin().copy(style.margin());
+    padding().copy(style.padding());
     return *this;
 }
 
@@ -186,22 +206,16 @@ void Style::init()
     top = 0;
     width = 0;
     height = 0;
-    leftMargin = 0;
-    rightMargin = 0;
-    topMargin = 0;
-    bottomMargin = 0;
     transparent = LTrue;
     textAlignement = LGraphicsContext::kTextLeft;
-    topPadding = 0;
-    bottomPadding = 0;
-    leftPadding = 0;
-    rightPadding = 0;
     focusable = LFalse;
     scale = 1;
     flexDirection = FLEX_NONE;
     align = ALIGN_NONE;
     m_border = kBoyiaNull;
     m_radius = kBoyiaNull;
+    m_margin = kBoyiaNull;
+    m_padding = kBoyiaNull;
 }
 
 Border& Style::border() const
@@ -221,4 +235,23 @@ BorderRadius& Style::radius() const
     
     return *m_radius;
 }
+
+Margin& Style::margin() const
+{
+    if (!m_margin) {
+        m_margin = new Margin();
+    }
+    
+    return *m_margin;
+}
+
+Padding& Style::padding() const
+{
+    if (!m_padding) {
+        m_padding = new Padding();
+    }
+    
+    return *m_padding;;
+}
+
 }

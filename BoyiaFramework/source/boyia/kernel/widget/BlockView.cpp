@@ -100,7 +100,7 @@ LVoid BlockView::layoutBlockChildren(LBool relayoutChildren)
         layoutBlockChild(child, previousLogicalHeight);
     }
 
-    previousLogicalHeight += m_style.topPadding;
+    previousLogicalHeight += m_style.padding().topPadding;
 
     LBool useLogicHeight = m_style.align != util::Style::ALIGN_ALL
         && !m_style.height;
@@ -146,8 +146,8 @@ LVoid BlockView::layoutInlineChildren()
         && getStyle()->textAlignement == LGraphicsContext::kTextCenter);
     rc.setCenter(center);
     // add top padding
-    rc.addX(getStyle()->leftPadding);
-    rc.addY(getStyle()->topPadding);
+    rc.addX(getStyle()->padding().leftPadding);
+    rc.addY(getStyle()->padding().topPadding);
 
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
@@ -160,15 +160,15 @@ LVoid BlockView::layoutInlineChildren()
     rc.newLine(this); // 换行
     rc.setNextLineHeight(0);
 
-    rc.addY(getStyle()->bottomPadding);
+    rc.addY(getStyle()->padding().bottomPadding);
 
     m_height = rc.getY() > m_height ? rc.getY() : m_height;
 }
 
 LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
 {
-    int y = previousLogicalHeight + child->getStyle()->topMargin + m_style.topPadding;
-    int x = child->getStyle()->leftMargin + m_style.leftPadding;
+    int y = previousLogicalHeight + child->getStyle()->margin().topMargin + m_style.padding().topPadding;
+    int x = child->getStyle()->margin().leftMargin + m_style.padding().leftPadding;
     child->setXpos(x);
     child->setYpos(y);
     child->layout();

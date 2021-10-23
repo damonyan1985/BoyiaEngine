@@ -50,6 +50,28 @@ public:
     LInt bottomRightRadius;
 };
 
+class Margin {
+public:
+    Margin();
+    LVoid copy(const Margin& margin);
+    
+    LInt leftMargin;
+    LInt rightMargin;
+    LInt topMargin;
+    LInt bottomMargin;
+};
+
+class Padding {
+public:
+    Padding();
+    LVoid copy(const Padding& padding);
+    
+    LInt topPadding;
+    LInt bottomPadding;
+    LInt leftPadding;
+    LInt rightPadding;
+};
+
 class Style {
 public:
     // must be used with absolute or fixed
@@ -95,6 +117,9 @@ public:
     
     Border& border() const;
     BorderRadius& radius() const;
+    
+    Margin& margin() const;
+    Padding& padding() const;
 
 public:
     LColor color; // foreground color
@@ -108,28 +133,23 @@ public:
     LInt top;
     LInt width;
     LInt height;
-    LInt leftMargin;
-    LInt rightMargin;
-    LInt topMargin;
-    LInt bottomMargin;
     LInt textAlignement;
-    LInt topPadding;
-    LInt bottomPadding;
-    LInt leftPadding;
-    LInt rightPadding;
     LReal scale;
     LInt zindex;
     LUint8 opacity;
     LUint8 drawOpacity;
-    //Border border;
     
     LBool focusable;
     LInt flexDirection;
     LInt align;
     
 private:
+    // TextView等元素不需要border，border-radius
+    // 因此这些样式采取动态创建的方式进行，减少内存开销
     mutable Border* m_border;
     mutable BorderRadius* m_radius;
+    mutable Margin* m_margin;
+    mutable Padding* m_padding;
 };
 }
 #endif

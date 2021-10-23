@@ -381,28 +381,28 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
         style.textAlignement = value.intVal;
     } break;
     case StyleTags::MARGIN_LEFT: {
-        style.leftMargin = value.intVal;
+        style.margin().leftMargin = value.intVal;
     } break;
     case StyleTags::MARGIN_TOP: {
-        style.topMargin = value.intVal;
+        style.margin().topMargin = value.intVal;
     } break;
     case StyleTags::MARGIN_RIGHT: {
-        style.rightMargin = value.intVal;
+        style.margin().rightMargin = value.intVal;
     } break;
     case StyleTags::MARGIB_BOTTOM: {
-        style.bottomMargin = value.intVal;
+        style.margin().bottomMargin = value.intVal;
     } break;
     case StyleTags::PADDING_LEFT: {
-        style.leftPadding = value.intVal;
+        style.padding().leftPadding = value.intVal;
     } break;
     case StyleTags::PADDING_TOP: {
-        style.topPadding = value.intVal;
+        style.padding().topPadding = value.intVal;
     } break;
     case StyleTags::PADDING_RIGHT: {
-        style.rightPadding = value.intVal;
+        style.padding().rightPadding = value.intVal;
     } break;
     case StyleTags::PADDING_BOTTOM: {
-        style.bottomPadding = value.intVal;
+        style.padding().bottomPadding = value.intVal;
     } break;
     case StyleTags::BORDER_BOTTOM_WIDTH: {
         style.border().bottomWidth = value.intVal;

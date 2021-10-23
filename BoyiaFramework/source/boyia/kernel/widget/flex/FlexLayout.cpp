@@ -14,17 +14,17 @@ LVoid FlexLayout::flexRowLayout(HtmlView* view)
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
     HtmlViewList::Iterator iterEnd = list.end();
-    LInt x = view->getStyle()->leftPadding;
-    LInt y = view->getStyle()->topPadding;
+    LInt x = view->getStyle()->padding().leftPadding;
+    LInt y = view->getStyle()->padding().topPadding;
     KFORMATLOG("layoutInlineBlock, child size=%d", list.count());
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
-        x += child->getStyle()->leftMargin;
-        y += child->getStyle()->topMargin;
+        x += child->getStyle()->margin().leftMargin;
+        y += child->getStyle()->margin().topMargin;
         child->setPos(x, y);
         KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
         child->layout();
-        x += child->getWidth() + child->getStyle()->rightMargin;
+        x += child->getWidth() + child->getStyle()->margin().rightMargin;
         if (view->getHeight() < child->getHeight() + y) {
             view->setHeight(child->getHeight() + y);
         }
@@ -41,17 +41,17 @@ LVoid FlexLayout::flexRowReverse(HtmlView* view)
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
     HtmlViewList::Iterator iterEnd = list.end();
-    LInt x = view->getWidth() - view->getStyle()->rightPadding;
-    LInt y = view->getStyle()->topPadding;
+    LInt x = view->getWidth() - view->getStyle()->padding().rightPadding;
+    LInt y = view->getStyle()->padding().topPadding;
     KFORMATLOG("layoutInlineBlock, child size=%d", list.count());
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
-        x -= child->getStyle()->rightMargin;
-        y += child->getStyle()->topMargin;
+        x -= child->getStyle()->margin().rightMargin;
+        y += child->getStyle()->margin().topMargin;
         child->setPos(x, y);
         KFORMATLOG("layoutInlineBlock, x=%d, y=%d", x, y);
         child->layout();
-        x -= child->getWidth() + child->getStyle()->leftMargin;
+        x -= child->getWidth() + child->getStyle()->margin().leftMargin;
         if (view->getHeight() < child->getHeight() + y) {
             view->setHeight(child->getHeight() + y);
         }

@@ -90,16 +90,16 @@ void TextView::layout(RenderContext& rc)
 
     m_newFont = LFont::create(m_style.font); // platform reference font
     m_newFont->setFontSize(m_style.font.getFontSize() * m_style.scale);
-    LInt longestLine = calcTextLine(m_text, m_maxWidth - m_style.leftMargin - m_style.rightMargin);
+    LInt longestLine = calcTextLine(m_text, m_maxWidth - m_style.margin().leftMargin - m_style.margin().rightMargin);
 
-    m_width = longestLine + m_style.leftMargin + m_style.rightMargin;
+    m_width = longestLine + m_style.margin().leftMargin + m_style.margin().rightMargin;
     KFORMATLOG("text=%s and text width=%d and lineWidth=%d", (const char*)m_text.GetBuffer(), m_width, longestLine);
-    m_height = m_newFont->getFontHeight() * m_textLines->size() + m_style.bottomMargin;
+    m_height = m_newFont->getFontHeight() * m_textLines->size() + m_style.margin().bottomMargin;
 
     KLOG("TextView::layout begin");
     KDESLOG(m_height);
     KDESLOG(m_newFont->getFontHeight());
-    KDESLOG(m_style.bottomMargin);
+    KDESLOG(m_style.margin().bottomMargin);
     KDESLOG(getBottomY());
     //rc.setX(getEndX());
     //rc.setY(getBottomY() - m_newFont->getFontHeight());

@@ -61,7 +61,7 @@ LVoid HtmlView::layoutInline(RenderContext& rc)
             }
         }
 
-        KFORMATLOG("Inline::layout m_x=%d and width=%d", m_x, m_width);
+        BOYIA_LOG("Inline::layout m_x=%d and width=%d", m_x, m_width);
         rc.addX(m_width);
         rc.setNextLineHeight(m_height);
     }
@@ -492,6 +492,7 @@ util::Style* HtmlView::getStyle() const
 LBool HtmlView::canDraw() const
 {
     LPoint point = getAbsoluteContainerTopLeft();
+    // 目前仅对超出屏幕的元素进行了判断
     if (PixelRatio::isInWindow(LRect(point.iX + getXpos(), point.iY + getYpos(), m_width, m_height))) {
         return LTrue;
     }
@@ -555,7 +556,7 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
 
         LRect rect = parent->isClipItem() ? parent->clipRect() : LRect(parentX, parentY, parent->getWidth(), parent->getHeight());
 
-        KFORMATLOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", parentX, parentY, parent->getWidth(), parent->getHeight());
+        BOYIA_LOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", parentX, parentY, parent->getWidth(), parent->getHeight());
 
         LayoutPoint topLeft = getAbsoluteContainerTopLeft();
 
