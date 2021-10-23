@@ -73,4 +73,16 @@ int PixelRatio::logicHeight()
     return s_logicHeight;
 }
 
+bool PixelRatio::isInWindow(const LRect& rect)
+{
+    if (rect.iBottomRight.iX < 0
+        || rect.iBottomRight.iY < 0
+        || rect.iTopLeft.iX > logicWidth()
+        || rect.iTopLeft.iY > logicHeight()) {
+        return false;
+    }
+    
+    return true;
+}
+
 }

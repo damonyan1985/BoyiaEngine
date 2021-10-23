@@ -143,7 +143,7 @@ LVoid RenderEngineIOS::setContextIOS(IOSRenderer* renderer)
 }
 
 LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
-{
+{    
     LRect& rect = cmd->rect;
     LColor& color = cmd->color;
     
@@ -197,9 +197,6 @@ LVoid RenderEngineIOS::setBuffer()
 
 LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 {
-//    if (cmd) {
-//        return;
-//    }
     RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
     LRect& rect = imageCmd->rect;
     LColor& color = imageCmd->color;
@@ -250,10 +247,6 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
 
 LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
 {
-//    if (cmd) {
-//        return;
-//    }
-
     RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
     LRect& rect = textCmd->rect;
     LColor& color = textCmd->color;

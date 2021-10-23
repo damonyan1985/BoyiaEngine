@@ -15,6 +15,7 @@
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "UIView.h"
+#include "PixelRatio.h"
 
 namespace yanbo {
 HtmlView::HtmlView(const String& id, LBool selectable)
@@ -43,7 +44,6 @@ LVoid HtmlView::layout(RenderContext& rc)
 
 LVoid HtmlView::layoutInline(RenderContext& rc)
 {
-
     if (m_type == HtmlTags::BR) {
         rc.newLine(this);
     } else {
@@ -91,12 +91,16 @@ LVoid HtmlView::handleXYPos(RenderContext& rc)
 
 LVoid HtmlView::paint(LGraphicsContext& gc)
 {
+    gc.setHtmlView(this);
+    
     if (m_style.displayType == util::Style::DISPLAY_NONE) {
         return;
     }
-
-    gc.setHtmlView(this);
-
+    
+    if (!canDraw()) {
+        return;
+    }
+    
     setClipRect(gc);
 
     KLOG("HtmlView::paint");
@@ -108,7 +112,7 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         x += topLeft.iX;
         y += topLeft.iY;
     } else {
-        KFORMATLOG("paint, x=%d, y=%d", x, y);
+        BOYIA_LOG("paint, x=%d, y=%d", x, y);
     }
 
     if (m_type == HtmlTags::BR) {
@@ -485,6 +489,16 @@ util::Style* HtmlView::getStyle() const
     return (util::Style*)&m_style;
 }
 
+LBool HtmlView::canDraw() const
+{
+    LPoint point = getAbsoluteContainerTopLeft();
+    if (PixelRatio::isInWindow(LRect(point.iX + getXpos(), point.iY + getYpos(), m_width, m_height))) {
+        return LTrue;
+    }
+    
+    return LFalse;
+}
+
 LayoutPoint HtmlView::getAbsoluteContainerTopLeft() const
 {
     // 使用getContainingBlock来寻找绝对的topleft坐标有个好处，
@@ -493,12 +507,12 @@ LayoutPoint HtmlView::getAbsoluteContainerTopLeft() const
     LayoutUnit top = 0;
     LayoutUnit left = 0;
     while (container && container != this) {
-        top += container->getXpos() + container->getScrollXPos();
-        left += container->getYpos() + container->getScrollYPos();
+        left += container->getXpos() + container->getScrollXPos();
+        top += container->getYpos() + container->getScrollYPos();
         container = container->getContainingBlock();
     }
 
-    return LayoutPoint(top, left);
+    return LayoutPoint(left, top);
 }
 
 LVoid HtmlView::setDocument(HtmlDocument* doc)

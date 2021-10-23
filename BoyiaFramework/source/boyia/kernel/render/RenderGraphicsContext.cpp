@@ -1,6 +1,7 @@
 #include "RenderGraphicsContext.h"
 #include "TextView.h"
 #include "UIView.h"
+#include "PixelRatio.h"
 
 namespace yanbo {
 class ItemPainter : public BoyiaRef {
@@ -10,8 +11,8 @@ public:
     {
     }
 
-    // 每次重新创建RenderCommandBuffer
-    // RenderCommandBuffer的释放由渲染线程管理
+    // 每次重绘创建RenderCommandBuffer，并将旧buffer放入回收器
+    // 回收器交给渲染线程来进行管理
     LVoid clear(KVector<LUintPtr>* collector)
     {
         if (collector) {
@@ -55,6 +56,10 @@ LVoid RenderGraphicsContext::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 
 LVoid RenderGraphicsContext::drawRect(const LRect& aRect)
 {
+    if (!PixelRatio::isInWindow(aRect)) {
+        return;
+    }
+    
     ItemPainter* painter = currentPainter();
     RenderRectCommand* cmd = new RenderRectCommand(aRect, m_brushColor);
 
@@ -76,6 +81,10 @@ LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, const LSize& aCor
 
 LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
 {
+    if (!PixelRatio::isInWindow(aRect)) {
+        return;
+    }
+    
     ItemPainter* painter = currentPainter();
     RenderRoundRectCommand* cmd =
         new RenderRoundRectCommand(aRect, m_brushColor, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
@@ -96,7 +105,7 @@ LVoid RenderGraphicsContext::drawImage(const LPoint& aTopLeft, const LImage* aBi
 
 LVoid RenderGraphicsContext::drawImage(const LImage* image)
 {
-    if (!image->pixels()) {
+    if (!image->pixels() || !PixelRatio::isInWindow(image->rect())) {
         return;
     }
     
@@ -122,6 +131,10 @@ LVoid RenderGraphicsContext::drawPlatform(const LRect& rect, LVoid* platformView
 
 LVoid RenderGraphicsContext::drawText(const String& text, const LRect& rect, TextAlign align)
 {
+    if (!PixelRatio::isInWindow(rect)) {
+        return;
+    }
+    
     ItemPainter* painter = currentPainter();
     
     RenderTextCommand* cmd = new RenderTextCommand(rect, m_penColor, m_font, text);
@@ -157,6 +170,10 @@ LVoid RenderGraphicsContext::reset()
 LVoid RenderGraphicsContext::submit(LVoid* view, RenderLayer* parentLayer)
 {
     yanbo::HtmlView* item = (yanbo::HtmlView*)view;
+    
+    if (!item->canDraw()) {
+        return;
+    }
 
     if (item->isText()) {
         yanbo::TextView* text = static_cast<yanbo::TextView*>(item);

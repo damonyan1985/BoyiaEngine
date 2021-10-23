@@ -1,6 +1,8 @@
 #ifndef PixelRatio_h
 #define PixelRatio_h
 
+#include "LGraphic.h"
+
 namespace yanbo {
 class PixelRatio {
 public:
@@ -11,6 +13,8 @@ public:
 
     static void setWindowSize(int width, int height);
     static void setLogicWindowSize(int width, int height);
+    
+    static bool isInWindow(const LRect& rect);
 
     static void setRatioDirection(PixelDirection direction);
     static float ratio();

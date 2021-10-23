@@ -310,6 +310,11 @@ LVoid GraphicsContextGL::reset()
 LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 {
     yanbo::HtmlView* item = (yanbo::HtmlView*)ptr;
+
+    if (!item->canDraw()) {
+        return;
+    }
+    
     // 如果是文本，则使用linetext来绘制
     if (item->isText()) {
         yanbo::TextView* text = static_cast<yanbo::TextView*>(item);
