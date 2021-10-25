@@ -151,6 +151,11 @@ public:
     
     virtual LVoid postData(const String& url, NetworkClient* client, LBool isWait)
     {
+        // 没有数据，就不用请求了
+        if (!m_data->GetLength()) {
+            return;
+        }
+        
         [m_engine setData:(const char*)m_data->GetBuffer() size:m_data->GetLength()];
         // 网络请求
         [m_engine loadUrlWithData:kHttpPost url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];

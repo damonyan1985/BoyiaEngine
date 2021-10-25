@@ -113,7 +113,6 @@ public:
     Style(const Style& style);
     const Style& operator=(const Style& style);
     void init();
-    void copyStyle(Style* style);
     
     Border& border() const;
     BorderRadius& radius() const;

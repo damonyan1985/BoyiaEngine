@@ -211,37 +211,41 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     
     createVertexAttr(rect, color, m_vertexs);
     
-    // 从普通指针转为OC ARC指针，使用完之后释放
-    UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
-    CGImageRef imageRef = image.CGImage;
-    
-    // 读取图片的宽高
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    
-    Byte* data = (Byte*) calloc(width * height * 4, sizeof(Byte)); //rgba共4个byte
-    
-    CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
-                                                       CGImageGetColorSpace(imageRef), kCGImageAlphaPremultipliedLast);
-    
-    // 3在CGContextRef上绘图
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
-    
-    CGContextRelease(context);
-    
     NSString* key = STR_TO_OCSTR(imageCmd->url);
-    [m_renderer setTextureData:key data:data width:width height:height];
     
-    //[m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key];
+    id tex = [m_renderer getTexture:key];
+    if (!tex) {
+        // 从普通指针转为OC ARC指针，使用完之后释放
+        UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
+        CGImageRef imageRef = image.CGImage;
+        
+        // 读取图片的宽高
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        
+        Byte* data = (Byte*) calloc(width * height * 4, sizeof(Byte)); //rgba共4个byte
+        
+        CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
+                                                           CGImageGetColorSpace(imageRef), kCGImageAlphaPremultipliedLast);
+        
+        // 3在CGContextRef上绘图
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+        
+        CGContextRelease(context);
+        
+        
+        [m_renderer setTextureData:key data:data width:width height:height];
+        
+        // 释放data
+        if (data) {
+            free(data);
+        }
+    }
+    
     if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key]) {
         Uniforms uniforms;
         uniforms.uType = 1;
         m_uniforms.addElement(uniforms);
-    }
-    
-    // 释放data
-    if (data) {
-        free(data);
     }
 }
 
