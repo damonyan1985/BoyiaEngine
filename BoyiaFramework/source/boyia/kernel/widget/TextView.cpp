@@ -90,16 +90,18 @@ void TextView::layout(RenderContext& rc)
 
     m_newFont = LFont::create(m_style.font); // platform reference font
     m_newFont->setFontSize(m_style.font.getFontSize() * m_style.scale);
-    LInt longestLine = calcTextLine(m_text, m_maxWidth - m_style.margin().leftMargin - m_style.margin().rightMargin);
+    m_width = calcTextLine(m_text, m_maxWidth);
 
-    m_width = longestLine + m_style.margin().leftMargin + m_style.margin().rightMargin;
-    KFORMATLOG("text=%s and text width=%d and lineWidth=%d", (const char*)m_text.GetBuffer(), m_width, longestLine);
-    m_height = m_newFont->getFontHeight() * m_textLines->size() + m_style.margin().bottomMargin;
-
+    //m_width = longestLine + m_style.margin().leftMargin + m_style.margin().rightMargin;
+    
+    BOYIA_LOG("text=%s and text width=%d", (const char*)m_text.GetBuffer(), m_width);
+    //m_height = m_newFont->getFontHeight() * m_textLines->size() + m_style.margin().bottomMargin;
+    m_height = m_newFont->getFontHeight() * m_textLines->size();
+    
     KLOG("TextView::layout begin");
     KDESLOG(m_height);
     KDESLOG(m_newFont->getFontHeight());
-    KDESLOG(m_style.margin().bottomMargin);
+    //KDESLOG(m_style.margin().bottomMargin);
     KDESLOG(getBottomY());
     //rc.setX(getEndX());
     //rc.setY(getBottomY() - m_newFont->getFontHeight());

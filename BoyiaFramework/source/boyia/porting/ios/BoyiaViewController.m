@@ -13,176 +13,8 @@
 #import "ShaderType.h"
 #import "IOSRenderer.h"
 
-#pragma mark - BoyiaTextPosition
-
-@interface BoyiaTextPosition : UITextPosition
-
-@property(nonatomic, readonly) NSUInteger index;
-
-+ (instancetype)positionWithIndex:(NSUInteger)index;
-- (instancetype)initWithIndex:(NSUInteger)index;
-
-@end
-
-@implementation BoyiaTextPosition
-
-+ (instancetype)positionWithIndex:(NSUInteger)index {
-  return [[BoyiaTextPosition alloc] initWithIndex:index];
-}
-
-- (instancetype)initWithIndex:(NSUInteger)index {
-  self = [super init];
-  if (self) {
-    _index = index;
-  }
-  return self;
-}
-
-@end
-
-#pragma mark - BoyiaTextRange
-
-@interface BoyiaTextRange : UITextRange <NSCopying>
-
-@property(nonatomic, readonly) NSRange range;
-
-+ (instancetype)rangeWithNSRange:(NSRange)range;
-
-@end
-
-@implementation BoyiaTextRange
-
-+ (instancetype)rangeWithNSRange:(NSRange)range {
-  return [[BoyiaTextRange alloc] initWithNSRange:range];
-}
-
-- (instancetype)initWithNSRange:(NSRange)range {
-  self = [super init];
-  if (self) {
-    _range = range;
-  }
-  return self;
-}
-
-- (UITextPosition*)start {
-  return [BoyiaTextPosition positionWithIndex:self.range.location];
-}
-
-- (UITextPosition*)end {
-  return [BoyiaTextPosition positionWithIndex:self.range.location + self.range.length];
-}
-
-- (BOOL)isEmpty {
-  return self.range.length == 0;
-}
-
-- (id)copyWithZone:(NSZone*)zone {
-  return [[BoyiaTextRange allocWithZone:zone] initWithNSRange:self.range];
-}
-
-- (BOOL)isEqualTo:(BoyiaTextRange*)other {
-  return NSEqualRanges(self.range, other.range);
-}
-@end
-
-#pragma mark - BoyiaTextInputView
-// 软键盘控制
-@interface BoyiaTextInputView : UIView<UITextInput>
-
-// UITextInput
-@property(nonatomic, readonly) NSMutableString* text;
-@property(nonatomic, readonly) NSMutableString* markedText;
-@property(readwrite, copy) UITextRange* selectedTextRange;
-@property(nonatomic, strong) UITextRange* markedTextRange;
-@property(nonatomic, copy) NSDictionary* markedTextStyle;
-@property(nonatomic, assign) id<UITextInputDelegate> inputDelegate;
-
-// UITextInputTraits
-@property(nonatomic) UITextAutocapitalizationType autocapitalizationType;
-@property(nonatomic) UITextAutocorrectionType autocorrectionType;
-@property(nonatomic) UITextSpellCheckingType spellCheckingType;
-@property(nonatomic) BOOL enablesReturnKeyAutomatically;
-@property(nonatomic) UIKeyboardAppearance keyboardAppearance;
-@property(nonatomic) UIKeyboardType keyboardType;
-@property(nonatomic) UIReturnKeyType returnKeyType;
-@property(nonatomic, getter=isSecureTextEntry) BOOL secureTextEntry;
-@property(nonatomic) UITextSmartQuotesType smartQuotesType API_AVAILABLE(ios(11.0));
-@property(nonatomic) UITextSmartDashesType smartDashesType API_AVAILABLE(ios(11.0));
-@property(nonatomic, copy) UITextContentType textContentType API_AVAILABLE(ios(10.0));
-
-@property(nonatomic, assign) UIAccessibilityElement* backingTextInputAccessibilityObject;
-
-@end
-
-@interface BoyiaTextInputView()
-@end
-
-@implementation BoyiaTextInputView {
-}
-
-@synthesize tokenizer = _tokenizer;
-
-- (BOOL)hasText {
-  return self.text.length > 0;
-}
-
-- (UITextPosition*)beginningOfDocument {
-  return [BoyiaTextPosition positionWithIndex:0];
-}
-
-- (UITextPosition*)endOfDocument {
-  return [BoyiaTextPosition positionWithIndex:self.text.length];
-}
-
--(instancetype)init {
-    self = [super init];
-    if (self != nil) {
-        // UITextInput
-        _text = [[NSMutableString alloc] init];
-        _markedText = [[NSMutableString alloc] init];
-        _selectedTextRange = [[BoyiaTextRange alloc] initWithNSRange:NSMakeRange(0, 0)];
-        //_markedRect = kInvalidFirstRect;
-        //_cachedFirstRect = kInvalidFirstRect;
-        
-        // UITextInputTraits
-        _autocapitalizationType = UITextAutocapitalizationTypeSentences;
-        _autocorrectionType = UITextAutocorrectionTypeDefault;
-        _spellCheckingType = UITextSpellCheckingTypeDefault;
-        _enablesReturnKeyAutomatically = NO;
-        _keyboardAppearance = UIKeyboardAppearanceDefault;
-        _keyboardType = UIKeyboardTypeDefault;
-        _returnKeyType = UIReturnKeyDone;
-        _secureTextEntry = NO;
-        
-//        _accessibilityEnabled = NO;
-//        _decommissioned = NO;
-        if (@available(iOS 13.0, *)) {
-            UITextInteraction* interaction =
-              [UITextInteraction textInteractionForMode:UITextInteractionModeEditable];
-            interaction.textInput = self;
-            [self addInteraction:interaction];
-        }
-    }
-    
-    return nil;
-}
-
-#pragma mark - UIResponder Overrides
--(BOOL)canBecomeFirstResponder {
-    return YES;
-}
-
-@end
-
-@interface BoyiaTextInputViewHider : UIView
-@end
-
-@implementation BoyiaTextInputViewHider {
-}
-
-@end
-
 #pragma mark - BoyiaGestureRecognizer
+// 使用GesturerRecognizer替代controller自身的touch事件接口
 @interface BoyiaGestureRecognizer : UIPanGestureRecognizer
 -(instancetype)initWithTarget:(id)target action:(SEL)action;
 
@@ -241,8 +73,7 @@
 @property (nonatomic, strong) BoyiaView* boyiaView;
 @property (nonatomic, strong) CADisplayLink* displayLink;
 @property (nonatomic, strong) IOSRenderer* renderer;
-@property (nonatomic, strong) BoyiaTextInputView* textInputView;
-@property (nonatomic, strong) BoyiaTextInputViewHider* textInputHider;
+@property (nonatomic, strong) UITextField* textField;
 
 @end
 
@@ -280,14 +111,14 @@
     [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     //self.inputView = [[BoyiaTextInputView alloc] init];
-    self.textInputHider = [[BoyiaTextInputViewHider alloc] init];
     
-    BoyiaTextInputView* textInputView = [[BoyiaTextInputView alloc] init];
-    BOOL result = [textInputView canBecomeFirstResponder];
-    [self addToInputParentViewIfNeeded:textInputView];
     
     BoyiaGestureRecognizer* gesture = [[BoyiaGestureRecognizer alloc]initWithTargetRenderer:self action:@selector(handlePanGesture:) renderer:self.renderer];
     [self.boyiaView addGestureRecognizer:gesture];
+    
+//    self.textField = [[UITextField alloc] initWithFrame:CGRectMake(100, 100, 300, 100)];
+//    [self.textField setText:@"Hello World"];
+//    [self.boyiaView addSubview:self.textField];
 }
 
 -(void)handlePanGesture:(UIPanGestureRecognizer*)gesture {
@@ -308,21 +139,25 @@
 
 -(void)viewDidAppear:(BOOL)animated;  {
     [super viewDidAppear:animated];
-//    BOOL result1 = [self canBecomeFirstResponder];
-//    BOOL result2 = [self becomeFirstResponder];
-//    BOOL result2 = [self.textInputView becomeFirstResponder];
-//
-//    BOOL result3 = [self.boyiaView canBecomeFirstResponder];
-//    BOOL result4 = [self.boyiaView becomeFirstResponder];
-//
-//    BOOL result5 = [self.textInputHider canBecomeFirstResponder];
-//    BOOL result6 = [self.textInputHider becomeFirstResponder];
     
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC*3)), dispatch_get_main_queue(), ^ {
+//        self.textInputView = [[BoyiaTextInputView alloc] init];
+//        [self addToInputParentViewIfNeeded:self.textInputView];
+//        //BOOL resign = [self canResignFirstResponder];
+//        BOOL can = [self.textInputView canBecomeFirstResponder];
+//        if (!can) {
+//            return;
+//        }
+//
+//        // 此处返回YES也弹不出键盘。。。
+//        if ([self.textInputView becomeFirstResponder]) {
+//            NSLog(@"result = true");
+//        }
+//    });
 }
 
 // 收到vsync信号之后进行渲染
 -(void)render:(CADisplayLink*)link {
-
     //[self.renderer render];
     // 避免一直渲染造成性能损耗
     self.displayLink.paused = YES;
@@ -332,16 +167,6 @@
     if (self.displayLink != nil) {
         self.displayLink.paused = NO;
     }
-}
-
-- (void)addToInputParentViewIfNeeded:(BoyiaTextInputView*)inputView {
-  if (![inputView isDescendantOfView:self.textInputHider]) {
-    [self.textInputHider addSubview:inputView];
-  }
-  UIView* parentView = self.boyiaView;
-  if (self.textInputHider.superview != parentView) {
-    [parentView addSubview:self.textInputHider];
-  }
 }
 
 //-(void)touchEvent:(int)type withEvent:(UIEvent*)event  {
@@ -374,24 +199,5 @@
 //-(void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event {
 //    [self touchEvent:2 withEvent:event];
 //}
-
--(UIWindow*)getKeyWindow {
-    UIApplication* application = [UIApplication sharedApplication];
-    if (@available(iOS 13.0, *)) {
-        for (UIWindowScene* windowScene in application.connectedScenes) {
-            if (windowScene.activationState == UISceneActivationStateForegroundActive) {
-                for (UIWindow* window in windowScene.windows) {
-                    if (window.isKeyWindow) {
-                        return window;
-                    }
-                }
-            }
-        }
-    } else {
-        return [application keyWindow];
-    }
-    
-    return nil;
-}
 
 @end

@@ -44,6 +44,8 @@ public:
     LVoid appendUniforms(LInt type);
     const KVector<Uniforms>& uniforms() const;
     
+    LVoid showKeyboard();
+    
 private:
     KVector<VertexAttributes> m_vertexs;
     KVector<Uniforms> m_uniforms;

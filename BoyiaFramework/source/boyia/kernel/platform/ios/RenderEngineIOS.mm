@@ -259,7 +259,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     
     int scale = 1;
     UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
-    //UIFont* font = [m_renderer getIconFont:textCmd->font.getFontSize()*scale];
+    //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
     
     int width = textCmd->rect.GetWidth() * scale;
     int height = textCmd->rect.GetHeight() * scale;
@@ -423,6 +423,11 @@ LVoid RenderEngineIOS::renderRoundRectEx(RenderCommand* cmd)
 const KVector<Uniforms>& RenderEngineIOS::uniforms() const
 {
     return m_uniforms;
+}
+
+LVoid RenderEngineIOS::showKeyboard()
+{
+    [m_renderer showKeyboard];
 }
 
 // Test Api

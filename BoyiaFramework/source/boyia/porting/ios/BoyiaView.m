@@ -28,4 +28,8 @@
     return (CAMetalLayer*)self.layer;
 }
 
+//-(BOOL)canBecomeFirstResponder {
+//    return YES;
+//}
+
 @end

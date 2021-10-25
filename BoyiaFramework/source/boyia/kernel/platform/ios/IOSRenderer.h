@@ -33,12 +33,15 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer;
 +(void)runOnUiThead:(dispatch_block_t)block;
++(UIWindow*)getKeyWindow;
+-(void)showKeyboard;
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
 -(CAMetalLayer*)layer;
 -(float)getRenderStatusBarHight;
--(UIFont*)getIconFont:(CGFloat)size;
+//-(UIFont*)getIconFont:(CGFloat)size;
+-(void)initFonts;
 
 -(void)clearBatchCommandBuffer;
 -(BOOL)appendBatchCommand:(BatchCommandType)cmdType size:(NSInteger)size key:(NSString*)key;

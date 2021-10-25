@@ -10,6 +10,7 @@
 #import <CoreText/CoreText.h>
 
 #import "IOSRenderer.h"
+#import "BoyiaTextInputView.h"
 
 //#import "ImageLoaderIOS.h"
 
@@ -23,6 +24,14 @@
 #include "FileUtil.h"
 #include "RenderThread.h"
 #include "AppManager.h"
+
+@interface BoyiaTextInputViewHider : UIView
+@end
+
+@implementation BoyiaTextInputViewHider {
+}
+
+@end
 
 class Client : public yanbo::NetworkClient {
 public:
@@ -114,7 +123,8 @@ private:
 
 @property (nonatomic, assign) CGFloat statusBarHeight;
 
-@property (nonatomic, strong) NSString* iconFontName;
+@property (nonatomic, strong) BoyiaTextInputView* textInputView;
+@property (nonatomic, strong) BoyiaTextInputViewHider* textInputHider;
 
 @end
 
@@ -181,6 +191,7 @@ private:
         
         self.cmdBuffer = [[NSMutableArray alloc] initWithCapacity:1024];
         self.textureCache = [NSMutableDictionary new];
+        self.textInputHider = [[BoyiaTextInputViewHider alloc] init];
         
 //        _engine = new yanbo::RenderEngineIOS();
 //        _engine->setContextIOS(self);
@@ -208,9 +219,57 @@ private:
         printf("boyia dir=%s\n", GET_STR(appPath));
         
         printf("intptr size=%ld\n", sizeof(LIntPtr));
+        
+        [self initFonts];
     }
     
     return self;
+}
+
+-(void)showKeyboard {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0)), dispatch_get_main_queue(), ^ {
+        self.textInputView = [[BoyiaTextInputView alloc] init];
+        [self addToInputParentViewIfNeeded:self.textInputView];
+        //BOOL resign = [self canResignFirstResponder];
+        BOOL can = [self.textInputView canBecomeFirstResponder];
+        if (!can) {
+            return;
+        }
+
+        // 此处返回YES也弹不出键盘。。。
+        if ([self.textInputView becomeFirstResponder]) {
+            NSLog(@"result = true");
+        }
+    });
+}
+
+-(void)addToInputParentViewIfNeeded:(BoyiaTextInputView*)inputView {
+    if (![inputView isDescendantOfView:self.textInputHider]) {
+        [self.textInputHider addSubview:inputView];
+    }
+    UIView* parentView = [IOSRenderer getKeyWindow]; //self.boyiaView;
+    if (self.textInputHider.superview != parentView) {
+        [parentView addSubview:self.textInputHider];
+    }
+}
+
++(UIWindow*)getKeyWindow {
+    UIApplication* application = [UIApplication sharedApplication];
+    if (@available(iOS 13.0, *)) {
+        for (UIWindowScene* windowScene in application.connectedScenes) {
+            if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+                for (UIWindow* window in windowScene.windows) {
+                    if (window.isKeyWindow) {
+                        return window;
+                    }
+                }
+            }
+        }
+    } else {
+        return [application keyWindow];
+    }
+    
+    return nil;
 }
 
 // 初始化metal环境
@@ -467,22 +526,20 @@ private:
 }
 
 // 获取图标字体
--(UIFont*)getIconFont:(CGFloat)size {
-    if (!self.iconFontName) {
-        NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
-        NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
-        NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
-        NSString* fontPath = [appBundle.bundlePath stringByAppendingString:@"/apps/font/icon.ttf"];
-        
-        NSURL* fontUrl = [NSURL fileURLWithPath:fontPath];
-        CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);
-        CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProvider);
-        CGDataProviderRelease(fontDataProvider);
-        
-        CTFontManagerRegisterGraphicsFont(fontRef, NULL);
-        self.iconFontName = CFBridgingRelease(CGFontCopyPostScriptName(fontRef));
-    }
+-(void)initFonts {
+    // Icon font 'BoyiaFont'
+    NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
+    NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
+    NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
+    NSString* fontPath = [appBundle.bundlePath stringByAppendingString:@"/apps/font/icon.ttf"];
     
-    return [UIFont fontWithName:self.iconFontName size:size];
+    NSURL* fontUrl = [NSURL fileURLWithPath:fontPath];
+    CGDataProviderRef fontDataProvider = CGDataProviderCreateWithURL((__bridge CFURLRef)fontUrl);
+    CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProvider);
+    CGDataProviderRelease(fontDataProvider);
+    
+    CTFontManagerRegisterGraphicsFont(fontRef, NULL);
+    NSString* fontName = CFBridgingRelease(CGFontCopyPostScriptName(fontRef));
+    NSLog(@"fontName=%@", fontName);
 }
 @end

@@ -72,7 +72,7 @@ public:
         BACKGROUND_COLOR,
         Z_INDEX,
         FOCUSABLE,
-        STYLE_NULL,
+        STYLE_INHERIT, // inherit之后的元素需要被继承
         COLOR,
         FONT,
         FONT_SIZE,

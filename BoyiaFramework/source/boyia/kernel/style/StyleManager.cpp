@@ -182,11 +182,11 @@ StyleRule* StyleManager::createNewStyleRule(const StyleRule* parentRule, StyleRu
         AttributeMap::Iterator iter = properties->begin();
         AttributeMap::Iterator iterEnd = properties->end();
         for (; iter != iterEnd; ++iter) {
-            if ((*iter)->getKey() > StyleTags::STYLE_NULL) //  iter.getKey() > 0 can be inherited
+            if ((*iter)->getKey() > StyleTags::STYLE_INHERIT) //  iter.getKey() > 0 can be inherited
             {
                 LInt key = (*iter)->getKey();
-                LInt styleNull = StyleTags::STYLE_NULL;
-                KFORMATLOG("StyleManager::createNewStyleRule inherited key=%d styleNull=%d", key, styleNull);
+                LInt styleNull = StyleTags::STYLE_INHERIT;
+                BOYIA_LOG("StyleManager::createNewStyleRule inherited key=%d styleNull=%d", key, styleNull);
 
                 if ((*iter)->getValue().strVal.GetLength() > 0) {
                     newStyleRule->addProperty((*iter)->getKey(), (*iter)->getValue().strVal);

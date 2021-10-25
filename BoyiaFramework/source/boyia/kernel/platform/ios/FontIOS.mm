@@ -82,7 +82,13 @@ LVoid FontIOS::getLineText(LInt index, String& text)
 
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
-    UIFont* font = [UIFont systemFontOfSize:getFontSize()];
+    UIFont* font = nil;
+    if (m_family.GetLength()) {
+        font = [UIFont fontWithName:[[NSString alloc] initWithUTF8String:GET_STR(m_family)] size:getFontSize()];
+    } else {
+        // 如果没有指定字体，则使用系统字体
+        font = [UIFont systemFontOfSize:getFontSize()];
+    }
     //UIFont* font = [UIFont fontWithName:@"HoeflerText-Regular" size:getFontSize()];
 //    float radio = yanbo::PixelRatio::ratio();
 //    maxWidth = maxWidth * radio;
