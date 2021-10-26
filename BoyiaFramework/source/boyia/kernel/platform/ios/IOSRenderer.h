@@ -31,10 +31,12 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 // 还有一个用途就是作为boyia和oc之间的桥梁
 @interface IOSRenderer : NSObject
 
++(IOSRenderer*)renderer;
+
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer;
 +(void)runOnUiThead:(dispatch_block_t)block;
 +(UIWindow*)getKeyWindow;
--(void)showKeyboard;
+-(void)showKeyboard:(NSString*)text;
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
@@ -54,6 +56,8 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y;
 -(void)onFling:(CGPoint)point;
+-(void)setInputText:(NSString*)text;
+
 @end
 
 

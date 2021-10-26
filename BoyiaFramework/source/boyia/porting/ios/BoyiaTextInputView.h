@@ -9,8 +9,13 @@
 #define BoyiaInputTextView_h
 
 #import <UIKit/UIKit.h>
+
+@class IOSRenderer;
+
 // BoyiaTextInputView
 @interface BoyiaTextInputView : UIView<UITextInput>
+
+-(instancetype)initWithRenderer:(IOSRenderer*)renderer;
 
 // UITextInput
 @property(nonatomic, readonly) NSMutableString* text;

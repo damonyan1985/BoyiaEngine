@@ -127,7 +127,8 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiSetInput: {
         String text(_CS(msg->obj), LTrue, msg->arg0);
-        InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg1)->view()); //(InputView*)msg->arg1;
+        InputView* view = static_cast<InputView*>(Editor::get()->view());
+        //InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg1)->view()); //(InputView*)msg->arg1;
         if (!view) {
             return;
         }

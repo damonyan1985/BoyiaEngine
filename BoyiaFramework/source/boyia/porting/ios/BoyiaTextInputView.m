@@ -6,8 +6,20 @@
 //
 
 #import "BoyiaTextInputView.h"
+#import "IOSRenderer.h"
 
 const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
+
+NSRange RangeForCharactersInRange(NSString* text, NSRange range) {
+  if (text == nil || range.location + range.length > text.length) {
+    return NSMakeRange(NSNotFound, 0);
+  }
+  NSRange sanitizedRange = [text rangeOfComposedCharacterSequencesForRange:range];
+  // We don't want to override the length, we just want to make sure we don't
+  // select into the middle of a multi-byte character. Taking the
+  // `sanitizedRange`'s length will end up altering the actual selection.
+  return NSMakeRange(sanitizedRange.location, range.length);
+}
 
 #pragma mark - BoyiaTextPosition
 @interface BoyiaTextPosition : UITextPosition
@@ -37,7 +49,7 @@ const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
 
 #pragma mark - BoyiaTextRange
 
-@interface BoyiaTextRange : UITextRange <NSCopying>
+@interface BoyiaTextRange : UITextRange<NSCopying>
 
 @property(nonatomic, readonly) NSRange range;
 
@@ -83,9 +95,14 @@ const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
 #pragma mark - BoyiaTextInputView
 // 软键盘控制
 @interface BoyiaTextInputView()
+
+@property (nonatomic, weak) IOSRenderer* renderer;
+
 @end
 
-@implementation BoyiaTextInputView
+@implementation BoyiaTextInputView {
+    BoyiaTextRange* _selectedTextRange;
+}
 
 @synthesize tokenizer = _tokenizer;
 
@@ -99,6 +116,15 @@ const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
 
 - (UITextPosition*)endOfDocument {
   return [BoyiaTextPosition positionWithIndex:self.text.length];
+}
+
+-(instancetype)initWithRenderer:(IOSRenderer*)renderer {
+    self = [self init];
+    if (self != nil) {
+        self.renderer = renderer;
+    }
+    
+    return self;
 }
 
 -(instancetype)init {
@@ -138,11 +164,36 @@ const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
     return YES;
 }
 
-- (void)deleteBackward {
+// 删除键
+-(void)deleteBackward {
+    if (self.text.length == 0) {
+        return;
+    }
+    
+    if (_selectedTextRange.isEmpty && [self hasText]) {
+        UITextRange* oldSelectedRange = _selectedTextRange;
+        NSRange oldRange = ((BoyiaTextRange*)oldSelectedRange).range;
+        if (oldRange.location > 0) {
+            NSRange newRange = NSMakeRange(oldRange.location - 1, 1);
+            _selectedTextRange = [[BoyiaTextRange rangeWithNSRange:newRange] copy];
+        }
+    }
+
+    if (!_selectedTextRange.isEmpty) {
+        [self replaceRange:_selectedTextRange withText:@""];
+    }
+
+    [self.renderer setInputText:self.text];
 }
 
+-(UITextRange*)selectedTextRange {
+    return [_selectedTextRange copy];
+}
+
+// 键盘输入时会调用
 - (void)insertText:(nonnull NSString *)text {
-    
+    [self replaceRange:_selectedTextRange withText:text];
+    [self.renderer setInputText:self.text];
 }
 
 - (NSWritingDirection)baseWritingDirectionForPosition:(nonnull UITextPosition *)position inDirection:(UITextStorageDirection)direction {
@@ -194,6 +245,47 @@ const CGRect kInvalidFirstRect = {{-1, -1}, {9999, 9999}};
 }
 
 - (void)replaceRange:(nonnull UITextRange *)range withText:(nonnull NSString *)text {
+    NSRange replaceRange = ((BoyiaTextRange*)range).range;
+    [self replaceRangeLocal:replaceRange withText:text];
+}
+
+-(void)replaceRangeLocal:(NSRange)range withText:(NSString*)text {
+    NSRange selectedRange = _selectedTextRange.range;
+    NSRange intersectionRange = NSIntersectionRange(range, selectedRange);
+    if (range.location <= selectedRange.location)
+        selectedRange.location += text.length - range.length;
+    if (intersectionRange.location != NSNotFound) {
+        selectedRange.location += intersectionRange.length;
+        selectedRange.length -= intersectionRange.length;
+    }
+
+    [self.text replaceCharactersInRange:[self clampSelection:range forText:self.text]
+                           withString:text];
+
+    [self setSelectedTextRangeLocal:[BoyiaTextRange
+                                          rangeWithNSRange:[self clampSelection:selectedRange
+                                                                        forText:self.text]]];
+    
+    NSLog(@"BoyiaTextInputView text=%@", self.text);
+}
+
+- (void)setSelectedTextRangeLocal:(UITextRange*)selectedTextRange {
+  if (_selectedTextRange != selectedTextRange) {
+    UITextRange* oldSelectedRange = _selectedTextRange;
+    if (self.hasText) {
+        BoyiaTextRange* textRange = (BoyiaTextRange*)selectedTextRange;
+      _selectedTextRange = [[BoyiaTextRange
+          rangeWithNSRange:RangeForCharactersInRange(self.text, textRange.range)] copy];
+    } else {
+      _selectedTextRange = [selectedTextRange copy];
+    }
+  }
+}
+
+-(NSRange)clampSelection:(NSRange)range forText:(NSString*)text {
+  int start = MIN(MAX(range.location, 0), text.length);
+  int length = MIN(range.length, text.length - start);
+  return NSMakeRange(start, length);
 }
 
 - (nonnull NSArray<UITextSelectionRect *> *)selectionRectsForRange:(nonnull UITextRange *)range {

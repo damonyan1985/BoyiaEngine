@@ -29,8 +29,8 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 
 //-(void)setHttpCallback:(id<HttpCallback>)cb;
 -(void)setData:(const char*)data size:(NSInteger)size;
--(void)loadUrl:(HttpMethod) method url: (NSString*) url callback:(id<HttpCallback>)cb;
--(void)loadUrlWithData: (HttpMethod) method url:(const char *)url callback:(id<HttpCallback>)cb;
+-(void)loadUrl:(HttpMethod)method url:(NSString*) url callback:(id<HttpCallback>)cb;
+-(void)loadUrlWithData:(HttpMethod)method url:(const char *)url callback:(id<HttpCallback>)cb;
 
 @end
 

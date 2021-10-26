@@ -201,20 +201,19 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     LRect& rect = imageCmd->rect;
     LColor& color = imageCmd->color;
     
-    if (!imageCmd->image) {
-        return;
-    }
+    
     
     if (!rect.GetWidth() || !rect.GetHeight()) {
         return;
     }
     
-    createVertexAttr(rect, color, m_vertexs);
-    
     NSString* key = STR_TO_OCSTR(imageCmd->url);
-    
     id tex = [m_renderer getTexture:key];
     if (!tex) {
+        if (!imageCmd->image) {
+            return;
+        }
+        
         // 从普通指针转为OC ARC指针，使用完之后释放
         UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
         CGImageRef imageRef = image.CGImage;
@@ -241,6 +240,8 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
             free(data);
         }
     }
+    
+    createVertexAttr(rect, color, m_vertexs);
     
     if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key]) {
         Uniforms uniforms;
@@ -429,9 +430,9 @@ const KVector<Uniforms>& RenderEngineIOS::uniforms() const
     return m_uniforms;
 }
 
-LVoid RenderEngineIOS::showKeyboard()
+IOSRenderer* RenderEngineIOS::iosRenderer() const
 {
-    [m_renderer showKeyboard];
+    return m_renderer;
 }
 
 // Test Api

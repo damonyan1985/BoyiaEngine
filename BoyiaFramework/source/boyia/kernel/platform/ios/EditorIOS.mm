@@ -2,8 +2,8 @@
 #define EditorIOS_h
 
 #include "LGdi.h"
-#include "RenderEngineIOS.h"
-#include "RenderThread.h"
+// oc import
+#import "IOSRenderer.h"
 
 namespace util {
 // TODO
@@ -19,8 +19,13 @@ EditorIOS::EditorIOS()
 
 LVoid EditorIOS::showKeyboard(const String& text)
 {
-    yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
-    engine->showKeyboard();
+    Editor* editor = static_cast<Editor*>(this);
+    IOSRenderer* renderer = [IOSRenderer renderer];
+    if (!renderer) {
+        return;
+    }
+    
+    [renderer showKeyboard:STR_TO_OCSTR(text)];
 }
 
 Editor* Editor::get()

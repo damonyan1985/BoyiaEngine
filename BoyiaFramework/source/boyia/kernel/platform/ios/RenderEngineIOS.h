@@ -43,8 +43,8 @@ public:
     
     LVoid appendUniforms(LInt type);
     const KVector<Uniforms>& uniforms() const;
-    
-    LVoid showKeyboard();
+        
+    IOSRenderer* iosRenderer() const;
     
 private:
     KVector<VertexAttributes> m_vertexs;

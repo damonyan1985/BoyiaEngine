@@ -155,6 +155,15 @@ private:
     return renderer;
 }
 
++(IOSRenderer*)renderer {
+    yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
+    if (!engine) {
+        return nil;
+    }
+    
+    return engine->iosRenderer();
+}
+
 +(void)runOnUiThead:(dispatch_block_t)block {
     dispatch_async(dispatch_get_main_queue(), block);
     
@@ -226,21 +235,31 @@ private:
     return self;
 }
 
--(void)showKeyboard {
+-(void)showKeyboard:(NSString*)text {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0)), dispatch_get_main_queue(), ^ {
-        self.textInputView = [[BoyiaTextInputView alloc] init];
-        [self addToInputParentViewIfNeeded:self.textInputView];
-        //BOOL resign = [self canResignFirstResponder];
-        BOOL can = [self.textInputView canBecomeFirstResponder];
-        if (!can) {
-            return;
+        if (!self.textInputView) {
+            self.textInputView = [[BoyiaTextInputView alloc] initWithRenderer:self];
+            [self addToInputParentViewIfNeeded:self.textInputView];
+            //BOOL resign = [self canResignFirstResponder];
+            BOOL can = [self.textInputView canBecomeFirstResponder];
+            if (!can) {
+                return;
+            }
         }
 
-        // 此处返回YES也弹不出键盘。。。
+        // 将目前控件中的文本设置到textInputView中
+        [self.textInputView insertText:text];
+        // 要对模拟器进行设置才能弹出键盘，I/O -> keyboard -> toggle software keyboard
         if ([self.textInputView becomeFirstResponder]) {
             NSLog(@"result = true");
         }
     });
+}
+
+-(void)setInputText:(NSString*)text {
+    String strText((const LUint8*)[text UTF8String]);
+    yanbo::AppManager::instance()->uiThread()->setInputText(strText, 0);
+    strText.ReleaseBuffer();
 }
 
 -(void)addToInputParentViewIfNeeded:(BoyiaTextInputView*)inputView {
