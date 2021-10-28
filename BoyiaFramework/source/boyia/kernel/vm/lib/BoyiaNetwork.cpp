@@ -29,6 +29,7 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     const char* method = parser.get("method")->valuestring;
     
     yanbo::NetworkBase* network = yanbo::AppManager::instance()->network();
+    network->clearHeaders();
     // 设置请求头
     if (header) {
         cJSON* child = header->child;

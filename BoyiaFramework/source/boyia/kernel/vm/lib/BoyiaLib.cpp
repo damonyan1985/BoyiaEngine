@@ -495,6 +495,7 @@ LInt loadDataFromNative(LVoid* vm)
             BoyiaStr* str = GetStringBuffer(params);
             String paramsStr(_CS(convertMStr2Str(str)), LTrue, str->mLen);
             network->load(strUrl, paramsStr);
+            return kOpResultSuccess;
         }
     }
     
