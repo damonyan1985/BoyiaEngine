@@ -578,7 +578,7 @@ static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mTmpLValSize = vm->mExecStack[vm->mEState->mFunctos].mTmpLValSize;
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm)
@@ -685,7 +685,7 @@ LInt CreateObject(LVoid* vm)
     BOYIA_LOG("HandleCallInternal CreateObject %d", 1);
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
     if (!value || value->mValueType != BY_CLASS) {
-        return 0;
+        return kOpResultFail;
     }
 
     BOYIA_LOG("HandleCallInternal CreateObject %d", 2);
@@ -702,7 +702,7 @@ LInt CreateObject(LVoid* vm)
     BOYIA_LOG("HandleCallInternal CreateObject %d", 4);
 
     GCAppendRef(newFunc, BY_CLASS, vm);
-    return 1;
+    return kOpResultSuccess;
 }
 
 LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
@@ -742,7 +742,7 @@ static LInt HandleBreak(LVoid* ins, BoyiaVM* vm)
     BOYIA_LOG("HandleBreak mLoopSize=%d \n", vm->mEState->mLoopSize);
     vm->mEState->mPC = (Instruction*)vm->mLoopStack[--vm->mEState->mLoopSize];
     //EngineLog("HandleBreak end=%d \n", gBoyiaVM->mEState->mPC->mNext->mOPCode);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid BreakStatement(CompileState* cs)
@@ -758,7 +758,7 @@ static LInt HandleCreateProp(LVoid* ins, BoyiaVM* vm)
     func->mParams[func->mParamSize].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
     func->mParams[func->mParamSize].mValue.mIntVal = 0;
     func->mParamSize++;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid PropStatement(CompileState* cs)
@@ -866,7 +866,8 @@ static LInt HandleCallInternal(LVoid* ins, BoyiaVM* vm)
 
     LInt idx = inst->mOPLeft.mValue;
     BOYIA_LOG("HandleCallInternal Exec idx=%d", idx);
-    //return (*gNativeFunTable[idx].mAddr)(vm);
+    
+    // Result from native function
     return CallNativeFunction(idx, vm);
 }
 
@@ -874,14 +875,14 @@ static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm)
 {
     vm->mExecStack[vm->mEState->mFunctos].mTmpLValSize = vm->mEState->mTmpLValSize;
     vm->mEState->mTmpLValSize = vm->mEState->mLValSize;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
 {
     if (vm->mEState->mFunctos >= FUNC_CALLS) {
         SntxError(NEST_FUNC, vm->mEState->mPC->mCodeLine);
-        return 0;
+        return kOpResultFail;
     }
 
     Instruction* inst = (Instruction*)ins;
@@ -890,7 +891,7 @@ static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
     vm->mExecStack[vm->mEState->mFunctos].mContext = vm->mEState->mContext;
     vm->mExecStack[vm->mEState->mFunctos++].mLoopSize = vm->mEState->mLoopSize;
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandlePushArg(LVoid* ins, BoyiaVM* vm)
@@ -899,10 +900,10 @@ static LInt HandlePushArg(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
     if (value) {
         LocalPush(value, vm);
-        return 1;
+        return kOpResultSuccess;
     }
 
-    return 0;
+    return kOpResultFail;
 }
 
 static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
@@ -919,7 +920,7 @@ static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mClass = kBoyiaNull;
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid ElseStatement(CompileState* cs)
@@ -1288,7 +1289,7 @@ static LInt HandleCreateParam(LVoid* ins, BoyiaVM* vm)
     BoyiaFunction* function = &vm->mFunTable[vm->mEState->mFunSize - 1];
     BoyiaValue* value = &function->mParams[function->mParamSize++];
     value->mNameKey = hashKey;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid InitParams(CompileState* cs)
@@ -1355,7 +1356,7 @@ static LInt HandleCreateExecutor(LVoid* ins, BoyiaVM* vm)
     }
 
     vm->mFunTable[vm->mEState->mFunSize - 1].mFuncBody = (LIntPtr)newTable;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid BodyStatement(CompileState* cs, LBool isFunction)
@@ -1391,11 +1392,11 @@ static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_NONE) {
         vm->mEState->mClass = kBoyiaNull;
-        return 1;
+        return kOpResultSuccess;
     }
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
     vm->mEState->mClass = CreateFunVal(hashKey, BY_CLASS, vm);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleExtend(LVoid* ins, BoyiaVM* vm)
@@ -1406,7 +1407,7 @@ static LInt HandleExtend(LVoid* ins, BoyiaVM* vm)
 
     // set super pointer
     classVal->mValue.mObj.mSuper = (LIntPtr)extendVal;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid ClassStatement(CompileState* cs)
@@ -1453,7 +1454,7 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
         CreateFunVal(hashKey, BY_FUNC, vm);
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid FunStatement(CompileState* cs)
@@ -1502,7 +1503,7 @@ static LInt HandleDeclGlobal(LVoid* ins, BoyiaVM* vm)
     val.mValueType = inst->mOPLeft.mValue;
     val.mNameKey = (LUintPtr)inst->mOPRight.mValue;
     ValueCopy(vm->mGlobals + vm->mEState->mGValSize++, &val);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid GlobalStatement(CompileState* cs)
@@ -1583,7 +1584,7 @@ static LInt HandleDeclLocal(LVoid* ins, BoyiaVM* vm)
     local.mValueType = inst->mOPLeft.mValue;
     local.mNameKey = (LUintPtr)inst->mOPRight.mValue;
     LocalPush(&local, vm); // 塞入本地符号表
-    return 1;
+    return kOpResultSuccess;
 }
 
 /* Declare a local variable. */
@@ -1616,7 +1617,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
     vm->mEState->mPC = vm->mEState->mContext->mBegin;
 
-    return 2;
+    return kOpResultJumpFun;
 }
 
 static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
@@ -1628,7 +1629,7 @@ static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
     if (value->mValueType == BY_FUNC) {
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
-            return 1;
+            return kOpResultSuccess;
         }
         // 从第二个参数开始，将形参key赋给实参
         LInt idx = start + 1;
@@ -1639,7 +1640,7 @@ static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
         }
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandlePop(LVoid* ins, BoyiaVM* vm)
@@ -1647,11 +1648,11 @@ static LInt HandlePop(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType != OP_REG0 && inst->mOPLeft.mType != OP_REG1) {
         --vm->mEState->mResultNum;
-        return 1;
+        return kOpResultSuccess;
     }
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     ValueCopy(value, vm->mOpStack + (--vm->mEState->mResultNum));
-    return 1;
+    return kOpResultSuccess;
 }
 
 /* Call a function. */
@@ -1703,7 +1704,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     if (!left)
-        return 0;
+        return kOpResultFail;
 
     switch (inst->mOPRight.mType) {
     case OP_CONST_STRING: { // 字符串是存在全局表中
@@ -1717,7 +1718,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
     case OP_VAR: {
         BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue, vm);
         if (!val) {
-            return 0;
+            return kOpResultFail;
         }
 
         ValueCopyNoName(left, val);
@@ -1731,7 +1732,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
     } break;
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 // 执行到ifend证明整个if elseif, else执行完毕，
@@ -1750,7 +1751,7 @@ static LInt HandleIfEnd(LVoid* ins, BoyiaVM* vm)
     if (inst) {
         vm->mEState->mPC = inst;
     }
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleJumpToIfTrue(LVoid* ins, BoyiaVM* vm)
@@ -1761,7 +1762,7 @@ static LInt HandleJumpToIfTrue(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mPC = inst + inst->mOPRight.mValue;
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 /* Execute an if statement. */
@@ -1784,7 +1785,7 @@ static LInt HandleLoopBegin(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     // push left => loop stack
     vm->mLoopStack[vm->mEState->mLoopSize++] = (LIntPtr)(inst + inst->mOPLeft.mValue);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleLoopIfTrue(LVoid* ins, BoyiaVM* vm)
@@ -1795,14 +1796,14 @@ static LInt HandleLoopIfTrue(LVoid* ins, BoyiaVM* vm)
     if (!value->mValue.mIntVal) {
         vm->mEState->mPC = inst + inst->mOPRight.mValue;
         vm->mEState->mLoopSize--;
-        return 1;
+        return kOpResultSuccess;
     }
 
     if (inst->mOPLeft.mValue) {
         vm->mEState->mPC = inst + inst->mOPLeft.mValue;
     }
 
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleJumpTo(LVoid* ins, BoyiaVM* vm)
@@ -1813,7 +1814,7 @@ static LInt HandleJumpTo(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mPC = inst - inst->mOPLeft.mValue;
     }
     //EngineLog("HandleJumpTo %d", 2);
-    return 1;
+    return kOpResultSuccess;
 }
 
 /* Execute a while loop. */
@@ -1877,27 +1878,27 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
     //EngineLog("HandleAdd left=%d \n", left->mValue.mIntVal);
     //EngineLog("HandleAdd right=%d \n", right->mValue.mIntVal);
     if (left->mValueType == BY_INT && right->mValueType == BY_INT) {
         right->mValue.mIntVal += left->mValue.mIntVal;
         BOYIA_LOG("HandleAdd result=%d", right->mValue.mIntVal);
-        return 1;
+        return kOpResultSuccess;
     }
 
     if (left->mValueType != BY_CLASS && right->mValueType != BY_CLASS) {
-        return 0;
+        return kOpResultFail;
     }
 
     if (GetBoyiaClassId(left) == kBoyiaString || GetBoyiaClassId(right) == kBoyiaString) {
         BOYIA_LOG("StringAdd Begin %d", 1);
         StringAdd(left, right, vm);
-        return 1;
+        return kOpResultSuccess;
     }
 
-    return 0;
+    return kOpResultFail;
 }
 
 static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
@@ -1906,15 +1907,15 @@ static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return 0;
+        return kOpResultFail;
 
     right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
     BOYIA_LOG("HandleSub R0=>%d", vm->mCpu->mReg0.mValue.mIntVal);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleMul(LVoid* ins, BoyiaVM* vm)
@@ -1924,17 +1925,17 @@ static LInt HandleMul(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
     BOYIA_LOG("HandleMul left=%d \n", left->mValue.mIntVal);
     BOYIA_LOG("HandleMul right=%d \n", right->mValue.mIntVal);
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return 0;
+        return kOpResultFail;
 
     right->mValue.mIntVal *= left->mValue.mIntVal;
     BOYIA_LOG("HandleMul result=%d \n", right->mValue.mIntVal);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleDiv(LVoid* ins, BoyiaVM* vm)
@@ -1944,17 +1945,17 @@ static LInt HandleDiv(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return 0;
+        return kOpResultFail;
 
     if (right->mValue.mIntVal == 0)
-        return 0;
+        return kOpResultFail;
 
     right->mValue.mIntVal = left->mValue.mIntVal / right->mValue.mIntVal;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleMod(LVoid* ins, BoyiaVM* vm)
@@ -1964,17 +1965,17 @@ static LInt HandleMod(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return 0;
+        return kOpResultFail;
 
     if (right->mValue.mIntVal == 0)
-        return 0;
+        return kOpResultFail;
 
     right->mValue.mIntVal = left->mValue.mIntVal % right->mValue.mIntVal;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleRelational(LVoid* ins, BoyiaVM* vm)
@@ -1984,40 +1985,40 @@ static LInt HandleRelational(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
     BOYIA_LOG("HandleLogic left=%d \n", left->mValue.mIntVal);
     BOYIA_LOG("HandleLogic right=%d \n", right->mValue.mIntVal);
 
-    LInt result = 0;
+    LInt result = kOpResultFail;
     switch (inst->mOPCode) {
     case kCmdNotRelation:
-        result = right->mValue.mIntVal ? 0 : 1;
+        result = right->mValue.mIntVal ? kOpResultFail : kOpResultSuccess;
         break;
     case kCmdLtRelation:
-        result = left->mValue.mIntVal < right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal < right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdLeRelation:
-        result = left->mValue.mIntVal <= right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal <= right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdGtRelation:
-        result = left->mValue.mIntVal > right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal > right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdGeRelation:
-        result = left->mValue.mIntVal >= right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal >= right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdEqRelation:
-        result = left->mValue.mIntVal == right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal == right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdNeRelation:
-        result = left->mValue.mIntVal != right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal != right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     }
 
     right->mValueType = BY_INT;
     right->mValue.mIntVal = result;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
@@ -2027,22 +2028,22 @@ static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return 0;
+        return kOpResultFail;
     }
 
-    LInt result = 0;
+    LInt result = kOpResultFail;
     switch (inst->mOPCode) {
     case kCmdAndLogic:
-        result = left->mValue.mIntVal && right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal && right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     case kCmdOrLogic:
-        result = left->mValue.mIntVal || right->mValue.mIntVal ? 1 : 0;
+        result = left->mValue.mIntVal || right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
         break;
     }
 
     right->mValueType = BY_INT;
     right->mValue.mIntVal = result;
-    return 1;
+    return kOpResultSuccess;
 }
 
 /* parser lib define */
@@ -2066,7 +2067,7 @@ static LInt HandlePush(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     ValueCopy(vm->mOpStack + (vm->mEState->mResultNum++), value);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
@@ -2075,12 +2076,12 @@ static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* result = GetOpValue(inst, OpRight, vm);
     if (!left || !result) {
-        return 0;
+        return kOpResultFail;
     }
     BoyiaValue* value = (BoyiaValue*)left->mNameKey;
     ValueCopyNoName(value, result);
     ValueCopy(&vm->mCpu->mReg0, value);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid CallNativeStatement(CompileState* cs, LInt idx)
@@ -2166,14 +2167,14 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
     // r0 -> lVal
     BoyiaValue* lVal = GetOpValue(inst, OpLeft, vm);
     if (!lVal) {
-        return 0;
+        return kOpResultFail;
     }
 
     // fetch value from inline cache
     BoyiaValue* result = GetInlineCache(inst->mCache, lVal);
     if (result) {
         ValueCopyWithKey(&vm->mCpu->mReg0, result);
-        return 1;
+        return kOpResultSuccess;
     }
 
     LUintPtr rVal = (LUintPtr)inst->mOPRight.mValue;
@@ -2181,10 +2182,10 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
     if (result) {
         // maybe function
         ValueCopyWithKey(&vm->mCpu->mReg0, result);
-        return 1;
+        return kOpResultSuccess;
     }
 
-    return 0;
+    return kOpResultFail;
 }
 
 // According to reg0, get reg0 obj's prop
@@ -2243,7 +2244,7 @@ static LInt HandleConstString(LVoid* ins, BoyiaVM* vm)
     BoyiaStr* str = &vm->mStrTable->mTable[inst->mOPLeft.mValue];
 
     CreateConstString(&vm->mCpu->mReg0, str->mPtr, str->mLen, vm);
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid Atom(CompileState* cs)

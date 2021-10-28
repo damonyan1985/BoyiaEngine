@@ -173,6 +173,7 @@ LInt BoyiaRuntime::findNativeFunc(LUintPtr key) const
 
     return -1;
 }
+
 LInt BoyiaRuntime::callNativeFunction(LInt idx) const
 {
     return (*m_nativeFunTable[idx].mAddr)(m_vm);
