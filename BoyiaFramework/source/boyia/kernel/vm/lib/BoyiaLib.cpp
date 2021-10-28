@@ -478,14 +478,27 @@ LInt loadDataFromNative(LVoid* vm)
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(2, vm);
-    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(
-        callback, obj, 
-        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    
     BoyiaStr* urlStr = GetStringBuffer(val);
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
+    
+    boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(
+        callback, obj,
+        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    
+    // 默认是get请求，如果参数包含params，按照params中包含的属性进行处理
+    if (GetLocalSize(vm) > 3) {
+        // params是一个json串
+        BoyiaValue* params = (BoyiaValue*)GetLocalValue(3, vm);
+        if (params->mValue.mStrVal.mPtr) {
+            BoyiaStr* str = GetStringBuffer(params);
+            String paramsStr(_CS(convertMStr2Str(str)), LTrue, str->mLen);
+            network->load(strUrl, paramsStr);
+        }
+    }
+    
     network->load(strUrl);
-
     return kOpResultSuccess;
 }
 

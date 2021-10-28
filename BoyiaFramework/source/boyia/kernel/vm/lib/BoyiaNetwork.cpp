@@ -21,6 +21,31 @@ LVoid BoyiaNetwork::load(const String& url)
     yanbo::AppManager::instance()->network()->loadUrl(url, this, LFalse);
 }
 
+LVoid BoyiaNetwork::load(const String& url, const String& params)
+{
+    JSONParser parser(params, LFalse);
+    cJSON* header = parser.get("header");
+    cJSON* body = parser.get("body");
+    const char* method = parser.get("method")->valuestring;
+    
+    yanbo::NetworkBase* network = yanbo::AppManager::instance()->network();
+    // 设置请求头
+    if (header) {
+        cJSON* child = header->child;
+        while (child) {
+            network->putHeader(_CS(child->string), _CS(child->valuestring));
+            child = child->next;
+        }
+    }
+    
+    if (strcmp(method, "get") == 0) {
+        network->loadUrl(url, this, LFalse);
+    } else if (strcmp(method, "post") == 0) {
+        network->setPostData(new String(_CS(body->valuestring)));
+        network->postData(url, this, LFalse);
+    }
+}
+
 LVoid BoyiaNetwork::onDataReceived(const LByte* data, LInt size)
 {
     LByte* destData = new LByte[size];

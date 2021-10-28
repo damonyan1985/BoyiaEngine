@@ -1,5 +1,19 @@
+class NetParams {
+    prop method;
+    prop headers;
+    prop body;
+}
+
 class Network {
-    fun load(url, callback, obj) {
-        BY_LoadData(url, callback, obj);
+    // url, 请求的链接
+    // callback, 回调函数
+    // obj, callback所绑定的对象
+    // params, NetParams对象, 此参数可选
+    fun load(url, callback, obj, params) {
+        var paramStr = null;
+        if (params != null) {
+            paramStr = Util.toJson(params);
+        }
+        BY_LoadData(url, callback, obj, paramStr);
     }
 }

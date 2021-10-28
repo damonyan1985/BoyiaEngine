@@ -15,7 +15,9 @@ public:
 
 public:
     LVoid load(const String& url);
-
+    LVoid load(const String& url, const String& params);
+    // 设置请求参数
+    
     virtual LVoid onDataReceived(const LByte* data, LInt size);
     virtual LVoid onStatusCode(LInt statusCode);
     virtual LVoid onFileLen(LInt len);
@@ -29,6 +31,7 @@ private:
     BoyiaValue m_callback;
     yanbo::StringBuilder m_builder;
     OwnerPtr<String> m_data;
+    String m_params;
 };
 }
 #endif

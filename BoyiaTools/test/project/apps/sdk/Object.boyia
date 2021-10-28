@@ -1,5 +1,5 @@
 class Object {
-    fun fetch(url, callback) {
-        Network.load(url, callback, this);
+    fun fetch(url, callback, params) {
+        Network.load(url, callback, this, params);
     }
 }

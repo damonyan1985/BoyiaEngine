@@ -30,7 +30,7 @@ class MainViewController extends ViewController {
 
         //Util.showToast("test boyia callstaticmethod");
         //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
-        this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback);
+        this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
 
         Util.log("test super begin");
         super.test();
