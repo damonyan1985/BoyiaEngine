@@ -25,7 +25,7 @@
 
 @implementation HttpEngineIOS
 
--(void) loadUrl: (HttpMethod) method url: (NSString*) url callback:(id<HttpCallback>)cb {
+-(void) loadUrl: (HttpMethod) method url:(NSString*)url headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb {
     //self.receiveData = [NSMutableData new];
     NSURL *reqUrl = [NSURL URLWithString:url];
     // 初始化请求对象
@@ -42,6 +42,10 @@
         } break;
         default:
             break;
+    }
+    
+    if (headers) {
+        [request setAllHTTPHeaderFields:headers];
     }
     
     // 使用默认配置
@@ -74,9 +78,9 @@
     [task resume];
 }
 
--(void)loadUrlWithData: (HttpMethod) method url:(const char *)url callback:(id<HttpCallback>)cb{
+-(void)loadUrlWithData: (HttpMethod) method url:(const char *)url headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb{
     NSString* nsUrl = [[NSString alloc] initWithUTF8String: url];
-    [self loadUrl:method url:nsUrl callback:cb];
+    [self loadUrl:method url:nsUrl headers:headers callback:cb];
 }
 
 -(void)setData: (const char*)data size:(NSInteger)size {

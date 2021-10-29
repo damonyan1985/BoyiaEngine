@@ -64,6 +64,9 @@ ImageLoaderIOS* ImageLoaderIOS::instance()
 
 LVoid ImageLoaderIOS::loadImage(const String& url, LInt clientId)
 {
+    // 清除HTTP请求头
+    AppManager::instance()->network()->clearHeaders();
+    // 开始加载图片
     AppManager::instance()->network()->loadUrl(url, new ImageLoaderClient(clientId), LFalse);
 }
 }

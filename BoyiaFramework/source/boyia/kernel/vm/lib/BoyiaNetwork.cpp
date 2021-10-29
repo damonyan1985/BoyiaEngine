@@ -24,7 +24,7 @@ LVoid BoyiaNetwork::load(const String& url)
 LVoid BoyiaNetwork::load(const String& url, const String& params)
 {
     JSONParser parser(params, LFalse);
-    cJSON* header = parser.get("header");
+    cJSON* header = parser.get("headers");
     cJSON* body = parser.get("body");
     const char* method = parser.get("method")->valuestring;
     

@@ -20,6 +20,8 @@
 #include "PlatformBridge.h"
 #include "OwnerPtr.h"
 
+#define STR_TO_OCSTR(str) ([[NSString alloc] initWithUTF8String: GET_STR(str)])
+
 @interface LoaderClient : NSObject<HttpCallback>
 
 -(instancetype)initWithClient:(yanbo::NetworkClient*)client;
@@ -127,6 +129,23 @@ public:
         loadUrl(url, client, LTrue);
     }
     
+    NSMutableDictionary* httpHeaderImpl() const
+    {
+        NSMutableDictionary* headers = nil;
+        if (m_headers.size()) {
+            headers = [NSMutableDictionary new];
+            NetworkMap::Iterator iter = m_headers.begin();
+            NetworkMap::Iterator iterEnd = m_headers.end();
+            for (; iter != iterEnd; ++iter) {
+                const String& key = (*iter)->getKey();
+                const String& value = (*iter)->getValue();
+                [headers setObject:STR_TO_OCSTR(key) forKey:STR_TO_OCSTR(value)];
+            }
+        }
+        
+        return headers;
+    }
+    
     virtual LVoid loadUrl(const String& url, NetworkClient* client, LBool isWait)
     {
         // schema如果是boyia://, 则进行文件请求
@@ -141,7 +160,7 @@ public:
         }
         
         // 网络请求
-        [m_engine loadUrlWithData:kHttpGet url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];
+        [m_engine loadUrlWithData:kHttpGet url:GET_STR(url) headers:httpHeaderImpl() callback:[[LoaderClient alloc] initWithClient:client]];
     }
 
     virtual LVoid postData(const String& url, NetworkClient* client)
@@ -158,7 +177,7 @@ public:
         
         [m_engine setData:(const char*)m_data->GetBuffer() size:m_data->GetLength()];
         // 网络请求
-        [m_engine loadUrlWithData:kHttpPost url:GET_STR(url) callback:[[LoaderClient alloc] initWithClient:client]];
+        [m_engine loadUrlWithData:kHttpPost url:GET_STR(url) headers:httpHeaderImpl() callback:[[LoaderClient alloc] initWithClient:client]];
     }
     
     virtual LVoid cancel() {};
