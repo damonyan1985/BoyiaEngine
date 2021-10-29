@@ -27,6 +27,7 @@ enum ErrorMsg {
     VALUE_NOT_OBJECT,
     LPTR_EXPECTED,
     RPTR_EXPECTED,
+    NO_PROP,
 };
 
 LVoid SntxError(LInt error, LInt lineNum);

@@ -18,6 +18,7 @@ public:
 
 protected:
     virtual void run() LFinal;
+    
     MessageQueue* m_queue;
     LBool m_continue;
 };

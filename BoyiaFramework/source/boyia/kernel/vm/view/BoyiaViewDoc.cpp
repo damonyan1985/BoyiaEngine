@@ -25,7 +25,7 @@ BoyiaViewDoc::~BoyiaViewDoc()
 
 LVoid BoyiaViewDoc::loadHTML(const String& url)
 {
-    KFORMATLOG("BoyiaViewDoc::loadHTML begin %d", 1);
+    BOYIA_LOG("BoyiaViewDoc::loadHTML begin %d", 1);
     m_doc = new HtmlDocument();
     m_doc->setView(runtime()->view());
 
@@ -34,7 +34,7 @@ LVoid BoyiaViewDoc::loadHTML(const String& url)
 
     DOMBuilder* dom = runtime()->domMap()->get(HashString(url, LFalse));
     if (!dom) {
-        KFORMATLOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
+        BOYIA_LOG("BoyiaViewDoc::loadHTML first create DOM %d", 1);
         dom = new DOMBuilder();
         runtime()->domMap()->put(url, dom);
 

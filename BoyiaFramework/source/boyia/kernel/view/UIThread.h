@@ -84,7 +84,7 @@ public:
 
     LVoid platformViewUpdate(const String& id);
     LVoid handleFlingEvent(LFlingEvent* evt);
-
+    
 private:
     LVoid reset(Message* msg);
     LVoid flush();

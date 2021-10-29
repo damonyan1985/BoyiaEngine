@@ -30,8 +30,8 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     
     yanbo::NetworkBase* network = yanbo::AppManager::instance()->network();
     network->clearHeaders();
-    // 设置请求头
-    if (header) {
+    // 设置请求头, header被要求是对象
+    if (header && header->type == cJSON_Object) {
         cJSON* child = header->child;
         while (child) {
             network->putHeader(_CS(child->string), _CS(child->valuestring));
@@ -42,7 +42,10 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     if (strcmp(method, "get") == 0) {
         network->loadUrl(url, this, LFalse);
     } else if (strcmp(method, "post") == 0) {
-        network->setPostData(new String(_CS(body->valuestring)));
+        if (body && body->type == cJSON_String) {
+            BOYIA_LOG("BoyiaNetwork::load post body=%s", body->valuestring);
+            network->setPostData(new String(_CS(body->valuestring)));
+        }
         network->postData(url, this, LFalse);
     }
 }
@@ -79,11 +82,11 @@ LVoid BoyiaNetwork::onLoadFinished()
 
 LVoid BoyiaNetwork::callback()
 {
-    BOYIA_LOG("BoyiaNetwork::onLoadFinished %d", 1);
+    BOYIA_LOG("BoyiaNetwork::callback %d", 1);
     BoyiaValue value;
     CreateNativeString(&value,
         (LInt8*)m_data->GetBuffer(), m_data->GetLength(), m_runtime->vm());
-    BOYIA_LOG("BoyiaNetwork::onLoadFinished, data=%s", (const char*)m_data->GetBuffer());
+    BOYIA_LOG("BoyiaNetwork::callback, data=%s", (const char*)m_data->GetBuffer());
     // 释放字符串控制权
     m_data->ReleaseBuffer();
     // 保存当前栈

@@ -26,7 +26,16 @@ namespace yanbo {
 
 class Condition {
 public:
-    Condition() { }
+    Condition()
+    {
+        pthread_cond_init(&condition, NULL);
+    }
+    
+    ~Condition()
+    {
+        pthread_cond_destroy(&condition);
+    }
+    
     pthread_t thread;
     pthread_cond_t condition;
 };

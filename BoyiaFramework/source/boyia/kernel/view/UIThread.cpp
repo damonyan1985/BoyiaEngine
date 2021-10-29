@@ -159,7 +159,7 @@ LVoid UIThread::handleMessage(Message* msg)
 
         LayoutPoint topLeft = view->getAbsoluteContainerTopLeft();
         LInt y = topLeft.iY + view->getYpos();
-        KFORMATLOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
+        BOYIA_LOG("InputView y=%d and keyboardHeight=%d", y, msg->arg1);
         if (y < PixelRatio::logicHeight() - msg->arg1) {
             return;
         }

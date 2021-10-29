@@ -2185,6 +2185,7 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
         return kOpResultSuccess;
     }
 
+    RuntimeError(rVal, NO_PROP, vm);
     return kOpResultFail;
 }
 
