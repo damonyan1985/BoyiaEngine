@@ -29,6 +29,8 @@ private:
     LRect m_clientRect;
     AppLoader* m_loader;
     UIThread* m_uiThread;
+    // network只能在UI线程中使用
+    // 其他线程中使用需要自己创建loader
     NetworkBase* m_network;
 };
 }

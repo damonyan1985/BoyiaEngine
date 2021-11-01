@@ -248,7 +248,7 @@ private:
         }
 
         // 将目前控件中的文本设置到textInputView中
-        [self.textInputView insertText:text];
+        [self.textInputView resetText:text];
         // 要对模拟器进行设置才能弹出键盘，I/O -> keyboard -> toggle software keyboard
         if ([self.textInputView becomeFirstResponder]) {
             NSLog(@"result = true");

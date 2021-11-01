@@ -190,8 +190,14 @@ NSRange RangeForCharactersInRange(NSString* text, NSRange range) {
     return [_selectedTextRange copy];
 }
 
+-(void)resetText:(nonnull NSString *)text {
+    //[self replaceRange:_selectedTextRange withText:@""];
+    [self replaceRangeLocal:NSMakeRange(0, self.text.length) withText:@""];
+    [self replaceRange:_selectedTextRange withText:text];
+}
+
 // 键盘输入时会调用
-- (void)insertText:(nonnull NSString *)text {
+-(void)insertText:(nonnull NSString *)text {
     [self replaceRange:_selectedTextRange withText:text];
     [self.renderer setInputText:self.text];
 }
