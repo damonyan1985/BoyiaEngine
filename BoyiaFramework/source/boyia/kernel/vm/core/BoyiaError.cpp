@@ -38,12 +38,12 @@ static const char* FindErrorInfo(LInt error)
 // error
 LVoid SntxError(LInt error, LInt lineNum)
 {
-    BOYIA_LOG("BoyiaVM Error=%s lineno=%d", FindErrorInfo(error), lineNum);
+    BOYIA_LOG("BoyiaVM CompileError=%s lineno=%d", FindErrorInfo(error), lineNum);
 }
 
 LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum, LVoid* vm)
 {
     BoyiaStr name;
     GetIdentName(key, &name, vm);
-    BOYIA_LOG("BoyiaVM Error=%s lineno=%d key=%s", FindErrorInfo(error), lineNum, name.mPtr);
+    BOYIA_LOG("BoyiaVM RuntimeError=%s lineno=%d key=%s", FindErrorInfo(error), lineNum, name.mPtr);
 }

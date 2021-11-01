@@ -14,8 +14,6 @@
 
 -(CAMetalLayer*)metalLayer;
 
-//@property (nonatomic, strong) UIView *inputView;
-
 @end
 
 

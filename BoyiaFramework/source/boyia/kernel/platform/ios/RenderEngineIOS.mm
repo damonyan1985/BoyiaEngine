@@ -160,31 +160,6 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
         uniforms.uType = 0;
         m_uniforms.addElement(uniforms);
     }
-#if 0
-    // left, bottom
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-
-    // right, bottom
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-    
-    // right, top
-    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-    
-    // left, top
-    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
-    attr.aPosition = {x, y, 0, 1};
-    attr.aColor = METAL_COLOR(color);
-    m_vertexs.addElement(attr);
-#endif
 }
 
 LVoid RenderEngineIOS::setBuffer()

@@ -30,6 +30,15 @@ char* convertMStr2Str(BoyiaStr* str)
     return newStr;
 }
 
+// 处理布尔类型返回
+static LInt resultBool(LInt result, LVoid* vm) {
+    BoyiaValue value;
+    value.mValueType = BY_INT;
+    value.mValue.mIntVal = result;
+    SetNativeResult(&value, vm);
+    return kOpResultSuccess;
+}
+
 LInt getFileContent(LVoid* vm)
 {
     // 0 索引第一个参数
@@ -652,12 +661,17 @@ LInt instanceOfClass(LVoid* vm)
     BoyiaValue* cls = (BoyiaValue*)GetLocalValue(1, vm);
 
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    LInt result = 0;
+    
+    if (obj->mValueType != BY_CLASS || !fun) {
+        return resultBool(result, vm);
+    }
+    
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
 
     BoyiaFunction* judgeFun = (BoyiaFunction*)cls->mValue.mObj.mPtr;
     BoyiaValue* judgeCls = (BoyiaValue*)judgeFun->mFuncBody;
 
-    LInt result = 0;
     while (baseCls) {
         if (baseCls == judgeCls) {
             result = 1;
@@ -666,12 +680,8 @@ LInt instanceOfClass(LVoid* vm)
 
         baseCls = (BoyiaValue*)baseCls->mValue.mObj.mSuper;
     }
-
-    BoyiaValue value;
-    value.mValueType = BY_INT;
-    value.mValue.mIntVal = result;
-    SetNativeResult(&value, vm);
-    return kOpResultSuccess;
+    
+    return resultBool(result, vm);
 }
 
 LInt setImageUrl(LVoid* vm)

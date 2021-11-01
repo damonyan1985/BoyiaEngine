@@ -136,7 +136,7 @@ void StyleParser::parseCss(InputStream& is)
         delete selectorGroup;
     }
 
-    KFORMATLOG("ParseCSS = %s", "END");
+    BOYIA_LOG("ParseCSS = %s", "END");
 }
 
 PropertyMap* StyleParser::parseDeclarations(InputStream& is)
@@ -219,7 +219,7 @@ void StyleParser::addSelectorGroup(SelectorGroup* selectors, PropertyMap* declar
         KSTRLOG8(property);
         KSTRLOG8(value);
         addProperty(rule, property, value);
-        KFORMATLOG("StyleParser:: PropertyValue = %s", (const char*)value.GetBuffer());
+        BOYIA_LOG("StyleParser:: PropertyValue = %s", GET_STR(value));
     }
 
     if (selectors->size()) {
@@ -234,7 +234,7 @@ LInt StyleParser::getCssColor(const String& colorValue)
 {
     if (colorValue.GetLength() == 4) //Shorthand Hexadecimal Colors e.g #fff
     {
-        KFORMATLOG("getCssColor = %s", (const char*)colorValue.GetBuffer());
+        BOYIA_LOG("getCssColor = %s", (const char*)colorValue.GetBuffer());
 
         LUint8* colorBuffer = NEW_BUFFER(LUint8, 7);
         colorBuffer[0] = colorValue.CharAt(0);
@@ -405,7 +405,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             color = COLOR_PINK;
         }
 
-        KFORMATLOG("color tag = %d and color = %x", cssTag, color);
+        BOYIA_LOG("color tag = %d and color = %x", cssTag, color);
         rule->addProperty(cssTag, color);
     } break;
     case StyleTags::FONT_SIZE: {

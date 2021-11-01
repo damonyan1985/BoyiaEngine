@@ -40,9 +40,9 @@ LVoid ImageView::paint(LGraphicsContext& gc)
         LayoutPoint topLeft = getAbsoluteContainerTopLeft();
         LInt x = topLeft.iX + getXpos();
         LInt y = topLeft.iY + getYpos();
-        KFORMATLOG("ImageView::paint topLeft.iX=%d", topLeft.iY);
-        KFORMATLOG("ImageView::paint getXpos()=%d", getXpos());
-        KFORMATLOG("ImageView::paint x=%d", x);
+        BOYIA_LOG("ImageView::paint topLeft.iX=%d", topLeft.iY);
+        BOYIA_LOG("ImageView::paint getXpos()=%d", getXpos());
+        BOYIA_LOG("ImageView::paint x=%d", x);
 
         if (getStyle()->bgColor.m_alpha != 0) {
             KLOG("ImageView::paint drawBitmap begin");
@@ -67,10 +67,10 @@ LVoid ImageView::layoutInline(RenderContext& rc)
     m_height = getStyle()->height > 0 ? (getStyle()->height * getStyle()->scale) : getParent()->getHeight();
 
     //rc.addLineItem(this);
-    KFORMATLOG("ImageView::layout handleBefore getXpos()=%d rc.X=%d", getXpos(), rc.getX());
+    BOYIA_LOG("ImageView::layout handleBefore getXpos()=%d rc.X=%d", getXpos(), rc.getX());
     handleXYPos(rc);
 
-    KFORMATLOG("ImageView::layout getXpos()=%d rc.X=%d", getXpos(), getStyle()->left);
+    BOYIA_LOG("ImageView::layout getXpos()=%d rc.X=%d", getXpos(), getStyle()->left);
     if (m_x + m_width > rc.getMaxWidth()) {
         rc.addY(m_height);
         rc.newLine(this);
@@ -85,8 +85,8 @@ LVoid ImageView::layoutInline(RenderContext& rc)
         m_y = m_y - getParent()->getYpos();
     }
 
-    KFORMATLOG("Image width=%d", m_width);
-    KFORMATLOG("Image height=%d", m_height);
+    BOYIA_LOG("Image width=%d", m_width);
+    BOYIA_LOG("Image height=%d", m_height);
 
     if (m_src.GetLength()) {
         loadImage(m_src);

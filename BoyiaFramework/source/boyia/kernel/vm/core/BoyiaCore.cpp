@@ -2084,6 +2084,7 @@ static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+// 调用native函数时不需要保存函数指针
 static LVoid CallNativeStatement(CompileState* cs, LInt idx)
 {
     NextToken(cs);
@@ -2185,7 +2186,7 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
         return kOpResultSuccess;
     }
 
-    RuntimeError(rVal, NO_PROP, vm);
+    RuntimeError(rVal, RUNTIME_NO_PROP, vm);
     return kOpResultFail;
 }
 

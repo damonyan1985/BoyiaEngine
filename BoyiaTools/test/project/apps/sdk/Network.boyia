@@ -11,6 +11,12 @@ class Network {
     // params, NetParams对象, 此参数可选
     fun load(url, callback, obj, params) {
         var paramStr = null;
+        // 如果params不是NetParams类型的则不选择使用
+        if (!Util.instanceof(params, NetParams)) {
+            params = null;
+            Util.log("params is not the object of NetParams params=" + params);
+        }
+        
         if (params != null) {
             paramStr = Util.toJson(params);
         }
