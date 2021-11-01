@@ -7,6 +7,7 @@
 
 #import "SceneDelegate.h"
 #import "BoyiaViewController.h"
+#import "app-Swift.h"
 
 @interface SceneDelegate ()
 
@@ -23,7 +24,9 @@
     UIWindowScene* windowScene = (UIWindowScene*)scene;
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     self.window.frame = windowScene.coordinateSpace.bounds;
-    self.window.rootViewController = [BoyiaViewController new];
+    //self.window.rootViewController = [BoyiaViewController new];
+    //self.window.rootViewController = [SplashViewController new];
+    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[SplashViewController new]];
     [self.window makeKeyAndVisible];
 }
 
