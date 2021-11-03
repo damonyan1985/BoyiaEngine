@@ -69,8 +69,13 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 	    INTERNET_FLAG_SECURE |
 	    INTERNET_FLAG_RELOAD;
 
+    wstring pathUrl = uri.path;
+    if (uri.query.length() > 0) {
+        pathUrl += L"?" + uri.query;
+    }
+
     // ´ò¿ªÇëÇó
-    HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", uri.path.c_str(), NULL,
+    HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", pathUrl.c_str(), NULL,
 	    NULL, NULL,
 	    dwOpenRequestFlags, dwConnectContext);
 
@@ -112,7 +117,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         InternetSetOption(request, INTERNET_OPTION_SECURITY_FLAGS,
 	        &dwFlags, sizeof(dwFlags));
 
-        request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", uri.path.c_str(), NULL,
+        request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", pathUrl.c_str(), NULL,
 	        NULL, NULL,
 	        dwOpenRequestFlags, dwConnectContext);
     }
