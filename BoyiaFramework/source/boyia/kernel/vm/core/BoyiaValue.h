@@ -9,6 +9,7 @@ enum KeyWord {
     BY_INT,
     BY_STRING,
     BY_FUNC,
+    BY_NAV_FUNC,
     BY_NAVCLASS,
     BY_CLASS,
     BY_EXTEND,
@@ -38,7 +39,8 @@ enum BuiltinId {
     kBoyiaThis = 1,
     kBoyiaSuper,
     kBoyiaString,
-    kBoyiaArray
+    kBoyiaArray,
+    kBoyiaMap,
 };
 
 // 字符串类型含义
@@ -146,6 +148,8 @@ LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
+
+LVoid BuiltinMapClass(LVoid* vm);
 
 LVoid SystemGC(LVoid* vm);
 #endif

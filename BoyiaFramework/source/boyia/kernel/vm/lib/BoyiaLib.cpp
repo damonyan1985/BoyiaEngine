@@ -761,7 +761,7 @@ static cJSON* convertObjToJson(BoyiaValue* obj, LBool isArray, LVoid* vm)
         } break;
         case BY_INT: {
             if (isArray) {
-                // add number item to json object
+                // add number item to json array
                 cJSON_AddItemToArray(jsonObj,
                     cJSON_CreateNumber(prop->mValue.mIntVal));
             } else {

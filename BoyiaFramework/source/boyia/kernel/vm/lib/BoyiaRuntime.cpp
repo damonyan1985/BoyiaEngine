@@ -97,12 +97,14 @@ LVoid BoyiaRuntime::init()
     m_idCreator->genIdentByStr("super", 5);
     m_idCreator->genIdentByStr("String", 6);
     m_idCreator->genIdentByStr("Array", 5);
+    m_idCreator->genIdentByStr("Map", 3);
     // end builtins id
 
     initNativeFunction();
 
     // add builtin classes
     BuiltinStringClass(m_vm);
+    BuiltinMapClass(m_vm);
 }
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)

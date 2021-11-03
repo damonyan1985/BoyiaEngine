@@ -619,7 +619,7 @@ static LVoid ExecInstruction(BoyiaVM* vm)
             LInt result = handler(es->mPC, vm);
             if (result == 0) { // 指令运行出错跳出循环
                 break;
-            } else if (es->mPC && result == 2) { // 函数跳转
+            } else if (es->mPC && result == kOpResultJumpFun) { // 函数跳转
                 continue;
             } // 指令计算结果为1即为正常情况
         }
@@ -1613,7 +1613,16 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
-
+    // 内置类产生的对象，调用其方法
+    if (value->mValueType == BY_NAV_FUNC) {
+        // 将对象作为最后一个参数传入
+        LocalPush(vm->mEState->mClass, vm);
+        NativePtr navFun = (NativePtr)func->mFuncBody;
+        // native函数没有instruction，所以pc置为null
+        vm->mEState->mPC = kBoyiaNull;
+        return navFun(vm);
+    }
+    
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
     vm->mEState->mPC = vm->mEState->mContext->mBegin;
 

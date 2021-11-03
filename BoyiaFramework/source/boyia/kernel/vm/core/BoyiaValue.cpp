@@ -14,6 +14,7 @@
 #include "SalLog.h"
 #include "StringUtils.h"
 #include "SystemUtil.h"
+#include "BoyiaCore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #if ENABLE(BOYIA_WINDOWS)
@@ -219,6 +220,11 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     KLOG("StringAdd End");
 }
 
+LUintPtr GenIdentByStr(const LInt8* str, LVoid* vm)
+{
+    return GetRuntime(vm)->idCreator()->genIdentByStr(str, (LInt)strlen(str));
+}
+
 LUintPtr GenIdentByStr(const LInt8* str, LInt len, LVoid* vm)
 {
     return GetRuntime(vm)->idCreator()->genIdentByStr(str, len);
@@ -403,7 +409,6 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 }
 
 // Boyia builtins
-// String class builtin
 // 获取唯一标识class的class id
 LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 {
@@ -412,6 +417,7 @@ LUintPtr GetBoyiaClassId(BoyiaValue* obj)
     return clzz->mNameKey;
 }
 
+// String class builtin
 // 内置Boyia的String类
 LVoid BuiltinStringClass(LVoid* vm)
 {
@@ -482,3 +488,45 @@ BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
     GCAppendRef(objBody, BY_CLASS, vm);
     return objBody;
 }
+
+// 内置Map Class builtin
+LInt BoyiaMapPut(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 索引1，2为两个传入的参数，
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    BoyiaValue* key = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaStr* keyStr = GetStringBuffer(key);
+    
+    BoyiaValue* value = (BoyiaValue*)GetLocalValue(2, vm);
+    
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    // 设置key和value
+    ValueCopy(fun->mParams + fun->mParamSize, value);
+    fun->mParams[fun->mParamSize++].mNameKey = GenIdentifier(keyStr, vm);
+    
+    return kOpResultSuccess;
+}
+
+LVoid BuiltinMapClass(LVoid* vm)
+{
+    BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaMap, vm);
+    BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
+
+    // map api
+    LInt paramSize = 2;
+    // put function
+    BoyiaFunction* function = NEW(BoyiaFunction, vm);
+    function->mParams = NEW_ARRAY(BoyiaValue, paramSize, vm);
+    function->mParamSize = paramSize;
+    // 实际调用的函数
+    function->mFuncBody = (LIntPtr)BoyiaMapPut;
+    
+    BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
+    putFuncVal->mValueType = BY_NAV_FUNC;
+    putFuncVal->mNameKey = GenIdentByStr("put", vm);
+    putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+}
+

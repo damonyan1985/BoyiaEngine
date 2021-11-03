@@ -26,10 +26,16 @@ build phases---->Copy Bundle Resource---->将编译好的bundle添加进来
 如果需要添加头文件引用目录，使用Build Settings中的Header Search Path选项进行添加
 ```
 
-3. Swift调用OC
+3. OC调用Swift
 ```
 Defines Module改为YES, 会自动生成app-Swift.h
-该自动生成的文件在/Library/Developer/Xcode/DerivedData中
+该自动生成的文件在/Library/Developer/Xcode/DerivedData中,
+实际原理就是，swift会编译成OC能够调用的接口
+```
+
+4. Swift调用OC
+```
+自动生成app-Bridging-Header.h
 ```
 
 ## Android环境变量配置

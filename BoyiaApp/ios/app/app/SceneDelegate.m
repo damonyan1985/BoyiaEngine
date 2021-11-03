@@ -16,7 +16,7 @@
 @implementation SceneDelegate
 
 // 此处添加根视图控制器
-- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
+-(void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
@@ -24,14 +24,12 @@
     UIWindowScene* windowScene = (UIWindowScene*)scene;
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     self.window.frame = windowScene.coordinateSpace.bounds;
-    //self.window.rootViewController = [BoyiaViewController new];
-    //self.window.rootViewController = [SplashViewController new];
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[SplashViewController new]];
     [self.window makeKeyAndVisible];
 }
 
 
-- (void)sceneDidDisconnect:(UIScene *)scene {
+-(void)sceneDidDisconnect:(UIScene *)scene {
     // Called as the scene is being released by the system.
     // This occurs shortly after the scene enters the background, or when its session is discarded.
     // Release any resources associated with this scene that can be re-created the next time the scene connects.

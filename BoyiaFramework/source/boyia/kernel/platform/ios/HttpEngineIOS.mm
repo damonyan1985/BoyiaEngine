@@ -45,6 +45,7 @@
     }
     
     if (headers) {
+        NSLog(@"HttpHeaders: %@",headers);
         [request setAllHTTPHeaderFields:headers];
     }
     

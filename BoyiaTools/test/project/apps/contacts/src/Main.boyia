@@ -33,12 +33,15 @@ class MainViewController extends ViewController {
         this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
         Util.log("test super begin");
         super.test();
+
         
         var params = new(NetParams);
         Util.log("NetParams0");
         params.method = "post";
         Util.log("NetParams1");
-        params.headers = "abcd";
+        params.headers = new(Map);
+        params.headers.put("Content-Type", "application/json");
+        params.headers.put("token", "123456");
         Util.log("NetParams2");
         params.body = "mybody";
         this.fetch("https://www.baidu.com", this.testCallback, params);
