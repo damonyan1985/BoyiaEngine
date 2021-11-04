@@ -668,7 +668,8 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm)
         BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
         LInt idx = func->mParamSize;
         while (idx--) {
-            if (func->mParams[idx].mValueType != BY_FUNC) {
+            LUint8 type = func->mParams[idx].mValueType;
+            if (type != BY_FUNC && type != BY_NAV_FUNC) {
                 ValueCopy(newFunc->mParams + newFunc->mParamSize++, func->mParams + idx);
             }
         }
@@ -1635,7 +1636,7 @@ static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
     LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
-    if (value->mValueType == BY_FUNC) {
+    if (value->mValueType == BY_FUNC) { // BY_NAV_FUNC不需要对参数名进行赋值
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
             return kOpResultSuccess;

@@ -53,7 +53,7 @@
     NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
     
     // 创建操作队列
-    NSOperationQueue *queue = [NSOperationQueue new];
+    NSOperationQueue* queue = [NSOperationQueue new];
     
     HttpEngineDelegate* delegate = [HttpEngineDelegate new];
     delegate.callback = cb;

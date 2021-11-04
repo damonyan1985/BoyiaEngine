@@ -517,16 +517,19 @@ LVoid BuiltinMapClass(LVoid* vm)
 
     // map api
     LInt paramSize = 2;
-    // put function
-    BoyiaFunction* function = NEW(BoyiaFunction, vm);
-    function->mParams = NEW_ARRAY(BoyiaValue, paramSize, vm);
-    function->mParamSize = paramSize;
-    // 实际调用的函数
-    function->mFuncBody = (LIntPtr)BoyiaMapPut;
-    
-    BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
-    putFuncVal->mValueType = BY_NAV_FUNC;
-    putFuncVal->mNameKey = GenIdentByStr("put", vm);
-    putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+    {
+        // put function implementation begin
+        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+        function->mParams = NEW_ARRAY(BoyiaValue, paramSize, vm);
+        function->mParamSize = paramSize;
+        // 实际调用的函数
+        function->mFuncBody = (LIntPtr)BoyiaMapPut;
+        
+        BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
+        putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+        putFuncVal->mNameKey = GenIdentByStr("put", vm);
+        putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        // put function implementation end
+    }
 }
 
