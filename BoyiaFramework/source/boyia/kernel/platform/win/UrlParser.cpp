@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <functional>
+#include <iterator>
 
 namespace yanbo
 {
