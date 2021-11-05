@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C4CA5FB2735301500C8622F /* core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E226CF835700946197 /* AppDelegate.m */; };
 		4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E526CF835700946197 /* SceneDelegate.m */; };
 		4C7AE7E926CF835700946197 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E826CF835700946197 /* ViewController.m */; };
@@ -18,6 +19,19 @@
 		4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4C4CA5FA2735300800C8622F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C4CA5FB2735301500C8622F /* core.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4C7AE7DE26CF835700946197 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +121,7 @@
 				4C7AE7DA26CF835700946197 /* Sources */,
 				4C7AE7DB26CF835700946197 /* Frameworks */,
 				4C7AE7DC26CF835700946197 /* Resources */,
+				4C4CA5FA2735300800C8622F /* CopyFiles */,
 			);
 			buildRules = (
 			);

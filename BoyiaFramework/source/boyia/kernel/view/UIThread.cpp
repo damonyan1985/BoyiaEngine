@@ -187,7 +187,7 @@ LVoid UIThread::handleMessage(Message* msg)
     case kUiDestory: {
         //m_context.destroyGL();
         m_continue = LFalse;
-    }
+    } break;
     case kUiReset: {
         reset(msg);
     } break;
