@@ -139,7 +139,7 @@ public:
             for (; iter != iterEnd; ++iter) {
                 const String& key = (*iter)->getKey();
                 const String& value = (*iter)->getValue();
-                [headers setObject:STR_TO_OCSTR(key) forKey:STR_TO_OCSTR(value)];
+                [headers setObject:STR_TO_OCSTR(value) forKey:STR_TO_OCSTR(key)];
             }
         }
         
