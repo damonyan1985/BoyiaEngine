@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 +(IOSRenderer*)renderer;
 
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer;
-+(void)runOnUiThead:(dispatch_block_t)block;
++(void)runOnUiThread:(dispatch_block_t)block;
 +(UIWindow*)getKeyWindow;
 -(void)showKeyboard:(NSString*)text;
 

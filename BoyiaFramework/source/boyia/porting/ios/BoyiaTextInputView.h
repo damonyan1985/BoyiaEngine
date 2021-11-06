@@ -41,6 +41,9 @@
 
 @property(nonatomic, assign) UIAccessibilityElement* backingTextInputAccessibilityObject;
 
+// 修改inputAccessoryView相关属性
+@property (nullable, readwrite, strong) UIView *inputAccessoryView;
+
 @end
 
 

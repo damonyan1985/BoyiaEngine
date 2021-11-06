@@ -122,9 +122,12 @@ private:
 @property (nonatomic, strong) NSMutableArray* cmdBuffer;
 
 @property (nonatomic, assign) CGFloat statusBarHeight;
+@property (nonatomic, assign) int keyboardHeight;
 
 @property (nonatomic, strong) BoyiaTextInputView* textInputView;
 @property (nonatomic, strong) BoyiaTextInputViewHider* textInputHider;
+
+
 
 @end
 
@@ -164,7 +167,7 @@ private:
     return engine->iosRenderer();
 }
 
-+(void)runOnUiThead:(dispatch_block_t)block {
++(void)runOnUiThread:(dispatch_block_t)block {
     dispatch_async(dispatch_get_main_queue(), block);
     
     // NSOperationQueue来切换回主线程
@@ -230,16 +233,61 @@ private:
         printf("intptr size=%ld\n", sizeof(LIntPtr));
         
         [self initFonts];
+        [self initKeyBoardListeners];
     }
     
     return self;
 }
 
+-(void)initKeyBoardListeners {
+    // 添加键盘弹出回调
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onKeyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    // 添加键盘隐藏回调
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onKeyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+-(void)onKeyboardWillShow:(NSNotification*)notification {
+    NSDictionary* info = [notification userInfo];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey]CGRectValue];
+    self.keyboardHeight = keyboardRect.size.height;
+    yanbo::AppManager::instance()->uiThread()->onKeyboardShow(0, yanbo::PixelRatio::viewY(self.keyboardHeight));
+}
+
+-(void)onKeyboardWillHide:(NSNotification*)notification {
+    yanbo::AppManager::instance()->uiThread()->onKeyboardHide(0, yanbo::PixelRatio::viewY(self.keyboardHeight));
+}
+
+-(void)initKeyboardHideButton {
+    UIToolbar * backView = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    [backView setBarStyle:UIBarStyleDefault];
+    
+    UIBarButtonItem * btnSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+    [btn setTitle:@"隐藏键盘" forState:UIControlStateNormal];
+    btn.frame = CGRectMake(2, 5, 70, 25);
+    // hideKeyboard不加冒号表示没有参数，如果函数带参数则需要加冒号
+    [btn addTarget:self action:@selector(hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *doneBtn = [[UIBarButtonItem alloc]initWithCustomView:btn];
+    NSArray * buttonsArray = @[btnSpace,doneBtn];
+    [backView setItems:buttonsArray];
+    self.textInputView.inputAccessoryView = backView;
+}
+
+// 显示键盘
 -(void)showKeyboard:(NSString*)text {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0)), dispatch_get_main_queue(), ^ {
         if (!self.textInputView) {
             self.textInputView = [[BoyiaTextInputView alloc] initWithRenderer:self];
             [self addToInputParentViewIfNeeded:self.textInputView];
+            
+            [self initKeyboardHideButton];
             //BOOL resign = [self canResignFirstResponder];
             BOOL can = [self.textInputView canBecomeFirstResponder];
             if (!can) {
@@ -254,6 +302,15 @@ private:
             NSLog(@"result = true");
         }
     });
+}
+
+// 隐藏键盘
+-(void)hideKeyboard {
+    [IOSRenderer runOnUiThread:^{
+        if (self.textInputView) {
+            [self.textInputView resignFirstResponder];
+        }
+    }];
 }
 
 -(void)setInputText:(NSString*)text {
