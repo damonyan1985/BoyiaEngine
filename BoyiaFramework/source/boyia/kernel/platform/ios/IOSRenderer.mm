@@ -263,19 +263,25 @@ private:
     yanbo::AppManager::instance()->uiThread()->onKeyboardHide(0, yanbo::PixelRatio::viewY(self.keyboardHeight));
 }
 
+-(NSString*)localizedStringForKey:(NSString*)key {
+    NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+    return [bundle localizedStringForKey:@"keyBoardHide" value:@"" table:nil];
+}
+
 -(void)initKeyboardHideButton {
-    UIToolbar * backView = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    UIToolbar* backView = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     [backView setBarStyle:UIBarStyleDefault];
     
-    UIBarButtonItem * btnSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem* btnSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-    [btn setTitle:@"隐藏键盘" forState:UIControlStateNormal];
+    
+    [btn setTitle:[self localizedStringForKey:@"keyBoardHide"] forState:UIControlStateNormal];
     btn.frame = CGRectMake(2, 5, 70, 25);
     // hideKeyboard不加冒号表示没有参数，如果函数带参数则需要加冒号
     [btn addTarget:self action:@selector(hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *doneBtn = [[UIBarButtonItem alloc]initWithCustomView:btn];
-    NSArray * buttonsArray = @[btnSpace,doneBtn];
+    UIBarButtonItem* doneBtn = [[UIBarButtonItem alloc]initWithCustomView:btn];
+    NSArray* buttonsArray = @[btnSpace,doneBtn];
     [backView setItems:buttonsArray];
     self.textInputView.inputAccessoryView = backView;
 }
