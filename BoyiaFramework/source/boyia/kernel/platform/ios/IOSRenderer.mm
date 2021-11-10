@@ -142,6 +142,8 @@ private:
     int w = [UIScreen mainScreen].bounds.size.width;
     int h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
     
+    NSLog(@"screen w=%d h=%d", w, h);
+    
     // 720*1080
     LInt logicHeight = (1.0f * 720 / w) * h;
     yanbo::PixelRatio::setWindowSize(w, h);
@@ -265,7 +267,7 @@ private:
 
 -(NSString*)localizedStringForKey:(NSString*)key {
     NSBundle* bundle = [NSBundle bundleForClass:[self class]];
-    return [bundle localizedStringForKey:@"keyBoardHide" value:@"" table:nil];
+    return [bundle localizedStringForKey:key value:@"" table:nil];
 }
 
 -(void)initKeyboardHideButton {

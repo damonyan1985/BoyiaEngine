@@ -141,7 +141,7 @@ public:
     {
         iTopLeft = aTopLeft;
         iBottomRight.iX = aTopLeft.iX + aSize.iWidth;
-        iBottomRight.iX = aTopLeft.iY + aSize.iHeight;
+        iBottomRight.iY = aTopLeft.iY + aSize.iHeight;
     }
 
     const LRect_t<T>& operator=(const LRect_t<T>& aRect)

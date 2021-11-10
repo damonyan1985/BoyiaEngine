@@ -14,7 +14,7 @@
 @class IOSRenderer;
 
 namespace yanbo {
-LVoid screenToMetalPoint(int x, int y, float* metalX, float* metalY);
+LVoid screenToMetalPoint(float x, float y, float* metalX, float* metalY);
 // TODO
 class RenderEngineIOS;
 typedef LVoid (RenderEngineIOS::*RenderFunction)(RenderCommand* cmd);

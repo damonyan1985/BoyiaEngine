@@ -1,0 +1,14 @@
+<view>
+<div>
+<div>用户名：</div><div><input type="text" /></div>
+</div>
+
+<div>
+<div>密码：</div><div><input type="text" /></div>
+</div>
+
+<div>
+<div>注册</div>
+<div>登陆</div>
+</div>
+</view>

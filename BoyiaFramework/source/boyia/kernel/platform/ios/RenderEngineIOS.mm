@@ -13,9 +13,13 @@
 // Need set xcode build settings Preprocessing
 namespace yanbo {
 
+using LRectF = util::LRect_t<float>;
+using LPointF = util::LPoint_t<float>;
+using LSizeF = util::LSize_t<float>;
+
 LVoid screenToMetalPoint(
-    int x,
-    int y,
+    float x,
+    float y,
     float* metalX,
     float* metalY)
 {
@@ -70,9 +74,75 @@ static LVoid createVertexAttr(const LRect& rect, const LColor& color, KVector<Ve
     vertexs.addElement(attr);
 }
 
+
+static LVoid createVertexAttrEx(const LRectF& rect, const LColor& color, KVector<VertexAttributes>& vertexs)
+{
+    VertexAttributes attr;
+    float x, y;
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    vertexs.addElement(attr);
+
+    // left, bottom
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 1 };
+    vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    vertexs.addElement(attr);
+
+    // right, bottom
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 1 };
+    vertexs.addElement(attr);
+
+    // left, top
+    screenToMetalPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 0, 0 };
+    vertexs.addElement(attr);
+
+    // right, top
+    screenToMetalPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &x, &y);
+    attr.aPosition = {x, y, 0, 1};
+    attr.aColor = METAL_COLOR(color);
+    attr.aTexCoord = { 1, 0 };
+    vertexs.addElement(attr);
+}
+
 inline static float realLength(LInt length)
 {
     return yanbo::PixelRatio::ratio() * length;
+}
+
+inline static float coreLength(float length)
+{
+    return length / yanbo::PixelRatio::ratio();
+}
+
+LVoid fixIosPlatformRect(const LRect& src, LRectF& dest)
+{
+    float scale = [[UIScreen mainScreen]scale];
+    // 一个dp占多少像素
+    float left = ceil(realLength(src.iTopLeft.iX) * scale);
+    float top = ceil(realLength(src.iTopLeft.iY) * scale);
+    
+    float width = ceil(realLength(src.GetWidth()) * scale);
+    float height = ceil(realLength(src.GetHeight()) * scale);
+    
+    dest.Set(LPointF(coreLength(left)/scale, coreLength(top)/scale), LSizeF(coreLength(width)/scale, coreLength(height)/scale));
 }
 
 // TODO
@@ -99,7 +169,6 @@ LVoid RenderEngineIOS::init()
 
 LVoid RenderEngineIOS::reset()
 {
-    
 }
 
 LVoid RenderEngineIOS::render(RenderLayer* layer)
@@ -144,14 +213,25 @@ LVoid RenderEngineIOS::setContextIOS(IOSRenderer* renderer)
 
 LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
 {    
-    LRect& rect = cmd->rect;
+    LRect& srcRect = cmd->rect;
     LColor& color = cmd->color;
     
-    if (!rect.GetWidth() || !rect.GetHeight()) {
+    if (!srcRect.GetWidth() || !srcRect.GetHeight()) {
         return;
     }
     
-    createVertexAttr(rect, color, m_vertexs);
+    LRectF rect;
+//    rect.Set(LPointF(srcRect.iTopLeft.iX, srcRect.iTopLeft.iY), LSizeF(srcRect.GetWidth(), srcRect.GetHeight()));
+    fixIosPlatformRect(srcRect, rect);
+    
+    float h = rect.GetHeight() * PixelRatio::ratio();
+    
+    float scale = [[UIScreen mainScreen]scale];
+    
+    NSLog(@"renderRect height=%d h=%f scale=%f pixel=%f", rect.GetHeight(), h, scale, scale * h);
+    
+    createVertexAttrEx(rect, color, m_vertexs);
+    //createVertexAttr(srcRect, color, m_vertexs);
     
     //[m_renderer appendBatchCommand:BatchCommandNormal size:6 key:nil];
     
@@ -175,8 +255,6 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
     RenderImageCommand* imageCmd = static_cast<RenderImageCommand*>(cmd);
     LRect& rect = imageCmd->rect;
     LColor& color = imageCmd->color;
-    
-    
     
     if (!rect.GetWidth() || !rect.GetHeight()) {
         return;
@@ -235,14 +313,17 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         return;
     }
     
+    //LRectF rect;
+    //fixIosPlatformRect(srcRect, rect);
+    
     createVertexAttr(rect, color, m_vertexs);
     
     int scale = 1;
     UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
     //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
     
-    int width = textCmd->rect.GetWidth() * scale;
-    int height = textCmd->rect.GetHeight() * scale;
+    int width = rect.GetWidth() * scale;
+    int height = rect.GetHeight() * scale;
     Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
     memset(data, 0, width * height * 4);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();

@@ -73,7 +73,6 @@
 @property (nonatomic, strong) BoyiaView* boyiaView;
 @property (nonatomic, strong) CADisplayLink* displayLink;
 @property (nonatomic, strong) IOSRenderer* renderer;
-@property (nonatomic, strong) UITextField* textField;
 
 @end
 
@@ -115,10 +114,6 @@
     
     BoyiaGestureRecognizer* gesture = [[BoyiaGestureRecognizer alloc]initWithTargetRenderer:self action:@selector(handlePanGesture:) renderer:self.renderer];
     [self.boyiaView addGestureRecognizer:gesture];
-    
-//    self.textField = [[UITextField alloc] initWithFrame:CGRectMake(100, 100, 300, 100)];
-//    [self.textField setText:@"Hello World"];
-//    [self.boyiaView addSubview:self.textField];
 }
 
 -(void)handlePanGesture:(UIPanGestureRecognizer*)gesture {

@@ -21,7 +21,7 @@
 // UITextInput
 @property(nonatomic, readonly) NSMutableString* text;
 @property(nonatomic, readonly) NSMutableString* markedText;
-@property(readwrite, copy) UITextRange* selectedTextRange;
+@property(nonatomic, readwrite, copy) UITextRange* selectedTextRange;
 @property(nonatomic, strong) UITextRange* markedTextRange;
 @property(nonatomic, copy) NSDictionary* markedTextStyle;
 @property(nonatomic, assign) id<UITextInputDelegate> inputDelegate;

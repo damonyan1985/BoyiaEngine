@@ -1,0 +1,3 @@
+class LoginView extends ViewController {
+
+}
