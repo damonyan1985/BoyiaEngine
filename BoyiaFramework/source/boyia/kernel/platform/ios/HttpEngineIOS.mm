@@ -95,6 +95,26 @@
 
 #pragma mark --NSURLSessionDownloadDelegate
 
+-(void)URLSession:(NSURLSession*)session task:(NSURLSessionTask*)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential* _Nullable))completionHandler
+{
+    NSLog(@"URLSession challenge:%@",challenge.protectionSpace);
+    
+    if (![challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        return;
+    }
+    /*
+     NSURLSessionAuthChallengeUseCredential 使用证书
+     NSURLSessionAuthChallengePerformDefaultHandling  忽略证书 默认的做法
+     NSURLSessionAuthChallengeCancelAuthenticationChallenge 取消请求,忽略证书
+     NSURLSessionAuthChallengeRejectProtectionSpace 拒绝,忽略证书
+     */
+    
+    // 信任自签名证书
+    NSURLCredential* credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+    
+    completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
+}
+
 // 接受网络数据
 - (void)URLSession:(NSURLSession*)session dataTask:(NSURLSessionDataTask*)dataTask didReceiveData:(NSData*)data {
     if (self.callback != nil) {

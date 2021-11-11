@@ -40,14 +40,18 @@ class MainViewController extends ViewController {
         params.method = "post";
         Util.log("NetParams1");
         params.headers = new(Map);
-        params.headers.put("Content-Type", "application/json");
+        params.headers.put("Content-Type", "application/x-www-form-urlencoded");
         params.headers.put("token", "123456");
         Util.log("NetParams2");
-        params.body = "mybody";
-        this.fetch("https://www.baidu.com", this.testCallback, params);
+        params.body = "name=test&pwd=test";
+        this.fetch("https://172.19.4.43/user/v1/login", this.testCallback, params);
     }
     
     fun testCallback(data) {
+        Util.log("testCallback data=" + data);
+        var result = Util.json(data);
+        Global.userToken = result.userToken;
+        Util.log("token=" + Global.userToken);
     }
 
     fun loadCallback(data) {

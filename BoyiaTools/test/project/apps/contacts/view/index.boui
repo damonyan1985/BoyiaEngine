@@ -34,6 +34,7 @@
 
 <script src="boyia://apps/contacts/src/bean/UserInfo.boyia" />
 <script src="boyia://apps/contacts/src/chat/ChatPage.boyia" />
+<script src="boyia://apps/contacts/src/Global.boyia" />
 <script src="boyia://apps/contacts/src/NewTextItem.boyia" />
 <script src="boyia://apps/contacts/src/CategoryItem.boyia" />
 <script src="boyia://apps/contacts/src/SearchHeader.boyia" />
