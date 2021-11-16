@@ -14,7 +14,8 @@ namespace yanbo {
 class TextLine;
 class TextView : public InlineView {
 public:
-    TextView(const String& id, const String& text);
+    TextView(const String& text);
+    ~TextView();
 
 public:
     virtual void layout(RenderContext& rc);
@@ -32,7 +33,6 @@ public:
     ViewPainter* linePainter(LInt i) const;
 
 protected:
-    ~TextView();
 
     String m_text;
     KVector<TextLine*>* m_textLines;

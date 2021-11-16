@@ -180,7 +180,12 @@ LVoid RenderGraphicsContext::submit(LVoid* view, RenderLayer* parentLayer)
         
         for (LInt i = 0; i < text->lineSize(); i++) {
             RenderLayer* layer = new RenderLayer();
-            layer->setCommand(static_cast<ItemPainter*>(text->linePainter(i)->painter())->buffer);
+            LVoid* painter = text->linePainter(i)->painter();
+            if (!painter) {
+                continue;
+            }
+            
+            layer->setCommand(static_cast<ItemPainter*>(painter)->buffer);
             parentLayer->addChild(layer);
         }
 

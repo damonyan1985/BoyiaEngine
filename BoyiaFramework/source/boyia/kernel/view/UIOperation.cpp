@@ -179,7 +179,7 @@ LVoid UIOperation::viewSetText(Message* msg)
             item->setText(text);
         }
     } else {
-        TextView* item = new TextView(_CS(""), text);
+        TextView* item = new TextView(text);
         item->setParent(*view);
         (*view)->addChild(item);
 

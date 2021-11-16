@@ -15,6 +15,8 @@
 namespace yanbo {
 
 const LInt kDefaultInputBorderWidth = 2;
+const LInt kDefaultInputTextPadding = 5;
+const LInt kDefaultInputButtonHeight = 20;
 
 InputView::InputView(
     const String& id,
@@ -23,12 +25,16 @@ InputView::InputView(
     const String& title,
     const String& imageUrl)
     : FormView(id, name, value, title)
-    , m_newFont(kBoyiaNull)
 {
     m_value = value;
     m_title = title;
+    
 
     initView();
+    
+    m_text = new TextView(value);
+    addChild(m_text);
+    m_text->setParent(this);
 }
 
 LVoid InputView::initView()
@@ -61,8 +67,8 @@ LVoid InputView::initView()
 
 InputView::~InputView()
 {
-    if (m_newFont) {
-        delete m_newFont;
+    if (m_text) {
+        delete m_text;
     }
 
     Editor::get()->removeView(this);
@@ -71,16 +77,27 @@ InputView::~InputView()
 LVoid InputView::setInputValue(const String& text)
 {
     m_value = text;
+    m_text->setText(text);
+    layoutText();
 }
 
 LVoid InputView::layoutBegin(RenderContext& rc)
 {
     rc.addLineItem(this);
-    if (m_newFont) {
-        delete m_newFont;
-    }
+}
 
-    m_newFont = LFont::create(getStyle()->font);
+LVoid InputView::layoutText()
+{
+    RenderContext rc;
+
+    rc.setMaxWidth(m_width);
+    rc.setNextLineHeight(0);
+    m_text->layout(rc);
+    
+    // always layout in y center
+    LInt yPos = (m_height - m_text->getHeight()) / 2;
+    m_text->setYpos(yPos);
+    m_text->setXpos(kDefaultInputTextPadding);
 }
 
 LVoid InputView::layoutEnd(RenderContext& rc)
@@ -98,8 +115,6 @@ LVoid InputView::layoutEnd(RenderContext& rc)
 
     setPos(rc.getX() + rc.getMaxWidth() / 80, rc.getY());
 
-    //itemCenter(rc);
-
     KLOG("InputView::layout");
     KDESLOG(m_y);
     KDESLOG(m_height);
@@ -110,7 +125,11 @@ LVoid InputView::layoutEnd(RenderContext& rc)
         rc.addItemInterval();
         rc.addLineItemCount();
     }
+    
+    layoutText();
 }
+
+
 
 LVoid InputView::paintBegin(LGraphicsContext& gc, LayoutPoint& point)
 {
@@ -120,14 +139,6 @@ LVoid InputView::paintBegin(LGraphicsContext& gc, LayoutPoint& point)
     LayoutPoint topLeft = getAbsoluteContainerTopLeft();
     LInt x = topLeft.iX + getXpos();
     LInt y = topLeft.iY + getYpos();
-
-    if (!m_newFont) {
-        m_newFont = LFont::create(getStyle()->font);
-    }
-    gc.setFont(*m_newFont);
-    LColor color = m_style.color;
-    color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
-    gc.setPenColor(color);
 
     point.iX = x;
     point.iY = y;
@@ -160,7 +171,7 @@ public:
         LInt maxWidth = rc.getMaxWidth();
         m_leftPadding = 5;
         m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
-        m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight() + 6;
+        m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight();
         InputView::layoutEnd(rc);
     }
 
@@ -176,25 +187,24 @@ public:
         if (m_value.GetLength() == 0) {
             return;
         }
-        gc.drawText(m_value,
-            LRect(point.iX + m_leftPadding,
-                point.iY + 6, m_width - m_leftPadding,
-                m_height - 6),
-            LGraphicsContext::kTextLeft);
+        
+        m_text->paint(gc);
     }
 
     LVoid paintTextBorder(LGraphicsContext& gc, LayoutPoint& point)
     {
         paintBegin(gc, point);
+        // 绘制背景
         if (m_style.bgColor.m_alpha) {
             gc.setBrushStyle(LGraphicsContext::kSolidBrush);
             gc.setBrushColor(getStyle()->bgColor);
 
             gc.setPenStyle(LGraphicsContext::kNullPen);
-            gc.drawRect(point.iX + m_leftPadding, point.iY, m_width, m_height);
+            gc.drawRect(point.iX, point.iY, m_width, m_height);
         }
 
-        paintBorder(gc, getStyle()->border(), point.iX + m_leftPadding, point.iY);
+        // 绘制边界
+        paintBorder(gc, getStyle()->border(), point.iX, point.iY);
     }
 
     virtual LVoid setSelected(const LBool selected)
@@ -220,6 +230,13 @@ public:
     {
         return kInputPassword;
     }
+    
+    virtual LVoid setInputValue(const String& text)
+    {
+        m_value = text;
+        m_text->setText(String('*', PlatformBridge::getTextSize(m_value)));
+        layoutText();
+    }
 
     virtual LVoid paint(LGraphicsContext& gc)
     {
@@ -228,12 +245,8 @@ public:
         if (m_value.GetLength() == 0) {
             return;
         }
-
-        gc.drawText(
-            String('*', PlatformBridge::getTextSize(m_value)),
-            LRect(point.iX + m_leftPadding, point.iY + 6,
-                m_width - m_leftPadding, m_height - 6),
-            LGraphicsContext::kTextLeft);
+        
+        m_text->paint(gc);
     }
 };
 
@@ -254,8 +267,8 @@ public:
         InputView::layoutBegin(rc);
         LInt maxWidth = rc.getMaxWidth();
         m_leftPadding = 0;
-        m_width = maxWidth / 5;
-        m_height = m_newFont->getFontHeight() + 10;
+        m_width = m_style.width ? m_style.width : maxWidth / 5;
+        m_height = m_style.height ? m_style.width : kDefaultInputButtonHeight;
         InputView::layoutEnd(rc);
     }
 

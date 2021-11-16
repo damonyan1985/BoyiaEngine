@@ -1,7 +1,6 @@
 #include "BoyiaViewGroup.h"
 #include "BlockView.h"
 #include "SalLog.h"
-#include "TextView.h"
 #include "UIOperation.h"
 #include "UIView.h"
 

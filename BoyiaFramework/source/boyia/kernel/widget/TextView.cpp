@@ -37,8 +37,8 @@ public:
     String m_text;
 };
 
-TextView::TextView(const String& id, const String& text)
-    : InlineView(id, LFalse)
+TextView::TextView(const String& text)
+    : InlineView(_CS(""), LFalse)
     , m_text(text)
     , m_textLines(kBoyiaNull)
     , m_newFont(kBoyiaNull)
@@ -113,9 +113,6 @@ void TextView::layout(RenderContext& rc)
         rc.addLineItem(this);
         rc.addX(m_width);
         rc.setNextLineHeight(m_height);
-    } else {
-        m_x = m_x - getParent()->getXpos();
-        m_y = m_y - getParent()->getYpos();
     }
 }
 

@@ -10,6 +10,7 @@
 
 #include "FormView.h"
 #include "LGdi.h"
+#include "TextView.h"
 
 namespace yanbo {
 
@@ -49,7 +50,7 @@ public:
     virtual LVoid execute();
 
     virtual LInt getInputType();
-    LVoid setInputValue(const String& text);
+    virtual LVoid setInputValue(const String& text);
 
 protected:
     virtual ~InputView();
@@ -59,11 +60,17 @@ protected:
     LVoid layoutEnd(RenderContext& rc);
     
     LVoid paintBegin(LGraphicsContext& gc, LayoutPoint& point);
+    
+    LVoid layoutText();
+    
+    //virtual LBool isReplaced() const;
 
     LInt m_type;
     LBool m_checked;
     LBool m_activated;
     LFont* m_newFont;
+    // inputview包含一个textview
+    TextView* m_text;
 };
 }
 #endif /* InputView_h */
