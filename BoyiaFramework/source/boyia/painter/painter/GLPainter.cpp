@@ -102,13 +102,13 @@ void GLPainter::setImage(Texture* tex, const LRect& rect, const LRect& clipRect)
 {
     m_cmd.type = EShapeImage;
 
-    LInt left = rect.iTopLeft.iX > clipRect.iTopLeft.iX ? rect.iTopLeft.iX : clipRect.iTopLeft.iX;
-    LInt top = rect.iTopLeft.iY > clipRect.iTopLeft.iY ? rect.iTopLeft.iY : clipRect.iTopLeft.iY;
-    LInt right = rect.iBottomRight.iX > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : rect.iBottomRight.iX;
-    LInt bottom = rect.iBottomRight.iY > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : rect.iBottomRight.iY;
-    LRect newRect(left, top, right - left, bottom - top);
+    // LInt left = rect.iTopLeft.iX > clipRect.iTopLeft.iX ? rect.iTopLeft.iX : clipRect.iTopLeft.iX;
+    // LInt top = rect.iTopLeft.iY > clipRect.iTopLeft.iY ? rect.iTopLeft.iY : clipRect.iTopLeft.iY;
+    // LInt right = rect.iBottomRight.iX > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : rect.iBottomRight.iX;
+    // LInt bottom = rect.iBottomRight.iY > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : rect.iBottomRight.iY;
+    // LRect newRect(left, top, right - left, bottom - top);
 
-    setTexture(tex, newRect, clipRect);
+    setTexture(tex, rect, clipRect);
 }
 
 float* GLPainter::stMatrix() const
@@ -157,43 +157,66 @@ void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRec
     KFORMATLOG("LRect width=%d. height=%d", rect.GetWidth(), rect.GetHeight());
 
     Quad& quad = m_cmd.quad;
-    ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
+    // ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
 
-    ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
+    // ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
 
-    ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
+    // ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
 
-    ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
+    // ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
 
-    float texL = ((float)(rect.iTopLeft.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
-    float texT = ((float)(rect.iTopLeft.iY - clipRect.iTopLeft.iY)) / clipRect.GetHeight();
+    float left = clipRect.iTopLeft.iX <= rect.iTopLeft.iX ?
+        rect.iTopLeft.iX : clipRect.iTopLeft.iX;
+    float top = clipRect.iTopLeft.iY <= rect.iTopLeft.iY ?
+        rect.iTopLeft.iY : clipRect.iTopLeft.iY;
 
-    float texR = ((float)(rect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
-    float texB = ((float)(rect.iBottomRight.iY - clipRect.iTopLeft.iY)) / clipRect.GetWidth();
+    float right = clipRect.iBottomRight.iX >= rect.iBottomRight.iX ?
+        rect.iBottomRight.iX : clipRect.iBottomRight.iX;
+    float bottom = clipRect.iBottomRight.iY >= rect.iBottomRight.iY ?
+        rect.iBottomRight.iY : clipRect.iBottomRight.iY;
+
+    ShaderUtil::screenToGlPoint(left, bottom, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(right, bottom, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(right, top, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(left, top, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);      
+
+
+    float texL = clipRect.iTopLeft.iX <= rect.iTopLeft.iX ?
+        0 : ((float)(clipRect.iTopLeft.iX - rect.iTopLeft.iX)) / clipRect.GetWidth();
+    float texT = clipRect.iTopLeft.iY <= rect.iTopLeft.iY ?
+        0 : ((float)(clipRect.iTopLeft.iY - rect.iTopLeft.iY)) / clipRect.GetHeight();
+
+    float texR = clipRect.iBottomRight.iX >= rect.iBottomRight.iX ?
+        1.0f : ((float)(clipRect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+    float texB = clipRect.iBottomRight.iY >= rect.iBottomRight.iY ?
+        1.0f : ((float)(clipRect.iBottomRight.iY - rect.iTopLeft.iY)) / clipRect.GetHeight();
     // 纹理坐标
-    quad.bottomLeft.texCoord.u = 0.0f;
-    quad.bottomLeft.texCoord.v = 1.0f;
+    // quad.bottomLeft.texCoord.u = 0.0f;
+    // quad.bottomLeft.texCoord.v = 1.0f;
 
-    quad.bottomRight.texCoord.u = 1.0f;
-    quad.bottomRight.texCoord.v = 1.0f;
+    // quad.bottomRight.texCoord.u = 1.0f;
+    // quad.bottomRight.texCoord.v = 1.0f;
 
-    quad.topRight.texCoord.u = 1.0f;
-    quad.topRight.texCoord.v = 0.0f;
+    // quad.topRight.texCoord.u = 1.0f;
+    // quad.topRight.texCoord.v = 0.0f;
 
-    quad.topLeft.texCoord.u = 0.0f;
-    quad.topLeft.texCoord.v = 0.0f;
+    // quad.topLeft.texCoord.u = 0.0f;
+    // quad.topLeft.texCoord.v = 0.0f;
 
-    // quad.bottomLeft.texCoord.u = texL;
-    // quad.bottomLeft.texCoord.v = texB;
+    quad.bottomLeft.texCoord.u = texL;
+    quad.bottomLeft.texCoord.v = texB;
 
-    // quad.bottomRight.texCoord.u = texR;
-    // quad.bottomRight.texCoord.v = texB;
+    quad.bottomRight.texCoord.u = texR;
+    quad.bottomRight.texCoord.v = texB;
 
-    // quad.topRight.texCoord.u = texR;
-    // quad.topRight.texCoord.v = texT;
+    quad.topRight.texCoord.u = texR;
+    quad.topRight.texCoord.v = texT;
 
-    // quad.topLeft.texCoord.u = texL;
-    // quad.topLeft.texCoord.v = texT;
+    quad.topLeft.texCoord.u = texL;
+    quad.topLeft.texCoord.v = texT;
 }
 
 void GLPainter::reset()

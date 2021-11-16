@@ -247,6 +247,7 @@ LVoid GraphicsContextGL::drawText(const String& text, const LRect& rect, TextAli
     } else {
         paint->setImage(tex, rect);
     }
+    //paint->setImage(tex, rect);
 
     painter->painters.push(paint);
 
@@ -354,7 +355,12 @@ LVoid GraphicsContextGL::submit()
     fillBuffer(yanbo::UIView::current()->getDocument()->getRenderTreeRoot());
     yanbo::GLPainter::bindVBO();
     glEnable(GL_BLEND);
+    // glEnable(GL_CULL_FACE);
+    // glFrontFace(GL_CCW);
+    // glCullFace(GL_BACK);
+
     yanbo::GLPainter::paintCommand();
+    //glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
     yanbo::GLPainter::unbindVBO();

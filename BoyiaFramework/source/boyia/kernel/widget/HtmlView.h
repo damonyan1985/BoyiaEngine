@@ -84,7 +84,6 @@ public:
     LVoid setDocument(HtmlDocument* doc);
     HtmlDocument* getDocument() const;
 
-    LBool isClipItem() const;
     LVoid setClipRect(LGraphicsContext& gc);
     LayoutRect clipRect() const;
 

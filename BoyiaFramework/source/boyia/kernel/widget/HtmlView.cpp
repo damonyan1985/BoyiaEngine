@@ -116,6 +116,7 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
     }
 
     if (m_type == HtmlTags::BR) {
+        gc.restore();
         return;
     }
 
@@ -153,6 +154,8 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
     }
     
     paintBorder(gc, m_style.border(), x, y);
+
+    gc.restore();
 }
 
 LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)
@@ -528,11 +531,6 @@ HtmlDocument* HtmlView::getDocument() const
     return m_doc;
 }
 
-LBool HtmlView::isClipItem() const
-{
-    return m_clip;
-}
-
 LayoutRect HtmlView::clipRect() const
 {
     return m_clipRect;
@@ -542,40 +540,45 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
 {
     HtmlView* parent = getParent();
     if (!parent) {
-        m_clip = LFalse;
+        m_clipRect = LRect(m_x, m_y, m_width, m_height);
         return;
     }
 
     //KFORMATLOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", getXpos(), getYpos(), parent->getWidth(), parent->getHeight());
-    if (getXpos() < 0 || getXpos() + getWidth() > parent->getWidth()
-        || getYpos() < 0 || getYpos() + getHeight() > parent->getHeight()) {
+    LPoint point = parent->getAbsoluteContainerTopLeft();
+    LayoutUnit left = point.iX + parent->getXpos() + getXpos();
+    LayoutUnit top = point.iY + parent->getYpos() + getYpos();
+    LayoutUnit right = left + getWidth();
+    LayoutUnit bottom = top + getHeight();
 
-        LPoint point = parent->getAbsoluteContainerTopLeft();
-        LInt parentX = point.iX + parent->getXpos();
-        LInt parentY = point.iY + parent->getYpos();
+    LRect clipRect = parent->clipRect();
+    
+    if (left < clipRect.iTopLeft.iX || right > clipRect.iBottomRight.iX
+        || top < clipRect.iTopLeft.iY || bottom > clipRect.iBottomRight.iY) {
 
-        LRect rect = parent->isClipItem() ? parent->clipRect() : LRect(parentX, parentY, parent->getWidth(), parent->getHeight());
+        //BOYIA_LOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", parentX, parentY, parent->getWidth(), parent->getHeight());
 
-        BOYIA_LOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", parentX, parentY, parent->getWidth(), parent->getHeight());
+        LInt clipL = left < clipRect.iTopLeft.iX ? clipRect.iTopLeft.iX : left;
+        LInt clipT = top < clipRect.iTopLeft.iY ? clipRect.iTopLeft.iY : top;
 
-        LayoutPoint topLeft = getAbsoluteContainerTopLeft();
+        LInt clipR = right > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : right;
+        LInt clipB = bottom > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : bottom;
 
-        LInt clipL = topLeft.iX < rect.iTopLeft.iX ? rect.iTopLeft.iX : topLeft.iX;
-        LInt clipT = topLeft.iY < rect.iTopLeft.iY ? rect.iTopLeft.iY : topLeft.iY;
-
-        LInt clipR = topLeft.iX + getWidth() > rect.iBottomRight.iX ? rect.iBottomRight.iX : topLeft.iX + getWidth();
-        LInt clipB = topLeft.iY + getHeight() > rect.iBottomRight.iY ? rect.iBottomRight.iY : topLeft.iY + getHeight();
+        // TODO scrollX scrollY需要考虑进来
+        //gc.clipRect(clipRect);
         m_clipRect = LayoutRect(
             clipL,
             clipT,
             clipR - clipL,
             clipB - clipT);
-
-        gc.clipRect(m_clipRect);
-        m_clip = LTrue;
+        
     } else {
+        m_clipRect = LRect(
+            left, 
+            top, 
+            m_width, 
+            m_height);
         gc.restore();
-        m_clip = LFalse;
     }
 }
 

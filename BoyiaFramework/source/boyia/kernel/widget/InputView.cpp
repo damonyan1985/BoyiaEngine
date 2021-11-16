@@ -188,6 +188,7 @@ public:
             return;
         }
         
+        //gc.clipRect(LRect(m_x, m_y, m_width, m_height));
         m_text->paint(gc);
     }
 
