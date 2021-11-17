@@ -532,7 +532,7 @@ HtmlDocument* HtmlView::getDocument() const
     return m_doc;
 }
 
-LayoutRect HtmlView::clipRect() const
+const LayoutRect& HtmlView::clipRect() const
 {
     return m_clipRect;
 }
@@ -566,7 +566,7 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
     LayoutUnit right = left + getWidth();
     LayoutUnit bottom = top + getHeight();
 
-    LRect clipRect = parent->clipRect();
+    const LRect& clipRect = parent->clipRect();
     
     if (left < clipRect.iTopLeft.iX || right > clipRect.iBottomRight.iX
         || top < clipRect.iTopLeft.iY || bottom > clipRect.iBottomRight.iY) {

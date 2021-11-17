@@ -87,7 +87,7 @@ public:
     HtmlDocument* getDocument() const;
 
     LVoid setClipRect(LGraphicsContext& gc);
-    LayoutRect clipRect() const;
+    const LayoutRect& clipRect() const;
 
     LVoid relayoutZIndexChild();
 

@@ -87,7 +87,6 @@
 }
 .full{
 	position:absolute;
-	background-color:#FFFF00FF;
 	align: all;
 	width: 720px;
 }
