@@ -81,6 +81,8 @@ public:
     util::Style* getStyle() const;
 
     LayoutPoint getAbsoluteContainerTopLeft() const;
+    LayoutPoint getAbsoluteTopLeft() const;
+
     LVoid setDocument(HtmlDocument* doc);
     HtmlDocument* getDocument() const;
 

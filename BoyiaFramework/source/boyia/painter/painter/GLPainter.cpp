@@ -150,6 +150,8 @@ void GLPainter::setExternal(Texture* tex, const LRect& rect)
     quad.topLeft.texCoord.v = 1.0f;
 }
 
+// rect为纹理显示的范围
+// clipRect为需要裁剪的范围
 void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRect)
 {
     m_cmd.texId = tex->texId;
@@ -185,14 +187,28 @@ void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRec
 
 
     float texL = clipRect.iTopLeft.iX <= rect.iTopLeft.iX ?
-        0 : ((float)(clipRect.iTopLeft.iX - rect.iTopLeft.iX)) / clipRect.GetWidth();
+        0 : (((float)(clipRect.iTopLeft.iX - rect.iTopLeft.iX)) / rect.GetWidth());
     float texT = clipRect.iTopLeft.iY <= rect.iTopLeft.iY ?
-        0 : ((float)(clipRect.iTopLeft.iY - rect.iTopLeft.iY)) / clipRect.GetHeight();
+        0 : (((float)(clipRect.iTopLeft.iY - rect.iTopLeft.iY)) / rect.GetHeight());
 
     float texR = clipRect.iBottomRight.iX >= rect.iBottomRight.iX ?
-        1.0f : ((float)(clipRect.iBottomRight.iX - clipRect.iTopLeft.iX)) / clipRect.GetWidth();
+        1.0f : (((float)(clipRect.iBottomRight.iX - rect.iTopLeft.iX)) / rect.GetWidth());
     float texB = clipRect.iBottomRight.iY >= rect.iBottomRight.iY ?
-        1.0f : ((float)(clipRect.iBottomRight.iY - rect.iTopLeft.iY)) / clipRect.GetHeight();
+        1.0f : (((float)(clipRect.iBottomRight.iY - rect.iTopLeft.iY)) / rect.GetHeight());
+
+
+    // quad.bottomLeft.texCoord.u = 0.5f;
+    // quad.bottomLeft.texCoord.v = 1.0f;
+
+    // quad.bottomRight.texCoord.u = 1.0f;
+    // quad.bottomRight.texCoord.v = 1.0f;
+
+    // quad.topRight.texCoord.u = 1.0f;
+    // quad.topRight.texCoord.v = 0.5f;
+
+    // quad.topLeft.texCoord.u = 0.5f;
+    // quad.topLeft.texCoord.v = 0.5f;
+
     // 纹理坐标
     // quad.bottomLeft.texCoord.u = 0.0f;
     // quad.bottomLeft.texCoord.v = 1.0f;

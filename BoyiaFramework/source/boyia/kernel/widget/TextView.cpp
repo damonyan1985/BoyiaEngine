@@ -153,10 +153,13 @@ LVoid TextView::paint(LGraphicsContext& gc)
 {
     //gc.setHtmlView(this);
     setClipRect(gc);
-    LayoutPoint topLeft = getAbsoluteContainerTopLeft();
-    KFORMATLOG("TextView::paint topLeft.x=%d", topLeft.iX);
-    LayoutUnit x = (getParent()->isBlockView() ? 0 : getParent()->getXpos()) + topLeft.iX + getXpos();
-    LayoutUnit y = (getParent()->isBlockView() ? 0 : getParent()->getYpos()) + topLeft.iY + getYpos();
+    //LayoutPoint topLeft = getAbsoluteContainerTopLeft();
+    LayoutPoint topLeft = getAbsoluteTopLeft();
+    BOYIA_LOG("TextView::paint topLeft.x=%d", topLeft.iX);
+    //LayoutUnit x = (getParent()->isBlockView() ? 0 : getParent()->getXpos()) + topLeft.iX + getXpos();
+    //LayoutUnit y = (getParent()->isBlockView() ? 0 : getParent()->getYpos()) + topLeft.iY + getYpos();
+    LayoutUnit x = topLeft.iX;
+    LayoutUnit y = topLeft.iY;
 
     if (m_newFont) {
         LInt textHeight = m_newFont->getFontHeight();
@@ -169,7 +172,7 @@ LVoid TextView::paint(LGraphicsContext& gc)
             if (m_style.textAlignement == LGraphicsContext::kTextCenter) { // 居中对齐
                 left += (m_width - line->m_lineLength) / 2;
 
-                KFORMATLOG("TextView::paint center left=%d", line->m_lineLength);
+                BOYIA_LOG("TextView::paint center left=%d", line->m_lineLength);
             } else if (m_style.textAlignement == LGraphicsContext::kTextRight) { // 右对齐
                 left += m_width - line->m_lineLength;
             }
@@ -187,8 +190,8 @@ LVoid TextView::paint(LGraphicsContext& gc)
             color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
 
             gc.setPenColor(color);
-            KFORMATLOG("text length=%d", line->m_lineLength);
-            KFORMATLOG("text x=%d, y=%d", x, y);
+            BOYIA_LOG("text length=%d", line->m_lineLength);
+            BOYIA_LOG("text x=%d, y=%d", x, y);
             gc.setPenStyle(LGraphicsContext::kSolidPen);
 
             gc.setBrushColor(m_style.bgColor);

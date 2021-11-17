@@ -188,6 +188,8 @@ public:
             return;
         }
         
+//        gc.setBrushColor(LColor(0xff, 0x00, 0xFF));
+//        gc.drawRect(clipRect());
         //gc.clipRect(LRect(m_x, m_y, m_width, m_height));
         m_text->paint(gc);
     }
@@ -206,6 +208,7 @@ public:
 
         // 绘制边界
         paintBorder(gc, getStyle()->border(), point.iX, point.iY);
+        gc.restore();
     }
 
     virtual LVoid setSelected(const LBool selected)

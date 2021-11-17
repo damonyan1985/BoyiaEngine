@@ -494,9 +494,10 @@ util::Style* HtmlView::getStyle() const
 
 LBool HtmlView::canDraw() const
 {
-    LPoint point = getAbsoluteContainerTopLeft();
+    LayoutPoint point = getAbsoluteTopLeft();
+    //LayoutPoint point = getAbsoluteContainerTopLeft();
     // 目前仅对超出屏幕的元素进行了判断
-    if (PixelRatio::isInWindow(LRect(point.iX + getXpos(), point.iY + getYpos(), m_width, m_height))) {
+    if (PixelRatio::isInWindow(LRect(point.iX, point.iY, m_width, m_height))) {
         return LTrue;
     }
     
@@ -536,6 +537,19 @@ LayoutRect HtmlView::clipRect() const
     return m_clipRect;
 }
 
+LayoutPoint HtmlView::getAbsoluteTopLeft() const
+{
+    HtmlView* parent = getParent();
+    if (!parent) {
+        return LayoutPoint(0, 0);
+    }
+
+    LayoutPoint point = getAbsoluteContainerTopLeft();
+    LayoutUnit left = (parent->isBlockView() ? 0 : parent->getXpos()) + point.iX + getXpos();
+    LayoutUnit top = (parent->isBlockView() ? 0 : parent->getYpos()) + point.iY + getYpos();
+    return LayoutPoint(left, top);
+}
+
 LVoid HtmlView::setClipRect(LGraphicsContext& gc)
 {
     HtmlView* parent = getParent();
@@ -545,9 +559,10 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
     }
 
     //KFORMATLOG("HtmlView::setClipRect X=%d Y=%d pwidth=%d pheight=%d", getXpos(), getYpos(), parent->getWidth(), parent->getHeight());
-    LPoint point = parent->getAbsoluteContainerTopLeft();
-    LayoutUnit left = point.iX + parent->getXpos() + getXpos();
-    LayoutUnit top = point.iY + parent->getYpos() + getYpos();
+    // 获取绝对坐标
+    LPoint point = getAbsoluteTopLeft();
+    LayoutUnit left = point.iX;
+    LayoutUnit top = point.iY;
     LayoutUnit right = left + getWidth();
     LayoutUnit bottom = top + getHeight();
 
@@ -564,14 +579,12 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
         LInt clipR = right > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : right;
         LInt clipB = bottom > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : bottom;
 
-        // TODO scrollX scrollY需要考虑进来
-        //gc.clipRect(clipRect);
+        gc.clipRect(clipRect);
         m_clipRect = LayoutRect(
             clipL,
             clipT,
             clipR - clipL,
             clipB - clipT);
-        
     } else {
         m_clipRect = LRect(
             left, 
