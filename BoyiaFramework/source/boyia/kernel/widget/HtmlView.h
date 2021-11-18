@@ -99,7 +99,7 @@ public:
 
     LInt viewId() const;
     
-    LBool canDraw() const;
+    virtual LBool canDraw() const;
     
     virtual LVoid setVisible(LBool visible);
 

@@ -15,6 +15,7 @@ public:
     static void setLogicWindowSize(int width, int height);
     
     static bool isInWindow(const LRect& rect);
+    static bool isInClipRect(const LRect& rect, const LRect& clipRect);
 
     static void setRatioDirection(PixelDirection direction);
     static float ratio();
@@ -25,6 +26,8 @@ public:
 
     static int logicWidth();
     static int logicHeight();
+
+    static LVoid clipRect(const LRect& srcRect, const LRect& clipRect, LRect& destRect);
 
 private:
     static float s_width;

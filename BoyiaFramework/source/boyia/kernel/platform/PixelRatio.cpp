@@ -85,4 +85,27 @@ bool PixelRatio::isInWindow(const LRect& rect)
     return true;
 }
 
+bool PixelRatio::isInClipRect(const LRect& rect, const LRect& clipRect)
+{
+    return !(rect.iBottomRight.iX < clipRect.iTopLeft.iX
+             || rect.iBottomRight.iY < clipRect.iTopLeft.iY
+             || rect.iTopLeft.iX > clipRect.iBottomRight.iX
+             || rect.iTopLeft.iY > clipRect.iBottomRight.iY);
+}
+
+LVoid PixelRatio::clipRect(const LRect& srcRect, const LRect& clipRect, LRect& destRect)
+{
+    LInt left = clipRect.iTopLeft.iX <= srcRect.iTopLeft.iX ?
+        srcRect.iTopLeft.iX : clipRect.iTopLeft.iX;
+    LInt top = clipRect.iTopLeft.iY <= srcRect.iTopLeft.iY ?
+        srcRect.iTopLeft.iY : clipRect.iTopLeft.iY;
+
+    LInt right = clipRect.iBottomRight.iX >= srcRect.iBottomRight.iX ?
+        srcRect.iBottomRight.iX : clipRect.iBottomRight.iX;
+    LInt bottom = clipRect.iBottomRight.iY >= srcRect.iBottomRight.iY ?
+        srcRect.iBottomRight.iY : clipRect.iBottomRight.iY;
+
+    destRect.Set(LPoint(left, top), LPoint(right, bottom));    
+}
+
 }

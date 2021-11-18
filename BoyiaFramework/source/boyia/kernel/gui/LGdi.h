@@ -33,6 +33,11 @@ public:
     virtual ~ViewPainter()
     {
     }
+    
+    virtual LBool canDraw() const
+    {
+        return LTrue;
+    }
 
     LVoid setPainter(BoyiaRef* painter)
     {

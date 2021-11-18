@@ -145,17 +145,17 @@ LVoid HtmlView::paint(LGraphicsContext& gc)
         }
         
     }
+    
+    paintBorder(gc, m_style.border(), x, y);
+    
+    gc.restore();
 
     HtmlViewList::Iterator iter = m_children.begin();
     HtmlViewList::Iterator iterEnd = m_children.end();
-
+    
     for (; iter != iterEnd; ++iter) {
         (*iter)->paint(gc);
     }
-    
-    paintBorder(gc, m_style.border(), x, y);
-
-    gc.restore();
 }
 
 LVoid HtmlView::paintBorder(LGraphicsContext& gc, const util::Border& border, LayoutUnit x, LayoutUnit y)
@@ -494,14 +494,28 @@ util::Style* HtmlView::getStyle() const
 
 LBool HtmlView::canDraw() const
 {
-    LayoutPoint point = getAbsoluteTopLeft();
-    //LayoutPoint point = getAbsoluteContainerTopLeft();
-    // 目前仅对超出屏幕的元素进行了判断
-    if (PixelRatio::isInWindow(LRect(point.iX, point.iY, m_width, m_height))) {
+    HtmlView* parent = getParent();
+    if (!parent) {
         return LTrue;
     }
     
-    return LFalse;
+    LayoutPoint point = getAbsoluteTopLeft();
+    //LayoutPoint point = getAbsoluteContainerTopLeft();
+    // 目前仅对超出屏幕的元素进行了判断
+//    if (PixelRatio::isInWindow(LRect(point.iX, point.iY, m_width, m_height))) {
+//        return LTrue;
+//    }
+//    return LFalse;
+    const LRect& clipRect = parent->clipRect();
+    
+    if (point.iX + getWidth() < clipRect.iTopLeft.iX
+        || point.iY + getHeight() < clipRect.iTopLeft.iY
+        || point.iX > clipRect.iBottomRight.iX
+        || point.iY > clipRect.iBottomRight.iY) {
+        return LFalse;
+    }
+    
+    return LTrue;
 }
 
 LayoutPoint HtmlView::getAbsoluteContainerTopLeft() const
@@ -579,7 +593,7 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
         LInt clipR = right > clipRect.iBottomRight.iX ? clipRect.iBottomRight.iX : right;
         LInt clipB = bottom > clipRect.iBottomRight.iY ? clipRect.iBottomRight.iY : bottom;
 
-        gc.clipRect(clipRect);
+        //gc.clipRect(clipRect);
         m_clipRect = LayoutRect(
             clipL,
             clipT,
@@ -591,8 +605,9 @@ LVoid HtmlView::setClipRect(LGraphicsContext& gc)
             top, 
             m_width, 
             m_height);
-        gc.restore();
     }
+    
+    gc.clipRect(m_clipRect);
 }
 
 LVoid HtmlView::relayoutZIndexChild()

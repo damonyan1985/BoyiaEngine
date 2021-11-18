@@ -56,12 +56,21 @@ LVoid RenderGraphicsContext::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 
 LVoid RenderGraphicsContext::drawRect(const LRect& aRect)
 {
-    if (!PixelRatio::isInWindow(aRect)) {
-        return;
+//    if (!PixelRatio::isInWindow(aRect)) {
+//        return;
+//    }
+    LRect destRect = aRect;
+    if (m_clipRect) {
+        // 如果绘制区域不在裁剪范围内
+        if (!PixelRatio::isInClipRect(aRect, *m_clipRect)) {
+            return;
+        }
+        
+        PixelRatio::clipRect(aRect, *m_clipRect, destRect);
     }
     
     ItemPainter* painter = currentPainter();
-    RenderRectCommand* cmd = new RenderRectCommand(aRect, m_brushColor);
+    RenderRectCommand* cmd = new RenderRectCommand(destRect, m_brushColor);
 
     painter->buffer->addElement(cmd);
 }

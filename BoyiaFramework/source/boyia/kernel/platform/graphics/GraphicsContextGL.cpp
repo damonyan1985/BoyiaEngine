@@ -11,6 +11,7 @@
 #include "TextView.h"
 #include "TextureCache.h"
 #include "UIView.h"
+#include "PixelRatio.h"
 
 #if ENABLE(BOYIA_PLATFORM_VIEW)
 #include "PlatformView.h"
@@ -106,9 +107,19 @@ LVoid GraphicsContextGL::drawLine(LInt x0, LInt y0, LInt x1, LInt y1)
 
 LVoid GraphicsContextGL::drawRect(const LRect& aRect)
 {
+    LRect destRect = aRect;
+    if (m_clipRect) {
+        // 如果绘制区域不在裁剪范围内
+        if (!yanbo::PixelRatio::isInClipRect(aRect, *m_clipRect)) {
+            return;
+        }
+        
+        yanbo::PixelRatio::clipRect(aRect, *m_clipRect, destRect);
+    }
+
     ItemPainter* painter = currentPainter();
     BoyiaPtr<yanbo::GLPainter> shapeRect = new yanbo::GLPainter();
-    shapeRect->setRect(aRect);
+    shapeRect->setRect(destRect);
     //m_brushColor.m_alpha = 0x33;
     shapeRect->setColor(m_brushColor);
     painter->painters.push(shapeRect);

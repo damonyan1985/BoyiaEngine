@@ -18,7 +18,8 @@ public:
     ~TextView();
 
 public:
-    virtual void layout(RenderContext& rc);
+    virtual LVoid layout(RenderContext& rc);
+    
     virtual LVoid paint(LGraphicsContext& gc);
     virtual LBool isText() const;
 

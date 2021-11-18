@@ -16,25 +16,46 @@
 namespace yanbo {
 class TextLine : public ViewPainter {
 public:
-    TextLine(LInt length, const String& text)
+    TextLine(TextView* view, LInt length, const String& text)
+        : m_view(view)
+        , m_lineLength(length)
+        , m_text(text)
     {
-        m_lineLength = length;
-        m_text = text;
     }
 
     ~TextLine()
     {
     }
+    
+    virtual LBool canDraw() const
+    {
+        //return LTrue;
+//        const LRect& rect = m_view->getParent()->clipRect();
+//        if (point.iX + getWidth() < clipRect.iTopLeft.iX
+//            || point.iY + getHeight() < clipRect.iTopLeft.iY
+//            || point.iX > clipRect.iBottomRight.iX
+//            || point.iY > clipRect.iBottomRight.iY) {
+//            return LFalse;
+//        }
+        
+        return LTrue;
+    }
 
     LVoid paint(LGraphicsContext& gc, const LRect& rect)
     {
+        if (!canDraw()) {
+            return;
+        }
+        m_rect = rect;
         gc.setHtmlView(this);
         gc.drawText(m_text, rect, LGraphicsContext::kTextLeft);
     }
 
 public:
+    TextView* m_view;
     LInt m_lineLength;
     String m_text;
+    LRect m_rect;
 };
 
 TextView::TextView(const String& text)
@@ -137,6 +158,7 @@ LInt TextView::calcTextLine(const String& text, LInt maxWidth)
         String text;
         m_newFont->getLineText(i, text);
         m_textLines->addElement(new TextLine(
+            this,
             m_newFont->getLineWidth(i),
             text));
     }
