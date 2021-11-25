@@ -32,6 +32,8 @@ public:
 
     LFont font;
     String text;
+    // 裁剪范围
+    LRect clipRect;
 };
 
 class RenderRectCommand : public RenderCommand {
@@ -48,6 +50,8 @@ public:
 
     String url;
     LVoid* image;
+    // 裁剪范围
+    LRect clipRect;
 };
 
 class RenderVideoCommand : public RenderCommand {
@@ -65,6 +69,8 @@ public:
 
     // 加载外界纹理
     LImage* image;
+    // 裁剪范围
+    LRect clipRect;
 };
 
 class RenderRoundRectCommand : public RenderCommand {

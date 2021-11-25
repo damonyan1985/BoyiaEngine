@@ -27,6 +27,7 @@ public:
 RenderGraphicsContext::RenderGraphicsContext()
     : m_clipRect(kBoyiaNull)
     , m_collectBuffers(new KVector<LUintPtr>(0, 20))
+    , m_vsync(kBoyiaNull)
 {
 }
 
@@ -104,6 +105,7 @@ LVoid RenderGraphicsContext::drawRoundRect(const LRect& aRect, LInt topLeftRadiu
 LVoid RenderGraphicsContext::drawText(const String& aText, const LRect& aRect)
 {
 }
+
 LVoid RenderGraphicsContext::drawText(const String& aText, const LPoint& aPoint)
 {
 }
@@ -118,9 +120,21 @@ LVoid RenderGraphicsContext::drawImage(const LImage* image)
         return;
     }
     
+    
+    LRect clipRect = image->rect();
+    if (m_clipRect) {
+        // 如果绘制区域不在裁剪范围内
+        if (!PixelRatio::isInClipRect(image->rect(), *m_clipRect)) {
+            return;
+        }
+        
+        PixelRatio::clipRect(image->rect(), *m_clipRect, clipRect);
+    }
+    
     ItemPainter* painter = currentPainter();
     RenderImageCommand* cmd = new RenderImageCommand(image->rect(), m_brushColor, image->pixels());
     cmd->url = image->url();
+    cmd->clipRect = clipRect;
     painter->buffer->addElement(cmd);
 }
 
@@ -220,10 +234,19 @@ LVoid RenderGraphicsContext::submit(LVoid* view, RenderLayer* parentLayer)
 
 LVoid RenderGraphicsContext::submit()
 {
-     // 生成RenderLayer树，并提交给渲染线程
+    // 生成RenderLayer树，并提交给渲染线程
     RenderLayer* layer = new RenderLayer();
     submit(yanbo::UIView::current()->getDocument()->getRenderTreeRoot(), layer);
-    RenderThread::instance()->renderLayerTree(layer, m_collectBuffers);
+    
+    KVector<LUintPtr>* buffer = m_collectBuffers;
+    if (vsyncWaiter()) {
+        vsyncWaiter()->awaitVsyncForCallback([layer, buffer] {
+            RenderThread::instance()->renderLayerTree(layer, buffer);
+        });
+    } else {
+        RenderThread::instance()->renderLayerTree(layer, buffer);
+    }
+    //RenderThread::instance()->renderLayerTree(layer, m_collectBuffers);
     // 每次提交后重置回收器
     m_collectBuffers = new KVector<LUintPtr>(0, 20);
 }
@@ -247,6 +270,15 @@ LVoid RenderGraphicsContext::clipRect(const LRect& rect)
 LVoid RenderGraphicsContext::restore()
 {
     m_clipRect = kBoyiaNull;
+}
+
+VsyncWaiter* RenderGraphicsContext::vsyncWaiter() const
+{
+    if (!m_vsync) {
+        m_vsync = VsyncWaiter::createVsyncWaiter();
+    }
+    
+    return m_vsync;
 }
 
 }

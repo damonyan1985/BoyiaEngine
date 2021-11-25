@@ -92,6 +92,7 @@ LVoid VsyncWaiterWin::awaitVSync()
 
 VsyncWaiter* VsyncWaiter::createVsyncWaiter()
 {
-    return new VsyncWaiterWin();
+    //return new VsyncWaiterWin();
+    return kBoyiaNull;
 }
 }

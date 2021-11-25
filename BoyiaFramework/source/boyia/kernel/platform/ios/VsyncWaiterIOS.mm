@@ -2,14 +2,16 @@
 #define VsyncWaiterIOS_h
 
 #include "VsyncWaiter.h"
+#include "UIThread.h"
 
 #include <Foundation/Foundation.h>
 #include <QuartzCore/CADisplayLink.h>
 #include <UIKit/UIKit.h>
 
 @interface VsyncClient : NSObject
--(instancetype)initVsync;
+-(instancetype)initVsync:(yanbo::VsyncWaiter::Callback)callback;
 -(void)await;
+-(void)removeVsync;
 @end
 
 namespace yanbo {
@@ -18,9 +20,19 @@ class VsyncWaiterIOS : public VsyncWaiter {
 public:
     VsyncWaiterIOS()
     {
-        m_client = [[VsyncClient alloc] initVsync];
+        auto callback = [this]() {
+
+            fireCallback();
+        };
+        m_client = [[VsyncClient alloc] initVsync:callback];
     }
     
+    ~VsyncWaiterIOS()
+    {
+        [m_client removeVsync];
+    }
+    
+    // 唤醒vsync信号
     virtual LVoid awaitVSync()
     {
         [m_client await];
@@ -36,26 +48,41 @@ VsyncWaiter* VsyncWaiter::createVsyncWaiter()
 }
 
 @implementation VsyncClient {
-    CADisplayLink* displayLink;
+    yanbo::VsyncWaiter::Callback _callback;
+    CADisplayLink* _displayLink;
 }
 
--(instancetype)initVsync {
+-(instancetype)initVsync:(yanbo::VsyncWaiter::Callback)callback {
     self = [super init];
     if (self) {
-        displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
-        [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        _callback = std::move(callback);
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
+        //_displayLink.paused = YES;
+        
+//        yanbo::UIThread::instance()->postClosureTask([client = self]() {
+//            [client->_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+//        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self->_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        });
     }
     
     return self;
 }
 
 -(void)await {
-    displayLink.paused = NO;
+    _displayLink.paused = NO;
 }
 
 -(void)onDisplayLink:(CADisplayLink*)link {
-    // TODO do something
-    displayLink.paused = YES;
+    // TODO do something render
+    _callback();
+    _displayLink.paused = YES;
+}
+
+// 从runloop中移除
+-(void)removeVsync {
+    [_displayLink invalidate];
 }
 @end
 #endif

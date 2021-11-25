@@ -105,9 +105,9 @@
     
     self.renderer = [IOSRenderer initRenderer:layer];
         
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self
-                                                   selector:@selector(render:)];
-    [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+//    self.displayLink = [CADisplayLink displayLinkWithTarget:self
+//                                                   selector:@selector(render:)];
+    //[self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     //self.inputView = [[BoyiaTextInputView alloc] init];
     

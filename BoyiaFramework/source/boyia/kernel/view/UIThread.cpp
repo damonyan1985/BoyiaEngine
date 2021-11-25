@@ -43,7 +43,9 @@ public:
 UIThread::UIThread(AppManager* manager)
     : m_manager(manager)
     , m_gc(LGraphicsContext::create())
+#if ENABLE(BOYIA_UI_VSYNC)
     , m_vsyncWaiter(VsyncWaiter::createVsyncWaiter())
+#endif
 {
     start();
 }
@@ -394,5 +396,38 @@ LVoid UIThread::handleFlingEvent(LFlingEvent* evt)
     msg->obj = evt;
     m_queue->push(msg);
     notify();
+}
+
+LVoid VsyncWaiter::awaitVsyncForCallback(const Callback& callback)
+{
+    if (!callback) {
+        return;
+    }
+    
+    {
+        AutoLock lock(&m_lock);
+//        if (m_callback) {
+//            return;
+//        }
+        m_callback = std::move(callback);
+    }
+    awaitVSync();
+}
+
+LVoid VsyncWaiter::fireCallback()
+{
+    Callback callback;
+    {
+        AutoLock lock(&m_lock);
+        callback = std::move(m_callback);
+    }
+    
+    if (!callback) {
+        return;
+    }
+    
+    UIThread::instance()->postClosureTask([callback] {
+        callback();
+    });
 }
 }

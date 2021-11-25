@@ -4,6 +4,7 @@
 #include "LGdi.h"
 #include "RenderThread.h"
 #include "RenderLayer.h"
+#include "VsyncWaiter.h"
 
 namespace yanbo {
 class ItemPainter;
@@ -52,6 +53,8 @@ public:
 
 private:
     LVoid submit(LVoid* view, RenderLayer* parentLayer);
+    VsyncWaiter* vsyncWaiter() const;
+    
     ItemPainter* currentPainter();
 
     LRect* m_clipRect;
@@ -60,6 +63,7 @@ private:
     LColor m_brushColor;
     LColor m_penColor;
     KVector<LUintPtr>* m_collectBuffers;
+    mutable VsyncWaiter* m_vsync;
 };
 }
 

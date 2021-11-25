@@ -24,6 +24,26 @@ $ git clone git@github.com:damonyan1985/BoyiaEngine.git
 | Painter Module | Render widget with opengl commands |
 | VM Module | Parse and Build Boyia language which bind with Widget Tree |
 
+## Framework Threads
+1. Platform Thread
+```
+Android, windows or ios UI Thread
+```
+2. UI Thread
+```
+Boyia Runtime and UI Elements run on this thread.
+```
+
+3. Render Thread
+```
+Opengl, Metal and GDI+ run on this thread.
+```
+
+4. IO Threads
+```
+Thread pool for all io operation
+```
+
 ### Boyia Blog
 [Blog](https://damonyan1985.github.io/)
 

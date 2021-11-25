@@ -271,6 +271,9 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
         UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
         CGImageRef imageRef = image.CGImage;
         
+        // 软裁剪
+//        CGImageCreateWithImageInRect(imageRef, CGRectMake(0, 0, image.size.width/2, image.size.height/2));
+        
         // 读取图片的宽高
         size_t width = CGImageGetWidth(imageRef);
         size_t height = CGImageGetHeight(imageRef);
