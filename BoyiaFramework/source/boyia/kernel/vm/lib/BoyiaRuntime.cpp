@@ -156,6 +156,7 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(m_idCreator->genIdentByStr("BY_SetImageUrl", 14), setImageUrl);
     appendNative(m_idCreator->genIdentByStr("BY_ViewCommit", 13), viewCommit);
     appendNative(m_idCreator->genIdentByStr("BY_SetViewVisible", 17), setViewVisible);
+    appendNative(m_idCreator->genIdentByStr("BY_GetPlatformType", 18), getPlatformType);
     // End
     appendNative(0, kBoyiaNull);
 }

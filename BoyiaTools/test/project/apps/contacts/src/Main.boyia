@@ -45,6 +45,8 @@ class MainViewController extends ViewController {
         Util.log("NetParams2");
         params.body = "name=test&pwd=test";
         this.fetch("https://172.19.4.43/user/v1/login", this.testCallback, params);
+        
+        Util.log("System Platform = " + Util.isWindows());
     }
     
     fun testCallback(data) {

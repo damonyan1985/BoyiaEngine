@@ -192,6 +192,11 @@ const LReal PlatformBridge::getDisplayDensity()
     // TODO
     return 0;
 }
+
+PlatformBridge::PlatformType PlatformBridge::getPlatformType()
+{
+    return kPlatformIos;
+}
 }
 
 #endif

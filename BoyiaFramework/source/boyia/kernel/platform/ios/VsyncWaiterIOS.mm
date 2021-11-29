@@ -21,7 +21,6 @@ public:
     VsyncWaiterIOS()
     {
         auto callback = [this]() {
-
             fireCallback();
         };
         m_client = [[VsyncClient alloc] initVsync:callback];
@@ -57,11 +56,12 @@ VsyncWaiter* VsyncWaiter::createVsyncWaiter()
     if (self) {
         _callback = std::move(callback);
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
-        //_displayLink.paused = YES;
+        _displayLink.paused = YES;
         
 //        yanbo::UIThread::instance()->postClosureTask([client = self]() {
 //            [client->_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 //        });
+        // 必须加入带有NSRunLoop的线程
         dispatch_async(dispatch_get_main_queue(), ^{
             [self->_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         });

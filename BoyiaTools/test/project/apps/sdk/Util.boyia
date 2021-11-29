@@ -2,6 +2,8 @@
 var true = 1, false = 0, null = 0;
 // Touch Event
 var TOUCH_DOWN = 1, TOUCH_UP = 2, TOUCH_MOVE = 4;
+// PlatformType
+var PLATFORM_ANDROID = 0, PLATFORM_IOS = 1, PLATFORM_WINDOWS = 2;
 // Util Class
 class Util {
     fun log(info) {
@@ -26,5 +28,17 @@ class Util {
 
     fun startApp(info) {
         BY_CallStaticMethod("com/boyia/app/common/utils/BoyiaUtils", "startApp", "(Ljava/lang/String;)V", info);
+    }
+    
+    fun isIOS() {
+        return BY_GetPlatformType() == PLATFORM_IOS;
+    }
+    
+    fun isAndroid() {
+        return BY_GetPlatformType() == PLATFORM_ANDROID;
+    }
+    
+    fun isWindows() {
+        return BY_GetPlatformType() == PLATFORM_WINDOWS;
     }
 }

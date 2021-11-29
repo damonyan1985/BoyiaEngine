@@ -14,6 +14,7 @@
 @interface HttpEngineDelegate : NSObject<NSURLSessionDataDelegate>
 
 @property (strong) id<HttpCallback> callback;
+@property (strong) NSString* url;
 
 @end
 
@@ -57,6 +58,7 @@
     
     HttpEngineDelegate* delegate = [HttpEngineDelegate new];
     delegate.callback = cb;
+    delegate.url = url;
     
     // 创建Session, 设置代理
     NSURLSession* session = [NSURLSession sessionWithConfiguration:config delegate:delegate delegateQueue:queue];
@@ -126,14 +128,19 @@
 didCompleteWithError:(nullable NSError *)error {
     //NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
     //NSLog(@"Result New data = %@",json);
-    if (error) {
-        NSLog(@"HttpEngine finished error: %@", [error localizedDescription]);
+    NSLog(@"HttpEngine finished url: %@", self.url);
+    if (!self.callback) {
         return;
     }
     
-    if (self.callback != nil) {
-        [self.callback onLoadFinished];
+    if (error) {
+        NSLog(@"HttpEngine finished error: %@", [error localizedDescription]);
+        [self.callback onLoadError];
+        return;
     }
+    
+
+    [self.callback onLoadFinished];
 }
 
 

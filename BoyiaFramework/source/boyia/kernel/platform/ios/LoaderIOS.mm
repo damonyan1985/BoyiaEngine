@@ -54,6 +54,12 @@
     }
 }
 
+-(void)onLoadError {
+    if (_client) {
+        _client->onLoadError(yanbo::NetworkClient::kNetworkFileError);
+    }
+}
+
 @end
 
 namespace yanbo {

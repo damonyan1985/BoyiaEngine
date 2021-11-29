@@ -7,6 +7,12 @@ namespace yanbo {
 
 class PlatformBridge {
 public:
+    enum PlatformType {
+        kPlatformAndroid = 0,
+        kPlatformIos,
+        kPlatformWindows
+    };
+    
     static bool unzip(const String& zipFile, const String& dir);
     static const char* getAppRoot();
     static const char* getAppPath();
@@ -19,6 +25,8 @@ public:
     static const char* getInstructionEntryPath();
     static const char* getSymbolTablePath();
     static const LReal getDisplayDensity();
+    
+    static PlatformType getPlatformType();
 };
 }
 

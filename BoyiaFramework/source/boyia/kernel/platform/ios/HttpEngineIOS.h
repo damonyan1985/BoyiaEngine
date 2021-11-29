@@ -21,6 +21,8 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 -(void)onDataReceive:(NSData*)data;
 // 请求完成
 -(void)onLoadFinished;
+// 请求失败
+-(void)onLoadError;
 
 @end
 

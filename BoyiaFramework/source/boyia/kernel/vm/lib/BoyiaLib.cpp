@@ -7,6 +7,7 @@
 #include "BoyiaSocket.h"
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
+#include "PlatformBridge.h"
 #if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
 #endif
@@ -31,7 +32,8 @@ char* convertMStr2Str(BoyiaStr* str)
 }
 
 // 处理布尔类型返回
-static LInt resultBool(LInt result, LVoid* vm) {
+static LInt resultInt(LInt result, LVoid* vm)
+{
     BoyiaValue value;
     value.mValueType = BY_INT;
     value.mValue.mIntVal = result;
@@ -664,7 +666,7 @@ LInt instanceOfClass(LVoid* vm)
     LInt result = 0;
     
     if (obj->mValueType != BY_CLASS || !fun) {
-        return resultBool(result, vm);
+        return resultInt(result, vm);
     }
     
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
@@ -681,7 +683,7 @@ LInt instanceOfClass(LVoid* vm)
         baseCls = (BoyiaValue*)baseCls->mValue.mObj.mSuper;
     }
     
-    return resultBool(result, vm);
+    return resultInt(result, vm);
 }
 
 LInt setImageUrl(LVoid* vm)
@@ -840,4 +842,9 @@ LInt sendSocketMsg(LVoid* vm)
     socket->send(msg);
 
     return kOpResultSuccess;
+}
+
+LInt getPlatformType(LVoid* vm)
+{
+    return resultInt((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
 }

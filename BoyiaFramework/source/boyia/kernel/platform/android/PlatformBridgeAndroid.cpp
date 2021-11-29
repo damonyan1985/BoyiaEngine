@@ -216,6 +216,11 @@ const LReal PlatformBridge::getDisplayDensity()
         "getDisplayDensity",
         "()F");
 }
+
+PlatformBridge::PlatformType PlatformBridge::getPlatformType()
+{
+    return kPlatformAndroid;
+}
 }
 
 #endif

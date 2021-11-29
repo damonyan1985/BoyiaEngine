@@ -187,6 +187,11 @@ const LReal PlatformBridge::getDisplayDensity()
 {
     return 10.0f;
 }
+
+PlatformBridge::PlatformType PlatformBridge::getPlatformType()
+{
+    return kPlatformWindows;
+}
 }
 
 #endif
