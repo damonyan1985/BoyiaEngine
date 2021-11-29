@@ -28,6 +28,8 @@ enum ErrorMsg {
     LPTR_EXPECTED,
     RPTR_EXPECTED,
     RUNTIME_NO_PROP,
+    CREATE_MAP_ERROR,
+    MAP_KEY_VALUE_ERROR,
 };
 
 LVoid SntxError(LInt error, LInt lineNum);

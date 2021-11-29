@@ -44,8 +44,18 @@ class MainViewController extends ViewController {
         params.headers.put("token", "123456");
         Util.log("NetParams2");
         params.body = "name=test&pwd=test";
+        
+        var body = {
+            "Content-Type" : "application/x-www-form-urlencoded",
+            token : "1234567890",
+            body : "name=test&pwd=test"
+        };
+        
         this.fetch("https://172.19.4.43/user/v1/login", this.testCallback, params);
         
+        
+        var bodyJson = Util.toJson(body);
+        Util.log("bodyJson=" + bodyJson);
         Util.log("System Platform = " + Util.isWindows());
     }
     

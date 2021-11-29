@@ -30,7 +30,9 @@ static const char* FindErrorInfo(LInt error)
         "value is not a object",
         "left parentheses expected",
         "right parentheses expected",
-        "is not a prop of the object"
+        "is not a prop of the object",
+        "create map error",
+        "map key value rule error"
     };
 
     return errorMap[error];

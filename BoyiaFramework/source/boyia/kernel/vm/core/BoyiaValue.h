@@ -150,6 +150,7 @@ LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 
 LVoid BuiltinMapClass(LVoid* vm);
+BoyiaFunction* CreatMapObject(LVoid* vm);
 
 LVoid SystemGC(LVoid* vm);
 #endif

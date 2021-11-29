@@ -72,14 +72,15 @@ enum MathValue {
 }; // 33
 // 标点符号
 enum DelimiValue {
-    SEMI = ASSIGN + 1,
-    COMMA,
-    QUOTE,
-    DOT
-}; // 37
+    SEMI = ASSIGN + 1, // 分号
+    COMMA, // 逗号
+    QUOTE, // 引号
+    DOT,   // 点
+    COLON  // 冒号
+}; // 38
 // 小括号，中括号，大括号
 enum BracketValue {
-    LPTR = DOT + 1,
+    LPTR = COLON + 1,
     RPTR,
     ARRAY_BEGIN,
     ARRAY_END,
@@ -146,7 +147,10 @@ enum CmdType {
     kCmdConstStr,
     kCmdLoop,
     kCmdBreak,
-    kCmdReturn
+    kCmdReturn,
+    kCmdCreateMap,
+    kCmdSetMapKey,
+    kCmdSetMapValue,
 };
 
 typedef struct {
@@ -385,6 +389,12 @@ static LInt HandleReturn(LVoid* ins, BoyiaVM* vm);
 static LInt HandleBreak(LVoid* ins, BoyiaVM* vm);
 
 static LInt HandleCreateProp(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleCreateMap(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleSetMapKey(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
 // Reset scene of global execute state
@@ -455,6 +465,9 @@ static OPHandler* InitHandlers()
     handlers[kCmdReturn] = HandleReturn;
     handlers[kCmdBreak] = HandleBreak;
     handlers[kCmdPropCreate] = HandleCreateProp;
+    handlers[kCmdCreateMap] = HandleCreateMap;
+    handlers[kCmdSetMapKey] = HandleSetMapKey;
+    handlers[kCmdSetMapValue] = HandleSetMapValue;
 
     return handlers;
 }
@@ -1163,7 +1176,7 @@ static LInt GetLogicValue(CompileState* cs)
 
 static LInt GetDelimiter(CompileState* cs)
 {
-    const char* delimiConst = "+-*/%^=;,'.()[]{}";
+    const char* delimiConst = "+-*/%^=;,'.:()[]{}";
     LInt op = ADD;
     do {
         if (*delimiConst == *cs->mProg) {
@@ -1273,8 +1286,8 @@ static LInt NextToken(CompileState* cs)
     // 处理Token操作
     if (GetIdentifer(cs)
         || GetLogicValue(cs)
-        || GetDelimiter(cs)
         || GetStringValue(cs)
+        || GetDelimiter(cs)
         || GetNumberValue(cs)) {
         return cs->mToken.mTokenType;
     }
@@ -2200,6 +2213,47 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
     return kOpResultFail;
 }
 
+static LInt HandleCreateMap(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* inst = (Instruction*)ins;
+    BoyiaFunction* fun = CreatMapObject(vm);
+    
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+    value->mValueType = BY_CLASS;
+    value->mValue.mObj.mPtr = (LIntPtr)fun;
+    value->mValue.mObj.mSuper = kBoyiaNull;
+    
+    return kOpResultSuccess;
+}
+
+static LInt HandleSetMapKey(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* inst = (Instruction*)ins;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+
+    BoyiaFunction* function = (BoyiaFunction*)value->mValue.mObj.mPtr;
+    BoyiaValue* param = &function->mParams[function->mParamSize++];
+    param->mNameKey = (LUintPtr)inst->mOPRight.mValue;
+    
+    return kOpResultSuccess;
+}
+
+static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* inst = (Instruction*)ins;
+    
+    BoyiaValue* obj = inst->mOPRight.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+
+    BoyiaFunction* function = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    BoyiaValue* param = &function->mParams[function->mParamSize - 1];
+    ValueCopyNoName(param, value);
+    
+    SetNativeResult(obj, vm);
+    
+    return kOpResultSuccess;
+}
+
 // According to reg0, get reg0 obj's prop
 static LVoid EvalGetProp(CompileState* cs)
 {
@@ -2477,19 +2531,77 @@ static LVoid EvalLogic(CompileState* cs)
     }
 }
 
+// 如果是Map对象
+static LVoid EvalObject(CompileState* cs)
+{
+    if (cs->mToken.mTokenValue != BLOCK_START) {
+        EvalLogic(cs);
+        return;
+    }
+    
+    // 创建一个Map对象
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdCreateMap, HandleCreateMap, cs);
+    
+
+    //Putback(cs);
+    do {
+        NextToken(cs);
+        // 如果是 } 则语句结束
+        if (cs->mToken.mTokenValue == BLOCK_END) {
+            return;
+        }
+
+        // 如果不是标识符提示出错
+        if (cs->mToken.mTokenType != IDENTIFIER && cs->mToken.mTokenType != STRING_VALUE) {
+            SntxErrorBuild(CREATE_MAP_ERROR, cs);
+            return;
+        }
+
+        BoyiaStr keyStr;
+        keyStr.mPtr = cs->mToken.mTokenName.mPtr;
+        keyStr.mLen = cs->mToken.mTokenType == STRING_VALUE
+            ? cs->mToken.mTokenName.mLen - 2
+            : cs->mToken.mTokenName.mLen;
+        
+        OpCommand cmd = {
+            OP_CONST_NUMBER,
+            (LIntPtr)GenIdentifier(&keyStr, cs->mVm)
+        };
+
+        // 此时R0为Map对象
+        PutInstruction(&COMMAND_R0, &cmd, kCmdSetMapKey, HandleSetMapKey, cs);
+
+        NextToken(cs); // : or =
+        if (cs->mToken.mTokenValue != COLON && cs->mToken.mTokenValue != ASSIGN) {
+            SntxErrorBuild(MAP_KEY_VALUE_ERROR, cs);
+            return;
+        }
+
+        // R0存入栈
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
+        // 计算value
+        EvalExpression(cs); // => R0
+        // 从栈中吐出数据到R1
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
+        PutInstruction(&COMMAND_R0, &COMMAND_R1, kCmdSetMapValue, HandleSetMapValue, cs);
+    } while (cs->mToken.mTokenValue == COMMA);
+}
+
 // 赋值,=
 static LVoid EvalAssignment(CompileState* cs)
 {
-    EvalLogic(cs); // =>R0
-    if (cs->mToken.mTokenValue == ASSIGN) { // '='
-        // R0存入栈
-        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
-        NextToken(cs);
-        EvalLogic(cs); // =>R0
-        // 从栈中吐出数据到R1
-        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
-        PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdAssignVar, HandleAssignVar, cs);
+    EvalObject(cs); // =>R0
+    if (cs->mToken.mTokenValue != ASSIGN) { // '='
+        return;
     }
+    
+    // R0存入栈
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
+    NextToken(cs);
+    EvalObject(cs); // =>R0
+    // 从栈中吐出数据到R1
+    PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
+    PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdAssignVar, HandleAssignVar, cs);
 }
 
 LVoid SetNativeResult(LVoid* result, LVoid* vm)

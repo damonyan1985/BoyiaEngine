@@ -533,3 +533,10 @@ LVoid BuiltinMapClass(LVoid* vm)
     }
 }
 
+BoyiaFunction* CreatMapObject(LVoid* vm)
+{
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaMap, 32, vm);
+    GCAppendRef(objBody, BY_CLASS, vm);
+    return objBody;
+}
+
