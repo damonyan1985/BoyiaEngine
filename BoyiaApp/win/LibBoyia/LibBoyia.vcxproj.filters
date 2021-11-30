@@ -43,21 +43,6 @@
     <Filter Include="boyia\kernel">
       <UniqueIdentifier>{dd8c655e-b29e-4131-b5eb-923464790c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="boyia\kernel\vm">
-      <UniqueIdentifier>{264076f9-c178-4423-a537-08928cfd6e4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="boyia\kernel\vm\lib">
-      <UniqueIdentifier>{93151a23-8915-40b6-911c-c17c398099b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="boyia\kernel\vm\core">
-      <UniqueIdentifier>{22edb4fc-3470-455c-93b0-d2241654f6a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="boyia\kernel\vm\json">
-      <UniqueIdentifier>{ed83b851-76e4-4c55-841a-2970e448813e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="boyia\kernel\vm\view">
-      <UniqueIdentifier>{09dc9887-1200-4f01-91b5-017767d4704c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="boyia\kernel\app">
       <UniqueIdentifier>{f70cccae-c8ad-4cc8-be5f-b9f3da6602cc}</UniqueIdentifier>
     </Filter>
@@ -108,6 +93,21 @@
     </Filter>
     <Filter Include="boyia\kernel\render\layer">
       <UniqueIdentifier>{56cd7618-190f-4e3d-b03f-9914a5a47fed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\vm">
+      <UniqueIdentifier>{264076f9-c178-4423-a537-08928cfd6e4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\vm\lib">
+      <UniqueIdentifier>{93151a23-8915-40b6-911c-c17c398099b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\vm\core">
+      <UniqueIdentifier>{22edb4fc-3470-455c-93b0-d2241654f6a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\vm\json">
+      <UniqueIdentifier>{ed83b851-76e4-4c55-841a-2970e448813e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\vm\view">
+      <UniqueIdentifier>{09dc9887-1200-4f01-91b5-017767d4704c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -840,7 +840,7 @@
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.cpp">
-      <Filter>boyia\porting</Filter>
+      <Filter>boyia\kernel\widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
