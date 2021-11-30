@@ -117,7 +117,7 @@
 }
 
 -(void)handlePanGesture:(UIPanGestureRecognizer*)gesture {
-    CGPoint point = [gesture translationInView:gesture.view];
+    //CGPoint point = [gesture translationInView:gesture.view];
     if (gesture.state == UIGestureRecognizerStateEnded) {
         CGPoint speed = [gesture velocityInView:gesture.view];
         NSLog(@"speed = %@", NSStringFromCGPoint(speed));
@@ -149,19 +149,6 @@
 //            NSLog(@"result = true");
 //        }
 //    });
-}
-
-// 收到vsync信号之后进行渲染
--(void)render:(CADisplayLink*)link {
-    //[self.renderer render];
-    // 避免一直渲染造成性能损耗
-    self.displayLink.paused = YES;
-}
-
--(void)await {
-    if (self.displayLink != nil) {
-        self.displayLink.paused = NO;
-    }
 }
 
 //-(void)touchEvent:(int)type withEvent:(UIEvent*)event  {

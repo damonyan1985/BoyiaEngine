@@ -57,6 +57,10 @@ class MainViewController extends ViewController {
         
         var bodyJson = Util.toJson(body);
         Util.log("bodyJson=" + bodyJson);
+        
+        
+        var arr1 = ["789", "100"];
+        Util.log("arrJson=" + Util.toJson(arr1));
         Util.log("System Platform = " + Util.isWindows());
     }
     
