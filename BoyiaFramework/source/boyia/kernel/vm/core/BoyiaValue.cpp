@@ -422,6 +422,8 @@ LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 LVoid BuiltinStringClass(LVoid* vm)
 {
     BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaString, vm);
+    // 没有父类
+    classRef->mValue.mObj.mSuper = kBoyiaNull;
 
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
@@ -513,6 +515,9 @@ LInt BoyiaMapPut(LVoid* vm)
 LVoid BuiltinMapClass(LVoid* vm)
 {
     BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaMap, vm);
+    // 没有父类
+    classRef->mValue.mObj.mSuper = kBoyiaNull;
+    
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
     // map api
@@ -540,3 +545,11 @@ BoyiaFunction* CreatMapObject(LVoid* vm)
     return objBody;
 }
 
+
+// 内置Array Class builtin
+BoyiaFunction* CreatArrayObject(LVoid* vm)
+{
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaArray, 32, vm);
+    GCAppendRef(objBody, BY_CLASS, vm);
+    return objBody;
+}

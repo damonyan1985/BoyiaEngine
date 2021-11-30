@@ -151,6 +151,8 @@ enum CmdType {
     kCmdCreateMap,
     kCmdSetMapKey,
     kCmdSetMapValue,
+    kCmdCreateArray,
+    kCmdAddArrayItem,
 };
 
 typedef struct {
@@ -395,6 +397,10 @@ static LInt HandleCreateMap(LVoid* ins, BoyiaVM* vm);
 static LInt HandleSetMapKey(LVoid* ins, BoyiaVM* vm);
 
 static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
 // Reset scene of global execute state
@@ -468,6 +474,8 @@ static OPHandler* InitHandlers()
     handlers[kCmdCreateMap] = HandleCreateMap;
     handlers[kCmdSetMapKey] = HandleSetMapKey;
     handlers[kCmdSetMapValue] = HandleSetMapValue;
+    handlers[kCmdCreateArray] = HandleCreateArray;
+    handlers[kCmdAddArrayItem] = HandleAddArrayItem;
 
     return handlers;
 }
@@ -2254,6 +2262,37 @@ static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* inst = (Instruction*)ins;
+    BoyiaFunction* fun = CreatArrayObject(vm);
+    
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+    
+    value->mValueType = BY_CLASS;
+    value->mValue.mObj.mPtr = (LIntPtr)fun;
+    value->mValue.mObj.mSuper = kBoyiaNull;
+        
+    return kOpResultSuccess;
+}
+
+static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* inst = (Instruction*)ins;
+    // right是数组对象
+    BoyiaValue* obj = inst->mOPRight.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+    // left是需要添加的数组的值
+    BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
+    BoyiaFunction* function = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    BoyiaValue* param = &function->mParams[function->mParamSize++];
+    // 将值赋值到对应的索引
+    ValueCopy(param, value);
+    // 设置给R0
+    SetNativeResult(obj, vm);
+    
+    return kOpResultSuccess;
+}
+
 // According to reg0, get reg0 obj's prop
 static LVoid EvalGetProp(CompileState* cs)
 {
@@ -2584,13 +2623,50 @@ static LVoid EvalObject(CompileState* cs)
         // 从栈中吐出数据到R1
         PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
         PutInstruction(&COMMAND_R0, &COMMAND_R1, kCmdSetMapValue, HandleSetMapValue, cs);
-    } while (cs->mToken.mTokenValue == COMMA);
+    } while (cs->mToken.mTokenValue == COMMA); // 遇到}结束
+    // 进入下一个token
+    NextToken(cs);
+}
+
+// 计算Array
+static LVoid EvalArray(CompileState* cs)
+{
+    // 数组以[开头
+    if (cs->mToken.mTokenValue != ARRAY_BEGIN) {
+        EvalObject(cs);
+        return;
+    }
+    
+    // 创建一个Array对象
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdCreateArray, HandleCreateArray, cs);
+    
+    NextToken(cs);
+    // 如果是 ] 则语句结束
+    if (cs->mToken.mTokenValue == ARRAY_END) {
+        return;
+    }
+    
+    Putback(cs);
+    
+    do {
+        // R0存入栈
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
+        
+        // 计算value
+        EvalExpression(cs);
+        // 从栈中吐出数据到R1
+        PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
+        PutInstruction(&COMMAND_R0, &COMMAND_R1, kCmdAddArrayItem, HandleAddArrayItem, cs);
+    } while(cs->mToken.mTokenValue == COMMA); // 遇到]结束
+    
+    // 进入下一个token
+    NextToken(cs);
 }
 
 // 赋值,=
 static LVoid EvalAssignment(CompileState* cs)
 {
-    EvalObject(cs); // =>R0
+    EvalArray(cs); // =>R0
     if (cs->mToken.mTokenValue != ASSIGN) { // '='
         return;
     }
@@ -2598,7 +2674,7 @@ static LVoid EvalAssignment(CompileState* cs)
     // R0存入栈
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, HandlePush, cs);
     NextToken(cs);
-    EvalObject(cs); // =>R0
+    EvalArray(cs); // =>R0
     // 从栈中吐出数据到R1
     PutInstruction(&COMMAND_R1, kBoyiaNull, kCmdPop, HandlePop, cs);
     PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdAssignVar, HandleAssignVar, cs);

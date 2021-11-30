@@ -48,7 +48,8 @@ class MainViewController extends ViewController {
         var body = {
             "Content-Type" : "application/x-www-form-urlencoded",
             token : "1234567890",
-            body : "name=test&pwd=test"
+            body : "name=test&pwd=test",
+            items : ["123", "456"]
         };
         
         this.fetch("https://172.19.4.43/user/v1/login", this.testCallback, params);

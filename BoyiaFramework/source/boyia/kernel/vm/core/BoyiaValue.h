@@ -152,5 +152,8 @@ LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 LVoid BuiltinMapClass(LVoid* vm);
 BoyiaFunction* CreatMapObject(LVoid* vm);
 
+// 创建数组对象
+BoyiaFunction* CreatArrayObject(LVoid* vm);
+
 LVoid SystemGC(LVoid* vm);
 #endif
