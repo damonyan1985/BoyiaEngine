@@ -7,6 +7,8 @@
 
 #import "SceneDelegate.h"
 #import "BoyiaViewController.h"
+// app-Swift.h是由xcode自动生成的
+// xcode会将swift对外接口编译成oc头文件
 #import "app-Swift.h"
 
 @interface SceneDelegate ()

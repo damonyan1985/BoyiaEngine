@@ -5,6 +5,7 @@
 #ifndef BridgeHeader_h
 #define BridgeHeader_h
 
+// swift引入oc时需要使用
 #import "BoyiaViewController.h"
 
 #endif
