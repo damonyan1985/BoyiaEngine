@@ -138,7 +138,6 @@ template <class T>
 LVoid KVector<T>::copyElements(const T* buffer, LInt size, LInt capacity, LInt increment, LBool deep)
 {
     T* tmp = m_buffer;
-    LInt tmpSize = m_size;
 
     m_buffer = new T[capacity];
     m_capacity = capacity;
@@ -146,7 +145,7 @@ LVoid KVector<T>::copyElements(const T* buffer, LInt size, LInt capacity, LInt i
     m_increment = increment;
     m_deep = deep;
 
-    for (LInt i = 0; i < tmpSize; i++) {
+    for (LInt i = 0; i < size; i++) {
         *(m_buffer + i) = *(buffer + i);
     }
 
