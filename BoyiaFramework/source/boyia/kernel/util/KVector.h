@@ -36,8 +36,11 @@ public:
     const T& lastElement() const;
     T& elementAt(LInt position);
     T& lastElement();
+    
     LInt size() const { return m_size; }
     LInt capacity() const { return m_capacity; }
+    LInt increment() const { return m_increment; }
+    
     T& operator[](LInt position);
     const T& operator[](LInt position) const;
     void remove(LInt position);
@@ -49,13 +52,14 @@ public:
 
 private:
     LVoid copyElements(const KVector<T>& kv, LBool deep = LTrue);
-    LVoid copyElements(const T* buffer, LInt len);
+    LVoid copyElements(const T* buffer, LInt size, LInt capacity, LInt increment, LBool deep);
 
 private:
     LInt m_size;
     T* m_buffer;
     LInt m_capacity;
-    Bool m_deep;
+    LInt m_increment;
+    LBool m_deep;
 };
 
 template <class T>
@@ -64,6 +68,7 @@ KVector<T>::KVector()
     , m_buffer(kBoyiaNull)
     , m_capacity(0)
     , m_deep(LTrue)
+    , m_increment(kEnlargeCapacity)
 {
 }
 
@@ -72,6 +77,7 @@ KVector<T>::KVector(LInt capacity)
     : m_size(capacity)
     , m_capacity(capacity)
     , m_deep(LTrue)
+    , m_increment(kEnlargeCapacity)
 {
     m_buffer = new T[capacity];
 }
@@ -81,6 +87,7 @@ KVector<T>::KVector(LInt size, LInt capacity)
     : m_size(size)
     , m_capacity(capacity)
     , m_deep(LTrue)
+    , m_increment(kEnlargeCapacity)
 {
     m_buffer = new T[capacity];
 }
@@ -97,12 +104,13 @@ template <class T> // 深拷贝
 KVector<T>::KVector(const KVector<T>& kv, Bool deep)
 {
     m_deep = deep;
-    if (deep == LTrue) {
+    if (deep) {
         copyElements(kv);
     } else {
         m_buffer = const_cast<T*>(kv.getBuffer());
         m_size = kv.size();
         m_capacity = kv.capacity();
+        m_increment = kv.increment();
     }
 }
 
@@ -116,31 +124,33 @@ template <class T>
 LVoid KVector<T>::copyElements(const KVector<T>& kv, LBool deep)
 {
     if (deep) {
-        copyElements(kv.getBuffer(), kv.size());
+        copyElements(kv.getBuffer(), kv.size(), kv.capacity(), kv.increment(), deep);
     } else {
         m_buffer = const_cast<T*>(kv.getBuffer());
         m_size = kv.size();
         m_capacity = kv.capacity();
+        m_deep = deep;
+        m_increment = kv.increment();
     }
 }
 
 template <class T>
-LVoid KVector<T>::copyElements(const T* buffer, LInt len)
+LVoid KVector<T>::copyElements(const T* buffer, LInt size, LInt capacity, LInt increment, LBool deep)
 {
-    LInt size = len;
     T* tmp = m_buffer;
-
-    m_buffer = new T[size];
-
     LInt tmpSize = m_size;
-    m_capacity = size;
+
+    m_buffer = new T[capacity];
+    m_capacity = capacity;
     m_size = size;
+    m_increment = increment;
+    m_deep = deep;
 
     for (LInt i = 0; i < tmpSize; i++) {
         *(m_buffer + i) = *(buffer + i);
     }
 
-    if (m_buffer) {
+    if (tmp) {
         delete[] tmp;
         tmp = kBoyiaNull;
     }
@@ -182,7 +192,7 @@ LVoid KVector<T>::insertElement(const T& kv, LInt index)
         m_size += 1;
     } else {
         T* buffer = m_buffer;
-        m_capacity += kEnlargeCapacity;
+        m_capacity += m_increment;
 
         m_buffer = new T[m_capacity];
         m_size += 1;
@@ -206,11 +216,13 @@ LVoid KVector<T>::addElement(const T& kv)
 {
     if (m_size < m_capacity) {
         *(m_buffer + m_size) = kv;
-        m_size++;
     } else {
-        copyElements(m_buffer, m_size + 1);
-        *(m_buffer + m_size - 1) = kv;
+        LInt size = m_size;
+        copyElements(m_buffer, m_size, m_capacity + m_increment, m_increment, m_deep);
+        *(m_buffer + size) = kv;
     }
+    
+    m_size++;
 }
 
 template <class T>
