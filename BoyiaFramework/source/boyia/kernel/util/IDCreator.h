@@ -13,6 +13,7 @@
 #include "BoyiaValue.h"
 #include "UtilString.h"
 #include "OwnerPtr.h"
+#include "KVector.h"
 
 namespace util {
 
@@ -30,6 +31,7 @@ public:
 private:
     LUint m_idCount;
     IdLink* m_idLink;
+    KVector<BoyiaStr*> m_strIds;
 };
 }
 

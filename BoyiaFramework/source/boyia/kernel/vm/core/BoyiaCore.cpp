@@ -658,7 +658,7 @@ static LVoid Putback(CompileState* cs)
 
 static LUint8 LookUp(BoyiaStr* name)
 {
-    register LInt i = 0;
+    LInt i = 0;
     for (; gKeywordTable[i].mName.mLen; ++i) {
         if (MStrcmp(&gKeywordTable[i].mName, name))
             return gKeywordTable[i].mType;
