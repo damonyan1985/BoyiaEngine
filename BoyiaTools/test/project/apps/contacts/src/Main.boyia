@@ -62,6 +62,7 @@ class MainViewController extends ViewController {
         var arr1 = ["789", "100"];
         Util.log("arrJson=" + Util.toJson(arr1));
         Util.log("System Platform = " + Util.isWindows());
+        Util.log("string length = " + params.body.length());
     }
     
     fun testCallback(data) {

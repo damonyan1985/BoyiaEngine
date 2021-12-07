@@ -32,6 +32,8 @@ private:
     BoyiaRuntime* m_runtime;
 };
 
+#define GEN_ID(key) m_idCreator->genIdentByStr(key, StringSize(key))
+
 BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     : m_app(app)
     , m_memoryPool(InitMemoryPool(kMemoryPoolSize))
@@ -90,28 +92,17 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
     m_eventManager->removeAllEvent(reinterpret_cast<LIntPtr>(ptr));
 }
 
-template<int n>
-constexpr int StringSize(const char(&s)[n])
-{
-    return n-1;
-}
-
-//static LVoid GenId(util::IDCreator* creator, const LInt8* idName)
-//{
-//    creator->genIdentByStr(idName, StringSize(idName));
-//}
-
 LVoid BoyiaRuntime::init()
 {
     
     //int n = StringSize("super");
     // begin builtins id
-    m_idCreator->genIdentByStr("this", StringSize("this"));
+    GEN_ID("this");
     //GenId(m_idCreator, "this");
-    m_idCreator->genIdentByStr("super", StringSize("super"));
-    m_idCreator->genIdentByStr("String", StringSize("String"));
-    m_idCreator->genIdentByStr("Array", StringSize("Array"));
-    m_idCreator->genIdentByStr("Map", StringSize("Map"));
+    GEN_ID("super");
+    GEN_ID("String");
+    GEN_ID("Array");
+    GEN_ID("Map");
     // end builtins id
 
     initNativeFunction();
@@ -128,49 +119,49 @@ LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 
 LVoid BoyiaRuntime::initNativeFunction()
 {
-    appendNative(m_idCreator->genIdentByStr("new", StringSize("new")), CreateObject);
-    appendNative(m_idCreator->genIdentByStr("BY_Content", StringSize("BY_Content")), getFileContent);
+    appendNative(GEN_ID("new"), CreateObject);
+    appendNative(GEN_ID("BY_Content"), getFileContent);
     // Array Api Begin
-    appendNative(m_idCreator->genIdentByStr("BY_GetFromArray", StringSize("BY_GetFromArray")), getElementFromVector);
-    appendNative(m_idCreator->genIdentByStr("BY_AddInArray", StringSize("BY_AddInArray")), addElementToVector);
-    appendNative(m_idCreator->genIdentByStr("BY_GetArraySize", StringSize("BY_GetArraySize")), getVectorSize);
-    appendNative(m_idCreator->genIdentByStr("BY_ClearArray", StringSize("BY_ClearArray")), clearVector);
-    appendNative(m_idCreator->genIdentByStr("BY_RemoveWidthIndex", StringSize("BY_RemoveWidthIndex")), removeElementWidthIndex);
-    appendNative(m_idCreator->genIdentByStr("BY_RemoveFromArray", StringSize("BY_RemoveFromArray")), removeElementFromVector);
+    appendNative(GEN_ID("BY_GetFromArray"), getElementFromVector);
+    appendNative(GEN_ID("BY_AddInArray"), addElementToVector);
+    appendNative(GEN_ID("BY_GetArraySize"), getVectorSize);
+    appendNative(GEN_ID("BY_ClearArray"), clearVector);
+    appendNative(GEN_ID("BY_RemoveWidthIndex"), removeElementWidthIndex);
+    appendNative(GEN_ID("BY_RemoveFromArray"), removeElementFromVector);
     // Array Api End
-    appendNative(m_idCreator->genIdentByStr("BY_Log", StringSize("BY_Log")), logPrint);
-    appendNative(m_idCreator->genIdentByStr("BY_Json", StringSize("BY_Json")), jsonParseWithCJSON);
-    appendNative(m_idCreator->genIdentByStr("BY_toJson", StringSize("BY_toJson")), toJsonString);
-    appendNative(m_idCreator->genIdentByStr("BY_CreateDocument", StringSize("BY_CreateDocument")), createJSDocument);
-    appendNative(m_idCreator->genIdentByStr("BY_AppendView", StringSize("BY_AppendView")), appendView);
-    appendNative(m_idCreator->genIdentByStr("BY_GetRootDocument", StringSize("BY_GetRootDocument")), getRootDocument);
-    appendNative(m_idCreator->genIdentByStr("BY_SetDocument", StringSize("BY_SetDocument")), setDocument);
-    appendNative(m_idCreator->genIdentByStr("BY_RemoveDocument", StringSize("BY_RemoveDocument")), removeDocument);
-    appendNative(m_idCreator->genIdentByStr("BY_SetXpos", StringSize("BY_SetXpos")), setViewXpos);
-    appendNative(m_idCreator->genIdentByStr("BY_SetYpos", StringSize("BY_SetYpos")), setViewYpos);
-    appendNative(m_idCreator->genIdentByStr("BY_DrawView", StringSize("BY_DrawView")), drawView);
-    appendNative(m_idCreator->genIdentByStr("BY_GetViewXpos", StringSize("BY_GetViewXpos")), getViewXpos);
-    appendNative(m_idCreator->genIdentByStr("BY_GetViewYpos", StringSize("BY_GetViewYpos")), getViewYpos);
-    appendNative(m_idCreator->genIdentByStr("BY_GetViewWidth", StringSize("BY_GetViewWidth")), getViewWidth);
-    appendNative(m_idCreator->genIdentByStr("BY_GetViewHeight", StringSize("BY_GetViewHeight")), getViewHeight);
-    appendNative(m_idCreator->genIdentByStr("BY_SetViewStyle", StringSize("BY_SetViewStyle")), setViewStyle);
-    appendNative(m_idCreator->genIdentByStr("BY_LoadData", StringSize("BY_LoadData")), loadDataFromNative);
-    appendNative(m_idCreator->genIdentByStr("BY_StartScale", StringSize("BY_StartScale")), startScale);
-    appendNative(m_idCreator->genIdentByStr("BY_StartOpacity", StringSize("BY_StartOpacity")), startOpacity);
-    appendNative(m_idCreator->genIdentByStr("BY_CallStaticMethod", StringSize("BY_CallStaticMethod")), callStaticMethod);
-    appendNative(m_idCreator->genIdentByStr("BY_StartTranslate", StringSize("BY_StartTranslate")), startTranslate);
-    appendNative(m_idCreator->genIdentByStr("BY_GetHtmlItem", StringSize("BY_GetHtmlItem")), getHtmlItem);
-    appendNative(m_idCreator->genIdentByStr("BY_LoadImage", StringSize("BY_LoadImage")), loadImageByUrl);
-    appendNative(m_idCreator->genIdentByStr("BY_SetViewText", StringSize("BY_SetViewText")), setViewGroupText);
-    appendNative(m_idCreator->genIdentByStr("BY_SetInputViewText", StringSize("BY_SetInputViewText")), setInputViewText);
-    appendNative(m_idCreator->genIdentByStr("BY_AddEventListener", StringSize("BY_AddEventListener")), addEventListener);
-    appendNative(m_idCreator->genIdentByStr("BY_SetToNativeView", StringSize("BY_SetToNativeView")), setToNativeView);
-    appendNative(m_idCreator->genIdentByStr("BY_InstanceOfClass", StringSize("BY_InstanceOfClass")), instanceOfClass);
-    appendNative(m_idCreator->genIdentByStr("BY_CreateViewGroup", StringSize("BY_CreateViewGroup")), createViewGroup);
-    appendNative(m_idCreator->genIdentByStr("BY_SetImageUrl", StringSize("BY_SetImageUrl")), setImageUrl);
-    appendNative(m_idCreator->genIdentByStr("BY_ViewCommit", StringSize("BY_ViewCommit")), viewCommit);
-    appendNative(m_idCreator->genIdentByStr("BY_SetViewVisible", StringSize("BY_SetViewVisible")), setViewVisible);
-    appendNative(m_idCreator->genIdentByStr("BY_GetPlatformType", StringSize("BY_GetPlatformType")), getPlatformType);
+    appendNative(GEN_ID("BY_Log"), logPrint);
+    appendNative(GEN_ID("BY_Json"), jsonParseWithCJSON);
+    appendNative(GEN_ID("BY_toJson"), toJsonString);
+    appendNative(GEN_ID("BY_CreateDocument"), createJSDocument);
+    appendNative(GEN_ID("BY_AppendView"), appendView);
+    appendNative(GEN_ID("BY_GetRootDocument"), getRootDocument);
+    appendNative(GEN_ID("BY_SetDocument"), setDocument);
+    appendNative(GEN_ID("BY_RemoveDocument"), removeDocument);
+    appendNative(GEN_ID("BY_SetXpos"), setViewXpos);
+    appendNative(GEN_ID("BY_SetYpos"), setViewYpos);
+    appendNative(GEN_ID("BY_DrawView"), drawView);
+    appendNative(GEN_ID("BY_GetViewXpos"), getViewXpos);
+    appendNative(GEN_ID("BY_GetViewYpos"), getViewYpos);
+    appendNative(GEN_ID("BY_GetViewWidth"), getViewWidth);
+    appendNative(GEN_ID("BY_GetViewHeight"), getViewHeight);
+    appendNative(GEN_ID("BY_SetViewStyle"), setViewStyle);
+    appendNative(GEN_ID("BY_LoadData"), loadDataFromNative);
+    appendNative(GEN_ID("BY_StartScale"), startScale);
+    appendNative(GEN_ID("BY_StartOpacity"), startOpacity);
+    appendNative(GEN_ID("BY_CallStaticMethod"), callStaticMethod);
+    appendNative(GEN_ID("BY_StartTranslate"), startTranslate);
+    appendNative(GEN_ID("BY_GetHtmlItem"), getHtmlItem);
+    appendNative(GEN_ID("BY_LoadImage"), loadImageByUrl);
+    appendNative(GEN_ID("BY_SetViewText"), setViewGroupText);
+    appendNative(GEN_ID("BY_SetInputViewText"), setInputViewText);
+    appendNative(GEN_ID("BY_AddEventListener"), addEventListener);
+    appendNative(GEN_ID("BY_SetToNativeView"), setToNativeView);
+    appendNative(GEN_ID("BY_InstanceOfClass"), instanceOfClass);
+    appendNative(GEN_ID("BY_CreateViewGroup"), createViewGroup);
+    appendNative(GEN_ID("BY_SetImageUrl"), setImageUrl);
+    appendNative(GEN_ID("BY_ViewCommit"), viewCommit);
+    appendNative(GEN_ID("BY_SetViewVisible"), setViewVisible);
+    appendNative(GEN_ID("BY_GetPlatformType"), getPlatformType);
     // End
     appendNative(0, kBoyiaNull);
 }

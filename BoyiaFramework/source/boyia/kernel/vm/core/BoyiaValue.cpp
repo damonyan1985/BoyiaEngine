@@ -27,6 +27,8 @@
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
 #define MAX_INLINE_CACHE 5
 
+#define GET_ID(key, vm) GenIdentByStr(key, StringSize(key), vm)
+
 enum InlineCacheType {
     CACHE_PROP = 1,
     CACHE_METHOD
@@ -418,6 +420,22 @@ LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 }
 
 // String class builtin
+LInt BoyiaStringLength(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为函数指针
+    // 最后一个索引是调用时添加的对象
+    // 0与size-1之间是函数的参数
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    BoyiaStr* str = GetStringBuffer(obj);
+    
+    BoyiaValue value;
+    value.mValueType = BY_INT;
+    value.mValue.mIntVal = str->mLen;
+    SetNativeResult(&value, vm);
+    return kOpResultSuccess;
+}
+
 // 内置Boyia的String类
 LVoid BuiltinStringClass(LVoid* vm)
 {
@@ -429,9 +447,25 @@ LVoid BuiltinStringClass(LVoid* vm)
 
     // first prop is raw string
     classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
-    classBody->mParams[classBody->mParamSize].mNameKey = GenIdentByStr("buffer", 6, vm);
+    classBody->mParams[classBody->mParamSize].mNameKey = GET_ID("buffer", vm); //GenIdentByStr("buffer", 6, vm);
     classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
     classBody->mParams[classBody->mParamSize++].mValue.mStrVal.mLen = 0;
+    
+    // function length
+    {
+        // put function implementation begin
+        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+        function->mParams = kBoyiaNull;
+        function->mParamSize = 0;
+        // 实际调用的函数
+        function->mFuncBody = (LIntPtr)BoyiaStringLength;
+        
+        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
+        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+        lengthFuncVal->mNameKey = GET_ID("length", vm); //GenIdentByStr("put", vm);
+        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        // put function implementation end
+    }
 }
 
 BoyiaStr* GetStringBuffer(BoyiaValue* ref)
@@ -521,18 +555,17 @@ LVoid BuiltinMapClass(LVoid* vm)
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
     // map api
-    LInt paramSize = 2;
     {
         // put function implementation begin
         BoyiaFunction* function = NEW(BoyiaFunction, vm);
-        function->mParams = NEW_ARRAY(BoyiaValue, paramSize, vm);
-        function->mParamSize = paramSize;
+        function->mParams = kBoyiaNull;
+        function->mParamSize = 0;
         // 实际调用的函数
         function->mFuncBody = (LIntPtr)BoyiaMapPut;
         
         BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
         putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        putFuncVal->mNameKey = GenIdentByStr("put", vm);
+        putFuncVal->mNameKey = GET_ID("put", vm); //GenIdentByStr("put", vm);
         putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         // put function implementation end
     }
