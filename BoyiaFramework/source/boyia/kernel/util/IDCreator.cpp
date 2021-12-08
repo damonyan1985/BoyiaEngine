@@ -1,21 +1,21 @@
 #include "IDCreator.h"
 
 namespace util {
-typedef struct BoyiaId {
-    BoyiaStr mStr;
-    LUint mID;
-    BoyiaId* mNext;
-} BoyiaId;
-
-typedef struct IdLink {
-    BoyiaId* mBegin;
-    BoyiaId* mEnd;
-} IdLink;
+//typedef struct BoyiaId {
+//    BoyiaStr mStr;
+//    LUint mID;
+//    BoyiaId* mNext;
+//} BoyiaId;
+//
+//typedef struct IdLink {
+//    BoyiaId* mBegin;
+//    BoyiaId* mEnd;
+//} IdLink;
 
 IDCreator::IDCreator()
-    : m_idCount(0)
-    , m_idLink(kBoyiaNull)
-    , m_strIds(0, 512)
+//    : m_idCount(0)
+//    , m_idLink(kBoyiaNull)
+    : m_strIds(0, 512)
 {
 }
 

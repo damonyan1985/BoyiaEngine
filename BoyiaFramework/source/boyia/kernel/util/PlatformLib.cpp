@@ -11,9 +11,13 @@
 // INCLUDE FILES
 // Class include
 #include "PlatformLib.h"
-#include "ArmFunction.h"
 
-#define SOFT_LIB
+#define USE_SYSTEM 0
+
+#if USE_SYSTEM
+#include <string.h>
+#endif
+
 // ================= MEMBER FUNCTIONS =======================
 namespace util {
 const double PI = 3.1415926535897931;
@@ -52,12 +56,16 @@ static LUint8* LItoa(LInt value, LUint8* str, LInt radix, LInt* len)
 
 LInt LStrlen(const LUint8* aStr)
 {
+#if USE_SYSTEM
+    return (LInt)strlen((const char*)aStr);
+#else
     LInt nLen = 0;
     while (*(aStr + nLen) != '\0') {
         ++nLen;
     }
 
     return nLen;
+#endif
 }
 
 LInt LStrcmp(const LCharA* src, const LCharA* cmpStr)
@@ -135,29 +143,30 @@ LInt8* LStrcpy(LInt8* aDest, const LInt8* aSrc)
 
 LVoid* LMemset(LVoid* dest, LInt value, LInt len)
 {
-#ifdef SOFT_LIB
+#if USE_SYSTEM
+    return memset(dest, value, len);
+#else
     LUint8* p = (LUint8*)dest;
     while (len--) {
         *(p + len) = value;
     }
-#else
-    ArmMemeset(dest, value, len);
-#endif
+    
     return dest;
+#endif
 }
 
 LVoid* LMemcpy(LVoid* dest, const LVoid* src, LInt len)
 {
-#ifdef SOFT_LIB
+#if USE_SYSTEM
+    return memcpy(dest, src, len);
+#else
     LUint8* d = (LUint8*)dest;
     LUint8* s = (LUint8*)src;
     while (len--) {
         *(d + len) = *(s + len);
     }
-#else
-    ArmMemcpy(dest, src, len);
-#endif
     return dest;
+#endif
 }
 
 LVoid* LMemmove(LVoid* dest, const LVoid* source, LInt count)

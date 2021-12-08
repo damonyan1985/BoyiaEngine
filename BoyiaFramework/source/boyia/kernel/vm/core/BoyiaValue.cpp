@@ -27,7 +27,7 @@
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
 #define MAX_INLINE_CACHE 5
 
-#define GET_ID(key, vm) GenIdentByStr(key, StringSize(key), vm)
+#define GEN_ID(key, vm) GenIdentByStr(key, StringUtils::StringSize(key), vm)
 
 enum InlineCacheType {
     CACHE_PROP = 1,
@@ -447,7 +447,7 @@ LVoid BuiltinStringClass(LVoid* vm)
 
     // first prop is raw string
     classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
-    classBody->mParams[classBody->mParamSize].mNameKey = GET_ID("buffer", vm); //GenIdentByStr("buffer", 6, vm);
+    classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("buffer", vm); //GenIdentByStr("buffer", 6, vm);
     classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
     classBody->mParams[classBody->mParamSize++].mValue.mStrVal.mLen = 0;
     
@@ -462,7 +462,7 @@ LVoid BuiltinStringClass(LVoid* vm)
         
         BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
         lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        lengthFuncVal->mNameKey = GET_ID("length", vm); //GenIdentByStr("put", vm);
+        lengthFuncVal->mNameKey = GEN_ID("length", vm); //GenIdentByStr("put", vm);
         lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         // put function implementation end
     }
@@ -565,7 +565,7 @@ LVoid BuiltinMapClass(LVoid* vm)
         
         BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
         putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        putFuncVal->mNameKey = GET_ID("put", vm); //GenIdentByStr("put", vm);
+        putFuncVal->mNameKey = GEN_ID("put", vm); //GenIdentByStr("put", vm);
         putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         // put function implementation end
     }

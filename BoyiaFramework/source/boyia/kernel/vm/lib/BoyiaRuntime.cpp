@@ -5,6 +5,8 @@
 #include "BoyiaMemory.h"
 #include "SalLog.h"
 #include "BoyiaAsyncEvent.h"
+#include "SystemUtil.h"
+#include "StringUtils.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
 const LInt kGcMemorySize = 1024 * 8;
@@ -32,7 +34,7 @@ private:
     BoyiaRuntime* m_runtime;
 };
 
-#define GEN_ID(key) m_idCreator->genIdentByStr(key, StringSize(key))
+#define GEN_ID(key) m_idCreator->genIdentByStr(key, StringUtils::StringSize(key))
 
 BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     : m_app(app)
@@ -94,11 +96,8 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
 
 LVoid BoyiaRuntime::init()
 {
-    
-    //int n = StringSize("super");
     // begin builtins id
     GEN_ID("this");
-    //GenId(m_idCreator, "this");
     GEN_ID("super");
     GEN_ID("String");
     GEN_ID("Array");

@@ -40,6 +40,13 @@ public:
     static LInt toupper(LInt ch);
 
     static void replaceSpecialChars(util::String& text);
+    
+    // 编译期计算字符串长度
+    template<LInt n>
+    static constexpr LInt StringSize(const char(&s)[n])
+    {
+        return n-1;
+    }
 };
 }
 

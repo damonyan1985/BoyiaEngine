@@ -27,25 +27,45 @@ class LStringPolicy;
 template <>
 class LStringPolicy<LCharA> {
 public:
-    typedef LUint8* LChars;
+    typedef LCharA* LChars;
+    
+    static inline LInt CountString(const LCharA* str)
+    {
+        return LStrlen((const LUint8*)str);
+    }
 };
 
 template <>
 class LStringPolicy<LUint8> {
 public:
     typedef LUint8* LChars;
+    
+    static inline LInt CountString(const LUint8* str)
+    {
+        return LStrlen(str);
+    }
 };
 
 template <>
 class LStringPolicy<LUint16> {
 public:
     typedef LUint16* LChars;
+    
+    static inline LInt CountString(const LUint16* str)
+    {
+        return -1;
+    }
 };
 
 template <>
 class LStringPolicy<wchar_t> {
 public:
     typedef wchar_t* LChars;
+    
+    static inline LInt CountString(const wchar_t* str)
+    {
+        return -1;
+    }
 };
 
 template <class T>
@@ -496,7 +516,14 @@ LBool LString<T>::operator>=(const LString<T>& str) const
 template <class T>
 LInt LString<T>::CountString(const T* lpsz) const
 {
-    LInt nLen = 0;
+    // 优先使用Policy中实现的方法进行实现
+    LInt nLen = LString<T>::Policy::CountString(lpsz);
+    // 返回-1表示方法未实现
+    if (nLen != -1) {
+        return nLen;
+    }
+    
+    nLen = 0;
     while (*(lpsz + nLen)) {
         ++nLen;
     }

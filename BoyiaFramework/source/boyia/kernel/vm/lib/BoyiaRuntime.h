@@ -7,12 +7,6 @@
 #include "UtilString.h"
 #include "DOMBuilder.h"
 
-template<LInt n>
-constexpr LInt StringSize(const char(&s)[n])
-{
-    return n-1;
-}
-
 namespace yanbo {
 class Application;
 }

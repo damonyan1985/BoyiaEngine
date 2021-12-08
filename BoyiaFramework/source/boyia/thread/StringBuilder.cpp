@@ -52,7 +52,7 @@ void StringBuilder::append(const String& str)
 
 void StringBuilder::append(const LByte* buffer)
 {
-    append(buffer, 0, util::LStrlen((const LByte*)buffer), LTrue);
+    append(buffer, 0, LStrlen(buffer), LTrue);
 }
 
 void StringBuilder::append(const LByte* buffer, LInt pos, LInt len, LBool isConst)

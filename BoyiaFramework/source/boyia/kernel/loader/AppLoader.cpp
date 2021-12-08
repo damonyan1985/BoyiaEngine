@@ -172,7 +172,7 @@ LVoid AppLoader::parseConfig()
 {
     String content;
 
-    String path(_CS(PlatformBridge::getBoyiaJsonPath()), LFalse, LStrlen((LUint8*)PlatformBridge::getBoyiaJsonPath()));
+    String path(_CS(PlatformBridge::getBoyiaJsonPath()), LFalse, LStrlen(_CS(PlatformBridge::getBoyiaJsonPath())));
     util::FileUtil::readFile(path, content);
     BOYIA_LOG("boyia app content=%s", GET_STR(content));
 
