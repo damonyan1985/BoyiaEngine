@@ -139,13 +139,13 @@ private:
     //CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
     CGFloat statusBarHeight = statusBarManager.statusBarFrame.size.height;
-    int w = [UIScreen mainScreen].bounds.size.width;
-    int h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
+    CGFloat w = [UIScreen mainScreen].bounds.size.width;
+    CGFloat h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
     
-    NSLog(@"screen w=%d h=%d", w, h);
+    NSLog(@"screen w=%f h=%f", w, h);
     
     // 720*1080
-    LInt logicHeight = (1.0f * 720 / w) * h;
+    CGFloat logicHeight = (1.0f * 720 / w) * h;
     yanbo::PixelRatio::setWindowSize(w, h);
     yanbo::PixelRatio::setLogicWindowSize(720, logicHeight);
     

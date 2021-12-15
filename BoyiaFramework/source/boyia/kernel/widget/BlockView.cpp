@@ -167,12 +167,13 @@ LVoid BlockView::layoutInlineChildren()
 
 LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)
 {
-    int y = previousLogicalHeight + child->getStyle()->margin().topMargin + m_style.padding().topPadding;
-    int x = child->getStyle()->margin().leftMargin + m_style.padding().leftPadding;
+    LInt deltaY = m_style.border().topWidth + child->getStyle()->margin().topMargin + m_style.padding().topPadding;
+    LInt y = previousLogicalHeight + deltaY;
+    LInt x = m_style.border().leftWidth + child->getStyle()->margin().leftMargin + m_style.padding().leftPadding;
     child->setXpos(x);
     child->setYpos(y);
     child->layout();
-    previousLogicalHeight += child->getHeight();
+    previousLogicalHeight += deltaY + child->getHeight();
 
     BOYIA_LOG("BlockView previousLogicalHeight=%d", previousLogicalHeight);
 }

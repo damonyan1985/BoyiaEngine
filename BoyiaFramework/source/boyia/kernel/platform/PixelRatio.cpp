@@ -10,13 +10,13 @@ float PixelRatio::s_logicHeight = 0;
 PixelRatio::PixelDirection PixelRatio::s_direction = PixelRatio::kPixelHorizontal;
 
 // 内核使用逻辑高度
-void PixelRatio::setWindowSize(int width, int height)
+void PixelRatio::setWindowSize(LReal width, LReal height)
 {
     s_width = width;
     s_height = height;
 }
 
-void PixelRatio::setLogicWindowSize(int width, int height)
+void PixelRatio::setLogicWindowSize(LReal width, LReal height)
 {
     s_logicWidth = width;
     s_logicHeight = height;

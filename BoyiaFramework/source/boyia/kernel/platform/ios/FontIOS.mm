@@ -124,7 +124,7 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
             //const char* buffer = [target UTF8String];
             NSData* nsData = [target dataUsingEncoding:NSUTF8StringEncoding];
             //OwnerPtr<String> lineText = new String((const LUint8*)buffer, (LInt)strlen(buffer));
-            OwnerPtr<String> lineText = new String((const LUint8*)nsData.bytes, (LInt)nsData.length);
+            OwnerPtr<String> lineText = new String(_CS(nsData.bytes), (LInt)nsData.length);
             //yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
             m_lines.addElement(new LineText(lineText, currentLineWidth));
             currentLineWidth = 0;

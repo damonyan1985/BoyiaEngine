@@ -122,6 +122,7 @@ static LVoid createVertexAttrEx(const LRectF& rect, const LColor& color, KVector
     vertexs.addElement(attr);
 }
 
+// boyia dp变换屏幕dp值
 inline static float realLength(LInt length)
 {
     return yanbo::PixelRatio::ratio() * length;
@@ -136,11 +137,11 @@ LVoid fixIosPlatformRect(const LRect& src, LRectF& dest)
 {
     float scale = [[UIScreen mainScreen]scale];
     // 一个dp占多少像素
-    float left = ceil(realLength(src.iTopLeft.iX) * scale);
-    float top = ceil(realLength(src.iTopLeft.iY) * scale);
+    float left = floor(realLength(src.iTopLeft.iX) * scale);
+    float top = floor(realLength(src.iTopLeft.iY) * scale);
     
-    float width = ceil(realLength(src.GetWidth()) * scale);
-    float height = ceil(realLength(src.GetHeight()) * scale);
+    float width = floor(realLength(src.GetWidth()) * scale);
+    float height = floor(realLength(src.GetHeight()) * scale);
     
     dest.Set(LPointF(coreLength(left)/scale, coreLength(top)/scale), LSizeF(coreLength(width)/scale, coreLength(height)/scale));
 }
@@ -221,15 +222,14 @@ LVoid RenderEngineIOS::renderRect(RenderCommand* cmd)
     }
     
     LRectF rect;
-//    rect.Set(LPointF(srcRect.iTopLeft.iX, srcRect.iTopLeft.iY), LSizeF(srcRect.GetWidth(), srcRect.GetHeight()));
     fixIosPlatformRect(srcRect, rect);
-    
+
     float h = rect.GetHeight() * PixelRatio::ratio();
-    
+
     float scale = [[UIScreen mainScreen]scale];
-    
+
     NSLog(@"renderRect height=%d h=%f scale=%f pixel=%f", rect.GetHeight(), h, scale, scale * h);
-    
+
     createVertexAttrEx(rect, color, m_vertexs);
     //createVertexAttr(srcRect, color, m_vertexs);
     

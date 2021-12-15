@@ -11,8 +11,8 @@ public:
         kPixelHorizontal
     };
 
-    static void setWindowSize(int width, int height);
-    static void setLogicWindowSize(int width, int height);
+    static void setWindowSize(LReal width, LReal height);
+    static void setLogicWindowSize(LReal width, LReal height);
     
     static bool isInWindow(const LRect& rect);
     static bool isInClipRect(const LRect& rect, const LRect& clipRect);

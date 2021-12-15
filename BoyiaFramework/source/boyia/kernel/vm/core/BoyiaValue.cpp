@@ -224,7 +224,7 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
 
 LUintPtr GenIdentByStr(const LInt8* str, LVoid* vm)
 {
-    return GetRuntime(vm)->idCreator()->genIdentByStr(str, (LInt)strlen(str));
+    return GetRuntime(vm)->idCreator()->genIdentByStr(str, LStrlen(_CS(str)));
 }
 
 LUintPtr GenIdentByStr(const LInt8* str, LInt len, LVoid* vm)
