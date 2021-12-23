@@ -234,7 +234,7 @@
 		4CFDE5F726D4D78400A01683 /* PixelRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5F526D4D78400A01683 /* PixelRatio.cpp */; };
 		4CFDE5F826D4D78400A01683 /* PixelRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE5F626D4D78400A01683 /* PixelRatio.h */; };
 		4CFDE5FA26D516AE00A01683 /* LockAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */; };
-		4CFDE5FC26D516DD00A01683 /* BaseThreadAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */; };
+		4CFDE5FC26D516DD00A01683 /* BaseThreadPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FB26D516DD00A01683 /* BaseThreadPosix.cpp */; };
 		4CFDE5FE26D5184200A01683 /* PlatformBridgeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */; };
 		4CFDE60026D51A3E00A01683 /* MediaPlayerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */; };
 		4CFDE60226D51AA500A01683 /* FontIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE60126D51AA500A01683 /* FontIOS.mm */; };
@@ -480,7 +480,7 @@
 		4CFDE5F526D4D78400A01683 /* PixelRatio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelRatio.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/PixelRatio.cpp; sourceTree = "<group>"; };
 		4CFDE5F626D4D78400A01683 /* PixelRatio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelRatio.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/PixelRatio.h; sourceTree = "<group>"; };
 		4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LockAndroid.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/android/LockAndroid.cpp; sourceTree = "<group>"; };
-		4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseThreadAndroid.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/android/BaseThreadAndroid.cpp; sourceTree = "<group>"; };
+		4CFDE5FB26D516DD00A01683 /* BaseThreadPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseThreadPosix.cpp; path = ../../../BoyiaFramework/source/boyia/kernel/platform/android/BaseThreadPosix.cpp; sourceTree = "<group>"; };
 		4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformBridgeIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/PlatformBridgeIOS.mm; sourceTree = "<group>"; };
 		4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlayerIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/MediaPlayerIOS.mm; sourceTree = "<group>"; };
 		4CFDE60126D51AA500A01683 /* FontIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = FontIOS.mm; path = ../../../BoyiaFramework/source/boyia/kernel/platform/ios/FontIOS.mm; sourceTree = "<group>"; };
@@ -658,7 +658,7 @@
 				4CFDE42826D493E200A01683 /* ImageLoaderIOS.h */,
 				4CFDE42926D493E200A01683 /* ImageLoaderIOS.mm */,
 				4CFDE5ED26D4D4FB00A01683 /* EditorIOS.mm */,
-				4CFDE5FB26D516DD00A01683 /* BaseThreadAndroid.cpp */,
+				4CFDE5FB26D516DD00A01683 /* BaseThreadPosix.cpp */,
 				4CFDE5F926D516AE00A01683 /* LockAndroid.cpp */,
 				4CFDE5FD26D5184200A01683 /* PlatformBridgeIOS.mm */,
 				4CFDE5FF26D51A3E00A01683 /* MediaPlayerIOS.mm */,
@@ -1332,7 +1332,7 @@
 				4CFDE5F726D4D78400A01683 /* PixelRatio.cpp in Sources */,
 				4CFDE55A26D4C5F200A01683 /* StyleManager.cpp in Sources */,
 				4CFDE42F26D493E200A01683 /* ImageLoaderIOS.mm in Sources */,
-				4CFDE5FC26D516DD00A01683 /* BaseThreadAndroid.cpp in Sources */,
+				4CFDE5FC26D516DD00A01683 /* BaseThreadPosix.cpp in Sources */,
 				4CFDE44F26D4ABEF00A01683 /* IDCreator.cpp in Sources */,
 				4CFDE4AA26D4C3A200A01683 /* BoyiaNetwork.cpp in Sources */,
 				4CFDE60226D51AA500A01683 /* FontIOS.mm in Sources */,

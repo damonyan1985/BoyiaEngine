@@ -12,7 +12,7 @@ AppStack::~AppStack()
 
 Application* AppStack::top()
 {
-    return m_stack.size() > 0 ? m_stack.top() : NULL;
+    return m_stack.size() > 0 ? m_stack.top() : kBoyiaNull;
 }
 
 Application* AppStack::pop()
