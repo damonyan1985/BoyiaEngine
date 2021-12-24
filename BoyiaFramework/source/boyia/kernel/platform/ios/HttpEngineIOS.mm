@@ -119,7 +119,7 @@
 
 // 接受网络数据
 - (void)URLSession:(NSURLSession*)session dataTask:(NSURLSessionDataTask*)dataTask didReceiveData:(NSData*)data {
-    if (self.callback != nil) {
+    if (self.callback) {
         [self.callback onDataReceive:data];
     }
 }

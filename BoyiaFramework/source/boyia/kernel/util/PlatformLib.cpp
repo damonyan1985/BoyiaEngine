@@ -12,7 +12,7 @@
 // Class include
 #include "PlatformLib.h"
 
-#define USE_SYSTEM 0
+#define USE_SYSTEM 1
 
 #if USE_SYSTEM
 #include <string.h>
