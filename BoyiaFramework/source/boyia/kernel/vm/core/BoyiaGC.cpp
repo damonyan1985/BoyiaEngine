@@ -119,7 +119,7 @@ static LBool IsInValidObject(BoyiaRef* ref)
 
     if (NativeObjectFlag(ref->mAddress) != kBoyiaGcWhite) {
         // 重置为白色
-        MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
+        // MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
         return LFalse;
     }
 
@@ -142,6 +142,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
     LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
     if (classId == kBoyiaString) {
         BoyiaStr* buffer = &objBody->mParams[0].mValue.mStrVal;
+        // 删除字符串对象中的缓冲数据
         if (IS_NATIVE_STRING(objBody)) {
             free(buffer->mPtr);
         } else if (IS_BOYIA_STRING(objBody)) {
@@ -197,12 +198,45 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     gc->mEnd = prev;
 }
 
+// 挤压内存
+//static LVoid CompactMemory()
+//{
+//
+//}
+
+// 标记boyia对象
+LVoid ResetBoyiaObject(BoyiaRef* ref)
+{
+    BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+    LInt high = fun->mParamCount >> 18;
+    LInt low = GET_FUNCTION_COUNT(fun);
+    fun->mParamCount = (high << 18) | low;
+}
+
+// 重置对象内存颜色位白色
+static LVoid ResetMemoryColor(BoyiaGC* gc)
+{
+    BoyiaRef* ref = gc->mBegin;
+    while (ref) {
+        if (ref->mType == BY_NAVCLASS) {
+            MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
+        } else if (ref->mType == BY_CLASS) {
+            ResetBoyiaObject(ref);
+        }
+        
+        ref = ref->mNext;
+    }
+}
+
 // 标记gcroots中引用的对象，垃圾回收标记清除
 extern LVoid GCollectGarbage(LVoid* vm)
 {
     BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
     LIntPtr stackAddr;
     LInt size = 0;
+    
+    // 重置对象内存颜色
+    ResetMemoryColor(gc);
 
     // 标记栈
     GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
