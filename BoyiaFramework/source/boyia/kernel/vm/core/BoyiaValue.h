@@ -48,9 +48,9 @@ enum BuiltinId {
 // kNativeStringBuffer表示String类创建的buffer
 // kConstStringBuffer表示是从Boyia常量表中获取的
 enum StringBufferType {
-    kBoyiaStringBuffer = 0,
-    kNativeStringBuffer,
-    kConstStringBuffer
+    kBoyiaStringBuffer = 0x0,
+    kNativeStringBuffer = 0x1,
+    kConstStringBuffer = 0x2
 };
 
 typedef struct {

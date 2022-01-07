@@ -30,8 +30,8 @@ enum BoyiaGcColor {
 };
 
 #define IS_OBJECT_INVALID(fun) (((fun->mParamCount >> 16) & kBoyiaGcMask) == kBoyiaGcWhite)
-#define IS_NATIVE_STRING(fun) ((fun->mParamCount >> 18) == kNativeStringBuffer)
-#define IS_BOYIA_STRING(fun) ((fun->mParamCount >> 18) == kBoyiaStringBuffer)
+#define IS_NATIVE_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kNativeStringBuffer)
+#define IS_BOYIA_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kBoyiaStringBuffer)
 
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
@@ -205,7 +205,7 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 //}
 
 // 标记boyia对象
-LVoid ResetBoyiaObject(BoyiaRef* ref)
+static LVoid ResetBoyiaObject(BoyiaRef* ref)
 {
     BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
     LInt high = fun->mParamCount >> 18;
