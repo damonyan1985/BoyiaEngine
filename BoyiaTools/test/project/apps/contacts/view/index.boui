@@ -28,6 +28,7 @@
 <script src="boyia://apps/sdk/ViewDoc.boyia" />
 <script src="boyia://apps/sdk/InputView.boyia" />
 <script src="boyia://apps/sdk/ImageView.boyia" />
+<script src="boyia://apps/sdk/Navigator.boyia" />
 <script src="boyia://apps/sdk/App.boyia" />
 <script src="boyia://apps/sdk/ViewController.boyia" />
 <script src="boyia://apps/sdk/ViewRoot.boyia" />

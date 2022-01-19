@@ -19,14 +19,14 @@ class MainViewController extends ViewController {
 
         //var root = ViewDoc.rootView();
         //var appBox = root.itemByID(ViewGroup, "AppBox");
-        var appBox = ViewRoot.getRoot();
+        //var appBox = ViewRoot.getRoot();
 
         this.mainView = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
         this.mainView.initView();
 
-        appBox.appendView(this.mainView);
+        //appBox.appendView(this.mainView);
 
-        this.setContent(appBox);
+        this.setContent(this.mainView);
 
         //Util.showToast("test boyia callstaticmethod");
         //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
@@ -142,4 +142,4 @@ fun getArea(data) {
 }
 
 // 启动ViewController
-App.push(MainViewController);
+App.runApp(MainViewController);

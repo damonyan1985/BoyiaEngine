@@ -39,15 +39,15 @@ LInt UIThreadClient::getClientId() const
 }
 
 // only call in ui thread
-static LInt sUIThreadClienId = 0;
-static LInt UIThreadClienIdCreate()
+LInt UIThreadClientMap::createClienId()
 {
-    return ++sUIThreadClienId;
+    return ++m_threadClienId;
 }
 
 // create a size and capactiy vector
 UIThreadClientMap::UIThreadClientMap()
     : m_map(kEnlargeCapacity * 4)
+    , m_threadClienId(0)
 {
     // Init all pointer to NULL
     for (LInt i = 0; i < m_map.capacity(); ++i) {
@@ -146,7 +146,7 @@ LVoid UIThreadClientMap::removeItem(LInt id)
 LVoid UIThreadClientMap::registerClient(UIThreadClient* client)
 {
     KFORMATLOG("UIThreadClientMap::registerClient client=%ld", (long)client);
-    LInt id = UIThreadClienIdCreate();
+    LInt id = createClienId();
     UIThreadItem* item = new UIThreadItem();
 
     KFORMATLOG("UIThreadClientMap::registerClient id=%d", (long)id);

@@ -5,19 +5,26 @@
 #include "TextView.h"
 #include "UIThread.h"
 #include "UIView.h"
-#include "WeakPtr.h"
 
 namespace yanbo {
 #define kMaxOpMessageSize 50
+#define kViewCapacitySize 256
 
 UIOperation::UIOperation()
     : m_msgs(new KVector<Message*>(0, kMaxOpMessageSize))
+    , m_views(new KVector<WeakPtr<HtmlView>>(0, kViewCapacitySize))
 {
 }
 
 UIOperation::~UIOperation()
 {
     delete m_msgs;
+    delete m_views;
+}
+
+LInt UIOperation::createView()
+{
+    return 0;
 }
 
 Message* UIOperation::obtain()

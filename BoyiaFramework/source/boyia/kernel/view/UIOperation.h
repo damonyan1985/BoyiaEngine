@@ -5,6 +5,7 @@
 #include "MessageQueue.h"
 #include "UtilString.h"
 #include "HtmlView.h"
+#include "WeakPtr.h"
 
 namespace yanbo {
 // UI线程一切操作【现有】Widget DOM必须走UIOperation
@@ -27,6 +28,8 @@ public:
     ~UIOperation();
 
     LVoid execute();
+    LInt createView();
+    
     virtual Message* obtain();
     LVoid swapBuffer();
 
@@ -46,6 +49,7 @@ private:
     LVoid viewSetInput(Message* msg);
 
     KVector<Message*>* m_msgs;
+    KVector<WeakPtr<HtmlView>>* m_views;
 };
 }
 #endif

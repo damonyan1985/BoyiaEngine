@@ -69,7 +69,7 @@ yanbo::HtmlDocument* BoyiaViewDoc::getDocument() const
 
 BoyiaView* BoyiaViewDoc::getItemByID(const String& id) const
 {
-    KFORMATLOG("BoyiaViewDoc::getItemByID id=%s", GET_STR(id));
+    BOYIA_LOG("BoyiaViewDoc::getItemByID id=%s", GET_STR(id));
     HtmlView* item = m_doc->getItemByID(id);
     KLOG("BoyiaViewDoc::getItemByID end");
     if (!item) {

@@ -1,49 +1,16 @@
 // 应用程序类，只有一个App全局对象
 class App {
-    // Controller Stack
-    prop controllerStack = null;
+    // 导航
+    prop navigator;
     
     // App初始化
     fun initApp() {
-        this.controllerStack = new(Array);
+        this.navigator = new(Navigator);
+        this.navigator.init();
     }
     
-    // 启动一个view controller
-    fun push(controllerClass) {
-        var size = this.controllerStack.size();
-        if (size) {
-            var controller = this.controllerStack.get(size - 1);
-            // 调用界面onStop回调
-            controller.onStop();
-        }
-    
-        var controller = new(controllerClass);
-        this.controllerStack.put(controller);
-        controller.init();
-    }
-
-    fun pop() {
-        var size = this.controllerStack.size();
-        // 当只有一个时证明在首页，不再执行pop
-        if (size <= 1) {
-            return;
-        }
-        
-        // 只有size大于1的情况下才能执行pop
-        var controller = this.controllerStack.get(size - 1);
-        // 调用界面onStop回调
-        controller.onStop();
-        this.controllerStack.remove(size - 1);
-        
-        //var root = ViewRoot.getRoot();
-        //root.removeView(controller.contentView);
-
-        // 唤醒之前的页面
-        var size = this.controllerStack.size();
-        if (size) {
-            controller = this.controllerStack.get(size - 1);
-            controller.onResume();
-        }
+    fun runApp(entryCtrl) {
+        this.navigator.push(entryCtrl);
     }
 }
 

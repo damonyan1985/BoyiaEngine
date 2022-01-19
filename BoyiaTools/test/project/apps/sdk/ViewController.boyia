@@ -4,12 +4,13 @@ class ViewController extends Object {
     // Life Cycle onCreate();
     fun setContent(view) {
         this.contentView = view;
-        this.draw();
     }
     
     fun init() {
         this.onCreate();
-        //this.draw();
+        // 加入根视图中显示
+        ViewRoot.getRoot().appendView(this.contentView);
+        this.draw();
     }
 
     fun draw() {

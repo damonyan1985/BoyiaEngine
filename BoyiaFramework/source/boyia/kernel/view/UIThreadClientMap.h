@@ -30,11 +30,13 @@ public:
     UIThreadClient* findUIThreadClient(LInt id);
 
 private:
+    LInt createClienId();
     //UIThreadClient* getUIThreadClient(LInt id);
     UIThreadClientMap();
     UIThreadItem* getUIThreadItem(LInt id);
 
     KVector<UIThreadItem*> m_map;
+    LInt m_threadClienId;
 };
 }
 
