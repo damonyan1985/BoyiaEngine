@@ -35,31 +35,27 @@ LVoid RenderThread::handleMessage(Message* msg)
 
 LVoid RenderThread::renderInit()
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kRenderInit;
-
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid RenderThread::renderReset()
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kRenderReset;
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid RenderThread::renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kRenderLayerTree;
     msg->obj = rootLayer;
     msg->arg0 = (LIntPtr)collector;
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 IRenderEngine* RenderThread::getRenderer() const

@@ -190,7 +190,7 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiDestory: {
         //m_context.destroyGL();
-        m_continue = LFalse;
+        quit();
     } break;
     case kUiReset: {
         reset(msg);
@@ -242,32 +242,29 @@ LVoid UIThread::flush()
 
 LVoid UIThread::setInputText(const String& text, LIntPtr item)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kUiSetInput;
     msg->obj = text.GetBuffer();
     msg->arg0 = text.GetLength();
     msg->arg1 = item;
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 void UIThread::videoUpdate(LIntPtr item)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kUiVideoUpdate;
     msg->arg0 = item;
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::clientCallback(LIntPtr item)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kUiClientCallback;
     msg->arg0 = item;
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::drawUI(LVoid* view)
@@ -282,34 +279,31 @@ LVoid UIThread::drawUI(LVoid* view)
 
 LVoid UIThread::uiExecute()
 {
-    m_queue->removeMessage(kUiOperationExec);
-    Message* msg = m_queue->obtain();
+    m_loop->queue()->removeMessage(kUiOperationExec);
+    Message* msg = obtain();
     msg->type = kUiOperationExec;
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::handleTouchEvent(LTouchEvent* evt)
 {
-    m_queue->removeMessage(kUiTouchEvent);
-    Message* msg = m_queue->obtain();
+    m_loop->queue()->removeMessage(kUiTouchEvent);
+    Message* msg = obtain();
     msg->type = kUiTouchEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::handleKeyEvent(LKeyEvent* evt)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kUiKeyEvent;
     msg->obj = evt;
     msg->arg0 = reinterpret_cast<LIntPtr>(m_manager->currentApp()->view());
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::onKeyboardShow(LIntPtr item, LInt keyboardHeight)
@@ -362,40 +356,36 @@ LVoid UIThread::sendUIEvent(UIEvent* event)
 
 LVoid UIThread::initApp(const String& entry)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kUiInitApp;
     msg->obj = entry.GetBuffer();
     msg->arg0 = entry.GetLength();
 
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::vsyncDraw()
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kVsyncDraw;
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::platformViewUpdate(const String& id)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kPlatformViewUpdate;
     msg->obj = id.GetBuffer();
     msg->arg0 = id.GetLength();
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid UIThread::handleFlingEvent(LFlingEvent* evt)
 {
-    Message* msg = m_queue->obtain();
+    Message* msg = obtain();
     msg->type = kFlingEvent;
     msg->obj = evt;
-    m_queue->push(msg);
-    notify();
+    postMessage(msg);
 }
 
 LVoid VsyncWaiter::awaitVsyncForCallback(const Callback& callback)

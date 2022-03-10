@@ -118,6 +118,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 // 获取视频的每一帧
 -(void)onDisplayLink:(CADisplayLink*)link {
     // 通知UI更新视频纹理
+    CVPixelBufferRef pixelBuffer = [self copyPixelBuffer];
+    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+        
+    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
+        
+    }
 }
 
 -(void)addObservers:(AVPlayerItem*)item {
@@ -187,7 +195,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         // 视频输出到videoOutput上
         [item addOutput:self.videoOutput];
 //        [self sendInitialized];
-        [self updatePlayingState];
+        self.isInitialized = true;
+        //[self updatePlayingState];
+        [self play];
         break;
     }
   } else if (context == playbackLikelyToKeepUpContext) {
@@ -199,7 +209,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-- (void)updatePlayingState {
+-(void)updatePlayingState {
     if (!self.isInitialized) {
         return;
     }

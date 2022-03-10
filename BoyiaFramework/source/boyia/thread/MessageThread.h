@@ -6,6 +6,17 @@
 
 namespace yanbo {
 
+class MessageLoop {
+public:
+    virtual ~MessageLoop() {};
+    virtual LVoid loop() = 0;
+    virtual LVoid postMessage(Message* msg) = 0;
+    virtual Message* obtain() = 0;
+    virtual LVoid quit() = 0;
+    virtual MessageQueue* queue() = 0;
+    virtual LBool isAlive() = 0;
+};
+
 class MessageThread : public BaseThread {
 public:
     MessageThread();
@@ -14,13 +25,15 @@ public:
     virtual LVoid handleMessage(Message* msg) = 0;
     LVoid postMessage(Message* msg);
     Message* obtain();
+    LVoid quit();
     virtual bool isAlive();
 
 protected:
-    virtual void run() LFinal;
+    virtual LVoid run() LFinal;
     
-    MessageQueue* m_queue;
-    LBool m_continue;
+    //MessageQueue* m_queue;
+    //LBool m_continue;
+    MessageLoop* m_loop;
 };
 }
 

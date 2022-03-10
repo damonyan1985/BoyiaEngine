@@ -153,7 +153,7 @@ LInt TextView::calcTextLine(const String& text, LInt maxWidth)
     LInt longestLine = m_newFont->calcTextLine(text, maxWidth);
     LInt len = m_newFont->getLineSize();
 
-    KFORMATLOG("TextView calcTextLine text=%s and len=%d longestLine=%d maxWidth=%d fontSize=%d", (const char*)m_text.GetBuffer(), len, longestLine, maxWidth, m_newFont->getFontSize());
+    BOYIA_LOG("TextView calcTextLine text=%s and len=%d longestLine=%d maxWidth=%d fontSize=%d", (const char*)m_text.GetBuffer(), len, longestLine, maxWidth, m_newFont->getFontSize());
     for (LInt i = 0; i < len; ++i) {
         String text;
         m_newFont->getLineText(i, text);

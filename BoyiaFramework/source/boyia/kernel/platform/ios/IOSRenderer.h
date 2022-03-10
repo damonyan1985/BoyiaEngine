@@ -24,6 +24,7 @@
 typedef NS_ENUM(NSInteger, BatchCommandType) {
     BatchCommandNormal = 0,
     BatchCommandTexture,
+    BatchCommendExternalTexture,
     BatchCommandRound,
 };
 

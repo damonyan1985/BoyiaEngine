@@ -157,11 +157,10 @@ public:
         // schema如果是boyia://, 则进行文件请求
         FileTask* task = loadBoyiaUrl(url, client);
         if (task) {
-            Message* msg = m_queue->obtain();
+            Message* msg = obtain();
             msg->type = kBoyiaNull;
             msg->obj = task;
-            m_queue->push(msg);
-            notify();
+            postMessage(msg);
             return;
         }
         
