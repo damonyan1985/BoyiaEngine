@@ -14,6 +14,7 @@
 
 #include "BoyiaValue.h"
 
+// Boyia Native Interface定义
 typedef LInt (*NativePtr)(LVoid* vm);
 
 typedef struct {

@@ -3,6 +3,7 @@ package com.boyia.app.common.db;
 ;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -43,7 +44,8 @@ public class BoyiaDB extends SQLiteOpenHelper {
             // delete exist database before done upgrade.
             mContext.deleteDatabase(mDbName);
             initDatabase(db);
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            BoyiaLog.e(TAG, "onUpgrade error", e);
             mContext.deleteDatabase(mDbName);
             initDatabase(db);
         }

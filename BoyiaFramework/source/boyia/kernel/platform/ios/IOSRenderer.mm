@@ -470,6 +470,7 @@ private:
     if (texture == nil) {
         return;
     }
+        
     [self.textureCache setObject:texture forKey:key];
     MTLRegion region = {{ 0, 0, 0 }, {width, height, 1}}; // 纹理上传的范围
     // UIImage的数据需要转成二进制才能上传，且不用jpg、png的NSData

@@ -34,6 +34,7 @@ public:
 
     LVoid registerEvent(BoyiaAsyncEvent* event)
     {
+        // 一个对象下可能会挂多个事件
         EventMapEntry* entry = kBoyiaNull;
         for (LInt i = 0; i < m_eventMap.size(); i++) {
             if (event->m_obj.mValue.mObj.mPtr == m_eventMap[i]->objPtr) {

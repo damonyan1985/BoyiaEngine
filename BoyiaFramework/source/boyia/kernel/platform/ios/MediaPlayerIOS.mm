@@ -3,6 +3,7 @@
 
 #include "LGdi.h"‘
 
+#import "IOSRenderer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
@@ -25,6 +26,7 @@
 
 @end
 
+// 这里的指针应该是表示成一个常量
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
 static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
@@ -44,12 +46,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 @implementation MediaPlayerImpl
 
+// 初始化，传入url
 -(instancetype)initWithURL:(NSURL*)url {
     AVPlayerItem* item = [AVPlayerItem playerItemWithURL:url];
     return [self initWithPlayerItem:item];
 }
 
-- (instancetype)initWithPlayerItem:(AVPlayerItem*)item {
+-(instancetype)initWithPlayerItem:(AVPlayerItem*)item {
     self = [super init];
     if (self != nil) {
         AVAsset* asset = [item asset];
@@ -100,14 +103,21 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
         (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
     };
-    
+    self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
     self.displayLink = [CADisplayLink displayLinkWithTarget:self
                                                selector:@selector(onDisplayLink:)];
-    self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+    
+    // 初始化播放器时停止垂直同步信号
+    self.displayLink.paused = YES;
+    // 必须加入带有NSRunLoop的线程
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self->_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    });
 }
 
+// 获取视频的每一帧
 -(void)onDisplayLink:(CADisplayLink*)link {
-    
+    // 通知UI更新视频纹理
 }
 
 -(void)addObservers:(AVPlayerItem*)item {
@@ -159,7 +169,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 //  }
 }
 
-// 监听对象的属性
+// 监听对象的属性，除了对context进行比较，其实也可以对keypath进行比较
+// 如[path isEqualToString:@"status"]
 -(void)observeValueForKeyPath:(NSString*)path
                       ofObject:(id)object
                         change:(NSDictionary*)change
@@ -168,11 +179,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else if (context == statusContext) {
     AVPlayerItem* item = (AVPlayerItem*)object;
     switch (item.status) {
-      case AVPlayerItemStatusFailed:
+      case AVPlayerItemStatusFailed: // 播放失败
         break;
-      case AVPlayerItemStatusUnknown:
+      case AVPlayerItemStatusUnknown: // 未知错误
         break;
-      case AVPlayerItemStatusReadyToPlay:
+      case AVPlayerItemStatusReadyToPlay: // 准备播放，类似android的onPrepared
         // 视频输出到videoOutput上
         [item addOutput:self.videoOutput];
 //        [self sendInitialized];
@@ -189,14 +200,18 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)updatePlayingState {
-  if (!self.isInitialized) {
-    return;
-  }
-  if (self.isPlaying) {
+    if (!self.isInitialized) {
+        return;
+    }
+    
+    if (self.isPlaying) {
       [self.player play];
-  } else {
+    } else {
       [self.player pause];
-  }
+    }
+    
+    // 播放器播放需要设置paused为NO
+    _displayLink.paused = !self.isPlaying;
 }
 
 -(AVMutableVideoComposition*)getVideoCompositionWithTransform:(CGAffineTransform)transform
@@ -313,10 +328,12 @@ public:
 
 private:
     LVoid* m_view;
+    MediaPlayerImpl* m_impl;
 };
 
 MediaPlayerIOS::MediaPlayerIOS(LVoid* view)
     : m_view(view)
+    , m_impl(kBoyiaNull)
 {
 }
 
@@ -326,6 +343,8 @@ MediaPlayerIOS::~MediaPlayerIOS()
 
 void MediaPlayerIOS::start(const String& url)
 {
+    NSURL* reqUrl = [NSURL URLWithString:STR_TO_OCSTR(url)];
+    m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl];
 }
 
 void MediaPlayerIOS::updateTexture(float* matrix)

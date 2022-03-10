@@ -2,6 +2,8 @@ package com.boyia.app.core;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.IntentService;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +38,7 @@ public class BoyiaActivity extends Activity {
         setTransparent(this);
         //getWindow().getDecorView().setFitsSystemWindows(true);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        // 加载so之后更新UI
         BoyiaCoreJNI.initLibrary(() -> {
             mContainer.removeAllViews();
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(

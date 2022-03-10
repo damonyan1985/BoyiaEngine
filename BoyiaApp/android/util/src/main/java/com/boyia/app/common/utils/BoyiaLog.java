@@ -34,4 +34,10 @@ public class BoyiaLog {
             Log.e(tag, msg);
         }
     }
+
+    public static void e(String tag, String msg, Throwable e) {
+        if (ENABLE_LOG) {
+            Log.e(tag, msg, e);
+        }
+    }
 }

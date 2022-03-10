@@ -13,13 +13,15 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
     int SEND_MESSAGE_ASYNC = IBinder.FIRST_CALL_TRANSACTION + 1;
 
     /**
-     * 服务端调用
+     * 服务端调用，BoyiaSenderStub是一个binder
+     * binder构造函数会使用native方法创建底层binder
      */
     abstract class BoyiaSenderStub extends Binder implements IBoyiaIpcSender {
         public BoyiaSenderStub() {
             this.attachInterface(this, DESCRIPTOR);
         }
 
+        // 传入的binder是一个远端binder
         public static IBoyiaIpcSender asInterface(IBinder binder) {
             if (binder == null) {
                 return null;

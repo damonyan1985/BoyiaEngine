@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 public class BoyiaUtils {
     public static final String TAG = "BoyiaUtils";
+    public static final String LIBRARY_NAME = "boyia";
+    public static final int LOAD_FILE_SIZE = 1024;
 
     // 根据align对字符串进行居左，居右，或是居中对齐
     // 整个字符串会被框进传入的rect范围内
@@ -70,12 +72,12 @@ public class BoyiaUtils {
 
         MessageDigest digest;
         FileInputStream in;
-        byte buffer[] = new byte[1024];
+        byte buffer[] = new byte[LOAD_FILE_SIZE];
         int len;
         try {
             digest = MessageDigest.getInstance("MD5");
             in = new FileInputStream(file);
-            while ((len = in.read(buffer, 0, 1024)) != -1) {
+            while ((len = in.read(buffer, 0, LOAD_FILE_SIZE)) != -1) {
                 digest.update(buffer, 0, len);
             }
             in.close();
@@ -90,7 +92,7 @@ public class BoyiaUtils {
 
     // 加载libs中的SO
     public static void loadLib() {
-        System.loadLibrary("boyia");
+        System.loadLibrary(LIBRARY_NAME);
     }
 
     public static boolean isTextEmpty(String text) {
