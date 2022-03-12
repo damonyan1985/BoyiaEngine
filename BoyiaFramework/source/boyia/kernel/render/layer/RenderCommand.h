@@ -56,10 +56,10 @@ public:
 
 class RenderVideoCommand : public RenderCommand {
 public:
-    RenderVideoCommand(const LRect& rect, const LColor& color, LMediaPlayer* player);
+    RenderVideoCommand(const LRect& rect, const LColor& color, LIntPtr playerId);
     virtual LInt type();
 
-    LMediaPlayer* mediaPlayer;
+    LIntPtr playerId;
 };
 
 class RenderPlatformCommand : public RenderCommand {

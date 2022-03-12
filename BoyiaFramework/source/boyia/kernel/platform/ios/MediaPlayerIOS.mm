@@ -1,12 +1,20 @@
 #ifndef MediaPlayerIOS_h
 #define MediaPlayerIOS_h
 
-#include "LGdi.h"‘
+#include "LGdi.h"
+#include "UIThreadClientMap.h"
+#include "UIThread.h"
+#include "AppManager.h"
 
 #import "IOSRenderer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
+
+static int64_t timeToMillis(CMTime time) {
+  if (time.timescale == 0) return 0;
+  return time.value * 1000 / time.timescale;
+}
 
 // IOS mediaplayer实现
 @interface MediaPlayerImpl : NSObject
@@ -19,8 +27,9 @@
 @property (nonatomic, assign) bool isPlaying;
 @property (nonatomic, assign) bool isInitialized;
 @property (nonatomic, assign) bool disposed;
+@property (nonatomic, assign) int clientId;
 
--(instancetype)initWithURL:(NSURL*)url;
+-(instancetype)initWithURL:(NSURL*)url andClient: (int)clientId;
 -(void)play;
 -(void)pause;
 
@@ -47,12 +56,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 @implementation MediaPlayerImpl
 
 // 初始化，传入url
--(instancetype)initWithURL:(NSURL*)url {
+-(instancetype)initWithURL:(NSURL*)url andClient: (int)clientId {
     AVPlayerItem* item = [AVPlayerItem playerItemWithURL:url];
-    return [self initWithPlayerItem:item];
+    return [self initWithPlayerItem:item andClient:clientId];
 }
 
--(instancetype)initWithPlayerItem:(AVPlayerItem*)item {
+-(instancetype)initWithPlayerItem:(AVPlayerItem*)item andClient: (int)clientId {
     self = [super init];
     if (self != nil) {
         AVAsset* asset = [item asset];
@@ -89,6 +98,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         self.isPlaying = false;
         self.player = [AVPlayer playerWithPlayerItem:item];
         self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+        self.clientId = clientId;
         
         [self createVideoOutput];
         [self addObservers:item];
@@ -122,9 +132,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
     if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
         pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-        
+        // TODO
     } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
-        
+        yanbo::AppManager::instance()->uiThread()->clientCallback(self.clientId);
     }
 }
 
@@ -135,7 +145,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:timeRangeContext];
     
-    // 监听item的loadedTimeRanges属性
+    // 监听item的状态属性
     [item addObserver:self
          forKeyPath:@"status"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
@@ -291,40 +301,54 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
--(void)disposeChannel {
+-(void)disposePlayer {
     self.disposed = true;
-    [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
-    [[_player currentItem] removeObserver:self
+    [[self.player currentItem] removeObserver:self
+                               forKeyPath:@"status"
+                                  context:statusContext];
+    [[self.player currentItem] removeObserver:self
                              forKeyPath:@"loadedTimeRanges"
                                 context:timeRangeContext];
-    [[_player currentItem] removeObserver:self
+    [[self.player currentItem] removeObserver:self
                              forKeyPath:@"playbackLikelyToKeepUp"
                                 context:playbackLikelyToKeepUpContext];
-    [[_player currentItem] removeObserver:self
+    [[self.player currentItem] removeObserver:self
                              forKeyPath:@"playbackBufferEmpty"
                                 context:playbackBufferEmptyContext];
-    [[_player currentItem] removeObserver:self
+    [[self.player currentItem] removeObserver:self
                              forKeyPath:@"playbackBufferFull"
                                 context:playbackBufferFullContext];
-    [_player replaceCurrentItemWithPlayerItem:nil];
+    [self.player replaceCurrentItemWithPlayerItem:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+// 播放视频
 -(void)play {
     self.isPlaying = true;
     [self updatePlayingState];
 }
 
+// 暂停播放
 -(void)pause {
     self.isPlaying = false;
     [self updatePlayingState];
+}
+
+// 获取当前播放时长
+-(int64_t)position {
+  return timeToMillis([self.player currentTime]);
+}
+
+/// 获取视频总时长
+-(int64_t)duration {
+  return timeToMillis([[self.player currentItem] duration]);
 }
 
 @end
 
 namespace util {
 // TODO
-class MediaPlayerIOS : public LMediaPlayer {
+class MediaPlayerIOS : public LMediaPlayer, public yanbo::UIThreadClient {
 public:
     MediaPlayerIOS(LVoid* view);
     ~MediaPlayerIOS();
@@ -335,6 +359,7 @@ public:
     virtual void stop();
     virtual void seek(int progress);
     virtual void updateTexture(float* matrix);
+    virtual LVoid onClientCallback();
 
 private:
     LVoid* m_view;
@@ -354,7 +379,7 @@ MediaPlayerIOS::~MediaPlayerIOS()
 void MediaPlayerIOS::start(const String& url)
 {
     NSURL* reqUrl = [NSURL URLWithString:STR_TO_OCSTR(url)];
-    m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl];
+    m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl andClient:getClientId()];
 }
 
 void MediaPlayerIOS::updateTexture(float* matrix)
@@ -371,6 +396,16 @@ void MediaPlayerIOS::pause()
 
 void MediaPlayerIOS::stop()
 {
+}
+
+void MediaPlayerIOS::onClientCallback()
+{
+    // 处理每一帧数据
+    CVPixelBufferRef pixelBuffer = [m_impl copyPixelBuffer];
+    setPlayerId((LIntPtr)pixelBuffer);
+    
+    // 绘制当前的view
+    yanbo::UIThread::instance()->drawUI(m_view);
 }
 
 LMediaPlayer* LMediaPlayer::create(LVoid* view)

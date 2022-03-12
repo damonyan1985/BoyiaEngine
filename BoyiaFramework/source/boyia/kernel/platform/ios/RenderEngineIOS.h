@@ -34,6 +34,7 @@ public:
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
     LVoid renderRoundRect(RenderCommand* cmd);
+    LVoid renderVideo(RenderCommand* cmd);
     
     // Just for test
     LVoid renderRoundRectEx(RenderCommand* cmd);

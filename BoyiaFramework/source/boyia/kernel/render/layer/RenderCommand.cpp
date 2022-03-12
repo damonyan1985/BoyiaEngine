@@ -46,9 +46,9 @@ LInt RenderImageCommand::type()
     return RenderCommand::kRenderImage;
 }
 
-RenderVideoCommand::RenderVideoCommand(const LRect& rect, const LColor& color, LMediaPlayer* player)
+RenderVideoCommand::RenderVideoCommand(const LRect& rect, const LColor& color, LIntPtr id)
     : RenderCommand(rect, color)
-    , mediaPlayer(player)
+    , playerId(id)
 {
 }
 

@@ -113,8 +113,11 @@ private:
 // 顶点缓冲
 @property (nonatomic, strong) id<MTLBuffer> verticeBuffer;
 
-// 纹理缓存
+// url作为key进行纹理缓存，主要是处理重复下载问题用于Image
 @property (nonatomic, strong) NSMutableDictionary* textureCache;
+
+// 整型id作为key进行纹理缓存，主要是处理外界纹理的问题, 如视频，同层组件
+@property (nonatomic, strong) NSMutableDictionary* externalTextureCache;
 
 // 常量buffer判断图像类型
 //@property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
@@ -133,6 +136,7 @@ private:
 
 @implementation IOSRenderer {
     yanbo::RenderEngineIOS* _engine;
+    CVMetalTextureCacheRef _cvTextureCache;
 }
 
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
@@ -151,11 +155,13 @@ private:
     
     IOSRenderer* renderer = [[IOSRenderer alloc] initWithLayer:layer];
     renderer.statusBarHeight = statusBarHeight;
+    
     yanbo::RenderEngineIOS* engine = static_cast<yanbo::RenderEngineIOS*>(yanbo::RenderThread::instance()->getRenderer());
     engine->setContextIOS(renderer);
     
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
+    
     
     return renderer;
 }
@@ -175,6 +181,10 @@ private:
     // NSOperationQueue来切换回主线程
 //    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
 //    }];
+}
+
+-(CVMetalTextureCacheRef)cvTextureCache {
+    return _cvTextureCache;
 }
 
 -(void)onFling:(CGPoint)point{
@@ -405,6 +415,9 @@ private:
     self.renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     
     self.commandQueue = [device newCommandQueue];
+    
+    // 创建textureCache
+    CVMetalTextureCacheCreate(NULL, NULL, device, NULL, &_cvTextureCache);
 }
 
 -(void)clearBatchCommandBuffer {
@@ -454,6 +467,10 @@ private:
 
 -(id<MTLTexture>)getTexture:(NSString*)key {
     return self.textureCache[key];
+}
+
+-(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture {
+    [self.textureCache setObject:texture forKey:key];
 }
 
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height {

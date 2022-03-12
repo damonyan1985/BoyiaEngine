@@ -144,6 +144,14 @@ LVoid RenderGraphicsContext::drawImage(const LRect& aDestRect, const LImage* aSo
 
 LVoid RenderGraphicsContext::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
+    if (!mp->playerId())
+    {
+        return;
+    }
+    
+    RenderVideoCommand* cmd = new RenderVideoCommand(rect, m_brushColor, mp->playerId());
+    ItemPainter* painter = currentPainter();
+    painter->buffer->addElement(cmd);
 }
 
 #if ENABLE(BOYIA_PLATFORM_VIEW)

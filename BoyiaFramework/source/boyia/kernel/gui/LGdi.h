@@ -360,6 +360,19 @@ public:
     virtual LVoid seek(LInt progress) = 0;
     virtual LVoid pause() = 0;
     virtual LVoid stop() = 0;
+    
+    virtual LVoid setPlayerId(LIntPtr id)
+    {
+        m_id = id;
+    }
+    
+    virtual LIntPtr playerId() const
+    {
+        return m_id;
+    }
+    
+private:
+    LIntPtr m_id = 0;
 };
 
 class Editor {

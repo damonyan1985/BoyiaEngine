@@ -53,11 +53,15 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 
 
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;
+
+-(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture;
 -(id<MTLTexture>)getTexture:(NSString*)key;
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y;
 -(void)onFling:(CGPoint)point;
 -(void)setInputText:(NSString*)text;
+
+-(CVMetalTextureCacheRef)cvTextureCache;
 
 @end
 
