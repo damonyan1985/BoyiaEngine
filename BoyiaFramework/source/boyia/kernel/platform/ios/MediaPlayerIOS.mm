@@ -128,14 +128,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 // 获取视频的每一帧
 -(void)onDisplayLink:(CADisplayLink*)link {
     // 通知UI更新视频纹理
-    CVPixelBufferRef pixelBuffer = [self copyPixelBuffer];
-    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
-        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-        // TODO
-    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
-        yanbo::AppManager::instance()->uiThread()->clientCallback(self.clientId);
-    }
+//    CVPixelBufferRef pixelBuffer = [self copyPixelBuffer];
+//    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+//    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+//        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+//        // TODO
+//    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
+//
+//    }
+    yanbo::AppManager::instance()->uiThread()->clientCallback(self.clientId);
 }
 
 -(void)addObservers:(AVPlayerItem*)item {
@@ -402,6 +403,18 @@ void MediaPlayerIOS::onClientCallback()
 {
     // 处理每一帧数据
     CVPixelBufferRef pixelBuffer = [m_impl copyPixelBuffer];
+    size_t width = CVPixelBufferGetWidth(pixelBuffer);
+    size_t height = CVPixelBufferGetHeight(pixelBuffer);
+    
+    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+        // TODO
+    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
+
+    }
+    
+    
     setPlayerId((LIntPtr)pixelBuffer);
     
     // 绘制当前的view
