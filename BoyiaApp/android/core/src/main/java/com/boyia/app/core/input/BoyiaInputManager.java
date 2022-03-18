@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 public class BoyiaInputManager {
     private static final String TAG = "BoyiaInputManager";
+    private static final int KEYBOARD_DETECT_HEIGHT = 200;
     private WeakReference<BoyiaView> mViewRef;
     private long mItem = 0;
     private int mRootViewVisibleHeight = 0;
@@ -47,13 +48,13 @@ public class BoyiaInputManager {
                     return;
                 }
 
-                if (mRootViewVisibleHeight - rect.height() > 200) {
+                if (mRootViewVisibleHeight - rect.height() > KEYBOARD_DETECT_HEIGHT) {
                     // 软键盘弹起
                     //mKeyboardHeight = rootView.getHeight() - rect.bottom;
                     BoyiaLog.d(TAG, "BoyiaInputManager SHOW");
                     BoyiaCoreJNI.nativeOnKeyboardShow(mItem, mRootViewVisibleHeight - rect.height());
                     mRootViewVisibleHeight = rect.height();
-                } else if (rect.height() - mRootViewVisibleHeight > 200) {
+                } else if (rect.height() - mRootViewVisibleHeight > KEYBOARD_DETECT_HEIGHT) {
                     BoyiaLog.d(TAG, "BoyiaInputManager HIDE");
                     BoyiaCoreJNI.nativeOnKeyboardHide(mItem, rect.height() - mRootViewVisibleHeight);
                     mRootViewVisibleHeight = rect.height();

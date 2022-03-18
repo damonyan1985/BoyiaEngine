@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlatformViewManager {
+    // 创建platformview工厂类
     private Map<String, PlatformViewFactory> mFactoryRegistry;
+    // 控制platformview
     private Map<String, PlatformViewController> mPlatformViews;
     private WeakReference<Context> mContext;
 

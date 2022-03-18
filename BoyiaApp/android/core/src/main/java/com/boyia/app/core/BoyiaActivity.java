@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IntentService;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+// Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
+// 主要使用来与AMS进行通信的，AMS的任务栈中持有的ActivitRecord与Activity一一对应
+// ActivitRecord中持有的appToken为IApplicationToken.Stub, 在C++底层体现就是一个BBinder(服务)
+
+// 每个Window都包含了一个ViewRootImpl，ViewRootImpl的成员mWindow是一个W类型的对象，
+// W类型是一个BBinder(Stub服务端)，是一个应用与WMS进行通信的token
+
+// WindowManager.addView相当于是添加了一个窗口
 public class BoyiaActivity extends Activity {
     private FrameLayout mContainer;
     @Override

@@ -3,10 +3,10 @@ apply plugin: 'maven'
 apply from: "$rootDir/library.gradle"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
         versionName "1.0"
 

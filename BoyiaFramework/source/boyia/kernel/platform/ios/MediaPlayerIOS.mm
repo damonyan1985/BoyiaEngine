@@ -100,6 +100,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
         self.clientId = clientId;
         
+        // 将视频纹理输出到AVPlayerItemVideoOutput中
         [self createVideoOutput];
         [self addObservers:item];
         [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
@@ -128,14 +129,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 // 获取视频的每一帧
 -(void)onDisplayLink:(CADisplayLink*)link {
     // 通知UI更新视频纹理
-//    CVPixelBufferRef pixelBuffer = [self copyPixelBuffer];
-//    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-//    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
-//        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-//        // TODO
-//    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
-//
-//    }
     yanbo::AppManager::instance()->uiThread()->clientCallback(self.clientId);
 }
 
@@ -177,6 +170,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                                              object:item];
 }
 
+// 播放结束通知
 -(void)itemDidPlayToEndTime:(NSNotification*)notification {
 //  if (_isLooping) {
 //    AVPlayerItem* p = [notification object];
@@ -208,6 +202,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 //        [self sendInitialized];
         self.isInitialized = true;
         //[self updatePlayingState];
+        // 准备完毕之后开始播放
         [self play];
         break;
     }

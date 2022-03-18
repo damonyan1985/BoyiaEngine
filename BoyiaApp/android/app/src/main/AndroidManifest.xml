@@ -35,6 +35,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 添加摄像头权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name="com.boyia.app.shell.BoyiaApplication"

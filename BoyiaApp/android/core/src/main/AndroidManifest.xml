@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boyia.app.core" >
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <application>
         <activity
             android:name="com.boyia.app.core.BoyiaActivity"

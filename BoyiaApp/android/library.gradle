@@ -20,6 +20,10 @@ def initExtension() {
 
 initExtension()
 
+gradle.ext.constants = [
+    sdkVersion: 29
+]
+
 gradle.ext.library = [
     framework_mk: "$rootDir/../../BoyiaFramework/Android.mk",
     framework_cmake: "$rootDir/../../BoyiaFramework/buildtool/CMakeLists.txt",
@@ -37,7 +41,9 @@ gradle.ext.library = [
     rxAndroidLib: 'io.reactivex.rxjava2:rxandroid:2.0.1',
     glideLib: 'com.github.bumptech.glide:glide:4.9.0',
     zip4jLib: 'net.lingala.zip4j:zip4j:1.3.2',
-    multidexLib: 'com.android.support:multidex:1.0.3',
+    multidexLib: 'androidx.multidex:multidex:2.0.1',
     umeng_common_lib: 'com.umeng.umsdk:common:9.3.8',
-    umeng_sdk_lib: 'com.umeng.umsdk:asms:1.2.2'
+    umeng_sdk_lib: 'com.umeng.umsdk:asms:1.2.2',
+    androidX: 'androidx.appcompat:appcompat:1.3.0',
+    kotlin: 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0',
 ]

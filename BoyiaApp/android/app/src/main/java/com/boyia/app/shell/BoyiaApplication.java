@@ -1,13 +1,16 @@
 package com.boyia.app.shell;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
+//import android.support.multidex.MultiDex;
 
 //import com.boyia.app.advert.platform.TTAdManagerHolder;
+import androidx.multidex.MultiDex;
+
 import com.boyia.app.common.BaseApplication;
 import com.umeng.commonsdk.UMConfigure;
 
 public class BoyiaApplication extends BaseApplication {
+    // base为ContextImpl
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

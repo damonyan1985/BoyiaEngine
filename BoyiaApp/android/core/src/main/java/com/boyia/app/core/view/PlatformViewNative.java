@@ -5,6 +5,7 @@ import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.loader.mue.MainScheduler;
 
 // 提供给c++进行调用
+// 平台view暴露在最外层的接口
 public class PlatformViewNative {
     private static final String TAG = "PlatformViewNative";
 
