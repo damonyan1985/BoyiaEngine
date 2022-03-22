@@ -72,6 +72,7 @@ public class OkEngine extends BaseEngine {
                 break;
             case HTTPFactory.HTTP_POST_METHOD: {
                 //final MediaType type = MediaType.parse("application/json; charset=utf-8");
+                // Post json数据
                 RequestBody body = RequestBody.create(null, request.mPostData);
                 builder.post(body);
             }

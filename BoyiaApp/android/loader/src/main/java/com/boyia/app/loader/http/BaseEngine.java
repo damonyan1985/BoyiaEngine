@@ -86,9 +86,6 @@ public abstract class BaseEngine {
             case HTTPFactory.URL_ENGINE:
                 httpEngine = new URLEngine();
                 break;
-            case HTTPFactory.OK_ENGINE:
-                httpEngine = new OkEngine();
-                break;
             default:
                 httpEngine = new OkEngine();
                 break;

@@ -17,6 +17,7 @@
 		4C7AE7F426CF835B00946197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7F326CF835B00946197 /* main.m */; };
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
 		4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */; };
+		4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5527E9BF4B00795648 /* Uploader.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		4C7AE81026CF83D000946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CA99D9B272FE8AE004FAD07 /* app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "app-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		4CC8FB5527E9BF4B00795648 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -85,18 +87,18 @@
 		4C7AE7E026CF835700946197 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				4CC8FB5327E9BF1D00795648 /* Base */,
+				4CC8FB5227E9BDE900795648 /* Controller */,
+				4CC8FB5127E9BDDD00795648 /* View */,
 				4C7AE7E126CF835700946197 /* AppDelegate.h */,
 				4C7AE7E226CF835700946197 /* AppDelegate.m */,
 				4C7AE7E426CF835700946197 /* SceneDelegate.h */,
 				4C7AE7E526CF835700946197 /* SceneDelegate.m */,
-				4C7AE7E726CF835700946197 /* ViewController.h */,
-				4C7AE7E826CF835700946197 /* ViewController.m */,
 				4C7AE7EA26CF835800946197 /* Main.storyboard */,
 				4C7AE7ED26CF835B00946197 /* Assets.xcassets */,
 				4C7AE7EF26CF835B00946197 /* LaunchScreen.storyboard */,
 				4C7AE7F226CF835B00946197 /* Info.plist */,
 				4C7AE7F326CF835B00946197 /* main.m */,
-				4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */,
 				4CA99D9B272FE8AE004FAD07 /* app-Bridging-Header.h */,
 			);
 			path = app;
@@ -109,6 +111,39 @@
 				4C7AE81026CF83D000946197 /* core.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4CC8FB5127E9BDDD00795648 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4CC8FB5227E9BDE900795648 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */,
+				4C7AE7E726CF835700946197 /* ViewController.h */,
+				4C7AE7E826CF835700946197 /* ViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		4CC8FB5327E9BF1D00795648 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB5427E9BF2900795648 /* Uploader */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		4CC8FB5427E9BF2900795648 /* Uploader */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB5527E9BF4B00795648 /* Uploader.swift */,
+			);
+			path = Uploader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -185,6 +220,7 @@
 				4C7AE7E926CF835700946197 /* ViewController.m in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
+				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
 				4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */,
 			);
