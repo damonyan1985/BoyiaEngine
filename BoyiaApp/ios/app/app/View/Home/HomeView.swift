@@ -13,26 +13,7 @@ struct HomeView : View {
             // 类似flutter中的stack
             ZStack {
                 Button(action: {
-//                    guard let window = UIApplication.shared.windows.first else {
-//                        return
-//                    }
-                    
-//                    window.rootViewController = UIHostingController(rootView: LoginView())
-//                    window.makeKeyAndVisible()
-//                    window.rootViewController?.navigationController?.pushViewController(
-//                        UIHostingController(rootView: LoginView()), animated: true)
-                    
-//                    let rootController = window.rootViewController;
-//                    let viewController = self.findCurrentVC(rootController)
-//
-//                    guard let nav = viewController?.navigationController else {
-//                        return
-//                    }
-//
-//                    nav.pushViewController(UIHostingController(rootView: LoginView()), animated: true)
-                    
                     BoyiaNavigator.push(view: LoginView())
-                    
                 }, label: {
                     Text("Test")
                 })

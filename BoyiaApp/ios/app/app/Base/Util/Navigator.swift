@@ -10,20 +10,28 @@ import SwiftUI
 
 // 封装导航
 class BoyiaNavigator {
-    
+    // push一个swiftui view
     static func push<CustomView>(view: CustomView) -> Void where CustomView : View  {
+        findNavigator()?.pushViewController(UIHostingController(rootView: view), animated: true)
+    }
+    
+    static func pop() {
+        findNavigator()?.popViewController(animated: true)
+    }
+    
+    static func findNavigator() -> UINavigationController? {
         guard let window = UIApplication.shared.windows.first else {
-            return
+            return nil
         }
         
         let rootController = window.rootViewController;
         let viewController = findCurrentVC(rootController)
         
         guard let nav = viewController?.navigationController else {
-            return
+            return nil
         }
         
-        nav.pushViewController(UIHostingController(rootView: view), animated: true)
+        return nav;
     }
     
     static func findCurrentVC(_ vc: UIViewController?) -> UIViewController? {
