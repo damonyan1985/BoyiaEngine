@@ -18,6 +18,15 @@
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
 		4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */; };
 		4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5527E9BF4B00795648 /* Uploader.swift */; };
+		4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5B27EABA4B00795648 /* BoyiaCamera.swift */; };
+		4CC8FB6027EAD0B400795648 /* BoyiaLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5F27EAD0B400795648 /* BoyiaLog.swift */; };
+		4CC8FB6427EB1C2700795648 /* BoyiaWebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6327EB1C2700795648 /* BoyiaWebController.swift */; };
+		4CC8FB6727EB4F7800795648 /* WebMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6627EB4F7800795648 /* WebMessageHandler.swift */; };
+		4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6827EB502A00795648 /* WebNavigationDelegateImpl.swift */; };
+		4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6A27EC0CDC00795648 /* LoginView.swift */; };
+		4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6E27EC4E4D00795648 /* Extension.swift */; };
+		4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7927EC601800795648 /* HomeView.swift */; };
+		4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7B27EC6E0A00795648 /* Navigator.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +60,15 @@
 		4CA99D9B272FE8AE004FAD07 /* app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "app-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		4CC8FB5527E9BF4B00795648 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
+		4CC8FB5B27EABA4B00795648 /* BoyiaCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaCamera.swift; sourceTree = "<group>"; };
+		4CC8FB5F27EAD0B400795648 /* BoyiaLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaLog.swift; sourceTree = "<group>"; };
+		4CC8FB6327EB1C2700795648 /* BoyiaWebController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaWebController.swift; sourceTree = "<group>"; };
+		4CC8FB6627EB4F7800795648 /* WebMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebMessageHandler.swift; sourceTree = "<group>"; };
+		4CC8FB6827EB502A00795648 /* WebNavigationDelegateImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebNavigationDelegateImpl.swift; sourceTree = "<group>"; };
+		4CC8FB6A27EC0CDC00795648 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		4CC8FB6E27EC4E4D00795648 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		4CC8FB7927EC601800795648 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4CC8FB7B27EC6E0A00795648 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -116,6 +134,8 @@
 		4CC8FB5127E9BDDD00795648 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4CC8FB7827EC600500795648 /* Home */,
+				4CC8FB6C27EC2B3C00795648 /* Login */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -126,6 +146,7 @@
 				4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */,
 				4C7AE7E726CF835700946197 /* ViewController.h */,
 				4C7AE7E826CF835700946197 /* ViewController.m */,
+				4CC8FB6327EB1C2700795648 /* BoyiaWebController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -133,6 +154,10 @@
 		4CC8FB5327E9BF1D00795648 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				4CC8FB6D27EC4E3300795648 /* Util */,
+				4CC8FB6527EB481600795648 /* Web */,
+				4CC8FB5E27EAD0A200795648 /* Log */,
+				4CC8FB5A27EABA2800795648 /* Camera */,
 				4CC8FB5427E9BF2900795648 /* Uploader */,
 			);
 			path = Base;
@@ -144,6 +169,56 @@
 				4CC8FB5527E9BF4B00795648 /* Uploader.swift */,
 			);
 			path = Uploader;
+			sourceTree = "<group>";
+		};
+		4CC8FB5A27EABA2800795648 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB5B27EABA4B00795648 /* BoyiaCamera.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		4CC8FB5E27EAD0A200795648 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB5F27EAD0B400795648 /* BoyiaLog.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
+		4CC8FB6527EB481600795648 /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB6627EB4F7800795648 /* WebMessageHandler.swift */,
+				4CC8FB6827EB502A00795648 /* WebNavigationDelegateImpl.swift */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
+		4CC8FB6C27EC2B3C00795648 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB6A27EC0CDC00795648 /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		4CC8FB6D27EC4E3300795648 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB6E27EC4E4D00795648 /* Extension.swift */,
+				4CC8FB7B27EC6E0A00795648 /* Navigator.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		4CC8FB7827EC600500795648 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8FB7927EC601800795648 /* HomeView.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,11 +293,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C7AE7E926CF835700946197 /* ViewController.m in Sources */,
+				4CC8FB6727EB4F7800795648 /* WebMessageHandler.swift in Sources */,
+				4CC8FB6427EB1C2700795648 /* BoyiaWebController.swift in Sources */,
+				4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */,
+				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
+				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
+				4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */,
+				4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */,
+				4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
 				4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */,
+				4CC8FB6027EAD0B400795648 /* BoyiaLog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

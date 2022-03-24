@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SplashViewController: UIViewController {
     override func viewDidLoad() {
@@ -23,6 +24,7 @@ class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
         // 显示BoyiaView
-        self.navigationController?.pushViewController(BoyiaViewController(), animated: true)
+        //self.navigationController?.pushViewController(BoyiaViewController(), animated: true)
+        self.navigationController?.pushViewController(UIHostingController(rootView: HomeView()), animated: true)
     }
 }

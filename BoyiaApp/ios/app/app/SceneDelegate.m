@@ -26,7 +26,12 @@
     UIWindowScene* windowScene = (UIWindowScene*)scene;
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     self.window.frame = windowScene.coordinateSpace.bounds;
+    // 开屏controller
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[SplashViewController new]];
+    
+//    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[BoyiaWebController new]];
+    
+//    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[BoyiaWebController new]];
     [self.window makeKeyAndVisible];
 }
 

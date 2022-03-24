@@ -46,12 +46,13 @@ public class BoyiaUtils {
         }
     }
 
-    // 必须搭配taskAffinity才能开启一个新的任务栈
+    // Activity中启动必须搭配taskAffinity才能开启一个新的任务栈
+    // Service中启动无需taskAffinity
     public static void startApp(final String info) {
-        Intent intent = new Intent();
-        intent.setAction("com.boyia.app.sub.action");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        BaseApplication.getInstance().startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setAction("com.boyia.app.sub.action");
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        BaseApplication.getInstance().startActivity(intent);
     }
 
     // Sub Thread exec Toast needs Looper

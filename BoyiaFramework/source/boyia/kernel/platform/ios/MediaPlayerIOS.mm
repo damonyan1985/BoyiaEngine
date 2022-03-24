@@ -109,6 +109,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return self;
 }
 
+// 图像输出
 -(void)createVideoOutput{
     NSDictionary* pixBuffAttributes = @{
         (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
