@@ -376,7 +376,7 @@ MediaPlayerIOS::~MediaPlayerIOS()
 void MediaPlayerIOS::start(const String& url)
 {
     NSURL* reqUrl = [NSURL URLWithString:STR_TO_OCSTR(url)];
-    m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl andClient:getClientId()];
+    //m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl andClient:getClientId()];
 }
 
 void MediaPlayerIOS::updateTexture(float* matrix)

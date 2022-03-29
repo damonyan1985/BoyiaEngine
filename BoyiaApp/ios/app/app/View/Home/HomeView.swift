@@ -24,30 +24,4 @@ struct HomeView : View {
         }
         .navigationBarHidden(true)
     }
-    
-    func findCurrentVC(_ vc: UIViewController?) -> UIViewController? {
-        
-        var currentShowingVC: UIViewController?
-        if (vc?.presentedViewController != nil) { //注要优先判断vc是否有弹出其他视图，如有则当前显示的视图肯定是在那上面
-            // 当前视图是被presented出来的
-            let nextRootVC = vc?.presentedViewController
-            currentShowingVC = self.findCurrentVC(nextRootVC)
-            
-        } else if (vc is UITabBarController) {
-            // 根视图为UITabBarController
-            let nextRootVC = (vc as? UITabBarController)?.selectedViewController
-            currentShowingVC = self.findCurrentVC(nextRootVC)
-            
-        } else if (vc is UINavigationController){
-            // 根视图为UINavigationController
-            let nextRootVC = (vc as? UINavigationController)?.visibleViewController
-            currentShowingVC = self.findCurrentVC(nextRootVC);
-            
-        } else {
-            // 根视图为非导航类
-            currentShowingVC = vc;
-        }
-        
-        return currentShowingVC;
-    }
 }
