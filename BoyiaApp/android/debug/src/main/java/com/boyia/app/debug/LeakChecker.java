@@ -16,7 +16,7 @@ public class LeakChecker {
         mRetainedKeys = new CopyOnWriteArraySet<>();
     }
 
-    public void watch(Object watchedRef) {
+    public void watch(Object watchedRef, LeakCallback callback) {
         final String key = UUID.randomUUID().toString();
         final BoyiaWeakReference ref = new BoyiaWeakReference(watchedRef, key, mQueue);
         mRetainedKeys.add(key);
@@ -32,8 +32,9 @@ public class LeakChecker {
                 // 先强制GC清除一次
                 clearGC();
                 removeWeakRef();
-                if (!checkRef(ref)) {
+                if (!checkRef(ref) && callback != null) {
                     // 内存泄漏
+                    callback.onLeak();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

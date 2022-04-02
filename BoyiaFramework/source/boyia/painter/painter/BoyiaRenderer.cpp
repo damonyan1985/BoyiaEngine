@@ -40,6 +40,7 @@ BoyiaRenderer::~BoyiaRenderer()
     glDeleteVertexArrays(1, &m_buffersVAO);
 }
 
+// 使用VAO定义数据含义
 LVoid BoyiaRenderer::bindPosition()
 {
     // 启动顶点索引
@@ -60,6 +61,8 @@ LVoid BoyiaRenderer::bindPosition()
 LVoid BoyiaRenderer::createVBO()
 {
     // 创建VAO
+    // VAO的作用是描述VBO中的数据，如果数据中既包含顶点坐标，顶点颜色，纹理坐标
+    // 则需要VAO来进行分类描述
     glGenVertexArrays(1, &m_buffersVAO);
     glBindVertexArray(m_buffersVAO);
 

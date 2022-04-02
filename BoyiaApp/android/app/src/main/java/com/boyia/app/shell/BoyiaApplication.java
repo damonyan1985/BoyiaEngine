@@ -1,20 +1,58 @@
 package com.boyia.app.shell;
 
+import android.app.Activity;
 import android.content.Context;
-//import android.support.multidex.MultiDex;
-
-//import com.boyia.app.advert.platform.TTAdManagerHolder;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.debug.LeakChecker;
 import com.umeng.commonsdk.UMConfigure;
 
 public class BoyiaApplication extends BaseApplication {
+    private static final String TAG = "BoyiaApplication";
     // base为ContextImpl
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(base);
+        // 监控APP内activity销毁
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+            }
+
+            @Override
+            public void onActivityStarted(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivityResumed(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivityStopped(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+            }
+
+            @Override
+            public void onActivityDestroyed(@NonNull Activity activity) {
+                // 监控activity是否被熊辉
+                new LeakChecker().watch(activity, () -> {
+                    BoyiaLog.d(TAG, String.format("Leak activity %s", activity.getClass().getCanonicalName()));
+                });
+            }
+        });
     }
 
     @Override

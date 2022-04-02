@@ -148,4 +148,5 @@ dependencies {
     //implementation "com.android.support:support-v4:28.0.0"
     implementation gradle.library.umeng_common_lib
     implementation gradle.library.umeng_sdk_lib
+    implementation gradle.library.boyia_debugger
 }

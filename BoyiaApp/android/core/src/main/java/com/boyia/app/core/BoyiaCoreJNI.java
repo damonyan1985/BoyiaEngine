@@ -30,6 +30,7 @@ public class BoyiaCoreJNI {
             if (sHasInit.compareAndSet(false, true)) {
                 BoyiaUtils.loadLib();
             }
+            // 这里处理了onComplete。subscribe才会调用襄阳的onComplete
             subscriber.onComplete();
         })
         .subscribeOn(JobScheduler.jobScheduler())
