@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">boyialib</string>
-    <string name="boyia_process">:boyia</string>
-    <string name="boyia_task">com.boyia.app.subprocess</string>
+    <string name="boyia_process_a">:boyia_app_a</string>
+    <string name="boyia_process_b">:boyia_app_b</string>
+    <string name="boyia_process_c">:boyia_app_c</string>
+    <string name="boyia_process_d">:boyia_app_d</string>
+    <string name="boyia_process_e">:boyia_app_e</string>
+    <string name="boyia_process_f">:boyia_app_f</string>
+    <string name="boyia_task_a">com.boyia.app.app_a</string>
+    <string name="boyia_task_b">com.boyia.app.app_b</string>
+    <string name="boyia_task_c">com.boyia.app.app_c</string>
+    <string name="boyia_task_d">com.boyia.app.app_d</string>
+    <string name="boyia_task_e">com.boyia.app.app_e</string>
+    <string name="boyia_task_f">com.boyia.app.app_f</string>
 </resources>

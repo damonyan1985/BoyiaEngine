@@ -5,8 +5,12 @@ import com.boyia.app.common.json.JsonAnnotation.JsonKey;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -69,8 +73,8 @@ public class BoyiaJson {
             Object value = jsonObject.opt(key);
             for (Field field : fields) {
                 JsonKey jsonKey = field.getAnnotation(JsonKey.class);
-                // 如果jsonKey与key相等
-                if (key.equals(jsonKey.name())) {
+                // 如果jsonKey与key相等, 或者与field name一致
+                if ((jsonKey != null && key.equals(jsonKey.name())) || key.equals(field.getName())) {
                     field.setAccessible(true);
                     if (!normalValue(value, field, newObject)) {
                         // 是一个类的对象
@@ -93,21 +97,50 @@ public class BoyiaJson {
             } else if (value instanceof JSONArray) {
                 // 如果是数组
                 JSONArray jarray = (JSONArray) value;
-                Class<?> type = field.getType().getComponentType();
-                Object[] array = (Object[]) Array.newInstance(type, jarray.length());
+                if (field.getType().isArray()) {
+                    BoyiaLog.d(TAG,
+                            "specialValue array field type = "
+                                    + field.getType() + " isList="
+                                    + List.class.isAssignableFrom(field.getType())
+                                    + " type=" + field.getType().getComponentType());
 
-                for (int i = 0; i < jarray.length(); i++) {
-                    array[i] = toNormalValue(jarray.get(i), type);
-                    // 如果不是普通类型
-                    if (array[i] == null) {
-                        array[i] = jsonParseImpl(jarray.getJSONObject(i), type);
+                    Class<?> type = field.getType().getComponentType();
+                    Object[] array = (Object[]) Array.newInstance(type, jarray.length());
+
+                    for (int i = 0; i < jarray.length(); i++) {
+                        array[i] = toNormalValue(jarray.get(i), type);
+                        // 如果不是普通类型
+                        if (array[i] == null) {
+                            array[i] = jsonParseImpl(jarray.getJSONObject(i), type);
+                        }
                     }
+                    // 奇葩！数组竟然代表了多个参数，
+                    // 例如数组长度为1代表一个参数，
+                    // 数组长度为2代表两个参数。。。
+                    //method.invoke(newObject, new Object[] {array});
+                    field.set(newObject, array);
+                } else if (List.class.isAssignableFrom(field.getType())) { // 是否是List的子类
+                    //Class<?> type = (Class<?>)((ParameterizedType) field.getType().getGenericSuperclass()).getActualTypeArguments()[0];
+                    Class<?> type = (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
+                    BoyiaLog.d(TAG,
+                            "specialValue array field type = "
+                                    + field.getType() + " isList="
+                                    + List.class.isAssignableFrom(field.getType())
+                                    + " type=" + type);
+                    // 如果是list类型
+                    ArrayList array = new ArrayList();
+                    for (int i = 0; i < jarray.length(); i++) {
+                        Object obj = toNormalValue(jarray.get(i), type);
+                        // 如果不是普通类型
+                        if (obj == null) {
+                            obj = jsonParseImpl(jarray.getJSONObject(i), type);
+                        }
+
+                        array.add(obj);
+                    }
+
+                    field.set(newObject, array);
                 }
-                // 奇葩！数组竟然代表了多个参数，
-                // 例如数组长度为1代表一个参数，
-                // 数组长度为2代表两个参数。。。
-                //method.invoke(newObject, new Object[] {array});
-                field.set(newObject, array);
             }
         } catch (Exception e) {
             BoyiaLog.e(TAG, "specialValue exec err=" + e.getMessage());

@@ -18,7 +18,9 @@ public class BoyiaBridge {
         return BoyiaFileUtil.getAppRoot();
     }
 
+    // dpi为每英寸所占的像素
     public static float getDisplayDensity() {
+        // 每英寸占用的像素除以160
         float density = BaseApplication.getInstance().
                 getResources().getDisplayMetrics().density;
         BoyiaLog.i(TAG, "BoyiaBridge.getDisplayDensity() = " + density);

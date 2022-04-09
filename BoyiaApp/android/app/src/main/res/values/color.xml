@@ -4,4 +4,6 @@
     <color name="remote_connect_text">#FFe78018</color>
     <color name="remote_disconnect_text">#FF901821</color>
     <color name="full_text_color">#FFF1F1F1</color>
+    <color name="start_up_begin_color">#FFFFC125</color>
+    <color name="start_up_end_color">#FFFFD700</color>
 </resources>

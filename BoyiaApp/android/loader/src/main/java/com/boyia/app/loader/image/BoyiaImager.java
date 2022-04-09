@@ -7,6 +7,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.boyia.app.common.utils.DiskLruCache;
 import com.boyia.app.loader.job.JobScheduler;
@@ -27,7 +28,6 @@ import android.os.Environment;
  * @Descrption Image Resource Download
  *     Base On IBoyiaImage
  */
-
 public class BoyiaImager {
     private static final String TAG = "BoyiaImager";
     protected static final String BOYIA_IMAGE_DISK_SAVE_PATH = BoyiaFileUtil
@@ -37,8 +37,10 @@ public class BoyiaImager {
 
     private BoyiaImageCache mBitmapCache = null;
     private DiskLruCache mDiskCache = null;
-    // Loading Cache
-    private HashMap<String, List<WeakReference<IBoyiaImage>>> mLoadingMap;
+    // Loading Cache使用了ConcurrentHashMap，ConcurrentHashMap采用了分段加锁机制，
+    // 相比快于对整个HashMap加锁，因为多线程竞争下对单表进行加锁访问效率比较地下，分段加锁能很好的解决这个问题
+    // 减少多线程竞争同一个资源的情况
+    private ConcurrentHashMap<String, List<WeakReference<IBoyiaImage>>> mLoadingMap;
 
     private static class BoyiaImageManagerHolder {
         static final BoyiaImager INSTANCE = new BoyiaImager();
@@ -51,7 +53,7 @@ public class BoyiaImager {
     private BoyiaImager() {
         initMemoryCache();
         initDiskCache(false);
-        mLoadingMap = new HashMap<>();
+        mLoadingMap = new ConcurrentHashMap<>();
     }
 
     public static void loadImage(final String url, final IBoyiaImage image) {
@@ -77,21 +79,11 @@ public class BoyiaImager {
     }
 
     protected List<WeakReference<IBoyiaImage>> getImageList(String url) {
-        if (mLoadingMap == null) {
-            return null;
-        }
-
-        synchronized (mLoadingMap) {
-            return mLoadingMap.size() == 0 ? null : mLoadingMap.get(url);
-        }
+        return mLoadingMap == null || mLoadingMap.size() == 0 ? null : mLoadingMap.get(url);
     }
 
     public void removeLoadImage(String url) {
-        if (mLoadingMap == null) {
-            return;
-        }
-
-        synchronized (mLoadingMap) {
+        if (mLoadingMap != null) {
             mLoadingMap.remove(url);
         }
     }
@@ -99,10 +91,6 @@ public class BoyiaImager {
     protected void putLoadImage(String url,
                                 List<WeakReference<IBoyiaImage>> imageList) {
         if (mLoadingMap == null) {
-            return;
-        }
-
-        synchronized (mLoadingMap) {
             mLoadingMap.put(url, imageList);
         }
     }
@@ -221,8 +209,10 @@ public class BoyiaImager {
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeStream(snapshot.getInputStream(0), null, options);
                     options.inJustDecodeBounds = false;
-                    int inSampleSize = options.outWidth / image.getWidth();
-                    // 必须判断压缩的inSampleSize是否为0，否则使用原图比例
+                    // options.outWidth为原图尺寸，image.getWidth()为需要贴图的尺寸
+                    int inSampleSize = image.getWidth() == 0 ? 1 : options.outWidth / image.getWidth();
+                    // 必须判断压缩的inSampleSize是否为0，否则使用原图比例. inSampleSize > 1时，会对图片进行压缩
+                    // inSampleSize必须是2的倍数，如果不是2的倍数就会被四舍五入
                     options.inSampleSize = inSampleSize > 0 ? inSampleSize : 1;
                     BoyiaLog.d(TAG, "Bitmap Size=" + options.inSampleSize + " Image url=" + image.getImageURL());
                     snapshot.close();

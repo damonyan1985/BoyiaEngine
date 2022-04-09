@@ -22,28 +22,35 @@ AppInfo::~AppInfo()
 {
 }
 
+LBool AppInfo::isKey(cJSON* item, const char* key)
+{
+    return 0 == strcmp(item->string, key);
+}
+
 LVoid AppInfo::parseApp(cJSON* appJson)
 {
     cJSON* item = appJson->child;
     while (item) {
-        if (0 == strcmp(item->string, "versionCode")) {
+        if (isKey(item, "versionCode")) {
             versionCode = item->valueint;
             BOYIA_LOG("boyia app version=%d", item->valueint);
-        } else if (0 == strcmp(item->string, "path")) {
+        } else if (isKey(item, "path")) {
             path = _CS(item->valuestring);
             BOYIA_LOG("boyia app path=%s", item->valuestring);
-        } else if (0 == strcmp(item->string, "url")) {
+        } else if (isKey(item, "url")) {
             url = _CS(item->valuestring);
             BOYIA_LOG("boyia app url=%s", item->valuestring);
-        } else if (0 == strcmp(item->string, "name")) {
+        } else if (isKey(item, "name")) {
             name = _CS(item->valuestring);
             BOYIA_LOG("boyia app name=%s", item->valuestring);
-        } else if (0 == strcmp(item->string, "isEntry")) {
+        } else if (isKey(item, "isEntry")) {
             isEntry = item->type == cJSON_True ? LTrue : LFalse;
             BOYIA_LOG("boyia app isEntry=%d", item->type);
-        } else if (0 == strcmp(item->string, "id")) {
+        } else if (isKey(item, "id")) {
             id = item->valueint;
             BOYIA_LOG("boyia app id=%d", item->valueint);
+        } else if (isKey(item, "cover")) {
+            cover = _CS(item->valuestring);
         }
 
         item = item->next;

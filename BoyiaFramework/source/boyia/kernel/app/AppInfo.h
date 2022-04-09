@@ -19,6 +19,7 @@ public:
     AppInfo();
     ~AppInfo();
 
+    LBool isKey(cJSON* item, const char* key);
     LVoid parseApp(cJSON* appJson);
 
 public:
@@ -27,6 +28,7 @@ public:
     String path; // download in local path
     String name; // app name
     String url; // download url
+    String cover; // app cover
     LBool isEntry;
     AppCodePath appCodePath;
 };

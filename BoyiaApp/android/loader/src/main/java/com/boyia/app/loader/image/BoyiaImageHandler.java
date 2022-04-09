@@ -63,7 +63,7 @@ public class BoyiaImageHandler {
                     }
 
                     if (width != loadImage.getWidth()) {
-                        options.inSampleSize = options.outWidth / loadImage.getWidth();
+                        options.inSampleSize = loadImage.getWidth() == 0 ? 1 : options.outWidth / loadImage.getWidth();
                         bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
                         BoyiaImager.getInstance().putBitmapCache(mUrl, bitmap);
                         width = loadImage.getWidth();

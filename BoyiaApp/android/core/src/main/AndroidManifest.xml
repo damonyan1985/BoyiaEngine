@@ -4,12 +4,62 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <application>
         <activity
-            android:name="com.boyia.app.core.BoyiaActivity"
-            android:process="@string/boyia_process"
-            android:taskAffinity="@string/boyia_task"
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityA"
+            android:process="@string/boyia_process_a"
+            android:taskAffinity="@string/boyia_task_a"
             android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="com.boyia.app.sub.action" />
+                <action android:name="com.boyia.app.suba.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityB"
+            android:process="@string/boyia_process_b"
+            android:taskAffinity="@string/boyia_task_b"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.subb.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityC"
+            android:process="@string/boyia_process_c"
+            android:taskAffinity="@string/boyia_task_c"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.subc.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityD"
+            android:process="@string/boyia_process_d"
+            android:taskAffinity="@string/boyia_task_d"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.subd.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityE"
+            android:process="@string/boyia_process_e"
+            android:taskAffinity="@string/boyia_task_e"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.sube.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityF"
+            android:process="@string/boyia_process_f"
+            android:taskAffinity="@string/boyia_task_f"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.subf.action" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

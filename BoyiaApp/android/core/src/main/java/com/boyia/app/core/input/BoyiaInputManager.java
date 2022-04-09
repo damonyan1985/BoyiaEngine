@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 public class BoyiaInputManager {
     private static final String TAG = "BoyiaInputManager";
+    // 超过KEYBOARD_DETECT_HEIGHT高度表示软键盘弹出
     private static final int KEYBOARD_DETECT_HEIGHT = 200;
     private WeakReference<BoyiaView> mViewRef;
     private long mItem = 0;

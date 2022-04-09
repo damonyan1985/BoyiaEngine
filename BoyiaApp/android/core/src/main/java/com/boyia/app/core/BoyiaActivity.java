@@ -96,4 +96,17 @@ public class BoyiaActivity extends Activity {
             }
         }
     }
+
+    // 以下是BoyiaApp子进程启动类, 最多只能启动6个应用进程
+    public static class BoyiaAppActivityA extends BoyiaActivity {}
+
+    public static class BoyiaAppActivityB extends BoyiaActivity {}
+
+    public static class BoyiaAppActivityC extends BoyiaActivity {}
+
+    public static class BoyiaAppActivityD extends BoyiaActivity {}
+
+    public static class BoyiaAppActivityE extends BoyiaActivity {}
+
+    public static class BoyiaAppActivityF extends BoyiaActivity {}
 }

@@ -8,11 +8,11 @@ import com.boyia.app.common.utils.BoyiaFileUtil;
 
 import android.content.Context;
 
-public class AppDB extends BoyiaDB {
+public class BoyiaAppDB extends BoyiaDB {
 	private static final String APP_DB_NAME = "boyia_app_db";
 	private static final String DB_FILE = "sql/boyia_app.sql";
 
-	public AppDB(Context context) {
+	public BoyiaAppDB(Context context) {
 		super(context, APP_DB_NAME);
 	}
 

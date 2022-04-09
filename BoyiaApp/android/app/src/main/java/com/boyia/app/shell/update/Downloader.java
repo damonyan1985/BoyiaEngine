@@ -116,5 +116,4 @@ public class Downloader implements ILoadListener {
     @Override
     public void onLoadRedirectUrl(String redirectUrl) {
     }
-
 }

@@ -23,6 +23,10 @@ import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.os.Process;
 
+import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+
 public class BoyiaMainActivity extends BoyiaActivity {
     private static final String TAG = "BoyiaMainActivity";
     private static final String BOYIA_RECEIVE_ACTION = "com.boyia.app.broadcast";

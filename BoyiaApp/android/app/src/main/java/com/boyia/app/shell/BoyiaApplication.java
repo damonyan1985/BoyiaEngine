@@ -49,6 +49,7 @@ public class BoyiaApplication extends BaseApplication {
             public void onActivityDestroyed(@NonNull Activity activity) {
                 // 监控activity是否被熊辉
                 new LeakChecker().watch(activity, () -> {
+                    // 此处可以上报内存泄露
                     BoyiaLog.d(TAG, String.format("Leak activity %s", activity.getClass().getCanonicalName()));
                 });
             }

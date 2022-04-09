@@ -1,6 +1,6 @@
 package com.boyia.app.shell.update;
 
-import com.boyia.app.shell.AppDB;
+import com.boyia.app.shell.BoyiaAppDB;
 import com.boyia.app.common.BaseApplication;
 
 import android.database.sqlite.SQLiteDatabase;
@@ -9,10 +9,10 @@ import java.util.List;
 public class DownloadUtil {
 	protected static SQLiteDatabase getAppDB() {
         SQLiteDatabase db = null;
-        AppDB dbHelper = null;
+        BoyiaAppDB dbHelper = null;
         try {
             if (null == dbHelper) {
-                dbHelper = new AppDB(BaseApplication.getInstance());
+                dbHelper = new BoyiaAppDB(BaseApplication.getInstance());
             }
             db = dbHelper.getWritableDatabase();
         } catch (Exception e) {
