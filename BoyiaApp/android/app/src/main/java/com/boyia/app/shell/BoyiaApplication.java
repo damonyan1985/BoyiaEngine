@@ -10,6 +10,9 @@ import androidx.multidex.MultiDex;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.debug.LeakChecker;
+import com.boyia.app.shell.home.HomeModule;
+import com.boyia.app.shell.login.LoginModule;
+import com.boyia.app.shell.module.ModuleManager;
 import com.umeng.commonsdk.UMConfigure;
 
 public class BoyiaApplication extends BaseApplication {
@@ -59,9 +62,15 @@ public class BoyiaApplication extends BaseApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        initModule();
         //TTAdManagerHolder.init(this);
         UMConfigure.setLogEnabled(true);
         UMConfigure.init(this, null, null,
                 UMConfigure.DEVICE_TYPE_PHONE, null);
+    }
+
+    private void initModule() {
+        ModuleManager.Companion.instance().register(ModuleManager.HOME, new HomeModule());
+        ModuleManager.Companion.instance().register(ModuleManager.LOGIN, new LoginModule());
     }
 }

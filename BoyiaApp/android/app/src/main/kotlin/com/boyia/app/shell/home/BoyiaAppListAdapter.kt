@@ -1,25 +1,18 @@
 package com.boyia.app.shell.home
 
 import android.content.Context
-import java.util.ArrayList;
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImager
-import com.boyia.app.shell.model.BoyiaAppItem
+import com.boyia.app.shell.api.IBoyiaHomeLoader
 
-class BoyiaAppListAdapter(private val context: Context?): RecyclerView.Adapter<BoyiaAppItemHolder>() {
+class BoyiaAppListAdapter(
+        private val context: Context?,
+        private val loader: IBoyiaHomeLoader): RecyclerView.Adapter<BoyiaAppItemHolder>() {
     companion object {
         const val TAG = "BoyiaAppListAdapter"
-    }
-
-    private var appList: ArrayList<BoyiaAppItem> = ArrayList()
-
-    fun appendList(list: ArrayList<BoyiaAppItem>) {
-        BoyiaLog.d(TAG, "appendList-" +list?.toString())
-        appList.addAll(list)
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoyiaAppItemHolder {
@@ -29,14 +22,13 @@ class BoyiaAppListAdapter(private val context: Context?): RecyclerView.Adapter<B
 
     override fun onBindViewHolder(holder: BoyiaAppItemHolder, position: Int) {
         val view = holder.itemView as BoyiaAppItemView
-        view.appNameView?.setText(appList[position].name)
-        BoyiaImager.loadImage(appList[position].cover, view.appIconView)
+        view.appNameView?.text = loader.appItem(position).name
+        BoyiaImager.loadImage(loader.appItem(position).cover, view.appIconView)
 
-        BoyiaLog.d(TAG, "onBindViewHolder-" + appList[position].toString())
+        BoyiaLog.d(TAG, "onBindViewHolder-" + loader.appItem(position).toString())
     }
 
     override fun getItemCount(): Int {
-        BoyiaLog.d(TAG, "getItemCount-" +appList.size)
-        return appList.size
+        return loader.appListCount()
     }
 }

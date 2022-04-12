@@ -8,16 +8,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.boyia.app.common.json.BoyiaJson
-import com.boyia.app.shell.model.BoyiaAppItem
-import com.boyia.app.shell.model.BoyiaAppListData
-import com.boyia.app.shell.model.BoyiaAppListModel
+import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 
-class BoyiaHomeFragment: Fragment() {
+class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
     companion object {
         const val GRID_SPAN_NUM = 3
     }
@@ -37,7 +33,7 @@ class BoyiaHomeFragment: Fragment() {
         headerView = BoyiaHomeHeader(context)
         footerView = BoyiaHomeFooter(context)
 
-        appListAdapter = BoyiaAppListAdapter(context)
+        appListAdapter = BoyiaAppListAdapter(context, loader)
         middleView = RecyclerView(requireContext())
         middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
         middleView?.adapter = appListAdapter
@@ -46,10 +42,15 @@ class BoyiaHomeFragment: Fragment() {
         layout.addView(middleView)
         layout.addView(footerView)
 
-        BoyiaAppListModel.requestAppList(object : LoadCallback {
-            override fun onResult(result: String?) {
-                var data: BoyiaAppListData = BoyiaJson.jsonParse(result, BoyiaAppListData::class.java)
-                appListAdapter?.appendList(data.apps)
+//        BoyiaAppListModel.requestAppList(object : LoadCallback {
+//            override fun onResult(result: String?) {
+//                var data: BoyiaAppListData = BoyiaJson.jsonParse(result, BoyiaAppListData::class.java)
+//                appListAdapter?.appendList(data.apps)
+//            }
+//        })
+        loader.loadAppList(object : LoadCallback {
+            override fun onLoaded() {
+                appListAdapter?.notifyDataSetChanged()
             }
         })
         return layout

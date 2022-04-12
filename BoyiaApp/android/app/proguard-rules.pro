@@ -48,7 +48,7 @@
 #-keep @com.boyia.app.common.db.DBAnnotation class * {*;}
 -keep class com.boyia.app.common.db.DBAnnotation {*;}
 -keep class * {
-    @com.boyia.app.common.db.DBAnnotation.DBColumn <fields>;
+    @com.boyia.app.common.db.DBAnnotation$DBColumn <fields>;
 }
 
 #-keep public class com.boyia.app.update.DownloadData {*;}
