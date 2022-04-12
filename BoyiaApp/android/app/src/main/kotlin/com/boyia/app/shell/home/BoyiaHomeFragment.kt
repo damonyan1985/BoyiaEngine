@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
+import com.boyia.app.common.utils.BoyiaUtils.dp
 
 class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
     companion object {
@@ -37,6 +38,7 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         middleView = RecyclerView(requireContext())
         middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
         middleView?.adapter = appListAdapter
+        middleView?.addItemDecoration(BoyiaGridSpaceItem(dp(12)))
 
         layout.addView(headerView)
         layout.addView(middleView)

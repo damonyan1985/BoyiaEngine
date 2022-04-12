@@ -10,6 +10,7 @@ import com.boyia.app.shell.module.IModuleContext
 // module类似presenter
 class HomeModule: IHomeModule, IBoyiaHomeLoader {
     private var appListModel: BoyiaAppListModel? = null
+
     override fun init() {
         appListModel = BoyiaAppListModel()
     }

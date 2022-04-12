@@ -49,14 +49,14 @@ class BoyiaAppListModel {
                     override fun onNext(result: BoyiaAppListData) {
                         //callback.onResult(result)
                         appList.addAll(result.apps)
-                        // 通知UI层刷新
-                        callback.onLoaded()
                     }
 
                     override fun onError(error: Throwable?) {
                     }
 
                     override fun onComplete() {
+                        // 通知UI层刷新
+                        callback.onLoaded()
                     }
                 })
     }
