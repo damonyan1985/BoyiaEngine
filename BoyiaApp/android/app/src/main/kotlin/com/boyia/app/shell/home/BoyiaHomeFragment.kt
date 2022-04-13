@@ -23,13 +23,17 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
     private var footerView: BoyiaHomeFooter? = null
     private var middleView: RecyclerView? = null
     private var appListAdapter: BoyiaAppListAdapter? = null
+    private var rootLayout: LinearLayout? = null
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//    }
-
+    // 要防止onCreateView被多次调用
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var layout = LinearLayout(context)
+        if (rootLayout != null) {
+            val parant = rootLayout?.parent as ViewGroup
+            parant.removeView(rootLayout)
+            return rootLayout;
+        }
+
+        rootLayout = LinearLayout(context)
 
         headerView = BoyiaHomeHeader(context)
         footerView = BoyiaHomeFooter(context)
@@ -40,22 +44,16 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         middleView?.adapter = appListAdapter
         middleView?.addItemDecoration(BoyiaGridSpaceItem(dp(12)))
 
-        layout.addView(headerView)
-        layout.addView(middleView)
-        layout.addView(footerView)
+        rootLayout?.addView(headerView)
+        rootLayout?.addView(middleView)
+        rootLayout?.addView(footerView)
 
-//        BoyiaAppListModel.requestAppList(object : LoadCallback {
-//            override fun onResult(result: String?) {
-//                var data: BoyiaAppListData = BoyiaJson.jsonParse(result, BoyiaAppListData::class.java)
-//                appListAdapter?.appendList(data.apps)
-//            }
-//        })
         loader.loadAppList(object : LoadCallback {
             override fun onLoaded() {
                 appListAdapter?.notifyDataSetChanged()
             }
         })
-        return layout
+        return rootLayout
     }
 
     class BoyiaHomeHeader(context: Context?) : RelativeLayout(context) {

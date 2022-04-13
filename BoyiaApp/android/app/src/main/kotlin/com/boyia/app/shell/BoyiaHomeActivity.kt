@@ -1,6 +1,8 @@
 package com.boyia.app.shell
 
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.os.PersistableBundle
@@ -15,6 +17,7 @@ import com.boyia.app.shell.home.BoyiaHomeFragment
 import com.boyia.app.shell.home.HomeModule
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.service.BoyiaNotifyService
 import java.util.concurrent.CopyOnWriteArrayList
 
 // 主页面，用来呈现应用列表信息
@@ -33,6 +36,7 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         super.onCreate(bundle)
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
         initHome()
+        initNotifyService()
     }
 
     private fun initHome() {
@@ -52,5 +56,14 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
 
     override fun getActivity(): AppCompatActivity {
         return this
+    }
+
+    private fun initNotifyService() {
+        val intent = Intent(this, BoyiaNotifyService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
     }
 }

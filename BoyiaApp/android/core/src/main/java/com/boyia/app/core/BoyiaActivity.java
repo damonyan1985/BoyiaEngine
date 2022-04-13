@@ -5,12 +5,17 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IntentService;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.launch.BoyiaAppInfo;
+import com.boyia.app.core.launch.BoyiaAppLauncher;
 
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
 // 主要使用来与AMS进行通信的，AMS的任务栈中持有的ActivitRecord与Activity一一对应
@@ -21,6 +26,7 @@ import android.widget.FrameLayout;
 
 // WindowManager.addView相当于是添加了一个窗口
 public class BoyiaActivity extends Activity {
+    private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
     @Override
     protected void onCreate(Bundle icicle) {
@@ -58,6 +64,20 @@ public class BoyiaActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        BoyiaLog.d(TAG, "onNewIntent intent action = " + intent.getAction());
+
+        Bundle bundle = intent.getExtras();
+        BoyiaAppInfo info = (BoyiaAppInfo) bundle.get(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
+        if (info == null) {
+            return;
+        }
+
+        // TODO native层设置info，启动应用
+    }
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private static void transparentStatusBar(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -87,7 +107,7 @@ public class BoyiaActivity extends Activity {
     }
 
     private static void setRootView(Activity activity) {
-        ViewGroup parent = (ViewGroup) activity.findViewById(android.R.id.content);
+        ViewGroup parent = activity.findViewById(android.R.id.content);
         for (int i = 0, count = parent.getChildCount(); i < count; i++) {
             View childView = parent.getChildAt(i);
             if (childView instanceof ViewGroup) {

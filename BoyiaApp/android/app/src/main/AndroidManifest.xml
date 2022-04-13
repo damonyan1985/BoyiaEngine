@@ -37,6 +37,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- 添加摄像头权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 前台service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <application
         android:name="com.boyia.app.shell.BoyiaApplication"
@@ -67,6 +70,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.boyia.app.shell.service.BoyiaNotifyService" />
     </application>
 
 </manifest>
