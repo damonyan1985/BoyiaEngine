@@ -3,6 +3,7 @@ package com.boyia.app.shell.home
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.view.MotionEvent
 import android.view.View
 import com.boyia.app.common.BaseApplication
 import com.boyia.app.common.utils.BoyiaLog
@@ -20,12 +21,19 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
     private var progress: Float = 0F
     private var fileTotalSize: Long = 0L
     private var fileCurrentSize: Int = 0
+    private var isDownloading = false
 
     init {
         // 禁止点击事件透传
-        setOnTouchListener { _, _ ->
+        setOnTouchListener { _, e ->
+            if (isDownloading) {
+                return@setOnTouchListener true
+            }
             // TODO 启动下载任务
-            Downloader(this).download(TEST_URL)
+            if (e.action == MotionEvent.ACTION_DOWN) {
+                Downloader(this).download(TEST_URL)
+                isDownloading = true;
+            }
             return@setOnTouchListener true
         }
     }
@@ -112,6 +120,8 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
         if (fileTotalSize == 0L) {
             return
         }
+
+        BoyiaLog.d(TAG, "BoyiaDownloadMask fileCurrentSize=$fileCurrentSize, fileTotalSize=$fileTotalSize")
 
         val progress = fileCurrentSize.toFloat() / fileTotalSize.toFloat()
         //BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadDataReceive progress=" + (progress * 100) + "%");
