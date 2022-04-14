@@ -39,11 +39,13 @@ public class Downloader implements ILoadListener {
     }
 
     public void download(String url) {
-        String path = DOWN_LOAD_DIR + File.separator + BoyiaUtils.getStringMD5(url);
+        String name = BoyiaUtils.getStringMD5(url);
+        String path = DOWN_LOAD_DIR + File.separator + name;
 
         mInfo = new DownloadData();
         mInfo.setFileUrl(url);
         mInfo.setFilePath(path);
+        mInfo.setFileName(name);
         download(mInfo);
     }
 
@@ -86,6 +88,8 @@ public class Downloader implements ILoadListener {
 
         // 正式开始启动下载
         mInfo.setStatus(DownloadData.DOWNLOADING);
+
+        //DownloadUtil.addDownloadInfo(mInfo);
     }
 
     @Override
@@ -114,7 +118,7 @@ public class Downloader implements ILoadListener {
         try {
             mSavedFile.close();
             mInfo.setStatus(DownloadData.FINISHED);
-            DownloadUtil.updateDownloadInfo(mInfo);
+            //DownloadUtil.updateDownloadInfo(mInfo);
 
             if (mListener != null) {
                 mListener.onLoadFinished(msg);

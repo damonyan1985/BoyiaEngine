@@ -9,12 +9,16 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils.dp
 import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
 
 class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+    companion object {
+        const val TAG = "BoyiaAppItemView"
+    }
 
     var container: LinearLayout? = null
     var appIconView: BoyiaImageView? = null
@@ -59,12 +63,15 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
         maskView = BoyiaDownloadMask(context, object: BoyiaDownloadMask.DownloadCallback {
             override fun onCompleted() {
                 MainScheduler.mainScheduler().sendJob {
+                    BoyiaLog.d(TAG, "BoyiaDownloadMask onCompleted")
                     if (maskView != null) {
                         removeView(maskView)
+                        maskView = null
                     }
                 }
             }
         })
+
         addView(maskView)
     }
 

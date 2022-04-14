@@ -125,7 +125,6 @@ public class BoyiaDAO<T extends BoyiaData> {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                bean = null;
             }
         }
 

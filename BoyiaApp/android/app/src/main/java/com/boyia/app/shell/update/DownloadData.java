@@ -22,10 +22,10 @@ public class DownloadData extends BoyiaData {
     private String fileName;
 
     @DBColumn(name = "current_size")
-    private Long currentSize;
+    private Long currentSize = 0L;
 
     @DBColumn(name = "max_len")
-    private Long maxLength;
+    private Long maxLength = 0L;
 
     @DBColumn(name = "status")
     private Integer status = PAUSE;

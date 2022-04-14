@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.*
 import android.view.View
 import com.boyia.app.common.BaseApplication
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener
 import com.boyia.app.shell.update.Downloader
@@ -12,6 +13,7 @@ import com.boyia.app.shell.update.Downloader
 @SuppressLint("ClickableViewAccessibility")
 class BoyiaDownloadMask(context: Context, private val downloadCallback: DownloadCallback): View(context), BoyiaSimpleLoaderListener {
     companion object {
+        const val TAG = "BoyiaDownloadMask"
         const val TEST_URL = "https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4"
     }
 
@@ -111,12 +113,16 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             return
         }
 
+        val progress = fileCurrentSize.toFloat() / fileTotalSize.toFloat()
+        //BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadDataReceive progress=" + (progress * 100) + "%");
+
         MainScheduler.mainScheduler().sendJob {
-            setProgress(fileCurrentSize.toFloat() / fileTotalSize.toFloat())
+            setProgress(progress)
         }
     }
 
     override fun onLoadFinished(p0: Any?) {
+        BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadFinished")
         downloadCallback.onCompleted()
     }
 
