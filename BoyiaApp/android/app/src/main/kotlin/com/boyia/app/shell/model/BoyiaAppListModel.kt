@@ -24,7 +24,7 @@ class BoyiaAppListModel {
     fun requestAppList(callback: LoadCallback) {
         MueTask.create { subscriber: Subscriber<BoyiaAppListData> -> run {
                     var buffer = ByteArrayOutputStream()
-                    BoyiaLoader(object : SimpleLoaderListener() {
+                    BoyiaLoader(object : SimpleLoaderListener {
                         override fun onLoadDataReceive(bytes: ByteArray?, length: Int, msg: Any?) {
                             buffer.write(bytes, 0, length)
                         }

@@ -72,6 +72,8 @@
         </activity>
 
         <service android:name="com.boyia.app.shell.service.BoyiaNotifyService" />
+        <service android:name="com.boyia.app.shell.update.UpdateApkService"
+            android:process="@string/boyia_app_upgrade_process" />
     </application>
 
 </manifest>

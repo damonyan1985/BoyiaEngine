@@ -3,10 +3,14 @@ package com.boyia.app.shell.update;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.security.MessageDigest;
+
+import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.loader.BoyiaLoader;
 import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.shell.client.BoyiaSimpleLoaderListener;
 
 
 /*
@@ -19,18 +23,34 @@ import com.boyia.app.common.utils.BoyiaLog;
  */
 
 public class Downloader implements ILoadListener {
-    public static final String DOWN_LOAD_DIR = BoyiaFileUtil.getFilePathRoot() + "download/";
+    private static final String TAG = "Downloader";
+    public static final String DOWN_LOAD_DIR = BoyiaFileUtil.getFilePathRoot() + "download";
     private BoyiaLoader mLoader;
     private DownloadData mInfo;
     private RandomAccessFile mSavedFile;
+    public ILoadListener mListener;
 
     public Downloader() {
+        this(null);
+    }
+
+    public Downloader(ILoadListener listener) {
+        mListener = listener;
+    }
+
+    public void download(String url) {
+        String path = DOWN_LOAD_DIR + File.separator + BoyiaUtils.getStringMD5(url);
+
+        mInfo = new DownloadData();
+        mInfo.setFileUrl(url);
+        mInfo.setFilePath(path);
+        download(mInfo);
     }
 
     public void download(DownloadData info) {
         mInfo = info;
         mLoader = new BoyiaLoader(this);
-        BoyiaLog.d("yanbo", "download url="+info.getFileUrl());
+        BoyiaLog.d(TAG, "download url="+info.getFileUrl());
         mLoader.load(info.getFileUrl());
     }
 
@@ -70,14 +90,20 @@ public class Downloader implements ILoadListener {
 
     @Override
     public void onLoadDataSize(long size) {
-        BoyiaLog.d("yanbo", "download size="+size);
+        BoyiaLog.d(TAG, "download size="+size);
         mInfo.setMaxLength(size);
+        if (mListener != null) {
+            mListener.onLoadDataSize(size);
+        }
     }
 
     @Override
     public void onLoadDataReceive(byte[] data, int length, Object msg) {
         try {
             mSavedFile.write(data, 0, length);
+            if (mListener != null) {
+                mListener.onLoadDataReceive(data, length, msg);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,7 +115,11 @@ public class Downloader implements ILoadListener {
             mSavedFile.close();
             mInfo.setStatus(DownloadData.FINISHED);
             DownloadUtil.updateDownloadInfo(mInfo);
-            BoyiaLog.d("yanbo", "download onLoaderFinished");
+
+            if (mListener != null) {
+                mListener.onLoadFinished(msg);
+            }
+            BoyiaLog.d(TAG, "download onLoaderFinished");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -9,7 +9,7 @@ import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.shell.api.IBoyiaHomeLoader
 
 class BoyiaAppListAdapter(
-        private val context: Context?,
+        private val context: Context,
         private val loader: IBoyiaHomeLoader): RecyclerView.Adapter<BoyiaAppItemHolder>() {
     companion object {
         const val TAG = "BoyiaAppListAdapter"

@@ -2,16 +2,16 @@ package com.boyia.app.shell.client;
 
 import com.boyia.app.loader.ILoadListener;
 
-public abstract class BoyiaSimpleLoaderListener implements ILoadListener {
+public interface BoyiaSimpleLoaderListener extends ILoadListener {
     @Override
-    public void onLoadStart() {
+    default void onLoadStart() {
     }
 
     @Override
-    public void onLoadDataSize(long size) {
+    default void onLoadDataSize(long size) {
     }
 
     @Override
-    public void onLoadRedirectUrl(String url) {
+    default void onLoadRedirectUrl(String url) {
     }
 }

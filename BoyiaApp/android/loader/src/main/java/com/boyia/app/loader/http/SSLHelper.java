@@ -72,10 +72,12 @@ public class SSLHelper {
                 mTrustManager = factory != null ? (X509TrustManager) factory.getTrustManagers()[0] :  new X509TrustManager() {
                     @Override
                     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        // TODO 校验客户端证书
                     }
 
                     @Override
                     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        // TODO 校验服务端证书
                     }
 
                     // 返回授信证书列表

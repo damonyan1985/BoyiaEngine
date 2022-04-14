@@ -38,7 +38,7 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         headerView = BoyiaHomeHeader(context)
         footerView = BoyiaHomeFooter(context)
 
-        appListAdapter = BoyiaAppListAdapter(context, loader)
+        appListAdapter = BoyiaAppListAdapter(requireContext(), loader)
         middleView = RecyclerView(requireContext())
         middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
         middleView?.adapter = appListAdapter

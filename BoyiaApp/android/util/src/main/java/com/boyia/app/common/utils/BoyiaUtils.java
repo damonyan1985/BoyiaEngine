@@ -71,6 +71,33 @@ public class BoyiaUtils {
         );
     }
 
+    // 获取字符串的md5值
+    public static String getStringMD5(String str) {
+        if (isTextEmpty(str)) {
+            return null;
+        }
+
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(str.getBytes());
+            StringBuilder builder = new StringBuilder();
+            for (byte b : bytes) {
+                String s = Integer.toHexString(b & 0xFF);
+                if (s.length() == 1) {
+                    builder.append("0");
+                }
+
+                builder.append(s);
+            }
+
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     // 得到文件MD5值
     public static String getFileMD5(File file) {
         if (!file.isFile()) {

@@ -5,6 +5,7 @@
     <string name="app_name">优质生活平台</string>
     <string name="main_name">MainApp</string>
     <string name="boyia_app_process">:BoyiaProcess</string>
+    <string name="boyia_app_upgrade_process">:boyia_app_upgrade_process</string>
     <string name="enter">确认按键</string>
     <string name="testString">\ue809</string>
     <string name="leak_app_name">leaker</string>

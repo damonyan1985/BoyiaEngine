@@ -18,8 +18,14 @@ class BoyiaNotifyService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        //return super.onStartCommand(intent, flags, startId)
         initNotificationManager()
         startForeground(Process.myPid(), createNotification())
+        // 服务被中止后不再重启该服务
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {

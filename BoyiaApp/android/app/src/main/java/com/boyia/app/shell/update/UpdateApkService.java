@@ -9,6 +9,9 @@ import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 
+/**
+ * 后台更新应用
+ */
 public class UpdateApkService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
