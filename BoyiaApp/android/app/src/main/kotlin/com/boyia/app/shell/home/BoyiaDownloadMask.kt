@@ -121,7 +121,7 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             return
         }
 
-        BoyiaLog.d(TAG, "BoyiaDownloadMask fileCurrentSize=$fileCurrentSize, fileTotalSize=$fileTotalSize")
+        //BoyiaLog.d(TAG, "BoyiaDownloadMask fileCurrentSize=$fileCurrentSize, fileTotalSize=$fileTotalSize")
 
         val progress = fileCurrentSize.toFloat() / fileTotalSize.toFloat()
         //BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadDataReceive progress=" + (progress * 100) + "%");

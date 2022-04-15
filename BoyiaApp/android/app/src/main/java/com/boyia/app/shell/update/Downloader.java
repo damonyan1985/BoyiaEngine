@@ -89,7 +89,7 @@ public class Downloader implements ILoadListener {
         // 正式开始启动下载
         mInfo.setStatus(DownloadData.DOWNLOADING);
 
-        //DownloadUtil.addDownloadInfo(mInfo);
+        DownloadUtil.addDownloadInfo(mInfo);
     }
 
     @Override
@@ -105,6 +105,7 @@ public class Downloader implements ILoadListener {
     public void onLoadDataReceive(byte[] data, int length, Object msg) {
         try {
             mSavedFile.write(data, 0, length);
+            mInfo.setCurrentSize(mInfo.getCurrentSize() + length);
             if (mListener != null) {
                 mListener.onLoadDataReceive(data, length, msg);
             }
@@ -118,7 +119,7 @@ public class Downloader implements ILoadListener {
         try {
             mSavedFile.close();
             mInfo.setStatus(DownloadData.FINISHED);
-            //DownloadUtil.updateDownloadInfo(mInfo);
+            DownloadUtil.updateDownloadInfo(mInfo);
 
             if (mListener != null) {
                 mListener.onLoadFinished(msg);

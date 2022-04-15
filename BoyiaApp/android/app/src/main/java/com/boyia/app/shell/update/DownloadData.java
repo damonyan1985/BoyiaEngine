@@ -22,13 +22,13 @@ public class DownloadData extends BoyiaData {
     private String fileName;
 
     @DBColumn(name = "current_size")
-    private Long currentSize = 0L;
+    private long currentSize = 0L;
 
     @DBColumn(name = "max_len")
-    private Long maxLength = 0L;
+    private long maxLength = 0L;
 
     @DBColumn(name = "status")
-    private Integer status = PAUSE;
+    private int status = PAUSE;
 
     public String getFileUrl() {
         return fileUrl;
@@ -54,27 +54,27 @@ public class DownloadData extends BoyiaData {
         this.fileName = fileName;
     }
 
-    public Long getCurrentSize() {
+    public long getCurrentSize() {
         return currentSize;
     }
 
-    public void setCurrentSize(Long currentSize) {
+    public void setCurrentSize(long currentSize) {
         this.currentSize = currentSize;
     }
 
-    public Long getMaxLength() {
+    public long getMaxLength() {
         return maxLength;
     }
 
-    public void setMaxLength(Long maxLength) {
+    public void setMaxLength(long maxLength) {
         this.maxLength = maxLength;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }

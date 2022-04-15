@@ -19,6 +19,7 @@ import com.boyia.app.common.utils.BoyiaUtils;
 
 // sqlite orm映射工具
 public class BoyiaDAO<T extends BoyiaData> {
+    private static final String TAG = "BoyiaDAO";
     private SQLiteDatabase mDb;
 
     public BoyiaDAO(SQLiteDatabase db) {
@@ -114,20 +115,23 @@ public class BoyiaDAO<T extends BoyiaData> {
 
             try {
                 String columnName = getColumnName(field);
-                if (field.getType() == Integer.class) {
+                if (field.getType() == int.class) {
                     cv.put(columnName, (Integer) field.get(bean));
                 } else if (field.getType() == String.class) {
                     cv.put(columnName, (String) field.get(bean));
-                } else if (field.getType() == Float.class) {
+                } else if (field.getType() == float.class) {
                     cv.put(columnName, field.getFloat(bean));
-                } else if (field.getType() == Long.class) {
-                    cv.put(columnName, field.getLong(bean));
+                } else if (field.getType() == long.class) {
+                    long value = field.getLong(bean); // Field.getLong()传入的参数必须是包含基础类型字段的对象
+                    BoyiaLog.d(TAG, "setDbData long value = " + value);
+                    cv.put(columnName, value);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
+        BoyiaLog.d(TAG, "setDbData cv = " + cv.toString());
         return cv;
     }
 
@@ -135,7 +139,7 @@ public class BoyiaDAO<T extends BoyiaData> {
     public String getTableName() {
         Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         Class<?> clzz = (Class<?>) type;
-        BoyiaLog.d("BoyiaDAO", "getTableName=" + clzz.getAnnotation(DBTable.class).name());
+        BoyiaLog.d(TAG, "getTableName=" + clzz.getAnnotation(DBTable.class).name());
         return clzz.getAnnotation(DBTable.class).name();
     }
 
