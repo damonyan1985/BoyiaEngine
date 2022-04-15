@@ -67,4 +67,16 @@ public class DownloadUtil {
 
         return name;
     }
+
+    public static List<DownloadData> getDownloadList(DownloadData filter) {
+        SQLiteDatabase db = getAppDB();
+        List<DownloadData> list = null;
+        if (db != null) {
+            DownloadDAO infoDAO = new DownloadDAO(db);
+            list = infoDAO.query(filter);
+            db.close();
+        }
+
+        return list;
+    }
 }

@@ -12,6 +12,9 @@ import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.loader.job.JobScheduler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UpdateApkOperation {
     public static final String PARAM_FILE_URL = "file_url";
 
@@ -20,10 +23,17 @@ public class UpdateApkOperation {
     public static final String METHOD_DELETE = "delete";
 
     private IBoyiaIpcSender mInterface;
+    private List<String> mDownloadUrls = new ArrayList<>();
+
     private ServiceConnection mConnect = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mInterface = IBoyiaIpcSender.BoyiaSenderStub.asInterface(iBinder);
+            if (mInterface != null && !mDownloadUrls.isEmpty()) {
+                for (int i = 0; i < mDownloadUrls.size(); i++) {
+                    download(mDownloadUrls.get(i));
+                }
+            }
         }
 
         @Override
@@ -57,6 +67,8 @@ public class UpdateApkOperation {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        } else {
+            mDownloadUrls.add(url);
         }
     }
 }

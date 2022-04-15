@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -177,18 +178,60 @@ public class BoyiaDAO<T extends BoyiaData> {
     }
 
     public List<T> queryAll(Class<T> cls) {
-        List<T> Infos = null;
+        List<T> infos = null;
         Cursor cursor = mDb.rawQuery("select * from " + getTableName(),
                 new String[]{});
         while (cursor.moveToNext()) {
-            if (null == Infos) {
-                Infos = new ArrayList<T>();
+            if (null == infos) {
+                infos = new ArrayList<T>();
             }
             T appInfo = setBeanData(cursor, cls);
-            Infos.add(appInfo);
+            infos.add(appInfo);
         }
         cursor.close();
-        return Infos;
+        return infos;
+    }
+
+    public List<T> queryByFilter(T bean, Class<T> cls) {
+        List<T> infos = null;
+
+        ContentValues cv = setDbData(bean, cls);
+        StringBuilder filter = new StringBuilder();
+        if (cv.size() > 0) {
+            filter.append(" where");
+        }
+        for (Map.Entry<String, Object> item : cv.valueSet()) {
+            filter.append(" ");
+            filter.append(item.getKey());
+            filter.append("=");
+
+            if (item.getValue() instanceof String) {
+                filter.append("'");
+                filter.append(item.getValue());
+                filter.append("'");
+            } else {
+                filter.append(item.getValue());
+            }
+        }
+
+        filter.append(";");
+
+        String sql = "select * from " + getTableName() + filter.toString();
+
+        BoyiaLog.d(TAG, "queryByFilter sql = " + sql);
+        Cursor cursor = mDb.rawQuery(sql, null);
+
+        while (cursor.moveToNext()) {
+            if (null == infos) {
+                infos = new ArrayList<T>();
+            }
+            T appInfo = setBeanData(cursor, cls);
+            infos.add(appInfo);
+        }
+
+        BoyiaLog.d(TAG, "queryByFilter infos = " + infos);
+        cursor.close();
+        return infos;
     }
 }
 

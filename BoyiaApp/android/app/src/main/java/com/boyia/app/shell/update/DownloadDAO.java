@@ -40,6 +40,10 @@ public class DownloadDAO extends BoyiaDAO<DownloadData> {
         return super.queryAll(DownloadData.class);
     }
 
+    public List<DownloadData> query(DownloadData info) {
+        return super.queryByFilter(info, DownloadData.class);
+    }
+
     @Override
     public String getTableName() {
         return super.getTableName();

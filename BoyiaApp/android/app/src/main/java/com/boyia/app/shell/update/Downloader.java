@@ -3,15 +3,13 @@ package com.boyia.app.shell.update;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.security.MessageDigest;
+import java.util.List;
 
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.loader.BoyiaLoader;
 import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.shell.client.BoyiaSimpleLoaderListener;
-
 
 /*
  * Downloader
@@ -21,7 +19,6 @@ import com.boyia.app.shell.client.BoyiaSimpleLoaderListener;
  * @Descrption HTTP Large Resource Download Loader
  *  Interface
  */
-
 public class Downloader implements ILoadListener {
     private static final String TAG = "Downloader";
     public static final String DOWN_LOAD_DIR = BoyiaFileUtil.getFilePathRoot() + "download";
@@ -30,7 +27,6 @@ public class Downloader implements ILoadListener {
     private RandomAccessFile mSavedFile;
     private ILoadListener mListener;
     private String mFilePath;
-
 
     public Downloader() {
         this(null, null);
@@ -50,13 +46,20 @@ public class Downloader implements ILoadListener {
         String path = mFilePath + File.separator + name;
 
         mInfo = new DownloadData();
-        mInfo.setFileUrl(url);
-        mInfo.setFilePath(path);
         mInfo.setFileName(name);
+
+        List<DownloadData> list = DownloadUtil.getDownloadList(mInfo);
+        if (list != null) {
+            BoyiaLog.d(TAG, "download getDownloadList size = " + list.size());
+        }
 
         if (useCache) {
             // TODO 根据name查询表
         }
+
+        mInfo.setFilePath(path);
+        mInfo.setFileUrl(url);
+
         download(mInfo);
     }
 
