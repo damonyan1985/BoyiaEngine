@@ -115,19 +115,25 @@ public class BoyiaDAO<T extends BoyiaData> {
 
             try {
                 String columnName = getColumnName(field);
-                if (field.getType() == int.class) {
-                    cv.put(columnName, (Integer) field.get(bean));
+                Object value = field.get(bean);
+                if (value == null) {
+                    continue;
+                }
+
+                if (field.getType() == Integer.class) {
+                    cv.put(columnName, (Integer) value);
                 } else if (field.getType() == String.class) {
-                    cv.put(columnName, (String) field.get(bean));
-                } else if (field.getType() == float.class) {
-                    cv.put(columnName, field.getFloat(bean));
-                } else if (field.getType() == long.class) {
-                    long value = field.getLong(bean); // Field.getLong()传入的参数必须是包含基础类型字段的对象
+                    cv.put(columnName, (String) value);
+                } else if (field.getType() == Float.class) {
+                    cv.put(columnName, (Float) value);
+                } else if (field.getType() == Long.class) {
+                    //long value = field.getLong(bean); // Field.getLong()传入的参数必须是包含基础类型字段的对象
                     BoyiaLog.d(TAG, "setDbData long value = " + value);
-                    cv.put(columnName, value);
+                    cv.put(columnName, (Long) value);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
+                BoyiaLog.e(TAG, "setDbData cv = " + cv.toString(), ex);
             }
         }
 

@@ -28,24 +28,35 @@ public class Downloader implements ILoadListener {
     private BoyiaLoader mLoader;
     private DownloadData mInfo;
     private RandomAccessFile mSavedFile;
-    public ILoadListener mListener;
+    private ILoadListener mListener;
+    private String mFilePath;
+
 
     public Downloader() {
-        this(null);
+        this(null, null);
     }
 
-    public Downloader(ILoadListener listener) {
+    public Downloader(ILoadListener listener, String filePath) {
         mListener = listener;
+        mFilePath = BoyiaUtils.isTextEmpty(filePath) ? DOWN_LOAD_DIR : (filePath + "download");
     }
 
     public void download(String url) {
+        download(url, false);
+    }
+
+    public void download(String url, boolean useCache) {
         String name = BoyiaUtils.getStringMD5(url);
-        String path = DOWN_LOAD_DIR + File.separator + name;
+        String path = mFilePath + File.separator + name;
 
         mInfo = new DownloadData();
         mInfo.setFileUrl(url);
         mInfo.setFilePath(path);
         mInfo.setFileName(name);
+
+        if (useCache) {
+            // TODO 根据name查询表
+        }
         download(mInfo);
     }
 
@@ -59,7 +70,7 @@ public class Downloader implements ILoadListener {
     @Override
     public void onLoadStart() {
         long rangeStart = 0;
-        File downDir = new File(Downloader.DOWN_LOAD_DIR);
+        File downDir = new File(mFilePath);
         if (!downDir.exists()) {
             downDir.mkdirs();
         }
@@ -69,9 +80,19 @@ public class Downloader implements ILoadListener {
             rangeStart = downFile.length();
         }
 
-        if (mInfo.getStatus() == DownloadData.ERROR) {
+        if (mInfo.getStatus() == null || mInfo.getStatus() == DownloadData.ERROR) {
             rangeStart = 0;
+            mInfo.setMaxLength(0L);
+            mInfo.setStatus(DownloadData.PAUSE);
         }
+
+        if (rangeStart >= mInfo.getMaxLength() && downFile.exists()) {
+            downFile.delete();
+            rangeStart = 0;
+            mInfo.setMaxLength(0L);
+        }
+
+        mInfo.setCurrentSize(rangeStart);
 
         // 断点续传
         if (rangeStart != 0) {

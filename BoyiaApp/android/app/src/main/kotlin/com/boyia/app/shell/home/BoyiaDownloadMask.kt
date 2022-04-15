@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import com.boyia.app.common.BaseApplication
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener
 import com.boyia.app.shell.update.Downloader
@@ -31,8 +33,8 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             }
             // TODO 启动下载任务
             if (e.action == MotionEvent.ACTION_DOWN) {
-                Downloader(this).download(TEST_URL)
-                isDownloading = true;
+                Downloader(this, BoyiaBridge.getAppRoot()).download(TEST_URL)
+                isDownloading = true
             }
             return@setOnTouchListener true
         }
@@ -76,7 +78,7 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             path.lineTo(w, h)
             path.lineTo(0F, h)
             path.lineTo(0F, 0F)
-            path.moveTo(w / 2, 0F)
+            //path.moveTo(w / 2, 0F)
         } else if (progress > 0.125 && progress <= 0.375) {
             val y1 = ((progress - 0.125) / 0.25) * h
             if (progress < 0.375) {
@@ -85,7 +87,7 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             path.lineTo(w, h)
             path.lineTo(0F, h)
             path.lineTo(0F, 0F)
-            path.moveTo(w / 2, 0F)
+            //path.moveTo(w / 2, 0F)
         } else if (progress > 0.375 && progress <= 0.625) {
             val x1 = w - ((progress - 0.375) / 0.25) * w
             if (progress < 0.625) {
@@ -93,7 +95,7 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             }
             path.lineTo(0F, h)
             path.lineTo(0F, 0F)
-            path.moveTo(w / 2, 0F)
+            //path.moveTo(w / 2, 0F)
 
         } else if (progress > 0.625 && progress <= 0.875) {
             val y1 = h - ((progress - 0.625) / 0.25) * h
@@ -101,13 +103,14 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
                 path.lineTo(0F, y1.toFloat())
             }
             path.lineTo(0F, 0F)
-            path.moveTo(w / 2, 0F)
+            //path.moveTo(w / 2, 0F)
         } else if (progress > 0.875 && progress < 1.0) {
             val x1 = ((progress - 0.875) / 0.25) * w
             path.lineTo(x1.toFloat(), 0F)
-            path.moveTo(w / 2, 0F)
+            //path.moveTo(w / 2, 0F)
         }
 
+        path.close()
         return path
     }
 
