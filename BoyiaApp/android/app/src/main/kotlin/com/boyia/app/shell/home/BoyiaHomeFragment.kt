@@ -48,6 +48,7 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         rootLayout?.addView(middleView)
         rootLayout?.addView(footerView)
 
+        loader.clear()
         loader.loadAppList(object : LoadCallback {
             override fun onLoaded() {
                 appListAdapter?.notifyDataSetChanged()

@@ -9,11 +9,8 @@ import java.util.List;
 public class DownloadUtil {
 	protected static SQLiteDatabase getAppDB() {
         SQLiteDatabase db = null;
-        BoyiaAppDB dbHelper = null;
         try {
-            if (null == dbHelper) {
-                dbHelper = new BoyiaAppDB(BaseApplication.getInstance());
-            }
+            BoyiaAppDB dbHelper = new BoyiaAppDB(BaseApplication.getInstance());
             db = dbHelper.getWritableDatabase();
         } catch (Exception e) {
             if (db != null) {

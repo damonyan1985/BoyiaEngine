@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
@@ -15,14 +17,20 @@ import okhttp3.RequestBody;
  * All Copyright reserved
  */
 public class OkEngine extends BaseEngine {
+    private Call mCall;
+
     @Override
     public void stop() {
+        if (mCall != null) {
+            mCall.cancel();
+        }
     }
 
     private Response handleResponse(OkHttpClient client, okhttp3.Request.Builder builder) {
         try {
             Response response = new Response();
-            okhttp3.Response res = client.newCall(builder.build()).execute();
+            mCall = client.newCall(builder.build());
+            okhttp3.Response res = mCall.execute();
             response.mInput = res.body().byteStream();
             response.mCode = res.code();
             response.mLength = res.body().contentLength();

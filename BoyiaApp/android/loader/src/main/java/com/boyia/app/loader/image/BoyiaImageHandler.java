@@ -45,7 +45,6 @@ public class BoyiaImageHandler {
     public void decode(byte[] data) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.inSampleSize = 2;
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(data, 0,
                     data.length, options);
@@ -53,26 +52,31 @@ public class BoyiaImageHandler {
 
             List<WeakReference<IBoyiaImage>> imageList = BoyiaImager.getInstance()
                     .getImageList(mUrl);
+
+            BoyiaLog.d(TAG, "BoyiaImageHandler decoding imageList = " + imageList + "，mUrl=" + mUrl);
             if (imageList != null && imageList.size() > 0) {
-                int width = options.outWidth;
-                Bitmap bitmap = null;
-                for (WeakReference<IBoyiaImage> loadImageRef : imageList) {
-                    IBoyiaImage loadImage = loadImageRef.get();
-                    if (loadImage == null) {
-                        continue;
-                    }
+                synchronized (imageList) {
+                    int width = options.outWidth;
+                    Bitmap bitmap = null;
+                    for (WeakReference<IBoyiaImage> loadImageRef : imageList) {
+                        IBoyiaImage loadImage = loadImageRef.get();
+                        if (loadImage == null) {
+                            continue;
+                        }
 
-                    if (width != loadImage.getWidth()) {
-                        options.inSampleSize = loadImage.getWidth() == 0 ? 1 : options.outWidth / loadImage.getWidth();
-                        bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-                        BoyiaImager.getInstance().putBitmapCache(mUrl, bitmap);
-                        width = loadImage.getWidth();
-                    }
+                        if (width != loadImage.getImageWidth()) {
+                            options.inSampleSize = loadImage.getImageWidth() == 0 ? 1 : options.outWidth / loadImage.getImageWidth();
+                            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                            BoyiaImager.getInstance().putBitmapCache(mUrl, bitmap);
+                            width = loadImage.getImageWidth();
+                        }
 
-                    String url = loadImage.getImageURL();
-                    if (!BoyiaUtils.isTextEmpty(url) && url.equals(mUrl) && bitmap != null) {
-                        loadImage.setImage(bitmap);
-                        BoyiaLog.d(TAG, "Decode data in native");
+                        String url = loadImage.getImageURL();
+                        BoyiaLog.d(TAG, "BoyiaImageHandler decode url = " + url + ", mUrl=" + mUrl);
+                        if (!BoyiaUtils.isTextEmpty(url) && url.equals(mUrl) && bitmap != null) {
+                            loadImage.setImage(bitmap);
+                            BoyiaLog.d(TAG, "Decode data in native");
+                        }
                     }
                 }
             }

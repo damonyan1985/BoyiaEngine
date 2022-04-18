@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.loader.mue.MainScheduler;
 
 /*
@@ -19,6 +20,8 @@ import com.boyia.app.loader.mue.MainScheduler;
  */
 
 public class BoyiaImageView extends ImageView implements IBoyiaImage {
+    private static final String TAG = "BoyiaImageView";
+
     public BoyiaImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -46,7 +49,18 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
 
     @Override
     public void setImage(final Bitmap bm) {
+        BoyiaLog.d(TAG, "BoyiaImageView setImage");
         MainScheduler.mainScheduler().sendJob(() -> setImageBitmap(bm));
+    }
+
+    @Override
+    public int getImageWidth() {
+        return getWidth();
+    }
+
+    @Override
+    public int getImageHeight() {
+        return getHeight();
     }
 
     public void releaseImageViewResouce() {

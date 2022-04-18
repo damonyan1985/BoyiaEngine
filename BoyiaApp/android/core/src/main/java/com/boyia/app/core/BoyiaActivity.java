@@ -25,6 +25,8 @@ import com.boyia.app.core.launch.BoyiaAppLauncher;
 // W类型是一个BBinder(Stub服务端)，是一个应用与WMS进行通信的token
 
 // WindowManager.addView相当于是添加了一个窗口
+// Activity是一个ContextThemeWrapper，从ContextWrapper派生而来
+// Activity attach的时候会将ContextImpl传入
 public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;

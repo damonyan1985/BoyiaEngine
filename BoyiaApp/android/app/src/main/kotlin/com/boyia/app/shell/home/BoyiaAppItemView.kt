@@ -60,6 +60,8 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
      * 初始化下载蒙层
      */
     private fun initDownloadMask() {
+        // maskview不能使用local value，kotlin语法不允许local被使用在闭包中
+        // 即便是加了final修饰也不行，和java不一样
         maskView = BoyiaDownloadMask(context, object: BoyiaDownloadMask.DownloadCallback {
             override fun onCompleted() {
                 MainScheduler.mainScheduler().sendJob {

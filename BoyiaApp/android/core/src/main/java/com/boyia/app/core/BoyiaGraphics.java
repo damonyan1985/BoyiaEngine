@@ -177,12 +177,12 @@ public class BoyiaGraphics {
 
         Matrix matrix = new Matrix();
         BoyiaLog.d(TAG, "left=" + left + " " + "width=" + width + " " + "height=" + height + " "
-                + "bitmap width=" + bitmap.getWidth() + " " + "bitmap height=" + bitmap.getHeight());
-        matrix.postScale(1.0f * width / bitmap.getWidth(),
-                1.0f * height / bitmap.getHeight());
+                + "bitmap width=" + bitmap.getImageWidth() + " " + "bitmap height=" + bitmap.getImageHeight());
+        matrix.postScale(1.0f * width / bitmap.getImageWidth(),
+                1.0f * height / bitmap.getImageHeight());
 
         Bitmap dstbmp = Bitmap.createBitmap(bitmap.getBitmap(), 0, 0,
-                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                bitmap.getImageWidth(), bitmap.getImageWidth(), matrix, true);
 
         mCanvas.drawBitmap(dstbmp, left, top, null);
     }

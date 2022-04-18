@@ -18,7 +18,7 @@ public interface IBoyiaImage {
 
     void setImage(Bitmap bitmap);
 
-    int getWidth();
+    int getImageWidth();
 
-    int getHeight();
+    int getImageHeight();
 }

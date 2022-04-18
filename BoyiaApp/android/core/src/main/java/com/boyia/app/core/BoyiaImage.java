@@ -41,11 +41,11 @@ public class BoyiaImage implements IBoyiaImage {
     }
 
     // 得到图片字节流 数组大小
-    public int getWidth() {
+    public int getImageWidth() {
         return mWidth;
     }
 
-    public int getHeight() {
+    public int getImageHeight() {
         return mHeight;
     }
 

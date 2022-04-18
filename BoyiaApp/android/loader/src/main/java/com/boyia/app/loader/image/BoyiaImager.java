@@ -90,7 +90,7 @@ public class BoyiaImager {
 
     protected void putLoadImage(String url,
                                 List<WeakReference<IBoyiaImage>> imageList) {
-        if (mLoadingMap == null) {
+        if (mLoadingMap != null) {
             mLoadingMap.put(url, imageList);
         }
     }
@@ -103,7 +103,9 @@ public class BoyiaImager {
             imageList.add(new WeakReference<>(image));
             putLoadImage(url, imageList);
         } else {
-            imageList.add(new WeakReference<>(image));
+            synchronized (imageList) {
+                imageList.add(new WeakReference<>(image));
+            }
             return true;
         }
 
@@ -210,7 +212,7 @@ public class BoyiaImager {
                     BitmapFactory.decodeStream(snapshot.getInputStream(0), null, options);
                     options.inJustDecodeBounds = false;
                     // options.outWidth为原图尺寸，image.getWidth()为需要贴图的尺寸
-                    int inSampleSize = image.getWidth() == 0 ? 1 : options.outWidth / image.getWidth();
+                    int inSampleSize = image.getImageWidth() == 0 ? 1 : options.outWidth / image.getImageWidth();
                     // 必须判断压缩的inSampleSize是否为0，否则使用原图比例. inSampleSize > 1时，会对图片进行压缩
                     // inSampleSize必须是2的倍数，如果不是2的倍数就会被四舍五入
                     options.inSampleSize = inSampleSize > 0 ? inSampleSize : 1;

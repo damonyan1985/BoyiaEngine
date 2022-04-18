@@ -38,4 +38,8 @@ class HomeModule: IHomeModule, IBoyiaHomeLoader {
     override fun appItem(index: Int): BoyiaAppItem {
         return appListModel?.appList!![index]
     }
+
+    override fun clear() {
+        appListModel?.appList?.clear()
+    }
 }

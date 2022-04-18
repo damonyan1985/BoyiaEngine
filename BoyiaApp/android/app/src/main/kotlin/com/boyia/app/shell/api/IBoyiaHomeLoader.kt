@@ -7,4 +7,5 @@ interface IBoyiaHomeLoader {
     fun loadAppList(callback: BoyiaAppListModel.LoadCallback)
     fun appListCount(): Int
     fun appItem(index: Int): BoyiaAppItem
+    fun clear()
 }
