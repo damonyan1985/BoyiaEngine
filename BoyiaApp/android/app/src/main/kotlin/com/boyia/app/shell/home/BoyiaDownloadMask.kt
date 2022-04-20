@@ -5,24 +5,20 @@ import android.content.Context
 import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
-import com.boyia.app.common.BaseApplication
+import android.view.ViewGroup
 import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.loader.mue.MainScheduler
-import com.boyia.app.shell.client.BoyiaSimpleLoaderListener
 import com.boyia.app.shell.update.Downloader
+import com.boyia.app.shell.update.Downloader.DownLoadProgressListener
 
 @SuppressLint("ClickableViewAccessibility")
-class BoyiaDownloadMask(context: Context, private val downloadCallback: DownloadCallback): View(context), BoyiaSimpleLoaderListener {
+class BoyiaDownloadMask(url: String, context: Context, private val downloadCallback: DownloadCallback): View(context), DownLoadProgressListener {
     companion object {
         const val TAG = "BoyiaDownloadMask"
-        const val TEST_URL = "https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4"
     }
 
     private var progress: Float = 0F
-    private var fileTotalSize: Long = 0L
-    private var fileCurrentSize: Int = 0
     private var isDownloading = false
 
     init {
@@ -33,15 +29,15 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
             }
             // TODO 启动下载任务
             if (e.action == MotionEvent.ACTION_DOWN) {
-                Downloader(this, BoyiaBridge.getAppRoot()).download(TEST_URL)
+                Downloader(this, BoyiaBridge.getAppRoot()).download(url)
                 isDownloading = true
             }
             return@setOnTouchListener true
         }
     }
 
-    fun setProgress(prog: Float) {
-        progress = prog
+    private fun setProgress(progress: Float) {
+        this.progress = progress
         invalidate()
     }
 
@@ -114,19 +110,14 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
         return path
     }
 
-    override fun onLoadDataSize(size: Long) {
-        fileTotalSize = size
-    }
-
-    override fun onLoadDataReceive(p0: ByteArray?, length: Int, p2: Any?) {
-        fileCurrentSize += length
-        if (fileTotalSize == 0L) {
+    override fun onProgress(current: Long, size: Long) {
+        if (size == 0L) {
             return
         }
 
-        //BoyiaLog.d(TAG, "BoyiaDownloadMask fileCurrentSize=$fileCurrentSize, fileTotalSize=$fileTotalSize")
+        //BoyiaLog.d(TAG, "BoyiaDownloadMask fileCurrentSize=$current, fileTotalSize=$size")
 
-        val progress = fileCurrentSize.toFloat() / fileTotalSize.toFloat()
+        val progress = current.toFloat() / size.toFloat()
         //BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadDataReceive progress=" + (progress * 100) + "%");
 
         MainScheduler.mainScheduler().sendJob {
@@ -134,12 +125,9 @@ class BoyiaDownloadMask(context: Context, private val downloadCallback: Download
         }
     }
 
-    override fun onLoadFinished(p0: Any?) {
+    override fun onCompleted() {
         BoyiaLog.d(TAG, "BoyiaDownloadMask onLoadFinished")
         downloadCallback.onCompleted()
-    }
-
-    override fun onLoadError(p0: String?, p1: Any?) {
     }
 
     interface DownloadCallback {

@@ -31,8 +31,9 @@ public class BoyiaImageRunner implements ILoadListener {
     }
 
     @Override
-    public void onLoadStart() {
+    public boolean onLoadStart() {
         BoyiaLog.d(TAG, "BoyiaImageRunner onLoadStart");
+        return true;
     }
 
     @Override

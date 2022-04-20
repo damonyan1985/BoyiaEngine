@@ -25,55 +25,77 @@ public class Downloader implements ILoadListener {
     private BoyiaLoader mLoader;
     private DownloadData mInfo;
     private RandomAccessFile mSavedFile;
-    private ILoadListener mListener;
-    private String mFilePath;
+    private DownLoadProgressListener mListener;
+    private String mFileDir;
+    private String mUrl;
 
     public Downloader() {
         this(null, null);
     }
 
-    public Downloader(ILoadListener listener, String filePath) {
+    public Downloader(DownLoadProgressListener listener, String fileDir) {
         mListener = listener;
-        mFilePath = BoyiaUtils.isTextEmpty(filePath) ? DOWN_LOAD_DIR : (filePath + "download");
+        mFileDir = BoyiaUtils.isTextEmpty(fileDir) ? DOWN_LOAD_DIR : (fileDir + "download");
     }
 
     public void download(String url) {
-        download(url, false);
-    }
-
-    public void download(String url, boolean useCache) {
-        String name = BoyiaUtils.getStringMD5(url);
-        String path = mFilePath + File.separator + name;
-
-        mInfo = new DownloadData();
-        mInfo.setFileName(name);
-
-        List<DownloadData> list = DownloadUtil.getDownloadList(mInfo);
-        if (list != null) {
-            BoyiaLog.d(TAG, "download getDownloadList size = " + list.size());
-        }
-
-        if (useCache) {
-            // TODO 根据name查询表
-        }
-
-        mInfo.setFilePath(path);
-        mInfo.setFileUrl(url);
-
-        download(mInfo);
-    }
-
-    public void download(DownloadData info) {
-        mInfo = info;
+        mUrl = url;
         mLoader = new BoyiaLoader(this);
-        BoyiaLog.d(TAG, "download url="+info.getFileUrl());
-        mLoader.load(info.getFileUrl());
+        BoyiaLog.d(TAG, "download url="+url);
+        mLoader.load(url);
+    }
+
+    private boolean initDownloadData() {
+        String name = BoyiaUtils.getStringMD5(mUrl);
+        String path = mFileDir + File.separator + name;
+
+        DownloadData info = new DownloadData();
+        info.setFileName(name);
+
+        // 查询是否已经存在同名数据
+        List<DownloadData> list = DownloadUtil.getDownloadList(info);
+        if (list == null || list.size() == 0) {
+            info.setFilePath(path);
+            info.setFileUrl(mUrl);
+            mInfo = info;
+            return true;
+        }
+
+        BoyiaLog.d(TAG, "download getDownloadList size = " + list.size());
+        mInfo = list.get(0);
+        if (mInfo.getStatus() != DownloadData.FINISHED) {
+            return true;
+        }
+
+        // 如果下载完成，对比文件MD5值与数据库中是否一致
+        File file = new File(mInfo.getFilePath());
+        if (!file.exists()) {
+            return true;
+        }
+
+        String md5 = BoyiaUtils.getFileMD5(file);
+        BoyiaLog.d(TAG, "initDownloadData md5 = " + md5);
+        if (!mInfo.getFileMd5().equals(md5)) {
+            return true;
+        }
+
+        // 如果下载完了，任务结束，不再继续执行下去
+        if (mListener != null) {
+            mListener.onCompleted();
+        }
+
+        return false;
     }
 
     @Override
-    public void onLoadStart() {
+    public boolean onLoadStart() {
+        // 初始化下载数据
+        if (!initDownloadData()) {
+            return false;
+        }
+
         long rangeStart = 0;
-        File downDir = new File(mFilePath);
+        File downDir = new File(mFileDir);
         if (!downDir.exists()) {
             downDir.mkdirs();
         }
@@ -81,6 +103,11 @@ public class Downloader implements ILoadListener {
         File downFile = new File(mInfo.getFilePath());
         if (downFile.exists()) {
             rangeStart = downFile.length();
+        }
+
+        // 初始化下载数据
+        if (!initDownloadData()) {
+            return false;
         }
 
         if (mInfo.getStatus() == null || mInfo.getStatus() == DownloadData.ERROR) {
@@ -107,22 +134,28 @@ public class Downloader implements ILoadListener {
             mSavedFile.seek(rangeStart);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            return false;
         }
 
         // 正式开始启动下载
         mInfo.setStatus(DownloadData.DOWNLOADING);
 
-        DownloadUtil.addDownloadInfo(mInfo);
+        if (mInfo.getId() == null || mInfo.getId() == 0) {
+            DownloadUtil.addDownloadInfo(mInfo);
+        } else {
+            DownloadUtil.updateDownloadInfo(mInfo);
+            if (mListener != null) {
+                mListener.onProgress(mInfo.getCurrentSize(), mInfo.getMaxLength());
+            }
+        }
+
+        return true;
     }
 
     @Override
     public void onLoadDataSize(long size) {
         BoyiaLog.d(TAG, "download size="+size);
         mInfo.setMaxLength(size);
-        if (mListener != null) {
-            mListener.onLoadDataSize(size);
-        }
     }
 
     @Override
@@ -131,7 +164,7 @@ public class Downloader implements ILoadListener {
             mSavedFile.write(data, 0, length);
             mInfo.setCurrentSize(mInfo.getCurrentSize() + length);
             if (mListener != null) {
-                mListener.onLoadDataReceive(data, length, msg);
+                mListener.onProgress(mInfo.getCurrentSize(), mInfo.getMaxLength());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -141,12 +174,15 @@ public class Downloader implements ILoadListener {
     @Override
     public void onLoadFinished(Object msg) {
         try {
+            String md5 = BoyiaUtils.getFileMD5(new File(mInfo.getFilePath()));
             mSavedFile.close();
+
+            mInfo.setFileMd5(md5);
             mInfo.setStatus(DownloadData.FINISHED);
             DownloadUtil.updateDownloadInfo(mInfo);
 
             if (mListener != null) {
-                mListener.onLoadFinished(msg);
+                mListener.onCompleted();
             }
             BoyiaLog.d(TAG, "download onLoaderFinished");
         } catch (IOException e) {
@@ -174,5 +210,10 @@ public class Downloader implements ILoadListener {
 
     @Override
     public void onLoadRedirectUrl(String redirectUrl) {
+    }
+
+    public interface DownLoadProgressListener {
+        void onProgress(long current, long size);
+        void onCompleted();
     }
 }

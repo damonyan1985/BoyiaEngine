@@ -81,4 +81,8 @@ public class BoyiaCoreJNI {
     // 滚动接口
     public static native void nativeOnFling(int type1, int x1, int y1,
         int type2, int x2, int y2, float velocityX, float velocityY);
+
+    // 启动boyia app
+    public static native void nativeLaunchApp(int aid, String name, int version,
+                                              String path, String url, String cover);
 }

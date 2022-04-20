@@ -13,6 +13,8 @@ public:
     Application* pop();
     LVoid push(Application* app);
     Application* top();
+    // clear stack
+    LVoid clear();
 
 private:
     Stack<Application*> m_stack;

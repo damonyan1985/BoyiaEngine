@@ -27,8 +27,8 @@ public class UpdateApkOperation {
 
     private ServiceConnection mConnect = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mInterface = IBoyiaIpcSender.BoyiaSenderStub.asInterface(iBinder);
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            mInterface = IBoyiaIpcSender.BoyiaSenderStub.asInterface(binder);
             if (mInterface != null && !mDownloadUrls.isEmpty()) {
                 for (int i = 0; i < mDownloadUrls.size(); i++) {
                     download(mDownloadUrls.get(i));

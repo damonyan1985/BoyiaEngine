@@ -7,7 +7,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 
+import com.boyia.app.common.utils.BoyiaLog;
+
 public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
+    String TAG = "IBoyiaIpcSender";
     String DESCRIPTOR = "com.boyia.app.common.ipc.IBoyiaSender";
     int SEND_MESSAGE_SYNC = IBinder.FIRST_CALL_TRANSACTION;
     int SEND_MESSAGE_ASYNC = IBinder.FIRST_CALL_TRANSACTION + 1;
@@ -133,11 +136,17 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                     callback.callback(sendMessageImpl(message, SEND_MESSAGE_ASYNC));
                 } catch (RemoteException e) {
                     e.printStackTrace();
+                    BoyiaLog.e(TAG, "BoyiaSenderProxy sendMessageAsync error", e);
                 }
             });
         }
 
         private BoyiaIpcData sendMessageImpl(BoyiaIpcData message, int code) throws RemoteException {
+            // 如果mRemote为空
+            if (mRemote == null) {
+                return null;
+            }
+
             Parcel data = Parcel.obtain();
             Parcel reply = Parcel.obtain();
             BoyiaIpcData result = null;

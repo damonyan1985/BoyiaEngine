@@ -18,6 +18,8 @@ public:
     Application* currentApp();
     UIThread* uiThread() const;
     LVoid launchApp(AppInfo* info);
+    // 调用其他app功能，TODO 权限控制
+    LVoid pushApp(AppInfo* info);
     NetworkBase* network() const;
     LVoid handleTouchEvent(LInt type, LInt x, LInt y);
 

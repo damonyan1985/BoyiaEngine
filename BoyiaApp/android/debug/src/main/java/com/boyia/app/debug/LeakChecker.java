@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class LeakChecker {
+    private static final int CLEAR_TIME = 5000;
     private ReferenceQueue mQueue;
     private final Set<String> mRetainedKeys;
 
@@ -23,7 +24,7 @@ public class LeakChecker {
         JobScheduler.jobScheduler().sendJob(() -> {
             try {
                 // 延迟5秒
-                Thread.sleep(5000);
+                Thread.sleep(CLEAR_TIME);
                 removeWeakRef();
                 // 如果已经被释放，则无内存泄漏
                 if (checkRef(ref)) {
@@ -33,7 +34,7 @@ public class LeakChecker {
                 clearGC();
                 removeWeakRef();
                 if (!checkRef(ref) && callback != null) {
-                    // 内存泄漏
+                    // 通知内存泄漏
                     callback.onLeak();
                 }
             } catch (Exception ex) {

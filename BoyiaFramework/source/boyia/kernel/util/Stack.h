@@ -24,6 +24,7 @@ public:
     void push(const T& obj);
     T& elementAt(LInt i);
     LBool contains(const T& kv);
+    LVoid clear();
 
 protected:
     KVector<T> m_vector;
@@ -81,6 +82,12 @@ template <class T>
 LBool Stack<T>::contains(const T& kv)
 {
     return m_vector.contains(kv);
+}
+
+template <class T>
+LVoid Stack<T>::clear()
+{
+    m_vector.clear();
 }
 }
 

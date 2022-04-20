@@ -23,4 +23,9 @@ LVoid AppStack::push(Application* app)
 {
     m_stack.push(app);
 }
+
+LVoid AppStack::clear()
+{
+    m_stack.clear();
+}
 }

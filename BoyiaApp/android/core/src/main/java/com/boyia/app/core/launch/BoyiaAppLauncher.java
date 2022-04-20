@@ -56,6 +56,7 @@ public class BoyiaAppLauncher {
         BoyiaLog.d(TAG,"launchApp action = " + processEnd);
         Intent intent = new Intent();
         intent.setAction(actionName);
+        // 使用application的context来启动activity时必须加入FLAG_ACTIVITY_NEW_TASK
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // 设置应用信息

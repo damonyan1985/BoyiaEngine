@@ -70,6 +70,7 @@ public class BoyiaFileUtil {
         return sBoyiaRootPath;
     }
 
+    @Deprecated
     public static FileOutputStream createPrivateFile(String fileName) {
         FileOutputStream output = null;
         if (BoyiaUtils.existSDCard()) {
@@ -156,14 +157,14 @@ public class BoyiaFileUtil {
         return "";
     }
 
-    public static void writeFile2SdcardFile(String fileName, String write_str) {
-        writeFile2SdcardFile(fileName, write_str.getBytes());
+    public static void writeFile(String fileName, String text) {
+        writeFile(fileName, text.getBytes());
     }
 
-    public static void writeFile2SdcardFile(String fileName, byte[] data) {
+    public static void writeFile(String filePath, byte[] data) {
         FileOutputStream fout = null;
         try {
-            fout = new FileOutputStream(fileName);
+            fout = new FileOutputStream(filePath);
             try {
                 fout.write(data);
                 fout.close();
@@ -175,15 +176,14 @@ public class BoyiaFileUtil {
         }
     }
 
-    public String readFileSdcardFile(String fileName) {
+    public String readFileFromLocal(String filePath) {
         String res = "";
         try {
-            FileInputStream fin = new FileInputStream(fileName);
+            FileInputStream fin = new FileInputStream(filePath);
             int length = fin.available();
 
             byte[] buffer = new byte[length];
             fin.read(buffer);
-            //res = EncodingUtils.getString(buffer, "UTF-8");
             res = new String(buffer, "UTF-8");
             fin.close();
         } catch (Exception e) {

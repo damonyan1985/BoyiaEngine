@@ -1,5 +1,7 @@
 package com.boyia.app.core.launch;
 
+import android.os.Binder;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.boyia.app.common.json.JsonAnnotation.JsonKey;
@@ -12,14 +14,16 @@ public class BoyiaAppInfo implements Parcelable {
     private String mAppPath;
     private String mAppUrl;
     private String mAppCover;
+    private IBinder mHostBinder;
 
-    public BoyiaAppInfo(int appId, int version, String name, String path, String url, String cover) {
+    public BoyiaAppInfo(int appId, int version, String name, String path, String url, String cover, IBinder binder) {
         mAppId = appId;
         mAppVersion = version;
         mAppName = name;
         mAppPath = path;
         mAppUrl = url;
         mAppCover = cover;
+        mHostBinder = binder;
     }
 
     public BoyiaAppInfo(Parcel source) {
@@ -29,6 +33,7 @@ public class BoyiaAppInfo implements Parcelable {
         mAppPath = source.readString();
         mAppUrl = source.readString();
         mAppCover = source.readString();
+        mHostBinder = source.readStrongBinder();
     }
 
     @Override
@@ -49,6 +54,7 @@ public class BoyiaAppInfo implements Parcelable {
         dest.writeString(mAppPath);
         dest.writeString(mAppUrl);
         dest.writeString(mAppCover);
+        dest.writeStrongBinder(mHostBinder);
     }
 
     @Override

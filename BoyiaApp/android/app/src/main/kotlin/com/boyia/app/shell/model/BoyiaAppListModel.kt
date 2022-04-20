@@ -3,6 +3,7 @@ package com.boyia.app.shell.model
 import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.BoyiaLoader
+import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.job.JobScheduler
 import com.boyia.app.loader.mue.Action
 import com.boyia.app.loader.mue.MainScheduler
@@ -23,17 +24,16 @@ class BoyiaAppListModel {
 
     fun requestAppList(callback: LoadCallback) {
         MueTask.create { subscriber: Subscriber<BoyiaAppListData> -> run {
-                    var buffer = ByteArrayOutputStream()
+                    val buffer = ByteArrayOutputStream()
                     BoyiaLoader(object : SimpleLoaderListener {
                         override fun onLoadDataReceive(bytes: ByteArray?, length: Int, msg: Any?) {
                             buffer.write(bytes, 0, length)
                         }
 
                         override fun onLoadFinished(msg: Any?) {
-                            //buffer.toString("UTF-8")
-                            val json = buffer.toString("UTF-8")
+                            val json = buffer.toString(HTTPFactory.HTTP_CHARSET_UTF8)
                             BoyiaLog.d(TAG, "requestAppList json = $json")
-                            var data: BoyiaAppListData = BoyiaJson.jsonParse(json, BoyiaAppListData::class.java)
+                            val data: BoyiaAppListData = BoyiaJson.jsonParse(json, BoyiaAppListData::class.java)
                             subscriber.onNext(data)
                             subscriber.onComplete();
                         }
@@ -47,7 +47,6 @@ class BoyiaAppListModel {
                 .observeOn(MainScheduler.mainScheduler())
                 .subscribe(object : Subscriber<BoyiaAppListData> {
                     override fun onNext(result: BoyiaAppListData) {
-                        //callback.onResult(result)
                         appList.addAll(result.apps)
                     }
 
@@ -60,8 +59,6 @@ class BoyiaAppListModel {
                     }
                 })
     }
-
-
 
     interface LoadCallback {
         fun onLoaded()

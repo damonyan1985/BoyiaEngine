@@ -28,7 +28,7 @@ public class BoyiaLoadJob implements IJob {
     private Object mMessage;
 
     public interface LoadJobCallback {
-        void onLoadStart();
+        boolean onLoadStart();
 
         void onRedirectUrl(String redirectUrl);
 
@@ -75,7 +75,10 @@ public class BoyiaLoadJob implements IJob {
             return;
         }
 
-        mCallback.onLoadStart();
+        if (!mCallback.onLoadStart()) {
+            return;
+        }
+
         Response data = mHttpEngine.getResponse(mRequest);
 
         if (null == data) {

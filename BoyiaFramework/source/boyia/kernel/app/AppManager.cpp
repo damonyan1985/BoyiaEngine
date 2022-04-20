@@ -52,7 +52,17 @@ const LRect& AppManager::getViewport() const
 
 LVoid AppManager::launchApp(AppInfo* info)
 {
+    // 先清空栈
+    m_stack.clear();
     m_stack.push(new Application(info));
+    // 启动index.ui
+    m_uiThread->initApp(info->path);
+}
+
+LVoid AppManager::pushApp(AppInfo* info)
+{
+    m_stack.push(new Application(info));
+    // 启动index.ui
     m_uiThread->initApp(info->path);
 }
 

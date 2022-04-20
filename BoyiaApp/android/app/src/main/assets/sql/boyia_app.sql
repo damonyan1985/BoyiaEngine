@@ -7,5 +7,8 @@ CREATE TABLE downloads (
     file_path varchar(200) not null,
     current_size integer,
     max_len integer,
+    file_md5 varchar(200),
     status integer
 );
+
+UPDATE sqlite_sequence SET seq = 10000 WHERE name = 'downloads';

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils.dp
+import com.boyia.app.core.launch.BoyiaAppInfo
 import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
@@ -27,7 +28,6 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
 
     init {
         initItemView()
-        initDownloadMask()
     }
 
     constructor(context: Context) : this(context, null)
@@ -36,7 +36,7 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
         container = LinearLayout(context)
         container?.orientation = LinearLayout.VERTICAL
         appIconView = BoyiaImageView(context)
-        var param: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
+        val param: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
                 dp(224), dp(224)
         )
 
@@ -49,20 +49,16 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
 
         container?.setBackgroundColor(Color.WHITE)
 
-        container?.setOnClickListener {
-            startApp("")
-        }
-
         addView(container)
     }
 
     /**
      * 初始化下载蒙层
      */
-    private fun initDownloadMask() {
+    fun initDownloadMask(url: String) {
         // maskview不能使用local value，kotlin语法不允许local被使用在闭包中
         // 即便是加了final修饰也不行，和java不一样
-        maskView = BoyiaDownloadMask(context, object: BoyiaDownloadMask.DownloadCallback {
+        maskView = BoyiaDownloadMask(url, context, object: BoyiaDownloadMask.DownloadCallback {
             override fun onCompleted() {
                 MainScheduler.mainScheduler().sendJob {
                     BoyiaLog.d(TAG, "BoyiaDownloadMask onCompleted")
@@ -75,9 +71,5 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
         })
 
         addView(maskView)
-    }
-
-    fun startApp(info: String) {
-        BoyiaAppLauncher.launch(null);
     }
 }

@@ -9,7 +9,10 @@ package com.boyia.app.loader;
  */
 public interface ILoadListener {
     // Begin to start load
-    void onLoadStart();
+    // 前期的准备工作，判断是否需要继续执行
+    default boolean onLoadStart() {
+        return true;
+    }
 
     // Content-length return
     void onLoadDataSize(long size);

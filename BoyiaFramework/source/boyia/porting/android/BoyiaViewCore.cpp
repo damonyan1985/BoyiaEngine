@@ -221,6 +221,19 @@ static void nativeOnFling(JNIEnv* env, jobject obj,
     yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }
 
+static void nativeLaunchApp(JNIEnv* env, jobject obj, jint aid, jstring name, jint version, jstring path, jstring url, jstring cover)
+{
+    yanbo::AppInfo* info = new yanbo::AppInfo();
+    info->id = aid;
+    info->versionCode = version;
+    util::jstringTostr(env, name, info->name);
+    util::jstringTostr(env, path, info->path);
+    util::jstringTostr(env, url, info->url);
+    util::jstringTostr(env, cover, info->cover);
+
+    yanbo::AppManager::instance()->launchApp(info);
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
@@ -241,6 +254,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
     { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
     { "nativeOnFling", "(IIIIIIFF)V", (void*)nativeOnFling },
+    { "nativeLaunchApp", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", (void*)nativeLaunchApp },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,

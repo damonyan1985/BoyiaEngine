@@ -110,10 +110,13 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
     }
 
     @Override
-    public void onLoadStart() {
+    public boolean onLoadStart() {
         if (mListener != null) {
-            mListener.onLoadStart();
+            return mListener.onLoadStart();
         }
+
+        // 默认继续执行
+        return true;
     }
 
     @Override

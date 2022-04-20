@@ -19,6 +19,12 @@ public class UpdateApkService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mStub = null;
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         return mStub;
     }
@@ -32,7 +38,7 @@ public class UpdateApkService extends Service {
 
         @Override
         public void sendMessageAsync(BoyiaIpcData boyiaIpcData, IBoyiaIpcCallback iBoyiaIpcCallback) throws RemoteException {
-            new Downloader().download(new DownloadData());
+            //new Downloader().download(new DownloadData());
         }
     };
 }

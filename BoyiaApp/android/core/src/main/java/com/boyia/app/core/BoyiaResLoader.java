@@ -36,7 +36,8 @@ public class BoyiaResLoader implements ILoadListener {
     }
 
     @Override
-    public void onLoadStart() {
+    public boolean onLoadStart() {
+        return true;
     }
 
     @Override

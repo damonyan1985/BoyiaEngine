@@ -30,6 +30,9 @@ public class DownloadData extends BoyiaData {
     @DBColumn(name = "status")
     private Integer status;
 
+    @DBColumn(name = "file_md5")
+    private String fileMd5;
+
     public DownloadData() {
         this(false);
     }
@@ -88,5 +91,13 @@ public class DownloadData extends BoyiaData {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public void setFileMd5(String fileMd5) {
+        this.fileMd5 = fileMd5;
     }
 }

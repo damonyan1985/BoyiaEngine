@@ -1,8 +1,10 @@
 package com.boyia.app.shell.model
 
+import com.boyia.app.common.json.JsonAnnotation.JsonKey
+
 class BoyiaAppItem {
     // 自动生成get set
-    var name: String? = null
+    @field:JsonKey(name = "name") var name: String? = null
     var cover: String? = null
     var url: String? = null
     var appId: Int = 0
