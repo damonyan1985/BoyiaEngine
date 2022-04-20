@@ -45,8 +45,8 @@ public class Downloader implements ILoadListener {
         mLoader.load(url);
     }
 
-    private boolean initDownloadData() {
-        String name = BoyiaUtils.getStringMD5(mUrl);
+    public boolean initDownloadData(String url) {
+        String name = BoyiaUtils.getStringMD5(url);
         String path = mFileDir + File.separator + name;
 
         DownloadData info = new DownloadData();
@@ -56,7 +56,7 @@ public class Downloader implements ILoadListener {
         List<DownloadData> list = DownloadUtil.getDownloadList(info);
         if (list == null || list.size() == 0) {
             info.setFilePath(path);
-            info.setFileUrl(mUrl);
+            info.setFileUrl(url);
             mInfo = info;
             return true;
         }
@@ -90,7 +90,7 @@ public class Downloader implements ILoadListener {
     @Override
     public boolean onLoadStart() {
         // 初始化下载数据
-        if (!initDownloadData()) {
+        if (!initDownloadData(mUrl)) {
             return false;
         }
 
@@ -103,11 +103,6 @@ public class Downloader implements ILoadListener {
         File downFile = new File(mInfo.getFilePath());
         if (downFile.exists()) {
             rangeStart = downFile.length();
-        }
-
-        // 初始化下载数据
-        if (!initDownloadData()) {
-            return false;
         }
 
         if (mInfo.getStatus() == null || mInfo.getStatus() == DownloadData.ERROR) {
