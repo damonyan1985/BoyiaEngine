@@ -96,7 +96,7 @@ static void nativeInitUIView(
     //h = 1280;
     yanbo::ShaderUtil::setScreenSize(720, logicHeight);
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
-    yanbo::AppManager::instance()->start();
+    //yanbo::AppManager::instance()->start();
 }
 
 static void nativeDistroyUIView(JNIEnv* env, jobject obj)
@@ -221,17 +221,20 @@ static void nativeOnFling(JNIEnv* env, jobject obj,
     yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }
 
-static void nativeLaunchApp(JNIEnv* env, jobject obj, jint aid, jstring name, jint version, jstring path, jstring url, jstring cover)
+static void nativeLaunchApp(JNIEnv* env, jobject obj, jint aid, jstring name, jint version, jstring url, jstring cover)
 {
     yanbo::AppInfo* info = new yanbo::AppInfo();
     info->id = aid;
     info->versionCode = version;
     util::jstringTostr(env, name, info->name);
-    util::jstringTostr(env, path, info->path);
     util::jstringTostr(env, url, info->url);
     util::jstringTostr(env, cover, info->cover);
+    info->parse();
 
-    yanbo::AppManager::instance()->launchApp(info);
+    //yanbo::AppManager::instance()->launchApp(info);
+    yanbo::AppManager::instance()->uiThread()->postClosureTask([info] {
+        yanbo::AppManager::instance()->launchApp(info);
+    });
 }
 
 static JNINativeMethod sUIViewMethods[] = {
@@ -254,7 +257,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeCacheCode", "()V", (void*)nativeCacheCode },
     { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
     { "nativeOnFling", "(IIIIIIFF)V", (void*)nativeOnFling },
-    { "nativeLaunchApp", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", (void*)nativeLaunchApp },
+    { "nativeLaunchApp", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;)V", (void*)nativeLaunchApp },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,

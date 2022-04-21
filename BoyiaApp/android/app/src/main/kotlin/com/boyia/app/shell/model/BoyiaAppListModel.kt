@@ -5,19 +5,18 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.BoyiaLoader
 import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.job.JobScheduler
-import com.boyia.app.loader.mue.Action
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.loader.mue.MueTask
 import com.boyia.app.loader.mue.Subscriber
 import java.io.ByteArrayOutputStream
-import java.lang.StringBuilder
 import java.util.ArrayList
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener as SimpleLoaderListener
 
 class BoyiaAppListModel {
     companion object {
         const val TAG = "BoyiaAppListModel"
-        const val APP_LIST_URL = "http://47.98.206.177/test.json"
+        //const val APP_LIST_URL = "http://47.98.206.177/test.json"
+        const val APP_LIST_URL = "boyia_assets://boyia.json";
     }
 
     var appList: ArrayList<BoyiaAppItem> = ArrayList()
@@ -58,6 +57,10 @@ class BoyiaAppListModel {
                         callback.onLoaded()
                     }
                 })
+    }
+
+    fun clear() {
+        appList.clear()
     }
 
     interface LoadCallback {

@@ -111,7 +111,7 @@ public class Downloader implements ILoadListener {
             mInfo.setStatus(DownloadData.PAUSE);
         }
 
-        if (rangeStart >= mInfo.getMaxLength() && downFile.exists()) {
+        if ((rangeStart >= mInfo.getMaxLength() || !mUrl.startsWith("http")) && downFile.exists()) {
             downFile.delete();
             rangeStart = 0;
             mInfo.setMaxLength(0L);

@@ -265,4 +265,28 @@ public class BoyiaFileUtil {
 
         return null;
     }
+
+    public static boolean copyFromAssets(String assetsPath, String destPath) {
+        if (BoyiaUtils.isTextEmpty(assetsPath) || BoyiaUtils.isTextEmpty(destPath)) {
+            return false;
+        }
+
+        try {
+            InputStream is = BaseApplication.getInstance().getAssets().open(assetsPath);
+            FileOutputStream fos = new FileOutputStream(destPath);
+            byte[] buffer = new byte[1024];
+            int byteCount;
+            while ((byteCount = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, byteCount);
+            }
+            fos.flush();
+            is.close();
+            fos.close();
+        } catch (Exception e) {
+            BoyiaLog.e(TAG, "copyFromAssets error", e);
+            return false;
+        }
+
+        return true;
+    }
 }

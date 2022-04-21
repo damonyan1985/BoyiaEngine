@@ -14,14 +14,9 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sApplication = this;
-        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public static BaseApplication getInstance() {
         return sApplication;
-    }
-
-    public Handler getAppHandler() {
-        return mHandler;
     }
 }

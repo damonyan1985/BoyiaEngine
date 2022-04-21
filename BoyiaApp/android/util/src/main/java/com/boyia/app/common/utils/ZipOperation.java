@@ -8,6 +8,7 @@ import net.lingala.zip4j.util.Zip4jConstants;
 import java.io.File;
 
 public class ZipOperation {
+    private static final String TAG = "ZipOperation";
     public static final String ZIP_PASSWORD = "123456";
 
     public static boolean zip(String src, String dest) {
@@ -37,10 +38,10 @@ public class ZipOperation {
             } else {
                 zipFile.addFile(sourceFile, zipParameters);
             }
-            System.out.println("ZipOperation zip: Succeed!");
+            BoyiaLog.d(TAG, "ZipOperation zip: Succeed!");
             return true;
         } catch (ZipException e) {
-            System.out.println("ZipOperation zip: Error：" + e);
+            BoyiaLog.e(TAG, "ZipOperation zip error", e);
             e.printStackTrace();
         }
         return false;
@@ -54,21 +55,21 @@ public class ZipOperation {
             ZipFile zipFile = new ZipFile(zipArchive);
             zipFile.setFileNameCharset("GBK");  //设置编码格式（支持中文）
             if (!zipFile.isValidZipFile()) {     //检查输入的zip文件是否是有效的zip文件
-                System.out.println("ZipOperation Zip File is invalid");
+                BoyiaLog.d(TAG, "ZipOperation Zip File is invalid");
                 return false;
             }
             if (sourceFile.isDirectory() && !sourceFile.exists()) {
                 sourceFile.mkdir();
             }
             if (zipFile.isEncrypted()) {
-                System.out.println("ZipOperation unZipFile Zip File has password");
+                BoyiaLog.d(TAG, "ZipOperation unZipFile Zip File has password");
                 zipFile.setPassword(ZIP_PASSWORD.toCharArray());
             }
             zipFile.extractAll(decompressDir); //解压
-            System.out.println("ZipOperation unZipFile Succeed!");
+            BoyiaLog.d(TAG, "ZipOperation unZipFile Succeed!");
             return true;
         } catch (ZipException e) {
-            System.out.println("ZipOperation unZipFile Error!");
+            BoyiaLog.e(TAG, "ZipOperation unZipFile Error!", e);
             e.printStackTrace();
         }
 

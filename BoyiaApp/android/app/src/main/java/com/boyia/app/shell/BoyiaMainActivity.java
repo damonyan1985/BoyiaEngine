@@ -4,6 +4,8 @@ package com.boyia.app.shell;
 import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
+import com.boyia.app.core.BoyiaBridge;
+import com.boyia.app.loader.mue.MainScheduler;
 import com.boyia.app.shell.broadcast.BoyiaBroadcast;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
@@ -121,11 +123,15 @@ public class BoyiaMainActivity extends BoyiaActivity {
             Process.killProcess(Process.myPid());
         } else {
             mNeedExit = true;
-            BoyiaUtils.showToast("再按一次退出程序");
-            BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
-                        mNeedExit = false;
-                    }
-                    , 3000);
+            BoyiaBridge.showToast("再按一次退出程序");
+//            BaseApplication.getInstance().getAppHandler().postDelayed(() -> {
+//                        mNeedExit = false;
+//                    }
+//                    , 3000);
+
+            MainScheduler.mainScheduler().sendJobDelay(() -> {
+                mNeedExit = false;
+            }, 3000);
         }
     }
 
@@ -141,7 +147,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
 
     @Override
     public void onNewIntent(Intent intent) {
-        BoyiaUtils.showToast(intent.getAction());
+        BoyiaBridge.showToast(intent.getAction());
     }
 
     @Override

@@ -56,6 +56,7 @@ LVoid AppManager::launchApp(AppInfo* info)
     m_stack.clear();
     m_stack.push(new Application(info));
     // 启动index.ui
+    BOYIA_LOG("AppManager::launchApp path=%s", GET_STR(info->path));
     m_uiThread->initApp(info->path);
 }
 

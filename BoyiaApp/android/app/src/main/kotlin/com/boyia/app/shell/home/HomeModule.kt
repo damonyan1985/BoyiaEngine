@@ -24,6 +24,7 @@ class HomeModule: IHomeModule, IBoyiaHomeLoader {
     }
 
     override fun dispose() {
+        appListModel?.clear()
     }
 
     override fun loadAppList(callback: BoyiaAppListModel.LoadCallback) {

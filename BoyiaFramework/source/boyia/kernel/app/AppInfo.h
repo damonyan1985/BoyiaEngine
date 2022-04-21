@@ -20,6 +20,7 @@ public:
     ~AppInfo();
 
     LBool isKey(cJSON* item, const char* key);
+    LVoid parse();
     LVoid parseApp(cJSON* appJson);
 
 public:

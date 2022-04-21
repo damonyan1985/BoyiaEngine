@@ -5,11 +5,14 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.core.launch.BoyiaAppInfo
 import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppItem
+import com.boyia.app.shell.update.DownloadData
+import com.boyia.app.shell.update.DownloadUtil
 
 class BoyiaAppListAdapter(
         private val context: Context,
@@ -30,10 +33,11 @@ class BoyiaAppListAdapter(
         view.appNameView?.text = item.name
         BoyiaImager.loadImage(item.cover, view.appIconView)
         view.container?.setOnClickListener {
-            BoyiaAppLauncher.launch(getAppInfo(item));
+            BoyiaAppLauncher.launch(getAppInfo(item))
         }
 
-        view.initDownloadMask(TEST_URL)
+        //view.initDownloadMask(TEST_URL)
+        view.initDownloadMask(item.url!!)
         BoyiaLog.d(TAG, "onBindViewHolder-" + loader.appItem(position).toString())
     }
 
@@ -42,11 +46,18 @@ class BoyiaAppListAdapter(
     }
 
     private fun getAppInfo(appItem: BoyiaAppItem): BoyiaAppInfo {
+        val name = BoyiaUtils.getStringMD5(appItem.url)
+
+        val info = DownloadData()
+        info.fileName = name;
+
+        val list = DownloadUtil.getDownloadList(info)
+
         return BoyiaAppInfo(
                 appItem.appId,
                 appItem.versionCode,
                 appItem.name,
-                "",
+                list[0].filePath,
                 appItem.url,
                 appItem.cover,
                 null

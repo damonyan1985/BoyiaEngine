@@ -4,13 +4,23 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.util.SparseArray;
 
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.BoyiaShare;
+import com.boyia.app.common.utils.FileUtil;
 import com.boyia.app.common.utils.ProcessUtil;
 import com.boyia.app.common.utils.ProcessUtil.ProcessInfo;
+import com.boyia.app.common.utils.ZipOperation;
+import com.boyia.app.core.BoyiaBridge;
 
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class BoyiaAppLauncher {
@@ -21,12 +31,85 @@ public class BoyiaAppLauncher {
     private static final String BOYIA_APP_ACTION_FORMAT = "com.boyia.app.sub%s.action";
 
     private static final String[] BOYIA_APP_PROCESS_ENDS = {"a", "b", "c", "d", "e", "f"};
+    private static final String BOYIA_APP_SDK_UNZIP_KEY = "boyia_app_sdk_unzip";
+
+    private static HandlerThread sLaunchThread;
+    private static SparseArray<String> sActions = null;
+
+    private static class BoyiaAppLauncherHolder {
+        private static final Handler LAUNCH_HANDLER = createLaunchHandler();
+    }
+
+    private static Handler createLaunchHandler() {
+        sActions = new SparseArray<>();
+        sLaunchThread = new HandlerThread(TAG);
+        sLaunchThread.start();
+        Handler handler = new Handler(sLaunchThread.getLooper());
+        handler.post(() -> initSdk());
+        return handler;
+    }
+
+    public static void launch(BoyiaAppInfo info) {
+        BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
+            if (!BoyiaShare.getBoolean(BOYIA_APP_SDK_UNZIP_KEY, false)) {
+                BoyiaLog.d(TAG, "sdk is not init");
+                return;
+            }
+
+            String end = sActions.get(info.mAppId);
+            if (end != null) {
+                launchApp(end, info);
+                return;
+            }
+
+            initApp(info);
+            launchImpl(info);
+        });
+    }
+
+    private static void initApp(BoyiaAppInfo info) {
+        String appPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + info.mAppName;
+        File file = new File(appPath);
+        if (file.exists()) {
+            return;
+        }
+
+        BoyiaFileUtil.createDirectory(appPath);
+        ZipOperation.unZipFile(info.mAppPath, appPath);
+    }
+
+    private static void initSdk() {
+        String sdkPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + "sdk";
+        File file = new File(sdkPath);
+        if (file.exists()) {
+            if (BoyiaShare.getBoolean(BOYIA_APP_SDK_UNZIP_KEY, false)) {
+                return;
+            }
+
+            FileUtil.deleteFolder(sdkPath);
+        }
+
+        String assetsFile = "out/sdk.zip";
+        BoyiaFileUtil.createDirectory(sdkPath);
+
+        String tmpDir = BoyiaBridge.getAppRoot() + "tmp";
+        BoyiaFileUtil.createDirectory(tmpDir);
+
+        String sdkFile = tmpDir + File.separator + "sdk_tmp1.zip";
+        if (!BoyiaFileUtil.copyFromAssets(assetsFile, sdkFile)) {
+            return;
+        }
+
+        if (ZipOperation.unZipFile(sdkFile, sdkPath)) {
+            BoyiaShare.putBoolean(BOYIA_APP_SDK_UNZIP_KEY, true);
+        }
+    }
 
     /**
      * 只允许主进程进行调用，其他进程可以通过IPC来调用此方法
      * @param info
      */
-    public static void launch(BoyiaAppInfo info) {
+    public static void launchImpl(BoyiaAppInfo info) {
         List<ProcessInfo> list = getRunningBoyiaProcessList();
 
         for (int i = 0; i < BOYIA_APP_PROCESS_ENDS.length; i++) {
@@ -41,7 +124,7 @@ public class BoyiaAppLauncher {
         launchApp(BOYIA_APP_PROCESS_ENDS[random], info);
     }
 
-    public static boolean canUse(List<ProcessInfo> list, String processEnd) {
+    private static boolean canUse(List<ProcessInfo> list, String processEnd) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).mName.endsWith(processEnd)) {
                 return false;
@@ -51,7 +134,7 @@ public class BoyiaAppLauncher {
         return true;
     }
 
-    public static void launchApp(String processEnd, BoyiaAppInfo info) {
+    private static void launchApp(String processEnd, BoyiaAppInfo info) {
         String actionName = String.format(BOYIA_APP_ACTION_FORMAT, processEnd);
         BoyiaLog.d(TAG,"launchApp action = " + processEnd);
         Intent intent = new Intent();
@@ -67,12 +150,13 @@ public class BoyiaAppLauncher {
         }
 
         BaseApplication.getInstance().startActivity(intent);
+        sActions.put(info.mAppId, processEnd);
     }
 
     /**
      * 获取正在运行的BoyiaApp进程
      */
-    public static List<ProcessInfo> getRunningBoyiaProcessList() {
+    private static List<ProcessInfo> getRunningBoyiaProcessList() {
         List<ProcessInfo> list = ProcessUtil.getProcessList();
 
         StringBuilder debugBuilder = new StringBuilder();

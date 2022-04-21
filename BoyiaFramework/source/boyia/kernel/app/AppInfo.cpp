@@ -1,6 +1,10 @@
 #include "AppInfo.h"
 #include "SalLog.h"
+#include "PlatformBridge.h"
+#include "FileUtil.h"
 #include <string.h>
+
+#define APP_JSON "/app.json"
 
 namespace yanbo {
 AppCodePath::AppCodePath()
@@ -54,6 +58,33 @@ LVoid AppInfo::parseApp(cJSON* appJson)
         }
 
         item = item->next;
+    }
+}
+
+LVoid AppInfo::parse()
+{
+    String appDir = _CS(PlatformBridge::getAppPath()) + name;
+    if (FileUtil::isExist(GET_STR(appDir))) {
+        // Get App Json Info
+        String appJsonPath = appDir + _CS(APP_JSON);
+        // LOG AppPath
+        BOYIA_LOG("AppInfo.cpp---parse()---appJsonPath=%s", GET_STR(appJsonPath));
+
+        if (!FileUtil::isExist(GET_STR(appJsonPath))) {
+            return;
+        }
+
+        boyia::JSONParser parser(appJsonPath);
+        // Get App Version
+        cJSON* version = parser.get("versionCode");
+        if (version) {
+            versionCode = version->valueint;
+        }
+
+        cJSON* entry = parser.get("entry");
+        if (entry) {
+            path = _CS(entry->valuestring);
+        }
     }
 }
 }

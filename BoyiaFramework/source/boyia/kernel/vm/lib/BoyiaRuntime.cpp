@@ -14,6 +14,7 @@ const LInt kGcMemorySize = 1024 * 8;
 const LInt kNativeFunctionCapacity = 100;
 
 extern LVoid* CreateGC(LVoid* vm);
+extern LVoid DestroyGC(LVoid* vm);
 extern LVoid GCollectGarbage(LVoid* vm);
 
 namespace boyia {
@@ -52,11 +53,13 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
 
 BoyiaRuntime::~BoyiaRuntime()
 {
-    FreeMemoryPool(m_memoryPool);
+    DestroyGC(m_vm);
     DestroyVM(m_vm);
+    FreeMemoryPool(m_memoryPool);
     delete[] m_nativeFunTable;
     delete m_idCreator;
     delete m_eventManager;
+    delete m_domMap;
 }
 
 LVoid* BoyiaRuntime::memoryPool() const

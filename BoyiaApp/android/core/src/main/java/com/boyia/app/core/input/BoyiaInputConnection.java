@@ -1,5 +1,6 @@
 package com.boyia.app.core.input;
 
+import com.boyia.app.core.BoyiaBridge;
 import com.boyia.app.core.BoyiaView;
 import com.boyia.app.common.utils.BoyiaUtils;
 
@@ -32,7 +33,7 @@ public class BoyiaInputConnection extends BaseInputConnection {
     public void deleteCommitText() {
         if (mBuilder.length() > 0) {
             mBuilder = mBuilder.deleteCharAt(mBuilder.length() - 1);
-            BoyiaUtils.showToast("BoyiaInputConnection deleteCommitText=" + mBuilder.toString());
+            BoyiaBridge.showToast("BoyiaInputConnection deleteCommitText=" + mBuilder.toString());
             mView.setInputText(mBuilder.toString());
         }
     }

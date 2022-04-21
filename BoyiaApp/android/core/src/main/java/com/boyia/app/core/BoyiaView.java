@@ -17,6 +17,7 @@ import android.view.inputmethod.InputConnection;
 import com.boyia.app.core.input.BoyiaInputConnection;
 import com.boyia.app.core.input.BoyiaInputManager;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.view.PlatformViewManager;
 import com.boyia.app.core.view.TestPlatformViewFactory;
 
@@ -47,16 +48,16 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
     private GestureDetector mGestureDetector = null;
     private static BoyiaInputManager mInputManager = null;
 
-    public BoyiaView(Context context) {
-        this(context, null);
+    public BoyiaView(Context context, BoyiaAppInfo info) {
+        this(context, null, info);
     }
 
-    public BoyiaView(Context context, AttributeSet set) {
+    public BoyiaView(Context context, AttributeSet set, BoyiaAppInfo info) {
         super(context, set);
-        init(context);
+        init(context, info);
     }
 
-    private void init(Context context) {
+    private void init(Context context, BoyiaAppInfo info) {
         PlatformViewManager.getInstance().setContext(context);
         // 叠在其他surfaceview之上
         BoyiaCoreJNI.nativeInitJNIContext((Activity) context);
@@ -110,6 +111,7 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
 
         PlatformViewManager.getInstance().registerFactory("test-view", new TestPlatformViewFactory());
 
+        BoyiaCoreJNI.nativeLaunchApp(info.mAppId, info.mAppName, info.mAppVersion, info.mAppUrl, info.mAppCover);
         BoyiaLog.i(TAG, "init rust " + BoyiaCoreJNI.nativeInitSdk());
     }
 

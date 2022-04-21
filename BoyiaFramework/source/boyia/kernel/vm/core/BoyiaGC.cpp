@@ -46,6 +46,19 @@ extern LVoid* CreateGC(LVoid* vm)
     return gc;
 }
 
+extern LVoid DestroyGC(LVoid* vm)
+{
+    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
+    BoyiaRef* ref = gc->mBegin;
+    while (ref) {
+        BoyiaRef* tmp = ref;
+        ref = ref->mNext;
+        FAST_DELETE(tmp);
+    }
+
+    FAST_DELETE(gc);
+}
+
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
 {
     BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);

@@ -24,6 +24,8 @@ LVoid Application::init(const String& entryPage)
 
 Application::~Application()
 {
+    delete m_runtime;
+    delete m_view;
 }
 
 UIView* Application::view() const

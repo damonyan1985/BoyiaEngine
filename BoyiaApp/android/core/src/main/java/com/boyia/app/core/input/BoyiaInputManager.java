@@ -2,6 +2,7 @@ package com.boyia.app.core.input;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaBridge;
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.BoyiaView;
 import com.boyia.app.loader.mue.MainScheduler;
@@ -69,7 +70,7 @@ public class BoyiaInputManager {
         }
 
         MainScheduler.mainScheduler().sendJob(() -> {
-            BoyiaUtils.showToast("show keyboard");
+            BoyiaBridge.showToast("show keyboard");
             mItem = item;
             InputMethodManager imm = (InputMethodManager) mViewRef.get()
                     .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);

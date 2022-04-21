@@ -15,6 +15,7 @@ import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.core.launch.BoyiaAppInfo
 import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.loader.image.BoyiaImageView
+import com.boyia.app.loader.job.JobScheduler
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.update.Downloader
 
@@ -55,13 +56,21 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
     }
 
     /**
-     * 初始化下载蒙层
+     * 初始化下载蒙层, 异步执行, 需要判断是否需要添加蒙层, 此过程需要查库耗时操作
      */
     fun initDownloadMask(url: String) {
-        if (!Downloader(null, BoyiaBridge.getAppRoot()).initDownloadData(url)) {
-            return
-        }
+        JobScheduler.jobScheduler().sendJob {
+            if (!Downloader(null, BoyiaBridge.getAppRoot()).initDownloadData(url)) {
+                return@sendJob
+            }
 
+            MainScheduler.mainScheduler().sendJob {
+                addMaskView(url)
+            }
+        }
+    }
+
+    private fun addMaskView(url: String) {
         // maskview不能使用local value，kotlin语法不允许local被使用在闭包中
         // 即便是加了final修饰也不行，和java不一样
         maskView = BoyiaDownloadMask(url, context, object: BoyiaDownloadMask.DownloadCallback {

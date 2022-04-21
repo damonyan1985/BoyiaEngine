@@ -30,15 +30,24 @@ import com.boyia.app.core.launch.BoyiaAppLauncher;
 public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
+    private BoyiaAppInfo mAppInfo;
+
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        fetchAppInfo();
         initBoyiaView();
     }
 
     protected void initBoyiaView() {
         initContainer();
         startBoyiaUI();
+    }
+
+    private void fetchAppInfo() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
     }
 
     protected void initContainer() {
@@ -62,7 +71,7 @@ public class BoyiaActivity extends Activity {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             );
-            mContainer.addView(new BoyiaView(this), params);
+            mContainer.addView(new BoyiaView(this, mAppInfo), params);
         });
     }
 

@@ -84,5 +84,5 @@ public class BoyiaCoreJNI {
 
     // 启动boyia app
     public static native void nativeLaunchApp(int aid, String name, int version,
-                                              String path, String url, String cover);
+                                              String url, String cover);
 }

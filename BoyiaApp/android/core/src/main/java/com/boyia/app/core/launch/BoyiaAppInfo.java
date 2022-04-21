@@ -1,20 +1,17 @@
 package com.boyia.app.core.launch;
 
-import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.boyia.app.common.json.JsonAnnotation.JsonKey;
-
 
 public class BoyiaAppInfo implements Parcelable {
-    private int mAppId;
-    private int mAppVersion;
-    private String mAppName;
-    private String mAppPath;
-    private String mAppUrl;
-    private String mAppCover;
-    private IBinder mHostBinder;
+    public int mAppId;
+    public int mAppVersion;
+    public String mAppName;
+    public String mAppPath;
+    public String mAppUrl;
+    public String mAppCover;
+    public IBinder mHostBinder;
 
     public BoyiaAppInfo(int appId, int version, String name, String path, String url, String cover, IBinder binder) {
         mAppId = appId;

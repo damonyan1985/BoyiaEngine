@@ -26,6 +26,9 @@ LVoid AppStack::push(Application* app)
 
 LVoid AppStack::clear()
 {
+    for (LInt i = 0; i < m_stack.size(); i++) {
+        delete m_stack.elementAt(i);
+    }
     m_stack.clear();
 }
 }
