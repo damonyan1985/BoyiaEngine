@@ -1,13 +1,9 @@
 package com.boyia.app.core;
 
-import java.io.IOException;
-
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.texture.BoyiaTexture;
 
-import android.graphics.SurfaceTexture;
-import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
@@ -22,12 +18,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.view.Surface;
 
 public class BoyiaPlayer implements OnBufferingUpdateListener,
         OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener,
         OnErrorListener, OnSeekCompleteListener, OnInfoListener,
         BoyiaTexture.TextureUpdateNotifier {
+    private static final String TAG = "BoyiaPlayer";
     private MediaPlayer mPlayer = null;
     private Uri mPlayerUri = null;
     private long mNativePtr = 0;
@@ -133,14 +129,8 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
                     mPlayerUri);
             mPlayer.setScreenOnWhilePlaying(true);
             mPlayer.prepareAsync();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            BoyiaLog.e(TAG, "BoyiaPlayer prepare error, context = " + BaseApplication.getInstance(), e);
         }
 
     }

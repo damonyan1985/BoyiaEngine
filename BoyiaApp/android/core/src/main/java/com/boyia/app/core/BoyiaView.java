@@ -47,6 +47,7 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
     private BoyiaInputConnection mInputConnect = null;
     private GestureDetector mGestureDetector = null;
     private static BoyiaInputManager mInputManager = null;
+    private BoyiaAppInfo mAppInfo;
 
     public BoyiaView(Context context, BoyiaAppInfo info) {
         this(context, null, info);
@@ -110,9 +111,9 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
         initEventListener();
 
         PlatformViewManager.getInstance().registerFactory("test-view", new TestPlatformViewFactory());
-
-        BoyiaCoreJNI.nativeLaunchApp(info.mAppId, info.mAppName, info.mAppVersion, info.mAppUrl, info.mAppCover);
         BoyiaLog.i(TAG, "init rust " + BoyiaCoreJNI.nativeInitSdk());
+
+        mAppInfo = info;
     }
 
     private void initEventListener() {
@@ -181,6 +182,8 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
         BoyiaCoreJNI.nativeInitUIView(mHolder.getSurfaceFrame().width(),
                 mHolder.getSurfaceFrame().height(),
                 BoyiaLog.ENABLE_LOG);
+
+        BoyiaCoreJNI.nativeLaunchApp(mAppInfo.mAppId, mAppInfo.mAppName, mAppInfo.mAppVersion, mAppInfo.mAppUrl, mAppInfo.mAppCover);
     }
 
     @Override
