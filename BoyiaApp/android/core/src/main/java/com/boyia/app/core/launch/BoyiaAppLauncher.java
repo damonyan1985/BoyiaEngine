@@ -67,6 +67,11 @@ public class BoyiaAppLauncher {
         });
     }
 
+    /**
+     * 实际上就是判断应用的zip包是否被解压了
+     * 如果没有解压就进行解压
+     * @param info
+     */
     private static void initApp(BoyiaAppInfo info) {
         String appPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + info.mAppName;
         File file = new File(appPath);
@@ -78,6 +83,9 @@ public class BoyiaAppLauncher {
         ZipOperation.unZipFile(info.mAppPath, appPath);
     }
 
+    /**
+     * 解压sdk.zip
+     */
     private static void initSdk() {
         String sdkPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + "sdk";
         File file = new File(sdkPath);

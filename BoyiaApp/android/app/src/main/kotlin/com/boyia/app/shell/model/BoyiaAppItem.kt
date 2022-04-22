@@ -7,7 +7,7 @@ class BoyiaAppItem {
     @field:JsonKey(name = "name") var name: String? = null
     var cover: String? = null
     var url: String? = null
-    var appId: Int = 0
+    @field:JsonKey(name = "id") var appId: Int = 0
     var versionCode: Int = 0
 
     override fun toString() : String {

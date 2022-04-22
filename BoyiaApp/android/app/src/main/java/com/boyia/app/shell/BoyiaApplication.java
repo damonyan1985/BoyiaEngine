@@ -11,6 +11,7 @@ import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.debug.LeakChecker;
 import com.boyia.app.shell.home.HomeModule;
+import com.boyia.app.shell.ipc.BoyiaIPCModule;
 import com.boyia.app.shell.login.LoginModule;
 import com.boyia.app.shell.module.ModuleManager;
 import com.umeng.commonsdk.UMConfigure;
@@ -72,5 +73,6 @@ public class BoyiaApplication extends BaseApplication {
     private void initModule() {
         ModuleManager.Companion.instance().register(ModuleManager.HOME, new HomeModule());
         ModuleManager.Companion.instance().register(ModuleManager.LOGIN, new LoginModule());
+        ModuleManager.Companion.instance().register(ModuleManager.IPC, new BoyiaIPCModule());
     }
 }

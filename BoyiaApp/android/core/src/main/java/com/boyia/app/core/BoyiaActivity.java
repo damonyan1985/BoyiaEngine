@@ -8,14 +8,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.boyia.app.common.ipc.IBoyiaIpcSender;
+import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
+import com.boyia.app.loader.mue.MainScheduler;
 
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
 // 主要使用来与AMS进行通信的，AMS的任务栈中持有的ActivitRecord与Activity一一对应
@@ -31,6 +36,9 @@ public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
     private BoyiaAppInfo mAppInfo;
+    private IBoyiaSender mSender;
+    private boolean mNeedExit = false;
+    private static final int EXIT_DELAY_TIME = 3000;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -48,6 +56,8 @@ public class BoyiaActivity extends Activity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
+        mSender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+        BoyiaBridge.setIPCSender(mSender);
     }
 
     protected void initContainer() {
@@ -86,7 +96,11 @@ public class BoyiaActivity extends Activity {
             return;
         }
 
-        // TODO native层设置info，启动应用
+
+        if (mAppInfo.mAppId != info.mAppId) {
+            // TODO 如果appid不一样，则重新刷新应用
+            mAppInfo = info;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -125,6 +139,48 @@ public class BoyiaActivity extends Activity {
                 childView.setFitsSystemWindows(true);
                 ((ViewGroup) childView).setClipToPadding(true);
             }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        BoyiaLog.d(TAG, "onKeyDown");
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                //backExit();
+                backToBackground();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_ENTER:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                break;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 退到后台不销毁
+     */
+    public void backToBackground() {
+        moveTaskToBack(true);
+        BoyiaCoreJNI.nativeCacheCode();
+    }
+
+    public void backExit() {
+        if (mNeedExit) {
+            BoyiaLog.d(TAG, "BoyiaApplication finished");
+            // 退出程序时将程序内存快照保存在本地
+            BoyiaCoreJNI.nativeCacheCode();
+            finish();
+            Process.killProcess(Process.myPid());
+        } else {
+            mNeedExit = true;
+            BoyiaBridge.showToast("再按一次退出程序");
+            MainScheduler.mainScheduler().sendJobDelay(() -> {
+                mNeedExit = false;
+            }, EXIT_DELAY_TIME);
         }
     }
 

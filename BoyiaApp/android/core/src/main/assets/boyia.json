@@ -7,6 +7,7 @@
     },
     "apps": [
         {
+            "id": 10000,
             "versionCode": 13,
             "url": "boyia_assets://out/contacts.zip",
             "name": "contacts",

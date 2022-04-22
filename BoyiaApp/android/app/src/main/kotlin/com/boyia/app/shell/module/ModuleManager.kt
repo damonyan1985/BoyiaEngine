@@ -6,6 +6,7 @@ class ModuleManager {
     companion object {
         const val LOGIN = "login"
         const val HOME = "home"
+        const val IPC = "ipc"
 
         fun instance() = Holder.manager
     }
@@ -23,5 +24,10 @@ class ModuleManager {
 
     fun getModule(key: String): IModule? {
         return moduleMap[key]
+    }
+
+    fun remove(key: String) {
+        val module = moduleMap.remove(key)
+        module?.dispose()
     }
 }

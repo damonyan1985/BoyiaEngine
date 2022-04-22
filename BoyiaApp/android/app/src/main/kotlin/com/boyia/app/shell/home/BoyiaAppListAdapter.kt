@@ -11,6 +11,8 @@ import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppItem
+import com.boyia.app.shell.module.IPCModule
+import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.update.DownloadData
 import com.boyia.app.shell.update.DownloadUtil
 
@@ -52,6 +54,7 @@ class BoyiaAppListAdapter(
         info.fileName = name;
 
         val list = DownloadUtil.getDownloadList(info)
+        val module = ModuleManager.instance().getModule(ModuleManager.IPC) as IPCModule
 
         return BoyiaAppInfo(
                 appItem.appId,
@@ -60,7 +63,7 @@ class BoyiaAppListAdapter(
                 list[0].filePath,
                 appItem.url,
                 appItem.cover,
-                null
+                module.getBinder()
         )
     }
 }

@@ -49,25 +49,7 @@ public class BoyiaMainActivity extends BoyiaActivity {
         // mSplashManager.loadSplashAd(this,
         //         getContainer(), () -> startBoyiaUI());
         startBoyiaUI();
-        initIpc();
         initBroadcast();
-    }
-
-    // 初始化主进程IPC服务
-    // 当主进程需要启动其他进程时，将binder传入即可跨进程通信
-    // 预留程序
-    private void initIpc() {
-        mBinder = new IBoyiaIpcSender.BoyiaSenderStub() {
-            @Override
-            public BoyiaIpcData sendMessageSync(BoyiaIpcData boyiaIpcData) throws RemoteException {
-                return null;
-            }
-
-            @Override
-            public void sendMessageAsync(BoyiaIpcData boyiaIpcData, IBoyiaIpcCallback iBoyiaIpcCallback) throws RemoteException {
-
-            }
-        };
     }
 
     private void initBroadcast() {

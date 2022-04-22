@@ -7,6 +7,7 @@
   },
   "apps": [
     {
+      "id": 10000,
       "versionCode": 13,
       "url": "https://damonyan1985.github.io/app/out/contacts.zip",
       "name": "contacts",
@@ -14,6 +15,7 @@
       "isEntry": true
     },
     {
+      "id": 10001,
       "versionCode": 1,
       "url": "https://damonyan1985.github.io/app/out/luxury.zip",
       "name": "luxury",

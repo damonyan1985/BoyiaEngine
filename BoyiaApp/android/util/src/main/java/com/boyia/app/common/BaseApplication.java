@@ -7,8 +7,6 @@ import android.os.HandlerThread;
 
 public class BaseApplication extends Application {
     private static BaseApplication sApplication = null;
-    private HandlerThread mAppThread = null;
-    private Handler mHandler = null;
 
     @Override
     public void onCreate() {
