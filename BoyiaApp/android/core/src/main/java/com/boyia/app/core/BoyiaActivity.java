@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IntentService;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -20,6 +21,7 @@ import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
+import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.mue.MainScheduler;
 
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
@@ -181,6 +183,15 @@ public class BoyiaActivity extends Activity {
             MainScheduler.mainScheduler().sendJobDelay(() -> {
                 mNeedExit = false;
             }, EXIT_DELAY_TIME);
+        }
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        BoyiaLog.d(TAG, "onTrimMemory level=" + level);
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+            BoyiaImager.getInstance().clearMemoryCache();
         }
     }
 

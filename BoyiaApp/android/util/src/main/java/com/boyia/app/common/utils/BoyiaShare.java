@@ -28,53 +28,53 @@ public class BoyiaShare {
         return BoyiaShareHolder.INSTANCE.mShare;
     }
 
-    public static void putInt(String key, int value) {
+    public static void put(String key, int value) {
         Editor editor = editor();
         editor.putInt(key, value);
         editor.commit();
     }
 
-    public static void putFloat(String key, float value) {
+    public static void put(String key, float value) {
         Editor editor = editor();
         editor.putFloat(key, value);
         editor.commit();
     }
 
-    public static void putLong(String key, long value) {
+    public static void put(String key, long value) {
         Editor editor = editor();
         editor.putLong(key, value);
         editor.commit();
     }
 
-    public static void putString(String key, String value) {
+    public static void put(String key, String value) {
         Editor editor = editor();
         editor.putString(key, value);
         editor.commit();
     }
 
-    public static void putBoolean(String key, boolean value) {
+    public static void put(String key, boolean value) {
         Editor editor = editor();
         editor.putBoolean(key, value);
         editor.commit();
     }
 
-    public static int getInt(String key, int defValue) {
+    public static int get(String key, int defValue) {
         return share().getInt(key, defValue);
     }
 
-    public static float getFloat(String key, float defValue) {
+    public static float get(String key, float defValue) {
         return share().getFloat(key, defValue);
     }
 
-    public static long getLong(String key, long defValue) {
+    public static long get(String key, long defValue) {
         return share().getLong(key, defValue);
     }
 
-    public static String getString(String key, String defValue) {
+    public static String get(String key, String defValue) {
         return share().getString(key, defValue);
     }
 
-    public static boolean getBoolean(String key, boolean defValue) {
+    public static boolean get(String key, boolean defValue) {
         return share().getBoolean(key, defValue);
     }
 
