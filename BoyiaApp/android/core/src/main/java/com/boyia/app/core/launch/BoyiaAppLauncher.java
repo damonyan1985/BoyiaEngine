@@ -51,7 +51,7 @@ public class BoyiaAppLauncher {
 
     public static void launch(BoyiaAppInfo info) {
         BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
-            if (!BoyiaShare.get(BOYIA_APP_SDK_UNZIP_KEY, false)) {
+            if (!BoyiaShare.getImpl(BOYIA_APP_SDK_UNZIP_KEY, false)) {
                 BoyiaLog.d(TAG, "sdk is not init");
                 return;
             }
@@ -90,7 +90,7 @@ public class BoyiaAppLauncher {
         String sdkPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + "sdk";
         File file = new File(sdkPath);
         if (file.exists()) {
-            if (BoyiaShare.get(BOYIA_APP_SDK_UNZIP_KEY, false)) {
+            if (BoyiaShare.getImpl(BOYIA_APP_SDK_UNZIP_KEY, false)) {
                 return;
             }
 
@@ -109,7 +109,7 @@ public class BoyiaAppLauncher {
         }
 
         if (ZipOperation.unZipFile(sdkFile, sdkPath)) {
-            BoyiaShare.put(BOYIA_APP_SDK_UNZIP_KEY, true);
+            BoyiaShare.putImpl(BOYIA_APP_SDK_UNZIP_KEY, true);
         }
     }
 

@@ -12,6 +12,9 @@ import com.boyia.app.common.utils.BoyiaLog;
 public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
     String TAG = "IBoyiaIpcSender";
     String DESCRIPTOR = "com.boyia.app.common.ipc.IBoyiaSender";
+    int SEND_RESULT_NULL_CODE = 0;
+    int SEND_RESULT_NOT_NULL_CODE = 1;
+
     int SEND_MESSAGE_SYNC = IBinder.FIRST_CALL_TRANSACTION;
     int SEND_MESSAGE_ASYNC = IBinder.FIRST_CALL_TRANSACTION + 1;
 
@@ -64,29 +67,30 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                     reply.writeNoException();
                     if (result != null) {
                         // 1表示数据不为null
-                        reply.writeInt(1);
+                        reply.writeInt(SEND_RESULT_NOT_NULL_CODE);
                         result.writeToParcel(reply,
                                 Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
                     } else {
-                        reply.writeInt(0);
+                        reply.writeInt(SEND_RESULT_NULL_CODE);
                     }
                     return true;
                 }
                 case SEND_MESSAGE_ASYNC: {
                     data.enforceInterface(DESCRIPTOR);
                     BoyiaIpcData ipcData = BoyiaIpcData.CREATOR.createFromParcel(data);
-                    // 服务端需要实现sendMessageAsync接口
+                    // 服务端需要实现sendMessageAsync接口，此时服务端sendMessageAsync内部实现还是采用同步
+                    // 改调用会在binder内部线程池中进行调用，不会阻塞UI线程
                     this.sendMessageAsync(ipcData, new IBoyiaIpcCallback() {
                         @Override
                         public void callback(BoyiaIpcData message) {
                             reply.writeNoException();
                             if (message != null) {
                                 // 1表示数据不为null
-                                reply.writeInt(1);
+                                reply.writeInt(SEND_RESULT_NOT_NULL_CODE);
                                 message.writeToParcel(reply,
                                         Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
                             } else {
-                                reply.writeInt(0);
+                                reply.writeInt(SEND_RESULT_NULL_CODE);
                             }
                         }
 
@@ -95,6 +99,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                             return null;
                         }
                     });
+
                     return true;
                 }
             }
@@ -130,6 +135,9 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
          */
         @Override
         public void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException {
+            if (callback == null || callback.scheduler() == null) {
+                return;
+            }
             // 使用callback所需要的scheduler执行
             callback.scheduler().run(() -> {
                 try {
@@ -156,7 +164,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
                 mRemote.transact(code, data, reply, 0);
                 reply.readException();
                 // 非0表示数据不为null
-                if (reply.readInt() != 0) {
+                if (reply.readInt() != SEND_RESULT_NULL_CODE) {
                     result = BoyiaIpcData.CREATOR.createFromParcel(reply);
                 }
             } finally {

@@ -12,9 +12,7 @@ class BoyiaHostBinder(private val module: BoyiaIPCModule) : IBoyiaIpcSender.Boyi
     }
 
     override fun sendMessageAsync(data: BoyiaIpcData?, callback: IBoyiaIpcCallback) {
-        JobScheduler.jobScheduler().sendJob {
-            val handler = module.getHandler(data?.method) ?: return@sendJob
-            handler.handle(data, callback)
-        }
+        val handler = module.getHandler(data?.method) ?: return
+        handler.handle(data, callback)
     }
 }

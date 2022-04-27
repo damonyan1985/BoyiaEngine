@@ -38,6 +38,8 @@ struct LoginView : View {
     @State var password: String = ""
     
     var body: some View {
+//        Image(systemName: "person")
+//            .foregroundColor(Color.white)
         NavigationView {
             // 纵向，类似flutter中的column
             VStack {

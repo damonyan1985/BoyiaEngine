@@ -4,11 +4,13 @@ import android.os.IBinder
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
+import com.boyia.app.shell.BoyiaConstants.IPCNameConstants;
+import com.boyia.app.shell.ipc.handler.SetShareHandler
 import java.util.concurrent.ConcurrentHashMap
 
 class BoyiaIPCModule : IPCModule {
     private var binder: BoyiaHostBinder? = null
-    private var handlerMap: Map<String?, IBoyiaIPCHandler>? = null
+    private lateinit var handlerMap: ConcurrentHashMap<String?, IBoyiaHandlerCreator>
 
     override fun getBinder(): IBinder? {
         return binder
@@ -16,19 +18,36 @@ class BoyiaIPCModule : IPCModule {
 
     override fun init() {
         binder = BoyiaHostBinder(this)
-        handlerMap = ConcurrentHashMap<String?, IBoyiaIPCHandler>()
+        handlerMap = ConcurrentHashMap<String?, IBoyiaHandlerCreator>()
+        register(IPCNameConstants.LOCAL_SHARE_SET, SetShareHandler::class.java)
+    }
+
+    /**
+     * 内部包一个handler对象生成器，获取handler时通过生成器生成
+     */
+    fun register(method: String, type: Class<out IBoyiaIPCHandler>) {
+        handlerMap[method] = object : IBoyiaHandlerCreator {
+            override fun create(): IBoyiaIPCHandler {
+                return type.newInstance()
+            }
+        }
     }
 
     fun getHandler(key: String?): IBoyiaIPCHandler? {
         if (BoyiaUtils.isTextEmpty(key)) {
             return null
         }
-        return handlerMap?.get(key)
+
+        return handlerMap[key]?.create()
     }
 
     override fun show(context: IModuleContext) {
     }
 
     override fun dispose() {
+    }
+
+    interface IBoyiaHandlerCreator {
+        fun create(): IBoyiaIPCHandler
     }
 }

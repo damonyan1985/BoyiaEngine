@@ -9,6 +9,14 @@ apply from: "$rootDir/library.gradle"
 //}
 
 android {
+    signingConfigs {
+        sign {
+            storeFile file(BOYIA_APP_KEY_STORE)
+            storePassword BOYIA_APP_STORE_PWD
+            keyPassword BOYIA_APP_KEY_PWD
+            keyAlias BOYIA_APP_ALIAS
+        }
+    }
     compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
         applicationId "com.boyia.app.shell"
@@ -25,11 +33,13 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.sign
         }
 
         debug {
             debuggable true
             jniDebuggable true
+            signingConfig signingConfigs.sign
         }
     }
 

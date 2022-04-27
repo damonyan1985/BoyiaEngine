@@ -10,18 +10,22 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
+import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.boyia.app.common.ipc.BoyiaIpcData;
+import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
 import com.boyia.app.loader.image.BoyiaImager;
+import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.loader.mue.MainScheduler;
 
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
@@ -60,6 +64,33 @@ public class BoyiaActivity extends Activity {
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         mSender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
         BoyiaBridge.setIPCSender(mSender);
+
+        justForTest();
+    }
+
+    private void justForTest() {
+        Bundle b = new Bundle();
+        b.putString("ipc_key", "key1");
+        b.putString("ipc_value", "value1");
+        BoyiaIpcData data = new BoyiaIpcData(
+                "local_share_set",
+                b
+        );
+        try {
+            mSender.sendMessageAsync(data, new IBoyiaIpcCallback() {
+                @Override
+                public void callback(BoyiaIpcData boyiaIpcData) {
+                    BoyiaLog.d(TAG, "BoyiaApp boyiaIpcData = " + boyiaIpcData);
+                }
+
+                @Override
+                public IpcScheduler scheduler() {
+                    return runnable -> JobScheduler.jobScheduler().sendJob(runnable::run);
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initContainer() {

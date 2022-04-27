@@ -27,6 +27,10 @@
 		4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB6E27EC4E4D00795648 /* Extension.swift */; };
 		4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7927EC601800795648 /* HomeView.swift */; };
 		4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7B27EC6E0A00795648 /* Navigator.swift */; };
+		4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */; };
+		4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */; };
+		4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */; };
+		4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +73,10 @@
 		4CC8FB6E27EC4E4D00795648 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		4CC8FB7927EC601800795648 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		4CC8FB7B27EC6E0A00795648 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
+		4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListModel.swift; sourceTree = "<group>"; };
+		4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppItem.swift; sourceTree = "<group>"; };
+		4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListData.swift; sourceTree = "<group>"; };
+		4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppModel.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -105,6 +113,7 @@
 		4C7AE7E026CF835700946197 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				4CF12FAB2817EFB500F0067E /* Model */,
 				4CC8FB5327E9BF1D00795648 /* Base */,
 				4CC8FB5227E9BDE900795648 /* Controller */,
 				4CC8FB5127E9BDDD00795648 /* View */,
@@ -221,6 +230,17 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		4CF12FAB2817EFB500F0067E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */,
+				4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */,
+				4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */,
+				4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -296,12 +316,16 @@
 				4CC8FB6727EB4F7800795648 /* WebMessageHandler.swift in Sources */,
 				4CC8FB6427EB1C2700795648 /* BoyiaWebController.swift in Sources */,
 				4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */,
+				4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */,
 				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
+				4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */,
+				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
 				4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */,
+				4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */,
 				4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */,
 				4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
@@ -388,6 +412,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../core/kernel/platform",
 					"$(PROJECT_DIR)/../core/port",
+					"$(PROJECT_DIR)/../core/kernel/platform/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -447,6 +472,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../core/kernel/platform",
 					"$(PROJECT_DIR)/../core/port",
+					"$(PROJECT_DIR)/../core/kernel/platform/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = NO;

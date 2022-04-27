@@ -16,10 +16,6 @@ class BoyiaNotifyService: Service() {
         const val BOYIA_APP_CHANNEL_NAME = "boyia_app_channel_name"
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //return super.onStartCommand(intent, flags, startId)
         initNotificationManager()

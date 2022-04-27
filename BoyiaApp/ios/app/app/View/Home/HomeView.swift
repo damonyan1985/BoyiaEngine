@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct HomeView : View {
+    @ObservedObject var model = BoyiaAppListModel()
+    
     var body: some View {
         NavigationView {
             // 类似flutter中的stack
             ZStack {
                 Button(action: {
+                    model.requestAppList()
                     BoyiaNavigator.push(view: LoginView())
                 }, label: {
                     Text("Test")

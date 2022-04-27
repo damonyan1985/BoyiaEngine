@@ -7,5 +7,6 @@
 
 // swift引入oc时需要使用
 #import "BoyiaViewController.h"
+#import "HttpEngineIOS.h"
 
 #endif

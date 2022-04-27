@@ -7,7 +7,7 @@
 
 #import "ViewController.h"
 #import "HttpEngineIOS.h"
-//#import "ImageLoaderIOS.h"
+//#import "IOSRenderer.h"
 
 @interface ViewController ()
 
@@ -17,8 +17,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //HttpEngineIOS* engine = [HttpEngineIOS alloc];
-    //[engine loadUrl:kHttpGet andUrl:@"https://www.baidu.com"];
+    HttpEngineIOS* engine = [HttpEngineIOS alloc];
+    
+    [engine loadUrl:kHttpGet url:@"https://www.baidu.com" headers:nil callback:nil];
     // Do any additional setup after loading the view.
     //[[ImageLoaderIOS shareInstance] loadImage:@"https://www.baidu.com" clientId:0];
 }
