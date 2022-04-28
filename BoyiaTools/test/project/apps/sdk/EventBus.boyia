@@ -1,0 +1,8 @@
+class EventBus {
+    prop events = {};
+    
+    // TODO map的get目前尚未完成
+    fun register(key, callback) {
+        
+    }
+}

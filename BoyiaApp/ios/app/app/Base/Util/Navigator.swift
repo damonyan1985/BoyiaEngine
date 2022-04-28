@@ -15,13 +15,20 @@ class BoyiaNavigator {
         findNavigator()?.pushViewController(UIHostingController(rootView: view), animated: true)
     }
     
+    static func push(controller: UIViewController) {
+        findNavigator()?.pushViewController(controller, animated: true)
+    }
+    
     static func pop() {
         findNavigator()?.popViewController(animated: true)
     }
     
     // 找到导航VC
     static func findNavigator() -> UINavigationController? {
-        guard let window = UIApplication.shared.windows.first else {
+//        guard let window = UIApplication.shared.windows.first else {
+//            return nil
+//        }
+        guard let window = getKeyWindow() else {
             return nil
         }
         
@@ -59,5 +66,18 @@ class BoyiaNavigator {
         }
         
         return currentShowingVC;
+    }
+    
+    static func getKeyWindow() -> UIWindow? {
+        // Get connected scenes
+        return UIApplication.shared.connectedScenes
+            // Keep only active scenes, onscreen and visible to the user
+            .filter { $0.activationState == .foregroundActive }
+            // Keep only the first `UIWindowScene`
+            .first(where: { $0 is UIWindowScene })
+            // Get its associated windows
+            .flatMap({ $0 as? UIWindowScene })?.windows
+            // Finally, keep only the key window
+            .first(where: \.isKeyWindow)
     }
 }

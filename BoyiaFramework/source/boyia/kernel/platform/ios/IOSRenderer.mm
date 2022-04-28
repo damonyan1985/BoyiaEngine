@@ -286,7 +286,7 @@ private:
     
     UIBarButtonItem* btnSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+    UIButton* btn = [UIButton buttonWithType:UIButtonTypeSystem];
     
     [btn setTitle:[self localizedStringForKey:@"keyBoardHide"] forState:UIControlStateNormal];
     btn.frame = CGRectMake(2, 5, 70, 25);
