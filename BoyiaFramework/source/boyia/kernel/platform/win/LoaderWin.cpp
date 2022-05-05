@@ -162,11 +162,10 @@ LVoid LoaderWin::loadUrl(const String& url, NetworkClient* client, LBool isWait)
 
     if (isWait) {
         // SendMessage
-        Message* msg = m_queue->obtain();
+        Message* msg = obtain();
         msg->type = NetworkBase::GET;
         msg->obj = task;
-        m_queue->push(msg);
-        notify();
+        postMessage(msg);
     } else {
         ThreadPool::getInstance()->sendTask(task);
     }
@@ -191,11 +190,10 @@ LVoid LoaderWin::postData(const String& url, NetworkClient* client, LBool isWait
 
     if (isWait) {
         // SendMessage
-        Message* msg = m_queue->obtain();
+        Message* msg = obtain();
         msg->type = NetworkBase::POST;
         msg->obj = task;
-        m_queue->push(msg);
-        notify();
+        postMessage(msg);
     } else {
         ThreadPool::getInstance()->sendTask(task);
     }
