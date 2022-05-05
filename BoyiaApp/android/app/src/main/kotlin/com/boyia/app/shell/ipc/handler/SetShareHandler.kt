@@ -18,7 +18,6 @@ class SetShareHandler: IBoyiaIPCHandler {
         val value = bundle?.get(IPCNameConstants.IPC_SHARE_VALUE)
 
         BoyiaLog.d(TAG, "SetShareHandler handle key = $key and value = $value")
-
         if (key is String) {
             BoyiaShare.set(key, value)
         }

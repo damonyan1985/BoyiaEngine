@@ -31,6 +31,7 @@
 		4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */; };
 		4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */; };
 		4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */; };
+		4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB4282382AA00F0067E /* PixelRatio.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,7 @@
 		4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppItem.swift; sourceTree = "<group>"; };
 		4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListData.swift; sourceTree = "<group>"; };
 		4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppModel.swift; sourceTree = "<group>"; };
+		4CF12FB4282382AA00F0067E /* PixelRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelRatio.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -218,6 +220,7 @@
 			children = (
 				4CC8FB6E27EC4E4D00795648 /* Extension.swift */,
 				4CC8FB7B27EC6E0A00795648 /* Navigator.swift */,
+				4CF12FB4282382AA00F0067E /* PixelRatio.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
 				4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */,
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
+				4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,

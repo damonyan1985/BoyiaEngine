@@ -24,7 +24,7 @@ class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
     
     func onLoadFinished() {
         do {
-            print("HttpCallbackImpl onLoadFinished json = \(String(data: buffer, encoding: .utf8)!)")
+            BoyiaLog.d("HttpCallbackImpl onLoadFinished json = \(String(data: buffer, encoding: .utf8)!)")
             let value = try JSONDecoder().decode(T.self, from: buffer)
             callback(value)
         } catch {

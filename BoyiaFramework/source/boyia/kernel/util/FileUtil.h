@@ -15,6 +15,7 @@
 #include "UtilString.h"
 
 namespace util {
+// android中的文件读写不能操作扩展卡中的内容，只能操作/data/data/com.boyia.app.shell下文件陆慕
 class FileUtil {
 public:
     static LVoid readFile(const String& fileName, String& content);

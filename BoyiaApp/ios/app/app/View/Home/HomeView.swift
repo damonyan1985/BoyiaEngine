@@ -15,14 +15,20 @@ struct HomeView : View {
     var body: some View {
         NavigationView {
             // 类似flutter中的stack
-            ZStack {
+            ZStack(alignment: .topLeading) {
 //                Button(action: {
 //                    model.requestAppList()
 //                    BoyiaNavigator.push(view: LoginView())
 //                }, label: {
 //                    Text("Test")
 //                })
-                getAppListView()
+                VStack(alignment: .leading) {
+
+                    ScrollView {
+                        getAppListView()
+                    }
+
+                }.offset(x: 0, y: BoyiaNavigator.getStatusbarHeight())
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             .background(Color(Color.RGBColorSpace.sRGB, red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
@@ -40,13 +46,16 @@ struct HomeView : View {
     }
     
     func getAppItemView(item: BoyiaAppItem) -> some View {
+        let width = PixelRatio.dp(value: 224)
         return VStack(alignment: .leading, spacing: 0) {
             
             AsyncImage(url: URL(string: item.cover)!) { phase in
                 if let image = phase.image {
                     image.resizable()
                         .transition(.slide)
-                        .frame(width: 100, height: 120, alignment: .top)
+                        .frame(width: width,
+                               height: PixelRatio.dp(value: 224),
+                               alignment: .top)
                 } else if phase.error != nil {
                     Text("path: \(item.cover), error: \(phase.error!.localizedDescription) ")
                 } else {
@@ -54,9 +63,9 @@ struct HomeView : View {
                 }
             
             }
-            Text(item.name).frame(width: 100, height: 40)
+            Text(item.name).frame(width: width, height: PixelRatio.dp(value: 36))
         }
-        .frame(width: 100, height: 160)
+        .frame(width: width, height: PixelRatio.dp(value: 260))
         .background(Color.blue)
         .onTapGesture {
             BoyiaNavigator.push(controller: BoyiaViewController())

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// 处理所有基础扩展
+
 // 扩展颜色
 extension Color {
     init(hex: Int, alpha: Double = 1) {

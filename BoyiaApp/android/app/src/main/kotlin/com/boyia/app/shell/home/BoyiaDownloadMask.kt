@@ -51,11 +51,11 @@ class BoyiaDownloadMask(url: String, context: Context, private val downloadCallb
         paint.color = 0x88000000.toInt()
 
         if (progress == 0F) {
-            canvas?.drawRect(Rect(0, 0, width,height), paint)
+            canvas?.drawRect(Rect(0, 0, width, height), paint)
             return
         }
 
-        val path = getPath() ?: return;
+        val path = getPath() ?: return
         canvas?.drawPath(path, paint)
     }
 

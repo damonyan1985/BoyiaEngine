@@ -139,10 +139,18 @@ private:
     CVMetalTextureCacheRef _cvTextureCache;
 }
 
++(CGFloat)getStatusBarHeight {
+    NSSet *set = [[UIApplication sharedApplication] connectedScenes];
+    UIWindowScene* windowScene = [set anyObject];
+    UIStatusBarManager* statusBarManager =  windowScene.statusBarManager;
+    return statusBarManager.statusBarFrame.size.height;
+}
+
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
     //CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
-    CGFloat statusBarHeight = statusBarManager.statusBarFrame.size.height;
+//    UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
+    //CGFloat statusBarHeight = statusBarManager.statusBarFrame.size.height;
+    CGFloat statusBarHeight = [IOSRenderer getStatusBarHeight];
     CGFloat w = [UIScreen mainScreen].bounds.size.width;
     CGFloat h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
     

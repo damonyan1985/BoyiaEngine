@@ -5,7 +5,6 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.BoyiaLoader
 import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.job.JobScheduler
-import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.loader.mue.MueTask
 import com.boyia.app.loader.mue.Subscriber
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener

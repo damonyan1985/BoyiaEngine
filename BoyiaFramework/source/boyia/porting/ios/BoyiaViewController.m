@@ -16,7 +16,7 @@
 #pragma mark - BoyiaGestureRecognizer
 // 使用GesturerRecognizer替代controller自身的touch事件接口
 @interface BoyiaGestureRecognizer : UIPanGestureRecognizer
--(instancetype)initWithTarget:(id)target action:(SEL)action;
+-(instancetype)initWithTargetRenderer:(id)target action:(SEL)action renderer:(IOSRenderer*)renderer;
 
 @property (nonatomic, weak) IOSRenderer* renderer;
 @end

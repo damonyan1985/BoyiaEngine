@@ -32,6 +32,7 @@ LUint IDCreator::genIdentByStr(const LInt8* str, LInt len)
     return genIdentifier(&strId);
 }
 
+// id从1开始自增
 LUint IDCreator::genIdentifier(BoyiaStr* str)
 {
 //    if (!m_idLink) {

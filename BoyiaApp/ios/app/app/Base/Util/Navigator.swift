@@ -12,7 +12,8 @@ import SwiftUI
 class BoyiaNavigator {
     // push一个swiftui view
     static func push<CustomView>(view: CustomView) -> Void where CustomView : View  {
-        findNavigator()?.pushViewController(UIHostingController(rootView: view), animated: true)
+        //findNavigator()?.pushViewController(UIHostingController(rootView: view), animated: true)
+        push(controller: UIHostingController(rootView: view))
     }
     
     static func push(controller: UIViewController) {
@@ -58,26 +59,51 @@ class BoyiaNavigator {
         } else if (vc is UINavigationController){
             // 根视图为UINavigationController
             let nextRootVC = (vc as? UINavigationController)?.visibleViewController
-            currentShowingVC = findCurrentVC(nextRootVC);
+            currentShowingVC = findCurrentVC(nextRootVC)
             
         } else {
             // 根视图为非导航类
-            currentShowingVC = vc;
+            currentShowingVC = vc
         }
         
-        return currentShowingVC;
+        return currentShowingVC
+    }
+        
+    static func getKeyWindow() -> UIWindow? {
+//        // Get connected scenes
+//        return UIApplication.shared.connectedScenes
+//            // Keep only active scenes, onscreen and visible to the user
+//            .filter { $0.activationState == .foregroundActive }
+//            // Keep only the first `UIWindowScene`
+//            .first(where: { $0 is UIWindowScene })
+//            // Get its associated windows
+//            .flatMap({ $0 as? UIWindowScene })?.windows
+//            // Finally, keep only the key window
+//            .first(where: \.isKeyWindow)
+        guard let scene = getKeyWindowScene() else {
+            return nil
+        }
+        
+        // Finally, keep only the key window
+        return scene.windows.first(where: \.isKeyWindow)
     }
     
-    static func getKeyWindow() -> UIWindow? {
-        // Get connected scenes
+    static func getKeyWindowScene() -> UIWindowScene? {
         return UIApplication.shared.connectedScenes
             // Keep only active scenes, onscreen and visible to the user
             .filter { $0.activationState == .foregroundActive }
             // Keep only the first `UIWindowScene`
             .first(where: { $0 is UIWindowScene })
             // Get its associated windows
-            .flatMap({ $0 as? UIWindowScene })?.windows
-            // Finally, keep only the key window
-            .first(where: \.isKeyWindow)
+            .flatMap({ $0 as? UIWindowScene })
+    }
+    
+    // 获取状态栏高度
+    static func getStatusbarHeight() -> Double {
+        guard let statusBarManager = getKeyWindowScene()?.statusBarManager else {
+            return 0
+        }
+        
+        return Double(Int(statusBarManager.statusBarFrame.size.height))
     }
 }

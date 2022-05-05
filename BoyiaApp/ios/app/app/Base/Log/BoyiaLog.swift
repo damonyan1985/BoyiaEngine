@@ -9,6 +9,6 @@ import Foundation
 
 class BoyiaLog {
     static func d(_ log: String) {
-        print(log);
+        print(log)
     }
 }

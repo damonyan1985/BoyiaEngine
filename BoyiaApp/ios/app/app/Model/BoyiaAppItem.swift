@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Identifiable用于list遍历，Codable用于json解析
 struct BoyiaAppItem: Codable, Identifiable {
     var id = UUID()
     let appId: Int

@@ -128,7 +128,7 @@ const char* PlatformBridge::getStringTableCachePath()
     const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
     if (!info->appCodePath.stringTablePath.GetLength()) {
         info->appCodePath.stringTablePath = _CS(getAppRoot());
-        const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
+        //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
 
         info->appCodePath.stringTablePath += _CS("dist/");
         if (!FileUtil::isExist(GET_STR(info->appCodePath.stringTablePath))) {
@@ -151,7 +151,7 @@ const char* PlatformBridge::getInstructionEntryPath()
     const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
     if (!info->appCodePath.entryCodePath.GetLength()) {
         info->appCodePath.entryCodePath = _CS(getAppRoot());
-        const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
+        //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
 
         info->appCodePath.entryCodePath += _CS("dist/");
         if (!FileUtil::isExist(GET_STR(info->appCodePath.entryCodePath))) {
@@ -173,7 +173,7 @@ const char* PlatformBridge::getSymbolTablePath()
     const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
     if (!info->appCodePath.symbolTablePath.GetLength()) {
         info->appCodePath.symbolTablePath = _CS(getAppRoot());
-        const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
+        //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
 
         info->appCodePath.symbolTablePath += _CS("dist/");
         if (!FileUtil::isExist(GET_STR(info->appCodePath.symbolTablePath))) {
