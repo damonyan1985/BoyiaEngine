@@ -142,6 +142,7 @@ LInt NativeObjectFlag(LVoid* address);
 // Builtins class
 LUintPtr GetBoyiaClassId(BoyiaValue* obj);
 LVoid BuiltinStringClass(LVoid* vm);
+BoyiaStr* GetStringBufferFromBody(BoyiaFunction* body);
 BoyiaStr* GetStringBuffer(BoyiaValue* ref);
 LIntPtr GetStringHash(BoyiaValue* ref);
 BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm);

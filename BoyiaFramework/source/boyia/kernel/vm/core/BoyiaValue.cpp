@@ -450,6 +450,8 @@ LInt BoyiaStringEqual(LVoid* vm)
     BoyiaStr* cmpStr = GetStringBuffer(cmpStrVal);
     LIntPtr cmpStrHash = GetStringHash(cmpStrVal);
     
+    BOYIA_LOG("BoyiaStringEqual hash1=%lld and hash2=%lld", strHash, cmpStrHash);
+    
     BoyiaValue value;
     value.mValueType = BY_INT;
     value.mValue.mIntVal = strHash == cmpStrHash && MStrcmp(str, cmpStr);
@@ -519,13 +521,18 @@ LVoid BuiltinStringClass(LVoid* vm)
 LIntPtr GetStringHash(BoyiaValue* ref)
 {
     BoyiaFunction* strObj = (BoyiaFunction*)ref->mValue.mObj.mPtr;
-    return strObj->mParams[1].mValue.mIntVal;
+    return strObj->mParams[0].mValue.mIntVal;
+}
+
+BoyiaStr* GetStringBufferFromBody(BoyiaFunction* body)
+{
+    return &body->mParams[1].mValue.mStrVal;
 }
 
 BoyiaStr* GetStringBuffer(BoyiaValue* ref)
 {
     BoyiaFunction* strObj = (BoyiaFunction*)ref->mValue.mObj.mPtr;
-    return &strObj->mParams[0].mValue.mStrVal;
+    return GetStringBufferFromBody(strObj);
 }
 
 LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
@@ -558,10 +565,12 @@ LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 // 常量字符串
 LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
-    //BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
-    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
-    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
-    objBody->mParams[0].mValue.mStrVal.mLen = len;
+    BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
+//    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
+//    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
+//    objBody->mParams[0].mValue.mStrVal.mLen = len;
+//
+//    objBody->mParams[1].mValue.mIntVal = GenHashCode(buffer, len);
 
     value->mValueType = BY_CLASS;
     value->mValue.mObj.mPtr = (LIntPtr)objBody;
@@ -573,11 +582,12 @@ LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 
 BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
 {
+    // copy object后字段的顺序变成倒序，索引获取的时候要反着来
     BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
-    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
-    objBody->mParams[0].mValue.mStrVal.mLen = len;
+    objBody->mParams[1].mValue.mStrVal.mPtr = buffer;
+    objBody->mParams[1].mValue.mStrVal.mLen = len;
     
-    objBody->mParams[1].mValue.mIntVal = GenHashCode(buffer, len);
+    objBody->mParams[0].mValue.mIntVal = GenHashCode(buffer, len);
 
     GCAppendRef(objBody, BY_CLASS, vm);
     return objBody;

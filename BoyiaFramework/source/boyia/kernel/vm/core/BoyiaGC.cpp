@@ -154,7 +154,8 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
     BoyiaValue* kclass = (BoyiaValue*)objBody->mFuncBody;
     LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
     if (classId == kBoyiaString) {
-        BoyiaStr* buffer = &objBody->mParams[0].mValue.mStrVal;
+        //BoyiaStr* buffer = &objBody->mParams[1].mValue.mStrVal;
+        BoyiaStr* buffer = GetStringBufferFromBody(objBody);
         // 删除字符串对象中的缓冲数据
         if (IS_NATIVE_STRING(objBody)) {
             free(buffer->mPtr);

@@ -64,7 +64,7 @@ class MainViewController extends ViewController {
         var str1 = "123456";
         var str2 = "123456";
         Util.log("equal result=" + str1.equal(str2));
-        Util.log("hash=" + str1.hash);
+        Util.log("hash1=" + str1.hash + " hash2=" + str2.hash);
         Util.log("arrJson=" + Util.toJson(arr1));
         Util.log("System Platform = " + Util.isWindows());
         Util.log("string length = " + params.body.length());
