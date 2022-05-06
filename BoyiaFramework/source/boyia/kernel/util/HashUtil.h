@@ -39,6 +39,11 @@ public:
     {
         return m_hash;
     }
+    
+    LUint8* GetBuffer() const
+    {
+        return m_value.GetBuffer();
+    }
 
 private:
     String m_value;

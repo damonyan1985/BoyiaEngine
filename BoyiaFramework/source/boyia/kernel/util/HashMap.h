@@ -8,6 +8,7 @@
 #define HashMap_h
 
 #include "PlatformLib.h"
+#include <functional>
 
 namespace util {
 const LInt HASH_TABLE_DEFAULT_SIZE = 1 << 4;
@@ -44,6 +45,7 @@ class HashMap {
 public:
     using HashMapEntryPtr = MapEntry<K, V>*;
     using HashMapEntry = MapEntry<K, V>;
+    using MapCallback = std::function<bool(const K&, const V&)>;
 
 public:
     HashMap()
@@ -167,12 +169,28 @@ public:
             current = current->next;
         }
     }
+    
+    // 遍历hashmap中的元素
+    LVoid map(MapCallback cb)
+    {
+        for (LInt i = 0; i < m_capacity; ++i) {
+            HashMapEntryPtr entry = m_table[i];
+            while (entry) {
+                // MapCallback判断是否需要拦截，不需要则继续遍历
+                if (cb(entry->key, entry->value)) {
+                    return;
+                }
+                
+                entry = entry->next;
+            }
+        }
+    }
 
 private:
     LUint genHash(const K& key)
     {
-        LUint hash = (hash = key.hash()) ^ (hash >> 16);
-        return hash;
+        LUint hash = key.hash();
+        return hash ^ (hash >> 16);
     }
 
     LInt indexHash(LUint hash)

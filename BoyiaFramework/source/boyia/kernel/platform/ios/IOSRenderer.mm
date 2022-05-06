@@ -146,6 +146,20 @@ private:
     return statusBarManager.statusBarFrame.size.height;
 }
 
+void testHashMap()
+{
+    HashMap<HashString, LInt> map;
+    map.put(HashString(_CS("hello")), 1);
+    map.put(HashString(_CS("hello1")), 2);
+    map.put(HashString(_CS("hello2")), 3);
+    map.put(HashString(_CS("hello3")), 4);
+    
+    map.map([](const HashString& k, const LInt& v) -> bool {
+        BOYIA_LOG("hashmap map -> key: %s, value: %d", GET_STR(k), v);
+        return false;
+    });
+}
+
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer {
     //CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
 //    UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
@@ -169,7 +183,7 @@ private:
     
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
-    
+    //testHashMap();
     
     return renderer;
 }

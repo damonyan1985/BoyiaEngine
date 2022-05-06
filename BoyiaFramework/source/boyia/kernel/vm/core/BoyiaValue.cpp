@@ -436,6 +436,27 @@ LInt BoyiaStringLength(LVoid* vm)
     return kOpResultSuccess;
 }
 
+LInt BoyiaStringEqual(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为函数指针
+    // 最后一个索引是调用时添加的对象
+    // 0与size-1之间是函数的参数
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    BoyiaStr* str = GetStringBuffer(obj);
+    LIntPtr strHash = GetStringHash(obj);
+    
+    BoyiaValue* cmpStrVal = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaStr* cmpStr = GetStringBuffer(cmpStrVal);
+    LIntPtr cmpStrHash = GetStringHash(cmpStrVal);
+    
+    BoyiaValue value;
+    value.mValueType = BY_INT;
+    value.mValue.mIntVal = strHash == cmpStrHash && MStrcmp(str, cmpStr);
+    SetNativeResult(&value, vm);
+    return kOpResultSuccess;
+}
+
 // 内置Boyia的String类
 LVoid BuiltinStringClass(LVoid* vm)
 {
@@ -446,10 +467,21 @@ LVoid BuiltinStringClass(LVoid* vm)
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
     // first prop is raw string
-    classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
-    classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("buffer", vm); //GenIdentByStr("buffer", 6, vm);
-    classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
-    classBody->mParams[classBody->mParamSize++].mValue.mStrVal.mLen = 0;
+    {
+        classBody->mParams[classBody->mParamSize].mValueType = BY_STRING;
+        // 第一个成员是buffer
+        classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("buffer", vm); //GenIdentByStr("buffer", 6, vm);
+        classBody->mParams[classBody->mParamSize].mValue.mStrVal.mPtr = kBoyiaNull;
+        classBody->mParams[classBody->mParamSize++].mValue.mStrVal.mLen = 0;
+    }
+    
+    // second prop is hash
+    {
+        classBody->mParams[classBody->mParamSize].mValueType = BY_INT;
+        // 第一个成员是buffer
+        classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("hash", vm); //GenIdentByStr("buffer", 6, vm);
+        classBody->mParams[classBody->mParamSize++].mValue.mIntVal = 0; // 默认是0
+    }
     
     // function length
     {
@@ -462,10 +494,32 @@ LVoid BuiltinStringClass(LVoid* vm)
         
         BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
         lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        lengthFuncVal->mNameKey = GEN_ID("length", vm); //GenIdentByStr("put", vm);
+        lengthFuncVal->mNameKey = GEN_ID("length", vm);
         lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         // put function implementation end
     }
+    
+    // function equal
+    {
+        // put function implementation begin
+        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+        function->mParams = kBoyiaNull;
+        function->mParamSize = 0;
+        // 实际调用的函数
+        function->mFuncBody = (LIntPtr)BoyiaStringEqual;
+        
+        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
+        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+        lengthFuncVal->mNameKey = GEN_ID("equal", vm);
+        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        // put function implementation end
+    }
+}
+
+LIntPtr GetStringHash(BoyiaValue* ref)
+{
+    BoyiaFunction* strObj = (BoyiaFunction*)ref->mValue.mObj.mPtr;
+    return strObj->mParams[1].mValue.mIntVal;
 }
 
 BoyiaStr* GetStringBuffer(BoyiaValue* ref)
@@ -489,6 +543,7 @@ LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm)
     SetNativeResult(&val, vm);
 }
 
+// 分配在系统堆上的字符串
 LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
     BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
@@ -500,6 +555,7 @@ LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
     objBody->mParamCount = objBody->mParamCount | (kNativeStringBuffer << 18);
 }
 
+// 常量字符串
 LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
     //BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
@@ -520,6 +576,8 @@ BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
     BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
     objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
     objBody->mParams[0].mValue.mStrVal.mLen = len;
+    
+    objBody->mParams[1].mValue.mIntVal = GenHashCode(buffer, len);
 
     GCAppendRef(objBody, BY_CLASS, vm);
     return objBody;
