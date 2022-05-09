@@ -437,21 +437,36 @@ LVoid RenderEngineIOS::renderVideo(RenderCommand* cmd)
 {
     RenderVideoCommand* videoCmd = static_cast<RenderVideoCommand*>(cmd);
     CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)videoCmd->playerId;
-    
-    size_t width = CVPixelBufferGetWidth(pixelBuffer);
-    size_t heigth = CVPixelBufferGetHeight(pixelBuffer);
-    
-    CVMetalTextureRef metalTexture = NULL;
-    CVReturn error = CVMetalTextureCacheCreateTextureFromImage(NULL, m_renderer.cvTextureCache, pixelBuffer, NULL, MTLPixelFormatBGRA8Unorm, width, heigth, 0, &metalTexture);
-    
-    // 创建MTLTexture
-    id<MTLTexture> texture = nil;
-    if (error == kCVReturnSuccess) {
-        texture = CVMetalTextureGetTexture(metalTexture);
-        CFRelease(metalTexture);
+    // 如果pixelBuffer为空以及纹理也为空，则不会绘制
+    if (!pixelBuffer && ![m_renderer getTexture:@"video"]) {
+        return;
     }
     
-    [m_renderer setTexture:@"video" texture:texture];
+    if (pixelBuffer) {
+        size_t width = CVPixelBufferGetWidth(pixelBuffer);
+        size_t heigth = CVPixelBufferGetHeight(pixelBuffer);
+        
+        CVMetalTextureRef metalTexture = NULL;
+        CVReturn error = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                                   m_renderer.cvTextureCache,
+                                                                   pixelBuffer,
+                                                                   NULL,
+                                                                   MTLPixelFormatBGRA8Unorm,
+                                                                   width,
+                                                                   heigth,
+                                                                   0,
+                                                                   &metalTexture);
+        
+        // 创建MTLTexture
+        id<MTLTexture> texture = nil;
+        if (error == kCVReturnSuccess) {
+            texture = CVMetalTextureGetTexture(metalTexture);
+            CFRelease(metalTexture);
+        }
+        
+        [m_renderer setTexture:@"video" texture:texture];
+    }
+    
     createVertexAttr(cmd->rect, cmd->color, m_vertexs);
     
     if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:@"video"]) {

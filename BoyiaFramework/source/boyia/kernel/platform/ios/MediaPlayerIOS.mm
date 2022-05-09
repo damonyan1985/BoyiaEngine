@@ -376,7 +376,7 @@ MediaPlayerIOS::~MediaPlayerIOS()
 void MediaPlayerIOS::start(const String& url)
 {
     NSURL* reqUrl = [NSURL URLWithString:STR_TO_OCSTR(url)];
-    //m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl andClient:getClientId()];
+    m_impl = [[MediaPlayerImpl alloc] initWithURL:reqUrl andClient:getClientId()];
 }
 
 void MediaPlayerIOS::updateTexture(float* matrix)
@@ -399,16 +399,16 @@ void MediaPlayerIOS::onClientCallback()
 {
     // 处理每一帧数据
     CVPixelBufferRef pixelBuffer = [m_impl copyPixelBuffer];
-    size_t width = CVPixelBufferGetWidth(pixelBuffer);
-    size_t height = CVPixelBufferGetHeight(pixelBuffer);
-    
-    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
-        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-        // TODO
-    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
-
-    }
+//    size_t width = CVPixelBufferGetWidth(pixelBuffer);
+//    size_t height = CVPixelBufferGetHeight(pixelBuffer);
+//
+//    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+//    if (pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+//        pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+//        // TODO
+//    } else if (pixelFormat == kCVPixelFormatType_32BGRA) {
+//
+//    }
     
     
     setPlayerId((LIntPtr)pixelBuffer);
