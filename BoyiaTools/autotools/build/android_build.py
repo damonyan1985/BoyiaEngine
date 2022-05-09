@@ -88,6 +88,11 @@ build_app_cmd = (
     f'{gradle_cmd} assembleDebug'
 )
 
+# build app bundle
+build_bundle_cmd = (
+    f'{gradle_cmd} bundle'
+)
+
 install_apk_cmd = (
     f'adb install -t {boyia_app_android_path}/app/build/outputs/apk/boyia/debug/app-boyia-debug.apk'
 )
@@ -148,7 +153,8 @@ def do_build_boyia_rust_sdk():
 def do_single_cmd(cmd):
     if cmd == "sdk":
         do_build_boyia_rust_sdk()
-        return
+    elif cmd == "bundle":
+        os.system(build_bundle_cmd)
 
 # 安装boyia工程中的rust ndk环境
 def install_boyia_rust_environment():
@@ -175,7 +181,9 @@ def install_and_build_rust():
     install_boyia_rust_config()
     do_build_boyia_rust_sdk()
 
-# 启动入口
+# 启动入口, 
+# build sdk, python3 android_build.py sdk
+# build apk, python3 android_build.py
 def main():
     length = len(sys.argv)
     print('arguments length=' + str(length))

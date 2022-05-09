@@ -84,6 +84,7 @@ private:
 -(void)dealloc {
     if (_pixelBuffer) {
         CVPixelBufferRelease(_pixelBuffer);
+        _pixelBuffer = NULL;
     }
 }
 

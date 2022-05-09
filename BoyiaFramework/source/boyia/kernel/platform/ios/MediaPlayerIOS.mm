@@ -293,9 +293,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
         // 根据时间获取图像数据
         return [self.videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
-    } else {
-        return NULL;
     }
+    
+    return NULL;
 }
 
 -(void)disposePlayer {
