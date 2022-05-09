@@ -317,66 +317,68 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         return;
     }
     
-    //LRectF rect;
-    //fixIosPlatformRect(srcRect, rect);
+    
     
     createVertexAttr(rect, color, m_vertexs);
     
-    int scale = 1;
-    UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
-    //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
-    
-    int width = rect.GetWidth() * scale;
-    int height = rect.GetHeight() * scale;
-    Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
-    memset(data, 0, width * height * 4);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
-                                                       colorSpace,
-                                                       kCGImageAlphaPremultipliedLast);
-    // push context之后才能绘制文字
-    UIGraphicsPushContext(context);
-    
-    CGContextTranslateCTM(context, 0, height);
-    CGContextScaleCTM(context, 1.0, -1.0);
-    CGContextSetShouldAntialias(context, YES);
-    
     // 转成OC字符串
     NSString* text = [[NSString alloc] initWithUTF8String: GET_STR(textCmd->text)];
-    //NSString* text = @"\U0000e800";
-    // 文字颜色
-    UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
-                                    green:METAL_COLOR_BIT(textCmd->color.m_green)
-                                     blue:METAL_COLOR_BIT(textCmd->color.m_blue)
-                                    alpha:METAL_COLOR_BIT(textCmd->color.m_alpha)];
-    
-    // 设置文字绘制属性
-    NSMutableDictionary* textAttributes = [NSMutableDictionary new];
-    [textAttributes setValue:font forKey:NSFontAttributeName];
-    [textAttributes setValue:uiColor forKey:NSForegroundColorAttributeName];
-    //[textAttributes setValue:UIColor.blueColor forKey:NSForegroundColorAttributeName];
-    
-    // 开始绘制文字
-//    [text drawInRect:CGRectMake(0, 0, width * 2, height)
-//      withAttributes:textAttributes];
-    [text drawAtPoint:CGPointMake(0, 0) withAttributes:textAttributes];
+    id tex = [m_renderer getTexture:text];
+    if (!tex) {
+        int scale = 1;
+        UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
+        //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
+        
+        int width = rect.GetWidth() * scale;
+        int height = rect.GetHeight() * scale;
+        Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
+        memset(data, 0, width * height * 4);
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
+                                                           colorSpace,
+                                                           kCGImageAlphaPremultipliedLast);
+        // push context之后才能绘制文字
+        UIGraphicsPushContext(context);
+        
+        CGContextTranslateCTM(context, 0, height);
+        CGContextScaleCTM(context, 1.0, -1.0);
+        CGContextSetShouldAntialias(context, YES);
+        
+        //NSString* text = @"\U0000e800";
+        // 文字颜色
+        UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
+                                        green:METAL_COLOR_BIT(textCmd->color.m_green)
+                                         blue:METAL_COLOR_BIT(textCmd->color.m_blue)
+                                        alpha:METAL_COLOR_BIT(textCmd->color.m_alpha)];
+        
+        // 设置文字绘制属性
+        NSMutableDictionary* textAttributes = [NSMutableDictionary new];
+        [textAttributes setValue:font forKey:NSFontAttributeName];
+        [textAttributes setValue:uiColor forKey:NSForegroundColorAttributeName];
+        //[textAttributes setValue:UIColor.blueColor forKey:NSForegroundColorAttributeName];
+        
+        // 开始绘制文字
+    //    [text drawInRect:CGRectMake(0, 0, width * 2, height)
+    //      withAttributes:textAttributes];
+        [text drawAtPoint:CGPointMake(0, 0) withAttributes:textAttributes];
 
-    UIGraphicsPopContext();
+        UIGraphicsPopContext();
+        
+        CGContextRelease(context);
+        CGColorSpaceRelease(colorSpace);
+        
+        [m_renderer setTextureData:text data:data width:width height:height];
+        
+        // 释放data
+        if (data) {
+            free(data);
+        }
+    }
     
-    CGContextRelease(context);
-    CGColorSpaceRelease(colorSpace);
-    
-    [m_renderer setTextureData:text data:data width:width height:height];
-    //[m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text];
     if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:text]) {
         Uniforms uniforms;
         uniforms.uType = 1;
         m_uniforms.addElement(uniforms);
-    }
-    
-    // 释放data
-    if (data) {
-        free(data);
     }
 }
 
@@ -433,6 +435,7 @@ LVoid RenderEngineIOS::appendUniforms(LInt type)
     m_uniforms.addElement(uniforms);
 }
 
+
 LVoid RenderEngineIOS::renderVideo(RenderCommand* cmd)
 {
     RenderVideoCommand* videoCmd = static_cast<RenderVideoCommand*>(cmd);
@@ -464,7 +467,7 @@ LVoid RenderEngineIOS::renderVideo(RenderCommand* cmd)
             CFRelease(metalTexture);
         }
         
-        [m_renderer setTexture:@"video" texture:texture];
+        [m_renderer setTexture:@"video" texture:texture pixel:pixelBuffer];
     }
     
     createVertexAttr(cmd->rect, cmd->color, m_vertexs);

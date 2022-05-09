@@ -28,6 +28,11 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
     BatchCommandRound,
 };
 
+@interface IOSTexture : NSObject
+-(instancetype)initTexture:(id<MTLTexture>)tex;
+-(instancetype)initTexture:(id<MTLTexture>)tex andPixel:(CVPixelBufferRef)ref;
+@end
+
 // IOSRenderer除了作为renderer使用，
 // 还有一个用途就是作为boyia和oc之间的桥梁
 @interface IOSRenderer : NSObject
@@ -55,6 +60,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height;
 
 -(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture;
+-(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture pixel:(CVPixelBufferRef)ref;
 -(id<MTLTexture>)getTexture:(NSString*)key;
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y;

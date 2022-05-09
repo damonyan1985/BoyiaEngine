@@ -73,6 +73,40 @@ private:
     yanbo::StringBuilder m_builder;
 };
 
+@interface IOSTexture()
+@property (nonatomic, strong) id<MTLTexture> tex;
+@end
+
+@implementation IOSTexture {
+    CVPixelBufferRef _pixelBuffer;
+}
+
+-(void)dealloc {
+    if (_pixelBuffer) {
+        CVPixelBufferRelease(_pixelBuffer);
+    }
+}
+
+-(instancetype)initTexture:(id<MTLTexture>)tex {
+    self = [self init];
+    if (self) {
+        self.tex = tex;
+        _pixelBuffer = NULL;
+    }
+    return self;
+}
+-(instancetype)initTexture:(id<MTLTexture>)tex andPixel:(CVPixelBufferRef)ref {
+    self = [self initTexture:tex];
+    if (self) {
+        _pixelBuffer = ref;
+    }
+    
+    return self;
+}
+
+@end
+
+
 
 @interface BatchCommand : NSObject
 
@@ -116,8 +150,6 @@ private:
 // url作为key进行纹理缓存，主要是处理重复下载问题用于Image
 @property (nonatomic, strong) NSMutableDictionary* textureCache;
 
-// 整型id作为key进行纹理缓存，主要是处理外界纹理的问题, 如视频，同层组件
-@property (nonatomic, strong) NSMutableDictionary* externalTextureCache;
 
 // 常量buffer判断图像类型
 //@property (nonatomic, strong) id<MTLBuffer> uniformsBuffer;
@@ -129,8 +161,6 @@ private:
 
 @property (nonatomic, strong) BoyiaTextInputView* textInputView;
 @property (nonatomic, strong) BoyiaTextInputViewHider* textInputHider;
-
-
 
 @end
 
@@ -492,7 +522,11 @@ void testHashMap()
 }
 
 -(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture {
-    [self.textureCache setObject:texture forKey:key];
+    [self.textureCache setObject:[[IOSTexture alloc]initTexture:texture] forKey:key];
+}
+
+-(void)setTexture:(NSString*)key texture:(id<MTLTexture>)texture pixel:(CVPixelBufferRef)ref {
+    [self.textureCache setObject:[[IOSTexture alloc]initTexture:texture andPixel:ref] forKey:key];
 }
 
 -(void)setTextureData:(NSString*)key data:(Byte*)data width:(NSUInteger)width height:(NSUInteger)height {
@@ -510,7 +544,7 @@ void testHashMap()
         return;
     }
         
-    [self.textureCache setObject:texture forKey:key];
+    [self.textureCache setObject:[[IOSTexture alloc]initTexture:texture] forKey:key];
     MTLRegion region = {{ 0, 0, 0 }, {width, height, 1}}; // 纹理上传的范围
     // UIImage的数据需要转成二进制才能上传，且不用jpg、png的NSData
     [texture replaceRegion:region
@@ -600,9 +634,9 @@ void testHashMap()
         [renderEncoder setFragmentBuffer:uniformsBuffer offset:0 atIndex:0];
         
         if (cmd.cmdType == BatchCommandTexture) {
-            id tex = self.textureCache[cmd.textureKey];
+            IOSTexture* tex = self.textureCache[cmd.textureKey];
             if (tex) {
-                [renderEncoder setFragmentTexture:tex atIndex:0];
+                [renderEncoder setFragmentTexture:tex.tex atIndex:0];
             } else {
                 // Error
             }
