@@ -8,9 +8,32 @@
 import UIKit
 import SwiftUI
 
+class Foo {
+    var x: IntObject?
+    var y: String?
+    
+    init() {
+        x = IntObject(0)
+        y = ""
+    }
+}
+
 class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let f = Foo()
+        let m = Mirror(reflecting: f)
+        for p in m.children {
+            let value = p.value
+            if var v = value as? IntObject {
+                //v.append("e")
+                v.value = 5
+                BoyiaLog.d("Foo v = \(f.x?.value)")
+            }
+        }
+        
+        
         
 //        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
 //        self.view.addSubview(view)
@@ -25,6 +48,9 @@ class SplashViewController: UIViewController {
         //self.view.backgroundColor = UIColor.green
         self.view.layer.addSublayer(gradient)
         //view.backgroundColor = UIColor(hex: 0xFFC125)
+        
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

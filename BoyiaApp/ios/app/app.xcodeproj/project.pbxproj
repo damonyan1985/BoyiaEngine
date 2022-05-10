@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C1B7BA0282A5EDA00AF3208 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */; };
+		4C1B7BA2282A5F2000AF3208 /* SqlHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */; };
+		4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA3282A8FF900AF3208 /* BaseType.swift */; };
 		4C4CA5FB2735301500C8622F /* core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E226CF835700946197 /* AppDelegate.m */; };
 		4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E526CF835700946197 /* SceneDelegate.m */; };
@@ -49,6 +52,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlHelper.swift; sourceTree = "<group>"; };
+		4C1B7BA3282A8FF900AF3208 /* BaseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseType.swift; sourceTree = "<group>"; };
 		4C7AE7DE26CF835700946197 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE7E126CF835700946197 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4C7AE7E226CF835700946197 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -87,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C1B7BA0282A5EDA00AF3208 /* libsqlite3.0.tbd in Frameworks */,
 				4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */,
 				4C7AE81126CF83D000946197 /* core.framework in Frameworks */,
 			);
@@ -136,6 +143,7 @@
 		4C7AE80F26CF83D000946197 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */,
 				4CFDE3FB26D48C9500A01683 /* MetalKit.framework */,
 				4C7AE81026CF83D000946197 /* core.framework */,
 			);
@@ -221,6 +229,8 @@
 				4CC8FB6E27EC4E4D00795648 /* Extension.swift */,
 				4CC8FB7B27EC6E0A00795648 /* Navigator.swift */,
 				4CF12FB4282382AA00F0067E /* PixelRatio.swift */,
+				4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */,
+				4C1B7BA3282A8FF900AF3208 /* BaseType.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -325,6 +335,7 @@
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
 				4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
+				4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
@@ -333,6 +344,7 @@
 				4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */,
 				4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
+				4C1B7BA2282A5F2000AF3208 /* SqlHelper.swift in Sources */,
 				4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */,
 				4CC8FB6027EAD0B400795648 /* BoyiaLog.swift in Sources */,
 			);
