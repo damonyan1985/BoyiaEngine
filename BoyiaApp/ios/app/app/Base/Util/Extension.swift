@@ -36,3 +36,22 @@ extension UIColor {
     }
 }
 
+extension HorizontalAlignment {
+  struct RightAlignment: AlignmentID {
+    static func defaultValue(in context: ViewDimensions) -> CGFloat {
+      return context[.trailing]
+    }
+  }
+  
+  static let right = HorizontalAlignment(RightAlignment.self)
+}
+
+extension HorizontalAlignment {
+    private enum HAlignment: AlignmentID {
+        static func defaultValue(in dimensions: ViewDimensions) -> CGFloat {
+            return dimensions[HorizontalAlignment.leading]
+        }
+    }
+    static let myHAlignment = HorizontalAlignment(HAlignment.self)
+}
+

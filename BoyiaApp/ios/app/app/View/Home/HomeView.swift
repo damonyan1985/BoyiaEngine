@@ -22,13 +22,34 @@ struct HomeView : View {
 //                }, label: {
 //                    Text("Test")
 //                })
-                VStack(alignment: .leading) {
-
-                    ScrollView {
-                        getAppListView()
+                
+                
+                
+            
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        ScrollView {
+                            getAppListView()
+                        }
                     }
-
-                }.offset(x: 0, y: BoyiaNavigator.getStatusbarHeight())
+                }
+                .offset(x: 0, y: PixelRatio.dp(value: 200))
+                
+                HStack {
+                    HStack {}
+                        .frame(width: PixelRatio.dp(value: 560))
+                    
+                    Image(systemName: "gearshape")
+                        .resizable()
+                        .frame(width: PixelRatio.dp(value: 50), height: PixelRatio.dp(value: 50))
+                        .foregroundColor(Color.black)
+                        .offset(x: 0, y: PixelRatio.dp(value: 26))
+                        
+                        //.alignmentGuide(.right, computeValue: { $0[.trailing] })
+                        //.alignmentGuide(.trailing, computeValue: { d in d[.trailing] - 5})
+                }
+                .frame(width: UIScreen.main.bounds.width, height: PixelRatio.dp(value: 160))
+                .background(Color(hex: 0xEDEDED))
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             .background(Color(Color.RGBColorSpace.sRGB, red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
@@ -38,7 +59,7 @@ struct HomeView : View {
     }
     
     func getAppListView() -> some View {
-        return LazyVGrid(columns: columns, alignment: .center, spacing: 10) {
+        return LazyVGrid(columns: columns, alignment: .center, spacing: PixelRatio.dp(value: 10)) {
             ForEach(model.appList, id: \.id) { item in
                 getAppItemView(item: item)
             }
@@ -66,7 +87,7 @@ struct HomeView : View {
             Text(item.name).frame(width: width, height: PixelRatio.dp(value: 36))
         }
         .frame(width: width, height: PixelRatio.dp(value: 260))
-        .background(Color.blue)
+        .background(Color(hex: 0xEDEDED))
         .onTapGesture {
             BoyiaNavigator.push(controller: BoyiaViewController())
         }

@@ -1,7 +1,7 @@
 //
 //  LoginView.swift
 //  登录模块主界面
-//
+//  使用系统图标构建app，SF Symbols
 //  Created by yanbo on 2022/3/24.
 //
 

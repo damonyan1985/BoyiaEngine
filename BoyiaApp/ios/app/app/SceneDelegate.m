@@ -17,6 +17,7 @@
 
 @implementation SceneDelegate
 
+// IOS AppIcon设置的时候必须是正方形不能带圆角，系统会自己处理
 // 此处添加根视图控制器
 -(void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.

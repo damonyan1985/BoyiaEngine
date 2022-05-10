@@ -11,6 +11,7 @@ import SwiftUI
 class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 //        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
 //        self.view.addSubview(view)
         
