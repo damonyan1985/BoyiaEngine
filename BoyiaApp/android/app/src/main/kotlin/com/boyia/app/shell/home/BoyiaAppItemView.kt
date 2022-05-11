@@ -3,8 +3,13 @@ package com.boyia.app.shell.home
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Outline
+import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -49,10 +54,25 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
         container?.addView(appNameView)
         appNameView?.setTextColor(Color.BLACK)
         appNameView?.setBackgroundColor(Color.WHITE)
+        appNameView?.gravity = Gravity.CENTER
+        appNameView?.ellipsize = TextUtils.TruncateAt.MARQUEE
 
         container?.setBackgroundColor(Color.WHITE)
 
         addView(container)
+
+        setRadius(dp(12));
+    }
+
+    // 设置圆角
+    private fun setRadius(radius: Int) {
+        outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline?) {
+                outline?.setRoundRect(0, 0, view.width, view.height, radius.toFloat())
+            }
+        }
+
+        clipToOutline = true
     }
 
     /**

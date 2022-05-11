@@ -25,7 +25,7 @@ struct HomeView : View {
                 
                 
                 
-            
+                // middle
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         ScrollView {
@@ -33,22 +33,23 @@ struct HomeView : View {
                         }
                     }
                 }
-                .offset(x: 0, y: PixelRatio.dp(value: 200))
+                .offset(x: 0, y: PixelRatio.dp(200))
                 
+                // header
                 HStack {
                     HStack {}
-                        .frame(width: PixelRatio.dp(value: 560))
+                        .frame(width: PixelRatio.dp(560))
                     
                     Image(systemName: "gearshape")
                         .resizable()
-                        .frame(width: PixelRatio.dp(value: 50), height: PixelRatio.dp(value: 50))
+                        .frame(width: PixelRatio.dp(50), height: PixelRatio.dp(50))
                         .foregroundColor(Color.black)
-                        .offset(x: 0, y: PixelRatio.dp(value: 26))
+                        .offset(x: 0, y: PixelRatio.dp(26))
                         
                         //.alignmentGuide(.right, computeValue: { $0[.trailing] })
                         //.alignmentGuide(.trailing, computeValue: { d in d[.trailing] - 5})
                 }
-                .frame(width: UIScreen.main.bounds.width, height: PixelRatio.dp(value: 160))
+                .frame(width: UIScreen.main.bounds.width, height: PixelRatio.dp(160))
                 .background(Color(hex: 0xEDEDED))
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -59,7 +60,7 @@ struct HomeView : View {
     }
     
     func getAppListView() -> some View {
-        return LazyVGrid(columns: columns, alignment: .center, spacing: PixelRatio.dp(value: 10)) {
+        return LazyVGrid(columns: columns, alignment: .center, spacing: PixelRatio.dp(10)) {
             ForEach(model.appList, id: \.id) { item in
                 getAppItemView(item: item)
             }
@@ -67,7 +68,7 @@ struct HomeView : View {
     }
     
     func getAppItemView(item: BoyiaAppItem) -> some View {
-        let width = PixelRatio.dp(value: 224)
+        let width = PixelRatio.dp(224)
         return VStack(alignment: .leading, spacing: 0) {
             
             AsyncImage(url: URL(string: item.cover)!) { phase in
@@ -75,7 +76,7 @@ struct HomeView : View {
                     image.resizable()
                         .transition(.slide)
                         .frame(width: width,
-                               height: PixelRatio.dp(value: 224),
+                               height: PixelRatio.dp(224),
                                alignment: .top)
                 } else if phase.error != nil {
                     Text("path: \(item.cover), error: \(phase.error!.localizedDescription) ")
@@ -84,10 +85,11 @@ struct HomeView : View {
                 }
             
             }
-            Text(item.name).frame(width: width, height: PixelRatio.dp(value: 36))
+            Text(item.name).frame(width: width, height: PixelRatio.dp(36))
         }
-        .frame(width: width, height: PixelRatio.dp(value: 260))
+        .frame(width: width, height: PixelRatio.dp(260))
         .background(Color(hex: 0xEDEDED))
+        .cornerRadius(PixelRatio.dp(12))
         .onTapGesture {
             BoyiaNavigator.push(controller: BoyiaViewController())
         }

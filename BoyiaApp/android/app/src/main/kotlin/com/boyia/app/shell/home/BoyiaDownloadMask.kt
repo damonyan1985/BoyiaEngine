@@ -16,6 +16,7 @@ import com.boyia.app.shell.update.Downloader.DownLoadProgressListener
 class BoyiaDownloadMask(url: String, context: Context, private val downloadCallback: DownloadCallback): View(context), DownLoadProgressListener {
     companion object {
         const val TAG = "BoyiaDownloadMask"
+        const val TEST_URL = "https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4"
     }
 
     private var progress: Float = 0F

@@ -43,8 +43,6 @@ class SqlHelper: NSObject {
         return (sqlite3_exec(db, sql, nil, nil, nil) == SQLITE_OK)
     }
     
-
-    
     func query<T: BoyiaData>(sql: String) -> [T]? {
         var stmt : OpaquePointer? = nil
         if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) != SQLITE_OK {
@@ -105,15 +103,13 @@ class SqlHelper: NSObject {
     }
     
     func setFieldValue(m: Mirror, index: Int32, stmt: OpaquePointer?) {
-        let name = String(cString: sqlite3_column_name(stmt, index)!, encoding: .utf8)
+        // 本地数据库中获取的名称需要转为小驼峰
+        let name = String(cString: sqlite3_column_name(stmt, index)!, encoding: .utf8)?.camelName
         print(name!)
         
         let type = sqlite3_column_type(stmt, index)
         
         for prop in m.children {
-//            if let value = prop.value as? String {
-//
-//            }
             if prop.label != name {
                 continue
             }

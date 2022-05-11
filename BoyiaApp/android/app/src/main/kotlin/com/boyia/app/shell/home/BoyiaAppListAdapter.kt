@@ -21,7 +21,6 @@ class BoyiaAppListAdapter(
         private val loader: IBoyiaHomeLoader): RecyclerView.Adapter<BoyiaAppItemHolder>() {
     companion object {
         const val TAG = "BoyiaAppListAdapter"
-        const val TEST_URL = "https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoyiaAppItemHolder {

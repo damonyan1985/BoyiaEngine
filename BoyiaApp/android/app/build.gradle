@@ -173,4 +173,7 @@ dependencies {
     implementation gradle.library.boyia_debugger
     implementation gradle.library.recycler_view
     implementation gradle.library.constraintlayout
+    implementation gradle.library.icon_core
+    implementation gradle.library.icon_lib
+    implementation gradle.library.icon_google_lib
 }

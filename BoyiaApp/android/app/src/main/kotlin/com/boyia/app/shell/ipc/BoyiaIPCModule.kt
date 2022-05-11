@@ -7,10 +7,12 @@ import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.BoyiaConstants.IPCNameConstants;
 import com.boyia.app.shell.ipc.handler.GetShareHandler
 import com.boyia.app.shell.ipc.handler.SetShareHandler
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
 class BoyiaIPCModule : IPCModule {
     private var binder: BoyiaHostBinder? = null
+    private var context: WeakReference<IModuleContext>? = null
     private lateinit var handlerMap: ConcurrentHashMap<String?, IBoyiaHandlerCreator>
 
     override fun getBinder(): IBinder? {
@@ -43,7 +45,9 @@ class BoyiaIPCModule : IPCModule {
         return handlerMap[key]?.create()
     }
 
-    override fun show(context: IModuleContext) {
+    override fun show(ctx: IModuleContext) {
+        // 保存context，用于handler调用时处理activity相关的操作
+        context = WeakReference(ctx)
     }
 
     override fun dispose() {

@@ -33,6 +33,13 @@ allprojects {
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaMaven/master/" }
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaUI/dev/maven/" }
     }
+
+    // all use a version androidx.core:core-ktx
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.core:core-ktx:1.6.0'
+        }
+    }
 }
 
 task clean(type: Delete) {

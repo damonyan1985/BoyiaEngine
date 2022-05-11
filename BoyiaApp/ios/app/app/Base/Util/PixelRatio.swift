@@ -31,11 +31,11 @@ class PixelRatio {
     }
     
     // 实际占用的像素
-    static func dp(value: Int) -> Double {
-        return dp(value: Double(value))
+    static func dp(_ value: Int) -> Double {
+        return dp(Double(value))
     }
     
-    static func dp(value: Double) -> Double {
+    static func dp(_ value: Double) -> Double {
         return round(value * radio())
     }
 }

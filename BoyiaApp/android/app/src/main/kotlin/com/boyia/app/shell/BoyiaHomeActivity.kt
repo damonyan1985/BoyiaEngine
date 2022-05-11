@@ -18,6 +18,7 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.home.BoyiaHomeFragment
 import com.boyia.app.shell.home.HomeModule
 import com.boyia.app.shell.module.IModuleContext
+import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.service.BoyiaNotifyService
 import java.util.concurrent.CopyOnWriteArrayList
@@ -47,6 +48,9 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         rootView?.id = View.generateViewId()
         rootView?.setBackgroundColor(Color.BLUE)
         setContentView(rootView)
+
+        val ipcModule = ModuleManager.instance().getModule(ModuleManager.IPC)
+        ipcModule?.show(this)
 
         val homeModule = ModuleManager.instance().getModule(ModuleManager.HOME)
         homeModule?.show(this)

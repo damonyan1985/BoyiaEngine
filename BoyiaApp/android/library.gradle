@@ -47,5 +47,9 @@ gradle.ext.library = [
     androidX: 'androidx.appcompat:appcompat:1.3.0',
     kotlin: 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0',
     recycler_view: 'androidx.recyclerview:recyclerview:1.1.0',
-    constraintlayout: 'androidx.constraintlayout:constraintlayout:1.1.3'
+    constraintlayout: 'androidx.constraintlayout:constraintlayout:1.1.3',
+    icon_core: 'com.mikepenz:iconics-core:5.3.3',
+    icon_lib: 'com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin',
+    icon_google_lib: 'com.mikepenz:google-material-typeface:4.0.0.2-kotlin',
+    icon_foundation_lib: 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin'
 ]

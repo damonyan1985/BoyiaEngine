@@ -55,3 +55,42 @@ extension HorizontalAlignment {
     static let myHAlignment = HorizontalAlignment(HAlignment.self)
 }
 
+extension String {
+    // 下划线转驼峰
+    public var camelName:String {
+        var result = ""
+        var flag = false
+        self.forEach { c in
+            let s = String(c)
+            if s == "_" {
+                flag = true
+                return
+            }
+            
+            if flag {
+                result += s.uppercased()
+                flag = false
+            } else {
+                result += s
+            }
+        }
+        return result
+    }
+    
+    // 驼峰转下划线，主要是用于本地数据库
+    public var underName: String {
+        var result = ""
+        self.forEach { c in
+            let num = c.unicodeScalars.map { $0.value }.last!
+            let s = String(c)
+            if num > 64 && num < 91 {
+                result += "_"
+                result += s.lowercased()
+            } else {
+                result += s
+            }
+        }
+        return result
+    }
+}
+
