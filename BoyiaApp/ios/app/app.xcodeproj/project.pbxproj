@@ -10,6 +10,11 @@
 		4C1B7BA0282A5EDA00AF3208 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */; };
 		4C1B7BA2282A5F2000AF3208 /* SqlHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */; };
 		4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA3282A8FF900AF3208 /* BaseType.swift */; };
+		4C1B7BA6282CB15600AF3208 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA5282CB15500AF3208 /* Permission.swift */; };
+		4C1B7BAA282CE04100AF3208 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1B7BA9282CE04100AF3208 /* CoreLocation.framework */; };
+		4C1B7BAC282CE7F800AF3208 /* BoyiaDownloadMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BAB282CE7F800AF3208 /* BoyiaDownloadMask.swift */; };
+		4C1B7BAE282CF02A00AF3208 /* BoyiaAppItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BAD282CF02A00AF3208 /* BoyiaAppItemView.swift */; };
+		4C1B7BB0282D206800AF3208 /* BoyiaSettingMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BAF282D206800AF3208 /* BoyiaSettingMenu.swift */; };
 		4C4CA5FB2735301500C8622F /* core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E226CF835700946197 /* AppDelegate.m */; };
 		4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7E526CF835700946197 /* SceneDelegate.m */; };
@@ -55,6 +60,12 @@
 		4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlHelper.swift; sourceTree = "<group>"; };
 		4C1B7BA3282A8FF900AF3208 /* BaseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseType.swift; sourceTree = "<group>"; };
+		4C1B7BA5282CB15500AF3208 /* Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		4C1B7BA7282CBDF300AF3208 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		4C1B7BA9282CE04100AF3208 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		4C1B7BAB282CE7F800AF3208 /* BoyiaDownloadMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaDownloadMask.swift; sourceTree = "<group>"; };
+		4C1B7BAD282CF02A00AF3208 /* BoyiaAppItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppItemView.swift; sourceTree = "<group>"; };
+		4C1B7BAF282D206800AF3208 /* BoyiaSettingMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaSettingMenu.swift; sourceTree = "<group>"; };
 		4C7AE7DE26CF835700946197 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE7E126CF835700946197 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4C7AE7E226CF835700946197 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -93,6 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C1B7BAA282CE04100AF3208 /* CoreLocation.framework in Frameworks */,
 				4C1B7BA0282A5EDA00AF3208 /* libsqlite3.0.tbd in Frameworks */,
 				4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */,
 				4C7AE81126CF83D000946197 /* core.framework in Frameworks */,
@@ -143,6 +155,8 @@
 		4C7AE80F26CF83D000946197 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C1B7BA9282CE04100AF3208 /* CoreLocation.framework */,
+				4C1B7BA7282CBDF300AF3208 /* Photos.framework */,
 				4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */,
 				4CFDE3FB26D48C9500A01683 /* MetalKit.framework */,
 				4C7AE81026CF83D000946197 /* core.framework */,
@@ -231,6 +245,7 @@
 				4CF12FB4282382AA00F0067E /* PixelRatio.swift */,
 				4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */,
 				4C1B7BA3282A8FF900AF3208 /* BaseType.swift */,
+				4C1B7BA5282CB15500AF3208 /* Permission.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -239,6 +254,9 @@
 			isa = PBXGroup;
 			children = (
 				4CC8FB7927EC601800795648 /* HomeView.swift */,
+				4C1B7BAB282CE7F800AF3208 /* BoyiaDownloadMask.swift */,
+				4C1B7BAD282CF02A00AF3208 /* BoyiaAppItemView.swift */,
+				4C1B7BAF282D206800AF3208 /* BoyiaSettingMenu.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -334,6 +352,7 @@
 				4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */,
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
 				4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */,
+				4C1B7BAC282CE7F800AF3208 /* BoyiaDownloadMask.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
 				4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
@@ -341,8 +360,11 @@
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
 				4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */,
 				4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */,
+				4C1B7BA6282CB15600AF3208 /* Permission.swift in Sources */,
+				4C1B7BB0282D206800AF3208 /* BoyiaSettingMenu.swift in Sources */,
 				4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */,
 				4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */,
+				4C1B7BAE282CF02A00AF3208 /* BoyiaAppItemView.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,
 				4C1B7BA2282A5F2000AF3208 /* SqlHelper.swift in Sources */,
 				4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */,

@@ -25,6 +25,22 @@ extension Color {
             opacity: alpha
         )
     }
+    
+    init(argb: UInt) {
+        let components = (
+            A: Double((argb >> 24) & 0xff) / 255,
+            R: Double((argb >> 16) & 0xff) / 255,
+            G: Double((argb >> 08) & 0xff) / 255,
+            B: Double((argb >> 00) & 0xff) / 255
+        )
+        self.init(
+            .sRGB,
+            red: components.R,
+            green: components.G,
+            blue: components.B,
+            opacity: components.A
+        )
+    }
 }
 
 extension UIColor {

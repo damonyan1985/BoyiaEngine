@@ -20,6 +20,8 @@ class BoyiaNavigator {
         findNavigator()?.pushViewController(controller, animated: true)
     }
     
+    // static func修饰的方法不能被子类重写
+    // class func修饰的方法能被子类重写
     static func pop() {
         findNavigator()?.popViewController(animated: true)
     }

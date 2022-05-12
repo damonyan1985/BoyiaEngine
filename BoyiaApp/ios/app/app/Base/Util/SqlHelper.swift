@@ -24,12 +24,12 @@ class SqlHelper: NSObject {
         queue = DispatchQueue(label: SqlConstants.DB_NAME, attributes: [])
     }
     
-    func open() -> Bool {
+    func open(filePath: String = SqlConstants.DB_NAME) -> Bool {
         let docDir: String! = NSSearchPathForDirectoriesInDomains(
             FileManager.SearchPathDirectory.documentDirectory,
             FileManager.SearchPathDomainMask.userDomainMask, true).first
         
-        let path =  docDir + "/" + SqlConstants.DB_NAME
+        let path =  docDir + "/" + filePath
         let error = sqlite3_open(path, &db)
         if error != SQLITE_OK {
             sqlite3_close(db)
@@ -63,34 +63,7 @@ class SqlHelper: NSObject {
                 let obj = T()
                 list.append(obj)
                 let mirror = Mirror(reflecting: obj)
-                
-            
-                
                 // 取出列的名称
-                let columnName = sqlite3_column_name(stmt, i)
-                let columnNameStr = String(cString: columnName!, encoding: .utf8)
-                print(columnNameStr!)
-                // 取出列的值
-                // 不同的数据类型，需要执行不同函数来获取
-                // 获取每列的数据类型
-//                let columnType = sqlite3_column_type(stmt, i)
-//                // 根据不同的数据类型，使用不同的函数，获取结果
-//                if columnType == SQLITE_INTEGER {
-//                    let value = sqlite3_column_int(stmt, i)
-//
-//                }
-//
-//                if columnType == SQLITE_FLOAT {
-//                    let value = sqlite3_column_double(stmt, i)
-//                    print(value)
-//                }
-//
-//                if columnType == SQLITE_TEXT {
-//                    let value = sqlite3_column_text(stmt, i)
-//                    //let valueInt8 = UnsafePointer<CChar>(value)
-//                    let valueStr = String(cString: value!)
-//                    print(valueStr)
-//                }
                 setFieldValue(m: mirror, index: i, stmt: stmt)
             }
         }
