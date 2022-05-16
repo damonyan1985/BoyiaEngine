@@ -14,28 +14,19 @@ struct HomeView : View {
     
     var columns: [GridItem] = //[GridItem(.adaptive(minimum: 50)), GridItem(.adaptive(minimum: 50))]
             Array(repeating: .init(.flexible()), count: 3)
-    
+        
     var body: some View {
         ZStack(alignment: .leading) {
             
             buildContent()
-//                .overlay(
-//                    Group {
-//                        if showSidebar {
-//                            Color.white
-//                                .opacity(showSidebar ? 0.01 : 0)
-//                                .onTapGesture {
-//                                    self.showSidebar = false
-//                                }
-//                        } else {
-//                            Color.clear
-//                            .opacity(showSidebar ? 0 : 0)
-//                            .onTapGesture {
-//                                self.showSidebar = false
-//                            }
-//                        }
-//                    }
-//                )
+                .overlay(
+                    Color.black
+                        .offset(x: 0, y: -PixelRatio.dp(10))
+                        .opacity(offset > 0 ? 0.6 : 0)
+                        .onTapGesture {
+                            offset = 0
+                        }
+                )
                 .offset(x: offset, y: 0)
                 .animation(.default, value: offset)
                 
@@ -65,7 +56,7 @@ struct HomeView : View {
                     }
                 }
                 .offset(x: 0, y: PixelRatio.dp(200))
-                .background(Color(hex: 0xFF00FF))
+                //.background(Color(hex: 0xFF00FF))
                 
                 // header
                 HStack {

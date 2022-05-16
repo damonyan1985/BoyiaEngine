@@ -701,4 +701,8 @@ void testHashMap()
     NSString* fontName = CFBridgingRelease(CGFontCopyPostScriptName(fontRef));
     NSLog(@"fontName=%@", fontName);
 }
+
+-(void)doesNotRecognizeSelector:(SEL)aSelector {
+    NSLog(@"Cannot find method %@", NSStringFromSelector(aSelector));
+}
 @end

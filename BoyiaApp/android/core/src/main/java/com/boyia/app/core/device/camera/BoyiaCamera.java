@@ -21,6 +21,7 @@ import android.os.HandlerThread;
 import android.util.Size;
 
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.texture.BoyiaTexture;
 
 import java.nio.ByteBuffer;
@@ -169,7 +170,7 @@ public class BoyiaCamera {
             }
         } catch (CameraAccessException e) {
             e.printStackTrace();
-            //BoyiaLog.e(TAG, "creatCamera error", e);
+            BoyiaLog.e(TAG, "creatCamera error", e);
         }
 
         initThread();

@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import UIKit
 
 class BoyiaCamera : NSObject {
     var captureDevice: AVCaptureDevice?;
@@ -16,10 +17,12 @@ class BoyiaCamera : NSObject {
         self.initCamera();
     }
     
-    func initCamera() {
+    // 默认使用前置摄像头
+    func initCamera(position: AVCaptureDevice.Position = .front) {
         let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera], mediaType: AVMediaType.video, position: AVCaptureDevice.Position.front).devices;
         
-        guard let device = devices.filter({$0.position == .front}).first else {
+        
+        guard let device = devices.filter({$0.position == position}).first else {
             return;
         }
         

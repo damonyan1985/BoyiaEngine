@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C1491012832286E004E0E50 /* HttpUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1491002832286E004E0E50 /* HttpUtil.swift */; };
 		4C1B7BA0282A5EDA00AF3208 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */; };
 		4C1B7BA2282A5F2000AF3208 /* SqlHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */; };
 		4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7BA3282A8FF900AF3208 /* BaseType.swift */; };
@@ -38,7 +39,6 @@
 		4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */; };
 		4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */; };
 		4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */; };
-		4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */; };
 		4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB4282382AA00F0067E /* PixelRatio.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
@@ -57,6 +57,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C1491002832286E004E0E50 /* HttpUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpUtil.swift; sourceTree = "<group>"; };
 		4C1B7B9F282A5EDA00AF3208 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlHelper.swift; sourceTree = "<group>"; };
 		4C1B7BA3282A8FF900AF3208 /* BaseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseType.swift; sourceTree = "<group>"; };
@@ -94,7 +95,6 @@
 		4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListModel.swift; sourceTree = "<group>"; };
 		4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppItem.swift; sourceTree = "<group>"; };
 		4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListData.swift; sourceTree = "<group>"; };
-		4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppModel.swift; sourceTree = "<group>"; };
 		4CF12FB4282382AA00F0067E /* PixelRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelRatio.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -246,6 +246,7 @@
 				4C1B7BA1282A5F2000AF3208 /* SqlHelper.swift */,
 				4C1B7BA3282A8FF900AF3208 /* BaseType.swift */,
 				4C1B7BA5282CB15500AF3208 /* Permission.swift */,
+				4C1491002832286E004E0E50 /* HttpUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -267,7 +268,6 @@
 				4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */,
 				4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */,
 				4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */,
-				4CF12FB2281959B000F0067E /* BoyiaAppModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -349,11 +349,11 @@
 				4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */,
 				4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */,
 				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
-				4CF12FB3281959B100F0067E /* BoyiaAppModel.swift in Sources */,
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
 				4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */,
 				4C1B7BAC282CE7F800AF3208 /* BoyiaDownloadMask.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
+				4C1491012832286E004E0E50 /* HttpUtil.swift in Sources */,
 				4C1B7BA4282A8FF900AF3208 /* BaseType.swift in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,
