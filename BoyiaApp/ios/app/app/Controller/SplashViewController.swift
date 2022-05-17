@@ -22,6 +22,8 @@ class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //let url = HttpUtil.HttpConstants.LOGIN_URL
+        
 //        let f = Foo()
 //        let m = Mirror(reflecting: f)
 //        for p in m.children {
