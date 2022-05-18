@@ -12,13 +12,14 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 import com.boyia.app.common.utils.BoyiaUtils.dp
 import com.boyia.app.shell.R
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
+import com.boyia.app.shell.module.IHomeModule
+import com.boyia.app.shell.module.ModuleManager
 
-class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
+class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
     companion object {
         const val GRID_SPAN_NUM = 3
         const val HEADER_BG_COLOR = 0xFFEDEDED.toInt()
@@ -43,7 +44,7 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         rootLayout?.setBackgroundColor(CONTAINER_BG_COLOR)
         rootLayout?.orientation = LinearLayout.VERTICAL
 
-        headerView = BoyiaHomeHeader(context)
+        headerView = BoyiaHomeHeader(context, loader)
         footerView = BoyiaHomeFooter(context)
 
         appListAdapter = BoyiaAppListAdapter(requireContext(), loader)
@@ -78,7 +79,7 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
         return rootLayout
     }
 
-    class BoyiaHomeHeader(context: Context?) : RelativeLayout(context) {
+    class BoyiaHomeHeader(context: Context?, module: IHomeModule) : RelativeLayout(context) {
         private var imageSetting: ImageView? = null
 
         init {
@@ -102,6 +103,14 @@ class BoyiaHomeFragment(private val loader: IBoyiaHomeLoader): Fragment() {
             settingParam.addRule(ALIGN_PARENT_RIGHT)
             settingParam.bottomMargin = dp(20)
             settingParam.rightMargin = dp(20)
+
+            imageSetting?.setOnClickListener {
+                val ctx = module.getContext()
+                if (ctx != null) {
+                    val settingModule = ModuleManager.instance().getModule(ModuleManager.SETTING)
+                    settingModule?.show(ctx)
+                }
+            }
 
             addView(imageSetting, settingParam);
         }

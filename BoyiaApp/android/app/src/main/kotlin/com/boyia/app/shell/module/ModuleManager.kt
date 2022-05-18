@@ -7,6 +7,7 @@ class ModuleManager {
         const val LOGIN = "login"
         const val HOME = "home"
         const val IPC = "ipc"
+        const val SETTING = "setting"
 
         fun instance() = Holder.manager
     }

@@ -1,4 +1,7 @@
 package com.boyia.app.shell.module
 
-interface IHomeModule: IModule {
+import com.boyia.app.shell.api.IBoyiaHomeLoader
+
+interface IHomeModule: IModule, IBoyiaHomeLoader {
+    fun getContext(): IModuleContext?
 }
