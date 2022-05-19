@@ -6,21 +6,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 import com.boyia.app.common.utils.BoyiaUtils.dp
 import com.boyia.app.shell.R
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.IHomeModule
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.setting.BoyiaSettingModule
+import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
+import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 
 class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
     companion object {
+        const val TAG = "BoyiaHomeFragment"
         const val GRID_SPAN_NUM = 3
         const val HEADER_BG_COLOR = 0xFFEDEDED.toInt()
         const val CONTAINER_BG_COLOR = 0xFF4F4F4F.toInt()
@@ -30,7 +36,10 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
     private var footerView: BoyiaHomeFooter? = null
     private var middleView: RecyclerView? = null
     private var appListAdapter: BoyiaAppListAdapter? = null
-    private var rootLayout: LinearLayout? = null
+    private var rootLayout: FrameLayout? = null
+    private var contentLayout: LinearLayout? = null
+    private var maskView: FrameLayout? = null
+    private var listener: SlideListener? = null
 
     // 要防止onCreateView被多次调用
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,11 +49,55 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
             return rootLayout
         }
 
-        rootLayout = LinearLayout(context)
-        rootLayout?.setBackgroundColor(CONTAINER_BG_COLOR)
-        rootLayout?.orientation = LinearLayout.VERTICAL
+        contentLayout = LinearLayout(context)
+        contentLayout?.setBackgroundColor(CONTAINER_BG_COLOR)
+        contentLayout?.orientation = LinearLayout.VERTICAL
 
-        headerView = BoyiaHomeHeader(context, loader)
+        listener = object: SlideListener {
+            private var callback: SlideCallback? = null
+            override fun onStart(value: Float) {
+                BoyiaLog.d(TAG, "maskView start")
+                if (maskView != null) {
+                    return
+                }
+                maskView = FrameLayout(requireContext())
+                val lp = FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+
+                maskView?.setBackgroundColor(0x88000000.toInt())
+                maskView?.alpha = value
+
+                maskView?.setOnClickListener {
+                    doHide()
+                }
+                rootLayout?.addView(maskView, lp)
+            }
+
+            override fun onSlide(value: Float, opacity: Float) {
+                rootLayout!!.x = value
+                maskView?.alpha = opacity
+                BoyiaLog.d(TAG, "rootLayout.x = ${rootLayout!!.x} value = $value and opacity = $opacity")
+            }
+
+            override fun doHide() {
+                callback?.doHide()
+            }
+
+            override fun onEnd(show: Boolean) {
+                if (!show) {
+                    rootLayout?.removeView(maskView)
+                    maskView = null
+                }
+            }
+
+            override fun setSlideCallback(cb: SlideCallback) {
+                callback = cb
+            }
+        }
+
+        headerView = BoyiaHomeHeader(context, loader, listener!!)
         footerView = BoyiaHomeFooter(context)
 
         appListAdapter = BoyiaAppListAdapter(requireContext(), loader)
@@ -57,14 +110,14 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 dp(130)
         )
-        rootLayout?.addView(headerView, headerParam)
+        contentLayout?.addView(headerView, headerParam)
 
         val middleParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         )
-        rootLayout?.addView(middleView, middleParam)
-        rootLayout?.addView(footerView)
+        contentLayout?.addView(middleView, middleParam)
+        contentLayout?.addView(footerView)
 
         activity?.window?.statusBarColor = HEADER_BG_COLOR
         HandlerFoundation.setStatusbarTextColor(activity, true)
@@ -76,10 +129,17 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
             }
         })
 
+        rootLayout = FrameLayout(requireContext())
+
+        val lp = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        rootLayout?.addView(contentLayout, lp)
         return rootLayout
     }
 
-    class BoyiaHomeHeader(context: Context?, module: IHomeModule) : RelativeLayout(context) {
+    class BoyiaHomeHeader(context: Context?, module: IHomeModule, listener: SlideListener) : RelativeLayout(context) {
         private var imageSetting: ImageView? = null
 
         init {
@@ -107,8 +167,9 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
             imageSetting?.setOnClickListener {
                 val ctx = module.getContext()
                 if (ctx != null) {
-                    val settingModule = ModuleManager.instance().getModule(ModuleManager.SETTING)
-                    settingModule?.show(ctx)
+                    val settingModule = ModuleManager.instance().getModule(ModuleManager.SETTING) as BoyiaSettingModule
+                    settingModule.show(ctx)
+                    settingModule.setSlideListener(listener)
                 }
             }
 
