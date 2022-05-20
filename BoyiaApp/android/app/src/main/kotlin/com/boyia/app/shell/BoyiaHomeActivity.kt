@@ -47,6 +47,8 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         rootView = FrameLayout(this)
         rootView?.id = View.generateViewId()
         rootView?.setBackgroundColor(Color.BLUE)
+        rootView?.fitsSystemWindows = true
+
         setContentView(rootView)
 
         val ipcModule = ModuleManager.instance().getModule(ModuleManager.IPC)

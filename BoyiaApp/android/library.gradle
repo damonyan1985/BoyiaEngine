@@ -51,5 +51,6 @@ gradle.ext.library = [
     icon_core: 'com.mikepenz:iconics-core:5.3.3',
     icon_lib: 'com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin',
     icon_google_lib: 'com.mikepenz:google-material-typeface:4.0.0.2-kotlin',
-    icon_foundation_lib: 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin'
+    icon_foundation_lib: 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin',
+    coordinator_lib: 'androidx.coordinatorlayout:coordinatorlayout:1.2.0',
 ]

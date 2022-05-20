@@ -176,4 +176,5 @@ dependencies {
     implementation gradle.library.icon_core
     implementation gradle.library.icon_lib
     implementation gradle.library.icon_google_lib
+    implementation gradle.library.coordinator_lib
 }

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils.dp
+import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
@@ -38,6 +39,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() 
         }
 
         rootLayout = RelativeLayout(context)
+        rootLayout?.id = View.generateViewId()
         val lp = ViewGroup.LayoutParams(
             SETTING_WIDTH,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -52,8 +54,24 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() 
                 animator?.reverse()
             }
         })
+        initLayout()
         slideToDisplay(0F, SETTING_WIDTH.toFloat())
         return rootLayout
+    }
+
+    private fun initLayout() {
+        val avatarView = BoyiaImageView(context, dp(54))
+        val avatarParam = RelativeLayout.LayoutParams(
+                dp(108),
+                dp(108)
+        )
+
+        avatarParam.addRule(RelativeLayout.ALIGN_PARENT_TOP, rootLayout!!.id)
+        avatarParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        avatarParam.topMargin = dp(108)
+
+        rootLayout?.addView(avatarView, avatarParam)
+        avatarView.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
     }
 
     private fun slideToDisplay(start: Float, end: Float) {

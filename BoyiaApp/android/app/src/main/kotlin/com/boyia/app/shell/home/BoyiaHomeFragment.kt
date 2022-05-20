@@ -130,7 +130,6 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
         })
 
         rootLayout = FrameLayout(requireContext())
-
         val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
