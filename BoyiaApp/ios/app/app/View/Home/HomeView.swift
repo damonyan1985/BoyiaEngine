@@ -11,6 +11,7 @@ struct HomeView : View {
     @ObservedObject var model = BoyiaAppListModel()
     
     @State var offset: CGFloat = 0
+    @State var showSetting = false
     
     var columns: [GridItem] = //[GridItem(.adaptive(minimum: 50)), GridItem(.adaptive(minimum: 50))]
             Array(repeating: .init(.flexible()), count: 3)
@@ -30,9 +31,23 @@ struct HomeView : View {
                 .offset(x: offset, y: 0)
                 .animation(.default, value: offset)
                 
-            BoyiaSettingMenu()
-                .offset(x: offset - PixelRatio.dp(200), y: 0)
-                .animation(.default, value: offset)
+//            BoyiaSettingMenu()
+//                .offset(x: offset - SettingConstants.SETTING_WIDTH, y: 0)
+//                .animation(.default, value: offset)
+            if (showSetting) {
+                BoyiaSettingMenu()
+                    .modifier(BoyiaTranslate(offset: offset - SettingConstants.SETTING_WIDTH, onCompletion: {
+                        if (offset == 0) {
+                            showSetting = false
+                        }
+                    }))
+                    .animation(.spring(), value: offset)
+                    .onAppear {
+                        DispatchQueue.main.async {
+                            offset = SettingConstants.SETTING_WIDTH
+                        }
+                    }
+            }
         }
     }
     
@@ -69,7 +84,9 @@ struct HomeView : View {
                         .foregroundColor(Color.black)
                         .offset(x: 0, y: PixelRatio.dp(26))
                         .onTapGesture {
-                            offset = PixelRatio.dp(200)
+                            showSetting = true
+                            
+                            //offset = SettingConstants.SETTING_WIDTH
                         }
                         
                         //.alignmentGuide(.right, computeValue: { $0[.trailing] })

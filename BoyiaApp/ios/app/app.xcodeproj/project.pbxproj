@@ -26,6 +26,7 @@
 		4C7AE7F426CF835B00946197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7F326CF835B00946197 /* main.m */; };
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
 		4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */; };
+		4CBE2E55283B9C7C001F0729 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBE2E54283B9C7C001F0729 /* Animations.swift */; };
 		4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5527E9BF4B00795648 /* Uploader.swift */; };
 		4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5B27EABA4B00795648 /* BoyiaCamera.swift */; };
 		4CC8FB6027EAD0B400795648 /* BoyiaLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5F27EAD0B400795648 /* BoyiaLog.swift */; };
@@ -82,6 +83,7 @@
 		4C7AE81026CF83D000946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CA99D9B272FE8AE004FAD07 /* app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "app-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		4CBE2E54283B9C7C001F0729 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		4CC8FB5527E9BF4B00795648 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		4CC8FB5B27EABA4B00795648 /* BoyiaCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaCamera.swift; sourceTree = "<group>"; };
 		4CC8FB5F27EAD0B400795648 /* BoyiaLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaLog.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				4C1B7BA3282A8FF900AF3208 /* BaseType.swift */,
 				4C1B7BA5282CB15500AF3208 /* Permission.swift */,
 				4C1491002832286E004E0E50 /* HttpUtil.swift */,
+				4CBE2E54283B9C7C001F0729 /* Animations.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */,
 				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
+				4CBE2E55283B9C7C001F0729 /* Animations.swift in Sources */,
 				4CF12FB5282382AA00F0067E /* PixelRatio.swift in Sources */,
 				4C1B7BAC282CE7F800AF3208 /* BoyiaDownloadMask.swift in Sources */,
 				4C7AE7E326CF835700946197 /* AppDelegate.m in Sources */,
