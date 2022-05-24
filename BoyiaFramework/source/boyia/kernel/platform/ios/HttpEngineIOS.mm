@@ -39,7 +39,9 @@
         case kHttpPost: {
             request.HTTPMethod = @"POST";
             // 设置post数据
-            request.HTTPBody = [self.postData dataUsingEncoding:NSUTF8StringEncoding];
+            if (self.postData) {
+                request.HTTPBody = [self.postData dataUsingEncoding:NSUTF8StringEncoding];
+            }
         } break;
         default:
             break;
@@ -86,9 +88,13 @@
     [self loadUrl:method url:nsUrl headers:headers callback:cb];
 }
 
--(void)setData: (const char*)data size:(NSInteger)size {
+-(void)setData:(const char*)data size:(NSInteger)size {
     //self.postData = [[NSString alloc] initWithUTF8String: data];
     self.postData = [[NSString alloc]initWithBytes:data length:size encoding:NSUTF8StringEncoding];
+}
+
+-(void)setData:(NSString*)data {
+    self.postData = data;
 }
 
 @end

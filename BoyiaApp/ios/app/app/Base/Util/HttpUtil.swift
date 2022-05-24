@@ -42,15 +42,35 @@ class HttpUtil {
         static let API_VERSION = "v1"
         
         static let LOGIN_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/login"
+        static let LOGOUT_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/logout"
         static let APP_LIST_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/appList"
     }
     // 业务数据请求接口
-    static func requestImpl<T: Decodable>(url: String, cb: @escaping ModelDataCallback<T>) {
+    static func get<T: Decodable>(
+        url: String,
+        headers: [AnyHashable : Any]? = nil,
+        cb: @escaping ModelDataCallback<T>) {
         let engine = HttpEngineIOS()
         engine.loadUrl(
             HttpMethod.get,
             url: url,
-            headers: nil,
+            headers: headers,
+            callback: HttpCallbackImpl<T>(cb: cb))
+    }
+    
+    static func post<T: Decodable>(
+        url: String,
+        data: String? = nil,
+        headers: [AnyHashable : Any]? = nil,
+        cb: @escaping ModelDataCallback<T>) {
+        let engine = HttpEngineIOS()
+        if data != nil {
+            engine.setData(data)
+        }
+        engine.loadUrl(
+            HttpMethod.post,
+            url: url,
+            headers: headers,
             callback: HttpCallbackImpl<T>(cb: cb))
     }
 }

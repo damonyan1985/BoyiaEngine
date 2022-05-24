@@ -37,41 +37,103 @@ struct LoginView : View {
     @State var account: String = ""
     @State var password: String = ""
     
+    @EnvironmentObject var loginModel: BoyiaLoginModel
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     var body: some View {
+        let iconSize = PixelRatio.dp(36)
+        let buttonSize = PixelRatio.dp(64)
 //        Image(systemName: "person")
 //            .foregroundColor(Color.white)
-        NavigationView {
             // 纵向，类似flutter中的column
-            VStack {
-                // 横向，类似flutter中的row
-                HStack {
-                    Image(systemName: "person")
-                        .foregroundColor(Color.white)
-                    //Spacer(minLength: 20)
-                    TextField("User:", text: $account, onCommit: {
-                        
-                    })
-                        //.labelStyle(ShadowLabelStyle())
-                        .frame(width: 200, height: 60, alignment: Alignment.leading)
-                        .textFieldStyle(UnderlineTextFieldStyle())
-                        .foregroundColor(Color.white)
-                }.frame(width: 300, alignment: Alignment.bottom)
-                Divider()
-                HStack {
-                    Image(systemName: "lock")
-                        .foregroundColor(Color.white)
-                    TextField("Password:", text: $password, onCommit: {})
-                        .frame(width: 200, height: 60, alignment: Alignment.leading)
-                        .foregroundColor(Color.white)
-                        .textFieldStyle(UnderlineTextFieldStyle())
+        VStack(alignment: .center, spacing: 0) {
+            marginTop(top: PixelRatio.dp(540))
+            // 横向，类似flutter中的row
+            HStack {
+                Image(systemName: "person")
+                    .resizable()
+                    .foregroundColor(Color(hex: 0xCAE1FF))
+                    .frame(width: iconSize, height: iconSize)
+                //Spacer(minLength: 20)
+                TextField("User:", text: $account, onCommit: {
                     
-                }.frame(width: 300)
-            }
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .background(Color(Color.RGBColorSpace.sRGB, red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
-            .edgesIgnoringSafeArea(.all)
+                })
+                    //.labelStyle(ShadowLabelStyle())
+                    .frame(width: 200, height: 60, alignment: Alignment.leading)
+                    .textFieldStyle(UnderlineTextFieldStyle())
+                    .foregroundColor(Color.white)
+            }.frame(width: 300, alignment: Alignment.bottom)
+            Divider()
+            HStack {
+                Image(systemName: "lock")
+                    .resizable()
+                    .foregroundColor(Color(hex: 0xCAE1FF))
+                    .frame(width: iconSize, height: iconSize)
+                
+                TextField("Password:", text: $password, onCommit: {})
+                    .frame(width: 200, height: 60, alignment: Alignment.leading)
+                    .foregroundColor(Color.white)
+                    .textFieldStyle(UnderlineTextFieldStyle())
+                
+            }.frame(width: 300)
             
+            marginTop(top: PixelRatio.dp(120))
+            //Spacer()
+            HStack {
+                Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "arrow.left.circle")
+                        .resizable()
+                        .foregroundColor(Color(hex: 0xCAE1FF))
+                        .frame(width: buttonSize, height: buttonSize)
+                }
+                
+                marginLeft(left: PixelRatio.dp(54))
+                
+                Button(action: {
+                    //self.presentationMode.wrappedValue.dismiss()
+//                        HttpUtil.requestImpl(url: HttpUtil.HttpConstants.LOGIN_URL, cb: { ()
+//
+//                        })
+                    
+                    loginModel.login(
+                        name: self.account,
+                        password: self.password,
+                        onComplete: { result in
+                            if result {
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+                    )
+                }) {
+                    Image(systemName: "arrow.right.circle")
+                        .resizable()
+                        .foregroundColor(Color(hex: 0xCAE1FF))
+                        .frame(width: buttonSize, height: buttonSize)
+                }
+            }
+//                Image(systemName: "arrow.left.circle")
+//                    .foregroundColor(Color.white)
+//                    .onTapGesture {
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    }
+            //marginTop(top: PixelRatio.dp(720))
+            Spacer()
         }
-        .navigationBarHidden(true) // 隐藏导航栏
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .background(Color(Color.RGBColorSpace.sRGB, red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
+        .edgesIgnoringSafeArea(.all)
+        .navigationBarHidden(true)
+         // 隐藏导航栏
+    }
+    
+    func marginTop(top: Double) -> some View {
+        return VStack{}.frame(width: 0, height: top, alignment: .top);
+    }
+    
+    func marginLeft(left: Double) -> some View {
+        return HStack{}.frame(width: left, height: 0, alignment: .leading)
     }
 }

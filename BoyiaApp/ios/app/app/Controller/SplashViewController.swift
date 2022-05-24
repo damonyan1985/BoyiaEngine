@@ -38,7 +38,7 @@ class SplashViewController: UIViewController {
         
 //        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
 //        self.view.addSubview(view)
-        
+    
         let gradient = CAGradientLayer();
         gradient.frame = view.bounds
         // 渐变使用CGColor
@@ -49,9 +49,6 @@ class SplashViewController: UIViewController {
         //self.view.backgroundColor = UIColor.green
         self.view.layer.addSublayer(gradient)
         //view.backgroundColor = UIColor(hex: 0xFFC125)
-        
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -18,7 +18,7 @@ class BoyiaAppListModel: ObservableObject {
     
     // 业务数据请求接口
     func requestAppList() {
-        HttpUtil.requestImpl(url: APP_LIST_URL, cb: { (data: BoyiaAppListData) in
+        HttpUtil.get(url: APP_LIST_URL, cb: { (data: BoyiaAppListData) in
             DispatchQueue.main.async {
                 self.appList.append(contentsOf: data.apps)
                 BoyiaLog.d("appList first name = \(self.appList[0].appId)")

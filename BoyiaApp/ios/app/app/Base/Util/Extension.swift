@@ -43,6 +43,7 @@ extension Color {
     }
 }
 
+// UIColor扩展颜色
 extension UIColor {
     convenience init(hex: Int, alpha: CGFloat = 1) {
         let red = (CGFloat((hex & 0xFF0000) >> 16)) / 255
@@ -71,6 +72,7 @@ extension HorizontalAlignment {
     static let myHAlignment = HorizontalAlignment(HAlignment.self)
 }
 
+// 扩展string下划线驼峰互转功能
 extension String {
     // 下划线转驼峰
     public var camelName:String {
@@ -107,6 +109,18 @@ extension String {
             }
         }
         return result
+    }
+}
+
+// swiftui添加侧滑
+extension UINavigationController: UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+    
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return viewControllers.count > 1
     }
 }
 

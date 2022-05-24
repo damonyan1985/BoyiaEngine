@@ -10,45 +10,53 @@ import SwiftUI
 struct HomeView : View {
     @ObservedObject var model = BoyiaAppListModel()
     
+    // @State只针对值类型，不能针对对象类型
     @State var offset: CGFloat = 0
     @State var showSetting = false
+    let loginModel = BoyiaLoginModel()
     
     var columns: [GridItem] = //[GridItem(.adaptive(minimum: 50)), GridItem(.adaptive(minimum: 50))]
             Array(repeating: .init(.flexible()), count: 3)
         
     var body: some View {
-        ZStack(alignment: .leading) {
-            
-            buildContent()
-                .overlay(
-                    Color.black
-                        .offset(x: 0, y: -PixelRatio.dp(10))
-                        .opacity(offset > 0 ? 0.6 : 0)
-                        .onTapGesture {
-                            offset = 0
-                        }
-                )
-                .offset(x: offset, y: 0)
-                .animation(.default, value: offset)
+        NavigationView {
+            ZStack(alignment: .leading) {
                 
-//            BoyiaSettingMenu()
-//                .offset(x: offset - SettingConstants.SETTING_WIDTH, y: 0)
-//                .animation(.default, value: offset)
-            if (showSetting) {
-                BoyiaSettingMenu()
-                    .modifier(BoyiaTranslate(offset: offset - SettingConstants.SETTING_WIDTH, onCompletion: {
-                        if (offset == 0) {
-                            showSetting = false
+                buildContent()
+                    .overlay(
+                        Color.black
+                            .offset(x: 0, y: -PixelRatio.dp(10))
+                            .opacity(offset > 0 ? 0.6 : 0)
+                            .onTapGesture {
+                                offset = 0
+                            }
+                    )
+                    .offset(x: offset, y: 0)
+                    .animation(.default, value: offset)
+                    
+    //            BoyiaSettingMenu()
+    //                .offset(x: offset - SettingConstants.SETTING_WIDTH, y: 0)
+    //                .animation(.default, value: offset)
+                if (showSetting) {
+                    BoyiaSettingMenu()
+                        .modifier(BoyiaTranslate(offset: offset - SettingConstants.SETTING_WIDTH, onCompletion: {
+                            if (offset == 0) {
+                                BoyiaLog.d("islogin=\(loginModel.isLogin)")
+                                showSetting = false
+                            }
+                        }))
+                        .animation(.spring(), value: offset)
+                        .onAppear {
+                            DispatchQueue.main.async {
+                                offset = SettingConstants.SETTING_WIDTH
+                            }
                         }
-                    }))
-                    .animation(.spring(), value: offset)
-                    .onAppear {
-                        DispatchQueue.main.async {
-                            offset = SettingConstants.SETTING_WIDTH
-                        }
-                    }
+                }
             }
+            
         }
+        .navigationBarHidden(true)
+        .environmentObject(loginModel)
     }
     
     func getAppListView() -> some View {
