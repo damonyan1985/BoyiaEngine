@@ -8,7 +8,11 @@
 import Foundation
 
 class BoyiaLog {
-    static func d(_ log: String) {
+    static func d(_ tag: String, log: Any...) {
+        print("\(tag): \(log)")
+    }
+    
+    static func d(_ log: Any...) {
         print(log)
     }
 }

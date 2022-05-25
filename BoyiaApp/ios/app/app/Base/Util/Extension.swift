@@ -124,3 +124,29 @@ extension UINavigationController: UIGestureRecognizerDelegate {
     }
 }
 
+// 使用userdefaults存储对象
+extension UserDefaults {
+    func setItem<T: Encodable>(obj: T, key: String) {
+        do {
+            let data = try JSONEncoder().encode(obj)
+            self.set(data, forKey: key)
+        } catch {
+            BoyiaLog.d("UserDefaults", error)
+        }
+    }
+    
+    func getItem<T: Decodable>(key: String) -> T? {
+        guard let data = self.data(forKey: key) else {
+            return nil
+        }
+        
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            BoyiaLog.d("UserDefaults", error)
+        }
+        
+        return nil
+    }
+}
+

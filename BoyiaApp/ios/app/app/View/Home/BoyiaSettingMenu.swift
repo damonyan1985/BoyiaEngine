@@ -20,7 +20,7 @@ struct BoyiaSettingMenu : View {
             VStack {
                 marginTop(top: PixelRatio.dp(108))
                 AsyncImage(url: URL(string: loginModel.isLogin
-                                    ? (BoyiaLoginInfo.shared.icon ?? "null")
+                                    ? (BoyiaLoginInfo.shared.user?.avatar ?? "null")
                                     : SettingConstants.DEFAULT_ICON)!) { phase in
                     if let image = phase.image {
                         image.resizable()
@@ -43,7 +43,7 @@ struct BoyiaSettingMenu : View {
                 
                 marginTop(top: PixelRatio.dp(8))
                 Text(loginModel.isLogin
-                     ? (BoyiaLoginInfo.shared.nickname ?? "null")
+                     ? (BoyiaLoginInfo.shared.user?.nickname ?? "null")
                      : "Anonymous")
                 
                 marginTop(top: PixelRatio.dp(12))
