@@ -150,3 +150,18 @@ extension UserDefaults {
     }
 }
 
+extension Int {
+    var dp: Double {
+        get {
+            return PixelRatio.dp(self)
+        }
+    }
+}
+
+extension Double {
+    var dp: Double {
+        get {
+            return PixelRatio.dp(self)
+        }
+    }
+}

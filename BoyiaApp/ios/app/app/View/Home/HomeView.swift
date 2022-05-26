@@ -60,7 +60,7 @@ struct HomeView : View {
     }
     
     func getAppListView() -> some View {
-        return LazyVGrid(columns: columns, alignment: .center, spacing: PixelRatio.dp(10)) {
+        return LazyVGrid(columns: columns, alignment: .center, spacing: 10.dp) {
             ForEach(model.appList, id: \.id) { item in
                 BoyiaAppItemView(data: item)
             }
@@ -78,19 +78,19 @@ struct HomeView : View {
                         }
                     }
                 }
-                .offset(x: 0, y: PixelRatio.dp(200))
+                .offset(x: 0, y: 200.dp)
                 //.background(Color(hex: 0xFF00FF))
                 
                 // header
                 HStack {
                     HStack {}
-                        .frame(width: PixelRatio.dp(560))
+                    .frame(width: 560.dp)
                     
                     Image(systemName: "gearshape")
                         .resizable()
-                        .frame(width: PixelRatio.dp(50), height: PixelRatio.dp(50))
+                        .frame(width: 50.dp, height: 50.dp)
                         .foregroundColor(Color.black)
-                        .offset(x: 0, y: PixelRatio.dp(26))
+                        .offset(x: 0, y: 26.dp)
                         .onTapGesture {
                             showSetting = true
                             
@@ -100,7 +100,7 @@ struct HomeView : View {
                         //.alignmentGuide(.right, computeValue: { $0[.trailing] })
                         //.alignmentGuide(.trailing, computeValue: { d in d[.trailing] - 5})
                 }
-                .frame(width: UIScreen.main.bounds.width, height: PixelRatio.dp(160))
+                .frame(width: UIScreen.main.bounds.width, height: 160.dp)
                 .background(Color(hex: 0xEDEDED))
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)

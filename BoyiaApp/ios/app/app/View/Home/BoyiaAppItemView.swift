@@ -16,8 +16,8 @@ struct BoyiaAppItemView : View {
     }
     
     var body: some View {
-        let width = PixelRatio.dp(224)
-        let height = PixelRatio.dp(260)
+        let width = 224.dp
+        let height = 260.dp
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
                 AsyncImage(url: URL(string: item.cover)!) { phase in
@@ -25,7 +25,7 @@ struct BoyiaAppItemView : View {
                         image.resizable()
                             .transition(.slide)
                             .frame(width: width,
-                                   height: PixelRatio.dp(224),
+                                   height: width,
                                    alignment: .top)
                     } else if phase.error != nil {
                         Text("path: \(item.cover), error: \(phase.error!.localizedDescription) ")
@@ -34,7 +34,7 @@ struct BoyiaAppItemView : View {
                     }
                 
                 }
-                Text(item.name).frame(width: width, height: PixelRatio.dp(36))
+                Text(item.name).frame(width: width, height: 36.dp)
             }
             .frame(width: width, height: height)
             .background(Color(hex: 0xEDEDED))
@@ -49,7 +49,7 @@ struct BoyiaAppItemView : View {
                 BoyiaDownloadMask(width: width, height: height)
             }
         }
-        .cornerRadius(PixelRatio.dp(12))
+        .cornerRadius(12.dp)
         .onTapGesture {
             showMask = false
         }

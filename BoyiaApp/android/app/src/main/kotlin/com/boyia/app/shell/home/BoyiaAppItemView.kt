@@ -15,7 +15,6 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.common.utils.BoyiaUtils.dp
 import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.core.launch.BoyiaAppInfo
 import com.boyia.app.core.launch.BoyiaAppLauncher
@@ -23,6 +22,7 @@ import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.job.JobScheduler
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.update.Downloader
+import com.boyia.app.shell.util.dp
 
 class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     companion object {
@@ -45,7 +45,7 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
         container?.orientation = LinearLayout.VERTICAL
         appIconView = BoyiaImageView(context)
         val param: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
-                dp(224), dp(224)
+                224.dp, 224.dp
         )
 
         container?.addView(appIconView, param)
@@ -61,7 +61,7 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
 
         addView(container)
 
-        setRadius(dp(12));
+        setRadius(12.dp);
     }
 
     // 设置圆角

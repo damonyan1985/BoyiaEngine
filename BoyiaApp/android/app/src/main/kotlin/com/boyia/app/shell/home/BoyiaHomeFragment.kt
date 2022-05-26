@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
-import com.boyia.app.common.utils.BoyiaUtils.dp
 import com.boyia.app.shell.R
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.IHomeModule
@@ -23,6 +22,7 @@ import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.setting.BoyiaSettingModule
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
+import com.boyia.app.shell.util.dp
 
 class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
     companion object {
@@ -104,11 +104,11 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
         middleView = RecyclerView(requireContext())
         middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
         middleView?.adapter = appListAdapter
-        middleView?.addItemDecoration(BoyiaGridSpaceItem(dp(12)))
+        middleView?.addItemDecoration(BoyiaGridSpaceItem(12.dp))
 
         val headerParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(130)
+                130.dp
         )
         contentLayout?.addView(headerView, headerParam)
 
@@ -155,13 +155,13 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
             setBackgroundColor(HEADER_BG_COLOR)
 
             val settingParam = LayoutParams(
-                    dp(50),
-                    dp(50)
+                    50.dp,
+                    50.dp
             )
             settingParam.addRule(ALIGN_PARENT_BOTTOM)
             settingParam.addRule(ALIGN_PARENT_RIGHT)
-            settingParam.bottomMargin = dp(20)
-            settingParam.rightMargin = dp(20)
+            settingParam.bottomMargin = 20.dp
+            settingParam.rightMargin = 20.dp
 
             imageSetting?.setOnClickListener {
                 val ctx = module.getContext()

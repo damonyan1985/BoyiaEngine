@@ -42,13 +42,13 @@ struct LoginView : View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
-        let iconSize = PixelRatio.dp(36)
-        let buttonSize = PixelRatio.dp(64)
+        let iconSize = 36.dp
+        let buttonSize = 64.dp
 //        Image(systemName: "person")
 //            .foregroundColor(Color.white)
             // 纵向，类似flutter中的column
         VStack(alignment: .center, spacing: 0) {
-            marginTop(top: PixelRatio.dp(540))
+            marginTop(top: 540.dp)
             // 横向，类似flutter中的row
             HStack {
                 Image(systemName: "person")
@@ -60,10 +60,10 @@ struct LoginView : View {
                     
                 })
                     //.labelStyle(ShadowLabelStyle())
-                    .frame(width: 200, height: 60, alignment: Alignment.leading)
+                    .frame(width: 400.dp, height: 120.dp, alignment: Alignment.leading)
                     .textFieldStyle(UnderlineTextFieldStyle())
                     .foregroundColor(Color.white)
-            }.frame(width: 300, alignment: Alignment.bottom)
+            }.frame(width: 600.dp, alignment: Alignment.bottom)
             Divider()
             HStack {
                 Image(systemName: "lock")
@@ -72,13 +72,13 @@ struct LoginView : View {
                     .frame(width: iconSize, height: iconSize)
                 
                 TextField("Password:", text: $password, onCommit: {})
-                    .frame(width: 200, height: 60, alignment: Alignment.leading)
+                    .frame(width: 400.dp, height: 120.dp, alignment: Alignment.leading)
                     .foregroundColor(Color.white)
                     .textFieldStyle(UnderlineTextFieldStyle())
                 
-            }.frame(width: 300)
+            }.frame(width: 600.dp)
             
-            marginTop(top: PixelRatio.dp(120))
+            marginTop(top: 120.dp)
             //Spacer()
             HStack {
                 Button(action: {
@@ -90,7 +90,7 @@ struct LoginView : View {
                         .frame(width: buttonSize, height: buttonSize)
                 }
                 
-                marginLeft(left: PixelRatio.dp(54))
+                marginLeft(left: 54.dp)
                 
                 Button(action: {
                     //self.presentationMode.wrappedValue.dismiss()
