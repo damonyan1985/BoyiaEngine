@@ -194,4 +194,8 @@ class BoyiaLoginFragment(private val module: LoginModule): BaseFragment() {
         }
         return null;
     }
+
+    override fun hide() {
+        module.hide()
+    }
 }

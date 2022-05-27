@@ -38,7 +38,7 @@ class BoyiaSettingModule : IUIModule {
 
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.remove(fragment!!)
-        fragmentTransaction.commit();
+        fragmentTransaction.commit()
 
         fragment = null
     }

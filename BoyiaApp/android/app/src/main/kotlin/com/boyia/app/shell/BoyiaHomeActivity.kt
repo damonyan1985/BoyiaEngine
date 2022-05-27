@@ -77,8 +77,6 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
             val list = supportFragmentManager.fragments
             val fragment = list.last() as BaseFragment
             if (fragment.canPop()) {
-                supportFragmentManager.popBackStack()
-            } else {
                 fragment.hide()
             }
         }
