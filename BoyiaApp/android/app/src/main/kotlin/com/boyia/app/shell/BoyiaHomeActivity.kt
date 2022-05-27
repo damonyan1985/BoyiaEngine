@@ -1,27 +1,19 @@
 package com.boyia.app.shell
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
-import android.os.PersistableBundle
-import android.util.ArrayMap
 import android.view.View
 import android.widget.FrameLayout
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import androidx.compose.material.Text
 import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.shell.home.BoyiaHomeFragment
-import com.boyia.app.shell.home.HomeModule
+import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IModuleContext
-import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.service.BoyiaNotifyService
-import java.util.concurrent.CopyOnWriteArrayList
 
 // 主页面，用来呈现应用列表信息
 class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
@@ -40,6 +32,9 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
         initHome()
         initNotifyService()
+//        setContent {
+//            Text("Hello world")
+//        }
     }
 
     private fun initHome() {
@@ -73,5 +68,24 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         } else {
             startService(intent)
         }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            super.onBackPressed()
+        } else {
+            val list = supportFragmentManager.fragments
+            val fragment = list.last() as BaseFragment
+            if (fragment.canPop()) {
+                supportFragmentManager.popBackStack()
+            } else {
+                fragment.hide()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ModuleManager.instance().hide()
     }
 }

@@ -21,7 +21,8 @@ def initExtension() {
 initExtension()
 
 gradle.ext.constants = [
-    sdkVersion: 29
+    sdkVersion: 29,
+    composeVersion: '1.1.0',
 ]
 
 gradle.ext.library = [
@@ -53,4 +54,11 @@ gradle.ext.library = [
     icon_google_lib: 'com.mikepenz:google-material-typeface:4.0.0.2-kotlin',
     icon_foundation_lib: 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin',
     coordinator_lib: 'androidx.coordinatorlayout:coordinatorlayout:1.2.0',
+    compose_ui: "androidx.compose.ui:ui:${gradle.constants.composeVersion}",
+    compose_foundation: "androidx.compose.foundation:foundation:${gradle.constants.composeVersion}",
+    compose_material: "androidx.compose.material:material:${gradle.constants.composeVersion}",
+    compose_livedata: "androidx.compose.runtime:runtime-livedata:${gradle.constants.composeVersion}",
+    compose_rxjava: "androidx.compose.runtime:runtime-rxjava2:${gradle.constants.composeVersion}",
+    compose_activity: "androidx.activity:activity-compose:${gradle.constants.composeVersion}",
+    compose_uitool: "androidx.compose.ui:ui-tooling:${gradle.constants.composeVersion}"
 ]

@@ -31,4 +31,18 @@ class ModuleManager {
         val module = moduleMap.remove(key)
         module?.dispose()
     }
+
+    fun hide() {
+        moduleMap.forEach { it
+            if (it.value is IUIModule) {
+                it.value.hide()
+            }
+        }
+    }
+
+    fun dispose() {
+        moduleMap.forEach { it
+            it.value.dispose()
+        }
+    }
 }

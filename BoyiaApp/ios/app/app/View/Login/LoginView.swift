@@ -93,11 +93,6 @@ struct LoginView : View {
                 marginLeft(left: 54.dp)
                 
                 Button(action: {
-                    //self.presentationMode.wrappedValue.dismiss()
-//                        HttpUtil.requestImpl(url: HttpUtil.HttpConstants.LOGIN_URL, cb: { ()
-//
-//                        })
-                    
                     loginModel.login(
                         name: self.account,
                         password: self.password,

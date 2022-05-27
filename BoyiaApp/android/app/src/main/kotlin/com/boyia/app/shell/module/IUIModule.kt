@@ -1,4 +1,4 @@
 package com.boyia.app.shell.module
 
-interface ILoginModule: IUIModule {
+interface IUIModule: IModule {
 }

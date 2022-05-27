@@ -20,7 +20,7 @@ android {
     compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
         applicationId "com.boyia.app.shell"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
         versionName "1.0"
@@ -111,6 +111,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+//    buildFeatures {
+//        compose true
+//    }
 }
 
 repositories {
@@ -177,4 +185,13 @@ dependencies {
     implementation gradle.library.icon_lib
     implementation gradle.library.icon_google_lib
     implementation gradle.library.coordinator_lib
+
+    // compose lib
+    implementation gradle.library.compose_ui
+    implementation gradle.library.compose_foundation
+    implementation gradle.library.compose_material
+    implementation gradle.library.compose_livedata
+    implementation gradle.library.compose_uitool
+    implementation gradle.library.compose_rxjava
+    implementation gradle.library.compose_activity
 }

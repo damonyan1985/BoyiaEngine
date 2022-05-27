@@ -1,15 +1,10 @@
 package com.boyia.app.shell;
 
 //import com.boyia.app.advert.platform.TTAdSplashManager;
-import com.boyia.app.common.ipc.BoyiaIpcData;
-import com.boyia.app.common.ipc.IBoyiaIpcCallback;
-import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.core.BoyiaBridge;
 import com.boyia.app.loader.mue.MainScheduler;
 import com.boyia.app.shell.broadcast.BoyiaBroadcast;
-import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.core.BoyiaActivity;
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.loader.image.BoyiaImager;
@@ -21,13 +16,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.os.Process;
-
-import java.util.Collections;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Lock;
 
 public class BoyiaMainActivity extends BoyiaActivity {
     private static final String TAG = "BoyiaMainActivity";

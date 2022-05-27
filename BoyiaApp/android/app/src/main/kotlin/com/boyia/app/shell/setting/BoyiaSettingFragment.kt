@@ -15,11 +15,12 @@ import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
+import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.util.dp
 
-class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() {
+class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragment() {
     companion object {
         const val TAG = "BoyiaSettingFragment"
     }
@@ -102,6 +103,10 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() 
         container.addView(nameView, nameParam)
 
         val loginButton = buildButton("login", 32.dp, container.id)
+        loginButton.setOnClickListener {
+            module.showLogin()
+        }
+
         val aboutButton = buildButton("about", 0.dp, loginButton.id)
 
         avatarView.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
@@ -119,10 +124,10 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() 
 
                     override fun onAnimationEnd(animation: Animator?) {
                         val value = animator!!.animatedValue as Float
-                        val show = value > 0F;
+                        val show = value > 0F
                         listener?.onEnd(show)
                         if (!show) {
-                            module.dispose()
+                            module.hide()
                         }
                     }
 
@@ -167,5 +172,19 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : Fragment() 
         rootLayout?.addView(button, loginParam)
 
         return button
+    }
+
+    override fun canPop(): Boolean {
+        return false;
+    }
+
+    override fun hide() {
+        if (animator?.isRunning == true) {
+            BoyiaLog.d(TAG, "hide() isRunning true")
+            return
+        }
+
+        BoyiaLog.d(TAG, "hide() isRunning false")
+        animator?.reverse()
     }
 }

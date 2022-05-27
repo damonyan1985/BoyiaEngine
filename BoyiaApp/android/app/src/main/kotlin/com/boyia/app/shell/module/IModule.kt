@@ -5,6 +5,8 @@ interface IModule {
     fun init()
     // 显示主UI
     fun show(context: IModuleContext)
+    // 隐藏
+    fun hide()
     // 模块析构
     fun dispose()
 }

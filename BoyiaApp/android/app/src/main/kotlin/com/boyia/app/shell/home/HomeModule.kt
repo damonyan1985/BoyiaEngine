@@ -1,7 +1,6 @@
 package com.boyia.app.shell.home
 
 import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.shell.api.IBoyiaHomeLoader
 import com.boyia.app.shell.model.BoyiaAppItem
 import com.boyia.app.shell.model.BoyiaAppListModel
 import com.boyia.app.shell.module.IHomeModule
@@ -12,6 +11,7 @@ import java.lang.ref.WeakReference
 class HomeModule: IHomeModule {
     private var context: WeakReference<IModuleContext>? = null
     private var appListModel: BoyiaAppListModel? = null
+    private var fragment: BoyiaHomeFragment? = null
 
     override fun init() {
         appListModel = BoyiaAppListModel()
@@ -19,11 +19,22 @@ class HomeModule: IHomeModule {
 
     override fun show(ctx: IModuleContext) {
         context = WeakReference(ctx)
-        val homeFragment = BoyiaHomeFragment(this)
+        fragment = BoyiaHomeFragment(this)
 
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(ctx.rootId(), homeFragment)
+        fragmentTransaction.add(ctx.rootId(), fragment!!)
         fragmentTransaction.commit()
+    }
+
+    override fun hide() {
+        val ctx = context?.get() ?: return
+        fragment ?: return
+
+        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
+        fragmentTransaction.remove(fragment!!)
+        fragmentTransaction.commit();
+
+        fragment = null
     }
 
     override fun dispose() {

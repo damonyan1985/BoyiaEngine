@@ -17,6 +17,7 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 import com.boyia.app.shell.R
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
+import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IHomeModule
 import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.setting.BoyiaSettingModule
@@ -24,7 +25,7 @@ import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.util.dp
 
-class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
+class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
     companion object {
         const val TAG = "BoyiaHomeFragment"
         const val GRID_SPAN_NUM = 3
@@ -136,6 +137,10 @@ class BoyiaHomeFragment(private val loader: IHomeModule): Fragment() {
         )
         rootLayout?.addView(contentLayout, lp)
         return rootLayout
+    }
+
+    override fun canPop(): Boolean {
+        return false
     }
 
     class BoyiaHomeHeader(context: Context?, module: IHomeModule, listener: SlideListener) : RelativeLayout(context) {

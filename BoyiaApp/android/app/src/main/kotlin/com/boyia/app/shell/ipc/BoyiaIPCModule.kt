@@ -50,6 +50,9 @@ class BoyiaIPCModule : IPCModule {
         context = WeakReference(ctx)
     }
 
+    override fun hide() {
+    }
+
     override fun dispose() {
     }
 
