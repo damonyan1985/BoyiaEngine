@@ -11,6 +11,8 @@ import com.boyia.app.shell.util.dp
 
 class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() {
     private var rootLayout: RelativeLayout? = null
+    private var userInput: EditText? = null
+    private var passwordInput: EditText? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootLayout != null) {
@@ -31,8 +33,12 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         loginInputLayout.orientation = LinearLayout.VERTICAL
         loginInputLayout.id = View.generateViewId()
 
-        val userItem = initInputItem(R.drawable.person)
-        val passwordItem = initInputItem(R.drawable.lock)
+        val userItem = initInputItem(R.drawable.person) { edit ->
+            userInput = edit
+        }
+        val passwordItem = initInputItem(R.drawable.lock) { edit ->
+            passwordInput = edit
+        }
 
         loginInputLayout.addView(userItem)
         loginInputLayout.addView(passwordItem)
@@ -50,7 +56,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         initLoginButton(loginInputLayout.id)
     }
 
-    private fun initInputItem(rid: Int): View {
+    private fun initInputItem(rid: Int, viewCallback: (edit: EditText) -> Unit): View {
         val inputLayout = LinearLayout(context)
         inputLayout.orientation = LinearLayout.HORIZONTAL
 
@@ -72,6 +78,8 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         )
         editTextParam.gravity = Gravity.CENTER_VERTICAL
         inputLayout.addView(editText, editTextParam)
+
+        viewCallback(editText)
         return inputLayout;
     }
 
@@ -91,6 +99,9 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         val forwardButton = ImageView(context)
         forwardButton.setImageResource(R.drawable.login_forward)
         forwardButton.setColorFilter(0xFFCAE1FF.toInt())
+        forwardButton.setOnClickListener {
+            module.login(userInput?.text.toString(), passwordInput?.text.toString())
+        }
         val forwardButtonParam = LinearLayout.LayoutParams(
                 64.dp,
                 64.dp

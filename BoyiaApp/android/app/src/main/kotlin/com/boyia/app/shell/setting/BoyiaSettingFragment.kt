@@ -15,12 +15,13 @@ import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
+import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.util.dp
 
-class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragment() {
+class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var info: BoyiaUserInfo? = null) : BaseFragment() {
     companion object {
         const val TAG = "BoyiaSettingFragment"
     }
@@ -30,6 +31,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
     private var rootLayout: RelativeLayout? = null
     private var animator: ValueAnimator? = null
     private var listener: SlideListener? = null
+    private var avatarView: BoyiaImageView? = null
+    private var nameView: TextView? = null
 
     fun setSlideListener(listener: SlideListener) {
         this.listener = listener
@@ -75,8 +78,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         rootLayout?.addView(container, lp)
 
-        val avatarView = BoyiaImageView(context, 54.dp)
-        avatarView.id = View.generateViewId()
+        avatarView = BoyiaImageView(context, 54.dp)
+        avatarView?.id = View.generateViewId()
         val avatarParam = RelativeLayout.LayoutParams(
                 108.dp,
                 108.dp
@@ -88,15 +91,15 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         container.addView(avatarView, avatarParam)
 
-        val nameView = TextView(context)
-        nameView.text = "Anonymous"
-        nameView.setTextColor(Color.BLACK)
+        nameView = TextView(context)
+        nameView?.text = "Anonymous"
+        nameView?.setTextColor(Color.BLACK)
 
         val nameParam = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        nameParam.addRule(RelativeLayout.BELOW, avatarView.id)
+        nameParam.addRule(RelativeLayout.BELOW, avatarView!!.id)
         nameParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
         nameParam.topMargin = 12.dp
         nameParam.bottomMargin = 12.dp
@@ -112,7 +115,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
             module.showAbout()
         }
 
-        avatarView.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
+        avatarView?.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
     }
 
     private fun slideToDisplay(start: Float, end: Float) {
@@ -189,5 +192,10 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         BoyiaLog.d(TAG, "hide() isRunning false")
         animator?.reverse()
+    }
+
+    fun setUserInfo(info: BoyiaUserInfo?) {
+        avatarView?.load(info?.avatar)
+        nameView?.text = info?.nickname
     }
 }

@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.boyia.app.shell.module.NavigationFragment
+import com.boyia.app.shell.util.dpx
 
 /**
  * 使用compose来编写关于页面
@@ -47,14 +47,14 @@ class BoyiaAboutFragment: NavigationFragment() {
 
                 Column(
                         modifier = Modifier
-                                .height(220.dp)
+                                .height(220.dpx)
                                 .fillMaxWidth()
                         //.background(Color.White)
                 ) {
-                    Spacer(modifier = Modifier.height(60.dp))
+                    Spacer(modifier = Modifier.height(60.dpx))
                     Image(
                             painter = rememberImagePainter(data = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"),
-                            modifier = Modifier.size(80.dp).align(alignment = Alignment.CenterHorizontally),
+                            modifier = Modifier.size(80.dpx).align(alignment = Alignment.CenterHorizontally),
                             contentScale = ContentScale.Fit,
                             contentDescription = "",
                     )
@@ -70,7 +70,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                     Text(text = "Version updata", color = Color.Black)
                 }
 
-                Spacer(modifier = Modifier.height(1.dp))
+                Spacer(modifier = Modifier.height(1.dpx))
 
                 TextButton(
                         onClick = { /*TODO*/ },
@@ -82,7 +82,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                     Text(text = "Feature introduction", color = Color.Black)
                 }
 
-                Spacer(modifier = Modifier.height(1.dp))
+                Spacer(modifier = Modifier.height(1.dpx))
 
                 TextButton(
                         onClick = { /*TODO*/ },

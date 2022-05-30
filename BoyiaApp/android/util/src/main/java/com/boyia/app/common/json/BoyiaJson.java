@@ -82,7 +82,6 @@ public class BoyiaJson {
                     }
                     break;
                 }
-
             }
         }
 
@@ -120,7 +119,6 @@ public class BoyiaJson {
                     //method.invoke(newObject, new Object[] {array});
                     field.set(newObject, array);
                 } else if (List.class.isAssignableFrom(field.getType())) { // 是否是List的子类
-                    //Class<?> type = (Class<?>)((ParameterizedType) field.getType().getGenericSuperclass()).getActualTypeArguments()[0];
                     Class<?> type = (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
                     BoyiaLog.d(TAG,
                             "specialValue array field type = "
@@ -148,24 +146,32 @@ public class BoyiaJson {
         }
     }
 
+    private static boolean isInt(Class<?> type) {
+        return type == Integer.class || type == int.class;
+    }
+
+    private static boolean isFloat(Class<?> type) {
+        return type == Float.class || type == float.class;
+    }
+
+    private static boolean isLong(Class<?> type) {
+        return type == Long.class || type == long.class;
+    }
+
+    private static boolean isDouble(Class<?> type) {
+        return type == Double.class || type == double.class;
+    }
+
     private static Object toNormalValue(Object value, Class<?> type) {
-        if (!(value instanceof String)) {
+        if (value == null) {
             return null;
         }
 
-        if (type == int.class) {
-            try {
-                value = Integer.valueOf(String.valueOf(value));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (type == float.class) {
-            try {
-                value = Float.valueOf(String.valueOf(value));
-            } catch (Exception e) {
-                value = 0.0f;
-            }
-        } else if (type == Date.class) {
+        if (isInt(type) || isFloat(type) || isDouble(type) || isLong(type) || type == String.class) {
+            return value;
+        }
+
+        if (type == Date.class) {
             try {
                 if ("".equals(value)) {
                     value = new Date(0);
@@ -176,17 +182,14 @@ public class BoyiaJson {
                         .format(DATE_SIMPLE.parse((String) value)))) {
                     value = DATE_SIMPLE.parse((String) value);
                 }
+
+                return value;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if (type != String.class) {
-            return null;
-        }
-
-        // 默认string类型
-        return value;
+        return null;
     }
 
     private static <T> boolean normalValue(Object value, Field field, T object) {

@@ -12,8 +12,8 @@ import java.io.ByteArrayOutputStream
 
 object BoyiaModelUtil {
     const val TAG = "BoyiaModelUtil"
-    const val HTTP_DOMAIN = "https://127.0.0.1:8443/"
-    const val API_VERSION = "v1"
+    private const val HTTP_DOMAIN = "https://47.98.206.177:8443/"
+    private const val API_VERSION = "v1"
 
     const val LOGIN_URL = "${HTTP_DOMAIN}user/${API_VERSION}/login"
     const val LOGOUT_URL = "${HTTP_DOMAIN}user/${API_VERSION}/logout"
@@ -51,10 +51,7 @@ object BoyiaModelUtil {
                 loader.setPostParam(data)
             }
 
-            headers?.forEach {
-                loader.putRequestHeader(it.key, it.value)
-            }
-
+            // 设置http头
             headers?.forEach {
                 loader.putRequestHeader(it.key, it.value)
             }
