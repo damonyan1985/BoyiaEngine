@@ -1,30 +1,16 @@
 package com.boyia.app.shell.login
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.animation.LinearInterpolator
 import android.widget.*
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.common.utils.BoyiaUtils
-import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.R
-import com.boyia.app.shell.module.BaseFragment
-import com.boyia.app.shell.setting.BoyiaSettingFragment
+import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.UnderlineEditText
 import com.boyia.app.shell.util.dp
 
-class BoyiaLoginFragment(private val module: LoginModule): BaseFragment() {
+class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() {
     private var rootLayout: RelativeLayout? = null
-    private var animator: ValueAnimator? = null
-
-    private val LOGIN_WIDTH = BoyiaUtils.getScreenSize().x.toFloat()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootLayout != null) {
@@ -34,18 +20,6 @@ class BoyiaLoginFragment(private val module: LoginModule): BaseFragment() {
         }
 
         initLayout()
-        //rootLayout?.x = -LOGIN_WIDTH
-//        rootLayout?.setOnKeyListener(object: View.OnKeyListener {
-//            override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
-//                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                    animator?.reverse()
-//                    return true
-//                }
-//                return false
-//            }
-//        })
-
-        //slideToDisplay(0F, LOGIN_WIDTH)
         return rootLayout
     }
 
@@ -139,63 +113,5 @@ class BoyiaLoginFragment(private val module: LoginModule): BaseFragment() {
         buttonLayoutParam.topMargin = 120.dp
 
         rootLayout?.addView(buttonLayout, buttonLayoutParam)
-    }
-
-    private fun slideToDisplay(start: Float, end: Float) {
-        MainScheduler.mainScheduler().sendJob {
-            animator = ValueAnimator.ofFloat(start, end).apply {
-                duration = 300
-                interpolator = LinearInterpolator()
-                addListener(object: Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {
-                    }
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        val value = animator!!.animatedValue as Float
-                        val show = value > 0F
-                        if (!show) {
-                            module.hide()
-                        }
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {
-                    }
-
-                    override fun onAnimationRepeat(animation: Animator?) {
-                    }
-
-                })
-                addUpdateListener {
-                    if (animator == null) {
-                        return@addUpdateListener
-                    }
-                    val start = -1 * LOGIN_WIDTH
-                    val value = animator!!.animatedValue as Float
-                    rootLayout!!.x = start + value
-                }
-            }
-
-            animator?.start()
-
-        }
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
-            if (enter) {
-                // 表示普通的进入的动作，比如add、show、attach等
-                return AnimationUtils.loadAnimation(context, R.anim.page_in);
-            }
-        } else if (transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE) {
-            if (!enter) {
-                // 表示一个退出动作，比如出栈、remove、hide、detach等
-                return AnimationUtils.loadAnimation(context, R.anim.page_out);
-            }
-        }
-        return null;
-    }
-
-    override fun hide() {
-        module.hide()
     }
 }

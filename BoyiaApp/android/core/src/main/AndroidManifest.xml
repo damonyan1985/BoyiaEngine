@@ -7,6 +7,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityA"
             android:process="@string/boyia_process_a"
             android:taskAffinity="@string/boyia_task_a"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.suba.action" />
@@ -17,6 +18,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityB"
             android:process="@string/boyia_process_b"
             android:taskAffinity="@string/boyia_task_b"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.subb.action" />
@@ -27,6 +29,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityC"
             android:process="@string/boyia_process_c"
             android:taskAffinity="@string/boyia_task_c"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.subc.action" />
@@ -37,6 +40,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityD"
             android:process="@string/boyia_process_d"
             android:taskAffinity="@string/boyia_task_d"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.subd.action" />
@@ -47,6 +51,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityE"
             android:process="@string/boyia_process_e"
             android:taskAffinity="@string/boyia_task_e"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.sube.action" />
@@ -57,6 +62,7 @@
             android:name="com.boyia.app.core.BoyiaActivity$BoyiaAppActivityF"
             android:process="@string/boyia_process_f"
             android:taskAffinity="@string/boyia_task_f"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.boyia.app.subf.action" />

@@ -30,9 +30,13 @@ class HomeModule: IHomeModule {
         val ctx = context?.get() ?: return
         fragment ?: return
 
+        if (ctx.getActivity().supportFragmentManager.isDestroyed) {
+            return
+        }
+
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.remove(fragment!!)
-        fragmentTransaction.commit();
+        fragmentTransaction.commit()
 
         fragment = null
     }

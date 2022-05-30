@@ -27,17 +27,10 @@ class LoginModule: ILoginModule {
     }
 
     override fun hide() {
-        val ctx = context?.get() ?: return
-        fragment ?: return
-
-        val fm = ctx.getActivity().supportFragmentManager
-        //fragmentTransaction.remove(fragment!!)
-        //fragmentTransaction.commit()
-        fm.popBackStack()
-
-        fragment = null
+        fragment?.hide()
     }
 
     override fun dispose() {
+        fragment?.hide()
     }
 }

@@ -116,9 +116,14 @@ android {
         jvmTarget = '1.8'
     }
 
-//    buildFeatures {
-//        compose true
-//    }
+    composeOptions {
+        kotlinCompilerExtensionVersion gradle.constants.composeVersion
+        kotlinCompilerVersion '1.6.10'
+    }
+
+    buildFeatures {
+        compose true
+    }
 }
 
 repositories {
@@ -167,8 +172,8 @@ dependencies {
     //implementation project(':utils')
     //implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     //implementation 'com.boyia.app.utils:utils:1.0.0'
-    debugImplementation gradle.library.leakcanary_debug
-    releaseImplementation gradle.library.leakcanary_release
+    //debugImplementation gradle.library.leakcanary_debug
+    //releaseImplementation gradle.library.leakcanary_release
 
     //implementation project(':advert')
     implementation gradle.library.multidexLib
@@ -194,4 +199,7 @@ dependencies {
     implementation gradle.library.compose_uitool
     implementation gradle.library.compose_rxjava
     implementation gradle.library.compose_activity
+    // compose coil
+    implementation gradle.library.coil_lib
+    implementation gradle.library.compose_coil_lib
 }

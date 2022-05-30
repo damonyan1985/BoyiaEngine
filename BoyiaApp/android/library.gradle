@@ -21,8 +21,9 @@ def initExtension() {
 initExtension()
 
 gradle.ext.constants = [
-    sdkVersion: 29,
+    sdkVersion: 31,
     composeVersion: '1.1.0',
+    coilVersion: '1.4.0',
 ]
 
 gradle.ext.library = [
@@ -60,5 +61,7 @@ gradle.ext.library = [
     compose_livedata: "androidx.compose.runtime:runtime-livedata:${gradle.constants.composeVersion}",
     compose_rxjava: "androidx.compose.runtime:runtime-rxjava2:${gradle.constants.composeVersion}",
     compose_activity: "androidx.activity:activity-compose:${gradle.constants.composeVersion}",
-    compose_uitool: "androidx.compose.ui:ui-tooling:${gradle.constants.composeVersion}"
+    compose_uitool: "androidx.compose.ui:ui-tooling:${gradle.constants.composeVersion}",
+    coil_lib: "io.coil-kt:coil:${gradle.constants.coilVersion}",
+    compose_coil_lib: "io.coil-kt:coil-compose:${gradle.constants.coilVersion}",
 ]

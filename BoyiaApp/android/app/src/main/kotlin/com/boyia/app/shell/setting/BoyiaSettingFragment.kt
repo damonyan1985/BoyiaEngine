@@ -108,6 +108,9 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         }
 
         val aboutButton = buildButton("about", 0.dp, loginButton.id)
+        aboutButton.setOnClickListener {
+            module.showAbout()
+        }
 
         avatarView.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
     }
@@ -175,7 +178,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
     }
 
     override fun canPop(): Boolean {
-        return false;
+        return false
     }
 
     override fun hide() {

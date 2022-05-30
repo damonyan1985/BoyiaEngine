@@ -21,7 +21,6 @@ struct HomeView : View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .leading) {
-                
                 buildContent()
                     .overlay(
                         Color.black

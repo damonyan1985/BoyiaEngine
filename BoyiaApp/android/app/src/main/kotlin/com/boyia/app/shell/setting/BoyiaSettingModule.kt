@@ -1,5 +1,6 @@
 package com.boyia.app.shell.setting
 
+import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
 import com.boyia.app.shell.module.ModuleManager
@@ -25,8 +26,8 @@ class BoyiaSettingModule : IUIModule {
         if (context == null) {
             context = WeakReference(ctx)
         }
-        fragment = BoyiaSettingFragment(this)
 
+        fragment = BoyiaSettingFragment(this)
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.add(ctx.rootId(), fragment!!)
         fragmentTransaction.commit()
@@ -35,6 +36,10 @@ class BoyiaSettingModule : IUIModule {
     override fun hide() {
         val ctx = context?.get() ?: return
         fragment ?: return
+
+        if (ctx.getActivity().supportFragmentManager.isDestroyed) {
+            return
+        }
 
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.remove(fragment!!)
@@ -51,6 +56,18 @@ class BoyiaSettingModule : IUIModule {
         val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN)
         val ctx = context?.get() ?: return
         loginModule?.show(ctx)
+    }
+
+    fun showAbout() {
+        val ctx = context?.get() ?: return
+
+        val about = BoyiaAboutFragment()
+
+        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        fragmentTransaction.add(ctx.rootId(), about)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 
     interface SlideCallback {
