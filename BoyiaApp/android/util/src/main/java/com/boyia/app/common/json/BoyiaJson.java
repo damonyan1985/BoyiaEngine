@@ -2,6 +2,7 @@ package com.boyia.app.common.json;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.json.JsonAnnotation.JsonKey;
+import com.boyia.app.common.utils.BoyiaUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -43,6 +44,10 @@ public class BoyiaJson {
     }
 
     public static <T> T jsonParse(String jsonStr, Class<T> cls) {
+        if (BoyiaUtils.isTextEmpty(jsonStr)) {
+            return null;
+        }
+
         T object = null;
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -206,5 +211,30 @@ public class BoyiaJson {
         }
 
         return true;
+    }
+
+    // TODO 先做简单点，后面处理复杂情况
+    public static <T> String toJson(T object) {
+        JSONObject obj = new JSONObject();
+
+        Field[] fields = object.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            String key = field.getName();
+
+            JsonKey jsonKey = field.getAnnotation(JsonKey.class);
+            if (jsonKey != null && !BoyiaUtils.isTextEmpty(jsonKey.name())) {
+                key = jsonKey.name();
+            }
+
+            try {
+                field.setAccessible(true);
+                obj.put(key, field.get(object));
+            } catch (Exception e) {
+                e.printStackTrace();
+                BoyiaLog.e(TAG, "toJson error: ", e);
+            }
+        }
+
+        return obj.toString();
     }
 }

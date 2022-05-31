@@ -16,11 +16,9 @@ class LoginModule: ILoginModule {
 
     private var context: WeakReference<IModuleContext>? = null
     private var fragment: BoyiaLoginFragment? = null
-    private var model: BoyiaLoginModel? = null
     private var listeners = mutableListOf<LoginListener>()
 
     override fun init() {
-        model = BoyiaLoginModel()
     }
 
     override fun show(ctx: IModuleContext) {
@@ -38,7 +36,7 @@ class LoginModule: ILoginModule {
     }
 
     fun login(name: String?, password: String?) {
-        model?.login(name, password) { info ->
+        BoyiaLoginModel.login(name, password) { info ->
             BoyiaLog.d(TAG, "login nickname = ${info.nickname}")
             listeners.forEach {
                 it.onLogined(info)

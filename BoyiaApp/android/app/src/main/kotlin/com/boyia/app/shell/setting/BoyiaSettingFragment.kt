@@ -2,6 +2,7 @@ package com.boyia.app.shell.setting
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,15 +16,17 @@ import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
+import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.util.dp
 
-class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var info: BoyiaUserInfo? = null) : BaseFragment() {
+class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragment() {
     companion object {
         const val TAG = "BoyiaSettingFragment"
+        const val DEFAULT_AVATAR = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"
     }
 
     private val SETTING_WIDTH = 320.dp
@@ -33,6 +36,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var i
     private var listener: SlideListener? = null
     private var avatarView: BoyiaImageView? = null
     private var nameView: TextView? = null
+    private var loginButton: Button? = null
 
     fun setSlideListener(listener: SlideListener) {
         this.listener = listener
@@ -91,8 +95,10 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var i
 
         container.addView(avatarView, avatarParam)
 
+        val info = BoyiaLoginInfo.instance();
+
         nameView = TextView(context)
-        nameView?.text = "Anonymous"
+        nameView?.text = info.user?.nickname ?: "Anonymous"
         nameView?.setTextColor(Color.BLACK)
 
         val nameParam = RelativeLayout.LayoutParams(
@@ -105,17 +111,23 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var i
         nameParam.bottomMargin = 12.dp
         container.addView(nameView, nameParam)
 
-        val loginButton = buildButton("login", 32.dp, container.id)
-        loginButton.setOnClickListener {
-            module.showLogin()
+        val loginText = if (info.token == null) "login" else "logout"
+        loginButton = buildButton(loginText, 32.dp, container.id)
+        loginButton?.setOnClickListener {
+            if (info.token == null) {
+                module.showLogin()
+            } else {
+                info.logout()
+                setUserInfo(null)
+            }
         }
 
-        val aboutButton = buildButton("about", 0.dp, loginButton.id)
+        val aboutButton = buildButton("about", 0.dp, loginButton!!.id)
         aboutButton.setOnClickListener {
             module.showAbout()
         }
 
-        avatarView?.load("https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500")
+        avatarView?.load(info.user?.avatar ?: DEFAULT_AVATAR)
     }
 
     private fun slideToDisplay(start: Float, end: Float) {
@@ -194,8 +206,11 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule, private var i
         animator?.reverse()
     }
 
+    @SuppressLint("SetTextI18n")
     fun setUserInfo(info: BoyiaUserInfo?) {
-        avatarView?.load(info?.avatar)
-        nameView?.text = info?.nickname
+        avatarView?.load(info?.avatar ?: DEFAULT_AVATAR)
+        nameView?.text = info?.nickname ?: "Anonymous"
+
+        loginButton?.text =  if (info == null) "login" else "logout"
     }
 }

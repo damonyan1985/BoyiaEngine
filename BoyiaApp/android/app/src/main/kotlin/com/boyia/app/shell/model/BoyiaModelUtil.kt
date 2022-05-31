@@ -21,7 +21,7 @@ object BoyiaModelUtil {
 
     inline fun <reified T> request(
             url: String,
-            cb: ModelDataCallback<T>,
+            cb: ModelDataCallback<T>? = null,
             method: Int = HTTPFactory.HTTP_GET_METHOD,
             headers: Map<String, String>? = null,
             data: String? = null) {
@@ -62,7 +62,7 @@ object BoyiaModelUtil {
                 //.observeOn(MainScheduler.mainScheduler())
                 .subscribe(object : Subscriber<T> {
                     override fun onNext(result: T) {
-                        cb.onLoadData(result)
+                        cb?.onLoadData(result)
                     }
 
                     override fun onError(error: Throwable?) {

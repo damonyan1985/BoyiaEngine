@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.login.LoginModule
 import com.boyia.app.shell.login.LoginModule.LoginListener
+import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
@@ -13,7 +14,6 @@ import java.lang.ref.WeakReference
 class BoyiaSettingModule : IUIModule {
     private var fragment: BoyiaSettingFragment? = null
     private var context: WeakReference<IModuleContext>? = null
-    private var userInfo: BoyiaUserInfo? = null
 
     override fun init() {
 
@@ -57,6 +57,9 @@ class BoyiaSettingModule : IUIModule {
 
     }
 
+    /**
+     * 显示登录界面
+     */
     fun showLogin() {
         val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as LoginModule
         val ctx = context?.get() ?: return
@@ -64,7 +67,6 @@ class BoyiaSettingModule : IUIModule {
         loginModule.addLoginLisnter(object: LoginListener {
             override fun onLogined(info: BoyiaUserInfo) {
                 MainScheduler.mainScheduler().sendJob {
-                    userInfo = info
                     fragment?.setUserInfo(info)
                 }
             }
