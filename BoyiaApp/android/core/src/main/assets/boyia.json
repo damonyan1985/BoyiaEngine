@@ -1,5 +1,6 @@
 {
-    "code": 200,
+    "retCode": 200,
+    "retMsg": "Load List Success",
     "sdk": {
         "versionCode": 1,
         "url": "boyia_assets://out/sdk.zip",

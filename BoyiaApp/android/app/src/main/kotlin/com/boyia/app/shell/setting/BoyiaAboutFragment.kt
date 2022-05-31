@@ -67,7 +67,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                                 .fillMaxWidth()
 
                 ) {
-                    Text(text = "Version updata", color = Color.Black)
+                    Text(text = "Version update", color = Color.Black)
                 }
 
                 Spacer(modifier = Modifier.height(1.dpx))

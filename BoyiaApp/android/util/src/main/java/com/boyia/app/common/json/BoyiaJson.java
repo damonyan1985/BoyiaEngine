@@ -76,21 +76,34 @@ public class BoyiaJson {
         for (int i = 0; i < jsonObject.names().length(); i++) {
             String key = String.valueOf(jsonObject.names().get(i));
             Object value = jsonObject.opt(key);
-            for (Field field : fields) {
-                JsonKey jsonKey = field.getAnnotation(JsonKey.class);
-                // 如果jsonKey与key相等, 或者与field name一致
-                if ((jsonKey != null && key.equals(jsonKey.name())) || key.equals(field.getName())) {
-                    field.setAccessible(true);
-                    if (!normalValue(value, field, newObject)) {
-                        // 是一个类的对象
-                        specialValue(value, field, newObject);
-                    }
-                    break;
-                }
+            if (setFieldValue(fields, key, value, newObject)) {
+                continue;
+            }
+
+            if (!cls.getSuperclass().equals(Object.class)) {
+                BoyiaLog.d(TAG, "super class = " + cls.getSuperclass().getName());
+                setFieldValue(cls.getSuperclass().getDeclaredFields(), key, value, newObject);
             }
         }
 
         return newObject;
+    }
+
+    private static <T> boolean setFieldValue(Field[] fields, String key, Object value, T obj) {
+        for (Field field : fields) {
+            JsonKey jsonKey = field.getAnnotation(JsonKey.class);
+            // 如果jsonKey与key相等, 或者与field name一致
+            if ((jsonKey != null && key.equals(jsonKey.name())) || key.equals(field.getName())) {
+                field.setAccessible(true);
+                if (!normalValue(value, field, obj)) {
+                    // 是一个类的对象
+                    specialValue(value, field, obj);
+                }
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static <T> void specialValue(Object value, Field field, T newObject) {
@@ -206,7 +219,7 @@ public class BoyiaJson {
         try {
             field.set(object, value);
         } catch (Exception e) {
-            e.printStackTrace();
+            BoyiaLog.e(TAG, "normalValue error", e);
             return false;
         }
 

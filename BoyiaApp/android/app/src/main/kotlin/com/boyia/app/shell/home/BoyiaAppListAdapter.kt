@@ -32,7 +32,7 @@ class BoyiaAppListAdapter(
         val view = holder.itemView as BoyiaAppItemView
         val item = loader.appItem(position)
         view.appNameView?.text = item.name
-        BoyiaImager.loadImage(item.cover, view.appIconView)
+        view.appIconView?.load(item.cover)
         view.container?.setOnClickListener {
             BoyiaAppLauncher.launch(getAppInfo(item))
         }

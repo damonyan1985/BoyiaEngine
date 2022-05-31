@@ -1,5 +1,5 @@
 package com.boyia.app.shell.model
 
-class BoyiaAppListData {
+class BoyiaAppListData: BoyiaBaseData() {
     var apps: ArrayList<BoyiaAppItem>? = null
 }

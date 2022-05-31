@@ -1,5 +1,6 @@
 package com.boyia.app.shell.model
 
+import com.boyia.app.common.utils.BoyiaLog
 import java.util.concurrent.CopyOnWriteArrayList
 import com.boyia.app.shell.model.BoyiaModelUtil.ModelDataCallback
 
@@ -18,6 +19,7 @@ class BoyiaAppListModel {
     fun requestAppList(callback: LoadCallback) {
         BoyiaModelUtil.request(APP_LIST_URL, object: ModelDataCallback<BoyiaAppListData> {
             override fun onLoadData(data: BoyiaAppListData) {
+                BoyiaLog.d(TAG, "BoyiaAppListData retMsg = ${data.retMsg}")
                 if (data.apps == null || data.apps!!.isEmpty()) {
                     return
                 }
