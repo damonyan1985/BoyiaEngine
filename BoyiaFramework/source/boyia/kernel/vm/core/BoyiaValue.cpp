@@ -637,7 +637,7 @@ LInt BoyiaMapPut(LVoid* vm)
 LInt BoyiaMapGet(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
+    // 索引0为get函数指针
     // 索引1为两个传入的参数key，
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
@@ -663,7 +663,7 @@ LInt BoyiaMapGet(LVoid* vm)
 LInt BoyiaMapRemove(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
+    // 索引0为remove函数指针
     // 索引1为两个传入的参数key，
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
@@ -697,7 +697,7 @@ LInt BoyiaMapRemove(LVoid* vm)
 LInt BoyiaMapClear(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
+    // 索引0为clear函数指针
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
     // Map对象地址
@@ -711,12 +711,29 @@ LInt BoyiaMapClear(LVoid* vm)
 LInt BoyiaMapMap(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
+    // 索引0为map函数指针
+    // 第一个参数为方法，属性方法或者是函数
+    BoyiaValue* cb = (BoyiaValue*)GetLocalValue(1, vm);
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
     // Map对象地址
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     for (LInt i = 0; i < fun->mParamSize; i++) {
+        if (cb->mValueType == BY_PROP_FUNC) {
+            // 保存当前栈
+            SaveLocalSize(vm);
+            // callback函数压栈
+            LocalPush(cb, vm);
+            // 参数压栈
+            LocalPush(&fun->mParams[i], vm);
+            // 构造回调对象引用
+            BoyiaValue cbObj;
+            cbObj.mValueType = BY_CLASS;
+            cbObj.mValue.mObj.mPtr = cb->mValue.mObj.mSuper;
+            
+            // 调用callback函数
+            NativeCall(&cbObj, vm);
+        }
     }
     //fun->mParamSize = 0;
 
@@ -760,6 +777,10 @@ LVoid BuiltinMapClass(LVoid* vm)
         // clear function implementation begin
         GenBuiltinClassFunction(GEN_ID("clear", vm), BoyiaMapClear, classBody, vm);
         // clear function implementation end
+        
+        // map function implementation begin
+        GenBuiltinClassFunction(GEN_ID("map", vm), BoyiaMapMap, classBody, vm);
+        // map function implementation end
     }
 }
 

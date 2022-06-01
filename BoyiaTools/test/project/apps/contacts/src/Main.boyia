@@ -8,6 +8,7 @@ fun jsNew(cls) {
 class MainViewController extends ViewController {
     // 主View设计
     prop mainView;
+    prop viewId;
     fun onCreate() {
         var a = 9; 
         var b = 5;
@@ -73,9 +74,17 @@ class MainViewController extends ViewController {
         Util.log("arrJson=" + Util.toJson(arr1));
         Util.log("System Platform = " + Util.isWindows());
         Util.log("string length = " + params.body.length());
+        
+        this.viewId = 30;
+        body.map(this.testMapFunc);
     }
     
-    fun testCallback(data) {
+    prop fun testMapFunc(elem) {
+        Util.log("viewId = " + this.viewId);
+        Util.log("elem = " + elem);
+    }
+    
+    prop fun testCallback(data) {
         Util.log("testCallback data=" + data);
         var result = Util.json(data);
         Global.userToken = result.userToken;

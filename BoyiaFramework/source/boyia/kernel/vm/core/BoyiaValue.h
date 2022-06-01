@@ -60,6 +60,7 @@ typedef struct {
 } BoyiaStr;
 
 // 如果是对象，mPtr指向当前对象的地址，mSuper指向其父类，没有父类mSuper为NULL
+// 如果是属性方法，mPtr指向当前方法的地址，mSuper指向对象地址
 typedef struct {
     LIntPtr mPtr;
     LIntPtr mSuper;

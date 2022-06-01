@@ -1482,7 +1482,8 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass->mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = isProp ? BY_PROP_FUNC : BY_FUNC;
-        func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
+        func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
+        func->mParams[func->mParamSize++].mValue.mObj.mSuper = isProp ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
     } else {
