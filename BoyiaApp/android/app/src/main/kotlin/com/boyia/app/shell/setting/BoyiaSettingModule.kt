@@ -43,12 +43,13 @@ class BoyiaSettingModule : IUIModule {
         fragment ?: return
 
         if (ctx.getActivity().supportFragmentManager.isDestroyed) {
+            fragment = null
             return
         }
 
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.remove(fragment!!)
-        fragmentTransaction.commit()
+        fragmentTransaction.commitAllowingStateLoss()
 
         fragment = null
     }

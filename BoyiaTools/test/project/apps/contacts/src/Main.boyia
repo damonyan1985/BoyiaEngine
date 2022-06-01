@@ -41,13 +41,13 @@ class MainViewController extends ViewController {
         Util.log("NetParams1");
         params.headers = new(Map);
         params.headers.put("Content-Type", "application/x-www-form-urlencoded");
-        params.headers.put("token", "123456");
+        params.headers.put("User-Token", "none");
         Util.log("NetParams2");
         params.body = "name=test&pwd=test";
         
         var body = {
             "Content-Type" : "application/x-www-form-urlencoded",
-            token : "1234567890",
+            "User-Token" : "1234567890",
             body : "name=test&pwd=test",
             items : ["123", "456"]
         };
@@ -58,6 +58,11 @@ class MainViewController extends ViewController {
         var bodyJson = Util.toJson(body);
         Util.log("bodyJson=" + bodyJson);
         
+        var paramsJson = Util.toJson(params);
+        Util.log("paramsJson=" + paramsJson);
+        
+        var mbody = body.get("body");
+        Util.log("mbody=" + mbody);
         
         var arr1 = ["789", "100"];
         

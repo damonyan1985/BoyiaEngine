@@ -9,6 +9,7 @@ enum KeyWord {
     BY_INT,
     BY_STRING,
     BY_FUNC,
+    BY_PROP_FUNC,
     BY_NAV_FUNC,
     BY_NAVCLASS,
     BY_CLASS,
@@ -58,6 +59,7 @@ typedef struct {
     LInt mLen;
 } BoyiaStr;
 
+// 如果是对象，mPtr指向当前对象的地址，mSuper指向其父类，没有父类mSuper为NULL
 typedef struct {
     LIntPtr mPtr;
     LIntPtr mSuper;

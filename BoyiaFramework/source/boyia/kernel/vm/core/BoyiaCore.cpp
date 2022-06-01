@@ -304,7 +304,7 @@ static LVoid DoStatement(CompileState* cs);
 
 static LVoid BlockStatement(CompileState* cs);
 
-static LVoid FunStatement(CompileState* cs);
+static LVoid FunStatement(CompileState* cs, LBool isProp);
 
 static LInt NextToken(CompileState* cs);
 
@@ -683,13 +683,20 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm)
     //EngineLog("HandleCallInternal CreateObject %d", 7);
     //EngineLog("HandleCallInternal CreateObject mParams mAddr %d",  (int)newFunc->mParams);
 
+    // 不拷贝方法，只拷贝属性
     while (clsVal) {
         BoyiaFunction* func = (BoyiaFunction*)clsVal->mValue.mObj.mPtr;
         LInt idx = func->mParamSize;
         while (idx--) {
             LUint8 type = func->mParams[idx].mValueType;
-            if (type != BY_FUNC && type != BY_NAV_FUNC) {
-                ValueCopy(newFunc->mParams + newFunc->mParamSize++, func->mParams + idx);
+            if (type == BY_FUNC || type == BY_NAV_FUNC) {
+                continue;
+            }
+            
+            BoyiaValue* prop = newFunc->mParams + newFunc->mParamSize++;
+            ValueCopy(prop, func->mParams + idx);
+            if (type == BY_PROP_FUNC) {
+                prop->mValue.mObj.mSuper = (LIntPtr)newFunc;
             }
         }
 
@@ -737,6 +744,7 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
     case BY_FUNC:
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         break;
+    case BY_PROP_FUNC:
     case BY_CLASS: {
         //dest->mValue.mIntVal = src->mValue.mIntVal;
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
@@ -793,6 +801,11 @@ static LVoid PropStatement(CompileState* cs)
 
         if (cs->mToken.mTokenValue != SEMI) {
             SntxErrorBuild(SEMI_EXPECTED, cs);
+        }
+    } else if (cs->mToken.mTokenType == KEYWORD) {
+        // 属性方法，初始化的时候会被拷贝到对象属性中，用于做回调使用
+        if (cs->mToken.mTokenValue == BY_FUNC) {
+            FunStatement(cs, LTrue);
         }
     } else {
         SntxErrorBuild(SYNTAX, cs);
@@ -1045,7 +1058,7 @@ static LVoid BlockStatement(CompileState* cs)
                 LocalStatement(cs);
                 break;
             case BY_FUNC:
-                FunStatement(cs);
+                FunStatement(cs, LFalse);
                 break;
             case BY_PROP:
                 PropStatement(cs);
@@ -1464,9 +1477,11 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
     if (vm->mEState->mClass) {
+        LIntPtr isProp = inst->mOPRight.mValue;
+        
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass->mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
-        func->mParams[func->mParamSize].mValueType = BY_FUNC;
+        func->mParams[func->mParamSize].mValueType = isProp ? BY_PROP_FUNC : BY_FUNC;
         func->mParams[func->mParamSize++].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
@@ -1477,13 +1492,14 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
-static LVoid FunStatement(CompileState* cs)
+static LVoid FunStatement(CompileState* cs, LBool isProp)
 {
     NextToken(cs);
     //EngineStrLog("HandlePushParams FunStatement name %s", cs->mToken.mTokenName);
     // 第一步，Function变量
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
-    PutInstruction(&cmd, kBoyiaNull, kCmdCreateFunction, cs);
+    OpCommand propCmd = { OP_CONST_NUMBER, isProp };
+    PutInstruction(&cmd, &propCmd, kCmdCreateFunction, cs);
     //EngineStrLog("FunctionName=%s", cs->mToken.mTokenName);
     // 第二步，初始化函数参数
     NextToken(cs); //   '(', 即LPTR
@@ -1577,7 +1593,7 @@ static LVoid ParseStatement(CompileState* cs)
         if (cs->mToken.mTokenValue == BY_VAR) {
             GlobalStatement(cs);
         } else if (cs->mToken.mTokenValue == BY_FUNC) {
-            FunStatement(cs);
+            FunStatement(cs, LFalse);
         } else if (cs->mToken.mTokenValue == BY_CLASS) {
             ClassStatement(cs);
         } else if (cs->mToken.mTokenType == IDENTIFIER) {
@@ -1655,7 +1671,7 @@ static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
     LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
-    if (value->mValueType == BY_FUNC) { // BY_NAV_FUNC不需要对参数名进行赋值
+    if (value->mValueType == BY_FUNC || value->mValueType == BY_PROP_FUNC) { // BY_NAV_FUNC不需要对参数名进行赋值
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
             return kOpResultSuccess;

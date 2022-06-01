@@ -81,7 +81,7 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         ModuleManager.instance().hide()
+        super.onDestroy()
     }
 }

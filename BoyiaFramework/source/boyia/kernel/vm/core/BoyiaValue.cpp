@@ -411,6 +411,21 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
 }
 
 // Boyia builtins
+// 创建Builtin类的方法
+LVoid GenBuiltinClassFunction(LUintPtr key, NativePtr func, BoyiaFunction* classBody, LVoid* vm)
+{
+    BoyiaFunction* function = NEW(BoyiaFunction, vm);
+    function->mParams = kBoyiaNull;
+    function->mParamSize = 0;
+    // 实际调用的函数
+    function->mFuncBody = (LIntPtr)func;
+    
+    BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
+    putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+    putFuncVal->mNameKey = key; //GenIdentByStr("put", vm);
+    putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+}
+
 // 获取唯一标识class的class id
 LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 {
@@ -488,32 +503,35 @@ LVoid BuiltinStringClass(LVoid* vm)
     // function length
     {
         // put function implementation begin
-        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-        function->mParams = kBoyiaNull;
-        function->mParamSize = 0;
-        // 实际调用的函数
-        function->mFuncBody = (LIntPtr)BoyiaStringLength;
+//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+//        function->mParams = kBoyiaNull;
+//        function->mParamSize = 0;
+//        // 实际调用的函数
+//        function->mFuncBody = (LIntPtr)BoyiaStringLength;
+//
+//        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
+//        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+//        lengthFuncVal->mNameKey = GEN_ID("length", vm);
+//        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         
-        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
-        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        lengthFuncVal->mNameKey = GEN_ID("length", vm);
-        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        GenBuiltinClassFunction(GEN_ID("length", vm), BoyiaStringLength, classBody, vm);
         // put function implementation end
     }
     
     // function equal
     {
         // put function implementation begin
-        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-        function->mParams = kBoyiaNull;
-        function->mParamSize = 0;
-        // 实际调用的函数
-        function->mFuncBody = (LIntPtr)BoyiaStringEqual;
-        
-        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
-        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        lengthFuncVal->mNameKey = GEN_ID("equal", vm);
-        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+//        function->mParams = kBoyiaNull;
+//        function->mParamSize = 0;
+//        // 实际调用的函数
+//        function->mFuncBody = (LIntPtr)BoyiaStringEqual;
+//
+//        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
+//        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+//        lengthFuncVal->mNameKey = GEN_ID("equal", vm);
+//        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        GenBuiltinClassFunction(GEN_ID("equal", vm), BoyiaStringEqual, classBody, vm);
         // put function implementation end
     }
 }
@@ -598,7 +616,7 @@ LInt BoyiaMapPut(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
     // 索引0为put函数指针
-    // 索引1，2为两个传入的参数，
+    // 索引1，2为两个传入的参数key,value，
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
     BoyiaValue* key = (BoyiaValue*)GetLocalValue(1, vm);
@@ -606,11 +624,102 @@ LInt BoyiaMapPut(LVoid* vm)
     
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(2, vm);
     
+    // Map对象地址
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     // 设置key和value
     ValueCopy(fun->mParams + fun->mParamSize, value);
     fun->mParams[fun->mParamSize++].mNameKey = GenIdentifier(keyStr, vm);
     
+    return kOpResultSuccess;
+}
+
+// map get方法
+LInt BoyiaMapGet(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 索引1为两个传入的参数key，
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    BoyiaValue* key = (BoyiaValue*)GetLocalValue(1, vm);
+    LUintPtr keyId = GenIdentifier(GetStringBuffer(key), vm);
+    // Map对象地址
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    for (LInt i = 0; i < fun->mParamSize; i++) {
+        if (keyId == fun->mParams[i].mNameKey) {
+            SetNativeResult(&fun->mParams[i], vm);
+            return kOpResultSuccess;
+        }
+    }
+    
+    BoyiaValue val;
+    val.mValue.mIntVal = kBoyiaNull;
+    val.mValueType = BY_INT;
+    SetNativeResult(&val, vm);
+    return kOpResultSuccess;
+}
+
+// map remove方法
+LInt BoyiaMapRemove(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 索引1为两个传入的参数key，
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    BoyiaValue* key = (BoyiaValue*)GetLocalValue(1, vm);
+    LUintPtr keyId = GenIdentifier(GetStringBuffer(key), vm);
+    // Map对象地址
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    
+    LInt idx = -1;
+    for (LInt i = 0; i < fun->mParamSize; i++) {
+        if (keyId == fun->mParams[i].mNameKey) {
+            idx = i;
+            break;
+        }
+    }
+    
+    // 如果没有找到，则直接返回
+    if (idx == -1) {
+        return kOpResultSuccess;
+    }
+    
+    for (LInt i = idx; i < fun->mParamSize - 1; ++i) {
+        ValueCopy(fun->mParams + i, fun->mParams + i + 1);
+    }
+    
+    --fun->mParamSize;
+    return kOpResultSuccess;
+}
+
+// map clear方法
+LInt BoyiaMapClear(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    // Map对象地址
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    fun->mParamSize = 0;
+
+    return kOpResultSuccess;
+}
+
+// TODO map的map方法
+LInt BoyiaMapMap(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    // Map对象地址
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    for (LInt i = 0; i < fun->mParamSize; i++) {
+    }
+    //fun->mParamSize = 0;
+
     return kOpResultSuccess;
 }
 
@@ -624,18 +733,33 @@ LVoid BuiltinMapClass(LVoid* vm)
 
     // map api
     {
-        // put function implementation begin
-        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-        function->mParams = kBoyiaNull;
-        function->mParamSize = 0;
-        // 实际调用的函数
-        function->mFuncBody = (LIntPtr)BoyiaMapPut;
         
-        BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
-        putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-        putFuncVal->mNameKey = GEN_ID("put", vm); //GenIdentByStr("put", vm);
-        putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
+//        function->mParams = kBoyiaNull;
+//        function->mParamSize = 0;
+//        // 实际调用的函数
+//        function->mFuncBody = (LIntPtr)BoyiaMapPut;
+//
+//        BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
+//        putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
+//        putFuncVal->mNameKey = GEN_ID("put", vm); //GenIdentByStr("put", vm);
+//        putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+        
+        // put function implementation begin
+        GenBuiltinClassFunction(GEN_ID("put", vm), BoyiaMapPut, classBody, vm);
         // put function implementation end
+        
+        // get function implementation begin
+        GenBuiltinClassFunction(GEN_ID("get", vm), BoyiaMapGet, classBody, vm);
+        // get function implementation end
+        
+        // remove function implementation begin
+        GenBuiltinClassFunction(GEN_ID("remove", vm), BoyiaMapRemove, classBody, vm);
+        // remove function implementation end
+        
+        // clear function implementation begin
+        GenBuiltinClassFunction(GEN_ID("clear", vm), BoyiaMapClear, classBody, vm);
+        // clear function implementation end
     }
 }
 

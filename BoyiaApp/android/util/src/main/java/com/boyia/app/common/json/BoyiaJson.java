@@ -80,6 +80,7 @@ public class BoyiaJson {
                 continue;
             }
 
+            // getFields只包含public成员，而getDeclaredFields包含所有成员
             if (!cls.getSuperclass().equals(Object.class)) {
                 BoyiaLog.d(TAG, "super class = " + cls.getSuperclass().getName());
                 setFieldValue(cls.getSuperclass().getDeclaredFields(), key, value, newObject);

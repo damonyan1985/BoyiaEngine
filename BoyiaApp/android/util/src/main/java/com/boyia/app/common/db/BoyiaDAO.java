@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -75,18 +76,19 @@ public class BoyiaDAO<T extends BoyiaData> {
         try {
             if (bean != null) {
                 String columnName = getColumnName(field);
+                int index = cursor.getColumnIndex(columnName);
+
+                if (index < 0) {
+                    return;
+                }
                 if (field.getType() == Integer.class) {
-                    field.set(bean, cursor.getInt(cursor
-                            .getColumnIndex(columnName)));
+                    field.set(bean, cursor.getInt(index));
                 } else if (field.getType() == String.class) {
-                    field.set(bean, cursor.getString(cursor
-                            .getColumnIndex(columnName)));
+                    field.set(bean, cursor.getString(index));
                 } else if (field.getType() == Float.class) {
-                    field.set(bean, cursor.getFloat(cursor
-                            .getColumnIndex(columnName)));
+                    field.set(bean, cursor.getFloat(index));
                 } else if (field.getType() == Long.class) {
-                    field.set(bean, cursor.getLong(cursor
-                            .getColumnIndex(columnName)));
+                    field.set(bean, cursor.getLong(index));
                 }
             }
         } catch (Exception ex) {
