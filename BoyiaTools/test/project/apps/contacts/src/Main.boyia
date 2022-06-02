@@ -77,11 +77,16 @@ class MainViewController extends ViewController {
         
         this.viewId = 30;
         body.map(this.testMapFunc);
+        
+        this.testCall(testMapFunc, "hello testCall");
+    }
+    
+    fun testCall(propFunc, elem) {
+        propFunc(elem);
     }
     
     prop fun testMapFunc(elem) {
-        Util.log("viewId = " + this.viewId);
-        Util.log("elem = " + elem);
+        Util.log("elem = " + elem + ", viewId = " + this.viewId);
     }
     
     prop fun testCallback(data) {

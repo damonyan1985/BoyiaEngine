@@ -224,7 +224,7 @@ typedef struct {
     LInt mTmpLValSize;
     LInt mLValSize; /* count of global variable stack */
     LInt mResultNum;
-    BoyiaValue* mClass;
+    BoyiaValue mClass;
     CommandTable* mContext;
     CommandTable* mCmds;
     Instruction* mPC; // pc , 指令计数器
@@ -236,7 +236,7 @@ typedef struct {
     LInt mTmpLValSize;
     LInt mLoopSize;
     CommandTable* mContext;
-    BoyiaValue* mClass;
+    BoyiaValue mClass;
 } ExecScene;
 
 // 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
@@ -402,6 +402,20 @@ static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm);
 static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
+static LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src);
+
+static LVoid AssignStateClass(BoyiaVM* vm, BoyiaValue* value)
+{
+    if (value) {
+        ValueCopyNoName(&vm->mEState->mClass, value);
+    } else {
+        vm->mEState->mClass.mValue.mObj.mPtr = kBoyiaNull;
+        vm->mEState->mClass.mValue.mObj.mSuper = kBoyiaNull;
+    }
+    
+    vm->mEState->mClass.mValueType = BY_CLASS;
+}
+
 // Reset scene of global execute state
 static LVoid ResetScene(BoyiaVM* vm)
 {
@@ -410,7 +424,8 @@ static LVoid ResetScene(BoyiaVM* vm)
     vm->mEState->mLoopSize = 0;
     vm->mEState->mResultNum = 0;
     vm->mEState->mTmpLValSize = 0;
-    vm->mEState->mClass = kBoyiaNull;
+    //vm->mEState->mClass = kBoyiaNull;
+    AssignStateClass(vm, kBoyiaNull);
 }
 
 static VMCode* CreateVMCode()
@@ -593,8 +608,9 @@ static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mPC = vm->mExecStack[vm->mEState->mFunctos].mPC;
         vm->mEState->mContext = vm->mExecStack[vm->mEState->mFunctos].mContext;
         vm->mEState->mLoopSize = vm->mExecStack[vm->mEState->mFunctos].mLoopSize;
-        vm->mEState->mClass = vm->mExecStack[vm->mEState->mFunctos].mClass;
+        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFunctos].mClass;
         vm->mEState->mTmpLValSize = vm->mExecStack[vm->mEState->mFunctos].mTmpLValSize;
+        AssignStateClass(vm, &vm->mExecStack[vm->mEState->mFunctos].mClass);
     }
 
     return kOpResultSuccess;
@@ -782,7 +798,7 @@ static LVoid BreakStatement(CompileState* cs)
 static LInt HandleCreateProp(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass->mValue.mObj.mPtr;
+    BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass.mValue.mObj.mPtr;
     func->mParams[func->mParamSize].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
     func->mParams[func->mParamSize].mValue.mIntVal = 0;
     func->mParamSize++;
@@ -837,11 +853,11 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
 {
     /* First, see if has obj scope */
     if (key == kBoyiaThis) {
-        return vm->mEState->mClass;
+        return &vm->mEState->mClass;
     }
 
     if (key == kBoyiaSuper) {
-        return vm->mEState->mClass ? (BoyiaValue*)vm->mEState->mClass->mValue.mObj.mSuper : kBoyiaNull;
+        return (BoyiaValue*)vm->mEState->mClass.mValue.mObj.mSuper;
     }
 
     /* second, see if it's a local variable */
@@ -861,7 +877,7 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
         return val;
     }
 
-    return FindObjProp(vm->mEState->mClass, key, kBoyiaNull, vm);
+    return FindObjProp(&vm->mEState->mClass, key, kBoyiaNull, vm);
 }
 
 static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm)
@@ -947,10 +963,12 @@ static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
     if (inst->mOPLeft.mType == OP_VAR) {
         LUintPtr objKey = (LUintPtr)inst->mOPLeft.mValue;
         if (objKey != kBoyiaSuper) {
-            vm->mEState->mClass = (BoyiaValue*)vm->mCpu->mReg0.mNameKey;
+            //vm->mEState->mClass = (BoyiaValue*)vm->mCpu->mReg0.mNameKey;
+            AssignStateClass(vm, (BoyiaValue*)vm->mCpu->mReg0.mNameKey);
         }
     } else {
-        vm->mEState->mClass = kBoyiaNull;
+        //vm->mEState->mClass = kBoyiaNull;
+        AssignStateClass(vm, kBoyiaNull);
     }
 
     return kOpResultSuccess;
@@ -1424,11 +1442,13 @@ static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_NONE) {
-        vm->mEState->mClass = kBoyiaNull;
+        //vm->mEState->mClass = kBoyiaNull;
+        AssignStateClass(vm, kBoyiaNull);
         return kOpResultSuccess;
     }
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
-    vm->mEState->mClass = CreateFunVal(hashKey, BY_CLASS, vm);
+    //vm->mEState->mClass = CreateFunVal(hashKey, BY_CLASS, vm);
+    AssignStateClass(vm, CreateFunVal(hashKey, BY_CLASS, vm));
     return kOpResultSuccess;
 }
 
@@ -1476,10 +1496,10 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
-    if (vm->mEState->mClass) {
+    if (vm->mEState->mClass.mValue.mObj.mPtr) {
         LIntPtr isProp = inst->mOPRight.mValue;
         
-        BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass->mValue.mObj.mPtr;
+        BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass.mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = isProp ? BY_PROP_FUNC : BY_FUNC;
         func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
@@ -1653,11 +1673,21 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     // 内置类产生的对象，调用其方法
     if (value->mValueType == BY_NAV_FUNC) {
         // 将对象作为最后一个参数传入
-        LocalPush(vm->mEState->mClass, vm);
+        LocalPush(&vm->mEState->mClass, vm);
         NativePtr navFun = (NativePtr)func->mFuncBody;
         // native函数没有instruction，所以pc置为null
         vm->mEState->mPC = kBoyiaNull;
         return navFun(vm);
+    }
+    
+    if (value->mValueType == BY_PROP_FUNC) {
+        BoyiaValue val;
+        val.mValueType = BY_CLASS;
+        BoyiaFunction* objBody = (BoyiaFunction*)value->mValue.mObj.mSuper;
+
+        val.mValue.mObj.mPtr = value->mValue.mObj.mSuper;
+        val.mValue.mObj.mSuper = objBody->mFuncBody;
+        AssignStateClass(vm, &val);
     }
     
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
@@ -2736,7 +2766,8 @@ LVoid CompileCode(LInt8* code, LVoid* vm)
     vmPtr->mEState->mTmpLValSize = 0;
     vmPtr->mEState->mResultNum = 0;
     vmPtr->mEState->mLoopSize = 0;
-    vmPtr->mEState->mClass = kBoyiaNull;
+    //vmPtr->mEState->mClass = kBoyiaNull;
+    AssignStateClass(vmPtr, kBoyiaNull);
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
@@ -2786,12 +2817,15 @@ LVoid SaveLocalSize(LVoid* vm)
 LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass = vmPtr->mEState->mClass;
+    //vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass = vmPtr->mEState->mClass;
+    ValueCopyNoName(&vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass, &vmPtr->mEState->mClass);
+    
     vmPtr->mExecStack[vmPtr->mEState->mFunctos].mLValSize = vmPtr->mEState->mTmpLValSize;
     vmPtr->mExecStack[vmPtr->mEState->mFunctos].mPC = vmPtr->mEState->mPC;
     vmPtr->mExecStack[vmPtr->mEState->mFunctos].mContext = vmPtr->mEState->mContext;
     vmPtr->mExecStack[vmPtr->mEState->mFunctos++].mLoopSize = vmPtr->mEState->mLoopSize;
-    vmPtr->mEState->mClass = obj;
+    //vmPtr->mEState->mClass = obj;
+    AssignStateClass(vmPtr, obj);
 
     HandlePushParams(kBoyiaNull, vmPtr);
     HandleCallFunction(kBoyiaNull, vmPtr);
