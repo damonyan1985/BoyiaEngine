@@ -104,7 +104,7 @@ typedef struct {
 
 // function count最大不能超过65535
 // mParamCount的剩余高16位将用来做对象标记：
-// 例如16，17表示GC标记清除；18，19位表示不同字符串类型的标记
+// 17，18表示GC标记清除；19，20位表示不同字符串类型的标记
 // 其中高16位前两位表示GC标记清除状态
 #define GET_FUNCTION_COUNT(function) (function->mParamCount & 0x0000FFFF)
 

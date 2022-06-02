@@ -77,7 +77,7 @@ LInt addElementToVector(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
     if (fun->mParamSize >= GET_FUNCTION_COUNT(fun)) {
         BoyiaValue* value = fun->mParams;
-        LInt count = fun->mParamCount;
+        LInt count = GET_FUNCTION_COUNT(fun);
         fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10), vm);
         fun->mParamCount = count + 10;
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));

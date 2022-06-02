@@ -81,8 +81,20 @@ static LVoid MarkValue(BoyiaValue* value);
 // 标记对象属性
 static LVoid MarkObjectProps(BoyiaValue* value)
 {
-    BoyiaFunction* fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
-
+    BoyiaFunction* fun = kBoyiaNull;
+    
+    if (value->mValueType == BY_CLASS) {
+        fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
+    } else if (value->mValueType == BY_PROP_FUNC) {
+        // 如果是属性方法，则从super中获取对象地址
+        fun = (BoyiaFunction*)value->mValue.mObj.mSuper;
+    }
+    
+    // fun为空，或者对象已经被标记过了
+    if (!fun || !IS_OBJECT_INVALID(fun)) {
+        return;
+    }
+    
     // 标记为灰色
     fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcGray << 16);
     LInt idx = 0;
@@ -104,7 +116,7 @@ static LVoid MarkValue(BoyiaValue* value)
     }
 
     // 标记boyia对象
-    if (value->mValueType == BY_CLASS) {
+    if (value->mValueType == BY_CLASS || value->mValueType == BY_PROP_FUNC) {
         MarkObjectProps(value);
     }
 }
@@ -219,26 +231,44 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 //}
 
 // 标记boyia对象
-static LVoid ResetBoyiaObject(BoyiaRef* ref)
+static LVoid ResetBoyiaObject(BoyiaFunction* fun)
 {
-    BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+    //BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+    // high保留字符串标记，清除掉GC标记
     LInt high = fun->mParamCount >> 18;
     LInt low = GET_FUNCTION_COUNT(fun);
     fun->mParamCount = (high << 18) | low;
+    
+    //LInt flag = (fun->mParamCount >> 16) & kBoyiaGcMask;
 }
 
 // 重置对象内存颜色位白色
 static LVoid ResetMemoryColor(BoyiaGC* gc)
 {
+    // 在GC列表中的都是动态生成的对象
     BoyiaRef* ref = gc->mBegin;
     while (ref) {
         if (ref->mType == BY_NAVCLASS) {
             MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
         } else if (ref->mType == BY_CLASS) {
-            ResetBoyiaObject(ref);
+            ResetBoyiaObject((BoyiaFunction*)ref->mAddress);
         }
         
         ref = ref->mNext;
+    }
+    
+    // 不在GC列表中的是全局对象，也需要重置
+    LIntPtr stackAddr;
+    LInt size = 0;
+    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
+    BoyiaValue* stack = (BoyiaValue*)stackAddr;
+    
+    LInt idx = 0;
+    for (; idx < size; idx++) {
+        BoyiaValue* val = stack + idx;
+        if (val->mValueType == BY_CLASS) {
+            ResetBoyiaObject((BoyiaFunction*)val->mValue.mObj.mPtr);
+        }
     }
 }
 
@@ -246,11 +276,11 @@ static LVoid ResetMemoryColor(BoyiaGC* gc)
 extern LVoid GCollectGarbage(LVoid* vm)
 {
     BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
-    LIntPtr stackAddr;
-    LInt size = 0;
-    
     // 重置对象内存颜色
     ResetMemoryColor(gc);
+    
+    LIntPtr stackAddr;
+    LInt size = 0;
 
     // 标记栈
     GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
