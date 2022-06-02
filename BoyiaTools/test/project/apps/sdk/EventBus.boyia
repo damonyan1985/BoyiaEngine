@@ -17,6 +17,15 @@ class EventBus {
         events.remove(key);
     }
     
+    fun removeCallback(key, cb) {
+        var callbacks = events.get(key);
+        if (!callbacks) {
+            return;
+        }
+        
+        callbacks.remove(cb);
+    }
+    
     // handle callback with data
     fun emit(key, data) {
         var callbacks = events.get(key);

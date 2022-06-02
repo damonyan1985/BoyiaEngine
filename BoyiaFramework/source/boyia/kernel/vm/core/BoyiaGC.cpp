@@ -255,6 +255,7 @@ static LVoid ResetMemoryColor(BoyiaGC* gc)
     }
     
     // 不在GC列表中的是全局对象，也需要重置
+    // 全局对象的地址在方法区，而不是动态生成的，不在gc列表中
     LIntPtr stackAddr;
     LInt size = 0;
     GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
