@@ -1,11 +1,32 @@
+// global object
 class EventBus {
     prop events = {};
     
-    fun register(key, callback) {
-        events.put(key, callback);
+    // key is string type
+    fun register(key, cb) {
+        var callbacks = events.get(key);
+        if (!callbacks) {
+            callbacks = new(Array);
+            callbacks.put(cb);
+            events.put(key, callbacks);
+        }
     }
     
-    fun emit(key, data) {
+    // remove callback by key
+    fun remove(key) {
+        events.remove(key);
+    }
     
+    // handle callback with data
+    fun emit(key, data) {
+        var callbacks = events.get(key);
+        if (!callbacks) {
+            return;
+        }
+        
+        for (var i=0;i<callbacks.size(); i=i+1) {
+            var cb = callbacks.get(i);
+            cb(data);
+        }
     }
 }

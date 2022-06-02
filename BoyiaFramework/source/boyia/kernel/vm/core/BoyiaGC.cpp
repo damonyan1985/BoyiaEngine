@@ -233,13 +233,10 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
 // 标记boyia对象
 static LVoid ResetBoyiaObject(BoyiaFunction* fun)
 {
-    //BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
     // high保留字符串标记，清除掉GC标记
     LInt high = fun->mParamCount >> 18;
     LInt low = GET_FUNCTION_COUNT(fun);
     fun->mParamCount = (high << 18) | low;
-    
-    //LInt flag = (fun->mParamCount >> 16) & kBoyiaGcMask;
 }
 
 // 重置对象内存颜色位白色
