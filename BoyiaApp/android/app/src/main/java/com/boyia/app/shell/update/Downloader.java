@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.util.List;
 
 import com.boyia.app.common.utils.BoyiaUtils;
+import com.boyia.app.core.BoyiaBridge;
 import com.boyia.app.loader.BoyiaLoader;
 import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.common.utils.BoyiaFileUtil;
@@ -30,7 +31,11 @@ public class Downloader implements ILoadListener {
     private String mUrl;
 
     public Downloader() {
-        this(null, null);
+        this(null, BoyiaBridge.getAppRoot());
+    }
+
+    public Downloader(DownLoadProgressListener listener) {
+        this(listener, BoyiaBridge.getAppRoot());
     }
 
     public Downloader(DownLoadProgressListener listener, String fileDir) {

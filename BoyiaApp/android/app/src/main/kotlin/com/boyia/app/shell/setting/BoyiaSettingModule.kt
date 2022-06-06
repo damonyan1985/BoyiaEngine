@@ -28,9 +28,7 @@ class BoyiaSettingModule : IUIModule {
             return
         }
 
-        if (context == null) {
-            context = WeakReference(ctx)
-        }
+        context = WeakReference(ctx)
 
         fragment = BoyiaSettingFragment(this)
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()

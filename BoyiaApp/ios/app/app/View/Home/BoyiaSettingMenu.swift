@@ -82,17 +82,25 @@ struct BoyiaSettingMenu : View {
                 marginTop(top: 1.dp)
             }
             
-            Button(action: {
-                //loginModel.logout()
-            }) {
-                HStack {
+//            Button(action: {
+//            }) {
+//                HStack {
+//                    Text("ABOUT")
+//                        .bold()
+//                        .foregroundColor(Color(hex: 0x000000))
+//                }
+//                .frame(width: SettingConstants.SETTING_WIDTH, height: 64.dp)
+//                .background(Color(hex: 0xFFFFFF))
+//            }
+            HStack {
+                NavigationLink(destination: AboutView(), label: {
                     Text("ABOUT")
                         .bold()
                         .foregroundColor(Color(hex: 0x000000))
-                }
-                .frame(width: SettingConstants.SETTING_WIDTH, height: 64.dp)
-                .background(Color(hex: 0xFFFFFF))
+                })
             }
+            .frame(width: SettingConstants.SETTING_WIDTH, height: 64.dp)
+            .background(Color(hex: 0xFFFFFF))
             
             Spacer()
         }

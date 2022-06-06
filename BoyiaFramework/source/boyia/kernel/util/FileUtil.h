@@ -13,6 +13,7 @@
 #define FileUtil_h
 
 #include "UtilString.h"
+#include "KVector.h"
 
 namespace util {
 // android中的文件读写不能操作扩展卡中的内容，只能操作/data/data/com.boyia.app.shell下文件陆慕
@@ -30,6 +31,7 @@ public:
     static LVoid printAllFiles(const char* path);
     static LVoid syncLoadUrl(const String& url, String& content);
     static const String& fileSchema();
+    static LVoid listFiles(const String& path, KVector<String>& dirs, KVector<String>& files);
 };
 }
 

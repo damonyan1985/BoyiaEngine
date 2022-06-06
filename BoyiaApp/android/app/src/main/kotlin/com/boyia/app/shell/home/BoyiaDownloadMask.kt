@@ -30,7 +30,7 @@ class BoyiaDownloadMask(url: String, context: Context, private val downloadCallb
             }
             // TODO 启动下载任务
             if (e.action == MotionEvent.ACTION_DOWN) {
-                Downloader(this, BoyiaBridge.getAppRoot()).download(url)
+                Downloader(this).download(url)
                 isDownloading = true
             }
             return@setOnTouchListener true

@@ -80,7 +80,7 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
      */
     fun initDownloadMask(url: String) {
         JobScheduler.jobScheduler().sendJob {
-            if (!Downloader(null, BoyiaBridge.getAppRoot()).initDownloadData(url)) {
+            if (!Downloader().initDownloadData(url)) {
                 return@sendJob
             }
 

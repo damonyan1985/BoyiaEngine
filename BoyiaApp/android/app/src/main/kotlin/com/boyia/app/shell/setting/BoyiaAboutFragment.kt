@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberImagePainter
-import com.boyia.app.common.utils.BoyiaUtils
-import com.boyia.app.core.BoyiaBridge
+import com.boyia.app.shell.R
 import com.boyia.app.shell.home.BoyiaDownloadMask
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.update.Downloader
@@ -61,7 +61,8 @@ class BoyiaAboutFragment: NavigationFragment() {
                 ) {
                     Spacer(modifier = Modifier.height(60.dpx))
                     Image(
-                            painter = rememberImagePainter(data = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"),
+                            //painter = rememberImagePainter(data = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"),
+                            painter = painterResource(id = R.drawable.ic_launcher),
                             modifier = Modifier
                                     .size(80.dpx)
                                     .align(alignment = Alignment.CenterHorizontally),
@@ -105,7 +106,7 @@ class BoyiaAboutFragment: NavigationFragment() {
 
     @Composable
     fun versionButton() {
-        val completed = !Downloader(null, BoyiaBridge.getAppRoot()).initDownloadData(BoyiaDownloadMask.TEST_URL)
+        val completed = !Downloader().initDownloadData(BoyiaDownloadMask.TEST_URL)
 
         var updateProgress by remember {
             if (completed) mutableStateOf(1F) else mutableStateOf(0F)
@@ -133,7 +134,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                         override fun onCompleted() {
                             updateProgress = 1F
                         }
-                    }, BoyiaBridge.getAppRoot()).download(BoyiaDownloadMask.TEST_URL)
+                    }).download(BoyiaDownloadMask.TEST_URL)
                 },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically

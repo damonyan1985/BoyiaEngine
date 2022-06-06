@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 import core
 
 class BoyiaAppListModel: ObservableObject {
@@ -13,7 +14,7 @@ class BoyiaAppListModel: ObservableObject {
     @Published var appList: [BoyiaAppItem] = []
     
     init() {
-        requestAppList()
+        requestAppList()        
     }
     
     // 业务数据请求接口

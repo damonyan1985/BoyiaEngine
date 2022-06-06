@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct HomeView : View {
-    @ObservedObject var model = BoyiaAppListModel()
+    // @StateObject相比@ObservedObject的好处是，view销毁后StateObject也会销毁
+    // 而ObservedObject则不一定会销毁
+    @StateObject var model = BoyiaAppListModel()
     
     // @State只针对值类型，不能针对对象类型
     @State var offset: CGFloat = 0
     @State var showSetting = false
+    // 将loginModel共享给其他子view
     let loginModel = BoyiaLoginModel()
     
     var columns: [GridItem] = //[GridItem(.adaptive(minimum: 50)), GridItem(.adaptive(minimum: 50))]

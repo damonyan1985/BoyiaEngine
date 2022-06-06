@@ -38,6 +38,9 @@ class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
 
 class HttpUtil {
     struct HttpConstants {
+        static let BUNDLE_INFO = "https://itunes.apple.com/lookup?bundleId=1000"
+        static let APP_STORE_URL = "itms-apps://itunes.apple.com/app/1000"
+        
         static let HTTP_DOMAIN = "https://127.0.0.1:8443/"
         static let API_VERSION = "v1"
         
@@ -72,5 +75,30 @@ class HttpUtil {
             url: url,
             headers: headers,
             callback: HttpCallbackImpl<T>(cb: cb))
+    }
+    
+    // 检查版本并跳转appstore
+    static func checkVersion() {
+        HttpUtil.get(url: HttpConstants.BUNDLE_INFO, cb: { (data: BoyiaBundleInfo) in
+            DispatchQueue.main.async {
+                BoyiaLog.d("requestBundleInfo store_version = \(data.results[0].version!)")
+                
+                let version: String = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String)!
+                BoyiaLog.d("requestBundleInfo app_version = \(version)")
+                if (version != data.results[0].version!) {
+                    let urlString = HttpConstants.APP_STORE_URL
+                    if let url = URL(string: urlString) {
+                        if #available(iOS 10, *) {
+                            UIApplication.shared.open(url, options: [:],
+                                                      completionHandler: {
+                                                        (success) in
+                            })
+                        } else {
+                            UIApplication.shared.openURL(url)
+                        }
+                    }
+                }
+            }
+        })
     }
 }

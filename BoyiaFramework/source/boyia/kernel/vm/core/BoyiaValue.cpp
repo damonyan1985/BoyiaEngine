@@ -750,18 +750,6 @@ LVoid BuiltinMapClass(LVoid* vm)
 
     // map api
     {
-        
-//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-//        function->mParams = kBoyiaNull;
-//        function->mParamSize = 0;
-//        // 实际调用的函数
-//        function->mFuncBody = (LIntPtr)BoyiaMapPut;
-//
-//        BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
-//        putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-//        putFuncVal->mNameKey = GEN_ID("put", vm); //GenIdentByStr("put", vm);
-//        putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
-        
         // put function implementation begin
         GenBuiltinClassFunction(GEN_ID("put", vm), BoyiaMapPut, classBody, vm);
         // put function implementation end
@@ -790,6 +778,7 @@ BoyiaFunction* CreatMapObject(LVoid* vm)
     GCAppendRef(objBody, BY_CLASS, vm);
     return objBody;
 }
+// end map builtin
 
 
 // 内置Array Class builtin

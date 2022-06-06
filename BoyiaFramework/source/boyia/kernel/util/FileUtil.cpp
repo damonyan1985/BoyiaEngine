@@ -255,4 +255,43 @@ LVoid FileUtil::printAllFiles(const char* path)
 #elif ENABLE(BOYIA_WINDOWS)
 #endif
 }
+
+LVoid FileUtil::listFiles(const String& path, KVector<String>& dirs, KVector<String>& files)
+{
+    BOYIA_LOG("FileUtil::listFiles filePath=%s", GET_STR(path));
+#if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
+    DIR* d;
+    struct dirent* file;
+    //struct stat sb;
+
+    if (!(d = opendir(GET_STR(path)))) {
+        BOYIA_LOG("FileUtil::printAllFiles error opendir %s!!!", GET_STR(path));
+        return;
+    }
+
+    while ((file = readdir(d)) != kBoyiaNull) {
+        //if (strncmp(file->d_name, ".", 1) == 0)
+        if (isSpecialDir(file->d_name))
+            continue;
+        //strcpy(filename[len++], file->d_name);
+        CString filePath = GET_STR(path);
+        LInt len = filePath.GetLength();
+        if ('/' != filePath[len - 1]) {
+            filePath += '/';
+        }
+
+        filePath += file->d_name;
+        const char* subPath = GET_STR(filePath);
+        if (isDir(subPath)) {
+            dirs.addElement(_CS(subPath));
+        } else {
+            BOYIA_LOG("FileUtil::printAllFiles final filePath=%s", subPath);
+            files.addElement(_CS(subPath));
+        }
+    }
+
+    closedir(d);
+#elif ENABLE(BOYIA_WINDOWS)
+#endif
+}
 }
