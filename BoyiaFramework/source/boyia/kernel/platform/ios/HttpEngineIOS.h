@@ -17,6 +17,7 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 
 @protocol HttpCallback <NSObject>
 
+-(void)onProgress:(int64_t)current total:(int64_t)total;
 // 回调网络数据
 -(void)onDataReceive:(NSData*)data;
 // 请求完成
@@ -29,7 +30,6 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 // IOS http请求类
 @interface HttpEngineIOS : NSObject
 
-//-(void)setHttpCallback:(id<HttpCallback>)cb;
 -(void)setData:(NSString*)data;
 -(void)setData:(const char*)data size:(NSInteger)size;
 -(void)loadUrl:(HttpMethod)method url:(NSString*) url headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb;

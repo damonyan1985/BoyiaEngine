@@ -18,6 +18,7 @@
 		4CB46AB026EB46EC002407C1 /* net_boyia.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CB46AAF26EB46EC002407C1 /* net_boyia.json */; };
 		4CB46AB226EB46F4002407C1 /* boyia.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CB46AB126EB46F4002407C1 /* boyia.json */; };
 		4CB46AB426EB46F9002407C1 /* apps in Resources */ = {isa = PBXBuildFile; fileRef = 4CB46AB326EB46F9002407C1 /* apps */; };
+		4CFC5A11284F9AB300E9639C /* BoyiaBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A10284F9AB300E9639C /* BoyiaBridge.m */; };
 		4CFDE41D26D490ED00A01683 /* BoyiaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFDE41926D490ED00A01683 /* BoyiaViewController.m */; };
 		4CFDE41E26D490ED00A01683 /* BoyiaViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE41A26D490ED00A01683 /* BoyiaViewController.h */; };
 		4CFDE41F26D490ED00A01683 /* BoyiaView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CFDE41B26D490ED00A01683 /* BoyiaView.h */; };
@@ -264,6 +265,8 @@
 		4CB46AAF26EB46EC002407C1 /* net_boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = net_boyia.json; path = ../../../../BoyiaTools/test/project/net_boyia.json; sourceTree = "<group>"; };
 		4CB46AB126EB46F4002407C1 /* boyia.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = boyia.json; path = ../../../../BoyiaTools/test/project/boyia.json; sourceTree = "<group>"; };
 		4CB46AB326EB46F9002407C1 /* apps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = apps; path = ../../../../BoyiaTools/test/project/apps; sourceTree = "<group>"; };
+		4CFC5A0F284F9A9200E9639C /* BoyiaBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BoyiaBridge.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaBridge.h; sourceTree = "<group>"; };
+		4CFC5A10284F9AB300E9639C /* BoyiaBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BoyiaBridge.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaBridge.m; sourceTree = "<group>"; };
 		4CFDE41926D490ED00A01683 /* BoyiaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BoyiaViewController.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaViewController.m; sourceTree = "<group>"; };
 		4CFDE41A26D490ED00A01683 /* BoyiaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaViewController.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaViewController.h; sourceTree = "<group>"; };
 		4CFDE41B26D490ED00A01683 /* BoyiaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoyiaView.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaView.h; sourceTree = "<group>"; };
@@ -638,6 +641,8 @@
 				4CFDE41926D490ED00A01683 /* BoyiaViewController.m */,
 				4CA99D932726C552004FAD07 /* BoyiaTextInputView.h */,
 				4CA99D942726C5A4004FAD07 /* BoyiaTextInputView.m */,
+				4CFC5A0F284F9A9200E9639C /* BoyiaBridge.h */,
+				4CFC5A10284F9AB300E9639C /* BoyiaBridge.m */,
 			);
 			name = porting;
 			sourceTree = "<group>";
@@ -1347,6 +1352,7 @@
 				4CFDE59C26D4C63200A01683 /* InlineView.cpp in Sources */,
 				4CFDE4ED26D4C46C00A01683 /* adler32.c in Sources */,
 				4CFDE5FA26D516AE00A01683 /* LockPosix.cpp in Sources */,
+				4CFC5A11284F9AB300E9639C /* BoyiaBridge.m in Sources */,
 				4CFDE4A326D4C3A200A01683 /* BoyiaRuntime.cpp in Sources */,
 				4CFDE5CA26D4C68A00A01683 /* ThreadPool.cpp in Sources */,
 				4CFDE4FC26D4C48F00A01683 /* ioapi.c in Sources */,

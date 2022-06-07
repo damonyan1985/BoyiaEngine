@@ -23,6 +23,7 @@ struct AboutView : View {
                         height: 360.dp)
             
             Button(action: {
+                HttpUtil.checkVersion()
             }) {
                 HStack {
                     Text("Version update")

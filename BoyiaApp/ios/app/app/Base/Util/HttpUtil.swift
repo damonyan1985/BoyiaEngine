@@ -9,13 +9,15 @@ import Foundation
 import core
 
 typealias ModelDataCallback<T> = (_ data: T) -> Void
+typealias DownloadProgressCallback = (_ progress: Double) -> Void
+typealias DownloadCompletedCallback = () -> Void
 
 class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
     lazy var buffer: Data = Data()
     var callback: ModelDataCallback<T>
     
     init(cb: @escaping ModelDataCallback<T>) {
-        callback =  cb
+        callback = cb
     }
     
     func onDataReceive(_ data: Data!) {
@@ -33,6 +35,36 @@ class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
     }
     
     func onLoadError() {
+    }
+    
+    func onProgress(_ current: Int64, total: Int64) {
+    }
+}
+
+class HttpDownloadCallback: NSObject, HttpCallback {
+    lazy var buffer: Data = Data()
+    var progressCB: DownloadProgressCallback
+    var completedCB: DownloadCompletedCallback
+    let path: String = BoyiaBridge.getAppRoot() + "/download/"
+    
+    init(pcb: @escaping DownloadProgressCallback, ccb: @escaping DownloadCompletedCallback) {
+        progressCB = pcb
+        completedCB = ccb
+    }
+    
+    func onDataReceive(_ data: Data!) {
+        buffer.append(data);
+    }
+    
+    func onLoadFinished() {
+        completedCB()
+    }
+    
+    func onLoadError() {
+    }
+    
+    func onProgress(_ current: Int64, total: Int64) {
+        progressCB((Double)(current)/(Double)(total))
     }
 }
 
@@ -53,6 +85,8 @@ class HttpUtil {
         url: String,
         headers: [AnyHashable : Any]? = nil,
         cb: @escaping ModelDataCallback<T>) {
+            
+        //BoyiaLog.d("approot = \(BoyiaBridge.getAppRoot()!)")
         let engine = HttpEngineIOS()
         engine.loadUrl(
             HttpMethod.get,
@@ -100,5 +134,26 @@ class HttpUtil {
                 }
             }
         })
+    }
+    
+    // 下载功能
+    static func download(url: String,
+                         headers: [AnyHashable : Any]? = nil,
+                         pcb: @escaping DownloadProgressCallback,
+                         ccb: @escaping DownloadCompletedCallback
+    ) {
+        let fileManager = FileManager.default
+        
+        let path: String = BoyiaBridge.getAppRoot() + "/download/" + url.md5
+        if fileManager.fileExists(atPath: path) == false {
+            do {
+                try fileManager.createDirectory(
+                    atPath: path,
+                    withIntermediateDirectories: true,
+                    attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
     }
 }

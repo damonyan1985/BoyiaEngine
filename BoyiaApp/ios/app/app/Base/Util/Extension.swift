@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CryptoKit
 
 // 处理所有基础扩展
 
@@ -109,6 +110,15 @@ extension String {
             }
         }
         return result
+    }
+    
+    // 获取string md5值
+    public var md5: String {
+        guard let data = self.data(using: .utf8) else { return "" }
+        return Insecure.MD5
+            .hash(data: data)
+            .map{String(format: "%02x", $0)}
+            .joined()
     }
 }
 

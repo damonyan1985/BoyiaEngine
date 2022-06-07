@@ -60,6 +60,9 @@
     }
 }
 
+-(void)onProgress:(int64_t)current total:(int64_t)total {
+}
+
 @end
 
 namespace yanbo {

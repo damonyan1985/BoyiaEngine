@@ -6,6 +6,7 @@
 #include "AppManager.h"
 #include "FileUtil.h"
 #include "IOSRenderer.h"
+#include "BoyiaBridge.h"
 
 namespace yanbo {
 // TODO
@@ -69,18 +70,20 @@ const char* PlatformBridge::getAppRoot()
         return GET_STR(sAppRootPath);
     }
     
-    NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
-    NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
-    NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
-    //NSString* appDir = [NSBundle bundleWithIdentifier:@"com.boyia.metal"].bundlePath;
-//    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    NSString* docDir = [paths objectAtIndex:0];
-//    NSString* appDir = [docDir stringByAppendingString:@"/boyia/"];
-//    NSFileManager* fileManager = [NSFileManager defaultManager];
-//    if (![fileManager fileExistsAtPath:appDir]) {
-//        [fileManager createDirectoryAtPath:appDir withIntermediateDirectories:YES attributes:nil error:nil];
-//    }
-    NSString* boyiaAppDir = [appBundle.bundlePath stringByAppendingString:@"/"];
+//    NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
+//    NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
+//    NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
+//    //NSString* appDir = [NSBundle bundleWithIdentifier:@"com.boyia.metal"].bundlePath;
+////    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+////    NSString* docDir = [paths objectAtIndex:0];
+////    NSString* appDir = [docDir stringByAppendingString:@"/boyia/"];
+////    NSFileManager* fileManager = [NSFileManager defaultManager];
+////    if (![fileManager fileExistsAtPath:appDir]) {
+////        [fileManager createDirectoryAtPath:appDir withIntermediateDirectories:YES attributes:nil error:nil];
+////    }
+//    NSString* boyiaAppDir = [appBundle.bundlePath stringByAppendingString:@"/"];
+    
+    NSString* boyiaAppDir = [BoyiaBridge getAppRoot];
     sAppRootPath = (const LUint8*)([boyiaAppDir UTF8String]);
     return GET_STR(sAppRootPath);
 }

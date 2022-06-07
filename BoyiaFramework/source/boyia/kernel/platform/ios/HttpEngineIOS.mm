@@ -11,7 +11,7 @@
 #import "HttpEngineIOS.h"
 
 // 实现请求代理
-@interface HttpEngineDelegate : NSObject<NSURLSessionDataDelegate>
+@interface HttpEngineDelegate : NSObject<NSURLSessionDataDelegate, NSURLSessionTaskDelegate>
 
 @property (strong) id<HttpCallback> callback;
 @property (strong) NSString* url;
@@ -149,5 +149,16 @@ didCompleteWithError:(nullable NSError *)error {
     [self.callback onLoadFinished];
 }
 
+#pragma mark --NSURLSessionDownloadDelegate
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+                                didSendBodyData:(int64_t)bytesSent
+                                 totalBytesSent:(int64_t)totalBytesSent
+totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    if (!self.callback) {
+        return;
+    }
+    
+    [self.callback onProgress:bytesSent total:totalBytesSent];
+}
 
 @end

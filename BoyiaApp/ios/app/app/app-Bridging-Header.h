@@ -8,6 +8,7 @@
 // swift引入oc时需要使用
 #import "BoyiaViewController.h"
 #import "HttpEngineIOS.h"
+#import "BoyiaBridge.h"
 #import "sqlite3.h"
 
 #endif
