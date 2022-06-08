@@ -42,21 +42,33 @@ class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
 }
 
 class HttpDownloadCallback: NSObject, HttpCallback {
-    lazy var buffer: Data = Data()
+    //lazy var buffer: Data = Data()
     var progressCB: DownloadProgressCallback
     var completedCB: DownloadCompletedCallback
-    let path: String = BoyiaBridge.getAppRoot() + "/download/"
+    let file: FileHandle?
+    var size: Int64 = 0
+    var current: Int64 = 0
     
-    init(pcb: @escaping DownloadProgressCallback, ccb: @escaping DownloadCompletedCallback) {
+    init(path: String, pcb: @escaping DownloadProgressCallback, ccb: @escaping DownloadCompletedCallback) {
         progressCB = pcb
         completedCB = ccb
+        file = FileHandle(forWritingAtPath: path)
+        BoyiaLog.d("HttpDownloadCallback path = \(path)")
     }
     
     func onDataReceive(_ data: Data!) {
-        buffer.append(data);
+        //buffer.append(data);
+        current += Int64(data.count)
+        file?.write(data)
+        progressCB((Double)(current)/(Double)(size))
     }
     
     func onLoadFinished() {
+        do {
+            try file?.close()
+        } catch {
+            BoyiaLog.d("HttpDownloadCallback close file error: \(error)")
+        }
         completedCB()
     }
     
@@ -64,7 +76,7 @@ class HttpDownloadCallback: NSObject, HttpCallback {
     }
     
     func onProgress(_ current: Int64, total: Int64) {
-        progressCB((Double)(current)/(Double)(total))
+        size = total
     }
 }
 
@@ -144,16 +156,39 @@ class HttpUtil {
     ) {
         let fileManager = FileManager.default
         
-        let path: String = BoyiaBridge.getAppRoot() + "/download/" + url.md5
-        if fileManager.fileExists(atPath: path) == false {
+        let downloadDir: String = BoyiaBridge.getAppRoot() + "download/"
+        if fileManager.fileExists(atPath: downloadDir) == false {
             do {
+                // 创建文件目录
                 try fileManager.createDirectory(
-                    atPath: path,
+                    atPath: downloadDir,
                     withIntermediateDirectories: true,
                     attributes: nil)
             } catch {
                 print(error)
+                return
             }
         }
+        
+        let downloadFile = downloadDir + url.md5
+        if fileManager.fileExists(atPath: downloadFile) {
+            do {
+                try fileManager.removeItem(atPath: downloadFile)
+            } catch {
+                print(error)
+                return
+            }
+            
+        }
+        
+        // 创建文件
+        fileManager.createFile(atPath: downloadFile, contents: nil, attributes: nil)
+        
+        let engine = HttpEngineIOS()
+        engine.loadUrl(
+            HttpMethod.get,
+            url: url,
+            headers: headers,
+            callback: HttpDownloadCallback(path: downloadFile, pcb: pcb, ccb: ccb))
     }
 }

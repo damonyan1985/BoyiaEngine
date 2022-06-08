@@ -2,10 +2,11 @@ package com.boyia.app.shell.ipc
 
 import android.os.IBinder
 import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
-import com.boyia.app.shell.BoyiaConstants.IPCNameConstants;
 import com.boyia.app.shell.ipc.handler.GetShareHandler
+import com.boyia.app.shell.ipc.handler.SendNotificationHandler
 import com.boyia.app.shell.ipc.handler.SetShareHandler
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
@@ -22,8 +23,9 @@ class BoyiaIPCModule : IPCModule {
     override fun init() {
         binder = BoyiaHostBinder(this)
         handlerMap = ConcurrentHashMap<String?, IBoyiaHandlerCreator>()
-        register(IPCNameConstants.LOCAL_SHARE_SET, SetShareHandler::class.java)
-        register(IPCNameConstants.LOCAL_SHARE_GET, GetShareHandler::class.java)
+        register(ApiConstants.ApiNames.LOCAL_SHARE_SET, SetShareHandler::class.java)
+        register(ApiConstants.ApiNames.LOCAL_SHARE_GET, GetShareHandler::class.java)
+        register(ApiConstants.ApiNames.NOTIFICATION_NAME, SendNotificationHandler::class.java)
     }
 
     /**

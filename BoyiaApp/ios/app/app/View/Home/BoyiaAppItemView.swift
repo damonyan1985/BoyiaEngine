@@ -46,12 +46,13 @@ struct BoyiaAppItemView : View {
             }
             
             if showMask {
-                BoyiaDownloadMask(width: width, height: height)
+                BoyiaDownloadMask(width: width, height: height, ccb: {
+                    DispatchQueue.main.async {
+                        showMask = false
+                    }
+                })
             }
         }
         .cornerRadius(12.dp)
-        .onTapGesture {
-            showMask = false
-        }
     }
 }

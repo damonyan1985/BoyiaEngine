@@ -23,6 +23,7 @@ import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.api.ApiImplementation;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
 import com.boyia.app.loader.image.BoyiaImager;
@@ -46,6 +47,7 @@ public class BoyiaActivity extends Activity {
     private IBoyiaSender mSender;
     private boolean mNeedExit = false;
     private static final int EXIT_DELAY_TIME = 3000;
+    private ApiImplementation mApiImplementation;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -64,34 +66,14 @@ public class BoyiaActivity extends Activity {
         Bundle bundle = intent.getExtras();
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         mSender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+        mApiImplementation = new ApiImplementation(mSender);
         BoyiaBridge.setIPCSender(mSender);
 
         justForTest();
     }
 
     private void justForTest() {
-        Bundle b = new Bundle();
-        b.putString("ipc_key", "key1");
-        b.putString("ipc_value", "value1");
-        BoyiaIpcData data = new BoyiaIpcData(
-                "local_share_set",
-                b
-        );
-        try {
-            mSender.sendMessageAsync(data, new IBoyiaIpcCallback() {
-                @Override
-                public void callback(BoyiaIpcData boyiaIpcData) {
-                    BoyiaLog.d(TAG, "BoyiaApp boyiaIpcData = " + boyiaIpcData);
-                }
-
-                @Override
-                public IpcScheduler scheduler() {
-                    return runnable -> JobScheduler.jobScheduler().sendJob(runnable::run);
-                }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        mApiImplementation.setShare("key1", "value1");
     }
 
     protected void initContainer() {
@@ -125,6 +107,10 @@ public class BoyiaActivity extends Activity {
         BoyiaLog.d(TAG, "onNewIntent intent action = " + intent.getAction());
 
         Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            return;
+        }
+
         BoyiaAppInfo info = (BoyiaAppInfo) bundle.get(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         if (info == null) {
             return;
@@ -225,6 +211,13 @@ public class BoyiaActivity extends Activity {
         if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
             BoyiaImager.getInstance().clearMemoryCache();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mApiImplementation.sendNotification(
+                getIntent().getAction(), mAppInfo);
     }
 
     // 以下是BoyiaApp子进程启动类, 最多只能启动6个应用进程

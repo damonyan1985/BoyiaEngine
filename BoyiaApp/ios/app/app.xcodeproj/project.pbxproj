@@ -48,6 +48,7 @@
 		4CFC5A08283CFBDF00E9639C /* BoyiaBaseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A07283CFBDF00E9639C /* BoyiaBaseData.swift */; };
 		4CFC5A0B284DAF5000E9639C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A0A284DAF4F00E9639C /* AboutView.swift */; };
 		4CFC5A0D284DDE1300E9639C /* BoyiaBundleInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A0C284DDE1300E9639C /* BoyiaBundleInfo.swift */; };
+		4CFC5A1328506CE700E9639C /* BoyiaDownloadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A1228506CE700E9639C /* BoyiaDownloadModel.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -112,6 +113,7 @@
 		4CFC5A07283CFBDF00E9639C /* BoyiaBaseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaBaseData.swift; sourceTree = "<group>"; };
 		4CFC5A0A284DAF4F00E9639C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4CFC5A0C284DDE1300E9639C /* BoyiaBundleInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaBundleInfo.swift; sourceTree = "<group>"; };
+		4CFC5A1228506CE700E9639C /* BoyiaDownloadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaDownloadModel.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -292,6 +294,7 @@
 				4CFC5A05283CBDC300E9639C /* BoyiaUserData.swift */,
 				4CFC5A07283CFBDF00E9639C /* BoyiaBaseData.swift */,
 				4CFC5A0C284DDE1300E9639C /* BoyiaBundleInfo.swift */,
+				4CFC5A1228506CE700E9639C /* BoyiaDownloadModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				4CC8FB6727EB4F7800795648 /* WebMessageHandler.swift in Sources */,
 				4CFC5A04283CB3BB00E9639C /* BoyiaLoginInfo.swift in Sources */,
 				4CC8FB6427EB1C2700795648 /* BoyiaWebController.swift in Sources */,
+				4CFC5A1328506CE700E9639C /* BoyiaDownloadModel.swift in Sources */,
 				4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */,
 				4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */,
 				4CFC5A00283CAFE600E9639C /* BoyiaUserInfo.swift in Sources */,

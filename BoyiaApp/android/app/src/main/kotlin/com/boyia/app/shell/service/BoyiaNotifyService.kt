@@ -3,6 +3,7 @@ package com.boyia.app.shell.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.os.Process
@@ -50,8 +51,10 @@ class BoyiaNotifyService: Service() {
         return NotificationCompat.Builder(this, BOYIA_APP_CHANNEL_ID)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher))
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent)
+                .setContentTitle("BoyiaApp")
                 .build()
     }
 }

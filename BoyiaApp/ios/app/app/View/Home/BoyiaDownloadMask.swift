@@ -9,14 +9,18 @@ import SwiftUI
 
 // TODO 下载mask动画
 struct BoyiaDownloadMask : View {
-    @State private var progress: Double = 0.375;
+    //@State private var progress: Double = 0.0;
+    @StateObject private var model = BoyiaDownloadModel()
     
     private var width: Double
     private var height: Double
+    private var completedCB: DownloadCompletedCallback
     
-    public init(width: Double, height: Double) {
-        self.width = width;
-        self.height = height;
+    public init(width: Double, height: Double, ccb: @escaping DownloadCompletedCallback) {
+        self.width = width
+        self.height = height
+    
+        self.completedCB = ccb
     }
     
     var body: some View {
@@ -26,9 +30,9 @@ struct BoyiaDownloadMask : View {
             
             path.move(to: CGPoint(x: w / 2, y: 0))
             path.addLine(to: CGPoint(x: w / 2, y: h / 2))
-            if progress <= 0.125 {
-                let x1 = w/2 + (w/2) * (progress / 0.125)
-                if (progress < 0.125) {
+            if model.progress <= 0.125 {
+                let x1 = w/2 + (w/2) * (model.progress / 0.125)
+                if (model.progress < 0.125) {
                     path.addLine(to: CGPoint(x: x1, y: 0))
                 }
                 path.addLine(to: CGPoint(x: w, y: 0))
@@ -37,9 +41,9 @@ struct BoyiaDownloadMask : View {
                 path.addLine(to: CGPoint(x: 0, y: 0))
                 
                 path.addLine(to: CGPoint(x: w / 2, y: 0))
-            } else if (progress > 0.125 && progress <= 0.375) {
-                let y1 = ((progress - 0.125) / 0.25) * h
-                if (progress < 0.375) {
+            } else if (model.progress > 0.125 && model.progress <= 0.375) {
+                let y1 = ((model.progress - 0.125) / 0.25) * h
+                if (model.progress < 0.375) {
                     path.addLine(to: CGPoint(x: w, y: y1))
                 }
                 path.addLine(to: CGPoint(x: w, y: h))
@@ -47,9 +51,9 @@ struct BoyiaDownloadMask : View {
                 path.addLine(to: CGPoint(x: 0, y: 0))
                 
                 path.addLine(to: CGPoint(x: w / 2, y: 0))
-            } else if (progress > 0.375 && progress <= 0.625) {
-                let x1 = w - ((progress - 0.375) / 0.25) * w
-                if (progress < 0.625) {
+            } else if (model.progress > 0.375 && model.progress <= 0.625) {
+                let x1 = w - ((model.progress - 0.375) / 0.25) * w
+                if (model.progress < 0.625) {
                     //path.addLine(x1.toFloat(), h)
                     path.addLine(to: CGPoint(x: x1, y: h))
                 }
@@ -57,16 +61,16 @@ struct BoyiaDownloadMask : View {
                 path.addLine(to: CGPoint(x: 0, y: 0))
                 
                 path.addLine(to: CGPoint(x: w / 2, y: 0))
-            } else if (progress > 0.625 && progress <= 0.875) {
-                let y1 = h - ((progress - 0.625) / 0.25) * h
-                if (progress < 0.875) {
+            } else if (model.progress > 0.625 && model.progress <= 0.875) {
+                let y1 = h - ((model.progress - 0.625) / 0.25) * h
+                if (model.progress < 0.875) {
                     path.addLine(to: CGPoint(x: 0, y: y1))
                 }
                 path.addLine(to: CGPoint(x: 0, y: 0))
                 
                 path.addLine(to: CGPoint(x: w / 2, y: 0))
-            } else if (progress > 0.875 && progress < 1.0) {
-                let x1 = ((progress - 0.875) / 0.25) * w
+            } else if (model.progress > 0.875 && model.progress < 1.0) {
+                let x1 = ((model.progress - 0.875) / 0.25) * w
                 path.addLine(to: CGPoint(x: x1, y: 0))
                 
                 path.addLine(to: CGPoint(x: w / 2, y: 0))
@@ -89,6 +93,9 @@ struct BoyiaDownloadMask : View {
         }
         .fill(Color(argb: 0x01000000))
         .frame(width: width, height: height)
+        .onTapGesture {
+            model.download(ccb: self.completedCB)
+        }
     }
 }
 

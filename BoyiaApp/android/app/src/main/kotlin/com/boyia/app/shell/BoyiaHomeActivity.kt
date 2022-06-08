@@ -32,7 +32,6 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
         initHome()
         initNotifyService()
-
     }
 
     private fun initHome() {

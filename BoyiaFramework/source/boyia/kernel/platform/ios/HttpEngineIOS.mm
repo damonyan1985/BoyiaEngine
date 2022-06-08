@@ -101,7 +101,7 @@
 
 @implementation HttpEngineDelegate
 
-#pragma mark --NSURLSessionDownloadDelegate
+#pragma mark --NSURLSessionDataDelegate
 
 -(void)URLSession:(NSURLSession*)session task:(NSURLSessionTask*)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential* _Nullable))completionHandler
 {
@@ -130,6 +130,7 @@
     }
 }
 
+// 完成回调
 - (void)URLSession:(NSURLSession*)session task:(NSURLSessionTask*)task
 didCompleteWithError:(nullable NSError *)error {
     //NSString* json = [[NSString alloc] initWithData:self.receiveData encoding:(NSUTF8StringEncoding)];
@@ -149,7 +150,8 @@ didCompleteWithError:(nullable NSError *)error {
     [self.callback onLoadFinished];
 }
 
-#pragma mark --NSURLSessionDownloadDelegate
+#pragma mark --NSURLSessionTaskDelegate
+// 上传进度
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
                                 didSendBodyData:(int64_t)bytesSent
                                  totalBytesSent:(int64_t)totalBytesSent
@@ -160,5 +162,20 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
     
     [self.callback onProgress:bytesSent total:totalBytesSent];
 }
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+                                 didReceiveResponse:(NSURLResponse *)response
+ completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
+    NSURLSessionResponseDisposition disposition = NSURLSessionResponseAllow;
+    if (completionHandler) {
+        completionHandler(disposition);
+    }
+    if (!self.callback) {
+        return;
+    }
+    
+    [self.callback onProgress:0 total:response.expectedContentLength];
+}
+
 
 @end
