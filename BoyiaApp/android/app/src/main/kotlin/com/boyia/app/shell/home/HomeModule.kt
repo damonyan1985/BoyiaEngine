@@ -5,6 +5,7 @@ import com.boyia.app.shell.model.BoyiaAppItem
 import com.boyia.app.shell.model.BoyiaAppListModel
 import com.boyia.app.shell.module.IHomeModule
 import com.boyia.app.shell.module.IModuleContext
+import com.boyia.app.shell.module.ModuleManager
 import java.lang.ref.WeakReference
 
 // module类似presenter
@@ -65,5 +66,11 @@ class HomeModule: IHomeModule {
 
     override fun clear() {
         appListModel?.appList?.clear()
+    }
+
+    fun showSearch() {
+        val ctx = context?.get() ?: return
+        val module = ModuleManager.instance().getModule(ModuleManager.SEARCH)
+        module?.show(ctx)
     }
 }

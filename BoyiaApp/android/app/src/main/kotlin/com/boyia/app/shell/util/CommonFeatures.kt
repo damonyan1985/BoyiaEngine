@@ -5,10 +5,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.Outline
 import android.os.Build
+import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.core.app.NotificationCompat
-import androidx.core.graphics.drawable.IconCompat
 import com.boyia.app.common.BaseApplication
 import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.loader.image.IBoyiaImage
@@ -60,5 +61,16 @@ object CommonFeatures {
                 return 100.dp
             }
         })
+    }
+
+    // 为view设置圆角
+    fun setViewRadius(view: View, radius: Int) {
+        view.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline?) {
+                outline?.setRoundRect(0, 0, view.width, view.height, radius.toFloat())
+            }
+        }
+
+        view.clipToOutline = true
     }
 }

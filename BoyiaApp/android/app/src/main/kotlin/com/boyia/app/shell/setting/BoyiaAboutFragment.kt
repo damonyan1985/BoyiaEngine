@@ -31,7 +31,7 @@ import com.boyia.app.shell.util.dpx
  * 使用compose来编写关于页面
  */
 class BoyiaAboutFragment: NavigationFragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun createView(): View {
         return ComposeView(requireContext()).apply { 
             setContent {
                 buildLayout()

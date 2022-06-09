@@ -5,6 +5,9 @@ import com.boyia.app.common.ipc.IBoyiaIpcCallback
 import com.boyia.app.common.ipc.IBoyiaIpcSender
 import com.boyia.app.loader.job.JobScheduler
 
+/**
+ * shell工程binder
+ */
 class BoyiaHostBinder(private val module: BoyiaIPCModule) : IBoyiaIpcSender.BoyiaSenderStub() {
 
     override fun sendMessageSync(data: BoyiaIpcData?): BoyiaIpcData? {

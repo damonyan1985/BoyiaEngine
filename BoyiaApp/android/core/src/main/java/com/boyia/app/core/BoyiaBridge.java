@@ -7,6 +7,7 @@ import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.core.api.ApiImplementation;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.loader.mue.MainScheduler;
 
@@ -18,7 +19,7 @@ import java.lang.ref.WeakReference;
  */
 public class BoyiaBridge {
     private static final String TAG = "BoyiaBridge";
-    private static WeakReference<IBoyiaSender> sSender;
+    private static WeakReference<ApiImplementation> sApiImplementation;
 
     /**
      * 获取文本长度
@@ -55,9 +56,9 @@ public class BoyiaBridge {
     }
 
     /**
-     * 设置IPC发送器
+     * 设置IPC发送器，为boyia app提供宿主api功能
      */
-    public static void setIPCSender(IBoyiaSender sender) {
-        sSender = new WeakReference<>(sender);
+    public static void setIPCSender(ApiImplementation implementation) {
+        sApiImplementation = new WeakReference<>(implementation);
     }
 }

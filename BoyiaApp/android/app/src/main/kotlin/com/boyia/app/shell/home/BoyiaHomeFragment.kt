@@ -3,6 +3,7 @@ package com.boyia.app.shell.home
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.boyia.app.common.utils.BoyiaLog
@@ -23,9 +23,12 @@ import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.setting.BoyiaSettingModule
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
+import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 
-class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
+class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
     companion object {
         const val TAG = "BoyiaHomeFragment"
         const val GRID_SPAN_NUM = 3
@@ -98,10 +101,10 @@ class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
             }
         }
 
-        headerView = BoyiaHomeHeader(context, loader, listener!!)
+        headerView = BoyiaHomeHeader(context, module, listener!!)
         footerView = BoyiaHomeFooter(context)
 
-        appListAdapter = BoyiaAppListAdapter(requireContext(), loader)
+        appListAdapter = BoyiaAppListAdapter(requireContext(), module)
         middleView = RecyclerView(requireContext())
         middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
         middleView?.adapter = appListAdapter
@@ -123,8 +126,8 @@ class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
         activity?.window?.statusBarColor = HEADER_BG_COLOR
         HandlerFoundation.setStatusbarTextColor(activity, true)
 
-        loader.clear()
-        loader.loadAppList(object : LoadCallback {
+        module.clear()
+        module.loadAppList(object : LoadCallback {
             override fun onLoaded() {
                 appListAdapter?.notifyDataSetChanged()
             }
@@ -143,17 +146,11 @@ class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
         return false
     }
 
-    class BoyiaHomeHeader(context: Context?, module: IHomeModule, listener: SlideListener) : RelativeLayout(context) {
+    class BoyiaHomeHeader(context: Context?, module: HomeModule, listener: SlideListener) : RelativeLayout(context) {
         private var imageSetting: ImageView? = null
 
         init {
             imageSetting = ImageView(context)
-//            val bitmap = IconicsDrawable(context!!, FontAwesome.Icon.faw_cog)
-//                    .apply {
-//                        sizeXPx = dp(50)
-//                        sizeYPx = dp(50)
-//                    }
-//                    .toBitmap()
             imageSetting?.setImageResource(R.drawable.gear)
             // 设置图像颜色
             imageSetting?.setColorFilter(Color.BLACK)
@@ -163,9 +160,9 @@ class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
                     50.dp,
                     50.dp
             )
-            settingParam.addRule(ALIGN_PARENT_BOTTOM)
+            settingParam.addRule(CENTER_VERTICAL)
             settingParam.addRule(ALIGN_PARENT_RIGHT)
-            settingParam.bottomMargin = 20.dp
+            //settingParam.bottomMargin = 20.dp
             settingParam.rightMargin = 20.dp
 
             imageSetting?.setOnClickListener {
@@ -177,7 +174,43 @@ class BoyiaHomeFragment(private val loader: IHomeModule): BaseFragment() {
                 }
             }
 
+            val searchLayout = context?.let { FrameLayout(it) }
+            searchLayout?.setBackgroundColor(Color.WHITE)
+            searchLayout?.setOnClickListener {
+                // 启动搜索页
+                module.showSearch()
+            }
+
+            val searchParam = LayoutParams(
+                    540.dp,
+                    70.dp
+            )
+            //searchParam.addRule(ALIGN_PARENT_BOTTOM)
+            searchParam.addRule(CENTER_VERTICAL)
+            searchParam.addRule(ALIGN_PARENT_LEFT)
+            //searchParam.bottomMargin = 20.dp
+            searchParam.leftMargin = 60.dp
+
+            val drawable = IconicsDrawable(context!!, GoogleMaterial.Icon.gmd_search)
+                    .apply {
+                        sizeXPx = 36.dp
+                        sizeYPx = 36.dp
+                    }
+
+            val searchImageView = ImageView(context)
+            searchImageView.setImageDrawable(drawable)
+            val searchImageParam = FrameLayout.LayoutParams(
+                    36.dp,
+                    36.dp
+            )
+            searchImageParam.leftMargin = 20.dp
+            searchImageParam.gravity = Gravity.CENTER_VERTICAL
+            searchLayout?.addView(searchImageView, searchImageParam)
+
+            CommonFeatures.setViewRadius(searchLayout!!, 35.dp)
+
             addView(imageSetting, settingParam);
+            addView(searchLayout, searchParam)
         }
     }
 

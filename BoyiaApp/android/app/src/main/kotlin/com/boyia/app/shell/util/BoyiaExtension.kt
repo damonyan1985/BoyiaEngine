@@ -1,5 +1,7 @@
 package com.boyia.app.shell.util
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.boyia.app.common.utils.BoyiaUtils
 
@@ -12,3 +14,8 @@ val Int.dp: Int
  */
 val Int.dpx: Dp
     get() = Dp(this.toFloat())
+
+@Composable
+fun dpx(value: Int): Dp {
+    return with(LocalDensity.current) { value.dp.toDp() }
+}

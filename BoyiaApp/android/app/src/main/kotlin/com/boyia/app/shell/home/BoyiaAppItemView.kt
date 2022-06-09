@@ -22,6 +22,7 @@ import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.job.JobScheduler
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.update.Downloader
+import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
 
 class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
@@ -61,18 +62,8 @@ class BoyiaAppItemView(context: Context, attrs: AttributeSet?) : FrameLayout(con
 
         addView(container)
 
-        setRadius(12.dp);
-    }
-
-    // 设置圆角
-    private fun setRadius(radius: Int) {
-        outlineProvider = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline?) {
-                outline?.setRoundRect(0, 0, view.width, view.height, radius.toFloat())
-            }
-        }
-
-        clipToOutline = true
+        //setRadius(12.dp);
+        CommonFeatures.setViewRadius(this, 12.dp)
     }
 
     /**

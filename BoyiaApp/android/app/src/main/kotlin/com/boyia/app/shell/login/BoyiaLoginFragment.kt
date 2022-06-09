@@ -14,7 +14,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
     private var userInput: EditText? = null
     private var passwordInput: EditText? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun createView(): View? {
         if (rootLayout != null) {
             val parant = rootLayout?.parent as ViewGroup
             parant.removeView(rootLayout)

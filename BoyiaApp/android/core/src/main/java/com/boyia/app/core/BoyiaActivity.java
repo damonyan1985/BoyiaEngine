@@ -44,7 +44,6 @@ public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
     private BoyiaAppInfo mAppInfo;
-    private IBoyiaSender mSender;
     private boolean mNeedExit = false;
     private static final int EXIT_DELAY_TIME = 3000;
     private ApiImplementation mApiImplementation;
@@ -65,9 +64,9 @@ public class BoyiaActivity extends Activity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
-        mSender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
-        mApiImplementation = new ApiImplementation(mSender);
-        BoyiaBridge.setIPCSender(mSender);
+        IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+        mApiImplementation = new ApiImplementation(sender);
+        BoyiaBridge.setIPCSender(mApiImplementation);
 
         justForTest();
     }

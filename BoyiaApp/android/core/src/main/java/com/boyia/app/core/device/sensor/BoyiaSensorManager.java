@@ -2,6 +2,8 @@ package com.boyia.app.core.device.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.SparseArray;
 
@@ -35,27 +37,58 @@ public class BoyiaSensorManager {
         mSensorItems = new SparseArray<>();
     }
 
-    private int genSensorItem(int type) {
-        Sensor sensor = getSensor(type);
-        if (sensor == null) {
-            return 0;
-        }
-
-        int id = mIdBase.incrementAndGet();
-        mSensorItems.put(id, new SensorItem(id, sensor));
-        return id;
-    }
-
-    private Sensor getSensor(int type) {
-        SensorManager manager = (SensorManager) BaseApplication.getInstance().getSystemService(Context.SENSOR_SERVICE);
+    private Sensor getSensor(SensorManager manager, int type) {
         switch (type) {
             case ACCELER_TYPE:
                 return manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             case MAGNETIC_TYPE:
-                return manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                return manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD); // 磁场变化
+            default:
+                return null;
+        }
+    }
+
+    public int addListener(int type) {
+        SensorManager manager = (SensorManager) BaseApplication.getInstance().getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = getSensor(manager, type);
+
+        if (sensor == null) {
+            return 0;
         }
 
-        return null;
+        SensorEventListener listener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                // TODO 调用native方法发送
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // TODO
+            }
+        };
+
+        int id = mIdBase.incrementAndGet();
+        mSensorItems.put(id, new SensorItem(id, listener));
+
+        manager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME);
+        // id需要回传给app，可以使用id来接受信息
+        return id;
+    }
+
+    public void removeListener(int type, int id) {
+        SensorItem item = mSensorItems.get(id);
+
+        mSensorItems.remove(id);
+
+        SensorManager manager = (SensorManager) BaseApplication.getInstance().getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = getSensor(manager, type);
+
+        if (sensor == null) {
+            return;
+        }
+
+        manager.unregisterListener(item.mListener, sensor);
     }
 
     /**
@@ -63,11 +96,11 @@ public class BoyiaSensorManager {
      */
     private static class SensorItem {
         public int mId;
-        public Sensor mSensor;
+        public SensorEventListener mListener;
 
-        public SensorItem(int id, Sensor sensor) {
-            mSensor = sensor;
+        public SensorItem(int id, SensorEventListener listener) {
             mId = id;
+            mListener = listener;
         }
     }
 }

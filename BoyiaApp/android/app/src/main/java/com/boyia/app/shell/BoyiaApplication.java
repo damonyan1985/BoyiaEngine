@@ -14,6 +14,7 @@ import com.boyia.app.shell.home.HomeModule;
 import com.boyia.app.shell.ipc.BoyiaIPCModule;
 import com.boyia.app.shell.login.LoginModule;
 import com.boyia.app.shell.module.ModuleManager;
+import com.boyia.app.shell.search.SearchModule;
 import com.boyia.app.shell.setting.BoyiaSettingModule;
 import com.umeng.commonsdk.UMConfigure;
 
@@ -76,5 +77,6 @@ public class BoyiaApplication extends BaseApplication {
         ModuleManager.Companion.instance().register(ModuleManager.LOGIN, new LoginModule());
         ModuleManager.Companion.instance().register(ModuleManager.IPC, new BoyiaIPCModule());
         ModuleManager.Companion.instance().register(ModuleManager.SETTING, new BoyiaSettingModule());
+        ModuleManager.Companion.instance().register(ModuleManager.SEARCH, new SearchModule());
     }
 }
