@@ -15,7 +15,7 @@ public interface ILoadListener {
     }
 
     // Content-length return
-    void onLoadDataSize(long size);
+    void onLoadDataSize(long size, Object msg);
 
     // Get redirect url
     void onLoadRedirectUrl(String redirectUrl);

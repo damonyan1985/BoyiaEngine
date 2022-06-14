@@ -62,7 +62,7 @@ public class BoyiaImageRunner implements ILoadListener {
     }
 
     @Override
-    public void onLoadDataSize(long size) {
+    public void onLoadDataSize(long size, Object msg) {
         BoyiaLog.d(TAG, "BoyiaImageRunner size: " + size);
         mDataSize = size;
     }

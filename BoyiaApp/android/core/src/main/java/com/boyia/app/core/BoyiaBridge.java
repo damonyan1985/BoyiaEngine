@@ -1,5 +1,6 @@
 package com.boyia.app.core;
 
+import android.content.Intent;
 import android.widget.Toast;
 
 import com.boyia.app.common.BaseApplication;
@@ -7,6 +8,7 @@ import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.BaseApplication;
+import com.boyia.app.core.api.ApiHandler;
 import com.boyia.app.core.api.ApiImplementation;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.loader.mue.MainScheduler;
@@ -60,5 +62,20 @@ public class BoyiaBridge {
      */
     public static void setIPCSender(ApiImplementation implementation) {
         sApiImplementation = new WeakReference<>(implementation);
+    }
+
+    public static void callApi(String json, long nativeCB) {
+        if (sApiImplementation != null && sApiImplementation.get() != null) {
+            sApiImplementation.get().handleApi(json, new ApiHandler.ApiHandlerCallback() {
+                long nativePtr() {
+                    return nativeCB;
+                }
+
+                @Override
+                public void callback(String json) {
+
+                }
+            });
+        }
     }
 }

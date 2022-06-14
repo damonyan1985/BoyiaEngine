@@ -29,6 +29,7 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     const char* method = parser.get("method")->valuestring;
     
     yanbo::NetworkBase* network = yanbo::AppManager::instance()->network();
+    // 清空请求头
     network->clearHeaders();
     // 设置请求头, header被要求是对象
     if (header && header->type == cJSON_Object) {
@@ -42,11 +43,12 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     if (strcmp(method, "get") == 0) {
         network->loadUrl(url, this, LFalse);
     } else if (strcmp(method, "post") == 0) {
+        // 只有存在body时才发送请求
         if (body && body->type == cJSON_String) {
             BOYIA_LOG("BoyiaNetwork::load post body=%s", body->valuestring);
             network->setPostData(new String(_CS(body->valuestring)));
+            network->postData(url, this, LFalse);
         }
-        network->postData(url, this, LFalse);
     }
 }
 

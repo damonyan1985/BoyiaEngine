@@ -2,7 +2,10 @@ package com.boyia.app.loader;
 
 import com.boyia.app.loader.http.Request;
 import com.boyia.app.loader.http.BoyiaLoadJob;
+import com.boyia.app.loader.http.upload.Uploader;
+import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
+import com.boyia.app.loader.http.upload.Uploader.UploadProgressListener;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -80,6 +83,17 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
         load(url, isWait, null);
     }
 
+    public void upload(String url, boolean isWait, Object msg) {
+        mRequest.mUrl = url;
+        IJob job = () -> Uploader.upload(mRequest, mListener, msg);
+
+        if (isWait) {
+            BoyiaWorker.getWorker().sendJob(job);
+        } else {
+            JobScheduler.jobScheduler().sendJob(job);
+        }
+    }
+
     @Override
     public void onDataReceived(byte[] data, int length, Object msg) {
         if (mListener != null) {
@@ -96,9 +110,9 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
     }
 
     @Override
-    public void onDataSize(long size) {
+    public void onDataSize(long size, Object msg) {
         if (mListener != null) {
-            mListener.onLoadDataSize(size);
+            mListener.onLoadDataSize(size, msg);
         }
     }
 

@@ -12,6 +12,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImageView
@@ -21,6 +22,7 @@ import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
+import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
 
 class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragment() {
@@ -70,6 +72,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
     }
 
     private fun initLayout() {
+        val info = BoyiaLoginInfo.instance()
+
         val container = RelativeLayout(context)
         container.id = View.generateViewId()
         container.setBackgroundColor(Color.WHITE)
@@ -83,6 +87,14 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         avatarView = BoyiaImageView(context, 54.dp)
         avatarView?.id = View.generateViewId()
+        avatarView?.setOnClickListener {
+            if (info.isLogin()) {
+//                activity?.let { act -> CommonFeatures.pickImage(act as AppCompatActivity) { it ->
+//                    BoyiaLog.d(TAG, "pick image callback = $it")
+//                } }
+                module.moduleContext()?.pickImage()
+            }
+        }
         val avatarParam = RelativeLayout.LayoutParams(
                 108.dp,
                 108.dp
@@ -94,7 +106,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         container.addView(avatarView, avatarParam)
 
-        val info = BoyiaLoginInfo.instance();
+
 
         nameView = TextView(context)
         nameView?.text = info.user?.nickname ?: "Anonymous"

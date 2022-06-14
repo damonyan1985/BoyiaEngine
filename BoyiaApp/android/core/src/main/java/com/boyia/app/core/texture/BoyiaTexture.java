@@ -4,8 +4,8 @@ import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
 public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
-    private SurfaceTexture mTexture = null;
-    private Surface mSurface = null;
+    private SurfaceTexture mTexture;
+    private Surface mSurface;
     private float[] mSTMatrix = new float[16];
     private boolean mUpdateSurface = false;
     private static long mLastPlayTime = 0;

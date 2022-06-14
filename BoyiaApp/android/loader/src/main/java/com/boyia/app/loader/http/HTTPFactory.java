@@ -12,6 +12,8 @@ public class HTTPFactory {
     public static final String TAG = "HTTPFactory";
     public static final int HTTP_GET_METHOD = 0;
     public static final int HTTP_POST_METHOD = 1;
+    public static final int HTTP_PUT_METHOD = 2;
+
     public static final String HTTP_GET_METHOD_STR = "GET";
     public static final String HTTP_POST_METHOD_STR = "POST";
     public static final int HTTP_TIME_OUT = 10 * 1000;

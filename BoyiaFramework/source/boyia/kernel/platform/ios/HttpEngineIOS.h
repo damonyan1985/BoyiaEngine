@@ -35,6 +35,8 @@ typedef NS_ENUM(NSUInteger, HttpMethod) {
 -(void)loadUrl:(HttpMethod)method url:(NSString*) url headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb;
 -(void)loadUrlWithData:(HttpMethod)method url:(const char *)url headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb;
 
+-(void)upload:(NSString*)url path:(NSString*)path headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb;
+
 @end
 
 #endif /* HttpEngineIOS_h */

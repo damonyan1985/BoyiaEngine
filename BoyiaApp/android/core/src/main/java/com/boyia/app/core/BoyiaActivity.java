@@ -65,7 +65,7 @@ public class BoyiaActivity extends Activity {
         Bundle bundle = intent.getExtras();
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
-        mApiImplementation = new ApiImplementation(sender);
+        mApiImplementation = new ApiImplementation(sender, this);
         BoyiaBridge.setIPCSender(mApiImplementation);
 
         justForTest();
@@ -217,6 +217,13 @@ public class BoyiaActivity extends Activity {
         super.onStop();
         mApiImplementation.sendNotification(
                 getIntent().getAction(), mAppInfo);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mApiImplementation.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     // 以下是BoyiaApp子进程启动类, 最多只能启动6个应用进程

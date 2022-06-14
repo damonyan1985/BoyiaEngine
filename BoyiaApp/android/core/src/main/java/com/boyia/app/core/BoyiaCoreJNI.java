@@ -41,6 +41,8 @@ public class BoyiaCoreJNI {
     // Native Method Define
     public static native void nativeInitUIView(int width, int height, boolean isDebug);
 
+    public static native void nativeOnDataSize(long size, long callback);
+
     public static native void nativeOnDataReceive(byte[] data, int length, long callback);
 
     public static native void nativeOnDataFinished(long callback);
@@ -85,4 +87,7 @@ public class BoyiaCoreJNI {
     // 启动boyia app
     public static native void nativeLaunchApp(int aid, String name, int version,
                                               String url, String cover);
+
+    // boyia app api回调
+    public static native void nativeApiCallback(String result, long callback);
 }

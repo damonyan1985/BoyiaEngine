@@ -104,12 +104,21 @@ static void nativeDistroyUIView(JNIEnv* env, jobject obj)
     yanbo::AppManager::instance()->uiThread()->destroy();
 }
 
+// loader callback begin
+static void nativeOnDataSize(JNIEnv* env, jobject obj, jlong size, jlong callback)
+{
+    reinterpret_cast<yanbo::NetworkClient*>(callback)->onFileLen(size);
+}
+
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)
 {
-    jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
-    LByte* buffer = new LByte[len];
-    LMemcpy(buffer, bytes, len);
-    env->ReleaseByteArrayElements(byteArray, bytes, 0);
+    LByte* buffer = kBoyiaNull;
+    if (byteArray) {
+        jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
+        buffer = new LByte[len];
+        LMemcpy(buffer, bytes, len);
+        env->ReleaseByteArrayElements(byteArray, bytes, 0);
+    }
     reinterpret_cast<yanbo::NetworkClient*>(callback)->onDataReceived(buffer, len);
 }
 
@@ -122,6 +131,8 @@ static void nativeOnLoadError(JNIEnv* env, jobject obj, jstring error, jlong cal
 {
     reinterpret_cast<yanbo::NetworkClient*>(callback)->onLoadError(yanbo::NetworkClient::kNetworkFileError);
 }
+
+// loader callback end
 
 static void nativeHandleTouchEvent(JNIEnv* env, jobject obj, jint type, jint x, jint y)
 {
@@ -237,8 +248,14 @@ static void nativeLaunchApp(JNIEnv* env, jobject obj, jint aid, jstring name, ji
     });
 }
 
+static void nativeApiCallback(JNIEnv* env, jobject obj, jstring result, jlong callback)
+{
+
+}
+
 static JNINativeMethod sUIViewMethods[] = {
     { "nativeInitUIView", "(IIZ)V", (void*)nativeInitUIView },
+    { "nativeOnDataSize", "(JJ)V", (void*)nativeOnDataSize },
     { "nativeOnDataReceive", "([BIJ)V", (void*)nativeOnDataReceive },
     { "nativeOnDataFinished", "(J)V", (void*)nativeOnDataFinished },
     { "nativeOnLoadError", "(Ljava/lang/String;J)V", (void*)nativeOnLoadError },
@@ -258,6 +275,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativePlatformViewUpdate", "(Ljava/lang/String;)V", (void*)nativePlatformViewUpdate },
     { "nativeOnFling", "(IIIIIIFF)V", (void*)nativeOnFling },
     { "nativeLaunchApp", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;)V", (void*)nativeLaunchApp },
+    { "nativeApiCallback", "(Ljava/lang/String;J)V", (void*)nativeApiCallback },
 };
 
 extern int registerNativeMethods(JNIEnv* env, const char* className,

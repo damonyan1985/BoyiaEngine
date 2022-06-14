@@ -5,6 +5,7 @@
 namespace yanbo {
 AppManager::AppManager()
 {
+    // 只允许在主线程中执行m_network
     m_network = NetworkBase::create();
     m_loader = new AppLoader(this);
     m_uiThread = new UIThread(this);

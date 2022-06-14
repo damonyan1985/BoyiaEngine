@@ -45,7 +45,7 @@ public class BoyiaAppLauncher {
         sLaunchThread = new HandlerThread(TAG);
         sLaunchThread.start();
         Handler handler = new Handler(sLaunchThread.getLooper());
-        handler.post(() -> initSdk());
+        handler.post(BoyiaAppLauncher::initSdk);
         return handler;
     }
 
@@ -64,6 +64,15 @@ public class BoyiaAppLauncher {
 
             initApp(info);
             launchImpl(info);
+        });
+    }
+
+    /**
+     * 当进程被杀死时，从缓存中移除
+     */
+    private static void onDestroyApp() {
+        BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
+
         });
     }
 
@@ -117,7 +126,7 @@ public class BoyiaAppLauncher {
      * 只允许主进程进行调用，其他进程可以通过IPC来调用此方法
      * @param info
      */
-    public static void launchImpl(BoyiaAppInfo info) {
+    private static void launchImpl(BoyiaAppInfo info) {
         List<ProcessInfo> list = getRunningBoyiaProcessList();
 
         for (int i = 0; i < BOYIA_APP_PROCESS_ENDS.length; i++) {

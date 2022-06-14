@@ -153,7 +153,7 @@ public class Downloader implements ILoadListener {
     }
 
     @Override
-    public void onLoadDataSize(long size) {
+    public void onLoadDataSize(long size, Object msg) {
         BoyiaLog.d(TAG, "download size="+size);
         mInfo.setMaxLength(size);
     }

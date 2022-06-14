@@ -23,6 +23,10 @@ class BoyiaSettingModule : IUIModule {
         fragment?.setSlideListener(listener)
     }
 
+    fun moduleContext(): IModuleContext? {
+        return context?.get()
+    }
+
     override fun show(ctx: IModuleContext) {
         if (fragment != null) {
             return

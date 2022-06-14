@@ -10,6 +10,8 @@
 #import "PlatformLib.h"
 #import "HttpEngineIOS.h"
 
+#define kNewLine [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]
+
 // 实现请求代理
 @interface HttpEngineDelegate : NSObject<NSURLSessionDataDelegate, NSURLSessionTaskDelegate>
 
@@ -97,6 +99,59 @@
     self.postData = data;
 }
 
+-(void)upload:(NSString*)url path:(NSString*)path headers:(NSDictionary*)headers callback:(id<HttpCallback>)cb {
+    NSURL *reqUrl = [NSURL URLWithString:url];
+    // 初始化请求对象
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:reqUrl cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
+    
+    NSString *boundary = [NSString stringWithFormat:@"Boundary-%@", [[NSUUID UUID] UUIDString]];
+    [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
+    request.HTTPMethod = @"POST";
+    if (headers) {
+        NSLog(@"HttpHeaders: %@",headers);
+        [request setAllHTTPHeaderFields:headers];
+    }
+        
+    NSURLSessionConfiguration* config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    // 创建操作队列
+    NSOperationQueue* queue = [NSOperationQueue new];
+    
+    HttpEngineDelegate* delegate = [HttpEngineDelegate new];
+    delegate.callback = cb;
+    delegate.url = url;
+    
+    // 创建Session, 设置代理
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:config delegate:delegate delegateQueue:queue];
+    
+    NSMutableData *fileData = [NSMutableData data];
+    
+    
+    [fileData appendData:[[NSString stringWithFormat:@"--%@", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:kNewLine];
+    
+    [fileData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"", path.lastPathComponent] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:kNewLine];
+    [fileData appendData:[@"Content-Type: image/jpeg" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:kNewLine];
+    [fileData appendData:kNewLine];
+    
+    NSData *fData = [NSData dataWithContentsOfFile:path];
+
+    
+    [fileData appendData:fData];
+    [fileData appendData:kNewLine];
+    [fileData appendData:[[NSString stringWithFormat:@"--%@--",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    request.HTTPBody = fileData;
+    
+    NSURLSessionTask* uploadTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            // 解析数据
+    //        NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        }];
+    [uploadTask resume];
+}
+
 @end
 
 @implementation HttpEngineDelegate
@@ -145,7 +200,6 @@ didCompleteWithError:(nullable NSError *)error {
         [self.callback onLoadError];
         return;
     }
-    
 
     [self.callback onLoadFinished];
 }

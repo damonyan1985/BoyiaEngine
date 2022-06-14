@@ -62,4 +62,8 @@ class BoyiaLoginInfo {
         user = null
         token = null
     }
+
+    fun isLogin(): Boolean {
+        return token != null
+    }
 }

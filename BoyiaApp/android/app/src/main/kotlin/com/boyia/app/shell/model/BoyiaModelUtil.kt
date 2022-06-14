@@ -18,46 +18,55 @@ object BoyiaModelUtil {
     const val LOGIN_URL = "${HTTP_DOMAIN}user/${API_VERSION}/login"
     const val LOGOUT_URL = "${HTTP_DOMAIN}user/${API_VERSION}/logout"
     const val APP_LIST_URL = "${HTTP_DOMAIN}app/${API_VERSION}/appList"
+    const val UPLOAD_URL = "${HTTP_DOMAIN}file/${API_VERSION}/upload"
 
     inline fun <reified T> request(
             url: String,
             cb: ModelDataCallback<T>? = null,
             method: Int = HTTPFactory.HTTP_GET_METHOD,
             headers: Map<String, String>? = null,
-            data: String? = null) {
+            data: String? = null,
+            upload: Boolean = false
+    ) {
 
-        MueTask.create { subscriber: Subscriber<T> -> run {
-            val buffer = ByteArrayOutputStream()
-            val loader = BoyiaLoader(object : BoyiaSimpleLoaderListener {
-                override fun onLoadDataReceive(bytes: ByteArray?, length: Int, msg: Any?) {
-                    buffer.write(bytes, 0, length)
+        MueTask.create { subscriber: Subscriber<T> ->
+            run {
+                val buffer = ByteArrayOutputStream()
+                val loader = BoyiaLoader(object : BoyiaSimpleLoaderListener {
+                    override fun onLoadDataReceive(bytes: ByteArray?, length: Int, msg: Any?) {
+                        buffer.write(bytes, 0, length)
+                    }
+
+                    override fun onLoadFinished(msg: Any?) {
+                        val json = buffer.toString(HTTPFactory.HTTP_CHARSET_UTF8)
+                        BoyiaLog.d(TAG, "requestAppList json = $json")
+                        val data: T = BoyiaJson.jsonParse(json, T::class.java)
+                        subscriber.onNext(data)
+                        subscriber.onComplete()
+                    }
+
+                    override fun onLoadError(msg: String?, p1: Any?) {
+                        subscriber.onError(null)
+                    }
+                })
+
+                loader.setRequestMethod(method)
+                if (data != null) {
+                    loader.setPostParam(data)
                 }
 
-                override fun onLoadFinished(msg: Any?) {
-                    val json = buffer.toString(HTTPFactory.HTTP_CHARSET_UTF8)
-                    BoyiaLog.d(TAG, "requestAppList json = $json")
-                    val data: T = BoyiaJson.jsonParse(json, T::class.java)
-                    subscriber.onNext(data)
-                    subscriber.onComplete()
+                // 设置http头
+                headers?.forEach {
+                    loader.putRequestHeader(it.key, it.value)
                 }
 
-                override fun onLoadError(msg: String?, p1: Any?) {
-                    subscriber.onError(null)
+                if (upload) {
+                    loader.upload(url, false, null)
+                } else {
+                    loader.load(url)
                 }
-            })
-
-            loader.setRequestMethod(method)
-            if (data != null) {
-                loader.setPostParam(data)
             }
-
-            // 设置http头
-            headers?.forEach {
-                loader.putRequestHeader(it.key, it.value)
-            }
-
-            loader.load(url)
-        } }
+        }
                 .subscribeOn(JobScheduler.jobScheduler())
                 //.observeOn(MainScheduler.mainScheduler())
                 .subscribe(object : Subscriber<T> {

@@ -36,7 +36,7 @@ public class BoyiaLoadJob implements IJob {
 
         void onReceiveFinished(Object msg);
 
-        void onDataSize(long size);
+        void onDataSize(long size, Object msg);
 
         void onHttpError(String info, Object msg);
     }
@@ -104,7 +104,7 @@ public class BoyiaLoadJob implements IJob {
     }
 
     private boolean executeRedirect(Response data) {
-        mCallback.onDataSize(data.getLength());
+        mCallback.onDataSize(data.getLength(), mMessage);
         String redirectUrl = data.getRedirectUrl();
         if (!BoyiaUtils.isTextEmpty(redirectUrl)) {
             BoyiaLog.d(TAG, "BoyiaLoadJob redirectUrl: " + redirectUrl);

@@ -80,6 +80,24 @@ class HttpDownloadCallback: NSObject, HttpCallback {
     }
 }
 
+class UploadCallback: NSObject, HttpCallback {
+    func onProgress(_ current: Int64, total: Int64) {
+        
+    }
+    
+    func onDataReceive(_ data: Data!) {
+        
+    }
+    
+    func onLoadFinished() {
+        
+    }
+    
+    func onLoadError() {
+        
+    }
+}
+
 class HttpUtil {
     struct HttpConstants {
         static let BUNDLE_INFO = "https://itunes.apple.com/lookup?bundleId=1000"
@@ -91,6 +109,7 @@ class HttpUtil {
         static let LOGIN_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/login"
         static let LOGOUT_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/logout"
         static let APP_LIST_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/appList"
+        static let UPLOAD_URL = "\(HTTP_DOMAIN)file/\(API_VERSION)/upload"
     }
     // 业务数据请求接口
     static func get<T: Decodable>(
@@ -190,5 +209,14 @@ class HttpUtil {
             url: url,
             headers: headers,
             callback: HttpDownloadCallback(path: downloadFile, pcb: pcb, ccb: ccb))
+    }
+    
+    // 上传功能
+    static func upload(path: String) {
+        var headers = [AnyHashable: Any]()
+        headers["User-Token"] = BoyiaLoginInfo.shared.token
+        
+        let engine = HttpEngineIOS()
+        engine.upload(HttpConstants.UPLOAD_URL, path: path, headers: headers, callback: UploadCallback())
     }
 }

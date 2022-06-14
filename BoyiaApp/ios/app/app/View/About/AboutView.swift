@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AboutView : View {
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 0) {
             VStack {
                 Image(uiImage: UIImage(named: appIconName())!)
                     .resizable()
@@ -33,10 +33,37 @@ struct AboutView : View {
                 .frame(width: PixelRatio.screenWidth(), height: 84.dp)
                 .background(Color(hex: 0xFFFFFF))
             }
+            marginTop(top: 1.dp)
+            Button(action: {
+                HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
+            }) {
+                HStack {
+                    Text("Feature introduction")
+                        .bold()
+                        .foregroundColor(Color(hex: 0x000000))
+                }
+                .frame(width: PixelRatio.screenWidth(), height: 84.dp)
+                .background(Color(hex: 0xFFFFFF))
+            }
+            Spacer()
+            
+            marginTop(top: 1.dp)
+            Button(action: {
+            }) {
+                HStack {
+                    Text("Feedback")
+                        .bold()
+                        .foregroundColor(Color(hex: 0x000000))
+                }
+                .frame(width: PixelRatio.screenWidth(), height: 84.dp)
+                .background(Color(hex: 0xFFFFFF))
+            }
             Spacer()
         }.background(Color(argb: 0x08000000))
-        
-        
+    }
+    
+    func marginTop(top: Double) -> some View {
+        return VStack{}.frame(width: 0, height: top, alignment: .top);
     }
     
     // 获取应用图标

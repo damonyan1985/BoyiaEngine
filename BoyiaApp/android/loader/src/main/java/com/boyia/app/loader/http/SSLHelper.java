@@ -62,8 +62,8 @@ public class SSLHelper {
     }
 
     public static class SSLInfo {
-        SSLSocketFactory mFactory;
-        X509TrustManager mTrustManager;
+        public SSLSocketFactory mFactory;
+        public X509TrustManager mTrustManager;
 
         public SSLInfo() {
             try {
