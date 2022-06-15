@@ -7,13 +7,16 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Text
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IModuleContext
@@ -27,7 +30,7 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
     companion object {
         const val TAG = "BoyiaHomeActivity"
     }
-    private var rootView: FrameLayout? = null
+    private var rootView: CoordinatorLayout? = null
 
 //    activity已经创建，并且persistableMode设置persistAcrossReboots才会调用
 //    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -55,17 +58,16 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
         initHome()
         initNotifyService()
-//        CommonFeatures.registerPickerImage(this) { path ->  
-//            
-//        }
+        BoyiaUtils.setStatusbarTransparent(this)
     }
 
     private fun initHome() {
         BoyiaLog.d(TAG, "BoyiaHomeActivity initHome")
-        rootView = FrameLayout(this)
+        rootView = CoordinatorLayout(this)
         rootView?.id = View.generateViewId()
         rootView?.setBackgroundColor(Color.BLUE)
-        rootView?.fitsSystemWindows = true
+        rootView?.fitsSystemWindows = false
+        rootView?.clipToPadding = false
 
         setContentView(rootView)
 

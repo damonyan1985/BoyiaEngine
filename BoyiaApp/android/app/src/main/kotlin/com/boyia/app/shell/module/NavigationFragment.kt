@@ -1,11 +1,13 @@
 package com.boyia.app.shell.module
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.FragmentTransaction
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.R
 
 open class NavigationFragment: BaseFragment() {
@@ -38,7 +40,11 @@ open class NavigationFragment: BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = createView()
         if (view != null) {
-            return view;
+            view.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            return view
         }
 
         view?.setOnTouchListener { v, event ->

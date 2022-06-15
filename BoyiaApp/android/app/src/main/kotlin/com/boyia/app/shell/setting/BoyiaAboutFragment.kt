@@ -20,23 +20,28 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberImagePainter
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.R
 import com.boyia.app.shell.home.BoyiaDownloadMask
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.update.Downloader
 import com.boyia.app.shell.update.Downloader.DownLoadProgressListener
 import com.boyia.app.shell.util.dpx
+import com.boyia.app.shell.util.toDp
 
 /**
  * 使用compose来编写关于页面
  */
 class BoyiaAboutFragment: NavigationFragment() {
     override fun createView(): View {
-        return ComposeView(requireContext()).apply { 
+        val view = ComposeView(requireContext()).apply {
             setContent {
                 buildLayout()
             }
         }
+
+        view.setBackgroundColor(0xFFFFFFFF.toInt())
+        return view
     }
 
     @Composable
@@ -44,11 +49,11 @@ class BoyiaAboutFragment: NavigationFragment() {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(color = Color.White)
+                .background(color =  Color(0x08000000))
+                .padding(top = toDp(BoyiaUtils.getStatusBarHeight(activity)))
         ) {
             Column(
                     modifier = Modifier
-                            .background(color = Color(0x08000000))
                             .fillMaxWidth()
                             .fillMaxHeight()
             ) {

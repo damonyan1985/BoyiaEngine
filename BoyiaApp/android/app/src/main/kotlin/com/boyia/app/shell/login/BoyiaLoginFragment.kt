@@ -28,6 +28,10 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
     private fun initLayout() {
         rootLayout = RelativeLayout(context)
         rootLayout?.setBackgroundColor(0xFF4F4F4F.toInt())
+        rootLayout?.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
         val loginInputLayout = LinearLayout(context)
         loginInputLayout.orientation = LinearLayout.VERTICAL
@@ -122,6 +126,11 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         buttonLayoutParam.addRule(RelativeLayout.BELOW, id)
         buttonLayoutParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
         buttonLayoutParam.topMargin = 120.dp
+
+        rootLayout?.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
         rootLayout?.addView(buttonLayout, buttonLayoutParam)
     }

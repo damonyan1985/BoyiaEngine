@@ -3,6 +3,7 @@ package com.boyia.app.shell.setting
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.api.IPickImageLoader
@@ -113,7 +115,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         avatarParam.addRule(RelativeLayout.ALIGN_PARENT_TOP, rootLayout!!.id)
         avatarParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        avatarParam.topMargin = 108.dp
+        avatarParam.topMargin = 108.dp + BoyiaUtils.getStatusBarHeight(context as Activity)
 
         container.addView(avatarView, avatarParam)
 

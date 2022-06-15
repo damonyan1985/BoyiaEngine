@@ -9,13 +9,18 @@ import com.boyia.app.common.utils.BoyiaUtils
 val Int.dp: Int
     get() = BoyiaUtils.dp(this)
 
-/**
- * 针对compose进行换算
- */
 val Int.dpx: Dp
     get() = Dp(this.toFloat())
 
+/**
+ * 针对compose进行换算
+ */
 @Composable
 fun dpx(value: Int): Dp {
     return with(LocalDensity.current) { value.dp.toDp() }
+}
+
+@Composable
+fun toDp(value: Int): Dp {
+    return with(LocalDensity.current) { value.toDp() }
 }

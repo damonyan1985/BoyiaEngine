@@ -1,5 +1,6 @@
 package com.boyia.app.shell.home
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -14,12 +15,14 @@ import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 import com.boyia.app.shell.R
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IHomeModule
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.setting.BoyiaSettingFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
@@ -123,8 +126,8 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         contentLayout?.addView(middleView, middleParam)
         contentLayout?.addView(footerView)
 
-        activity?.window?.statusBarColor = HEADER_BG_COLOR
-        HandlerFoundation.setStatusbarTextColor(activity, true)
+        //activity?.window?.statusBarColor = HEADER_BG_COLOR
+        //HandlerFoundation.setStatusbarTextColor(activity, true)
 
         module.clear()
         module.loadAppList(object : LoadCallback {
@@ -134,11 +137,19 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         })
 
         rootLayout = FrameLayout(requireContext())
+        rootLayout?.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        )
         val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         )
+        lp.topMargin = BoyiaUtils.getStatusBarHeight(context as Activity)
         rootLayout?.addView(contentLayout, lp)
+        rootLayout?.setBackgroundColor(HEADER_BG_COLOR)
+        //rootLayout?.fitsSystemWindows = true
+        //rootLayout?.clipToPadding = false
         return rootLayout
     }
 
@@ -162,7 +173,6 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
             )
             settingParam.addRule(CENTER_VERTICAL)
             settingParam.addRule(ALIGN_PARENT_RIGHT)
-            //settingParam.bottomMargin = 20.dp
             settingParam.rightMargin = 20.dp
 
             imageSetting?.setOnClickListener {
@@ -209,7 +219,7 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
 
             CommonFeatures.setViewRadius(searchLayout!!, 35.dp)
 
-            addView(imageSetting, settingParam);
+            addView(imageSetting, settingParam)
             addView(searchLayout, searchParam)
         }
     }
