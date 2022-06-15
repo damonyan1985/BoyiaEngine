@@ -34,7 +34,9 @@ object BoyiaModelUtil {
                 val buffer = ByteArrayOutputStream()
                 val loader = BoyiaLoader(object : BoyiaSimpleLoaderListener {
                     override fun onLoadDataReceive(bytes: ByteArray?, length: Int, msg: Any?) {
-                        buffer.write(bytes, 0, length)
+                        if (bytes != null) {
+                            buffer.write(bytes, 0, length)
+                        }
                     }
 
                     override fun onLoadFinished(msg: Any?) {

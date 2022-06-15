@@ -1,6 +1,7 @@
 package com.boyia.app.shell
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -13,9 +14,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Text
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.permission.BoyiaPermissions
 import com.boyia.app.shell.service.BoyiaNotifyService
 import com.boyia.app.shell.util.CommonFeatures
 
@@ -36,14 +39,25 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
 //            BoyiaLog.d("tag", it.toString())
 //        }
 //    }
-    private val pickLauncher = CommonFeatures.registerPickerImage(this)
+
+    private val pickerLoaders = ArrayList<IPickImageLoader>()
+    private val pickLauncher = CommonFeatures.registerPickerImage(this) { path ->
+        BoyiaLog.d(CommonFeatures.TAG, "registerPickerImage path = $path")
+        pickerLoaders.forEach { it
+            it.onImage(path)
+        }
+
+        pickerLoaders.clear()
+    }
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
         initHome()
         initNotifyService()
-        CommonFeatures.registerPickerImage(this);
+//        CommonFeatures.registerPickerImage(this) { path ->  
+//            
+//        }
     }
 
     private fun initHome() {
@@ -70,8 +84,11 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         return this
     }
 
-    override fun pickImage() {
-        pickLauncher.launch(null)
+    override fun pickImage(loader: IPickImageLoader) {
+        pickerLoaders.add(loader)
+        if (BoyiaPermissions.requestPhotoPermissions(this)) {
+            pickLauncher.launch(null)
+        }
     }
 
     private fun initNotifyService() {
@@ -98,5 +115,16 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
     override fun onDestroy() {
         ModuleManager.instance().hide()
         super.onDestroy()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            BoyiaPermissions.PHOTO_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    pickLauncher.launch(null)
+                }
+            }
+        }
     }
 }

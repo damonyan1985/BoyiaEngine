@@ -48,6 +48,8 @@
         android:networkSecurityConfig="@xml/network_config"
         android:theme="@android:style/Theme.Light.NoTitleBar"
         android:debuggable="true"
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="q"
         tools:ignore="HardcodedDebugMode">
     <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" > -->
         <activity

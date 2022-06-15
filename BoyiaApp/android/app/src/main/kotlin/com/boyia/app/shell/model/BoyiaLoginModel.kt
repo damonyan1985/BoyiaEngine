@@ -11,6 +11,7 @@ object BoyiaLoginModel {
         if (BoyiaUtils.isTextEmpty(name)
                 || BoyiaUtils.isTextEmpty(password)
         ) {
+            BoyiaLog.d(TAG, "name or passsword is emprt")
             return
         }
 

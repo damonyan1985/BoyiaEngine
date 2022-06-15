@@ -86,7 +86,7 @@ object CommonFeatures {
         view.clipToOutline = true
     }
 
-    fun registerPickerImage(context: AppCompatActivity): ActivityResultLauncher<Unit?> {
+    fun registerPickerImage(context: AppCompatActivity, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?> {
         return context.registerForActivityResult(object: ActivityResultContract<Unit?, Uri?>() {
             override fun createIntent(context: Context, input: Unit?): Intent {
                 return Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
@@ -95,18 +95,9 @@ object CommonFeatures {
             override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
                 return intent?.data
             }
-
         }) { uri: Uri? ->
             if (uri != null) {
-                val path = BoyiaFileUtil.getRealFilePath(context, uri)
-                BoyiaLog.d(TAG, "registerPickerImage path = $path")
-                //cb(BoyiaFileUtil.getRealFilePath(context, uri))
-                BoyiaModelUtil.request<Unit>(
-                        url = BoyiaModelUtil.UPLOAD_URL,
-                        upload = true,
-                        data = path,
-                        headers = mapOf("User-Token" to (BoyiaLoginInfo.instance().token ?: "none"))
-                )
+                pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
             }
         }
     }

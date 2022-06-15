@@ -17,7 +17,9 @@ import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
+import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.model.BoyiaLoginInfo
+import com.boyia.app.shell.model.BoyiaModelUtil
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
@@ -92,7 +94,16 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 //                activity?.let { act -> CommonFeatures.pickImage(act as AppCompatActivity) { it ->
 //                    BoyiaLog.d(TAG, "pick image callback = $it")
 //                } }
-                module.moduleContext()?.pickImage()
+                module.moduleContext()?.pickImage(object : IPickImageLoader {
+                    override fun onImage(path: String) {
+                        BoyiaModelUtil.request<Unit>(
+                                url = BoyiaModelUtil.UPLOAD_URL,
+                                upload = true,
+                                data = path,
+                                headers = mapOf("User-Token" to (BoyiaLoginInfo.instance().token ?: "none"))
+                        )
+                    }
+                })
             }
         }
         val avatarParam = RelativeLayout.LayoutParams(
