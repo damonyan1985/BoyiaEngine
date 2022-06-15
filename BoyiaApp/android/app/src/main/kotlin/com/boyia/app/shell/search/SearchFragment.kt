@@ -1,9 +1,6 @@
 package com.boyia.app.shell.search
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,16 +12,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.dpx
+import com.boyia.app.shell.util.toDp
 
 class SearchFragment: NavigationFragment() {
     override fun createView(): View {
-        return ComposeView(requireContext()).apply {
+        val view = ComposeView(requireContext()).apply {
             setContent {
                 buildLayout()
             }
         }
+
+        view.setBackgroundColor(0xFFFFFFFF.toInt())
+        return view
     }
 
     @Composable
@@ -32,7 +34,7 @@ class SearchFragment: NavigationFragment() {
         Column(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(top = dpx(12))
+                .padding(top = dpx(12) + toDp(value = BoyiaUtils.getStatusBarHeight(activity)))
                 .background(color = Color.White)) {
             buildHeader()
         }

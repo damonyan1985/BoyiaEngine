@@ -18,6 +18,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.api.IPickImageLoader
+import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.ModuleManager
@@ -76,6 +77,8 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
 
         val homeModule = ModuleManager.instance().getModule(ModuleManager.HOME)
         homeModule?.show(this)
+
+        HandlerFoundation.setStatusbarTextColor(this, true)
     }
 
     override fun rootId(): Int {

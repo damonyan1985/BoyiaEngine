@@ -126,9 +126,6 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         contentLayout?.addView(middleView, middleParam)
         contentLayout?.addView(footerView)
 
-        //activity?.window?.statusBarColor = HEADER_BG_COLOR
-        //HandlerFoundation.setStatusbarTextColor(activity, true)
-
         module.clear()
         module.loadAppList(object : LoadCallback {
             override fun onLoaded() {
