@@ -56,6 +56,14 @@ class BoyiaLoginInfo {
             }
         }
 
+    /**
+     * 更新user信息
+     */
+    fun flush() {
+        val info = user
+        user = info
+    }
+
     fun logout() {
         BoyiaLoginModel.logout()
 

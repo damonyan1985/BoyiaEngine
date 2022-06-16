@@ -1,5 +1,6 @@
 package com.boyia.app.shell.model
 
+import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.http.HTTPFactory
@@ -33,6 +34,19 @@ object BoyiaLoginModel {
                 method = HTTPFactory.HTTP_POST_METHOD,
                 headers = mapOf("Content-Type" to "application/x-www-form-urlencoded", "User-Token" to "none"),
                 data = "name=${name}&pwd=${password}"
+        )
+    }
+
+    fun update() {
+        val info =  BoyiaJson.toJson(BoyiaLoginInfo.instance().user)
+        BoyiaModelUtil.request<BoyiaBaseData>(
+                BoyiaModelUtil.UPDATE_USER_URL,
+                method = HTTPFactory.HTTP_POST_METHOD,
+                headers = mapOf(
+                        "User-Token" to (BoyiaLoginInfo.instance().token ?: "none"),
+                        "Content-Type" to "application/json;charset=UTF-8"
+                ),
+                data = info
         )
     }
 

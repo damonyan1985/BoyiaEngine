@@ -4,12 +4,11 @@ import com.boyia.app.loader.ILoadListener;
 import com.boyia.app.loader.BoyiaLoader;
 import com.boyia.app.loader.http.HTTPFactory;
 import com.boyia.app.loader.http.Response;
-import com.boyia.app.loader.http.upload.Uploader.UploadProgressListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class BoyiaResLoader implements ILoadListener, UploadProgressListener {
+public class BoyiaResLoader implements ILoadListener {
     private BoyiaLoader mLoader = null;
 
     public BoyiaResLoader() {
@@ -100,21 +99,6 @@ public class BoyiaResLoader implements ILoadListener, UploadProgressListener {
      */
     public void upload(String url, boolean isWait, long callback) {
         mLoader.upload(url, isWait, new ResInfo(url, callback));
-    }
-
-    @Override
-    public void onProgress(long totalSize, long progress) {
-
-    }
-
-    @Override
-    public void onError() {
-
-    }
-
-    @Override
-    public void onUploaded(String result) {
-
     }
 
     public static class ResInfo {

@@ -20,9 +20,7 @@ import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.api.IPickImageLoader
-import com.boyia.app.shell.model.BoyiaLoginInfo
-import com.boyia.app.shell.model.BoyiaModelUtil
-import com.boyia.app.shell.model.BoyiaUserInfo
+import com.boyia.app.shell.model.*
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
@@ -98,11 +96,19 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 //                } }
                 module.moduleContext()?.pickImage(object : IPickImageLoader {
                     override fun onImage(path: String) {
-                        BoyiaModelUtil.request<Unit>(
+                        BoyiaModelUtil.request(
                                 url = BoyiaModelUtil.UPLOAD_URL,
                                 upload = true,
                                 data = path,
-                                headers = mapOf("User-Token" to (BoyiaLoginInfo.instance().token ?: "none"))
+                                headers = mapOf("User-Token" to (info.token ?: "none")),
+                                cb = object : BoyiaModelUtil.ModelDataCallback<BoyiaUploadData> {
+                                    override fun onLoadData(data: BoyiaUploadData) {
+                                        info.user?.avatar = data.url
+                                        info.flush()
+                                        avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(data.url))
+                                        BoyiaLoginModel.update()
+                                    }
+                                }
                         )
                     }
                 })
@@ -151,7 +157,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
             module.showAbout()
         }
 
-        avatarView?.load(info.user?.avatar ?: DEFAULT_AVATAR)
+        avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(info.user?.avatar) ?: DEFAULT_AVATAR)
     }
 
     private fun slideToDisplay(start: Float, end: Float) {

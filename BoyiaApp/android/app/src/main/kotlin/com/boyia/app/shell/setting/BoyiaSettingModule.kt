@@ -69,9 +69,7 @@ class BoyiaSettingModule : IUIModule {
         loginModule.show(ctx)
         loginModule.addLoginLisnter(object: LoginListener {
             override fun onLogined(info: BoyiaUserInfo) {
-                MainScheduler.mainScheduler().sendJob {
-                    fragment?.setUserInfo(info)
-                }
+                fragment?.setUserInfo(info)
             }
         })
     }

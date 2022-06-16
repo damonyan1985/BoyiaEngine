@@ -28,4 +28,7 @@ public interface ILoadListener {
 
     // Load data error
     void onLoadError(String error, Object msg);
+
+    // Upload data progress
+    default void onUploadProgress(long current, long total, Object msg) {}
 }

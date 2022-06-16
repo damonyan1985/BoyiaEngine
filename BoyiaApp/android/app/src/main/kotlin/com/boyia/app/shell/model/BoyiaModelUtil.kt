@@ -2,9 +2,11 @@ package com.boyia.app.shell.model
 
 import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.BoyiaLoader
 import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.job.JobScheduler
+import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.loader.mue.MueTask
 import com.boyia.app.loader.mue.Subscriber
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener
@@ -12,13 +14,32 @@ import java.io.ByteArrayOutputStream
 
 object BoyiaModelUtil {
     const val TAG = "BoyiaModelUtil"
-    private const val HTTP_DOMAIN = "https://47.98.206.177:8443/"
+    private const val HTTP_DOMAIN = "https://47.98.206.177:8443"
+    //private const val HTTP_DOMAIN = "https://192.168.121.103:8443"
     private const val API_VERSION = "v1"
 
-    const val LOGIN_URL = "${HTTP_DOMAIN}user/${API_VERSION}/login"
-    const val LOGOUT_URL = "${HTTP_DOMAIN}user/${API_VERSION}/logout"
-    const val APP_LIST_URL = "${HTTP_DOMAIN}app/${API_VERSION}/appList"
-    const val UPLOAD_URL = "${HTTP_DOMAIN}file/${API_VERSION}/upload"
+    const val LOGIN_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/login"
+    const val LOGOUT_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/logout"
+    const val APP_LIST_URL = "${HTTP_DOMAIN}/app/${API_VERSION}/appList"
+    const val UPLOAD_URL = "${HTTP_DOMAIN}/file/${API_VERSION}/upload"
+    const val UPDATE_USER_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/updateAdmin"
+
+    fun getRemoteUrl(url: String?): String? {
+        if (BoyiaUtils.isTextEmpty(url)) {
+            return null
+        }
+
+        if (url?.startsWith("http")?.or(url.startsWith("https")) == true) {
+            return url
+        }
+
+        return "$HTTP_DOMAIN$url"
+    }
+
+    fun getImageUrlWithToken(url: String?): String? {
+        val url = getRemoteUrl(url) ?: return null
+        return "$url?token=${BoyiaLoginInfo.instance().token}"
+    }
 
     inline fun <reified T> request(
             url: String,
@@ -50,6 +71,10 @@ object BoyiaModelUtil {
                     override fun onLoadError(msg: String?, p1: Any?) {
                         subscriber.onError(null)
                     }
+
+                    override fun onUploadProgress(current: Long, total: Long, msg: Any?) {
+                        super.onUploadProgress(current, total, msg)
+                    }
                 })
 
                 loader.setRequestMethod(method)
@@ -70,7 +95,7 @@ object BoyiaModelUtil {
             }
         }
                 .subscribeOn(JobScheduler.jobScheduler())
-                //.observeOn(MainScheduler.mainScheduler())
+                .observeOn(MainScheduler.mainScheduler())
                 .subscribe(object : Subscriber<T> {
                     override fun onNext(result: T) {
                         cb?.onLoadData(result)

@@ -1,5 +1,10 @@
 package com.boyia.app.loader.http;
 
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.loader.ILoadListener;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +13,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 /*
  * OkEngine
@@ -84,7 +95,17 @@ public class OkEngine extends BaseEngine {
                 RequestBody body = RequestBody.create(null, request.mPostData);
                 builder.post(body);
             }
-            break;
+                break;
+            case HTTPFactory.HTTP_POST_UPLOAD_METHOD: {
+                File file = new File(request.mPostData);
+                MultipartBody.Builder postBodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                postBodyBuilder.addFormDataPart(
+                        HTTPFactory.UPLOADER_TYPE_FILE,
+                        file.getName(),
+                        createUpload(request, MultipartBody.FORM, file));
+                builder.post(postBodyBuilder.build());
+            }
+                break;
         }
 
         return handleResponse(client, builder);
@@ -101,5 +122,42 @@ public class OkEngine extends BaseEngine {
         }
 
         return builder;
+    }
+
+    private static RequestBody createUpload(
+            final Request request,
+            final MediaType type,
+            final File file) {
+        return new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return type;
+            }
+
+            public long contentLength() throws IOException {
+                return file.length();
+            }
+
+            @Override
+            public void writeTo(BufferedSink sink) throws IOException {
+                Source source;
+                try {
+                    source = Okio.source(file);
+                    Buffer buffer = new Buffer();
+
+                    long total = contentLength();
+                    long current = 0;
+                    for (long readSize; (readSize = source.read(buffer, HTTPFactory.UPLOADER_WRITE_SIZE)) != -1;) {
+                        sink.write(buffer, readSize);
+                        if (request.mListener != null) {
+                            current += readSize;
+                            request.mListener.onUploadProgress(current, total);
+                        }
+                    }
+                } catch (Exception e) {
+                    BoyiaLog.e(TAG, "upload write error", e);
+                }
+            }
+        };
     }
 }

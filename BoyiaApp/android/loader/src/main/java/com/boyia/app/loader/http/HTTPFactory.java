@@ -13,6 +13,7 @@ public class HTTPFactory {
     public static final int HTTP_GET_METHOD = 0;
     public static final int HTTP_POST_METHOD = 1;
     public static final int HTTP_PUT_METHOD = 2;
+    public static final int HTTP_POST_UPLOAD_METHOD = 3;
 
     public static final String HTTP_GET_METHOD_STR = "GET";
     public static final String HTTP_POST_METHOD_STR = "POST";
@@ -31,6 +32,9 @@ public class HTTPFactory {
     // HTTP引擎类型
     public static final int OK_ENGINE = 0;
     public static final int URL_ENGINE = 1;
+
+    public static final int UPLOADER_WRITE_SIZE = 2048;
+    public static final String UPLOADER_TYPE_FILE = "file";
 
     public static Response getResponse(String url) {
         return getResponse(new Request(

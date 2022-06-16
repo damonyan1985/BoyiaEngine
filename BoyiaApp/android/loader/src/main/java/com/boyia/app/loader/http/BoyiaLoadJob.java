@@ -2,11 +2,6 @@ package com.boyia.app.loader.http;
 
 import java.io.IOException;
 
-import com.boyia.app.loader.http.BaseEngine;
-import com.boyia.app.loader.http.ErrorInfo;
-import com.boyia.app.loader.http.Request;
-import com.boyia.app.loader.http.Response;
-import com.boyia.app.loader.http.HTTPFactory;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
 import com.boyia.app.loader.job.IJob;
@@ -25,34 +20,29 @@ public class BoyiaLoadJob implements IJob {
     private Request mRequest;
     private BaseEngine mHttpEngine;
     private boolean mHasStop = false;
-    private Object mMessage;
 
     public interface LoadJobCallback {
         boolean onLoadStart();
 
         void onRedirectUrl(String redirectUrl);
 
-        void onDataReceived(byte[] data, int length, Object msg);
+        void onDataReceived(byte[] data, int length);
 
-        void onReceiveFinished(Object msg);
+        void onReceiveFinished();
 
-        void onDataSize(long size, Object msg);
+        void onDataSize(long size);
 
-        void onHttpError(String info, Object msg);
+        void onHttpError(String info);
+
+        void onUploadProgress(long current, long total);
     }
 
     public BoyiaLoadJob(Request request,
                         LoadJobCallback callback) {
-        this(request, callback, null);
-    }
-
-    public BoyiaLoadJob(Request request,
-                        LoadJobCallback callback,
-                        Object message) {
         mCallback = callback;
         mRequest = request;
-        mMessage = message;
         mHttpEngine = HTTPFactory.createHttpEngine();
+        mRequest.mListener = callback;
     }
 
     public void setCallback(LoadJobCallback callback) {
@@ -100,11 +90,11 @@ public class BoyiaLoadJob implements IJob {
             return;
         }
 
-        mCallback.onReceiveFinished(mMessage);
+        mCallback.onReceiveFinished();
     }
 
     private boolean executeRedirect(Response data) {
-        mCallback.onDataSize(data.getLength(), mMessage);
+        mCallback.onDataSize(data.getLength());
         String redirectUrl = data.getRedirectUrl();
         if (!BoyiaUtils.isTextEmpty(redirectUrl)) {
             BoyiaLog.d(TAG, "BoyiaLoadJob redirectUrl: " + redirectUrl);
@@ -120,7 +110,7 @@ public class BoyiaLoadJob implements IJob {
         int length;
         try {
             while ((length = data.read(buffer)) != -1 && !mHasStop) {
-                mCallback.onDataReceived(buffer, length, mMessage);
+                mCallback.onDataReceived(buffer, length);
             }
 
             BoyiaLog.d(TAG, "BoyiaLoadJob receive data success url: "
@@ -137,9 +127,9 @@ public class BoyiaLoadJob implements IJob {
 
     private void executeError(String error) {
         if (mHasStop) {
-            mCallback.onReceiveFinished(mMessage);
+            mCallback.onReceiveFinished();
         } else {
-            mCallback.onHttpError(error, mMessage);
+            mCallback.onHttpError(error);
         }
     }
 }

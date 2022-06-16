@@ -4,6 +4,7 @@ import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -47,10 +48,10 @@ class SearchFragment: NavigationFragment() {
             Spacer(modifier = Modifier.width(dpx(60)))
             TextField(searchKey,
                     { searchKey = it },
-                    shape = RoundedCornerShape(dpx(35)),
+                    shape = CircleShape,
                     modifier = Modifier
-                            .width(dpx(540))
-                            .height(dpx(70)),
+                            .width(dpx(540)),
+                            //.height(dpx(70)),
                     colors = TextFieldDefaults.textFieldColors(
                             //textColor = Color.Gray,
                             disabledTextColor = Color.Transparent,

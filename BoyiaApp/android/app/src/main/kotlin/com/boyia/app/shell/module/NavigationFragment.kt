@@ -58,8 +58,6 @@ open class NavigationFragment: BaseFragment() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-
-
     open fun createView(): View? {
         return null
     }

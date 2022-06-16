@@ -1,5 +1,7 @@
 package com.boyia.app.loader.http;
 
+import com.boyia.app.loader.ILoadListener;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +16,8 @@ public class Request {
     public String mPostData;
     public int mMethod;
     public String mUrl;
+    public BoyiaLoadJob.LoadJobCallback mListener;
+    public Object mMsg;
 
     public Request() {
         this(null, HTTPFactory.HTTP_GET_METHOD, null, null);

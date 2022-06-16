@@ -1,11 +1,9 @@
 package com.boyia.app.loader;
 
+import com.boyia.app.loader.http.HTTPFactory;
 import com.boyia.app.loader.http.Request;
 import com.boyia.app.loader.http.BoyiaLoadJob;
-import com.boyia.app.loader.http.upload.Uploader;
-import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
-import com.boyia.app.loader.http.upload.Uploader.UploadProgressListener;
 
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.BoyiaUtils;
@@ -71,7 +69,8 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
         }
 
         mRequest.mUrl = url;
-        mLoadJob = new BoyiaLoadJob(mRequest, this, msg);
+        mRequest.mMsg = msg;
+        mLoadJob = new BoyiaLoadJob(mRequest, this);
         if (isWait) {
             BoyiaWorker.getWorker().sendJob(mLoadJob);
         } else {
@@ -85,41 +84,57 @@ public class BoyiaLoader implements BoyiaLoadJob.LoadJobCallback {
 
     public void upload(String url, boolean isWait, Object msg) {
         mRequest.mUrl = url;
-        IJob job = () -> Uploader.upload(mRequest, mListener, msg);
+        mRequest.mMsg = msg;
+        mRequest.mMethod = HTTPFactory.HTTP_POST_UPLOAD_METHOD;
 
+        mLoadJob = new BoyiaLoadJob(mRequest, this);
         if (isWait) {
-            BoyiaWorker.getWorker().sendJob(job);
+            BoyiaWorker.getWorker().sendJob(mLoadJob);
         } else {
-            JobScheduler.jobScheduler().sendJob(job);
+            JobScheduler.jobScheduler().sendJob(mLoadJob);
         }
+//        IJob job = () -> Uploader.upload(mRequest, mListener, msg);
+//
+//        if (isWait) {
+//            BoyiaWorker.getWorker().sendJob(job);
+//        } else {
+//            JobScheduler.jobScheduler().sendJob(job);
+//        }
     }
 
     @Override
-    public void onDataReceived(byte[] data, int length, Object msg) {
+    public void onDataReceived(byte[] data, int length) {
         if (mListener != null) {
-            mListener.onLoadDataReceive(data, length, msg);
+            mListener.onLoadDataReceive(data, length, mRequest.mMsg);
         }
     }
 
     @Override
-    public void onReceiveFinished(Object msg) {
+    public void onReceiveFinished() {
         BoyiaLog.i(TAG, "onReceiveFinished");
         if (mListener != null) {
-            mListener.onLoadFinished(msg);
+            mListener.onLoadFinished(mRequest.mMsg);
         }
     }
 
     @Override
-    public void onDataSize(long size, Object msg) {
+    public void onDataSize(long size) {
         if (mListener != null) {
-            mListener.onLoadDataSize(size, msg);
+            mListener.onLoadDataSize(size, mRequest.mMsg);
         }
     }
 
     @Override
-    public void onHttpError(String info, Object msg) {
+    public void onHttpError(String info) {
         if (mListener != null) {
-            mListener.onLoadError(info, msg);
+            mListener.onLoadError(info, mRequest.mMsg);
+        }
+    }
+
+    @Override
+    public void onUploadProgress(long current, long total) {
+        if (mListener != null) {
+            mListener.onUploadProgress(current, total, mRequest.mMsg);
         }
     }
 
