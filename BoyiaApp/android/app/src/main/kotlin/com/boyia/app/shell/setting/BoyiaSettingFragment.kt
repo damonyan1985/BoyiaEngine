@@ -5,14 +5,14 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.Button
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.boyia.app.common.utils.BoyiaLog
@@ -26,6 +26,11 @@ import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
+import com.mikepenz.iconics.IconicsColor
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
+import com.mikepenz.iconics.utils.color
+import com.mikepenz.iconics.utils.colorInt
 
 class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragment() {
     companion object {
@@ -40,6 +45,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
     private var avatarView: BoyiaImageView? = null
     private var nameView: TextView? = null
     private var loginButton: Button? = null
+    private var avatarContainer: FrameLayout? = null
+    private var cameraView: ImageView? = null
 
     fun setSlideListener(listener: SlideListener) {
         this.listener = listener
@@ -87,45 +94,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         rootLayout?.addView(container, lp)
 
-        avatarView = BoyiaImageView(context, 54.dp)
-        avatarView?.id = View.generateViewId()
-        avatarView?.setOnClickListener {
-            if (info.isLogin()) {
-//                activity?.let { act -> CommonFeatures.pickImage(act as AppCompatActivity) { it ->
-//                    BoyiaLog.d(TAG, "pick image callback = $it")
-//                } }
-                module.moduleContext()?.pickImage(object : IPickImageLoader {
-                    override fun onImage(path: String) {
-                        BoyiaModelUtil.request(
-                                url = BoyiaModelUtil.UPLOAD_URL,
-                                upload = true,
-                                data = path,
-                                headers = mapOf("User-Token" to (info.token ?: "none")),
-                                cb = object : BoyiaModelUtil.ModelDataCallback<BoyiaUploadData> {
-                                    override fun onLoadData(data: BoyiaUploadData) {
-                                        info.user?.avatar = data.url
-                                        info.flush()
-                                        avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(data.url))
-                                        BoyiaLoginModel.update()
-                                    }
-                                }
-                        )
-                    }
-                })
-            }
-        }
-        val avatarParam = RelativeLayout.LayoutParams(
-                108.dp,
-                108.dp
-        )
-
-        avatarParam.addRule(RelativeLayout.ALIGN_PARENT_TOP, rootLayout!!.id)
-        avatarParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        avatarParam.topMargin = 108.dp + BoyiaUtils.getStatusBarHeight(context as Activity)
-
-        container.addView(avatarView, avatarParam)
-
-
+        initAvatar(info, container)
 
         nameView = TextView(context)
         nameView?.text = info.user?.nickname ?: "Anonymous"
@@ -135,7 +104,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        nameParam.addRule(RelativeLayout.BELOW, avatarView!!.id)
+        nameParam.addRule(RelativeLayout.BELOW, avatarContainer!!.id)
         nameParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
         nameParam.topMargin = 12.dp
         nameParam.bottomMargin = 12.dp
@@ -156,8 +125,76 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         aboutButton.setOnClickListener {
             module.showAbout()
         }
+    }
 
+    private fun initAvatar(info: BoyiaLoginInfo, container: RelativeLayout) {
+        avatarContainer = FrameLayout(requireContext())
+        avatarContainer?.id = View.generateViewId()
+
+        avatarView = BoyiaImageView(context, 54.dp)
+        avatarView?.id = View.generateViewId()
+        avatarView?.setOnClickListener {
+            if (info.isLogin()) {
+                module.moduleContext()?.pickImage(object : IPickImageLoader {
+                    override fun onImage(path: String) {
+                        BoyiaModelUtil.request(
+                                url = BoyiaModelUtil.UPLOAD_URL,
+                                upload = true,
+                                data = path,
+                                headers = mapOf("User-Token" to (info.token ?: "none")),
+                                cb = object : BoyiaModelUtil.ModelDataCallback<BoyiaUploadData> {
+                                    override fun onLoadData(data: BoyiaUploadData) {
+                                        info.user?.avatar = data.url
+                                        info.flush()
+                                        avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(data.url))
+                                        BoyiaLoginModel.update()
+                                    }
+                                }
+                        )
+                    }
+                })
+            }
+        }
+
+        avatarContainer?.addView(avatarView)
+
+        val avatarParam = RelativeLayout.LayoutParams(
+                108.dp,
+                108.dp
+        )
+
+        avatarParam.addRule(RelativeLayout.ALIGN_PARENT_TOP, rootLayout!!.id)
+        avatarParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        avatarParam.topMargin = 108.dp + BoyiaUtils.getStatusBarHeight(context as Activity)
+
+        container.addView(avatarContainer, avatarParam)
         avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(info.user?.avatar) ?: DEFAULT_AVATAR)
+
+        if (info.isLogin()) {
+            initCamera()
+        }
+    }
+
+    private fun initCamera() {
+        if (cameraView != null) {
+            return
+        }
+        cameraView = ImageView(context)
+        val drawable = IconicsDrawable(requireContext(), GoogleMaterial.Icon.gmd_photo_camera)
+                .apply {
+                    sizeXPx = 36.dp
+                    sizeYPx = 36.dp
+                    colorInt = 0x99000000.toInt()
+                }
+        cameraView?.setImageDrawable(drawable)
+
+        val cameraParam = FrameLayout.LayoutParams(
+                30.dp,
+                30.dp
+        )
+
+        cameraParam.gravity = Gravity.BOTTOM.or(Gravity.RIGHT)
+        avatarContainer?.addView(cameraView, cameraParam)
     }
 
     private fun slideToDisplay(start: Float, end: Float) {
@@ -242,5 +279,12 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         nameView?.text = info?.nickname ?: "Anonymous"
 
         loginButton?.text =  if (info == null) "login" else "logout"
+
+        if (info != null) {
+            initCamera()
+        } else {
+            avatarContainer?.removeView(cameraView)
+            cameraView = null
+        }
     }
 }

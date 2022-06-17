@@ -22,44 +22,35 @@ struct AboutView : View {
             .frame(width: PixelRatio.screenWidth(),
                         height: 360.dp)
             
-            Button(action: {
+            buildButton(text: "Version update", action: {
                 HttpUtil.checkVersion()
-            }) {
-                HStack {
-                    Text("Version update")
-                        .bold()
-                        .foregroundColor(Color(hex: 0x000000))
-                }
-                .frame(width: PixelRatio.screenWidth(), height: 84.dp)
-                .background(Color(hex: 0xFFFFFF))
-            }
-            marginTop(top: 1.dp)
-            Button(action: {
-                HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
-            }) {
-                HStack {
-                    Text("Feature introduction")
-                        .bold()
-                        .foregroundColor(Color(hex: 0x000000))
-                }
-                .frame(width: PixelRatio.screenWidth(), height: 84.dp)
-                .background(Color(hex: 0xFFFFFF))
-            }
-            Spacer()
+            })
             
             marginTop(top: 1.dp)
-            Button(action: {
-            }) {
-                HStack {
-                    Text("Feedback")
-                        .bold()
-                        .foregroundColor(Color(hex: 0x000000))
-                }
-                .frame(width: PixelRatio.screenWidth(), height: 84.dp)
-                .background(Color(hex: 0xFFFFFF))
-            }
+            buildButton(text: "Feature introduction", action: {
+                HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
+            })
+            
+            marginTop(top: 1.dp)
+            buildButton(text: "Register", action: {})
+            
+            marginTop(top: 1.dp)
+            buildButton(text: "Feedback", action: {})
+
             Spacer()
         }.background(Color(argb: 0x08000000))
+    }
+    
+    func buildButton(text: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(text)
+                    .bold()
+                    .foregroundColor(Color(hex: 0x000000))
+            }
+            .frame(width: PixelRatio.screenWidth(), height: 84.dp)
+            .background(Color(hex: 0xFFFFFF))
+        }
     }
     
     func marginTop(top: Double) -> some View {

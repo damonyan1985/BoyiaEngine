@@ -103,6 +103,20 @@ class BoyiaAboutFragment: NavigationFragment() {
                         contentPadding = PaddingValues()
 
                 ) {
+                    Text(text = "Register", color = Color.Black)
+                }
+
+                Spacer(modifier = Modifier.height(1.dpx))
+
+                TextButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                                .background(Color.White)
+                                .fillMaxWidth()
+                                .height(60.dpx),
+                        contentPadding = PaddingValues()
+
+                ) {
                     Text(text = "Feedback", color = Color.Black)
                 }
             }

@@ -31,10 +31,13 @@ class BoyiaPermission {
             break
         case .restricted:
             closurer(false)
+            break
         case .denied:
             closurer(false)
+            break
         case .limited:
-            closurer(false)
+            closurer(true)
+            break
         @unknown default:
             closurer(false)
         }

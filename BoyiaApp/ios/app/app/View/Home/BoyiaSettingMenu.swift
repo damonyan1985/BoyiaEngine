@@ -14,6 +14,7 @@ struct SettingConstants {
 
 struct BoyiaSettingMenu : View {
     @EnvironmentObject var loginModel: BoyiaLoginModel
+    @State private var showImagePicker = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -40,6 +41,11 @@ struct BoyiaSettingMenu : View {
                        height: 108.dp,
                         alignment: .top)
                 .cornerRadius(54.dp)
+                .onTapGesture {
+                    BoyiaPermission.authPhoto(closurer: { (status) in
+                        showImagePicker = status
+                    })
+                }
                 
                 marginTop(top: 8.dp)
                 Text(loginModel.isLogin
@@ -109,6 +115,19 @@ struct BoyiaSettingMenu : View {
             height: PixelRatio.screenHeight())
         //.background(Color(hex: 0xFF00FF))
         .background(Color(hex: 0xEEE9E9))
+        .sheet(isPresented: $showImagePicker, onDismiss: {}) {
+            ImagePicker() { image in
+                showImagePicker = false
+            }
+        }
+//        .actionSheet(isPresented: $showImagePicker, content: {
+//            HStack() {
+//                ImagePicker(sourceType: UIImagePickerController.SourceType.photoLibrary) { image in
+//
+//                }
+//            }
+//        })
+        
     }
     
     func marginTop(top: Double) -> some View {

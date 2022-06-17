@@ -49,6 +49,7 @@
 		4CFC5A0B284DAF5000E9639C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A0A284DAF4F00E9639C /* AboutView.swift */; };
 		4CFC5A0D284DDE1300E9639C /* BoyiaBundleInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A0C284DDE1300E9639C /* BoyiaBundleInfo.swift */; };
 		4CFC5A1328506CE700E9639C /* BoyiaDownloadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A1228506CE700E9639C /* BoyiaDownloadModel.swift */; };
+		4CFC5A15285C5D5100E9639C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC5A14285C5D5000E9639C /* ImagePicker.swift */; };
 		4CFDE3FC26D48C9500A01683 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFDE3FB26D48C9500A01683 /* MetalKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		4CFC5A0A284DAF4F00E9639C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4CFC5A0C284DDE1300E9639C /* BoyiaBundleInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaBundleInfo.swift; sourceTree = "<group>"; };
 		4CFC5A1228506CE700E9639C /* BoyiaDownloadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaDownloadModel.swift; sourceTree = "<group>"; };
+		4CFC5A14285C5D5000E9639C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		4CFDE3FB26D48C9500A01683 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -267,6 +269,7 @@
 				4C1B7BA5282CB15500AF3208 /* Permission.swift */,
 				4C1491002832286E004E0E50 /* HttpUtil.swift */,
 				4CBE2E54283B9C7C001F0729 /* Animations.swift */,
+				4CFC5A14285C5D5000E9639C /* ImagePicker.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 				4CFC5A06283CBDC300E9639C /* BoyiaUserData.swift in Sources */,
 				4C7AE7F426CF835B00946197 /* main.m in Sources */,
 				4CC8FB6B27EC0CDC00795648 /* LoginView.swift in Sources */,
+				4CFC5A15285C5D5100E9639C /* ImagePicker.swift in Sources */,
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
 				4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */,
 				4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */,
