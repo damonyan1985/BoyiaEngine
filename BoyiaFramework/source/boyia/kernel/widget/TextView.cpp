@@ -88,6 +88,14 @@ LInt TextView::lineSize() const
     return m_textLines->size();
 }
 
+LInt TextView::lineWidth(LInt i) const
+{
+    if (!m_textLines || i >= m_textLines->size()) {
+        return 0;
+    }
+    return m_textLines->elementAt(i)->m_lineLength;
+}
+
 void TextView::layout(RenderContext& rc)
 {
     handleXYPos(rc);

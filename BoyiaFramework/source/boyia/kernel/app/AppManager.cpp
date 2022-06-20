@@ -13,6 +13,7 @@ AppManager::AppManager()
 
 AppManager::~AppManager()
 {
+    m_uiThread->quit();
 }
 
 NetworkBase* AppManager::network() const

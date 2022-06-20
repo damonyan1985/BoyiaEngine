@@ -11,12 +11,73 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "Animation.h"
+#include "UIThread.h"
 
 namespace yanbo {
-
 const LInt kDefaultInputBorderWidth = 2;
 const LInt kDefaultInputTextPadding = 5;
 const LInt kDefaultInputButtonHeight = 20;
+
+// text input cursor
+class TextInputCursor {
+public:
+    TextInputCursor(LInt cursorHeight)
+        : m_cursorHeight(cursorHeight)
+        , m_paint(LFalse)
+        , m_timer(kBoyiaNull)
+    {
+    }
+    
+    LBool isBlink()
+    {
+        return m_timer != kBoyiaNull;
+    }
+    
+    LVoid cancel()
+    {
+        if (m_timer) {
+            m_timer->quit();
+        }
+        
+        m_timer = kBoyiaNull;
+    }
+    
+    LVoid startBlink()
+    {
+        cancel();
+        
+        m_timer = new Timer(750, [self = this]() -> LVoid {
+            self->m_paint = self->m_timer == kBoyiaNull ? LFalse : !self->m_paint;
+            UIThread::instance()->draw(Editor::get()->view());
+        }, LTrue);
+    }
+    
+    LInt getHeight() const
+    {
+        return m_cursorHeight;
+    }
+ 
+    // point is left top point
+    LVoid paint(LGraphicsContext& gc, LayoutPoint& point)
+    {
+        if (!m_paint) {
+            return;
+        }
+        gc.setBrushColor(LColorUtil::parseArgbInt(COLOR_BLACK));
+        gc.drawRect(point.iX + kDefaultInputTextPadding, point.iY, kDefaultInputBorderWidth * 10, m_cursorHeight);
+    }
+    
+    ~TextInputCursor()
+    {
+        cancel();
+    }
+    
+private:
+    LInt m_cursorHeight;
+    Timer* m_timer;
+    LBool m_paint;
+};
 
 InputView::InputView(
     const String& id,
@@ -162,7 +223,15 @@ public:
         const String& title,
         const String& imageUrl)
         : InputView(id, name, value, title, imageUrl)
+        , m_cursor(kBoyiaNull)
     {
+    }
+    
+    virtual ~InputTextBox()
+    {
+        if (m_cursor) {
+            delete m_cursor;
+        }
     }
 
     LVoid layout(RenderContext& rc)
@@ -173,6 +242,8 @@ public:
         m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
         m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight();
         InputView::layoutEnd(rc);
+        
+        m_cursor = new TextInputCursor(m_height * 0.75);
     }
 
     virtual LInt getInputType()
@@ -184,13 +255,25 @@ public:
     {
         LayoutPoint point;
         paintTextBorder(gc, point);
+        
+        LayoutPoint cursorPoint(point.iX + m_text->lineWidth(0), point.iY + (m_height - m_cursor->getHeight())/2);
+        
         if (m_value.GetLength() == 0) {
+            m_cursor->paint(gc, cursorPoint);
             return;
         }
         
 //        gc.setBrushColor(LColor(0xff, 0x00, 0xFF));
 //        gc.drawRect(clipRect());
         //gc.clipRect(LRect(m_x, m_y, m_width, m_height));
+        
+        BOYIA_LOG("boyia cursor: x=%d c_x=%d y=%d c_y=%d",
+                  point.iX,
+                  point.iX + m_text->lineWidth(0),
+                  point.iY,
+                  point.iY + ((m_height - m_cursor->getHeight())/2));
+        m_cursor->paint(gc, cursorPoint);
+
         m_text->paint(gc);
     }
 
@@ -208,14 +291,27 @@ public:
 
         // 绘制边界
         paintBorder(gc, getStyle()->border(), point.iX, point.iY);
+        
         gc.restore();
     }
 
     virtual LVoid setSelected(const LBool selected)
     {
         HtmlView::setSelected(selected);
-        Editor::get()->setView(this)->showKeyboard(m_value);
+        if (selected) {
+            Editor::get()->setView(this)->showKeyboard(m_value);
+            if (m_cursor && !m_cursor->isBlink()) {
+                m_cursor->startBlink();
+            }
+        } else {
+            if (m_cursor) {
+                m_cursor->cancel();
+            }
+        }
     }
+    
+private:
+    TextInputCursor* m_cursor;
 };
 
 class InputPassword : public InputTextBox {

@@ -94,7 +94,8 @@ struct BoyiaDownloadMask : View {
         .fill(Color(argb: 0x01000000))
         .frame(width: width, height: height)
         .onTapGesture {
-            model.download(ccb: self.completedCB)
+            //model.download(ccb: self.completedCB)
+            self.completedCB()
         }
     }
 }

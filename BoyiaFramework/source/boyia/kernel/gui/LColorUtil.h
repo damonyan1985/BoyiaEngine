@@ -29,4 +29,6 @@ public:
     static LColor parseArgbInt(LUint argbValue);
 };
 }
+
+using util::LColorUtil;
 #endif

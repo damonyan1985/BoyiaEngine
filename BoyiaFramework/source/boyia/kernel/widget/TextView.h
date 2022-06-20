@@ -31,6 +31,7 @@ public:
     HtmlView* getLinkItem();
 
     LInt lineSize() const;
+    LInt lineWidth(LInt i) const;
     ViewPainter* linePainter(LInt i) const;
 
 protected:

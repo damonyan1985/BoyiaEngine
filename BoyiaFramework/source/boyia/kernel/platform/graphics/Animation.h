@@ -18,6 +18,21 @@ class AnimationTask;
 
 using AnimList = KList<BoyiaPtr<Animation>>;
 using AnimTaskList = KList<BoyiaPtr<AnimationTask>>;
+using closure = std::function<void()>;
+
+
+class Timer : public MessageThread {
+public:
+    enum TimerType {
+        kTimeOut
+    };
+    Timer(LInt milliseconds, const closure& func, LBool loop);
+    virtual LVoid handleMessage(Message* msg);
+    LVoid postTask(const closure& func);
+    
+private:
+    LBool m_loop;
+};
 
 class Animation : public BoyiaRef {
 public:
@@ -120,7 +135,6 @@ private:
     AnimList m_animList;
 };
 
-using closure = std::function<void()>;
 class Animator : public MessageThread {
 public:
     enum {

@@ -23,6 +23,11 @@ public:
                 m_thread->waitOnNotify();
             }
         }
+        
+        // when thread is over, delete the message queue
+        delete m_queue;
+        delete this;
+        delete m_thread;
     }
     
     Message* obtain() LOverride
@@ -39,17 +44,12 @@ public:
     LVoid quit() LOverride
     {
         m_continue = LFalse;
+        m_thread->notify();
     }
     
     MessageQueue* queue() LOverride
     {
         return m_queue;
-    }
-    
-    ~CommonMessageLoop()
-    {
-        quit();
-        delete m_queue;
     }
     
     LBool isAlive() LOverride
@@ -58,6 +58,12 @@ public:
     }
     
 private:
+    // cannot delete loop in other scope
+    ~CommonMessageLoop()
+    {
+        quit();
+    }
+    
     MessageQueue* m_queue;
     MessageThread* m_thread;
     LBool m_continue;
@@ -70,7 +76,6 @@ MessageThread::MessageThread()
 
 MessageThread::~MessageThread()
 {
-    delete m_loop;
 }
 
 LVoid MessageThread::postMessage(Message* msg)

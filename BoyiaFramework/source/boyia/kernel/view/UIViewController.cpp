@@ -184,9 +184,10 @@ void UIViewController::onTouchUp(const LPoint& pt)
     }
 
     if (hitTest(pt)) {
-        if (m_target->isSelectable()) {
-            m_target->setSelected(LTrue);
-        }
+//        if (m_target->isSelectable()) {
+//            m_target->setSelected(LTrue);
+//        }
+        m_view->getDocument()->setFocusView(m_target);
 
         if (m_target->getListener()) {
             m_target->getListener()->onPressUp(m_target);

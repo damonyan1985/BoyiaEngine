@@ -15,6 +15,7 @@ HtmlDocument::HtmlDocument()
     , m_url(_CS(""))
     , m_root(kBoyiaNull)
     , m_view(kBoyiaNull)
+    , m_focus(kBoyiaNull)
 {
 }
 
@@ -22,7 +23,7 @@ HtmlDocument::~HtmlDocument()
 {
 }
 
-void HtmlDocument::setRenderTreeRoot(HtmlView* root)
+LVoid HtmlDocument::setRenderTreeRoot(HtmlView* root)
 {
     m_root = root;
 }
@@ -32,7 +33,7 @@ HtmlView* HtmlDocument::getRenderTreeRoot() const
     return m_root;
 }
 
-void HtmlDocument::setPageTitle(const String& titleText)
+LVoid HtmlDocument::setPageTitle(const String& titleText)
 {
     m_title = titleText;
 }
@@ -42,7 +43,7 @@ const String& HtmlDocument::getPageTitle() const
     return m_title;
 }
 
-void HtmlDocument::setPageUrl(const String& url)
+LVoid HtmlDocument::setPageUrl(const String& url)
 {
     m_url = url;
 }
@@ -80,16 +81,17 @@ HtmlView* HtmlDocument::getCurrentItem()
     return *m_currentItemIter;
 }
 
-void HtmlDocument::addHtmlView(HtmlView* item)
+LVoid HtmlDocument::addHtmlView(HtmlView* item)
 {
     m_itemList.push(item);
 }
 
-void HtmlDocument::resetHtmlFocus()
+LVoid HtmlDocument::resetHtmlFocus()
 {
     m_currentItemIter = m_itemList.begin();
 }
-void HtmlDocument::clearHtmlList()
+
+LVoid HtmlDocument::clearHtmlList()
 {
     m_itemList.clear();
 }
@@ -99,7 +101,7 @@ const LayoutRect& HtmlDocument::getViewPort() const
     return m_view->getClientRange();
 }
 
-void HtmlDocument::putItemID(String& id, HtmlView* item)
+LVoid HtmlDocument::putItemID(String& id, HtmlView* item)
 {
     m_idMap.put(id, item);
 }
@@ -109,7 +111,7 @@ HtmlView* HtmlDocument::getItemByID(const String& id)
     return (HtmlView*)m_idMap.get(HashString(id, LFalse));
 }
 
-void HtmlDocument::setView(UIView* view)
+LVoid HtmlDocument::setView(UIView* view)
 {
     m_view = view;
 }
@@ -117,5 +119,23 @@ void HtmlDocument::setView(UIView* view)
 UIView* HtmlDocument::getView() const
 {
     return m_view;
+}
+
+LVoid HtmlDocument::setFocusView(HtmlView* view)
+{   
+    if (!view) {
+        return;
+    }
+
+    if (!view->isSelectable()) {
+        return;
+    }
+
+    if (m_focus && m_focus != view) {
+        m_focus->setSelected(LFalse);
+    }
+    
+    m_focus = view;
+    m_focus->setSelected(LTrue);
 }
 }

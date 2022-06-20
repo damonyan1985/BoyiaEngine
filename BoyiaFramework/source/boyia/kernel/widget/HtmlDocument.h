@@ -24,31 +24,33 @@ public:
     ~HtmlDocument();
 
 public:
-    void setRenderTreeRoot(HtmlView* root);
+    LVoid setRenderTreeRoot(HtmlView* root);
     HtmlView* getRenderTreeRoot() const;
 
-    void setPageTitle(const String& titleText);
+    LVoid setPageTitle(const String& titleText);
     const String& getPageTitle() const;
 
-    void setPageUrl(const String& url);
+    LVoid setPageUrl(const String& url);
     const String& getPageUrl() const;
 
     HtmlView* getPreItem();
     HtmlView* getNextItem();
 
     HtmlView* getCurrentItem();
-    void addHtmlView(HtmlView* item);
+    LVoid addHtmlView(HtmlView* item);
 
-    void resetHtmlFocus();
-    void clearHtmlList();
+    LVoid resetHtmlFocus();
+    LVoid clearHtmlList();
 
     const LayoutRect& getViewPort() const;
 
-    void putItemID(String& id, HtmlView* item);
+    LVoid putItemID(String& id, HtmlView* item);
     HtmlView* getItemByID(const String& id);
 
-    void setView(UIView* view);
+    LVoid setView(UIView* view);
     UIView* getView() const;
+    
+    LVoid setFocusView(HtmlView* view);
 
 private:
     /**+
@@ -68,6 +70,8 @@ private:
     LayoutRect m_viewRect;
     HashMap<HashString, WeakPtr<HtmlView>> m_idMap;
     UIView* m_view;
+    
+    WeakPtr<HtmlView> m_focus;
 };
 }
 #endif /* HTMLDOCUMENT_H_ */

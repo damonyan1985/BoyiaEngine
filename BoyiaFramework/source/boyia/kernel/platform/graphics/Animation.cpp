@@ -466,4 +466,45 @@ LVoid Animator::handleMessage(Message* msg)
     } break;
     }
 }
+
+Timer::Timer(LInt milliseconds, const closure& func, LBool loop)
+    : m_loop(loop)
+{
+    start();
+    
+    postTask([self = this, milliseconds, func]() -> void {
+        if (milliseconds > 0) {
+            self->waitTimeOut(milliseconds);
+        }
+        
+        UIThread::instance()->postClosureTask([func]() -> void {
+            func();
+        });
+    });
+}
+
+LVoid Timer::postTask(const closure& func)
+{
+    Message* msg = this->obtain();
+    msg->type = kTimeOut;
+    msg->obj = new ClosureTask(func);
+    msg->when = SystemUtil::getSystemTime();
+    postMessage(msg);
+}
+
+LVoid Timer::handleMessage(Message* msg)
+{
+    switch (msg->type) {
+    case kTimeOut: {
+        OwnerPtr<ClosureTask> task = static_cast<ClosureTask*>(msg->obj);
+        task->m_func();
+        
+        if (m_loop) {
+            postTask(task->m_func);
+        } else {
+            quit();
+        }
+    } break;
+    }
+}
 }
