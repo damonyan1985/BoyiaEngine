@@ -51,6 +51,7 @@ public:
 
     virtual LInt getInputType();
     virtual LVoid setInputValue(const String& text);
+    virtual LVoid setSelectedWithPosition(const LBool selected, const LayoutPoint& point);
 
 protected:
     virtual ~InputView();
@@ -65,7 +66,6 @@ protected:
     
     //virtual LBool isReplaced() const;
 
-    LInt m_type;
     LBool m_checked;
     LBool m_activated;
     LFont* m_newFont;

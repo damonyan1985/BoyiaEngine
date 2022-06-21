@@ -50,7 +50,7 @@ public:
     LVoid setView(UIView* view);
     UIView* getView() const;
     
-    LVoid setFocusView(HtmlView* view);
+    LVoid setFocusView(HtmlView* view, const LPoint& point);
 
 private:
     /**+

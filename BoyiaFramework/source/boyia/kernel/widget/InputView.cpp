@@ -26,6 +26,7 @@ public:
         : m_cursorHeight(cursorHeight)
         , m_paint(LFalse)
         , m_timer(kBoyiaNull)
+        , m_point(0, 0)
     {
     }
     
@@ -59,13 +60,23 @@ public:
     }
  
     // point is left top point
-    LVoid paint(LGraphicsContext& gc, LayoutPoint& point)
+    LVoid paint(LGraphicsContext& gc, LayoutPoint point)
     {
         if (!m_paint) {
             return;
         }
         gc.setBrushColor(LColorUtil::parseArgbInt(COLOR_BLACK));
         gc.drawRect(point.iX + kDefaultInputTextPadding, point.iY, kDefaultInputBorderWidth * 10, m_cursorHeight);
+    }
+    
+    LVoid setPosition(const LayoutPoint& point)
+    {
+        m_point = point;
+    }
+    
+    LayoutPoint position() const
+    {
+        return m_point;
     }
     
     ~TextInputCursor()
@@ -77,6 +88,7 @@ private:
     LInt m_cursorHeight;
     Timer* m_timer;
     LBool m_paint;
+    LayoutPoint m_point;
 };
 
 InputView::InputView(
@@ -163,7 +175,7 @@ LVoid InputView::layoutText()
 
 LVoid InputView::layoutEnd(RenderContext& rc)
 {
-    if (kInputHidden != m_type && rc.getX() >= 0) {
+    if (kInputHidden != getInputType() && rc.getX() >= 0) {
         if (rc.getX() + m_leftPadding + m_width > rc.getMaxWidth() + rc.getNewLineXStart()) {
             rc.newLine(this);
             rc.setNextLineHeight(m_height);
@@ -182,15 +194,13 @@ LVoid InputView::layoutEnd(RenderContext& rc)
 
     rc.addX(m_width);
 
-    if (m_type != kInputHidden) {
+    if (getInputType() != kInputHidden) {
         rc.addItemInterval();
         rc.addLineItemCount();
     }
     
     layoutText();
 }
-
-
 
 LVoid InputView::paintBegin(LGraphicsContext& gc, LayoutPoint& point)
 {
@@ -212,6 +222,11 @@ LVoid InputView::execute()
 LInt InputView::getInputType()
 {
     return kInputText;
+}
+
+LVoid InputView::setSelectedWithPosition(const LBool selected, const LayoutPoint& point)
+{
+    HtmlView::setSelected(selected);
 }
 
 class InputTextBox : public InputView {
@@ -256,10 +271,10 @@ public:
         LayoutPoint point;
         paintTextBorder(gc, point);
         
-        LayoutPoint cursorPoint(point.iX + m_text->lineWidth(0), point.iY + (m_height - m_cursor->getHeight())/2);
+        LInt cursorY = point.iY + (m_height - m_cursor->getHeight())/2;
         
         if (m_value.GetLength() == 0) {
-            m_cursor->paint(gc, cursorPoint);
+            m_cursor->paint(gc, LayoutPoint(point.iX, cursorY));
             return;
         }
         
@@ -272,7 +287,17 @@ public:
                   point.iX + m_text->lineWidth(0),
                   point.iY,
                   point.iY + ((m_height - m_cursor->getHeight())/2));
-        m_cursor->paint(gc, cursorPoint);
+        
+        LayoutPoint cursorPosition = m_cursor->position();
+        LInt textWidth = m_text->lineWidth(0);
+        LInt textSize = m_text->lineLength(0);
+        LInt perWith = textWidth/textSize;
+        LInt cursorDelta = cursorPosition.iX - point.iX;
+        LInt index = cursorDelta/perWith > textSize ? textSize : cursorDelta/perWith;
+        
+        LInt cursorX = cursorDelta > 0 ? index * perWith : 0;
+        
+        m_cursor->paint(gc, LayoutPoint(point.iX + cursorX, cursorY));
 
         m_text->paint(gc);
     }
@@ -299,6 +324,7 @@ public:
     {
         HtmlView::setSelected(selected);
         if (selected) {
+            //Editor::get()->setView(this);
             Editor::get()->setView(this)->showKeyboard(m_value);
             if (m_cursor && !m_cursor->isBlink()) {
                 m_cursor->startBlink();
@@ -307,6 +333,19 @@ public:
             if (m_cursor) {
                 m_cursor->cancel();
             }
+        }
+    }
+    
+    virtual LBool isEditor() const
+    {
+        return LTrue;
+    }
+    
+    virtual LVoid setSelectedWithPosition(const LBool selected, const LayoutPoint& point)
+    {
+        setSelected(selected);
+        if (selected && m_cursor) {
+            m_cursor->setPosition(point);
         }
     }
     

@@ -2,6 +2,7 @@
 #define HashUtil_h
 
 #include "StringUtils.h"
+#include "PlatformBridge.h"
 
 namespace util {
 class HashString {
@@ -44,7 +45,12 @@ public:
     {
         return m_value.GetBuffer();
     }
-
+    
+    LInt GetStringSize() const
+    {
+        return yanbo::PlatformBridge::getTextSize(m_value);
+    }
+    
 private:
     String m_value;
     LUint m_hash;

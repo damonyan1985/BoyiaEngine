@@ -12,8 +12,22 @@
 #include "RenderContext.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "PlatformBridge.h"
 
 namespace yanbo {
+class TextSelection {
+public:
+    TextSelection()
+        : start(0)
+        , end(0)
+    {
+    }
+  
+public:
+    LInt start;
+    LInt end;
+};
+
 class TextLine : public ViewPainter {
 public:
     TextLine(TextView* view, LInt length, const String& text)
@@ -94,6 +108,15 @@ LInt TextView::lineWidth(LInt i) const
         return 0;
     }
     return m_textLines->elementAt(i)->m_lineLength;
+}
+
+LInt TextView::lineLength(LInt i) const
+{
+    if (!m_textLines || i >= m_textLines->size()) {
+        return 0;
+    }
+    
+    return PlatformBridge::getTextSize(m_textLines->elementAt(i)->m_text);
 }
 
 void TextView::layout(RenderContext& rc)

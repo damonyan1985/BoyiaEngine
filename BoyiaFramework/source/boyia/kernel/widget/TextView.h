@@ -10,8 +10,9 @@
 
 #include "InlineView.h"
 
-namespace yanbo {
+namespace yanbo {    
 class TextLine;
+class TextSelection;
 class TextView : public InlineView {
 public:
     TextView(const String& text);
@@ -32,6 +33,7 @@ public:
 
     LInt lineSize() const;
     LInt lineWidth(LInt i) const;
+    LInt lineLength(LInt i) const;
     ViewPainter* linePainter(LInt i) const;
 
 protected:

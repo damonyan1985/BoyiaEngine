@@ -674,4 +674,9 @@ LVoid HtmlView::setVisible(LBool visible)
         LBaseView::setVisible(visible);
     }
 }
+
+LBool HtmlView::isEditor() const
+{
+    return LFalse;
+}
 }

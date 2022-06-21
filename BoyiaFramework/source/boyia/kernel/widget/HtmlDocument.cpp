@@ -7,6 +7,7 @@
 #include "HtmlDocument.h"
 #include "StringUtils.h"
 #include "UIView.h"
+#include "InputView.h"
 
 namespace yanbo {
 
@@ -121,7 +122,7 @@ UIView* HtmlDocument::getView() const
     return m_view;
 }
 
-LVoid HtmlDocument::setFocusView(HtmlView* view)
+LVoid HtmlDocument::setFocusView(HtmlView* view, const LPoint& point)
 {   
     if (!view) {
         return;
@@ -136,6 +137,10 @@ LVoid HtmlDocument::setFocusView(HtmlView* view)
     }
     
     m_focus = view;
-    m_focus->setSelected(LTrue);
+    if (m_focus->isEditor()) {
+        static_cast<InputView*>(view)->setSelectedWithPosition(LTrue, point);
+    } else {
+        m_focus->setSelected(LTrue);
+    }
 }
 }

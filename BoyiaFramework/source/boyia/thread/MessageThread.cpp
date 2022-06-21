@@ -61,7 +61,7 @@ private:
     // cannot delete loop in other scope
     ~CommonMessageLoop()
     {
-        quit();
+        //quit();
     }
     
     MessageQueue* m_queue;

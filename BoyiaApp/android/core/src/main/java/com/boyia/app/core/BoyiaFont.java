@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoyiaFont {
-    private Paint mFontPaint = null;
-    private List<LineText> mList = null;
+    private Paint mFontPaint;
+    private List<LineText> mList;
 
     public BoyiaFont() {
         mFontPaint = new Paint();
-        mList = new ArrayList<LineText>();
+        mList = new ArrayList<>();
     }
 
     public int getFontWidth(String ch, int size) {
@@ -51,37 +51,28 @@ public class BoyiaFont {
         return mList.get(index).mWidth;
     }
 
+    /**
+     * 分割字符串为多行
+     * @param text
+     * @param maxWidth
+     * @param fontSize
+     * @return
+     */
     public int calcTextLine(String text, int maxWidth, int fontSize) {
         mFontPaint.setTextSize(fontSize);
         mList.clear();
 
-        //char[] charArray = text.toCharArray();
         int currentLineWidth = 0;
         int maxLineWidth = 0;
-        //StringBuilder builder = new StringBuilder();
         int start = 0;
         int end = 0;
         BoyiaLog.d("libboyia", "java text=" + text);
-        Rect rect = new Rect();
-        //for (int index = 0; index < text.length(); ++index) {
         int index = 0;
         while (index < text.length()) {
             end = index+1;
             String subText = text.substring(start, end);
-            //mFontPaint.getTextBounds(subText, 0, subText.length(), rect);
             int width = (int)Math.ceil(mFontPaint.measureText(subText));
-            //int width = BoyiaUtils.getFontWidth(mFontPaint, charArray, index);
-            //BoyiaLog.d("libboyia", "text=" + charArray[index] + " and width=" + width);
-//            if (currentLineWidth + width <= maxWidth) {
-//                builder.append(charArray[index]);
-//                currentLineWidth += width;
-//            } else {
-//                maxLineWidth = maxLineWidth < currentLineWidth ?
-//                        currentLineWidth : maxLineWidth;
-//                mList.add(new LineText(builder.toString(), currentLineWidth));
-//                currentLineWidth = 0;
-//                builder.delete(0, builder.length());
-//            }
+
             if (width <= maxWidth) {
                 currentLineWidth = width;
                 ++index;
@@ -104,6 +95,30 @@ public class BoyiaFont {
         }
 
         return maxLineWidth;
+    }
+
+    /**
+     * 根据x坐标计算所在line的索引，x坐标为相对位移
+     * @param line
+     * @param x
+     * @return
+     */
+    public int getOffsetByLine(int line, int x) {
+        if (mList.size() == 0) {
+            return 0;
+        }
+
+        String text = mList.get(line).mText;
+        int i = 0;
+        for (; i < text.length(); i++) {
+            String subText = text.substring(0, i+1);
+            int width = (int)Math.ceil(mFontPaint.measureText(subText));
+            if (x < width) {
+                return i;
+            }
+        }
+
+        return i;
     }
 
     private static class LineText {

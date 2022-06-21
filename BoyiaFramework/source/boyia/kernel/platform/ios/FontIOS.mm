@@ -33,8 +33,12 @@ public:
     virtual LInt getLineSize() const;
     virtual LInt getLineWidth(LInt index) const;
     virtual LVoid getLineText(LInt index, String& text);
+    
+    LInt getOffsetByLine(LInt line, LInt x);
 
 private:
+    UIFont* getUIFont() const;
+    
     mutable KVector<OwnerPtr<LineText>> m_lines;
     mutable LInt m_height;
 };
@@ -80,15 +84,26 @@ LVoid FontIOS::getLineText(LInt index, String& text)
     text = *m_lines.elementAt(index)->text.get();
 }
 
+UIFont* FontIOS::getUIFont() const
+{
+    if (m_family.GetLength()) {
+        return [UIFont fontWithName:[[NSString alloc] initWithUTF8String:GET_STR(m_family)] size:getFontSize()];
+    }
+    
+    // 如果没有指定字体，则使用系统字体
+    return [UIFont systemFontOfSize:getFontSize()];
+}
+
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
-    UIFont* font = nil;
-    if (m_family.GetLength()) {
-        font = [UIFont fontWithName:[[NSString alloc] initWithUTF8String:GET_STR(m_family)] size:getFontSize()];
-    } else {
-        // 如果没有指定字体，则使用系统字体
-        font = [UIFont systemFontOfSize:getFontSize()];
-    }
+    UIFont* font = getUIFont();
+//    if (m_family.GetLength()) {
+//        font = [UIFont fontWithName:[[NSString alloc] initWithUTF8String:GET_STR(m_family)] size:getFontSize()];
+//    } else {
+//        // 如果没有指定字体，则使用系统字体
+//        font = [UIFont systemFontOfSize:getFontSize()];
+//    }
+    
     //UIFont* font = [UIFont fontWithName:@"HoeflerText-Regular" size:getFontSize()];
 //    float radio = yanbo::PixelRatio::ratio();
 //    maxWidth = maxWidth * radio;
@@ -147,6 +162,35 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
     }
 
     return maxLineWidth;
+}
+
+LInt FontIOS::getOffsetByLine(LInt line, LInt x)
+{
+    if (!m_lines.size()) {
+        return 0;
+    }
+    
+    NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR((*m_lines[line]->text.get()))];
+    CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
+    
+    UIFont* font = getUIFont();
+    NSDictionary* dict = @{NSFontAttributeName:font};
+    
+    LInt i = 0;
+    while (i < nsText.length) {
+        NSString* rangeString = [nsText substringWithRange:NSMakeRange(0, i+1)];
+        CGRect rect =  [rangeString boundingRectWithSize:maxSize
+                                                 options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                              attributes:dict context:nil];
+        
+        if (x < rect.size.width) {
+            return i;
+        }
+        
+        i++;
+    }
+    
+    return i;
 }
 
 LFont* LFont::create(const LFont& font)
