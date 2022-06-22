@@ -15,8 +15,8 @@ LVoid EditorAndroid::showKeyboard(const String& text, LInt cursor)
     JNIUtil::callStaticVoidMethod(
         "com/boyia/app/core/BoyiaView",
         "showKeyboard",
-        "(JLjava/lang/String;)V",
-        (jlong)editor, strText);
+        "(JLjava/lang/String;I)V",
+        (jlong)editor, strText, (jint)cursor);
 }
 
 Editor* Editor::get()

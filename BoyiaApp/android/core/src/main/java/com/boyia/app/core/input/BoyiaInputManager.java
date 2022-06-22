@@ -64,7 +64,7 @@ public class BoyiaInputManager {
             });
     }
 
-    public void show(final long item, final String text) {
+    public void show(final long item, final String text, final int cursor) {
         if (mViewRef.get() == null) {
             return;
         }
@@ -75,7 +75,7 @@ public class BoyiaInputManager {
             InputMethodManager imm = (InputMethodManager) mViewRef.get()
                     .getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(mViewRef.get(), 0, null);
-            mViewRef.get().resetCommitText(text);
+            mViewRef.get().resetCommitText(text, cursor);
         });
     }
 

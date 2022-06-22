@@ -166,13 +166,13 @@ static void nativeInitJNIContext(JNIEnv* env, jobject obj, jobject context)
     yanbo::JNIUtil::setClassLoaderFrom(context);
 }
 
-static void nativeSetInputText(JNIEnv* env, jobject obj, jstring text, jlong item)
+static void nativeSetInputText(JNIEnv* env, jobject obj, jstring text, jlong item, jint cursor)
 {
     String result;
     util::jstringTostr(env, text, result);
     BOYIA_LOG("nativeSetInputText text=%s", (const char*)result.GetBuffer());
 
-    yanbo::AppManager::instance()->uiThread()->setInputText(result, item);
+    yanbo::AppManager::instance()->uiThread()->setInputText(result, cursor);
     result.ReleaseBuffer();
 }
 
@@ -262,7 +262,7 @@ static JNINativeMethod sUIViewMethods[] = {
     { "nativeDistroyUIView", "()V", (void*)nativeDistroyUIView },
     { "nativeHandleKeyEvent", "(II)V", (void*)nativeHandleKeyEvent },
     { "nativeImageLoaded", "(J)V", (void*)nativeImageLoaded },
-    { "nativeSetInputText", "(Ljava/lang/String;J)V", (void*)nativeSetInputText },
+    { "nativeSetInputText", "(Ljava/lang/String;JI)V", (void*)nativeSetInputText },
     { "nativeVideoTextureUpdate", "(J)V", (void*)nativeVideoTextureUpdate },
     { "nativeHandleTouchEvent", "(III)V", (void*)nativeHandleTouchEvent },
     { "nativeInitJNIContext", "(Landroid/app/Activity;)V", (void*)nativeInitJNIContext },

@@ -140,18 +140,18 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
         requestFocus();
     }
 
-    public void setInputText(String text) {
-        BoyiaCoreJNI.nativeSetInputText(text, mInputManager.item());
+    public void setInputText(String text, int cursor) {
+        BoyiaCoreJNI.nativeSetInputText(text, mInputManager.item(), cursor);
     }
 
-    public void resetCommitText(final String text) {
+    public void resetCommitText(final String text, final int cursor) {
         if (mInputConnect != null) {
-            mInputConnect.resetCommitText(text);
+            mInputConnect.resetCommitText(text, cursor);
         }
     }
 
-    public static void showKeyboard(long callback, String text) {
-        mInputManager.show(callback, text);
+    public static void showKeyboard(long callback, String text, int cursor) {
+        mInputManager.show(callback, text, cursor);
     }
 
     public void onNativeTouch(MotionEvent event) {

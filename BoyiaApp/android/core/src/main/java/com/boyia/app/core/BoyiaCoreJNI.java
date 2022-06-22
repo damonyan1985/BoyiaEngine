@@ -59,7 +59,7 @@ public class BoyiaCoreJNI {
 
     public static native void nativeInitJNIContext(Activity context);
 
-    public static native void nativeSetInputText(String text, long item);
+    public static native void nativeSetInputText(String text, long item, int cursor);
 
     public static native void nativeVideoTextureUpdate(long item);
 
