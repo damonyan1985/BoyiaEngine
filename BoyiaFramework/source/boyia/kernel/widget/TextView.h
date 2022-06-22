@@ -35,6 +35,8 @@ public:
     LInt lineWidth(LInt i) const;
     LInt lineLength(LInt i) const;
     ViewPainter* linePainter(LInt i) const;
+    LInt getIndexByOffset(LInt line, LInt x);
+    LInt getOffsetByIndex(LInt line, LInt index);
 
 protected:
 

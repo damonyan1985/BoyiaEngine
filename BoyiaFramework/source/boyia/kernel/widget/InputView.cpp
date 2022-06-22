@@ -26,7 +26,7 @@ public:
         : m_cursorHeight(cursorHeight)
         , m_paint(LFalse)
         , m_timer(kBoyiaNull)
-        , m_point(0, 0)
+        , m_cursorIndex(0)
     {
     }
     
@@ -69,14 +69,14 @@ public:
         gc.drawRect(point.iX + kDefaultInputTextPadding, point.iY, kDefaultInputBorderWidth * 10, m_cursorHeight);
     }
     
-    LVoid setPosition(const LayoutPoint& point)
+    LVoid setTextIndexCursor(const LInt index)
     {
-        m_point = point;
+        m_cursorIndex = index;
     }
     
-    LayoutPoint position() const
+    LInt cursorIndex() const
     {
-        return m_point;
+        return m_cursorIndex;
     }
     
     ~TextInputCursor()
@@ -88,7 +88,7 @@ private:
     LInt m_cursorHeight;
     Timer* m_timer;
     LBool m_paint;
-    LayoutPoint m_point;
+    LInt m_cursorIndex;
 };
 
 InputView::InputView(
@@ -153,6 +153,8 @@ LVoid InputView::setInputValue(const String& text)
     m_text->setText(text);
     layoutText();
 }
+
+LVoid InputView::setInputCursor(const LInt cursor) {}
 
 LVoid InputView::layoutBegin(RenderContext& rc)
 {
@@ -288,14 +290,16 @@ public:
                   point.iY,
                   point.iY + ((m_height - m_cursor->getHeight())/2));
         
-        LayoutPoint cursorPosition = m_cursor->position();
-        LInt textWidth = m_text->lineWidth(0);
-        LInt textSize = m_text->lineLength(0);
-        LInt perWith = textWidth/textSize;
-        LInt cursorDelta = cursorPosition.iX - point.iX;
-        LInt index = cursorDelta/perWith > textSize ? textSize : cursorDelta/perWith;
+//        LayoutPoint cursorPosition = m_cursor->position();
+//        LInt textWidth = m_text->lineWidth(0);
+//        LInt textSize = m_text->lineLength(0);
+//        LInt perWith = textWidth/textSize;
+//        LInt cursorDelta = cursorPosition.iX - point.iX;
+//        LInt index = cursorDelta/perWith > textSize ? textSize : cursorDelta/perWith;
+//
+//        LInt cursorX = cursorDelta > 0 ? index * perWith : 0;
         
-        LInt cursorX = cursorDelta > 0 ? index * perWith : 0;
+        LInt cursorX = m_text->getOffsetByIndex(0, m_cursor->cursorIndex());
         
         m_cursor->paint(gc, LayoutPoint(point.iX + cursorX, cursorY));
 
@@ -319,33 +323,45 @@ public:
         
         gc.restore();
     }
-
-    virtual LVoid setSelected(const LBool selected)
-    {
-        HtmlView::setSelected(selected);
-        if (selected) {
-            //Editor::get()->setView(this);
-            Editor::get()->setView(this)->showKeyboard(m_value);
-            if (m_cursor && !m_cursor->isBlink()) {
-                m_cursor->startBlink();
-            }
-        } else {
-            if (m_cursor) {
-                m_cursor->cancel();
-            }
-        }
-    }
     
     virtual LBool isEditor() const
     {
         return LTrue;
     }
     
+    LVoid setInputCursor(const LInt cursor)
+    {
+        if (m_cursor) {
+            m_cursor->setTextIndexCursor(cursor);
+        }
+    }
+    
+    
     virtual LVoid setSelectedWithPosition(const LBool selected, const LayoutPoint& point)
     {
-        setSelected(selected);
-        if (selected && m_cursor) {
-            m_cursor->setPosition(point);
+        HtmlView::setSelected(selected);
+        if (selected) {
+            if (!m_cursor) {
+                return;
+            }
+            // TODO 必须是已经layout过了
+            LayoutPoint topLeft = getAbsoluteContainerTopLeft();
+            LInt x = topLeft.iX + getXpos();
+            //LInt y = topLeft.iY + getYpos();
+            
+            LInt deltaX = point.iX - x;
+            LInt index = m_text->getIndexByOffset(0, deltaX);
+            
+            m_cursor->setTextIndexCursor(index);
+            
+            Editor::get()->setView(this)->showKeyboard(m_value, index);
+            if (!m_cursor->isBlink()) {
+                m_cursor->startBlink();
+            }
+        } else {
+            if (m_cursor) {
+                m_cursor->cancel();
+            }
         }
     }
     

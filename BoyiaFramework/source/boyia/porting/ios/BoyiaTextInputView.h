@@ -16,7 +16,7 @@
 @interface BoyiaTextInputView : UIView<UITextInput>
 
 -(instancetype)initWithRenderer:(IOSRenderer*)renderer;
--(void)resetText:(nonnull NSString *)text;
+-(void)resetText:(nonnull NSString *)text cursor:(NSUInteger)cursor;
 
 // UITextInput
 @property(nonatomic, readonly) NSMutableString* text;

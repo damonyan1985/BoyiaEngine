@@ -19,6 +19,8 @@ public:
     LInt getLineWidth(LInt index) const;
     LVoid getLineText(LInt index, String& text);
     LInt calcTextLine(const String& text, LInt maxWidth, LInt fontSize) const;
+    LInt getIndexByOffset(LInt line, LInt x) const;
+    LInt getOffsetByIndex(LInt line, LInt index) const;
 
 private:
     struct JFontAndroid* m_privateFont;

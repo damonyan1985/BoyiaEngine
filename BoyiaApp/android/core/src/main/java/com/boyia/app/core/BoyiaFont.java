@@ -101,9 +101,9 @@ public class BoyiaFont {
      * 根据x坐标计算所在line的索引，x坐标为相对位移
      * @param line
      * @param x
-     * @return
+     * @return 返回位置所在的索引
      */
-    public int getOffsetByLine(int line, int x) {
+    public int getIndexByOffset(int line, int x) {
         if (mList.size() == 0) {
             return 0;
         }
@@ -119,6 +119,20 @@ public class BoyiaFont {
         }
 
         return i;
+    }
+
+    public int getOffsetByIndex(int line, int index) {
+        if (mList.size() == 0) {
+            return 0;
+        }
+
+        String text = mList.get(line).mText;
+        if (index > text.length()) {
+            index = text.length();
+        }
+
+        String subText = text.substring(0, index);
+        return (int)Math.ceil(mFontPaint.measureText(subText));
     }
 
     private static class LineText {

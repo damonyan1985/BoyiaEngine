@@ -329,7 +329,17 @@ public:
     {
         return 0;
     }
+    
+    virtual LInt getIndexByOffset(LInt line, LInt x)
+    {
+        return 0;
+    }
 
+    virtual LInt getOffsetByIndex(LInt line, LInt x)
+    {
+        return 0;
+    }
+    
 private:
     // 主要用来做字体宽高适配
     LInt getFontAdapter() const
@@ -393,8 +403,8 @@ public:
     virtual ~Editor()
     {
     }
-
-    virtual LVoid showKeyboard(const String& text) = 0;
+    
+    virtual LVoid showKeyboard(const String& text, LInt cursor) = 0;
 
     Editor* setView(LVoid* view)
     {

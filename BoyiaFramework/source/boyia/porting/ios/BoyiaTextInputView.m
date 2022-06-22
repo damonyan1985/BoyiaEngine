@@ -71,25 +71,26 @@ NSRange RangeForCharactersInRange(NSString* text, NSRange range) {
   return self;
 }
 
-- (UITextPosition*)start {
+-(UITextPosition*)start {
   return [BoyiaTextPosition positionWithIndex:self.range.location];
 }
 
-- (UITextPosition*)end {
+-(UITextPosition*)end {
   return [BoyiaTextPosition positionWithIndex:self.range.location + self.range.length];
 }
 
-- (BOOL)isEmpty {
+-(BOOL)isEmpty {
   return self.range.length == 0;
 }
 
-- (id)copyWithZone:(NSZone*)zone {
+-(id)copyWithZone:(NSZone*)zone {
   return [[BoyiaTextRange allocWithZone:zone] initWithNSRange:self.range];
 }
 
-- (BOOL)isEqualTo:(BoyiaTextRange*)other {
+-(BOOL)isEqualTo:(BoyiaTextRange*)other {
   return NSEqualRanges(self.range, other.range);
 }
+
 @end
 
 #pragma mark - BoyiaTextInputView
@@ -183,23 +184,30 @@ NSRange RangeForCharactersInRange(NSString* text, NSRange range) {
         [self replaceRange:_selectedTextRange withText:@""];
     }
 
-    [self.renderer setInputText:self.text];
+    [self.renderer setInputText:self.text cursor:_selectedTextRange.range.location];
 }
 
 -(UITextRange*)selectedTextRange {
     return [_selectedTextRange copy];
 }
 
--(void)resetText:(nonnull NSString *)text {
-    //[self replaceRange:_selectedTextRange withText:@""];
-    [self replaceRangeLocal:NSMakeRange(0, self.text.length) withText:@""];
-    [self replaceRange:_selectedTextRange withText:text];
+// cursor表示光标插入的位置
+-(void)resetText:(nonnull NSString *)text cursor:(NSUInteger)cursor {
+    _selectedTextRange = [[BoyiaTextRange alloc] initWithNSRange:NSMakeRange(0, 0)];
+    [self.text replaceCharactersInRange:NSMakeRange(0, self.text.length)
+                           withString:@""];
+    NSLog(@"resetText text = %@", self.text);
+    //[self replaceRangeLocal:NSMakeRange(0, self.text.length) withText:@""];
+    [self replaceRangeLocal:NSMakeRange(0, text.length - cursor) withText:text];
+    //[self replaceRange:_selectedTextRange withText:text];
+    //[self replaceRange:NSMakeRange(0, 1) withText:text];
 }
 
 // 键盘输入时会调用
 -(void)insertText:(nonnull NSString *)text {
     [self replaceRange:_selectedTextRange withText:text];
-    [self.renderer setInputText:self.text];
+    NSLog(@"insertText _selectedTextRange.location = %lu", _selectedTextRange.range.location);
+    [self.renderer setInputText:self.text cursor:_selectedTextRange.range.location];
 }
 
 - (NSWritingDirection)baseWritingDirectionForPosition:(nonnull UITextPosition *)position inDirection:(UITextStorageDirection)direction {
@@ -257,6 +265,7 @@ NSRange RangeForCharactersInRange(NSString* text, NSRange range) {
 
 -(void)replaceRangeLocal:(NSRange)range withText:(NSString*)text {
     NSRange selectedRange = _selectedTextRange.range;
+    // 取交集
     NSRange intersectionRange = NSIntersectionRange(range, selectedRange);
     if (range.location <= selectedRange.location)
         selectedRange.location += text.length - range.length;

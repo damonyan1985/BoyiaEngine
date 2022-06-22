@@ -352,7 +352,7 @@ void testHashMap()
 }
 
 // 显示键盘
--(void)showKeyboard:(NSString*)text {
+-(void)showKeyboard:(NSString*)text cursor:(int)cursor {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0)), dispatch_get_main_queue(), ^ {
         if (!self.textInputView) {
             self.textInputView = [[BoyiaTextInputView alloc] initWithRenderer:self];
@@ -367,7 +367,7 @@ void testHashMap()
         }
 
         // 将目前控件中的文本设置到textInputView中
-        [self.textInputView resetText:text];
+        [self.textInputView resetText:text cursor:cursor];
         // 要对模拟器进行设置才能弹出键盘，I/O -> keyboard -> toggle software keyboard
         if ([self.textInputView becomeFirstResponder]) {
             NSLog(@"result = true");
@@ -384,9 +384,9 @@ void testHashMap()
     }];
 }
 
--(void)setInputText:(NSString*)text {
+-(void)setInputText:(NSString*)text cursor:(NSUInteger)cursor {
     String strText((const LUint8*)[text UTF8String]);
-    yanbo::AppManager::instance()->uiThread()->setInputText(strText, 0);
+    yanbo::AppManager::instance()->uiThread()->setInputText(strText, cursor);
     strText.ReleaseBuffer();
 }
 

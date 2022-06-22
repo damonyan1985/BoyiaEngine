@@ -136,6 +136,9 @@ LVoid UIThread::handleMessage(Message* msg)
         }
 
         view->setInputValue(text);
+        if (view->isEditor()) {
+            view->setInputCursor(msg->arg1);
+        }
         drawUI(view);
     } break;
     case kUiVideoUpdate: {

@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 +(IOSRenderer*)initRenderer:(CAMetalLayer*)layer;
 +(void)runOnUiThread:(dispatch_block_t)block;
 +(UIWindow*)getKeyWindow;
--(void)showKeyboard:(NSString*)text;
+-(void)showKeyboard:(NSString*)text cursor:(int)cursor;
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer;
 -(void)render;
@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y;
 -(void)onFling:(CGPoint)point;
--(void)setInputText:(NSString*)text;
+-(void)setInputText:(NSString*)text cursor:(NSUInteger)cursor;
 
 -(CVMetalTextureCacheRef)cvTextureCache;
 

@@ -10,14 +10,14 @@ namespace util {
 class EditorIOS : public Editor {
 public:
     EditorIOS();
-    virtual LVoid showKeyboard(const String& text);
+    virtual LVoid showKeyboard(const String& text, LInt cursor);
 };
 
 EditorIOS::EditorIOS()
 {
 }
 
-LVoid EditorIOS::showKeyboard(const String& text)
+LVoid EditorIOS::showKeyboard(const String& text, LInt cursor)
 {
     Editor* editor = static_cast<Editor*>(this);
     IOSRenderer* renderer = [IOSRenderer renderer];
@@ -25,7 +25,7 @@ LVoid EditorIOS::showKeyboard(const String& text)
         return;
     }
     
-    [renderer showKeyboard:STR_TO_OCSTR(text)];
+    [renderer showKeyboard:STR_TO_OCSTR(text) cursor:cursor];
 }
 
 Editor* Editor::get()

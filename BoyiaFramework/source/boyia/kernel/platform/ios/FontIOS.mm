@@ -34,7 +34,8 @@ public:
     virtual LInt getLineWidth(LInt index) const;
     virtual LVoid getLineText(LInt index, String& text);
     
-    LInt getOffsetByLine(LInt line, LInt x);
+    virtual LInt getIndexByOffset(LInt line, LInt x);
+    virtual LInt getOffsetByIndex(LInt line, LInt index);
 
 private:
     UIFont* getUIFont() const;
@@ -66,7 +67,16 @@ LInt FontIOS::getFontWidth(LUint8 ch) const
 
 LInt FontIOS::getTextWidth(const String& text) const
 {
-    return 0;
+    NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR(text)];
+    NSDictionary* dict = @{NSFontAttributeName:getUIFont()};
+    //设置文本能占用的最大宽高
+    CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
+    
+    CGRect rect =  [nsText boundingRectWithSize:maxSize
+                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                          attributes:dict context:nil];
+    
+    return rect.size.width;
 }
 
 LInt FontIOS::getLineSize() const
@@ -96,7 +106,6 @@ UIFont* FontIOS::getUIFont() const
 
 LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
 {
-    UIFont* font = getUIFont();
 //    if (m_family.GetLength()) {
 //        font = [UIFont fontWithName:[[NSString alloc] initWithUTF8String:GET_STR(m_family)] size:getFontSize()];
 //    } else {
@@ -110,7 +119,7 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
     // String换NSString
     NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR(text)];
     
-    NSDictionary* dict = @{NSFontAttributeName:font};
+    NSDictionary* dict = @{NSFontAttributeName:getUIFont()};
     //设置文本能占用的最大宽高
     CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
     
@@ -164,7 +173,9 @@ LInt FontIOS::calcTextLine(const String& text, LInt maxWidth) const
     return maxLineWidth;
 }
 
-LInt FontIOS::getOffsetByLine(LInt line, LInt x)
+// 根据位置定位所在字符串中的索引
+// x为相对textview的位移
+LInt FontIOS::getIndexByOffset(LInt line, LInt x)
 {
     if (!m_lines.size()) {
         return 0;
@@ -173,8 +184,7 @@ LInt FontIOS::getOffsetByLine(LInt line, LInt x)
     NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR((*m_lines[line]->text.get()))];
     CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
     
-    UIFont* font = getUIFont();
-    NSDictionary* dict = @{NSFontAttributeName:font};
+    NSDictionary* dict = @{NSFontAttributeName:getUIFont()};
     
     LInt i = 0;
     while (i < nsText.length) {
@@ -191,6 +201,25 @@ LInt FontIOS::getOffsetByLine(LInt line, LInt x)
     }
     
     return i;
+}
+
+LInt FontIOS::getOffsetByIndex(LInt line, LInt index)
+{
+    if (!m_lines.size()) {
+        return 0;
+    }
+    
+    NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR((*m_lines[line]->text.get()))];
+    CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
+    
+    NSDictionary* dict = @{NSFontAttributeName:getUIFont()};
+    
+    NSString* rangeString = [nsText substringWithRange:NSMakeRange(0, index)];
+    CGRect rect =  [rangeString boundingRectWithSize:maxSize
+                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                          attributes:dict context:nil];
+    
+    return rect.size.width;
 }
 
 LFont* LFont::create(const LFont& font)

@@ -8,7 +8,7 @@ EditorAndroid::EditorAndroid()
 {
 }
 
-LVoid EditorAndroid::showKeyboard(const String& text)
+LVoid EditorAndroid::showKeyboard(const String& text, LInt cursor)
 {
     jstring strText = strToJstring(yanbo::JNIUtil::getEnv(), text);
     Editor* editor = static_cast<Editor*>(this);

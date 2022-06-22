@@ -17,6 +17,8 @@ struct JFontAndroid {
     jmethodID m_getLineWidth;
     jmethodID m_getLineText;
     jmethodID m_calcTextLine;
+    jmethodID m_getIndexByOffset;
+    jmethodID m_getOffsetByIndex;
     AutoJObject object(JNIEnv* env)
     {
         return getRealObject(env, m_obj);
@@ -53,6 +55,8 @@ void FontAndroid::init(JNIEnv* env, jclass clazz, jobject obj)
     m_privateFont->m_getLineWidth = GetJMethod(env, clazz, "getLineWidth", "(I)I");
     m_privateFont->m_getLineText = GetJMethod(env, clazz, "getLineText", "(I)Ljava/lang/String;");
     m_privateFont->m_calcTextLine = GetJMethod(env, clazz, "calcTextLine", "(Ljava/lang/String;II)I");
+    m_privateFont->m_getIndexByOffset = GetJMethod(env, clazz, "getIndexByOffset", "(II)I");
+    m_privateFont->m_getOffsetByIndex = GetJMethod(env, clazz, "getOffsetByIndex", "(II)I");
 
     env->DeleteLocalRef(obj);
     env->DeleteLocalRef(clazz);
@@ -65,6 +69,26 @@ FontAndroid::~FontAndroid()
         env->DeleteGlobalRef(m_privateFont->m_obj);
         delete m_privateFont;
     }
+}
+
+LInt FontAndroid::getIndexByOffset(LInt line, LInt x) const
+{
+    JNIEnv* env = yanbo::JNIUtil::getEnv();
+    AutoJObject javaObject = m_privateFont->object(env);
+    if (!javaObject.get())
+        return 0;
+
+    return env->CallIntMethod(javaObject.get(), m_privateFont->m_getIndexByOffset, line, x);
+}
+
+LInt FontAndroid::getOffsetByIndex(LInt line, LInt index) const
+{
+    JNIEnv* env = yanbo::JNIUtil::getEnv();
+    AutoJObject javaObject = m_privateFont->object(env);
+    if (!javaObject.get())
+        return 0;
+
+    return env->CallIntMethod(javaObject.get(), m_privateFont->m_getOffsetByIndex, line, index);
 }
 
 LInt FontAndroid::getFontWidth(LUint8 ch, LInt size) const
@@ -228,6 +252,16 @@ public:
     virtual LInt getLineSize() const;
     virtual LInt getLineWidth(LInt index) const;
     virtual LVoid getLineText(LInt index, String& text);
+
+    virtual LInt getIndexByOffset(LInt line, LInt x)
+    {
+        return m_fontPort->getIndexByOffset(line, x);
+    }
+
+    virtual LInt getOffsetByIndex(LInt line, LInt index)
+    {
+        return m_fontPort->getOffsetByIndex(line, index);
+    }
 
 private:
     FontAndroid* m_fontPort;

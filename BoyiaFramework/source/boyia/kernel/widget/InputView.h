@@ -52,6 +52,7 @@ public:
     virtual LInt getInputType();
     virtual LVoid setInputValue(const String& text);
     virtual LVoid setSelectedWithPosition(const LBool selected, const LayoutPoint& point);
+    virtual LVoid setInputCursor(const LInt cursor);
 
 protected:
     virtual ~InputView();

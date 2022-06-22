@@ -119,6 +119,24 @@ LInt TextView::lineLength(LInt i) const
     return PlatformBridge::getTextSize(m_textLines->elementAt(i)->m_text);
 }
 
+LInt TextView::getIndexByOffset(LInt line, LInt x)
+{
+    if (!m_newFont) {
+        return 0;
+    }
+    
+    return m_newFont->getIndexByOffset(line, x);
+}
+
+LInt TextView::getOffsetByIndex(LInt line, LInt index)
+{
+    if (!m_newFont || index == 0) {
+        return 0;
+    }
+    
+    return m_newFont->getOffsetByIndex(line, index);
+}
+
 void TextView::layout(RenderContext& rc)
 {
     handleXYPos(rc);
