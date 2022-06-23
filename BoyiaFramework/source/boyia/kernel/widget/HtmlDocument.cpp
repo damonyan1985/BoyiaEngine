@@ -122,6 +122,15 @@ UIView* HtmlDocument::getView() const
     return m_view;
 }
 
+LVoid HtmlDocument::setFocusImpl(LBool focus, const LPoint& point)
+{
+    if (m_focus->isEditor()) {
+        static_cast<InputView*>(m_focus.get())->setSelectedWithPosition(focus, point);
+    } else {
+        m_focus->setSelected(focus);
+    }
+}
+
 LVoid HtmlDocument::setFocusView(HtmlView* view, const LPoint& point)
 {   
     if (!view) {
@@ -133,14 +142,10 @@ LVoid HtmlDocument::setFocusView(HtmlView* view, const LPoint& point)
     }
 
     if (m_focus && m_focus != view) {
-        m_focus->setSelected(LFalse);
+        setFocusImpl(LFalse, point);
     }
     
     m_focus = view;
-    if (m_focus->isEditor()) {
-        static_cast<InputView*>(view)->setSelectedWithPosition(LTrue, point);
-    } else {
-        m_focus->setSelected(LTrue);
-    }
+    setFocusImpl(LTrue, point);
 }
 }

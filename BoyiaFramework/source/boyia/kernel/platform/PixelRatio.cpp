@@ -108,4 +108,14 @@ LVoid PixelRatio::clipRect(const LRect& srcRect, const LRect& clipRect, LRect& d
     destRect.Set(LPoint(left, top), LPoint(right, bottom));    
 }
 
+int PixelRatio::rawX(int x)
+{
+    return x * ratio();
+}
+
+int PixelRatio::rawY(int y)
+{
+    return y * ratio();
+}
+
 }

@@ -25,7 +25,6 @@ public class BoyiaInputConnection extends BaseInputConnection {
      */
     @Override
     public boolean commitText(CharSequence text, int newCursorPosition) {
-        //mBuilder.append(text);
         if (mCursorIndex > mBuilder.length()) {
             mCursorIndex = mBuilder.length();
         }

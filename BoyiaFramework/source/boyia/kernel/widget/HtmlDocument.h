@@ -53,6 +53,8 @@ public:
     LVoid setFocusView(HtmlView* view, const LPoint& point);
 
 private:
+    inline LVoid setFocusImpl(LBool focus, const LPoint& point);
+    
     /**+
      * The URL of this page.
      */

@@ -24,6 +24,9 @@ public:
     static int viewX(int x);
     static int viewY(int y);
 
+    static int rawX(int x);
+    static int rawY(int y);
+
     static int logicWidth();
     static int logicHeight();
 

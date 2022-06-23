@@ -79,25 +79,35 @@ struct BoyiaDownloadMask : View {
         .fill(Color(argb: 0x88000000))
         .frame(width: width, height: height)
         
+        
         getTransparentMask()
     }
     
     // 避免点击事件向下传递
     func getTransparentMask() -> some View {
-        return Path { path in
-            path.move(to: CGPoint(x: 0, y: 0))
-            path.addLine(to: CGPoint(x: width, y: 0))
-            path.addLine(to: CGPoint(x: width, y: height))
-            path.addLine(to: CGPoint(x: 0, y: height))
-            path.addLine(to: CGPoint(x: 0, y: 0))
-        }
-        .fill(Color(argb: 0x01000000))
-        .frame(width: width, height: height)
-        .onTapGesture {
-            //model.download(ccb: self.completedCB)
-            self.completedCB()
+        return ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: 0))
+                path.addLine(to: CGPoint(x: width, y: 0))
+                path.addLine(to: CGPoint(x: width, y: height))
+                path.addLine(to: CGPoint(x: 0, y: height))
+                path.addLine(to: CGPoint(x: 0, y: 0))
+            }
+            .fill(Color(argb: 0x01000000))
+            .frame(width: width, height: height)
+            .onTapGesture {
+                //model.download(ccb: self.completedCB)
+                self.completedCB()
+            }
+            
+            Image(systemName: "lock.circle")
+                .resizable()
+                .foregroundColor(Color(hex: 0xF3F3F3))
+                .frame(width: 54.dp, height: 54.dp)
         }
     }
+    
+    
 }
 
 

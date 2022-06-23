@@ -1,0 +1,3 @@
+class PhotoMainController extends ViewController {
+    
+}

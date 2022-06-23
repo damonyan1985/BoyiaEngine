@@ -181,6 +181,8 @@ LInt FontIOS::getIndexByOffset(LInt line, LInt x)
         return 0;
     }
     
+    //x = yanbo::PixelRatio::rawX(x);
+    
     NSString* nsText = [[NSMutableString alloc] initWithUTF8String:GET_STR((*m_lines[line]->text.get()))];
     CGSize maxSize = CGSizeMake(CGFLOAT_MAX, MAXFLOAT);
     
@@ -189,7 +191,7 @@ LInt FontIOS::getIndexByOffset(LInt line, LInt x)
     LInt i = 0;
     while (i < nsText.length) {
         NSString* rangeString = [nsText substringWithRange:NSMakeRange(0, i+1)];
-        CGRect rect =  [rangeString boundingRectWithSize:maxSize
+        CGRect rect = [rangeString boundingRectWithSize:maxSize
                                                  options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                               attributes:dict context:nil];
         
@@ -219,6 +221,7 @@ LInt FontIOS::getOffsetByIndex(LInt line, LInt index)
                                              options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
                                           attributes:dict context:nil];
     
+    //return yanbo::PixelRatio::viewX(rect.size.width);
     return rect.size.width;
 }
 

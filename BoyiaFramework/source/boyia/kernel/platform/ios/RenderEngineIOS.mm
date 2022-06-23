@@ -317,8 +317,6 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         return;
     }
     
-    
-    
     createVertexAttr(rect, color, m_vertexs);
     
     // 转成OC字符串
