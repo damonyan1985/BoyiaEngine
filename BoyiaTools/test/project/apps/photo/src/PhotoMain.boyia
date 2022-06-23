@@ -1,3 +1,7 @@
 class PhotoMainController extends ViewController {
-    
+    fun onCreate() {
+    }
 }
+
+// 启动ViewController
+App.runApp(PhotoMainController);

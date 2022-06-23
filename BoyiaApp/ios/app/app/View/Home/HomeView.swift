@@ -85,8 +85,21 @@ struct HomeView : View {
                 
                 // header
                 HStack {
-                    HStack {}
-                    .frame(width: 560.dp)
+                    HStack(alignment: VerticalAlignment.center) {
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .frame(width: 50.dp, height: 50.dp)
+                            .foregroundColor(Color.black)
+                        Spacer()
+                    }
+                    .frame(width: 560.dp, height: 70.dp)
+                    .padding(Edge.Set.leading, 20.dp)
+                    .background(Color.white)
+                    .cornerRadius(35.dp) // radius必须在background之后，否则不起效果
+                    .offset(x: 0, y: 26.dp)
+                    .onTapGesture {
+                        // TODO Search View
+                    }
                     
                     Image(systemName: "gearshape")
                         .resizable()
@@ -102,7 +115,7 @@ struct HomeView : View {
                         //.alignmentGuide(.right, computeValue: { $0[.trailing] })
                         //.alignmentGuide(.trailing, computeValue: { d in d[.trailing] - 5})
                 }
-                .frame(width: UIScreen.main.bounds.width, height: 160.dp)
+                .frame(width: UIScreen.main.bounds.width, height: 180.dp)
                 .background(Color(hex: 0xEDEDED))
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)

@@ -1,0 +1,6 @@
+<view class="full">
+<div class="photos">
+</div>
+<div id="header" />
+<div id="footer" />
+</view>
