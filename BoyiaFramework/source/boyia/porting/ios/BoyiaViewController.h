@@ -10,7 +10,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BoyiaViewController : UIViewController
+@interface BoyiaViewController : UIViewController<UIGestureRecognizerDelegate>
 
 @end
 

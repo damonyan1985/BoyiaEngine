@@ -1,5 +1,7 @@
 class PhotoMainController extends ViewController {
+    prop mainView;
     fun onCreate() {
+        
     }
 }
 

@@ -240,18 +240,20 @@ void testHashMap()
     return _cvTextureCache;
 }
 
--(void)onFling:(CGPoint)point{
-//    LFlingEvent* evt = new LFlingEvent();
-//    evt->pt1.Set(yanbo::PixelRatio::viewX(x1), yanbo::PixelRatio::viewY(y1));
-//    evt->pt2.Set(yanbo::PixelRatio::viewX(x2), yanbo::PixelRatio::viewY(y2));
-//
-//    // 速度是秒级别的，换算成毫秒级别
-//    //velocityX = velocityX / 1000;
-//    //velocityY = velocityY / 1000;
-//    evt->velocityX = yanbo::PixelRatio::viewX(velocityX);
-//    evt->velocityY = yanbo::PixelRatio::viewY(velocityY);
-//
-//    yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
+-(void)onFling:(CGPoint)speed pointStart:(CGPoint)start pointEnd:(CGPoint)end{
+    LFlingEvent* evt = new LFlingEvent();
+    evt->pt1.Set(yanbo::PixelRatio::viewX(start.x),
+                 yanbo::PixelRatio::viewY(start.y - self.statusBarHeight));
+    evt->pt2.Set(yanbo::PixelRatio::viewX(end.x),
+                 yanbo::PixelRatio::viewY(end.y - self.statusBarHeight));
+
+    // 速度是秒级别的，换算成毫秒级别
+//    velocityX = velocityX / 1000;
+//    velocityY = velocityY / 1000;
+    evt->velocityX = yanbo::PixelRatio::viewX(speed.x);
+    evt->velocityY = yanbo::PixelRatio::viewY(speed.y);
+
+    yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }
 
 -(void)handleTouchEvent:(int)type x:(int)x y:(int)y {

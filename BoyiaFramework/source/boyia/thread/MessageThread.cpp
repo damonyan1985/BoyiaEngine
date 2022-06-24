@@ -66,7 +66,7 @@ private:
     
     MessageQueue* m_queue;
     MessageThread* m_thread;
-    LBool m_continue;
+    volatile LBool m_continue;
 };
 
 MessageThread::MessageThread()
