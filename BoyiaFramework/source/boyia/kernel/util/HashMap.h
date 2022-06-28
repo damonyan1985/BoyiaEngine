@@ -154,6 +154,7 @@ public:
         if (hash == header->hash && header->key == key) {
             m_table[index] = header->next;
             delete header;
+            --m_size;
             return;
         }
 
@@ -163,6 +164,7 @@ public:
             if (hash == ptr->hash && ptr->key == key) {
                 current->next = ptr->next;
                 delete ptr;
+                --m_size;
                 return;
             }
 

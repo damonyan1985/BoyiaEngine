@@ -240,6 +240,10 @@ LReal VelocityAnimation::getSplineFlingDistance(LReal velocity)
 
 LVoid VelocityAnimation::setVelocity(LReal velocityX, LReal velocityY)
 {
+    if (!m_item) {
+        return;
+    }
+    
     m_velocity = hypot(velocityX, velocityY);
     setDuration(getSplineFlingDuration(m_velocity) / 1000);
 
@@ -362,6 +366,11 @@ public:
         : m_func(func)
     {
     }
+    
+    ~ClosureTask()
+    {
+        
+    }
 
     closure m_func;
 };
@@ -384,7 +393,7 @@ Animator* Animator::instance()
 
 LVoid Animator::addTask(AnimationTask* task)
 {
-    AutoLock lock(&m_lock);
+    AutoLock lock(&m_animLock);
     m_taskList.push(task);
 }
 
@@ -393,7 +402,7 @@ LVoid Animator::postTimeout()
     long now = SystemUtil::getSystemTime();
     postTask([self = this, now]() -> void {
         long delta = SystemUtil::getSystemTime() - now;
-        if (delta && CONST_REFRESH_TIME - delta > 0) {
+        if (delta >= 0 && CONST_REFRESH_TIME - delta > 0) {
             self->waitTimeOut(CONST_REFRESH_TIME - delta);
         }
     });
@@ -428,7 +437,7 @@ LVoid Animator::startAnimation(Animation* anim)
 
 LVoid Animator::runTasks()
 {
-    AutoLock lock(&m_lock);
+    AutoLock lock(&m_animLock);
     AnimTaskList::Iterator iter = m_taskList.begin();
     AnimTaskList::Iterator iterEnd = m_taskList.end();
 
@@ -454,7 +463,7 @@ LVoid Animator::handleMessage(Message* msg)
         task->m_func();
 
         UIThread::instance()->postClosureTask([self = this]() -> void {
-            // 执行动画
+            // UIThread中执行动画
             self->runTasks();
             // 如果还有动画存在
             KLOG("VelocityAnimation.handleMessage, run tasks");

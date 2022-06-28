@@ -18,6 +18,7 @@ namespace yanbo {
 const LInt kDefaultInputBorderWidth = 2;
 const LInt kDefaultInputTextPadding = 5;
 const LInt kDefaultInputButtonHeight = 20;
+const LInt kDefaultInputCursorBlinkTime = 600; // 毫秒
 
 // text input cursor
 class TextInputCursor {
@@ -48,7 +49,7 @@ public:
     {
         cancel();
         
-        m_timer = new Timer(750, [self = this]() -> LVoid {
+        m_timer = new Timer(kDefaultInputCursorBlinkTime, [self = this]() -> LVoid {
             self->m_paint = self->m_timer == kBoyiaNull ? LFalse : !self->m_paint;
             UIThread::instance()->draw(Editor::get()->view());
         }, LTrue);
@@ -66,7 +67,7 @@ public:
             return;
         }
         gc.setBrushColor(LColorUtil::parseArgbInt(COLOR_BLACK));
-        gc.drawRect(point.iX + kDefaultInputTextPadding, point.iY, kDefaultInputBorderWidth * 10, m_cursorHeight);
+        gc.drawRect(point.iX + kDefaultInputBorderWidth, point.iY, kDefaultInputBorderWidth, m_cursorHeight);
     }
     
     LVoid setTextIndexCursor(const LInt index)

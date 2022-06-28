@@ -7,7 +7,12 @@ namespace util {
 template <typename T>
 class WeakPtr {
 public:
-    WeakPtr(BoyiaPtr<T> ptr)
+    WeakPtr(const BoyiaPtr<T>& ptr)
+    {
+        initPtr(ptr.get());
+    }
+    
+    WeakPtr(const WeakPtr<T>& ptr)
     {
         initPtr(ptr.get());
     }

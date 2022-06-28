@@ -159,10 +159,13 @@ void UIViewController::onTouchDown(const LPoint& pt)
     if (m_target) {
         BlockView* container = m_target->getContainingBlock();
         if (container) {
-            WeakPtr<Animation> anim = m_scrollMap.get(HashPtr((LUintPtr)container));
+            HashPtr key((LUintPtr)container);
+            WeakPtr<Animation> anim = m_scrollMap.get(key);
             if (anim) {
                 anim->stop();
             }
+            
+            m_scrollMap.remove(key);
         }
 
         LayoutPoint topLeft = m_target->getAbsoluteContainerTopLeft();
@@ -236,11 +239,16 @@ LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velo
 {
     BOYIA_LOG("UIViewController::onFling velocityY=%f", velocityY);
     // 获取目标view
-    HtmlView* target = findViewByPosition(pt1, m_view->getDocument()->getRenderTreeRoot());
-    if (!target) {
-        KLOG("UIViewController::onFling target is null");
+//    HtmlView* target = findViewByPosition(pt1, m_view->getDocument()->getRenderTreeRoot());
+//    if (!target) {
+//        KLOG("UIViewController::onFling target is null");
+//        return;
+//    }
+    if (!m_target) {
         return;
     }
+    
+    HtmlView* target = m_target;
 
     BlockView* view = target->getContainingBlock();
     if (!view) {
@@ -253,8 +261,11 @@ LVoid UIViewController::onFling(const LPoint& pt1, const LPoint& pt2, LReal velo
     // velocityY < 0表示向上滑动
     VelocityAnimation* velocityAnim = new VelocityAnimation(view);
     velocityAnim->setVelocity(velocityX, velocityY);
-
-    m_scrollMap.put(HashPtr((LUintPtr)view), velocityAnim);
+    
     Animator::instance()->startAnimation(velocityAnim);
+
+    HashPtr key((LUintPtr)view);
+    // weakptr相互传递时必须保证ptr已经被ref过，一般先使用boyiaptr进行包装
+    m_scrollMap.put(key, velocityAnim);
 }
 }

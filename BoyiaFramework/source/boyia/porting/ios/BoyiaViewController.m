@@ -121,10 +121,10 @@
         CGPoint point = [gesture locationInView:gesture.view];
         CGPoint speed = [gesture velocityInView:gesture.view];
         NSLog(@"speed = %@", NSStringFromCGPoint(speed));
-        
-//        if (self.renderer) {
-//            [self.renderer onFling:speed pointStart:point pointEnd:point];
-//        }
+
+        if (self.renderer) {
+            [self.renderer onFling:speed pointStart:point pointEnd:point];
+        }
     }
 }
 

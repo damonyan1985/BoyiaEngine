@@ -49,7 +49,6 @@ public:
     
     virtual LVoid onFileLen(LInt len)
     {
-        
     }
     
     virtual LVoid onRedirectUrl(const String& redirectUrl)
@@ -423,7 +422,7 @@ void testHashMap()
 
 // 初始化metal环境
 -(void)initMetal {
-    
+
     id device = MTLCreateSystemDefaultDevice();
     
     self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
