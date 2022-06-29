@@ -142,6 +142,36 @@ LVoid RenderGraphicsContext::drawImage(const LRect& aDestRect, const LImage* aSo
 {
 }
 
+LVoid RenderGraphicsContext::drawRoundImage(const LImage* image, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
+{
+    if (!image->pixels() || !PixelRatio::isInWindow(image->rect())) {
+        return;
+    }
+    
+    
+    LRect clipRect = image->rect();
+    if (m_clipRect) {
+        // 如果绘制区域不在裁剪范围内
+        if (!PixelRatio::isInClipRect(image->rect(), *m_clipRect)) {
+            return;
+        }
+        
+        PixelRatio::clipRect(image->rect(), *m_clipRect, clipRect);
+    }
+    
+    ItemPainter* painter = currentPainter();
+    RenderRoundImageCommand* cmd = new RenderRoundImageCommand(image->rect(),
+                                                               m_brushColor,
+                                                               image->pixels(),
+                                                               topLeftRadius,
+                                                               topRightRadius,
+                                                               bottomRightRadius,
+                                                               bottomLeftRadius);
+    cmd->url = image->url();
+    cmd->clipRect = clipRect;
+    painter->buffer->addElement(cmd);
+}
+
 LVoid RenderGraphicsContext::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
 //    if (!mp->playerId())

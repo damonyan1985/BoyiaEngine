@@ -90,8 +90,7 @@ float opacity(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
 }
 
 
-
-
+// smoothstep(x1,x2,y)函数表示，当y < x1时，返回0，当y > x2时返回1，当y介于x1,x2之间时返回一个平滑曲线比例值
 float circle(thread VertexVaryings& varyings, constant Uniforms& uniforms) {
     // 坐标
     float px = varyings.gl_Position.x;
@@ -169,9 +168,6 @@ vertex VertexVaryings vertexMain(uint vertexID [[vertex_id]], constant VertexAtt
 fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]],
                              constant Uniforms& uniforms[[buffer(0)]],
                              texture2d<half> colorTexture [[texture(0)]]) {
-//  FragmentShader shader(varyings, uniforms, colorTexture);
-//  shader.main();
-//  return shader.gl_FragColor;
     float4 gl_FragColor;
     if (uniforms.uType == 0) {
         gl_FragColor = varyings.vColor;
@@ -180,10 +176,21 @@ fragment float4 fragmentMain(VertexVaryings varyings[[stage_in]],
         //float op = varyings.gl_Position.x < uniforms.uRadius.topLeft.x ? 1 : 0;
         //varyings.gl_Position.x = varyings.gl_Position.x * 0.3;
         gl_FragColor = float4(varyings.vColor.rgb, varyings.vColor.a * op); //op * varyings.vColor;
+    } else if (uniforms.uType == 5) {
+        constexpr sampler textureSampler(mag_filter::linear,
+                                          min_filter::linear); // sampler是采样器
+        // half是16位精度的浮点数据
+        half4 colorSample = colorTexture.sample(textureSampler, varyings.vTexCoord); // 得到纹理对应位置的颜色
+        float4 texColor = float4(colorSample);
+        float op = circle(varyings, uniforms);
+        
+        gl_FragColor = float4(texColor.rgb, texColor.a * op);
     } else { // 纹理
         constexpr sampler textureSampler(mag_filter::linear,
                                           min_filter::linear); // sampler是采样器
+        // half是16位精度的浮点数据
         half4 colorSample = colorTexture.sample(textureSampler, varyings.vTexCoord); // 得到纹理对应位置的颜色
+        
         gl_FragColor = float4(colorSample);
     }
     

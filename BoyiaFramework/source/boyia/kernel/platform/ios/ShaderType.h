@@ -28,7 +28,7 @@ typedef struct {
     float bottomRightRadius;
 } Radius;
 
-// uType, 0表示矩形，1表示图片，2表示视频，3表示nativeview, 4圆角矩形
+// uType, 0表示矩形，1表示图片，2表示视频，3表示nativeview, 4圆角矩形, 5圆角纹理
 // uRadius, 圆角半径
 typedef struct
 {

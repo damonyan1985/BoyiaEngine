@@ -167,6 +167,7 @@ LVoid RenderEngineIOS::init()
     m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineIOS::renderText;
     m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineIOS::renderImage;
     m_functions[RenderCommand::kRenderVideo] = (RenderFunction)&RenderEngineIOS::renderVideo;
+    m_functions[RenderCommand::kRenderRoundImage] = (RenderFunction)&RenderEngineIOS::renderRoundImage;
 }
 
 LVoid RenderEngineIOS::reset()
@@ -396,34 +397,97 @@ LVoid RenderEngineIOS::renderRoundRect(RenderCommand* cmd)
     if ([m_renderer appendBatchCommand:BatchCommandRound size:6 key:nil]) {
         Uniforms uniforms;
         uniforms.uType = 4;
-        
-        uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
-        uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
-        uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
-        uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
-        
-        uniforms.uRadius.topLeft = {
-            realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
-            realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
-        };
-        
-        uniforms.uRadius.topRight = {
-            realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
-            realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
-        };
-        
-        uniforms.uRadius.bottomLeft = {
-            realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
-            realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
-        };
-        
-        uniforms.uRadius.bottomRight = {
-            realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
-            realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
-        };
+        createRadiusUniform(uniforms, roundCmd);
         
         m_uniforms.addElement(uniforms);
     }
+}
+
+LVoid RenderEngineIOS::renderRoundImage(RenderCommand* cmd)
+{
+    RenderRoundImageCommand* imageCmd = static_cast<RenderRoundImageCommand*>(cmd);
+    LRect& rect = imageCmd->rect;
+    LColor& color = imageCmd->color;
+    
+    if (!rect.GetWidth() || !rect.GetHeight()) {
+        return;
+    }
+    
+    NSString* key = STR_TO_OCSTR(imageCmd->url);
+    id tex = [m_renderer getTexture:key];
+    if (!tex) {
+        if (!imageCmd->image) {
+            return;
+        }
+        
+        // 从普通指针转为OC ARC指针，使用完之后释放
+        UIImage* image = (__bridge_transfer UIImage*)imageCmd->image;
+        CGImageRef imageRef = image.CGImage;
+        
+        // 软裁剪
+//        CGImageCreateWithImageInRect(imageRef, CGRectMake(0, 0, image.size.width/2, image.size.height/2));
+        
+        // 读取图片的宽高
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        
+        Byte* data = (Byte*) calloc(width * height * 4, sizeof(Byte)); //rgba共4个byte
+        
+        CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
+                                                           CGImageGetColorSpace(imageRef), kCGImageAlphaPremultipliedLast);
+        
+        // 3在CGContextRef上绘图
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+        
+        CGContextRelease(context);
+        
+        
+        [m_renderer setTextureData:key data:data width:width height:height];
+        
+        // 释放data
+        if (data) {
+            free(data);
+        }
+    }
+    
+    createVertexAttr(rect, color, m_vertexs);
+    
+    if ([m_renderer appendBatchCommand:BatchCommandTexture size:6 key:key]) {
+        Uniforms uniforms;
+        uniforms.uType = 5;
+        createRadiusUniform(uniforms, imageCmd);
+        m_uniforms.addElement(uniforms);
+    }
+}
+
+LVoid RenderEngineIOS::createRadiusUniform(Uniforms& uniforms, RenderRoundRectCommand* roundCmd)
+{
+    LRect& rect = roundCmd->rect;
+    
+    uniforms.uRadius.topLeftRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.topRightRadius = realLength(roundCmd->topRightRadius);
+    uniforms.uRadius.bottomRightRadius = realLength(roundCmd->bottomRightRadius);
+    uniforms.uRadius.bottomLeftRadius = realLength(roundCmd->bottomLeftRadius);
+    
+    uniforms.uRadius.topLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->topLeftRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.topRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->topRightRadius),
+        realLength(rect.iTopLeft.iY + roundCmd->topRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.bottomLeft = {
+        realLength(rect.iTopLeft.iX + roundCmd->bottomLeftRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomLeftRadius) + [m_renderer getRenderStatusBarHight]
+    };
+    
+    uniforms.uRadius.bottomRight = {
+        realLength(rect.iBottomRight.iX - roundCmd->bottomRightRadius),
+        realLength(rect.iBottomRight.iY - roundCmd->bottomRightRadius) + [m_renderer getRenderStatusBarHight]
+    };
 }
 
 LVoid RenderEngineIOS::appendUniforms(LInt type)

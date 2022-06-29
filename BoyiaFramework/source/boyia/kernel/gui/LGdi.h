@@ -105,6 +105,7 @@ public:
     virtual LVoid drawImage(const LPoint& tl, const LImage* image) = 0;
     virtual LVoid drawImage(const LImage* image) = 0;
     virtual LVoid drawImage(const LRect& rect, const LImage* image, const LRect& sRect) = 0;
+    virtual LVoid drawRoundImage(const LImage* image, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius) {}
 
     virtual LVoid drawVideo(const LRect& rect, const LMediaPlayer* mp) = 0;
 

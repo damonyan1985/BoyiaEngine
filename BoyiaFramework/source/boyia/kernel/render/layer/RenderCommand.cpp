@@ -81,4 +81,26 @@ LInt RenderRoundRectCommand::type()
 {
     return kRenderRoundRect;
 }
+
+RenderRoundImageCommand::RenderRoundImageCommand(const LRect& rect,
+    const LColor& color,
+    LVoid* commandImage,
+    LInt topLeftRadius,
+    LInt topRightRadius,
+    LInt bottomRightRadius,
+    LInt bottomLeftRadius)
+    : RenderRoundRectCommand(rect,
+                             color,
+                             topLeftRadius,
+                             topRightRadius,
+                             bottomRightRadius,
+                             bottomLeftRadius)
+    , image(commandImage)
+{
+}
+
+LInt RenderRoundImageCommand::type()
+{
+    return RenderCommand::kRenderRoundImage;
+}
 }

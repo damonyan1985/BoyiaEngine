@@ -34,6 +34,7 @@ public:
     LVoid renderImage(RenderCommand* cmd);
     LVoid renderText(RenderCommand* cmd);
     LVoid renderRoundRect(RenderCommand* cmd);
+    LVoid renderRoundImage(RenderCommand* cmd);
     LVoid renderVideo(RenderCommand* cmd);
     
     // Just for test
@@ -48,11 +49,13 @@ public:
     IOSRenderer* iosRenderer() const;
     
 private:
+    LVoid createRadiusUniform(Uniforms& uniforms, RenderRoundRectCommand* roundCmd);
+    
     KVector<VertexAttributes> m_vertexs;
     KVector<Uniforms> m_uniforms;
     
     IOSRenderer* m_renderer;
-    RenderFunction m_functions[6];
+    RenderFunction m_functions[7];
 };
 }
 #endif /* RenderEngineIOS_h */

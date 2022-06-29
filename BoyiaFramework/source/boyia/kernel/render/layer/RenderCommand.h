@@ -12,6 +12,7 @@ public:
         kRenderRoundRect,
         kRenderText,
         kRenderImage,
+        kRenderRoundImage,
         kRenderVideo,
         kRenderPlatform
     };
@@ -82,6 +83,26 @@ public:
     LInt topRightRadius;
     LInt bottomRightRadius;
     LInt bottomLeftRadius;
+};
+
+class RenderRoundImageCommand : public RenderRoundRectCommand {
+public:
+    RenderRoundImageCommand(
+        const LRect& rect,
+        const LColor& color,
+        LVoid* image,
+        LInt topLeftRadius,
+        LInt topRightRadius,
+        LInt bottomRightRadius,
+        LInt bottomLeftRadius);
+    
+    virtual LInt type();
+    
+    String url;
+    
+    LVoid* image;
+    // 裁剪范围
+    LRect clipRect;
 };
 }
 #endif

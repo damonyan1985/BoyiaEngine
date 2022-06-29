@@ -254,4 +254,12 @@ Padding& Style::padding() const
     return *m_padding;;
 }
 
+LBool Style::hasRadius() const
+{
+    return radius().topLeftRadius
+        || radius().topRightRadius
+        || radius().bottomLeftRadius
+        || radius().bottomRightRadius;
+}
+
 }

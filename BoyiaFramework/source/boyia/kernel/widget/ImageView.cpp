@@ -52,7 +52,16 @@ LVoid ImageView::paint(LGraphicsContext& gc)
             bgColor.m_alpha = bgColor.m_alpha * ((float)getStyle()->drawOpacity / 255.0f);
 
             gc.setBrushColor(bgColor);
-            gc.drawImage(m_image);
+            //gc.drawImage(m_image);
+            if (getStyle()->hasRadius()) {
+                gc.drawRoundImage(m_image,
+                                 getStyle()->radius().topLeftRadius,
+                                 getStyle()->radius().topRightRadius,
+                                 getStyle()->radius().bottomRightRadius,
+                                 getStyle()->radius().bottomLeftRadius);
+            } else {
+                gc.drawImage(m_image);
+            }
             KLOG("ImageView::paint drawBitmap end");
         }
 

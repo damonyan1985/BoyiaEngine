@@ -119,6 +119,8 @@ public:
     
     Margin& margin() const;
     Padding& padding() const;
+    
+    LBool hasRadius() const;
 
 public:
     LColor color; // foreground color
