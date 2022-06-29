@@ -9,10 +9,12 @@ const char* VertexSource::s_uielement = "#version 300 es\n"
                                         "in vec2 aTexCoord;\n"
                                         "out vec4 vColor;\n"
                                         "out vec2 vTexCoord;\n"
+                                        "out vec4 vPosition;\n"
                                         "void main() {\n"
-                                        "  gl_Position = uMVPMatrix * vec4(aPosition, 1);\n"
+                                        "  vPosition = uMVPMatrix * vec4(aPosition, 1);\n"
                                         "  vColor = aColor;\n"
                                         "  vTexCoord = aTexCoord;\n"
+                                        "  gl_Position = vPosition;\n"
                                         "}\n";
 
 const char* VertexSource::s_video = "#version 300 es\n"

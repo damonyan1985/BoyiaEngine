@@ -75,6 +75,9 @@ void GLProgram::initShader()
         //m_aTextureCoord = glGetAttribLocation(m_program, "aTexCoord");
         // 获取采样器
         m_uSampler2D = glGetUniformLocation(m_normalPrgm, "uSampler2D");
+
+        m_uRadius = glGetUniformLocation(m_normalPrgm, "uRadius");
+        m_uRect = glGetUniformLocation(m_normalPrgm, "uRect");
     }
 }
 

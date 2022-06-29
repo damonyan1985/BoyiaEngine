@@ -10,8 +10,6 @@ public:
     static const char* s_uielement;
     // 处理视频
     static const char* s_video;
-    // 处理圆角矩形
-    static const char* s_corner;
 };
 } // namespace yanbo
 

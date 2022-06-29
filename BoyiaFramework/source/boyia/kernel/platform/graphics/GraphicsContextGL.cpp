@@ -138,6 +138,11 @@ LVoid GraphicsContextGL::drawRoundRect(const LRect& aRect, const LSize& aCornerS
 {
 }
 
+LVoid GraphicsContextGL::drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
+{
+    
+}
+
 LVoid GraphicsContextGL::drawText(const String& aText, const LRect& aRect)
 {
 }

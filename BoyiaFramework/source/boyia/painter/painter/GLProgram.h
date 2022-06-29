@@ -43,6 +43,9 @@ private:
     //GLuint m_aColorHandle;
     GLuint m_muMVPMatrixHandle;
     GLuint m_uIsImageHandle;
+    GLuint m_uRadius;
+    GLuint m_uRect;
+
     //GLuint m_aTextureCoord;
     GLuint m_uSampler2D;
     // Video Handle
