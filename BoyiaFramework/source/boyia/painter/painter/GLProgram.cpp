@@ -70,7 +70,7 @@ void GLProgram::initShader()
         // 获取程序中总变换矩阵引用id
         m_muMVPMatrixHandle = glGetUniformLocation(m_normalPrgm, "uMVPMatrix");
         // 是否是texture
-        m_uIsImageHandle = glGetUniformLocation(m_normalPrgm, "uIsImage");
+        m_uShapeTypeHandle = glGetUniformLocation(m_normalPrgm, "uShapeType");
         // 获取程序中纹理坐标属性引用id
         //m_aTextureCoord = glGetAttribLocation(m_program, "aTexCoord");
         // 获取采样器
@@ -78,6 +78,7 @@ void GLProgram::initShader()
 
         m_uRadius = glGetUniformLocation(m_normalPrgm, "uRadius");
         m_uRect = glGetUniformLocation(m_normalPrgm, "uRect");
+        m_uRatio = glGetUniformLocation(m_normalPrgm, "uRatio");
     }
 }
 
@@ -98,7 +99,7 @@ bool GLProgram::available()
 
 GLuint GLProgram::texFlag()
 {
-    return m_uIsImageHandle;
+    return m_uShapeTypeHandle;
 }
 
 GLuint GLProgram::matrix()
@@ -122,6 +123,21 @@ GLuint GLProgram::videoSTMatrix()
 GLuint GLProgram::videoSampler2D()
 {
     return m_videoSampler2D;
+}
+
+GLuint GLProgram::radius()
+{
+    return m_uRadius;
+}
+
+GLuint GLProgram::rect()
+{
+    return m_uRect;
+}
+
+GLuint GLProgram::ratio()
+{
+    return m_uRatio;
 }
 
 } // namespace yanbo

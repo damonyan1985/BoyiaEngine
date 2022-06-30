@@ -140,7 +140,22 @@ LVoid GraphicsContextGL::drawRoundRect(const LRect& aRect, const LSize& aCornerS
 
 LVoid GraphicsContextGL::drawRoundRect(const LRect& aRect, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
 {
-    
+    LRect destRect = aRect;
+    if (m_clipRect) {
+        // 如果绘制区域不在裁剪范围内
+        if (!yanbo::PixelRatio::isInClipRect(aRect, *m_clipRect)) {
+            return;
+        }
+        
+        yanbo::PixelRatio::clipRect(aRect, *m_clipRect, destRect);
+    }
+
+    ItemPainter* painter = currentPainter();
+    BoyiaPtr<yanbo::GLPainter> shapeRect = new yanbo::GLPainter();
+    shapeRect->setRoundRect(destRect, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+    //m_brushColor.m_alpha = 0x33;
+    shapeRect->setColor(m_brushColor);
+    painter->painters.push(shapeRect);
 }
 
 LVoid GraphicsContextGL::drawText(const String& aText, const LRect& aRect)

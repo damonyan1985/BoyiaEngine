@@ -4,6 +4,7 @@
 #include "SalLog.h"
 #include "ShaderUtil.h"
 #include "StringUtils.h"
+#include "PixelRatio.h"
 
 namespace yanbo {
 BatchCommandBuffer GLPainter::s_buffer;
@@ -15,11 +16,42 @@ RotateInfo::RotateInfo()
 {
 }
 
+RoundRectInfo::RoundRectInfo()
+    : topLeftRadius(0)
+    , topRightRadius(0)
+    , bottomRightRadius(0)
+    , bottomLeftRadius(0)
+    , left(0)
+    , top(0)
+    , width(0)
+    , height(0)
+{
+}
+
+RoundRectInfo::RoundRectInfo(const RoundRectInfo& info)
+    : topLeftRadius(info.topLeftRadius)
+    , topRightRadius(info.topRightRadius)
+    , bottomRightRadius(info.bottomRightRadius)
+    , bottomLeftRadius(info.bottomLeftRadius)
+    , left(info.left)
+    , top(info.top)
+    , width(info.width)
+    , height(info.height)
+{
+}
+
 PaintCommand::PaintCommand()
     : texId(0)
     , type(GLPainter::EShapeNone)
     , matrix(NULL)
 {
+}
+
+PaintCommand::~PaintCommand()
+{
+    // if (round) {
+    //     delete round;
+    // }
 }
 
 BatchCommand::BatchCommand()
@@ -34,11 +66,12 @@ BatchCommandBuffer::BatchCommandBuffer()
 {
 }
 
-bool BatchCommandBuffer::sameMaterial(GLuint texId)
+bool BatchCommandBuffer::sameMaterial(const PaintCommand& cmd)
 {
-    KFORMATLOG("BatchCommandBuffer::sameMaterial prevTexid=%u texId=%u", buffer[size - 1].texId, texId);
-    return size > 0 && buffer[size - 1].texId == texId;
-    //return false;
+    KFORMATLOG("BatchCommandBuffer::sameMaterial prevTexid=%u texId=%u", buffer[size - 1].texId, cmd.texId);
+    return size > 0 
+        && buffer[size - 1].texId == cmd.texId 
+        && (buffer[size - 1].type != GLPainter::EShapeRoundRect && cmd.type != GLPainter::EShapeRoundRect);
 }
 
 LVoid BatchCommandBuffer::addBatchCommand()
@@ -54,6 +87,9 @@ LVoid BatchCommandBuffer::addBatchCommand(const PaintCommand& cmd)
     buffer[size].type = cmd.type;
     buffer[size].matrix = cmd.matrix;
     buffer[size].size = 1;
+
+    // 圆角半径设置
+    buffer[size].round = cmd.round;
     size++;
 }
 
@@ -90,6 +126,35 @@ void GLPainter::setRect(const LRect& rect)
     ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
 
     ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
+}
+
+void GLPainter::setRoundRect(
+        const LRect& rect, 
+        LInt topLeftRadius, 
+        LInt topRightRadius, 
+        LInt bottomRightRadius, 
+        LInt bottomLeftRadius)
+{
+    m_cmd.type = EShapeRoundRect;
+    Quad& quad = m_cmd.quad;
+
+    ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iTopLeft.iY, &quad.topLeft.vec3D.x, &quad.topLeft.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iTopLeft.iY, &quad.topRight.vec3D.x, &quad.topRight.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(rect.iBottomRight.iX, rect.iBottomRight.iY, &quad.bottomRight.vec3D.x, &quad.bottomRight.vec3D.y);
+
+    ShaderUtil::screenToGlPoint(rect.iTopLeft.iX, rect.iBottomRight.iY, &quad.bottomLeft.vec3D.x, &quad.bottomLeft.vec3D.y);
+
+    m_cmd.round.left = quad.topLeft.vec3D.x;
+    m_cmd.round.top = quad.topLeft.vec3D.y;
+    m_cmd.round.width = quad.bottomRight.vec3D.x - quad.topLeft.vec3D.x;
+    m_cmd.round.height = quad.bottomRight.vec3D.y - quad.topLeft.vec3D.y;
+
+    m_cmd.round.topLeftRadius = ShaderUtil::screenToGlWidth(topLeftRadius);
+    m_cmd.round.topRightRadius = ShaderUtil::screenToGlWidth(topRightRadius);
+    m_cmd.round.bottomRightRadius = ShaderUtil::screenToGlWidth(bottomRightRadius);
+    m_cmd.round.bottomLeftRadius = ShaderUtil::screenToGlWidth(bottomLeftRadius);
 }
 
 void GLPainter::setImage(Texture* tex, const LRect& rect)
@@ -246,14 +311,14 @@ void GLPainter::paintCommand()
         return;
     }
 
+    GLProgram* program = BoyiaPainterEnv::instance()->program();
     LInt drawQuadIndex = 0;
-
     for (LInt i = 0; i < s_buffer.size; i++) {
         KLOG("BaseShape::drawSelf()");
 
         MatrixState::pushMatrix();
         // 制定使用某套shader程序
-        BoyiaPainterEnv::instance()->program()->use(s_buffer.buffer[i].type);
+        program->use(s_buffer.buffer[i].type);
         KLOG("BaseShape::drawSelf()1");
         // 初始化变换矩阵
         KLOG("BaseShape::drawSelf()2");
@@ -268,42 +333,58 @@ void GLPainter::paintCommand()
 
         KLOG("BaseShape::drawSelf()5");
 
-        switch (s_buffer.buffer[i].type) {
+        BatchCommand& cmd = s_buffer.buffer[i];
+        switch (cmd.type) {
         case EShapeExternal: {
-            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-            if (s_buffer.buffer[i].matrix) {
-                glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->videoSTMatrix(), 1, GL_FALSE, s_buffer.buffer[i].matrix);
+            glUniformMatrix4fv(program->videoMatrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            if (cmd.matrix) {
+                glUniformMatrix4fv(program->videoSTMatrix(), 1, GL_FALSE, cmd.matrix);
             }
 
             //KFORMATLOG("m_shapeType == EShapeVideo error=%d", glGetError());
-            glUniform1i(BoyiaPainterEnv::instance()->program()->videoSampler2D(), 0);
+            glUniform1i(program->videoSampler2D(), 0);
             // 绑定纹理
             glActiveTexture(GL_TEXTURE0);
             // Set GL_TEXTURE_EXTERNAL_OES
-            glBindTexture(GL_TEXTURE_EXTERNAL_OES, s_buffer.buffer[i].texId);
+            glBindTexture(GL_TEXTURE_EXTERNAL_OES, cmd.texId);
         } break;
         case EShapeImage: {
-            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-            glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 1);
+            glUniformMatrix4fv(program->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(program->texFlag(), 1);
 
-            glUniform1i(BoyiaPainterEnv::instance()->program()->sampler2D(), 0);
+            glUniform1i(program->sampler2D(), 0);
             //绑定纹理
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, s_buffer.buffer[i].texId);
+            glBindTexture(GL_TEXTURE_2D, cmd.texId);
 
-            KFORMATLOG("GLPainter::paintCommand texSize=%d", s_buffer.buffer[i].size);
+            KFORMATLOG("GLPainter::paintCommand texSize=%d", cmd.size);
         } break;
         case EShapeRect: {
-            glUniformMatrix4fv(BoyiaPainterEnv::instance()->program()->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
-            glUniform1i(BoyiaPainterEnv::instance()->program()->texFlag(), 0);
-            KFORMATLOG("GLPainter::paintCommand rectSize=%d", s_buffer.buffer[i].size);
+            glUniformMatrix4fv(program->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(program->texFlag(), 0);
+            KFORMATLOG("GLPainter::paintCommand rectSize=%d", cmd.size);
+        } break;
+        case EShapeRoundRect: {
+            glUniformMatrix4fv(program->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(program->texFlag(), 2);
+            glUniform4f(program->radius(),
+                cmd.round.topLeftRadius,
+                cmd.round.topRightRadius,
+                cmd.round.bottomRightRadius,
+                cmd.round.bottomLeftRadius);
+            glUniform4f(program->rect(), 
+                cmd.round.left,
+                cmd.round.top,
+                cmd.round.width,
+                cmd.round.height);
+            glUniform1f(program->ratio(), (PixelRatio::logicWidth() * 1.0f) / PixelRatio::logicHeight());
         } break;
         }
 
         // 绘制矩形
-        glDrawElements(GL_TRIANGLES, s_buffer.buffer[i].size * 6, GL_UNSIGNED_SHORT, (GLvoid*)(drawQuadIndex * 6 * sizeof(GLushort)));
+        glDrawElements(GL_TRIANGLES, cmd.size * 6, GL_UNSIGNED_SHORT, (GLvoid*)(drawQuadIndex * 6 * sizeof(GLushort)));
         MatrixState::popMatrix();
-        drawQuadIndex += s_buffer.buffer[i].size;
+        drawQuadIndex += cmd.size;
     }
 }
 
@@ -311,7 +392,7 @@ void GLPainter::appendToBuffer()
 {
     BoyiaPainterEnv::instance()->appendQuad(m_cmd.quad);
 
-    if (s_buffer.sameMaterial(m_cmd.texId)) {
+    if (s_buffer.sameMaterial(m_cmd)) {
         s_buffer.addBatchCommand();
     } else {
         s_buffer.addBatchCommand(m_cmd);

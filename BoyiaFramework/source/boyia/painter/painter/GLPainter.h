@@ -21,9 +21,27 @@ public:
     float ry;
     float rz;
 };
+
+class RoundRectInfo {
+public:
+    RoundRectInfo();
+    RoundRectInfo(const RoundRectInfo& info);
+
+    float left;
+    float top;
+    float width;
+    float height;
+    // 圆角半径设置
+    float topLeftRadius;
+    float topRightRadius;
+    float bottomRightRadius; 
+    float bottomLeftRadius;
+};
+
 class PaintCommand {
 public:
     PaintCommand();
+    ~PaintCommand();
 
     LInt top;
 
@@ -32,6 +50,8 @@ public:
     GLuint texId;
     LInt type;
     float* matrix;
+
+    RoundRectInfo round;
 };
 
 class BatchCommand {
@@ -42,13 +62,15 @@ public:
     GLuint texId;
     LInt size;
     float* matrix;
+
+    RoundRectInfo round;
 };
 
 class BatchCommandBuffer {
 public:
     BatchCommandBuffer();
 
-    bool sameMaterial(GLuint texId);
+    bool sameMaterial(const PaintCommand& cmd);
     LVoid addBatchCommand();
     LVoid addBatchCommand(const PaintCommand& cmd);
     LVoid reset();
@@ -63,6 +85,7 @@ public:
         EShapeNone = 0,
         EShapeLine,
         EShapeRect,
+        EShapeRoundRect,
         EShapeString,
         EShapeImage,
         EShapeExternal,
@@ -79,6 +102,13 @@ public:
     void setColor(const LColor& color);
 
     void setRect(const LRect& rect);
+    void setRoundRect(
+        const LRect& rect, 
+        LInt topLeftRadius, 
+        LInt topRightRadius, 
+        LInt bottomRightRadius, 
+        LInt bottomLeftRadius);
+
     void setLine(const LPoint& p1, const LPoint& p2);
     void setImage(Texture* tex, const LRect& rect);
     void setImage(Texture* tex, const LRect& rect, const LRect& clipRect);

@@ -32,6 +32,10 @@ public:
     GLuint videoSTMatrix();
     GLuint videoSampler2D();
 
+    GLuint radius();
+    GLuint rect();
+    GLuint ratio();
+
     GLuint m_videoPositionHandle;
     GLuint m_videoColorHandle;
     GLuint m_videoTextureHandle;
@@ -42,9 +46,10 @@ private:
     //GLuint m_aPositionHandle;
     //GLuint m_aColorHandle;
     GLuint m_muMVPMatrixHandle;
-    GLuint m_uIsImageHandle;
+    GLuint m_uShapeTypeHandle;
     GLuint m_uRadius;
     GLuint m_uRect;
+    GLuint m_uRatio;
 
     //GLuint m_aTextureCoord;
     GLuint m_uSampler2D;
