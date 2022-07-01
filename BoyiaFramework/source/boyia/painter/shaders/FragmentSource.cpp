@@ -1,9 +1,10 @@
 #include "FragmentSource.h"
 
 namespace yanbo {
-// uIsImage == 1, 表示是纹理
-// uIsImage == 2, 表示是圆角矩形
-// uIsImage == 0, 表示是普通矩形
+// opengl坐标系与数学坐标系一致，与android坐标系不同   
+// uShapeType == 1, 表示是纹理
+// uShapeType == 2, 表示是圆角矩形
+// uShapeType == 0, 表示是普通矩形
 const char* FragmentSource::s_uielement = "#version 300 es\n"
                                           "precision mediump float;\n"
                                           "in vec2 vTexCoord;\n"

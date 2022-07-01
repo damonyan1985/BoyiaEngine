@@ -53,8 +53,8 @@ public:
         
         m_timer = new Timer(kDefaultInputCursorBlinkTime, [self = this]() -> LVoid {
             self->m_paint = self->m_timer == kBoyiaNull ? LFalse : !self->m_paint;
-            Editor* editor = self->m_view->getDocument()->getEditor();
-            UIThread::instance()->draw(editor->view());
+            //Editor* editor = self->m_view->getDocument()->getEditor();
+            UIThread::instance()->draw(self->m_view);
         }, LTrue);
     }
     

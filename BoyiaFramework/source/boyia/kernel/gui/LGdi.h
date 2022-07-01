@@ -11,7 +11,8 @@
 #ifndef LGdi_h
 #define LGdi_h
 
-#include "BoyiaPtr.h"
+//#include "BoyiaPtr.h"
+#include "WeakPtr.h"
 #include "LGraphic.h"
 #include "UtilString.h"
 
@@ -407,26 +408,44 @@ public:
     
     virtual LVoid showKeyboard(const String& text, LInt cursor) = 0;
 
-    Editor* setView(LVoid* view)
+    Editor* setView(BoyiaRef* view)
     {
         m_view = view;
         return this;
     }
 
-    LVoid* view() const
+    BoyiaRef* view() const
     {
-        return m_view;
+        return m_view.get();
     }
 
-    LVoid removeView(LVoid* view)
+    LVoid removeView(BoyiaRef* view)
     {
-        if (m_view == view) {
+        if (m_view.get() == view) {
             m_view = kBoyiaNull;
         }
     }
+//    Editor* setView(LVoid* view)
+//    {
+//        m_view = view;
+//        return this;
+//    }
+//
+//    LVoid* view() const
+//    {
+//        return m_view;
+//    }
+//
+//    LVoid removeView(LVoid* view)
+//    {
+//        if (m_view == view) {
+//            m_view = kBoyiaNull;
+//        }
+//    }
 
 private:
-    LVoid* m_view;
+    WeakPtr<BoyiaRef> m_view;
+    //LVoid* m_view;
 };
 }
 
