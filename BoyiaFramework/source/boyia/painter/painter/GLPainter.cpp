@@ -23,8 +23,8 @@ RoundRectInfo::RoundRectInfo()
     , bottomLeftRadius(0)
     , left(0)
     , top(0)
-    , width(0)
-    , height(0)
+    , right(0)
+    , bottom(0)
 {
 }
 
@@ -35,8 +35,8 @@ RoundRectInfo::RoundRectInfo(const RoundRectInfo& info)
     , bottomLeftRadius(info.bottomLeftRadius)
     , left(info.left)
     , top(info.top)
-    , width(info.width)
-    , height(info.height)
+    , right(info.right)
+    , bottom(info.bottom)
 {
 }
 
@@ -148,8 +148,8 @@ void GLPainter::setRoundRect(
 
     m_cmd.round.left = quad.topLeft.vec3D.x;
     m_cmd.round.top = quad.topLeft.vec3D.y;
-    m_cmd.round.width = quad.bottomRight.vec3D.x - quad.topLeft.vec3D.x;
-    m_cmd.round.height = quad.bottomRight.vec3D.y - quad.topLeft.vec3D.y;
+    m_cmd.round.right = quad.bottomRight.vec3D.x; // right
+    m_cmd.round.bottom = quad.bottomRight.vec3D.y; // bottom
 
     m_cmd.round.topLeftRadius = ShaderUtil::screenToGlWidth(topLeftRadius);
     m_cmd.round.topRightRadius = ShaderUtil::screenToGlWidth(topRightRadius);
@@ -375,8 +375,8 @@ void GLPainter::paintCommand()
             glUniform4f(program->rect(), 
                 cmd.round.left,
                 cmd.round.top,
-                cmd.round.width,
-                cmd.round.height);
+                cmd.round.right,
+                cmd.round.bottom);
             glUniform1f(program->ratio(), (PixelRatio::logicWidth() * 1.0f) / PixelRatio::logicHeight());
         } break;
         }

@@ -29,8 +29,8 @@ public:
 
     float left;
     float top;
-    float width;
-    float height;
+    float right;
+    float bottom;
     // 圆角半径设置
     float topLeftRadius;
     float topRightRadius;
