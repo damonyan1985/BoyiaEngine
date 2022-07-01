@@ -43,7 +43,7 @@ const char* FragmentSource::s_uielement = "#version 300 es\n"
                                           "        float delta = smoothstep(r-0.001, r+0.001, dist);\n"
                                           "        return 1.0-delta;\n"
                                           "    }\n"
-                                          "    r = uRadius.w;\n" // 右下角半径
+                                          "    r = uRadius.w;\n" // 左下角半径
                                           "    rx = uRect.x + r;\n"
                                           "    ry = uRect.w / uRatio + r;\n"
                                           "    if (px <= rx && py <= ry && r > 0.) {\n"

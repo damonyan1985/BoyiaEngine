@@ -51,6 +51,8 @@ public:
     UIView* getView() const;
     
     LVoid setFocusView(HtmlView* view, const LPoint& point);
+    
+    Editor* getEditor() const;
 
 private:
     inline LVoid setFocusImpl(LBool focus, const LPoint& point);

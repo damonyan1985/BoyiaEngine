@@ -19,6 +19,7 @@ UIView::UIView(Application* app)
     , m_controller(kBoyiaNull)
     , m_operation(kBoyiaNull)
     , m_viewIdStart(0)
+    , m_editor(kBoyiaNull)
 {
     initComponents();
 }
@@ -39,6 +40,10 @@ UIView::~UIView()
 
     if (m_operation) {
         delete m_operation;
+    }
+    
+    if (m_editor) {
+        delete m_editor;
     }
 }
 
@@ -61,6 +66,7 @@ void UIView::initComponents()
 {
     if (!m_loader) {
         m_loader = new ResourceLoader(this);
+        m_editor = Editor::get();
         m_doc = new HtmlDocument();
         m_doc->setView(this);
         m_controller = new UIViewController(this);
@@ -164,5 +170,10 @@ void UIView::handleFlingEvent(const LFlingEvent& evt)
 LInt UIView::incrementViewId()
 {
     return ++m_viewIdStart;
+}
+
+Editor* UIView::getEditor() const
+{
+    return m_editor;
 }
 }

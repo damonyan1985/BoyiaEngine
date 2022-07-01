@@ -148,4 +148,9 @@ LVoid HtmlDocument::setFocusView(HtmlView* view, const LPoint& point)
     m_focus = view;
     setFocusImpl(LTrue, point);
 }
+
+Editor* HtmlDocument::getEditor() const
+{
+    return m_view->getEditor();
+}
 }

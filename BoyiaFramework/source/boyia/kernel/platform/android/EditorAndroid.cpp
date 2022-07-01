@@ -21,7 +21,8 @@ LVoid EditorAndroid::showKeyboard(const String& text, LInt cursor)
 
 Editor* Editor::get()
 {
-    static EditorAndroid sInstance;
-    return &sInstance;
+    // static EditorAndroid sInstance;
+    // return &sInstance;
+    return new EditorAndroid();
 }
 }

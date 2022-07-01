@@ -19,7 +19,7 @@ EditorIOS::EditorIOS()
 
 LVoid EditorIOS::showKeyboard(const String& text, LInt cursor)
 {
-    Editor* editor = static_cast<Editor*>(this);
+    //Editor* editor = static_cast<Editor*>(this);
     IOSRenderer* renderer = [IOSRenderer renderer];
     if (!renderer) {
         return;
@@ -30,8 +30,9 @@ LVoid EditorIOS::showKeyboard(const String& text, LInt cursor)
 
 Editor* Editor::get()
 {
-    static EditorIOS sInstance;
-    return &sInstance;
+//    static EditorIOS sInstance;
+//    return &sInstance;
+    return new EditorIOS();
 }
 }
 

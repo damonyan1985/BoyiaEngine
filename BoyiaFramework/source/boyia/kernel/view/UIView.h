@@ -48,6 +48,8 @@ public:
 
     bool canHit() const;
     LInt incrementViewId();
+    
+    Editor* getEditor() const;
 
 private:
     ResourceLoader* m_loader;
@@ -58,6 +60,7 @@ private:
     Application* m_app;
     UIOperation* m_operation;
     LInt m_viewIdStart;
+    Editor* m_editor;
 };
 }
 #endif

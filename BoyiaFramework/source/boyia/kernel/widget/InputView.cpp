@@ -13,6 +13,7 @@
 #include "StringUtils.h"
 #include "Animation.h"
 #include "UIThread.h"
+#include "UIView.h"
 
 namespace yanbo {
 const LInt kDefaultInputBorderWidth = 2;
@@ -23,8 +24,9 @@ const LInt kDefaultInputCursorBlinkTime = 600; // 毫秒
 // text input cursor
 class TextInputCursor {
 public:
-    TextInputCursor(LInt cursorHeight)
+    TextInputCursor(LInt cursorHeight, HtmlView* view)
         : m_cursorHeight(cursorHeight)
+        , m_view(view)
         , m_paint(LFalse)
         , m_timer(kBoyiaNull)
         , m_cursorIndex(0)
@@ -51,7 +53,8 @@ public:
         
         m_timer = new Timer(kDefaultInputCursorBlinkTime, [self = this]() -> LVoid {
             self->m_paint = self->m_timer == kBoyiaNull ? LFalse : !self->m_paint;
-            UIThread::instance()->draw(Editor::get()->view());
+            Editor* editor = self->m_view->getDocument()->getEditor();
+            UIThread::instance()->draw(editor->view());
         }, LTrue);
     }
     
@@ -90,6 +93,7 @@ private:
     Timer* m_timer;
     LBool m_paint;
     LInt m_cursorIndex;
+    HtmlView* m_view;
 };
 
 InputView::InputView(
@@ -102,7 +106,6 @@ InputView::InputView(
 {
     m_value = value;
     m_title = title;
-    
 
     initView();
     
@@ -145,7 +148,7 @@ InputView::~InputView()
         delete m_text;
     }
 
-    Editor::get()->removeView(this);
+    //Editor::get()->removeView(this);
 }
 
 LVoid InputView::setInputValue(const String& text)
@@ -250,6 +253,8 @@ public:
         if (m_cursor) {
             delete m_cursor;
         }
+        
+        getDocument()->getEditor()->removeView(this);
     }
 
     LVoid layout(RenderContext& rc)
@@ -261,7 +266,7 @@ public:
         m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight();
         InputView::layoutEnd(rc);
         
-        m_cursor = new TextInputCursor(m_height * 0.75);
+        m_cursor = new TextInputCursor(m_height * 0.75, this);
     }
 
     virtual LInt getInputType()
@@ -355,7 +360,7 @@ public:
             
             m_cursor->setTextIndexCursor(index);
             
-            Editor::get()->setView(this)->showKeyboard(m_value, index);
+            getDocument()->getEditor()->setView(this)->showKeyboard(m_value, index);
             if (!m_cursor->isBlink()) {
                 m_cursor->startBlink();
             }

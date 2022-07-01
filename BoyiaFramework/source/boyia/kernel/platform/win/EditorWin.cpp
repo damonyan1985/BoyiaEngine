@@ -20,8 +20,9 @@ LVoid EditorWin::showKeyboard(const String& text)
 
 Editor* Editor::get()
 {
-    static EditorWin sInstance;
-    return &sInstance;
+    // static EditorWin sInstance;
+    // return &sInstance;
+    return new EditorWin();
 }
 }
 

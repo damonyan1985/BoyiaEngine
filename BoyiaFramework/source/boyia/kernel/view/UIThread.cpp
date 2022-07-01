@@ -129,7 +129,9 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiSetInput: {
         String text(_CS(msg->obj), LTrue, msg->arg0);
-        InputView* view = static_cast<InputView*>(Editor::get()->view());
+        
+        Editor* editor = m_manager->currentApp()->view()->getEditor();
+        InputView* view = static_cast<InputView*>(editor->view());
         //InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg1)->view()); //(InputView*)msg->arg1;
         if (!view) {
             return;
@@ -158,7 +160,8 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiOnKeyboardShow: {
         //InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
-        InputView* view = static_cast<InputView*>(Editor::get()->view());
+        Editor* editor = m_manager->currentApp()->view()->getEditor();
+        InputView* view = static_cast<InputView*>(editor->view());
         if (!view) {
             return;
         }
@@ -177,7 +180,8 @@ LVoid UIThread::handleMessage(Message* msg)
     } break;
     case kUiOnKeyboardHide: {
         //InputView* view = static_cast<InputView*>(reinterpret_cast<Editor*>(msg->arg0)->view());
-        InputView* view = static_cast<InputView*>(Editor::get()->view());
+        Editor* editor = m_manager->currentApp()->view()->getEditor();
+        InputView* view = static_cast<InputView*>(editor->view());
         if (!view) {
             return;
         }
