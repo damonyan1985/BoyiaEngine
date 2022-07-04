@@ -6,7 +6,7 @@
         "url": "boyia_assets://out/sdk.zip",
         "name": "sdk"
     },
-    "apps": [
+    "data": [
         {
             "id": 10000,
             "versionCode": 13,

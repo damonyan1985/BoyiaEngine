@@ -103,15 +103,24 @@ class HttpUtil {
         static let BUNDLE_INFO = "https://itunes.apple.com/lookup?bundleId=1000"
         static let APP_STORE_URL = "itms-apps://itunes.apple.com/app/1000"
         
-        static let HTTP_DOMAIN = "https://127.0.0.1:8443/"
+        static let HTTP_DOMAIN = "https://127.0.0.1:8443"
         static let API_VERSION = "v1"
         
-        static let LOGIN_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/login"
-        static let LOGOUT_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/logout"
-        static let APP_LIST_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/appList"
-        static let UPLOAD_URL = "\(HTTP_DOMAIN)file/\(API_VERSION)/upload"
-        static let SEARCH_APP_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/search"
+        static let LOGIN_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/login"
+        static let LOGOUT_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/logout"
+        static let APP_LIST_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/appList"
+        static let UPLOAD_URL = "\(HTTP_DOMAIN)/file/\(API_VERSION)/upload"
+        static let SEARCH_APP_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/search"
     }
+    
+    static func getRemoteUrl(url: String?) -> String? {
+        if (url == nil || url?.isEmpty == true) {
+            return nil
+        }
+        
+        return "\(HttpConstants.HTTP_DOMAIN)\(url!)"
+    }
+    
     // 业务数据请求接口
     static func get<T: Decodable>(
         url: String,

@@ -18,9 +18,11 @@ struct BoyiaAppItemView : View {
     var body: some View {
         let width = 224.dp
         let height = 260.dp
+        
+        let url = URL(string: HttpUtil.getRemoteUrl(url: item.cover)!)
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
-                AsyncImage(url: URL(string: item.cover)!) { phase in
+                AsyncImage(url: url!) { phase in
                     if let image = phase.image {
                         image.resizable()
                             .transition(.slide)

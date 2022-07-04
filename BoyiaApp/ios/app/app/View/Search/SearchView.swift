@@ -12,8 +12,6 @@ struct SearchView : View {
     @StateObject var model = BoyiaAppListModel()
     @Environment(\.presentationMode) var presentationMode
     
-    
-    
     var body: some View {
         // GeometryReader可以控制视图在statubar之下
         GeometryReader { geometry in
