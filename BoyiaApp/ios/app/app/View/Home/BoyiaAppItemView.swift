@@ -34,7 +34,9 @@ struct BoyiaAppItemView : View {
                     }
                 
                 }
-                Text(item.name).frame(width: width, height: 36.dp)
+                Text(item.name)
+                    .frame(width: width, height: 36.dp)
+                    .foregroundColor(Color.black)
             }
             .frame(width: width, height: height)
             .background(Color(hex: 0xEDEDED))

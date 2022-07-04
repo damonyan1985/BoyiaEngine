@@ -110,6 +110,7 @@ class HttpUtil {
         static let LOGOUT_URL = "\(HTTP_DOMAIN)user/\(API_VERSION)/logout"
         static let APP_LIST_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/appList"
         static let UPLOAD_URL = "\(HTTP_DOMAIN)file/\(API_VERSION)/upload"
+        static let SEARCH_APP_URL = "\(HTTP_DOMAIN)app/\(API_VERSION)/search"
     }
     // 业务数据请求接口
     static func get<T: Decodable>(

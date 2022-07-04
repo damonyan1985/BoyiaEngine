@@ -48,6 +48,7 @@ class SplashViewController: UIViewController {
         //self.view.backgroundColor = UIColor(red: 0x37/255, green: 0xba/255, blue: 0x46/255, alpha: 1)
         //self.view.backgroundColor = UIColor.green
         self.view.layer.addSublayer(gradient)
+        //self.navigationController?.navigationBar.barStyle = .default
         //view.backgroundColor = UIColor(hex: 0xFFC125)
     }
     
@@ -61,6 +62,7 @@ class SplashViewController: UIViewController {
         super.viewDidAppear(animated);
         // 显示BoyiaView
         //self.navigationController?.pushViewController(BoyiaViewController(), animated: true)
-        self.navigationController?.pushViewController(UIHostingController(rootView: HomeView()), animated: true)
+        self.navigationController?.pushViewController(
+            BoyiaAppViewController(rootView: HomeView()), animated: true)
     }
 }

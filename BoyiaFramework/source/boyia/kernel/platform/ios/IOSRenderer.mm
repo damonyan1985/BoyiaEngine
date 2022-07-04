@@ -464,6 +464,7 @@ void testHashMap()
     self.depthStencilState = [device newDepthStencilStateWithDescriptor:depthStencilDescriptor];
     
     self.renderPassDescriptor = [MTLRenderPassDescriptor new];
+    // 可以在此设置statusbar背景颜色
     self.renderPassDescriptor.colorAttachments[0].clearColor = METAL_COLOR(LColor(0xed, 0x40, 0x40, 0xFF));//MTLClearColorMake(1.0, 1.0, 0.0, 1.0);
     self.renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     self.renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;

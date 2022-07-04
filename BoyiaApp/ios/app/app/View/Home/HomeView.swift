@@ -55,7 +55,6 @@ struct HomeView : View {
                         }
                 }
             }
-            
         }
         .navigationBarHidden(true)
         .environmentObject(loginModel)
@@ -85,21 +84,21 @@ struct HomeView : View {
                 
                 // header
                 HStack {
-                    HStack(alignment: VerticalAlignment.center) {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 50.dp, height: 50.dp)
-                            .foregroundColor(Color.black)
-                        Spacer()
-                    }
-                    .frame(width: 560.dp, height: 70.dp)
-                    .padding(Edge.Set.leading, 20.dp)
-                    .background(Color.white)
-                    .cornerRadius(35.dp) // radius必须在background之后，否则不起效果
-                    .offset(x: 0, y: 26.dp)
-                    .onTapGesture {
-                        // TODO Search View
-                    }
+                    NavigationLink(destination: SearchView(), label: {
+                        // seach
+                        HStack(alignment: VerticalAlignment.center) {
+                            Image(systemName: "magnifyingglass")
+                                .resizable()
+                                .frame(width: 50.dp, height: 50.dp)
+                                .foregroundColor(Color.black)
+                            Spacer()
+                        }
+                        .frame(width: 560.dp, height: 70.dp)
+                        .padding(Edge.Set.leading, 20.dp)
+                        .background(Color.white)
+                        .cornerRadius(35.dp) // radius必须在background之后，否则不起效果
+                        .offset(x: 0, y: 26.dp)
+                    })
                     
                     Image(systemName: "gearshape")
                         .resizable()

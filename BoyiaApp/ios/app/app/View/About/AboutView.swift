@@ -10,35 +10,37 @@ import SwiftUI
 
 struct AboutView : View {
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            VStack {
-                Image(uiImage: UIImage(named: appIconName())!)
-                    .resizable()
-                    .frame(width: 108.dp, height: 108.dp, alignment: .top)
+        ZStack {
+            VStack(alignment: .center, spacing: 0) {
+                VStack {
+                    Image(uiImage: UIImage(named: appIconName())!)
+                        .resizable()
+                        .frame(width: 108.dp, height: 108.dp, alignment: .top)
+                    
+                    Spacer()
+                }
+                .padding(Edge.Set.top, 60.dp)
+                .frame(width: PixelRatio.screenWidth(),
+                            height: 360.dp)
                 
-                Spacer()
-            }
-            .padding(Edge.Set.top, 60.dp)
-            .frame(width: PixelRatio.screenWidth(),
-                        height: 360.dp)
-            
-            buildButton(text: "Version update", action: {
-                HttpUtil.checkVersion()
-            })
-            
-            marginTop(top: 1.dp)
-            buildButton(text: "Feature introduction", action: {
-                HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
-            })
-            
-            marginTop(top: 1.dp)
-            buildButton(text: "Register", action: {})
-            
-            marginTop(top: 1.dp)
-            buildButton(text: "Feedback", action: {})
+                buildButton(text: "Version update", action: {
+                    HttpUtil.checkVersion()
+                })
+                
+                marginTop(top: 1.dp)
+                buildButton(text: "Feature introduction", action: {
+                    HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
+                })
+                
+                marginTop(top: 1.dp)
+                buildButton(text: "Register", action: {})
+                
+                marginTop(top: 1.dp)
+                buildButton(text: "Feedback", action: {})
 
-            Spacer()
-        }.background(Color(argb: 0x08000000))
+                Spacer()
+            }.background(Color(argb: 0x08000000))
+        }.background(Color(hex: 0xFFFFFF))
     }
     
     func buildButton(text: String, action: @escaping () -> Void) -> some View {
@@ -51,10 +53,6 @@ struct AboutView : View {
             .frame(width: PixelRatio.screenWidth(), height: 84.dp)
             .background(Color(hex: 0xFFFFFF))
         }
-    }
-    
-    func marginTop(top: Double) -> some View {
-        return VStack{}.frame(width: 0, height: top, alignment: .top);
     }
     
     // 获取应用图标

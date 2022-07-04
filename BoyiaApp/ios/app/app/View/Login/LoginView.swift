@@ -39,6 +39,7 @@ struct LoginView : View {
     
     @EnvironmentObject var loginModel: BoyiaLoginModel
     
+    // 导航返回
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
@@ -122,13 +123,5 @@ struct LoginView : View {
         .edgesIgnoringSafeArea(.all)
         .navigationBarHidden(true)
          // 隐藏导航栏
-    }
-    
-    func marginTop(top: Double) -> some View {
-        return VStack{}.frame(width: 0, height: top, alignment: .top);
-    }
-    
-    func marginLeft(left: Double) -> some View {
-        return HStack{}.frame(width: left, height: 0, alignment: .leading)
     }
 }

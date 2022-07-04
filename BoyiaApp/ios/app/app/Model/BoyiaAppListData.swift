@@ -8,5 +8,5 @@
 import Foundation
 
 struct BoyiaAppListData: Codable {
-    let apps: [BoyiaAppItem]
+    let data: [BoyiaAppItem]
 }

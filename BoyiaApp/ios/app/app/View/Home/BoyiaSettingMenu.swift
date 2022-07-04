@@ -50,7 +50,7 @@ struct BoyiaSettingMenu : View {
                 marginTop(top: 8.dp)
                 Text(loginModel.isLogin
                      ? (BoyiaLoginInfo.shared.user?.nickname ?? "null")
-                     : "Anonymous")
+                     : "Anonymous").foregroundColor(Color.black)
                 
                 marginTop(top: 12.dp)
             }
@@ -128,9 +128,5 @@ struct BoyiaSettingMenu : View {
 //            }
 //        })
         
-    }
-    
-    func marginTop(top: Double) -> some View {
-        return VStack{}.frame(width: 0, height: top, alignment: .top);
     }
 }
