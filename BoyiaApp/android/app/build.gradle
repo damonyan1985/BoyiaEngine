@@ -181,14 +181,38 @@ dependencies {
     //implementation "com.android.support:appcompat-v7:28.0.0"
     //implementation "com.android.support:support-annotations:28.0.0"
     //implementation "com.android.support:support-v4:28.0.0"
+
     implementation gradle.library.umeng_common_lib
     implementation gradle.library.umeng_sdk_lib
     implementation gradle.library.boyia_debugger
     implementation gradle.library.recycler_view
     implementation gradle.library.constraintlayout
     implementation gradle.library.icon_core
-    implementation gradle.library.icon_lib
+//    implementation gradle.library.icon_lib
     implementation gradle.library.icon_google_lib
+    implementation gradle.library.icon_google_extend_lib
+    implementation gradle.library.icon_material_lib
+//    implementation "com.mikepenz:iconics-core:5.3.3"
+    // 添加自定义视图依赖（可选项）
+//    implementation "com.mikepenz:iconics-views:5.3.3"
+    // 选择你想要的字体（可选项）
+//    implementation 'com.mikepenz:google-material-typeface:4.0.0.2-kotlin@aar'
+//    implementation 'com.mikepenz:google-material-typeface-outlined:4.0.0.1-kotlin@aar'
+//    implementation 'com.mikepenz:material-design-iconic-typeface:2.2.0.8-kotlin@aar'
+//    implementation 'com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin@aar'
+//    implementation 'com.mikepenz:octicons-typeface:11.1.0.0-kotlin@aar'
+//    implementation 'com.mikepenz:meteocons-typeface:1.1.0.7-kotlin@aar'
+//    implementation 'com.mikepenz:community-material-typeface:6.4.95.0-kotlin@aar'
+//    implementation 'com.mikepenz:weather-icons-typeface:2.0.10.7-kotlin@aar'
+//    implementation 'com.mikepenz:typeicons-typeface:2.0.7.7-kotlin@aar'
+//    implementation 'com.mikepenz:entypo-typeface:1.0.0.7-kotlin@aar'
+//    implementation 'com.mikepenz:devicon-typeface:2.0.0.7-kotlin@aar'
+//    implementation 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin@aar'
+//    implementation 'com.mikepenz:ionicons-typeface:2.0.1.7-kotlin@aar'
+//    implementation 'com.mikepenz:pixeden-7-stroke-typeface:1.2.0.5-kotlin@aar'
+//    implementation 'com.mikepenz:material-design-icons-dx-typeface:5.0.1.2-kotlin@aar'
+//    implementation 'com.mikepenz:phosphor-typeface:1.0.0.0-kotlin@aar'
+
     implementation gradle.library.coordinator_lib
 
     // compose lib

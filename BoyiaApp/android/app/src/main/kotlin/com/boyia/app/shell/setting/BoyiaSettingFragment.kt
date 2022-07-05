@@ -29,6 +29,7 @@ import com.boyia.app.shell.util.dp
 import com.mikepenz.iconics.IconicsColor
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
+import com.mikepenz.iconics.typeface.library.googlematerial.OutlinedGoogleMaterial
 import com.mikepenz.iconics.utils.color
 import com.mikepenz.iconics.utils.colorInt
 
@@ -180,7 +181,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
             return
         }
         cameraView = ImageView(context)
-        val drawable = IconicsDrawable(requireContext(), GoogleMaterial.Icon.gmd_photo_camera)
+        val drawable = IconicsDrawable(requireContext(), OutlinedGoogleMaterial.Icon.gmo_photo_camera)
+        //val drawable = IconicsDrawable(requireContext(), GoogleMaterial.Icon.gmd_photo_camera)
                 .apply {
                     sizeXPx = 36.dp
                     sizeYPx = 36.dp
