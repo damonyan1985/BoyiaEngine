@@ -30,6 +30,8 @@ import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
+import com.mikepenz.iconics.typeface.library.googlematerial.OutlinedGoogleMaterial
+import com.mikepenz.iconics.utils.colorInt
 
 class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
     companion object {
@@ -104,7 +106,7 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
             }
         }
 
-        headerView = BoyiaHomeHeader(context, module, listener!!)
+        headerView = BoyiaHomeHeader(requireContext(), module, listener!!)
         footerView = BoyiaHomeFooter(context)
 
         appListAdapter = BoyiaAppListAdapter(requireContext(), module)
@@ -154,7 +156,7 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         return false
     }
 
-    class BoyiaHomeHeader(context: Context?, module: HomeModule, listener: SlideListener) : RelativeLayout(context) {
+    class BoyiaHomeHeader(context: Context, module: HomeModule, listener: SlideListener) : RelativeLayout(context) {
         private var imageSetting: ImageView? = null
 
         init {
@@ -162,6 +164,15 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
             imageSetting?.setImageResource(R.drawable.gear)
             // 设置图像颜色
             imageSetting?.setColorFilter(Color.BLACK)
+//            val settingDrawable = IconicsDrawable(context, OutlinedGoogleMaterial.Icon.gmo_settings)
+//                    .apply {
+//                        sizeXPx = 50.dp
+//                        sizeYPx = 50.dp
+//                        colorInt = 0x99000000.toInt()
+//                    }
+//            imageSetting?.setImageDrawable(settingDrawable)
+
+
             setBackgroundColor(HEADER_BG_COLOR)
 
             val settingParam = LayoutParams(
@@ -170,7 +181,7 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
             )
             settingParam.addRule(CENTER_VERTICAL)
             settingParam.addRule(ALIGN_PARENT_RIGHT)
-            settingParam.rightMargin = 20.dp
+            settingParam.rightMargin = 50.dp
 
             imageSetting?.setOnClickListener {
                 val ctx = module.getContext()

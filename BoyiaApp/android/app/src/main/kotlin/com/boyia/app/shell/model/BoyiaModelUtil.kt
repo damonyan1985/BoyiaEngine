@@ -23,6 +23,7 @@ object BoyiaModelUtil {
     const val APP_LIST_URL = "${HTTP_DOMAIN}/app/${API_VERSION}/appList"
     const val UPLOAD_URL = "${HTTP_DOMAIN}/file/${API_VERSION}/upload"
     const val UPDATE_USER_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/updateAdmin"
+    const val SEARCH_APP_LIST_URL = "${HTTP_DOMAIN}/app/${API_VERSION}/search"
 
     fun getRemoteUrl(url: String?): String? {
         if (BoyiaUtils.isTextEmpty(url)) {

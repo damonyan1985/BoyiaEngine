@@ -34,6 +34,7 @@ class ModuleManager {
     }
 
     fun hide() {
+        // 清除所有fragment
         moduleMap.forEach { it
             if (it.value is IUIModule) {
                 it.value.hide()

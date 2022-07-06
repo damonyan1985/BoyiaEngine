@@ -8,6 +8,11 @@ import com.boyia.app.shell.R
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.UnderlineEditText
 import com.boyia.app.shell.util.dp
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.IIcon
+import com.mikepenz.iconics.typeface.ITypeface
+import com.mikepenz.iconics.typeface.library.googlematerial.OutlinedGoogleMaterial
+import com.mikepenz.iconics.utils.colorInt
 
 class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() {
     private var rootLayout: RelativeLayout? = null
@@ -102,6 +107,13 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
 
         val forwardButton = ImageView(context)
         forwardButton.setImageResource(R.drawable.login_forward)
+//        val forwardDrawable = IconicsDrawable(requireContext(), OutlineInnerExtension.gmo_arrow_circle_right)
+//                .apply {
+//                    sizeXPx = 64.dp
+//                    sizeYPx = 64.dp
+//                    colorInt = 0xFFCAE1FF.toInt()
+//                }
+        //forwardButton.setImageDrawable(forwardDrawable)
         forwardButton.setColorFilter(0xFFCAE1FF.toInt())
         forwardButton.setOnClickListener {
             module.login(userInput?.text.toString(), passwordInput?.text.toString())
@@ -111,7 +123,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
                 64.dp
         )
 
-        forwardButtonParam.leftMargin = 54.dp
+        forwardButtonParam.leftMargin = 108.dp
 
         val buttonLayout = LinearLayout(context)
         buttonLayout.orientation = LinearLayout.HORIZONTAL
@@ -125,7 +137,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
 
         buttonLayoutParam.addRule(RelativeLayout.BELOW, id)
         buttonLayoutParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        buttonLayoutParam.topMargin = 120.dp
+        buttonLayoutParam.topMargin = 132.dp
 
         rootLayout?.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -134,4 +146,9 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
 
         rootLayout?.addView(buttonLayout, buttonLayoutParam)
     }
+
+//    enum class OutlineInnerExtension constructor(override val character: Char) : IIcon {
+//        gmo_arrow_circle_right('\ueaaa');
+//        override val typeface: ITypeface by lazy { OutlinedGoogleMaterial }
+//    }
 }

@@ -73,6 +73,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                                     .align(alignment = Alignment.CenterHorizontally),
                             contentScale = ContentScale.Fit,
                             contentDescription = "",
+
                     )
                 }
                 //Spacer(modifier = Modifier.height(100.dp))
