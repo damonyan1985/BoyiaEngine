@@ -1,18 +1,21 @@
 package com.boyia.app.shell.search
 
 import android.view.View
+
+import androidx.compose.runtime.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -20,13 +23,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.ViewModel
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.loader.http.HTTPFactory
+import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.R
+import com.boyia.app.shell.model.*
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.dpx
 import com.boyia.app.shell.util.toDp
 
-class SearchFragment: NavigationFragment() {
+class SearchFragment(private val mode: SearchModule): NavigationFragment() {
+    //var appList = mutableStateListOf<BoyiaAppItem>()
+    var model = BoyiaAppSearchModel()
+
     override fun createView(): View {
         val view = ComposeView(requireContext()).apply {
             setContent {
@@ -46,6 +57,7 @@ class SearchFragment: NavigationFragment() {
                 .padding(top = dpx(12) + toDp(value = BoyiaUtils.getStatusBarHeight(activity)))
                 .background(color = Color.White)) {
             buildHeader()
+            buildAppList()
         }
     }
 
@@ -86,7 +98,7 @@ class SearchFragment: NavigationFragment() {
                     placeholder = { Text("Please input search key")}
             )
             Spacer(modifier = Modifier.width(dpx(10)))
-            TextButton(onClick = { /*TODO*/ },
+            TextButton(onClick = { model.searchAppList(searchKey)},
                     modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .background(Color.Gray, RoundedCornerShape(50)) // 要先设置背景再设置宽高，不然背景会超出宽高
@@ -103,7 +115,9 @@ class SearchFragment: NavigationFragment() {
     @Composable
     fun buildAppList() {
         LazyColumn {
-
+            items(model.appList.size) { index ->
+                model.appList[index].name?.let { Text(text = it) }
+            }
         }
     }
 }

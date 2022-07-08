@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SearchView : View {
     @State var text = ""
-    @StateObject var model = BoyiaAppListModel()
+    @StateObject var model = BoyiaAppListModel(autoLoad: false)
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -38,7 +38,7 @@ struct SearchView : View {
                         .cornerRadius(48.dp)
                     
                     Button(action: {
-                        model.searchAppList(key: text, pos: 0, size: 10)
+                        model.searchAppList(key: text)
                     }) {
                         Text("Search")
                             .foregroundColor(Color.white)
@@ -54,8 +54,9 @@ struct SearchView : View {
                     Spacer()
                 }
                 
-                
-                Spacer()
+                buildAppList()
+
+                //Spacer()
                 
             }
             .frame(width: PixelRatio.screenWidth(), height: PixelRatio.screenHeight())
@@ -68,9 +69,12 @@ struct SearchView : View {
     }
     
     func buildAppList() -> some View {
+        BoyiaLog.d("SearchView::buildAppList")
         return ScrollView {
-            LazyVStack {
-                
+            LazyVStack(alignment: .leading) {
+                ForEach(model.appList, id: \.id) { item in
+                    Text(item.name).foregroundColor(Color(hex: 0xFF00FF))
+                }
             }
         }
     }

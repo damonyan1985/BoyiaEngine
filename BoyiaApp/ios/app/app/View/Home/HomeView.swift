@@ -61,7 +61,9 @@ struct HomeView : View {
     }
     
     func getAppListView() -> some View {
+        // spacing元素之间的距离
         return LazyVGrid(columns: columns, alignment: .center, spacing: 10.dp) {
+            // foreach \.id不是appitem id, 而是迭代的id
             ForEach(model.appList, id: \.id) { item in
                 BoyiaAppItemView(data: item)
             }

@@ -15,8 +15,10 @@ class BoyiaAppListModel: ObservableObject {
     private let APP_LIST_URL = "https://47.98.206.177:8443/app/v1/appList"
     @Published var appList: [BoyiaAppItem] = []
     
-    init() {
-        requestAppList()        
+    init(autoLoad: Bool = true) {
+        if (autoLoad) {
+            requestAppList()
+        }
     }
     
     // 业务数据请求接口
@@ -29,7 +31,27 @@ class BoyiaAppListModel: ObservableObject {
         })
     }
     
-    func searchAppList(key: String, pos: Int, size: Int) {
+    func appendSearchList(key: String) {
+        self.loadSearchAppList(
+            key: key,
+            pos: self.appList.count,
+            size: 20,
+            append: true)
+    }
+    
+    func searchAppList(key: String) {
+        self.loadSearchAppList(
+            key: key,
+            pos: 0,
+            size: 20,
+            append: false)
+    }
+    
+    func loadSearchAppList(key: String, pos: Int, size: Int, append: Bool) {
+        if (key.isEmpty) {
+            return
+        }
+        
         var headers = [AnyHashable: Any]()
         headers["Content-Type"] = "application/x-www-form-urlencoded"
         headers["User-Token"] = BoyiaLoginInfo.shared.token
@@ -41,8 +63,11 @@ class BoyiaAppListModel: ObservableObject {
                       headers: headers,
                       cb: { (data: BoyiaAppListData) in
             DispatchQueue.main.async {
+                if (!append) {
+                    self.appList.removeAll()
+                }
                 self.appList.append(contentsOf: data.data)
-                BoyiaLog.d("searchAppList first name = \(self.appList[0].appId)")
+                BoyiaLog.d("searchAppList first name = \(self.appList[0].name)")
             }
         })
     }

@@ -1,8 +1,10 @@
 package com.boyia.app.shell.model
 
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.loader.http.HTTPFactory
 import java.util.concurrent.CopyOnWriteArrayList
 import com.boyia.app.shell.model.BoyiaModelUtil.ModelDataCallback
+import com.boyia.app.shell.model.BoyiaModelUtil.SEARCH_APP_LIST_URL
 
 class BoyiaAppListModel {
     companion object {

@@ -124,10 +124,14 @@ class BoyiaAboutFragment: NavigationFragment() {
         }
     }
 
+    // Composable修饰的函数实际上会编译成一个静态函数
     @Composable
     fun versionButton() {
         val completed = !Downloader().initDownloadData(BoyiaDownloadMask.TEST_URL)
 
+        // by关键字代理行为，会生成一个对象
+        // remember是一个函数，后面的{}也是一个函数，remember调用
+        // currentComposer.cache来调用{}暂存和返回一个MutableState对象
         var updateProgress by remember {
             if (completed) mutableStateOf(1F) else mutableStateOf(0F)
         }
