@@ -109,7 +109,7 @@ class HttpUtil {
         static let LOGIN_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/login"
         static let LOGOUT_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/logout"
         static let APP_LIST_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/appList"
-        static let UPLOAD_URL = "\(HTTP_DOMAIN)/file/\(API_VERSION)/upload"
+        static let UPLOAD_URL = "\(HTTP_DOMAIN)/file/\(API_VERSION)/upload_user_icon"
         static let SEARCH_APP_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/search"
     }
     
@@ -119,6 +119,16 @@ class HttpUtil {
         }
         
         return "\(HttpConstants.HTTP_DOMAIN)\(url!)"
+    }
+    
+    static func getImageUrlWithToken(url: String?) -> String? {
+        guard var imageUrl = getRemoteUrl(url: url) else {
+            return nil
+        }
+        
+        imageUrl = "\(imageUrl)?uid=\(BoyiaLoginInfo.shared.user!.uid)&token=\(BoyiaLoginInfo.shared.token!.md5)"
+        
+        return imageUrl;
     }
     
     // 业务数据请求接口

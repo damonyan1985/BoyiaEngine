@@ -21,7 +21,7 @@ struct BoyiaSettingMenu : View {
             VStack {
                 marginTop(top: 108.dp)
                 AsyncImage(url: URL(string: loginModel.isLogin
-                                    ? (BoyiaLoginInfo.shared.user?.avatar ?? "null")
+                                    ? (HttpUtil.getImageUrlWithToken(url: BoyiaLoginInfo.shared.user?.avatar) ?? "null")
                                     : SettingConstants.DEFAULT_ICON)!) { phase in
                     if let image = phase.image {
                         image.resizable()
@@ -113,20 +113,12 @@ struct BoyiaSettingMenu : View {
         .frame(
             width: SettingConstants.SETTING_WIDTH,
             height: PixelRatio.screenHeight())
-        //.background(Color(hex: 0xFF00FF))
         .background(Color(hex: 0xEEE9E9))
         .sheet(isPresented: $showImagePicker, onDismiss: {}) {
-            ImagePicker() { image in
+            ImagePicker() { url in
+                HttpUtil.upload(path: url)
                 showImagePicker = false
-            }
+            }.ignoresSafeArea(.keyboard)
         }
-//        .actionSheet(isPresented: $showImagePicker, content: {
-//            HStack() {
-//                ImagePicker(sourceType: UIImagePickerController.SourceType.photoLibrary) { image in
-//
-//                }
-//            }
-//        })
-        
     }
 }

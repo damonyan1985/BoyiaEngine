@@ -28,6 +28,7 @@
 		4C7AE7F126CF835B00946197 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C7AE7EF26CF835B00946197 /* LaunchScreen.storyboard */; };
 		4C7AE7F426CF835B00946197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7F326CF835B00946197 /* main.m */; };
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
+		4CA5144D287BC91E00A4F301 /* SearchItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA5144C287BC91E00A4F301 /* SearchItemView.swift */; };
 		4CA99D9D272FE8AF004FAD07 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */; };
 		4CBE2E55283B9C7C001F0729 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBE2E54283B9C7C001F0729 /* Animations.swift */; };
 		4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB5527E9BF4B00795648 /* Uploader.swift */; };
@@ -96,6 +97,7 @@
 		4C7AE7F226CF835B00946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C7AE7F326CF835B00946197 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C7AE81026CF83D000946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CA5144C287BC91E00A4F301 /* SearchItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchItemView.swift; sourceTree = "<group>"; };
 		4CA99D9B272FE8AE004FAD07 /* app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "app-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CA99D9C272FE8AF004FAD07 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		4CBE2E54283B9C7C001F0729 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				4C4F270F286FF4840007BAE5 /* SearchView.swift */,
+				4CA5144C287BC91E00A4F301 /* SearchItemView.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -422,6 +425,7 @@
 				4CFC5A15285C5D5100E9639C /* ImagePicker.swift in Sources */,
 				4CC8FB5627E9BF4B00795648 /* Uploader.swift in Sources */,
 				4C4F2714286FFC8A0007BAE5 /* CustomViews.swift in Sources */,
+				4CA5144D287BC91E00A4F301 /* SearchItemView.swift in Sources */,
 				4C4F2710286FF4840007BAE5 /* SearchView.swift in Sources */,
 				4CC8FB5C27EABA4B00795648 /* BoyiaCamera.swift in Sources */,
 				4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */,

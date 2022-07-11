@@ -10,6 +10,7 @@
 		4C28B84526D1F17C00953864 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C28B84426D1F17C00953864 /* MetalKit.framework */; };
 		4C3D2EC62738BFC50050B19C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C3D2EC82738BFC50050B19C /* Localizable.strings */; };
 		4C7AE80926CF837300946197 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C7AE80726CF837300946197 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CA51455287C740800A4F301 /* cert in Resources */ = {isa = PBXBuildFile; fileRef = 4CA51454287C740800A4F301 /* cert */; };
 		4CA99D952726C5A4004FAD07 /* BoyiaTextInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D942726C5A4004FAD07 /* BoyiaTextInputView.m */; };
 		4CB3239F26EE1490005568CD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB3239E26EE1490005568CD /* AVFoundation.framework */; };
 		4CB323A126EE14EA005568CD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB323A026EE14EA005568CD /* CoreMedia.framework */; };
@@ -257,6 +258,7 @@
 		4C7AE80426CF837300946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7AE80726CF837300946197 /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		4C7AE80826CF837300946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CA51454287C740800A4F301 /* cert */ = {isa = PBXFileReference; lastKnownFileType = folder; path = cert; sourceTree = "<group>"; };
 		4CA99D932726C552004FAD07 /* BoyiaTextInputView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BoyiaTextInputView.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaTextInputView.h; sourceTree = "<group>"; };
 		4CA99D942726C5A4004FAD07 /* BoyiaTextInputView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BoyiaTextInputView.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaTextInputView.m; sourceTree = "<group>"; };
 		4CB3239E26EE1490005568CD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1073,6 +1075,7 @@
 		4CFDE65726D8CC2100A01683 /* metal */ = {
 			isa = PBXGroup;
 			children = (
+				4CA51454287C740800A4F301 /* cert */,
 				4CB46AB326EB46F9002407C1 /* apps */,
 				4CB46AB126EB46F4002407C1 /* boyia.json */,
 				4CB46AAF26EB46EC002407C1 /* net_boyia.json */,
@@ -1301,6 +1304,7 @@
 			files = (
 				4CB46AB426EB46F9002407C1 /* apps in Resources */,
 				4CB46AB226EB46F4002407C1 /* boyia.json in Resources */,
+				4CA51455287C740800A4F301 /* cert in Resources */,
 				4CB46AB026EB46EC002407C1 /* net_boyia.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

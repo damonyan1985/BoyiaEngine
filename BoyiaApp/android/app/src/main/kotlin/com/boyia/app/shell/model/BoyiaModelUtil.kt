@@ -39,7 +39,7 @@ object BoyiaModelUtil {
 
     fun getImageUrlWithToken(url: String?): String? {
         val url = getRemoteUrl(url) ?: return null
-        return "$url?token=${BoyiaLoginInfo.instance().token}"
+        return "$url?uid=${BoyiaLoginInfo.instance().user?.id}&token=${BoyiaLoginInfo.instance().token}"
     }
 
     inline fun <reified T> request(

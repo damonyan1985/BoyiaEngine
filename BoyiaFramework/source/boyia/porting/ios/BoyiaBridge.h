@@ -13,6 +13,7 @@
 @interface BoyiaBridge : NSObject
 
 +(NSString*)getAppRoot;
++(NSString*)getSSLCertPath;
 
 @end
 

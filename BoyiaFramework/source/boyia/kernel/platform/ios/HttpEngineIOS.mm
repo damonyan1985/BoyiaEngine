@@ -9,6 +9,7 @@
 
 #import "PlatformLib.h"
 #import "HttpEngineIOS.h"
+#import "BoyiaBridge.h"
 
 #define kNewLine [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]
 
@@ -158,6 +159,24 @@
 
 #pragma mark --NSURLSessionDataDelegate
 
+// 本地有证书则利用
+-(NSURLCredential*)getURLCredential:(NSURLAuthenticationChallenge *)challenge {
+    // 获取服务端自签名证书
+    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+    SecCertificateRef certRef = SecTrustGetCertificateAtIndex(serverTrust, 0);
+    NSData* certData = CFBridgingRelease(CFBridgingRetain(CFBridgingRelease(SecCertificateCopyData(certRef))));
+    NSString* path = [BoyiaBridge getSSLCertPath];
+    NSData* localCertData = [NSData dataWithContentsOfFile:path];
+    if ([certData isEqualToData:localCertData]) {
+        NSURLCredential* credential = [[NSURLCredential alloc]initWithTrust:serverTrust];
+        [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
+        return credential;
+    }
+    
+    // 忽略证书
+    return [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];;
+}
+
 -(void)URLSession:(NSURLSession*)session task:(NSURLSessionTask*)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential* _Nullable))completionHandler
 {
     NSLog(@"URLSession challenge:%@",challenge.protectionSpace);
@@ -173,7 +192,8 @@
      */
     
     // 信任自签名证书
-    NSURLCredential* credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+    //NSURLCredential* credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+    NSURLCredential* credential = [self getURLCredential:challenge];
     
     completionHandler(NSURLSessionAuthChallengeUseCredential,credential);
 }

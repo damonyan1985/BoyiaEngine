@@ -10,12 +10,26 @@
 
 @implementation BoyiaBridge
 
-+(NSString*)getAppRoot {
++(NSBundle*)getAppBundle {
     NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
     NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
     NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
-    NSString* boyiaAppDir = [appBundle.bundlePath stringByAppendingString:@"/"];
+    return appBundle;
+}
+
++(NSString*)getAppRoot {
+//    NSBundle* coreBundle = [NSBundle bundleWithIdentifier:@"com.boyia.core"];
+//    NSString* appDir = [coreBundle pathForResource:@"metal" ofType:@"bundle"];
+//    NSBundle* appBundle = [NSBundle bundleWithPath:appDir];
+    NSString* boyiaAppDir = [[BoyiaBridge getAppBundle].bundlePath stringByAppendingString:@"/"];
     return boyiaAppDir;
+}
+
++(NSString*)getSSLCertPath {
+    NSBundle* bundle = [BoyiaBridge getAppBundle];
+    //return [bundle pathForResource:@"cert" ofType:@"cert"];
+    NSString* boyiaCertPath = [bundle.bundlePath stringByAppendingString:@"/cert/boyia_server.cert"];
+    return boyiaCertPath;
 }
 
 @end
