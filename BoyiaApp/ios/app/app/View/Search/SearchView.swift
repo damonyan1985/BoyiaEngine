@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SearchView : View {
     @State var text = ""
+    @FocusState var focus: Bool
     @StateObject var model = BoyiaAppListModel(autoLoad: false)
     @Environment(\.presentationMode) var presentationMode
     
@@ -28,6 +29,7 @@ struct SearchView : View {
                             .frame(width: 64.dp, height: 64.dp)
                     }
                     CustomTextField(
+                        focus: $focus,
                         placeholder: Text("Please input search key")
                             .foregroundColor(Color(hex: 0x696969)),
                         text: $text)
@@ -73,7 +75,8 @@ struct SearchView : View {
         return ScrollView {
             LazyVStack(alignment: .leading) {
                 ForEach(model.appList, id: \.id) { item in
-                    Text(item.name).foregroundColor(Color(hex: 0xFF00FF))
+                    //Text(item.name).foregroundColor(Color(hex: 0xFF00FF))
+                    SearchItemView(item: item)
                 }
             }
         }

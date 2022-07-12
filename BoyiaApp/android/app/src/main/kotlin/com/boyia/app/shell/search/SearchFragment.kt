@@ -120,4 +120,13 @@ class SearchFragment(private val mode: SearchModule): NavigationFragment() {
             }
         }
     }
+
+    @Composable
+    fun buildSearchAppItem() {
+        Row {
+            Column {
+
+            }
+        }
+    }
 }

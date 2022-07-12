@@ -16,15 +16,20 @@ func marginLeft(left: Double) -> some View {
 }
 
 struct CustomTextField: View {
+    var focus: FocusState<Bool>.Binding
     var placeholder: Text
     @Binding var text: String
-    var editingChanged: (Bool)->() = { _ in }
-    var commit: ()->() = { }
+    var editingChanged: (Bool) -> () = { _ in }
+    var commit: () -> () = { }
     
     var body: some View {
         ZStack(alignment: .leading) {
             if text.isEmpty { placeholder }
-            TextField("", text: $text, onEditingChanged: editingChanged, onCommit: commit)
+            TextField(
+                "",
+                text: $text,
+                onEditingChanged: editingChanged,
+                onCommit: commit).focused(focus)
         }
     }
 }
