@@ -21,7 +21,7 @@ object BoyiaModelUtil {
     const val LOGIN_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/login"
     const val LOGOUT_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/logout"
     const val APP_LIST_URL = "${HTTP_DOMAIN}/app/${API_VERSION}/appList"
-    const val UPLOAD_URL = "${HTTP_DOMAIN}/file/${API_VERSION}/upload"
+    const val UPLOAD_URL = "${HTTP_DOMAIN}/file/${API_VERSION}/upload_user_icon"
     const val UPDATE_USER_URL = "${HTTP_DOMAIN}/user/${API_VERSION}/updateAdmin"
     const val SEARCH_APP_LIST_URL = "${HTTP_DOMAIN}/app/${API_VERSION}/search"
 
@@ -38,8 +38,8 @@ object BoyiaModelUtil {
     }
 
     fun getImageUrlWithToken(url: String?): String? {
-        val url = getRemoteUrl(url) ?: return null
-        return "$url?uid=${BoyiaLoginInfo.instance().user?.id}&token=${BoyiaLoginInfo.instance().token}"
+        val imageUrl = getRemoteUrl(url) ?: return null
+        return "$imageUrl?uid=${BoyiaLoginInfo.instance().user?.id}&token=${BoyiaUtils.getStringMD5(BoyiaLoginInfo.instance().token)}"
     }
 
     inline fun <reified T> request(
