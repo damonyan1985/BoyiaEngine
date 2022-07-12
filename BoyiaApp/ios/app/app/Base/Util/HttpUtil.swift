@@ -11,6 +11,7 @@ import core
 typealias ModelDataCallback<T> = (_ data: T) -> Void
 typealias DownloadProgressCallback = (_ progress: Double) -> Void
 typealias DownloadCompletedCallback = () -> Void
+typealias ImageLoadedCallback = (_ image: UIImage?) -> Void
 
 class HttpCallbackImpl<T: Decodable>: NSObject, HttpCallback {
     lazy var buffer: Data = Data()
@@ -81,6 +82,8 @@ class HttpDownloadCallback: NSObject, HttpCallback {
 }
 
 class UploadCallback: NSObject, HttpCallback {
+    lazy var buffer: Data = Data()
+    // 上传进度
     func onProgress(_ current: Int64, total: Int64) {
         
     }
@@ -98,6 +101,31 @@ class UploadCallback: NSObject, HttpCallback {
     }
 }
 
+class ImageCallback: NSObject, HttpCallback {
+    lazy var buffer: Data = Data()
+    var callback: ImageLoadedCallback
+    
+    init(cb: @escaping ImageLoadedCallback) {
+        callback = cb
+    }
+    
+    func onDataReceive(_ data: Data!) {
+        buffer.append(data);
+    }
+    
+    func onLoadFinished() {
+        DispatchQueue.main.async {
+            self.callback(UIImage(data: self.buffer));
+        }
+    }
+    
+    func onLoadError() {
+    }
+    
+    func onProgress(_ current: Int64, total: Int64) {
+    }
+}
+
 class HttpUtil {
     struct HttpConstants {
         static let BUNDLE_INFO = "https://itunes.apple.com/lookup?bundleId=1000"
@@ -111,6 +139,7 @@ class HttpUtil {
         static let APP_LIST_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/appList"
         static let UPLOAD_URL = "\(HTTP_DOMAIN)/file/\(API_VERSION)/upload_user_icon"
         static let SEARCH_APP_URL = "\(HTTP_DOMAIN)/app/\(API_VERSION)/search"
+        static let UPDATE_USER_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/updateAdmin"
     }
     
     static func getRemoteUrl(url: String?) -> String? {
@@ -126,7 +155,10 @@ class HttpUtil {
             return nil
         }
         
-        imageUrl = "\(imageUrl)?uid=\(BoyiaLoginInfo.shared.user!.uid)&token=\(BoyiaLoginInfo.shared.token!.md5)"
+        let uid = BoyiaLoginInfo.shared.user?.uid ?? 0
+        let md5 = BoyiaLoginInfo.shared.token?.md5 ?? ""
+        
+        imageUrl = "\(imageUrl)?uid=\(uid)&token=\(md5)"
         
         return imageUrl;
     }
@@ -232,11 +264,30 @@ class HttpUtil {
     }
     
     // 上传功能
-    static func upload(path: String) {
+    static func upload<T: Decodable>(path: String, cb: @escaping ModelDataCallback<T>) {
         var headers = [AnyHashable: Any]()
         headers["User-Token"] = BoyiaLoginInfo.shared.token
         
         let engine = HttpEngineIOS()
-        engine.upload(HttpConstants.UPLOAD_URL, path: path, headers: headers, callback: UploadCallback())
+        engine.upload(
+            HttpConstants.UPLOAD_URL,
+            path: path,
+            headers: headers,
+            callback: HttpCallbackImpl(cb: cb))
+    }
+    
+    // 处理图片
+    static func loadImage(url: String, loadCB: @escaping ImageLoadedCallback) {
+        let imageUrl = HttpUtil.getImageUrlWithToken(url: url)
+        let engine = HttpEngineIOS()
+        
+        var headers = [AnyHashable: Any]()
+        headers["User-Token"] = BoyiaLoginInfo.shared.token
+        
+        engine.loadUrl(
+            HttpMethod.get,
+            url: imageUrl,
+            headers: headers,
+            callback: ImageCallback(cb: loadCB))
     }
 }

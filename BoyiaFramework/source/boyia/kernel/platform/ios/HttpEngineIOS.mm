@@ -146,10 +146,7 @@
     
     request.HTTPBody = fileData;
     
-    NSURLSessionTask* uploadTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            // 解析数据
-    //        NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-        }];
+    NSURLSessionTask* uploadTask = [session dataTaskWithRequest:request];
     [uploadTask resume];
 }
 
@@ -161,19 +158,43 @@
 
 // 本地有证书则利用
 -(NSURLCredential*)getURLCredential:(NSURLAuthenticationChallenge *)challenge {
+    if (![challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        return nil;
+    }
+    
     // 获取服务端自签名证书
     SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
     SecCertificateRef certRef = SecTrustGetCertificateAtIndex(serverTrust, 0);
     NSData* certData = CFBridgingRelease(CFBridgingRetain(CFBridgingRelease(SecCertificateCopyData(certRef))));
     NSString* path = [BoyiaBridge getSSLCertPath];
     NSData* localCertData = [NSData dataWithContentsOfFile:path];
-    if ([certData isEqualToData:localCertData]) {
+    
+    SecCertificateRef caRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)localCertData);
+    if (!caRef) {
+        return nil;
+    }
+    
+    NSArray *caArray = @[(__bridge id)(caRef)];
+    OSStatus status = SecTrustSetAnchorCertificates(serverTrust, (__bridge CFArrayRef)caArray);
+    if (errSecSuccess != status) {
+        return nil;
+    }
+    
+//    SecTrustResultType result = kSecTrustResultInvalid;
+    CFErrorRef error;
+    BOOL result = SecTrustEvaluateWithError(serverTrust, &error);
+//    if (errSecSuccess != status) {
+//        return nil;
+//    }
+    
+    //BOOL allowConnect = (result == kSecTrustResultUnspecified) || (result == kSecTrustResultProceed);
+    if (result) {
         NSURLCredential* credential = [[NSURLCredential alloc]initWithTrust:serverTrust];
         [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
         return credential;
     }
     
-    // 忽略证书
+    // 忽略证书校验，默认信任自签名证书
     return [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];;
 }
 

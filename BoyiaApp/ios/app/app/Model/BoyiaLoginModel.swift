@@ -60,4 +60,24 @@ class BoyiaLoginModel : ObservableObject {
             }
         })
     }
+    
+    func update() {
+        do {
+            let info = try JSONEncoder().encode(BoyiaLoginInfo.shared.user)
+            var headers = [AnyHashable: Any]()
+            headers["Content-Type"] = "application/json;charset=UTF-8"
+            headers["User-Token"] = BoyiaLoginInfo.shared.token
+            HttpUtil.post(
+                url: HttpUtil.HttpConstants.UPDATE_USER_URL,
+                data: String(data: info, encoding: .utf8),
+                headers: headers, cb: { (data: BoyiaBaseData) in
+                    BoyiaLog.d("BoyiaLoginModel update result = \(data.retCode)")
+                    DispatchQueue.main.async {
+                        self.isLogin = true
+                    }
+            })
+        } catch {
+            BoyiaLog.d("BoyiaLoginModel update error \(error)")
+        }
+    }
 }

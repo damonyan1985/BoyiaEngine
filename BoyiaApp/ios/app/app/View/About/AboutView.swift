@@ -29,7 +29,7 @@ struct AboutView : View {
                 
                 marginTop(top: 1.dp)
                 buildButton(text: "Feature introduction", action: {
-                    HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
+//                    HttpUtil.upload(path: "/Users/yanbo/Library/Developer/Xcode/DerivedData/Boyia-fcdfmyhktgurjubvszoklymjqfym/Build/Products/Debug-iphonesimulator/core.framework/metal.bundle/boyia.json")
                 })
                 
                 marginTop(top: 1.dp)

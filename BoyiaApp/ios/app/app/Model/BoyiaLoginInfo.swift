@@ -58,6 +58,11 @@ class BoyiaLoginInfo {
         }
     }
     
+    static func flush() {
+        let info = BoyiaLoginInfo.shared.user
+        BoyiaLoginInfo.shared.user = info
+    }
+    
     static func setLoginInfo(info: BoyiaUserInfo, token: String) {
         BoyiaLoginInfo.shared.token = token
         BoyiaLoginInfo.shared.user = info

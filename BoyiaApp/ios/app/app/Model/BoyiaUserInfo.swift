@@ -11,7 +11,7 @@ struct BoyiaUserInfo : Codable {
     let uid: Int
     let name: String
     let nickname: String
-    let avatar: String
+    var avatar: String
     let email: String
     let phone: String? // 允许phone为空
     

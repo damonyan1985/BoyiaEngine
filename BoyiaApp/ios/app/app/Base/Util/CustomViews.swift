@@ -28,3 +28,21 @@ struct CustomTextField: View {
         }
     }
 }
+
+struct BoyiaImage: View {
+    private var width: Double = 0;
+    private var height: Double = 0;
+    @ObservedObject var model = BoyiaImageModel()
+    
+    init(url: String, width: Double, height: Double) {
+        self.model.load(url: url)
+        self.width = width;
+        self.height = height;
+    }
+    
+    var body: some View {
+        Image(uiImage: model.image)
+            .resizable()
+            .frame(width: self.width, height: self.height)
+    }
+}

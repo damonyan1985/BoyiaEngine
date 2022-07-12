@@ -20,23 +20,23 @@ struct BoyiaSettingMenu : View {
         VStack(alignment: .center, spacing: 0) {
             VStack {
                 marginTop(top: 108.dp)
-                AsyncImage(url: URL(string: loginModel.isLogin
-                                    ? (HttpUtil.getImageUrlWithToken(url: BoyiaLoginInfo.shared.user?.avatar) ?? "null")
-                                    : SettingConstants.DEFAULT_ICON)!) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                            .transition(.slide)
-    //                        .frame(width: PixelRatio.dp(36),
-    //                               height: PixelRatio.dp(36),
-    //                               alignment: .top)
-                    } else if phase.error != nil {
-                        //Text("path: \(item.cover), error: \(phase.error!.localizedDescription) ")
-                        ProgressView()
-                    } else {
-                        ProgressView()
-                    }
-                
-                }
+//                AsyncImage(url: URL(string: loginModel.isLogin
+//                                    ? (HttpUtil.getImageUrlWithToken(url: BoyiaLoginInfo.shared.user?.avatar) ?? "null")
+//                                    : SettingConstants.DEFAULT_ICON)!) { phase in
+//                    if let image = phase.image {
+//                        image.resizable()
+//                            .transition(.slide)
+//                    } else if phase.error != nil {
+//                        ProgressView()
+//                    } else {
+//                        ProgressView()
+//                    }
+//
+//                }
+            BoyiaImage(
+                url: BoyiaLoginInfo.shared.user?.avatar ?? SettingConstants.DEFAULT_ICON,
+                width: 108.dp,
+                height: 108.dp)
                 .frame(width: 108.dp,
                        height: 108.dp,
                         alignment: .top)
@@ -116,7 +116,11 @@ struct BoyiaSettingMenu : View {
         .background(Color(hex: 0xEEE9E9))
         .sheet(isPresented: $showImagePicker, onDismiss: {}) {
             ImagePicker() { url in
-                HttpUtil.upload(path: url)
+                HttpUtil.upload(path: url) { (data: BoyiaUploadData) in
+                    BoyiaLoginInfo.shared.user?.avatar = data.url
+                    BoyiaLoginInfo.flush()
+                    loginModel.update()
+                }
                 showImagePicker = false
             }.ignoresSafeArea(.keyboard)
         }
