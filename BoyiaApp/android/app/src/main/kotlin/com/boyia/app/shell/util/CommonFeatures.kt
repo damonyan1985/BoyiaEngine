@@ -11,15 +11,24 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.NotificationCompat
 import com.boyia.app.common.BaseApplication
 import com.boyia.app.common.utils.BoyiaFileUtil
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.core.api.ApiConstants
+import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.loader.image.IBoyiaImage
 import com.boyia.app.shell.R
@@ -100,5 +109,28 @@ object CommonFeatures {
                 pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
             }
         }
+    }
+
+    /**
+     * 在compose中使用BoyiaImageView
+     */
+    @Composable
+    fun ComposeBoyiaImageView(width: Int, height: Int, radius: Int, url: String?) {
+        AndroidView(factory = { ctx ->
+            BoyiaImageView(ctx, radius).apply {
+                layoutParams = LinearLayout.LayoutParams(width, height)
+                load(BoyiaModelUtil.getImageUrlWithToken(url))
+            }
+        })
+    }
+
+    @Composable
+    fun marginTop(top: Int) {
+        Spacer(modifier = Modifier.height(dpx(value = top)))
+    }
+
+    @Composable
+    fun marginLeft(left: Int) {
+        Spacer(modifier = Modifier.width(dpx(value = left)))
     }
 }

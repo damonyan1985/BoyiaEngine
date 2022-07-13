@@ -26,13 +26,16 @@ struct SearchItemView : View {
 //                }
 //            }
             marginLeft(left: 20.dp)
-            BoyiaImage(url: self.item.cover, width: 108.dp, height: 108.dp)
+            BoyiaImage(url: self.item.cover, width: 164.dp, height: 164.dp)
                 .cornerRadius(12.dp)
             marginLeft(left: 20.dp)
-            VStack(alignment: .leading, spacing: 10.dp) {
-                Text(item.name).foregroundColor(Color.black)
+            VStack(alignment: .leading) {
+                Text(item.name)
+                    .font(.system(size: 36.dp, weight: .bold))
+                    .foregroundColor(Color.black)
+                Spacer()
                 Text("App ID: \(item.appId)").foregroundColor(Color.black)
-            }
+            }.padding([.top, .bottom], 20.dp)
             Spacer()
             Button(action: {
                 
@@ -51,6 +54,6 @@ struct SearchItemView : View {
             }
             marginLeft(left: 20.dp)
         }
-        .frame(width: PixelRatio.screenWidth(), height: 108.dp)
+        .frame(width: PixelRatio.screenWidth(), height: 164.dp)
     }
 }

@@ -49,7 +49,7 @@ class BoyiaAboutFragment: NavigationFragment() {
         Box(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .background(color =  Color(0x08000000))
+                .background(color = Color(0x08000000))
                 .padding(top = toDp(BoyiaUtils.getStatusBarHeight(activity)))
         ) {
             Column(
@@ -60,16 +60,16 @@ class BoyiaAboutFragment: NavigationFragment() {
 
                 Column(
                         modifier = Modifier
-                                .height(220.dpx)
+                                .height(dpx(360))
                                 .fillMaxWidth()
                         //.background(Color.White)
                 ) {
-                    Spacer(modifier = Modifier.height(60.dpx))
+                    Spacer(modifier = Modifier.height(dpx(60)))
                     Image(
                             //painter = rememberImagePainter(data = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"),
                             painter = painterResource(id = R.drawable.ic_launcher),
                             modifier = Modifier
-                                    .size(80.dpx)
+                                    .size(dpx(108))
                                     .align(alignment = Alignment.CenterHorizontally),
                             contentScale = ContentScale.Fit,
                             contentDescription = "",
@@ -79,42 +79,42 @@ class BoyiaAboutFragment: NavigationFragment() {
                 //Spacer(modifier = Modifier.height(100.dp))
                 versionButton()
 
-                Spacer(modifier = Modifier.height(1.dpx))
+                Spacer(modifier = Modifier.height(dpx(1)))
 
                 TextButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                                 .background(Color.White)
                                 .fillMaxWidth()
-                                .height(60.dpx),
+                                .height(dpx(84)),
                         contentPadding = PaddingValues()
 
                 ) {
                     Text(text = "Feature introduction", color = Color.Black)
                 }
 
-                Spacer(modifier = Modifier.height(1.dpx))
+                Spacer(modifier = Modifier.height(dpx(1)))
 
                 TextButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                                 .background(Color.White)
                                 .fillMaxWidth()
-                                .height(60.dpx),
+                                .height(dpx(84)),
                         contentPadding = PaddingValues()
 
                 ) {
                     Text(text = "Register", color = Color.Black)
                 }
 
-                Spacer(modifier = Modifier.height(1.dpx))
+                Spacer(modifier = Modifier.height(dpx(1)))
 
                 TextButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                                 .background(Color.White)
                                 .fillMaxWidth()
-                                .height(60.dpx),
+                                .height(dpx(84)),
                         contentPadding = PaddingValues()
 
                 ) {
@@ -138,7 +138,7 @@ class BoyiaAboutFragment: NavigationFragment() {
         Row(modifier = Modifier
                 .background(Color.White)
                 .fillMaxWidth()
-                .height(60.dpx)
+                .height(dpx(84))
                 .clickable {
                     if (updateProgress > 0F) {
                         return@clickable
@@ -176,7 +176,7 @@ class BoyiaAboutFragment: NavigationFragment() {
                                 progress = updateProgress,
                                 modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(60.dpx),
+                                        .height(dpx(84)),
                                 color = Color(0xFFD3D3D3),
                                 backgroundColor = Color.White
                         )

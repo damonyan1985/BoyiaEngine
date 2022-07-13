@@ -11,8 +11,11 @@ import com.boyia.app.common.utils.BoyiaUtils
 val Int.dp: Int
     get() = BoyiaUtils.dp(this)
 
-val Int.dpx: Dp
-    get() = Dp(this.toFloat())
+/**
+ * 防止与compose dp冲突
+ */
+val Int.dpx: Int
+    get() = BoyiaUtils.dp(this)
 
 /**
  * boyia dp转compose dp
