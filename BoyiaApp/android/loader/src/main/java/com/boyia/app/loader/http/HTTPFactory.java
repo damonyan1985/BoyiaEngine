@@ -21,13 +21,18 @@ public class HTTPFactory {
     public static final String HTTP_CHARSET_UTF8 = "utf-8";
 
     // HTTP协议头部
-    public static final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
-    public static final String HTTP_HEADER_CONNECT = "Connection";
-    public static final String HTTP_HEADER_CHARSET = "Charset";
-    public static final String HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
+    public static class HeaderKeys {
+        public static final String CONTENT_TYPE = "Content-Type";
+        public static final String CONNECT = "Connection";
+        public static final String CHARSET = "Charset";
+        public static final String CONTENT_LENGTH = "Content-Length";
+    }
 
-    public static final String HTTP_HEADER_VALUE_FORM = "application/x-www-form-urlencoded";
-    public static final String HTTP_HEADER_VALUE_KEEP = "Keep-Alive";
+    public static class HeaderValues {
+        public static final String FORM = "application/x-www-form-urlencoded";
+        public static final String JSON = "application/json;charset=UTF-8";
+        public static final String KEEP = "Keep-Alive";
+    }
 
     // HTTP引擎类型
     public static final int OK_ENGINE = 0;

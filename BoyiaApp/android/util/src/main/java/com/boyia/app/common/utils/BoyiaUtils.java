@@ -2,16 +2,20 @@ package com.boyia.app.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import com.boyia.app.common.BaseApplication;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -22,6 +26,7 @@ import android.os.Build;
 import android.util.Size;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -143,7 +148,7 @@ public class BoyiaUtils {
     }
 
     public static Display getDisplay() {
-        WindowManager wm =  (WindowManager) BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
         return wm.getDefaultDisplay();
     }
 
@@ -234,5 +239,37 @@ public class BoyiaUtils {
             return activity.getResources().getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    //获取虚拟按键的高度
+    public static int getNavigationBarHeight(Activity context) {
+        int result = 0;
+        if (checkNavigationBarShow(context)) {
+            Resources res = context.getResources();
+            int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = res.getDimensionPixelSize(resourceId);
+            }
+        }
+        return result;
+    }
+
+    public static boolean checkNavigationBarShow(Activity context) {
+        boolean show;
+        Display display = context.getWindow().getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getRealSize(point);
+
+        View decorView = context.getWindow().getDecorView();
+        Configuration conf = context.getResources().getConfiguration();
+        if (Configuration.ORIENTATION_LANDSCAPE == conf.orientation) {
+            View contentView = decorView.findViewById(android.R.id.content);
+            show = (point.x != contentView.getWidth());
+        } else {
+            Rect rect = new Rect();
+            decorView.getWindowVisibleDisplayFrame(rect);
+            show = (rect.bottom != point.y);
+        }
+        return show;
     }
 }

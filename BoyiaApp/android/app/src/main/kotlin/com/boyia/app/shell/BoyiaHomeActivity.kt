@@ -66,7 +66,7 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         BoyiaLog.d(TAG, "BoyiaHomeActivity initHome")
         rootView = CoordinatorLayout(this)
         rootView?.id = View.generateViewId()
-        rootView?.setBackgroundColor(Color.BLUE)
+        rootView?.setBackgroundColor(Color.WHITE)
         rootView?.fitsSystemWindows = false
         rootView?.clipToPadding = false
 

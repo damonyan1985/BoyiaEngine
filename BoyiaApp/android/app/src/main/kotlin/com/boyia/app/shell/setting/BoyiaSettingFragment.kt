@@ -64,7 +64,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         rootLayout?.id = View.generateViewId()
         val lp = ViewGroup.LayoutParams(
             SETTING_WIDTH,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            CommonFeatures.getFragmentHeight(requireActivity())
         )
 
         rootLayout?.x = -1 * SETTING_WIDTH.toFloat()

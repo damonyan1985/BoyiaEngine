@@ -138,7 +138,8 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         rootLayout = FrameLayout(requireContext())
         rootLayout?.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                CommonFeatures.getFragmentHeight(requireActivity())
+                //ViewGroup.LayoutParams.MATCH_PARENT
         )
         val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

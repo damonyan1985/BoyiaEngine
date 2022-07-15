@@ -32,7 +32,7 @@ object BoyiaLoginModel {
                     }
                 },
                 method = HTTPFactory.HTTP_POST_METHOD,
-                headers = mapOf("Content-Type" to "application/x-www-form-urlencoded", "User-Token" to "none"),
+                headers = mapOf(HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.FORM, "User-Token" to "none"),
                 data = "name=${name}&pwd=${password}"
         )
     }
@@ -44,7 +44,7 @@ object BoyiaLoginModel {
                 method = HTTPFactory.HTTP_POST_METHOD,
                 headers = mapOf(
                         "User-Token" to (BoyiaLoginInfo.instance().token ?: "none"),
-                        "Content-Type" to "application/json;charset=UTF-8"
+                        HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.JSON
                 ),
                 data = info
         )

@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils
 import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.R
+import com.boyia.app.shell.util.CommonFeatures
 
 open class NavigationFragment: BaseFragment() {
     // TODO 添加手势划出
@@ -42,7 +43,8 @@ open class NavigationFragment: BaseFragment() {
         if (view != null) {
             view.layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    //ViewGroup.LayoutParams.MATCH_PARENT
+                    CommonFeatures.getFragmentHeight(requireActivity())
             )
             return view
         }

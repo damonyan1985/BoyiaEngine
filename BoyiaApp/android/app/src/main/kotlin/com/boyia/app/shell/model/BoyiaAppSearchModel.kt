@@ -43,7 +43,7 @@ class BoyiaAppSearchModel {
                     }
                 },
                 HTTPFactory.HTTP_POST_METHOD,
-                mapOf("Content-Type" to "application/x-www-form-urlencoded", "User-Token" to "none"),
+                mapOf(HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.FORM, "User-Token" to "none"),
                 "key=${key}&pos=${pos}&size=${size}"
         )
     }

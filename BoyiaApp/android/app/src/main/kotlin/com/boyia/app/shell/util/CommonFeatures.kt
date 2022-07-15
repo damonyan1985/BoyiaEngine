@@ -27,6 +27,7 @@ import androidx.core.app.NotificationCompat
 import com.boyia.app.common.BaseApplication
 import com.boyia.app.common.utils.BoyiaFileUtil
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.image.BoyiaImager
@@ -109,6 +110,10 @@ object CommonFeatures {
                 pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
             }
         }
+    }
+
+    fun getFragmentHeight(activity: Activity) : Int {
+        return BoyiaUtils.getRealScreenSize().y - BoyiaUtils.getNavigationBarHeight(activity)
     }
 
     /**
