@@ -28,6 +28,7 @@
 		4C7AE7F126CF835B00946197 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C7AE7EF26CF835B00946197 /* LaunchScreen.storyboard */; };
 		4C7AE7F426CF835B00946197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7AE7F326CF835B00946197 /* main.m */; };
 		4C7AE81126CF83D000946197 /* core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C7AE81026CF83D000946197 /* core.framework */; };
+		4CA34EA528811F0600466CB7 /* SearchDownloadButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA34EA428811F0600466CB7 /* SearchDownloadButton.swift */; };
 		4CA5144D287BC91E00A4F301 /* SearchItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA5144C287BC91E00A4F301 /* SearchItemView.swift */; };
 		4CA51457287D4B7600A4F301 /* BoyiaImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA51456287D4B7600A4F301 /* BoyiaImageModel.swift */; };
 		4CA51459287D59B500A4F301 /* BoyiaUploadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA51458287D59B500A4F301 /* BoyiaUploadData.swift */; };
@@ -99,6 +100,7 @@
 		4C7AE7F226CF835B00946197 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C7AE7F326CF835B00946197 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C7AE81026CF83D000946197 /* core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CA34EA428811F0600466CB7 /* SearchDownloadButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDownloadButton.swift; sourceTree = "<group>"; };
 		4CA5144C287BC91E00A4F301 /* SearchItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchItemView.swift; sourceTree = "<group>"; };
 		4CA51456287D4B7600A4F301 /* BoyiaImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaImageModel.swift; sourceTree = "<group>"; };
 		4CA51458287D59B500A4F301 /* BoyiaUploadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaUploadData.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			children = (
 				4C4F270F286FF4840007BAE5 /* SearchView.swift */,
 				4CA5144C287BC91E00A4F301 /* SearchItemView.swift */,
+				4CA34EA428811F0600466CB7 /* SearchDownloadButton.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				4C1B7BB0282D206800AF3208 /* BoyiaSettingMenu.swift in Sources */,
 				4CFC5A08283CFBDF00E9639C /* BoyiaBaseData.swift in Sources */,
 				4CC8FB6F27EC4E4D00795648 /* Extension.swift in Sources */,
+				4CA34EA528811F0600466CB7 /* SearchDownloadButton.swift in Sources */,
 				4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */,
 				4C1B7BAE282CF02A00AF3208 /* BoyiaAppItemView.swift in Sources */,
 				4C7AE7E626CF835700946197 /* SceneDelegate.m in Sources */,

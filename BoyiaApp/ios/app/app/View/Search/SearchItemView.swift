@@ -37,21 +37,22 @@ struct SearchItemView : View {
                 Text("App ID: \(item.appId)").foregroundColor(Color.black)
             }.padding([.top, .bottom], 20.dp)
             Spacer()
-            Button(action: {
-                
-            }) {
-                ZStack {
-                    Text("Install")
-                        .font(.system(size: 24.dp))
-                        .foregroundColor(Color.green)
-                }.frame(width: 108.dp, height: 54.dp, alignment: Alignment.center)
-            }
-            .frame(width: 108.dp, height: 54.dp, alignment: Alignment.center)
-            .cornerRadius(27.dp)
-            .overlay {
-                RoundedRectangle(cornerRadius: 27.dp, style: .continuous)
-                    .stroke(Color.green, lineWidth: 2.dp)
-            }
+            SearchDownloadButton()
+//            Button(action: {
+//
+//            }) {
+//                ZStack {
+//                    Text("Install")
+//                        .font(.system(size: 24.dp))
+//                        .foregroundColor(Color.green)
+//                }.frame(width: 108.dp, height: 54.dp, alignment: Alignment.center)
+//            }
+//            .frame(width: 108.dp, height: 54.dp, alignment: Alignment.center)
+//            .cornerRadius(27.dp)
+//            .overlay {
+//                RoundedRectangle(cornerRadius: 27.dp, style: .continuous)
+//                    .stroke(Color.green, lineWidth: 2.dp)
+//            }
             marginLeft(left: 20.dp)
         }
         .frame(width: PixelRatio.screenWidth(), height: 164.dp)

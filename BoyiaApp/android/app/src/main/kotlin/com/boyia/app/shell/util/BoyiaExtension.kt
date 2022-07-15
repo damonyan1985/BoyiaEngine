@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.boyia.app.common.utils.BoyiaUtils
+import java.nio.channels.FileLock
 
 /**
  * boyia dp扩展属性
@@ -17,6 +18,8 @@ val Int.dp: Int
 val Int.dpx: Int
     get() = BoyiaUtils.dp(this)
 
+val Int.dpf: Float
+    get() = BoyiaUtils.dp(this).toFloat()
 /**
  * boyia dp转compose dp
  */
