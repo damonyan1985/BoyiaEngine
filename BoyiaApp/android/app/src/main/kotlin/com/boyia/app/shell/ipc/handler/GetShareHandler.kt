@@ -17,7 +17,7 @@ class GetShareHandler: IBoyiaIPCHandler {
             val value = BoyiaShare.get(key, null)
             BoyiaLog.d(SetShareHandler.TAG, "SetShareHandler handle key = $key and value = $value")
 
-            val bundle = Bundle();
+            val bundle = Bundle()
             putValue(bundle, value)
             cb.callback(BoyiaIpcData(data.method, bundle))
         }

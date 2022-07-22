@@ -30,6 +30,7 @@ private:
     yanbo::WebSocket* m_socket;
     String m_wsUrl;
     BoyiaSocketListener* m_listener;
+    KVector<String> m_msgs;
 };
 }
 

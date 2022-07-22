@@ -16,6 +16,11 @@ public class ApiConstants {
          * 打开相册
          */
         public static final String PICK_IMAGE = "pick_image";
+
+        /**
+         * 获取用户信息
+         */
+        public static final String USER_INFO = "user_info";
     }
 
     public static class ApiKeys {

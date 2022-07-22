@@ -79,6 +79,10 @@ public class ApiImplementation {
                 return false;
             }
         });
+
+        registerHandler(ApiNames.USER_INFO, () -> (params, callback) -> {
+            getUserInfo(callback);
+        });
     }
 
     public void registerHandler(String method, ApiCreator creator) {
@@ -126,18 +130,12 @@ public class ApiImplementation {
     }
 
     private void sendData(BoyiaIpcData data) {
-        try {
-            mSender.sendMessageAsync(data, new IBoyiaIpcCallback() {
-                @Override
-                public void callback(BoyiaIpcData boyiaIpcData) {
-                    BoyiaLog.d(TAG, "BoyiaApp boyiaIpcData = " + boyiaIpcData);
-                }
+        sendData(data, message -> BoyiaLog.d(TAG, "sendData callback = " + message));
+    }
 
-                @Override
-                public IpcScheduler scheduler() {
-                    return runnable -> JobScheduler.jobScheduler().sendJob(runnable::run);
-                }
-            });
+    private void sendData(BoyiaIpcData data, RemoteCallback remoteCB) {
+        try {
+            mSender.sendMessageAsync(data, remoteCB);
         } catch (RemoteException e) {
             BoyiaLog.e(TAG, String.format("sendData %s error", data.getMethod()), e);
         }
@@ -164,6 +162,21 @@ public class ApiImplementation {
         }
     }
 
+    /**
+     * 从主端获取用户信息
+     * @return
+     */
+    public void getUserInfo(ApiHandlerCallback apiCB) {
+        BoyiaIpcData data = new BoyiaIpcData(
+                ApiNames.USER_INFO,
+                null
+        );
+
+        sendData(data, message -> apiCB.callback(
+                message.getParams().get(ApiNames.USER_INFO).toString()));
+    }
+
+
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         for (ApiHandler handler : mResultHandlers) {
             if (handler.onActivityResult(requestCode, resultCode, data)) {
@@ -178,5 +191,12 @@ public class ApiImplementation {
 
     public interface ApiCreator {
         ApiHandler create();
+    }
+
+    public interface RemoteCallback extends IBoyiaIpcCallback {
+        @Override
+        default IpcScheduler scheduler() {
+            return runnable -> JobScheduler.jobScheduler().sendJob(runnable::run);
+        }
     }
 }

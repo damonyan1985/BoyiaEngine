@@ -32,4 +32,8 @@
     return boyiaCertPath;
 }
 
++(void)handleApi:(NSString*)apiName andParams:(NSString*)params {
+    
+}
+
 @end

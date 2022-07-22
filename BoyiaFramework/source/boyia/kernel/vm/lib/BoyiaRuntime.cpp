@@ -164,6 +164,8 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(GEN_ID("BY_ViewCommit"), viewCommit);
     appendNative(GEN_ID("BY_SetViewVisible"), setViewVisible);
     appendNative(GEN_ID("BY_GetPlatformType"), getPlatformType);
+    appendNative(GEN_ID("BY_CreateSocket"), createSocket);
+    appendNative(GEN_ID("BY_SendSocketMsg"), sendSocketMsg);
     // End
     appendNative(0, kBoyiaNull);
 }

@@ -6,6 +6,7 @@ import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.ipc.handler.GetShareHandler
+import com.boyia.app.shell.ipc.handler.GetUserInfoHandler
 import com.boyia.app.shell.ipc.handler.SendNotificationHandler
 import com.boyia.app.shell.ipc.handler.SetShareHandler
 import java.lang.ref.WeakReference
@@ -26,6 +27,7 @@ class BoyiaIPCModule : IPCModule {
         register(ApiConstants.ApiNames.LOCAL_SHARE_SET, SetShareHandler::class.java)
         register(ApiConstants.ApiNames.LOCAL_SHARE_GET, GetShareHandler::class.java)
         register(ApiConstants.ApiNames.NOTIFICATION_NAME, SendNotificationHandler::class.java)
+        register(ApiConstants.ApiNames.USER_INFO, GetUserInfoHandler::class.java)
     }
 
     /**

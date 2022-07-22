@@ -1,4 +1,5 @@
 #include "BoyiaSocket.h"
+#include "UIThread.h"
 #include "SalLog.h"
 
 namespace boyia {
@@ -18,18 +19,23 @@ LVoid BoyiaSocket::setSocketListener(BoyiaSocketListener* listener)
 
 LVoid BoyiaSocket::onListen()
 {
-    m_socket->send(_CS("Test BoyiaSocket1"));
+    for (LInt i = 0; i < m_msgs.size(); i++) {
+        m_socket->send(m_msgs[i]);
+    }
 }
 
 LVoid BoyiaSocket::send(const String& message)
 {
-    m_socket->send(message);
+    if (m_socket) {
+        m_socket->send(message);
+    } else {
+        m_msgs.addElement(message);
+    }
 }
 
-void BoyiaSocket::handleMessage(const String& message)
+LVoid BoyiaSocket::handleMessage(const String& message)
 {
     BOYIA_LOG(">>> %s", GET_STR(message));
-    m_socket->send(_CS("Test BoyiaSocket"));
     if (m_listener) {
         m_listener->onMessage(message);
     }
@@ -37,21 +43,29 @@ void BoyiaSocket::handleMessage(const String& message)
 
 LVoid BoyiaSocket::run()
 {
-    m_socket = yanbo::WebSocket::create(m_wsUrl);
-    if (!m_socket) {
+    yanbo::WebSocket* socket = yanbo::WebSocket::create(m_wsUrl);
+    if (!socket) {
         return;
     }
 
-    m_socket->setHandler(this);
-    onListen();
+    socket->setHandler(this);
+    //onListen();
+    // 切到UI线程处理消息
+    yanbo::UIThread::instance()->postClosureTask([self = this]() -> void {
+        self->onListen();
+    });
+    
+    m_socket = socket;
+    
     if (m_listener) {
         m_listener->onListen();
     }
 
     while (m_socket->getReadyState() != yanbo::WebSocket::kClosed) {
+        // 接受消息
         m_socket->poll();
+        // 派发消息
         m_socket->dispatch();
-        m_socket->send(_CS("hahaha"));
     }
 
     if (m_listener) {

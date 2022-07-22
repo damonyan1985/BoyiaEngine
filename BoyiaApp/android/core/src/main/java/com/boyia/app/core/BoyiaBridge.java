@@ -71,9 +71,12 @@ public class BoyiaBridge {
                     return nativeCB;
                 }
 
+                /**
+                 * 利用nativeCB回传给引擎
+                 * @param json
+                 */
                 @Override
                 public void callback(String json) {
-
                 }
             });
         }

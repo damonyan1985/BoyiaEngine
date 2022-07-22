@@ -19,7 +19,7 @@ BoyiaBase::BoyiaBase(BoyiaRuntime* runtime)
     value.mValueType = BY_NAVCLASS;
     value.mValue.mIntVal = (LIntPtr)this;
     // 放入临时变量中进行存储
-    // 则不会再GC线程中被误清除
+    // 则不会在GC线程中被误清除
     SetNativeResult(&value, m_runtime->vm());
     GCAppendRef(this, BY_NAVCLASS, m_runtime->vm());
 }

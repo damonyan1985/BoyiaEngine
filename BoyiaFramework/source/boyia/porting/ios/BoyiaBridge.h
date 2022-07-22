@@ -14,6 +14,7 @@
 
 +(NSString*)getAppRoot;
 +(NSString*)getSSLCertPath;
++(void)handleApi:(NSString*)apiName andParams:(NSString*)params;
 
 @end
 

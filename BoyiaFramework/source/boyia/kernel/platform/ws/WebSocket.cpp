@@ -459,6 +459,7 @@ public:
                     }
                 }
                 receivedData.insert(receivedData.end(), rxbuf.begin() + ws.header_size, rxbuf.begin() + ws.header_size + (size_t)ws.N); // just feed
+                // 如果数据接受完毕
                 if (ws.fin) {
                     if (wsHandler) {
                         //wsHandler->handleMessage(std::string(receivedData.begin(), receivedData.end()));

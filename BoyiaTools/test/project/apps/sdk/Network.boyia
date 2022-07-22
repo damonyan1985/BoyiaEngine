@@ -23,3 +23,18 @@ class Network {
         BY_LoadData(url, callback, obj, paramStr);
     }
 }
+
+class BoyiaSocket {
+    prop socket = null;
+    
+    fun init(wsUrl) {
+        this.socket = BY_CreateSocket(wsUrl);
+    }
+    
+    fun sendMsg(msg) {
+        BY_SendSocketMsg(this.socket, msg);
+    }
+    
+    fun close() {
+    }
+}

@@ -4,6 +4,7 @@ namespace yanbo {
 // opengl坐标系与数学坐标系一致，与android坐标系不同   
 // uShapeType == 1, 表示是纹理
 // uShapeType == 2, 表示是圆角矩形
+// uShapeType == 3, 裁剪成圆角纹理
 // uShapeType == 0, 表示是普通矩形
 const char* FragmentSource::s_uielement = "#version 300 es\n"
                                           "precision mediump float;\n"
@@ -60,6 +61,9 @@ const char* FragmentSource::s_uielement = "#version 300 es\n"
                                           "    } else if (uShapeType == 2) {\n"
                                           //"        FragColor = vColor;\n"
                                           "        FragColor = vec4(vColor.rgb, vColor.a * circle());\n"
+                                          "    } else if (uShapeType == 3) {\n"
+                                          "        vec4 texColor = texture(uSampler2D, vTexCoord) * vColor;\n"
+                                          "        FragColor = vec4(texColor.rgb, texColor.a * circle());\n"
                                           "    } else {\n"
                                           "        FragColor = vColor;\n"
                                           "    }\n"

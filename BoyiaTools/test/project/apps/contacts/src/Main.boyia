@@ -9,6 +9,7 @@ class MainViewController extends ViewController {
     // 主View设计
     prop mainView;
     prop viewId;
+    prop socket;
     fun onCreate() {
         var a = 9; 
         var b = 5;
@@ -79,6 +80,10 @@ class MainViewController extends ViewController {
         body.map(this.testMapFunc);
         
         this.testCall(testMapFunc, "hello testCall");
+        
+        this.socket = new(BoyiaSocket);
+        this.socket.init("ws://127.0.0.1:8445/contacts?id=123");
+        this.socket.sendMsg("hello world");
     }
     
     fun testCall(propFunc, elem) {
