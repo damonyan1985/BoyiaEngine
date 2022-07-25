@@ -79,11 +79,14 @@ class MainViewController extends ViewController {
         this.viewId = 30;
         body.map(this.testMapFunc);
         
-        this.testCall(testMapFunc, "hello testCall");
+        this.testCall(this.testMapFunc, "hello testCall");
         
-        this.socket = new(BoyiaSocket);
-        this.socket.init("ws://127.0.0.1:8445/contacts?id=123");
-        this.socket.sendMsg("hello world");
+        this.socket = BoyiaSocket.create("ws://127.0.0.1:8445/contacts?uid=123", this.onSocketMsg);
+        this.socket.sendMsg("hello world boyia");
+    }
+    
+    prop fun onSocketMsg(msg) {
+        Util.log("onSocketMsg msg:" + msg);
     }
     
     fun testCall(propFunc, elem) {

@@ -7,19 +7,10 @@
 #include "BoyiaBase.h"
 
 namespace boyia {
-class BoyiaSocketListener {
-public:
-    virtual LVoid onListen() = 0;
-    virtual LVoid onMessage(const String& message) = 0;
-    virtual LVoid onClose() = 0;
-};
-
 class BoyiaSocket : public BoyiaBase, public yanbo::BaseThread, public yanbo::WebSocketHandler {
 public:
-    BoyiaSocket(const String& url, BoyiaRuntime* runtime);
+    BoyiaSocket(const String& url, BoyiaValue* msgCB, BoyiaRuntime* runtime);
     ~BoyiaSocket();
-
-    LVoid setSocketListener(BoyiaSocketListener* listener);
 
     virtual LVoid run();
     virtual LVoid handleMessage(const String& message);
@@ -27,10 +18,12 @@ public:
     LVoid send(const String& message);
 
 private:
+    LVoid onMessage(const String& message);
+    
     yanbo::WebSocket* m_socket;
     String m_wsUrl;
-    BoyiaSocketListener* m_listener;
     KVector<String> m_msgs;
+    BoyiaValue m_msgCB;
 };
 }
 

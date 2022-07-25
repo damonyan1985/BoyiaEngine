@@ -27,8 +27,14 @@ class Network {
 class BoyiaSocket {
     prop socket = null;
     
-    fun init(wsUrl) {
-        this.socket = BY_CreateSocket(wsUrl);
+    fun create(wsUrl, msgCB) {
+        var ws = new(BoyiaSocket);
+        ws.init(wsUrl, msgCB);
+        return ws;
+    }
+    
+    fun init(wsUrl, msgCB) {
+        this.socket = BY_CreateSocket(wsUrl, msgCB);
     }
     
     fun sendMsg(msg) {

@@ -216,10 +216,10 @@ void testHashMap()
     yanbo::AppManager::instance()->setViewport(LRect(0, 0, 720, logicHeight));
     yanbo::AppManager::instance()->start();
     //testHashMap();
-    boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://127.0.0.1:8445/contacts?id=456"), kBoyiaNull);
-    new yanbo::Timer(600, [socket]() -> LVoid {
-        socket->send(_CS("hello world"));
-    }, LTrue);
+//    boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://127.0.0.1:8445/contacts"), kBoyiaNull);
+//    new yanbo::Timer(600, [socket]() -> LVoid {
+//        socket->send(_CS("hello world"));
+//    }, LTrue);
     
     return renderer;
 }

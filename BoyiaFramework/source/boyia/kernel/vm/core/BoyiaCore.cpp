@@ -2778,6 +2778,10 @@ LVoid CompileCode(LInt8* code, LVoid* vm)
 
 LVoid* GetLocalValue(LInt idx, LVoid* vm)
 {
+    LInt size = GetLocalSize(vm);
+    if (idx >= size) {
+        return kBoyiaNull;
+    }
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     LInt start = vmPtr->mExecStack[vmPtr->mEState->mFunctos - 1].mLValSize;
     return &vmPtr->mLocals[start + idx];

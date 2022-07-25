@@ -820,13 +820,14 @@ LInt toJsonString(LVoid* vm)
 
 LInt createSocket(LVoid* vm)
 {
-    BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
+    BoyiaValue* wsUrl = (BoyiaValue*)GetLocalValue(0, vm);
+    BoyiaValue* msgCB = (BoyiaValue*)GetLocalValue(1, vm);
 
-    BoyiaStr* urlStr = GetStringBuffer(value);
+    BoyiaStr* urlStr = GetStringBuffer(wsUrl);
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
 
-    new boyia::BoyiaSocket(strUrl, static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    new boyia::BoyiaSocket(strUrl, msgCB, static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
     return kOpResultSuccess;
 }
 
