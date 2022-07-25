@@ -91,4 +91,7 @@ LInt createSocket(LVoid* vm);
 LInt sendSocketMsg(LVoid* vm);
 // BoyiaSocket Api End
 
+// 平台相关api调用
+LInt callPlatformApiHandler(LVoid* vm);
+
 #endif // !BoyiaLib_h

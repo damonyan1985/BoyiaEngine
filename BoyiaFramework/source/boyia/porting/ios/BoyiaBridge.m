@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "BoyiaBridge.h"
 
+static NSMutableDictionary* _apiMap = nil;
+
 @implementation BoyiaBridge
 
 +(NSBundle*)getAppBundle {
@@ -32,8 +34,31 @@
     return boyiaCertPath;
 }
 
-+(void)handleApi:(NSString*)apiName andParams:(NSString*)params {
++(NSMutableDictionary*)apiMap {
+    if (!_apiMap) {
+        _apiMap = [NSMutableDictionary new];
+    }
     
+    return _apiMap;
+}
+
++(void)registerApi:(NSString*)apiName creator:(BoyiaApiCreator)creator {
+    [[BoyiaBridge apiMap]setObject:creator forKey:apiName];
+}
+
++(void)handleApi:(NSString*)json callback:(id<BoyiaApiHandlerCB>)cb {
+    NSMutableDictionary* map = [BoyiaBridge apiMap];
+    NSData* data = [json dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableDictionary* jsonObj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    
+    NSString* method = jsonObj[@"api_method"];
+    NSDictionary* params = jsonObj[@"api_params"];
+    if (!method || !params) {
+        return;
+    }
+    
+    BoyiaApiCreator creator = map[method];
+    [creator() handle:params callback:cb];
 }
 
 @end

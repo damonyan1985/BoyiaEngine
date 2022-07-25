@@ -50,6 +50,9 @@ class SplashViewController: UIViewController {
         self.view.layer.addSublayer(gradient)
         //self.navigationController?.navigationBar.barStyle = .default
         //view.backgroundColor = UIColor(hex: 0xFFC125)
+        
+        // 注册api
+        self.registerApiHandler()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,5 +67,11 @@ class SplashViewController: UIViewController {
         //self.navigationController?.pushViewController(BoyiaViewController(), animated: true)
         self.navigationController?.pushViewController(
             BoyiaAppViewController(rootView: HomeView()), animated: true)
+    }
+    
+    func registerApiHandler() {
+        BoyiaBridge.registerApi("user_info", creator: {
+            return GetUserInfoHandler()
+        })
     }
 }

@@ -849,3 +849,12 @@ LInt getPlatformType(LVoid* vm)
 {
     return resultInt((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
 }
+
+LInt callPlatformApiHandler(LVoid* vm)
+{
+    // 方法名
+    BoyiaValue* method = (BoyiaValue*)GetLocalValue(0, vm);
+    // 方法参数
+    BoyiaValue* params = (BoyiaValue*)GetLocalValue(1, vm);
+    return kOpResultSuccess;
+}
