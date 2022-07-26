@@ -97,13 +97,14 @@ body {
     background-color:#FFFFFFFF;
 }
 .underline {
-	border-bottom: #e8e8e8 solid 1px;
 	flex-direction: row;
-	focusable: true; 
+	focusable: true;
+    height: 152px;
 }
 #hot {
-	width: 220px;
-	height: 150px;
+	width: 120px;
+	height: 120px;
+    border-radius: 24px;
 }
 #title {
 	font-size: 30px;
@@ -119,7 +120,7 @@ body {
 	margin-left: 20px;
 }
 .new_text {
-	width: 500px;
+	width: 560px;
 	height: 150px;
 }
 #header {
@@ -128,8 +129,8 @@ body {
 .items {
     position: absolute;
     top: 155px;
-    background-color:#FFFF00FF;
-    height: 1025px;
+    background-color:#FFFFFFFF;
+    height: 1200px;
 }
 .video {
 	position:absolute;
@@ -184,9 +185,8 @@ body {
 	position: absolute;
 	align: bottom;
 	width: 720px;
-	height: 100px;
-	border-top: 1px solid #8F8F8F;
-	background-color: #F6F5ECCC;
+	height: 150px;
+	background-color: #F8F8FFFF;
 }
 
 .tabs {
@@ -250,4 +250,28 @@ body {
     width: 200px;
     height: 100px;
     border-radius: 24px;
+}
+
+.avatar-container {
+    width: 160px;
+    height: 150px;
+}
+
+.avatar-center {
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    align: center;
+}
+
+#msg-badge {
+    width: 32px;
+    height: 32px;
+    background-color: #FF3030FF;
+    border-radius: 16px;
+    margin-left: 120px;
+    margin-top: 10px;
+    color: #FFFFFF;
+    font-size:24px;
+    text-align:center;
 }

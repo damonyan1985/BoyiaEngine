@@ -1,11 +1,18 @@
 <view class="underline">
+<div class="avatar-container">
+<div class="avatar-center">
+<img id="hot" />
+</div>
+
+<div id="msg-badge">1</div>
+</div>
+
 <div class="new_text">
+
 <div id="title">
 测试
 </div>
 <div id="info" />
-</div>
-<div>
-<img id="hot" />
+
 </div>
 </view>

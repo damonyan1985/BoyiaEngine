@@ -119,7 +119,8 @@ LVoid BlockView::layoutPositionChild(HtmlView* child)
         child->setYpos(m_height - child->getHeight());
     } else if (m_style.width && child->getStyle()->align == util::Style::ALIGN_CENTER) {
         child->setXpos((m_width - child->getWidth()) / 2);
-        child->setYpos(child->getStyle()->top);
+        //child->setYpos(child->getStyle()->top);
+        child->setYpos((m_height - child->getHeight()) / 2);
         BOYIA_LOG("BlockView layoutPositionChild m_width=%d child.width=%d", m_width, child->getWidth());
         //child->setYpos(m_height - child->getHeight());
     } else {

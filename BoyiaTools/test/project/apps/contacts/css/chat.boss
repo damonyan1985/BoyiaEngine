@@ -33,3 +33,7 @@
 	width: 600px;
 	height: 80px;
 }
+
+.avatar_center {
+
+}
