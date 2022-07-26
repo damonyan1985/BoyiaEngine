@@ -10,10 +10,11 @@
 
 namespace yanbo {
 
-TaskThread::TaskThread(BlockQueue* queue)
+TaskThread::TaskThread(BlockQueue* queue, LBool isOwner)
     : m_queue(queue)
     , m_continue(LTrue)
     , m_working(LFalse)
+    , m_isOwner(isOwner)
 {
 }
 
@@ -24,6 +25,12 @@ TaskThread::~TaskThread()
 LBool TaskThread::working()
 {
     return m_working;
+}
+
+LVoid TaskThread::sendTask(TaskBase* task)
+{
+    m_queue->addTask(task);
+    notify();
 }
 
 void TaskThread::run()
@@ -46,6 +53,8 @@ void TaskThread::run()
             BaseThread::waitOnNotify();
         }
     }
+    
+    delete this;
 }
 
 bool TaskThread::isAlive()
@@ -56,5 +65,6 @@ bool TaskThread::isAlive()
 void TaskThread::stop()
 {
     m_continue = LFalse;
+    notify();
 }
 }

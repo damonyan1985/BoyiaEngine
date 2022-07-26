@@ -80,7 +80,6 @@ LVoid BoyiaSocket::run()
     }
 
     socket->setHandler(this);
-    //onListen();
     // 切到UI线程处理消息
     WeakPtr<BoyiaSocket>* weak = new WeakPtr<BoyiaSocket>(this);
     yanbo::UIThread::instance()->postClosureTask([weak]() -> void {
@@ -111,5 +110,8 @@ LVoid BoyiaSocket::release()
 
 BoyiaSocket::~BoyiaSocket()
 {
+    if (m_socket) {
+        delete m_socket;
+    }
 }
 }

@@ -3,7 +3,6 @@
 
 #include "WebSocket.h"
 #include "UtilString.h"
-#include "BaseThread.h"
 #include "BoyiaBase.h"
 
 namespace boyia {
@@ -19,11 +18,12 @@ public:
 
     virtual LVoid run();
     virtual LVoid handleMessage(const String& message);
-    LVoid onListen();
     LVoid send(const String& message);
 
 private:
     ~BoyiaSocket();
+    
+    LVoid onListen();
     LVoid onMessage(const String& message);
     
     yanbo::WebSocket* m_socket;

@@ -16,8 +16,8 @@ ThreadPool::ThreadPool()
 
 ThreadPool::~ThreadPool()
 {
-    KList<BoyiaPtr<TaskThread>>::Iterator iter = m_threadList.begin();
-    KList<BoyiaPtr<TaskThread>>::Iterator iterEnd = m_threadList.end();
+    KList<TaskThread*>::Iterator iter = m_threadList.begin();
+    KList<TaskThread*>::Iterator iterEnd = m_threadList.end();
     for (; iter != iterEnd; ++iter) {
         (*iter)->stop();
     }
@@ -43,8 +43,8 @@ void ThreadPool::sendTask(TaskBase* task)
         m_queue->addTask(task);
     }
 
-    KList<BoyiaPtr<TaskThread>>::Iterator iter = m_threadList.begin();
-    KList<BoyiaPtr<TaskThread>>::Iterator iterEnd = m_threadList.end();
+    KList<TaskThread*>::Iterator iter = m_threadList.begin();
+    KList<TaskThread*>::Iterator iterEnd = m_threadList.end();
     for (; iter != iterEnd; ++iter) {
         if (!(*iter)->working()) {
             (*iter)->notify();
@@ -53,7 +53,7 @@ void ThreadPool::sendTask(TaskBase* task)
     }
 
     if (m_threadList.count() < KThreadPoolSize) {
-        BoyiaPtr<TaskThread> thread = new TaskThread(m_queue.get());
+        TaskThread* thread = new TaskThread(m_queue.get());
         m_threadList.push(thread);
         thread->start();
     }

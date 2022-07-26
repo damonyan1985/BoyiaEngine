@@ -18,7 +18,7 @@ private:
     ~ThreadPool();
     ThreadPool();
 
-    KList<BoyiaPtr<TaskThread>> m_threadList;
+    KList<TaskThread*> m_threadList;
     BoyiaPtr<BlockQueue> m_queue;
 };
 }

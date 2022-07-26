@@ -78,7 +78,8 @@ typedef int socket_t;
 #include "WebSocket.h"
 #include "KList.h"
 #include "OwnerPtr.h"
-#include "ThreadPool.h"
+//#include "ThreadPool.h"
+#include "TaskThread.h"
 
 namespace yanbo {
 
@@ -314,6 +315,8 @@ public:
     bool isRxBad;
     WebSocketHandler* wsHandler;
     KList<OwnerPtr<String>> msgList;
+    // 独立线程处理send事件，避免多线程写socket出现次序问题
+    yanbo::TaskThread* sendExecutor;
     
 
     WebSocketImpl(socket_t sockfd, bool useMask)
@@ -323,6 +326,13 @@ public:
         , isRxBad(false)
         , wsHandler(NULL)
     {
+        sendExecutor = new yanbo::TaskThread(new yanbo::BlockQueue(), LTrue);
+        sendExecutor->start();
+    }
+    
+    ~WebSocketImpl()
+    {
+        sendExecutor->stop();
     }
 
     virtual void setHandler(WebSocketHandler* handler)
@@ -359,6 +369,8 @@ public:
         select(sockfd + 1, &rfds, &wfds, 0, timeout > 0 ? &tv : 0);
         //}
 
+        // 避免使用FD_ISSET造成不断轮询的问题
+        // 大多数情况下，缓冲区都是可写的，会不断触发可写事件，造成性能问题
         while (true) {
             // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
@@ -516,13 +528,14 @@ public:
         }
     }
 
+    // 读写分离
     void send(const String& message)
     {
         if (readyState == WebSocket::kClosing || readyState == WebSocket::kClosed) {
             return;
         }
         
-        ThreadPool::getInstance()->sendTask(
+        sendExecutor->sendTask(
             new SocketSendTask(
                 message,
                 wsheader_type::TEXT_FRAME,
@@ -621,7 +634,7 @@ public:
 //        uint8_t closeFrame[6] = { 0x88, 0x80, 0x00, 0x00, 0x00, 0x00 }; // last 4 bytes are a masking key
 //        std::vector<uint8_t> header(closeFrame, closeFrame + 6);
 //        txbuf.insert(txbuf.end(), header.begin(), header.end());
-        ThreadPool::getInstance()->sendTask(new SocketCloseTask(sockfd));
+        sendExecutor->sendTask(new SocketCloseTask(sockfd));
     }
 };
 
