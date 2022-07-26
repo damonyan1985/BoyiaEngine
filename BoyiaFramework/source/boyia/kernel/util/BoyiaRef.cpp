@@ -17,6 +17,11 @@ void BoyiaRef::ref()
     m_refCount->ref();
 }
 
+LVoid BoyiaRef::onlyDeref()
+{
+    m_refCount->deref();
+}
+
 void BoyiaRef::deref()
 {
     m_refCount->deref();

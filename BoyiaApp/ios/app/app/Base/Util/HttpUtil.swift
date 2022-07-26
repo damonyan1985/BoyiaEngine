@@ -158,8 +158,7 @@ class HttpUtil {
         let uid = BoyiaLoginInfo.shared.user?.uid ?? 0
         let md5 = BoyiaLoginInfo.shared.token?.md5 ?? ""
         
-        imageUrl = "\(imageUrl)?uid=\(uid)&token=\(md5)"
-        
+        imageUrl = "\(imageUrl)?uid=\(uid)&token=\(md5)"        
         return imageUrl;
     }
     

@@ -11,6 +11,8 @@ public:
 
     LVoid ref();
     LVoid deref();
+    // 只做引用计数减一，但不释放内存
+    LVoid onlyDeref();
     RefCount* count() const;
 
     void* operator new(size_t sz);

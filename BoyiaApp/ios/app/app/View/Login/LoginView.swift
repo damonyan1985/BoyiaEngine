@@ -42,6 +42,12 @@ struct LoginView : View {
     // 导航返回
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    var successCB: (() -> Void)?
+    
+    public init(successCB: (() -> Void)? = nil) {
+        self.successCB = successCB;
+    }
+    
     var body: some View {
         let iconSize = 36.dp
         let buttonSize = 64.dp

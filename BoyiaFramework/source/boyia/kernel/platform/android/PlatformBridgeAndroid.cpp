@@ -221,6 +221,10 @@ PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 {
     return kPlatformAndroid;
 }
+
+void PlatformBridge::handleApi(const String& params, LIntPtr callback)
+{    
+}
 }
 
 #endif

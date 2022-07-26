@@ -192,6 +192,10 @@ PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 {
     return kPlatformWindows;
 }
+
+void PlatformBridge::handleApi(const String& params, LIntPtr callback)
+{    
+}
 }
 
 #endif

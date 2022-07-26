@@ -42,4 +42,9 @@ LInt BoyiaBase::gcFlag() const
 {
     return m_gcFlag;
 }
+
+LVoid BoyiaBase::release()
+{
+    delete this;
+}
 }

@@ -115,22 +115,22 @@ static socket_t hostname_connect(const std::string& hostname, int port)
     return sockfd;
 }
 
-class SocketSendTask : public TaskBase {
+class WebSocketTask : public TaskBase {
 public:
-    SocketSendTask(const String& msg, int type, socket_t sockfd, bool mask)
-        : message(msg)
-        , headerType(type)
-        , wsockfd(sockfd)
-        , useMask(mask)
+    WebSocketTask(socket_t sockfd)
+        : wsockfd(sockfd)
     {
     }
-
+    
     virtual LVoid execute()
     {
-        std::string msg(GET_STR(message));
-        sendData(headerType, msg.size(), msg.begin(), msg.end());
+        std::vector<uint8_t> txbuf;
+        handleData(txbuf);
+        sendImpl(txbuf);
     }
-
+    
+    virtual LVoid handleData(std::vector<uint8_t>& txbuf) = 0;
+    
     void sendImpl(std::vector<uint8_t>& txbuf)
     {
         while (txbuf.size()) {
@@ -139,23 +139,53 @@ public:
                 break;
             } else if (ret <= 0) {
                 closesocket(wsockfd);
-                //readyState = CLOSED;
                 BOYIA_LOG(ret < 0 ? "Connection error! %d" : "Connection closed! %d", 1);
                 break;
             } else {
                 txbuf.erase(txbuf.begin(), txbuf.begin() + ret);
             }
         }
+    }
+    
+private:
+    socket_t wsockfd;
+};
 
-        /*
-        if (!txbuf.size() && readyState == CLOSING) {
-            closesocket(sockfd);
-            readyState = CLOSED;
-        }*/
+class SocketCloseTask : public WebSocketTask {
+public:
+    SocketCloseTask(socket_t sockfd)
+        : WebSocketTask(sockfd) {}
+    
+    virtual LVoid handleData(std::vector<uint8_t>& txbuf)
+    {
+        uint8_t closeFrame[6] = { 0x88, 0x80, 0x00, 0x00, 0x00, 0x00 }; // last 4 bytes are a masking key
+        std::vector<uint8_t> header(closeFrame, closeFrame + 6);
+        txbuf.insert(txbuf.end(), header.begin(), header.end());
+    }
+};
+
+class SocketSendTask : public WebSocketTask {
+public:
+    SocketSendTask(const String& msg, int type, socket_t sockfd, bool mask)
+        : WebSocketTask(sockfd)
+        , message(msg)
+        , headerType(type)
+        , useMask(mask)
+    {
+    }
+    
+    LVoid handleData(std::vector<uint8_t>& txbuf) override
+    {
+        std::string msg(GET_STR(message));
+        sendData(headerType, msg.size(), msg.begin(), msg.end(), txbuf);
     }
 
     template <class Iterator>
-    void sendData(int type, uint64_t message_size, Iterator message_begin, Iterator message_end)
+    void sendData(int type,
+                  uint64_t message_size,
+                  Iterator message_begin,
+                  Iterator message_end,
+                  std::vector<uint8_t>& txbuf)
     {
         // TODO:
         // Masking key should (must) be derived from a high quality random
@@ -164,10 +194,6 @@ public:
 
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         // TODO: consider acquiring a lock on txbuf...
-        /*
-        if (readyState == CLOSING || readyState == CLOSED) {
-            return;
-        }*/
         std::vector<uint8_t> header;
         header.assign(2 + (message_size >= 126 ? 2 : 0) + (message_size >= 65536 ? 6 : 0) + (useMask ? 4 : 0), 0);
         header[0] = 0x80 | type;
@@ -208,7 +234,7 @@ public:
         }
         // N.B. - txbuf will keep growing until it can be transmitted over the socket:
         // Add message header
-        std::vector<uint8_t> txbuf;
+        
         txbuf.insert(txbuf.end(), header.begin(), header.end());
         // Add message body
         txbuf.insert(txbuf.end(), message_begin, message_end);
@@ -218,14 +244,11 @@ public:
                 txbuf[message_offset + i] ^= masking_key[i & 0x3];
             }
         }
-
-        sendImpl(txbuf);
     }
 
 private:
     String message;
     int headerType;
-    socket_t wsockfd;
     bool useMask;
 };
 
@@ -374,6 +397,11 @@ public:
             closesocket(sockfd);
             readyState = CLOSED;
         }*/
+        
+        if (readyState == WebSocket::kClosing) {
+            closesocket(sockfd);
+            readyState = WebSocket::kClosed;
+        }
     }
 
     virtual void dispatch()
@@ -490,13 +518,16 @@ public:
 
     void send(const String& message)
     {
+        if (readyState == WebSocket::kClosing || readyState == WebSocket::kClosed) {
+            return;
+        }
+        
         ThreadPool::getInstance()->sendTask(
             new SocketSendTask(
                 message,
                 wsheader_type::TEXT_FRAME,
                 sockfd,
-                useMask
-                ));
+                useMask));
         //std::string msg(GET_STR(message));
         //sendData(wsheader_type::TEXT_FRAME, msg.size(), msg.begin(), msg.end());
     }
@@ -587,9 +618,10 @@ public:
             return;
         }
         readyState = WebSocket::kClosing;
-        uint8_t closeFrame[6] = { 0x88, 0x80, 0x00, 0x00, 0x00, 0x00 }; // last 4 bytes are a masking key
-        std::vector<uint8_t> header(closeFrame, closeFrame + 6);
-        txbuf.insert(txbuf.end(), header.begin(), header.end());
+//        uint8_t closeFrame[6] = { 0x88, 0x80, 0x00, 0x00, 0x00, 0x00 }; // last 4 bytes are a masking key
+//        std::vector<uint8_t> header(closeFrame, closeFrame + 6);
+//        txbuf.insert(txbuf.end(), header.begin(), header.end());
+        ThreadPool::getInstance()->sendTask(new SocketCloseTask(sockfd));
     }
 };
 

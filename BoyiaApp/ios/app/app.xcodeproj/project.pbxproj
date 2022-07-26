@@ -45,6 +45,7 @@
 		4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7927EC601800795648 /* HomeView.swift */; };
 		4CC8FB7C27EC6E0A00795648 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8FB7B27EC6E0A00795648 /* Navigator.swift */; };
 		4CD3602C288EC2FA00A4777E /* GetUserInfoHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3602B288EC2FA00A4777E /* GetUserInfoHandler.swift */; };
+		4CD3602E288F89EE00A4777E /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3602D288F89EE00A4777E /* LoginHandler.swift */; };
 		4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */; };
 		4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */; };
 		4CF12FB128191E0B00F0067E /* BoyiaAppListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */; };
@@ -119,6 +120,7 @@
 		4CC8FB7927EC601800795648 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		4CC8FB7B27EC6E0A00795648 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		4CD3602B288EC2FA00A4777E /* GetUserInfoHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserInfoHandler.swift; sourceTree = "<group>"; };
+		4CD3602D288F89EE00A4777E /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		4CF12FAC2817F2D800F0067E /* BoyiaAppListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListModel.swift; sourceTree = "<group>"; };
 		4CF12FAE28191CD500F0067E /* BoyiaAppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppItem.swift; sourceTree = "<group>"; };
 		4CF12FB028191E0B00F0067E /* BoyiaAppListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoyiaAppListData.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 			isa = PBXGroup;
 			children = (
 				4CD3602B288EC2FA00A4777E /* GetUserInfoHandler.swift */,
+				4CD3602D288F89EE00A4777E /* LoginHandler.swift */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -430,6 +433,7 @@
 				4CC8FB7A27EC601800795648 /* HomeView.swift in Sources */,
 				4CF12FAD2817F2D900F0067E /* BoyiaAppListModel.swift in Sources */,
 				4CFC5A00283CAFE600E9639C /* BoyiaUserInfo.swift in Sources */,
+				4CD3602E288F89EE00A4777E /* LoginHandler.swift in Sources */,
 				4CC8FB6927EB502A00795648 /* WebNavigationDelegateImpl.swift in Sources */,
 				4CF12FAF28191CD500F0067E /* BoyiaAppItem.swift in Sources */,
 				4CBE2E55283B9C7C001F0729 /* Animations.swift in Sources */,

@@ -11,13 +11,15 @@ namespace boyia {
 class BoyiaBase {
 public:
     BoyiaBase(BoyiaRuntime* runtime);
-    virtual ~BoyiaBase();
+    virtual LVoid release();
 
     BoyiaRuntime* runtime() const;
     LVoid setGcFlag(LInt flag);
     LInt gcFlag() const;
 
 protected:
+    virtual ~BoyiaBase();
+    
     BoyiaRuntime* m_runtime;
     LInt m_gcFlag;
 };

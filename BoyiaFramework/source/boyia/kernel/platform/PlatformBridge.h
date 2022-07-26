@@ -2,6 +2,7 @@
 #define PlatformBridge_h
 
 #include "UtilString.h"
+#include <functional>
 
 namespace yanbo {
 
@@ -25,6 +26,7 @@ public:
     static const char* getInstructionEntryPath();
     static const char* getSymbolTablePath();
     static const LReal getDisplayDensity();
+    static void handleApi(const String& params, LIntPtr callback);
     
     static PlatformType getPlatformType();
 };

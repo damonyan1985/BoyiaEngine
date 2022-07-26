@@ -158,6 +158,14 @@ extension String {
             return nil
         }
     }
+    
+    func encodeURIComponent() -> String? {
+        return self.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+    }
+    
+    func decodeURIComponent() -> String? {
+        return self.removingPercentEncoding;
+    }
 }
 
 // swiftui添加侧滑

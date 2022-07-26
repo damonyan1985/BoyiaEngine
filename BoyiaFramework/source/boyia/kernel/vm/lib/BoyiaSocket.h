@@ -7,10 +7,15 @@
 #include "BoyiaBase.h"
 
 namespace boyia {
-class BoyiaSocket : public BoyiaBase, public yanbo::BaseThread, public yanbo::WebSocketHandler {
+class BoyiaSocket : 
+    public BoyiaBase,
+    public BoyiaRef,
+    public yanbo::BaseThread,
+    public yanbo::WebSocketHandler {
 public:
     BoyiaSocket(const String& url, BoyiaValue* msgCB, BoyiaRuntime* runtime);
-    ~BoyiaSocket();
+    virtual LVoid release();
+    
 
     virtual LVoid run();
     virtual LVoid handleMessage(const String& message);
@@ -18,6 +23,7 @@ public:
     LVoid send(const String& message);
 
 private:
+    ~BoyiaSocket();
     LVoid onMessage(const String& message);
     
     yanbo::WebSocket* m_socket;

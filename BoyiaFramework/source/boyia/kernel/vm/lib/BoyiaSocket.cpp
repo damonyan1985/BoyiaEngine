@@ -14,6 +14,7 @@ BoyiaSocket::BoyiaSocket(const String& url, BoyiaValue* msgCB, BoyiaRuntime* run
         m_msgCB.mValue.mObj.mPtr = kBoyiaNull;
     }
     
+    ref();
     start();
 }
 
@@ -36,14 +37,16 @@ LVoid BoyiaSocket::send(const String& message)
 LVoid BoyiaSocket::handleMessage(const String& message)
 {
     BOYIA_LOG(">>> %s", GET_STR(message));
-//    if (m_listener) {
-//        m_listener->onMessage(message);
-//    }
-    
-    yanbo::UIThread::instance()->postClosureTask([self = this, message] {
+
+    WeakPtr<BoyiaSocket>* weak = new WeakPtr<BoyiaSocket>(this);
+    yanbo::UIThread::instance()->postClosureTask([weak, message] {
+        if (weak->expired()) {
+            return;
+        }
         String msg(message, message.GetLength());
-        self->onMessage(msg);
+        weak->get()->onMessage(msg);
         msg.ReleaseBuffer();
+        delete weak;
     });
 }
 
@@ -79,8 +82,13 @@ LVoid BoyiaSocket::run()
     socket->setHandler(this);
     //onListen();
     // 切到UI线程处理消息
-    yanbo::UIThread::instance()->postClosureTask([self = this]() -> void {
-        self->onListen();
+    WeakPtr<BoyiaSocket>* weak = new WeakPtr<BoyiaSocket>(this);
+    yanbo::UIThread::instance()->postClosureTask([weak]() -> void {
+        if (weak->expired()) {
+            return;
+        }
+        weak->get()->onListen();
+        delete weak;
     });
     
     m_socket = socket;
@@ -90,12 +98,18 @@ LVoid BoyiaSocket::run()
         m_socket->poll();
         // 派发消息
         m_socket->dispatch();
-        //m_socket->send(_CS("HAHAHA"));
     }
+    
+    delete this;
+}
+
+LVoid BoyiaSocket::release()
+{
+    onlyDeref();
+    m_socket->close();
 }
 
 BoyiaSocket::~BoyiaSocket()
 {
-    stop();
 }
 }

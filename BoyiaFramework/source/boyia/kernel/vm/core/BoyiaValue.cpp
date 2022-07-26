@@ -177,7 +177,7 @@ LBool MStrcmp(BoyiaStr* src, BoyiaStr* dest)
 
 extern LVoid NativeDelete(LVoid* data)
 {
-    delete static_cast<boyia::BoyiaBase*>(data);
+    static_cast<boyia::BoyiaBase*>(data)->release();
 }
 
 // "Hello" + "World"
