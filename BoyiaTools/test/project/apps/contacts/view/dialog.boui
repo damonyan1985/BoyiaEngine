@@ -1,0 +1,9 @@
+<view class="dialog-container">
+<div class="dialog">
+    <div class="dialog-title">Can you sure?</div>
+    <div class="dialog-button-container">
+        <div class="dialog-button" id="dialog-confirm">Confirm</div>
+        <div class="dialog-button" id="dialog-cancel">Cancel</div>
+    </div>
+</div>
+</view>

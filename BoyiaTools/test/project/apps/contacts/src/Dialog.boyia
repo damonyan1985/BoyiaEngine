@@ -1,0 +1,35 @@
+class DialogView extends ViewDoc {
+    prop confirm;
+    prop cancel;
+
+    fun initView(confirmCB, cancelCB) {
+        this.confirm = this.itemByID(ViewGroup, "dialog-confirm");
+        this.cancel = this.itemByID(ViewGroup, "dialog-cancel");
+        
+        this.confirm.addEventListener(2, confirmCB);
+        this.cancel.addEventListener(2, cancelCB);
+    }
+}
+
+class Dialog {
+    prop dialogView;
+    
+    fun show(confirmTitle, cancelTitle, confirmCB, cancelCB) {
+        this.dialogView = ViewDoc.createView(DialogView, "boyia://apps/contacts/view/dialog.boui");
+        this.dialogView.initView(this.confirmCallback, this.cancelCallback);
+        
+        ViewRoot.getRoot().appendView(this.dialogView);
+        this.dialogView.draw();
+        this.dialogView.commit();
+    }
+    
+    prop fun confirmCallback() {
+        Util.log("confirmCallback invoke");
+    }
+    
+    prop fun cancelCallback() {
+        Util.log("cancelCallback invoke");
+        this.dialogView.removeView();
+        this.dialogView.commit();
+    }
+}

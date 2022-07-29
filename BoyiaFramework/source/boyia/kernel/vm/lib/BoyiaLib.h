@@ -23,6 +23,8 @@ LInt createJSDocument(LVoid* vm);
 
 LInt appendView(LVoid* vm);
 
+LInt removeView(LVoid* vm);
+
 LInt getRootDocument(LVoid* vm);
 
 LInt setDocument(LVoid* vm);

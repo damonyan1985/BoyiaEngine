@@ -147,8 +147,6 @@ InputView::~InputView()
     if (m_text) {
         delete m_text;
     }
-
-    //Editor::get()->removeView(this);
 }
 
 LVoid InputView::setInputValue(const String& text)
@@ -399,16 +397,16 @@ public:
         layoutText();
     }
 
-    virtual LVoid paint(LGraphicsContext& gc)
-    {
-        LayoutPoint point;
-        paintTextBorder(gc, point);
-        if (m_value.GetLength() == 0) {
-            return;
-        }
-        
-        m_text->paint(gc);
-    }
+//    virtual LVoid paint(LGraphicsContext& gc)
+//    {
+//        LayoutPoint point;
+//        paintTextBorder(gc, point);
+//        if (m_value.GetLength() == 0) {
+//            return;
+//        }
+//        
+//        m_text->paint(gc);
+//    }
 };
 
 class InputButton : public InputView {

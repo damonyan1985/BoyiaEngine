@@ -10,6 +10,8 @@ public:
     static LVoid flexRowLayout(HtmlView* view);
     // 从右使用行排版
     static LVoid flexRowReverse(HtmlView* view);
+    // 等间距行排版
+    static LVoid flexRowSpacebetween(HtmlView* view);
 };
 }
 

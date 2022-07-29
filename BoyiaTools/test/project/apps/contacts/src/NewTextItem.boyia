@@ -3,6 +3,8 @@ class NewTextItem extends ViewDoc {
     prop info = null;
     prop image = null;
     prop titleText = null;
+    prop time = null;
+    prop badgeNum = null;
     
     fun initView() {
         Util.log("NewTextItem0");
@@ -10,18 +12,37 @@ class NewTextItem extends ViewDoc {
             Util.log("NewTextItem1");
             this.image = this.itemByID(ImageView, "hot");
         }
+        
         if (!this.title) {
             this.title = this.itemByID(ViewGroup, "title");
         }
+        
         if (!this.info) {
             this.info = this.itemByID(ViewGroup, "info");
+        }
+        
+        if (!this.time) {
+            this.time = this.itemByID(ViewGroup, "msg-time");
+        }
+        
+        if (!this.badgeNum) {
+            this.badgeNum = this.itemByID(ViewGroup, "msg-badge");
         }
         
         this.addEventListener(2, this.touchDownCallback);
     }
     
     fun touchDownCallback() {
-        Util.startApp(this.titleText);
+        //Util.startApp(this.titleText);
+        Dialog.show("", "", this.confirmCallback, this.cancelCallback);
+    }
+    
+    prop fun confirmCallback() {
+        
+    }
+    
+    prop fun cancelCallback() {
+    
     }
     
     fun setTitle(t) {
@@ -39,5 +60,13 @@ class NewTextItem extends ViewDoc {
     
     fun setInfo(i) {
         this.info.setText(i);
+    }
+    
+    fun setTime(time) {
+        this.time.setText(time);
+    }
+    
+    fun setBadgeNum(num) {
+        this.badgeNum.setText(num);
     }
 }

@@ -22,6 +22,7 @@ public:
         UIOP_SETTEXT,
         UIOP_DRAW,
         UIOP_APPLY_DOM_STYLE,
+        UIOP_REMOVE_VIEW
     };
 
     UIOperation();
@@ -41,12 +42,14 @@ public:
     LVoid opViewDraw(HtmlView* view);
     LVoid opApplyDomStyle(HtmlView* view);
     LVoid opSetInput(HtmlView* view, const String& text);
+    LVoid opRemoveView(HtmlView* view);
 
 private:
     LVoid viewAddChild(Message* msg);
     LVoid viewSetText(Message* msg);
     LVoid viewDraw(Message* msg);
     LVoid viewSetInput(Message* msg);
+    LVoid viewRemove(Message* msg);
 
     KVector<Message*>* m_msgs;
     KVector<WeakPtr<HtmlView>>* m_views;

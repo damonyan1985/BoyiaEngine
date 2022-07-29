@@ -97,6 +97,14 @@ LVoid UIOperation::opApplyDomStyle(HtmlView* view)
     m_msgs->addElement(msg);
 }
 
+LVoid UIOperation::opRemoveView(HtmlView* view)
+{
+    Message* msg = obtain();
+    msg->type = UIOP_REMOVE_VIEW;
+    msg->obj = new WeakPtr<HtmlView>(view);
+    m_msgs->addElement(msg);
+}
+
 LVoid UIOperation::swapBuffer()
 {
     UIThread::instance()->uiExecute();
@@ -147,6 +155,9 @@ LVoid UIOperation::execute()
             }
 
             delete root;
+        } break;
+        case UIOP_REMOVE_VIEW: {
+            viewRemove(msg);
         } break;
         }
 
@@ -219,6 +230,19 @@ LVoid UIOperation::viewDraw(Message* msg)
         (*view)->paint(*gc);
     }
    
+    delete view;
+}
+
+LVoid UIOperation::viewRemove(Message* msg)
+{
+    WeakPtr<HtmlView>* view = static_cast<WeakPtr<HtmlView>*>(msg->obj);
+    if (*view && (*view)->getParent()) {
+        HtmlView* parent = (*view)->getParent();
+        parent->removeChild(*view);
+        LGraphicsContext* gc = UIView::current()->getGraphicsContext();
+        parent->paint(*gc);
+    }
+
     delete view;
 }
 }

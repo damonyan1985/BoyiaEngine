@@ -139,28 +139,55 @@ LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
     Animator::instance()->startAnimation(anim);
 }
 
+LVoid BoyiaView::onTouchEventCallback(BoyiaValue* cb)
+{
+    SaveLocalSize(m_runtime->vm());
+    LocalPush(cb, m_runtime->vm());
+    
+    // 保存当前栈
+    SaveLocalSize(m_runtime->vm());
+    // callback函数压栈
+    LocalPush(cb, m_runtime->vm());
+    
+    if (cb->mValueType == BY_PROP_FUNC) {
+        // 构造回调对象引用
+        BoyiaValue cbObj;
+        cbObj.mValueType = BY_CLASS;
+        cbObj.mValue.mObj.mPtr = cb->mValue.mObj.mSuper;
+        
+        // 调用callback函数
+        NativeCall(&cbObj, m_runtime->vm());
+    } else {
+        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+        NativeCall(obj, m_runtime->vm());
+    }
+}
+
 LVoid BoyiaView::onPressDown(LVoid* view)
 {
     if (m_type & LTouchEvent::ETOUCH_DOWN) {
         KLOG("BoyiaBase::onPressDown");
         // 处理touchdown
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_DOWN >> 1];
-        SaveLocalSize(m_runtime->vm());
-        LocalPush(val, m_runtime->vm());
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj, m_runtime->vm());
+//        SaveLocalSize(m_runtime->vm());
+//        LocalPush(val, m_runtime->vm());
+//        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+//        NativeCall(obj, m_runtime->vm());
+        onTouchEventCallback(val);
     }
 }
+
 LVoid BoyiaView::onPressMove(LVoid* view)
 {
     if (m_type & LTouchEvent::ETOUCH_MOVE) {
         // 处理touchmove
         BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_MOVE >> 1];
 
-        SaveLocalSize(m_runtime->vm());
-        LocalPush(val, m_runtime->vm());
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj, m_runtime->vm());
+//        SaveLocalSize(m_runtime->vm());
+//        LocalPush(val, m_runtime->vm());
+//        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
+//        NativeCall(obj, m_runtime->vm());
+        onTouchEventCallback(val);
     }
 }
 
@@ -169,11 +196,8 @@ LVoid BoyiaView::onPressUp(LVoid* view)
     BOYIA_LOG("BoyiaBase::onPressUp m_type=%d ETOUCH_UP=%d", m_type, LTouchEvent::ETOUCH_UP);
     if (m_type & LTouchEvent::ETOUCH_UP) {
         // 处理touchup
-        BoyiaValue* val = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
-        SaveLocalSize(m_runtime->vm());
-        LocalPush(val, m_runtime->vm());
-        BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj, m_runtime->vm());
+        BoyiaValue* cb = &m_callbacks[LTouchEvent::ETOUCH_UP >> 1];
+        onTouchEventCallback(cb);
     }
 }
 
@@ -204,5 +228,10 @@ LVoid BoyiaView::setBoyiaView(BoyiaValue* value)
 LVoid BoyiaView::setVisible(bool visible)
 {
     m_item->setVisible(visible);
+}
+
+LVoid BoyiaView::removeView()
+{
+    runtime()->view()->operation()->opRemoveView(m_item);
 }
 }

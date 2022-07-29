@@ -120,7 +120,7 @@ body {
 	margin-left: 20px;
 }
 .new_text {
-	width: 560px;
+	width: 480px;
 	height: 150px;
 }
 #header {
@@ -291,4 +291,53 @@ body {
     font-size:24px;
     text-align:center;
     padding-top: 1px;
+}
+
+#msg-time {
+    width: 120px;
+    height: 150px;
+    font-size: 20px;
+    color: #77777799;
+    padding-top: 10px;
+}
+
+.dialog-container {
+    position:absolute;
+    align: all;
+    width: 720px;
+}
+
+.dialog {
+    width: 560px;
+    height: 280px;
+    border-radius: 24px;
+    background-color: #000000CC;
+    position:absolute;
+    align:center;
+}
+
+.dialog-title {
+    margin-top: 20px;
+    color: #FFF;
+    font-size: 54px;
+    text-align: center;
+}
+
+.dialog-button-container {
+    margin-top: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
+    flex-direction: row-spacebetween;
+}
+
+.dialog-button {
+    width: 220px;
+    height: 80px;
+    background-color: #00CD66;
+    border-radius: 12px;
+    font-size: 32px;
+    color: #FFF;
+    text-align: center;
+    padding-top: 22px;
+    focusable: true;
 }

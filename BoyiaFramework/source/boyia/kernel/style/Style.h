@@ -102,9 +102,11 @@ public:
     typedef enum FlexDirection {
         FLEX_NONE,
         FLEX_ROW,
-        FLEX_COLUMN,
         FLEX_ROW_REVERSE,
-        FLEX_COLUMN_REVERSE
+        FLEX_ROW_SPACE_BETWEEN,
+        FLEX_COLUMN,
+        FLEX_COLUMN_REVERSE,
+        FLEX_COLUMN_SPACE_BETWEEN
     } FlexDirection;
 
 public:

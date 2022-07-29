@@ -502,6 +502,8 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_ROW_REVERSE);
         } else if (value.CompareNoCase(_CS("column-reverse"))) {
             rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_COLUMN_REVERSE);
+        } else if (value.CompareNoCase(_CS("row-spacebetween"))) {
+            rule->addProperty(StyleTags::FLEX_DIRECTION, Style::FLEX_ROW_SPACE_BETWEEN);
         }
     } break;
     case StyleTags::BORDER_RADIUS:

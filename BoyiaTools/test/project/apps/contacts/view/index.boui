@@ -23,6 +23,8 @@
     <img class="round-image" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2Ftp09%2F210F2130512J47-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659068115&t=22169a6b31d4e6d9c4eedfdbfc604557" />
 </div>
 
+<div id="layer" />
+
 </body>
 <script src="boyia://apps/sdk/Util.boyia" />
 <script src="boyia://apps/sdk/Array.boyia" />
@@ -44,6 +46,7 @@
 <script src="boyia://apps/contacts/src/CategoryItem.boyia" />
 <script src="boyia://apps/contacts/src/SearchHeader.boyia" />
 <script src="boyia://apps/contacts/src/FooterView.boyia" />
+<script src="boyia://apps/contacts/src/Dialog.boyia" />
 <script src="boyia://apps/contacts/src/MainView.boyia" />
 <script src="boyia://apps/contacts/src/Main.boyia" />
 </html>

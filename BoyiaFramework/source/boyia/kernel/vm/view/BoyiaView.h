@@ -53,8 +53,11 @@ public:
     virtual LVoid addListener(LInt type, BoyiaValue* callback);
     LVoid setBoyiaView(BoyiaValue* value);
     LVoid setVisible(bool visible);
+    LVoid removeView();
 
 protected:
+    LVoid onTouchEventCallback(BoyiaValue* cb);
+    
     LInt m_type;
     BoyiaValue m_callbacks[EVENT_MAX_SIZE];
     BoyiaValue m_boyiaView;

@@ -1,5 +1,7 @@
 class ViewRoot {
 	prop root = null;
+    prop layer = null;
+ 
 	fun getRoot() {
 		if (!this.root) {
 	    	this.root = ViewDoc.rootView().itemByID(ViewGroup, "root");
@@ -7,4 +9,12 @@ class ViewRoot {
 
 	    return this.root;
 	}
+ 
+    fun getLayer() {
+        if (!this.layer) {
+            this.layer = ViewDoc.rootView().itemByID(ViewGroup, "layer");
+        }
+
+        return this.layer;
+    }
 }

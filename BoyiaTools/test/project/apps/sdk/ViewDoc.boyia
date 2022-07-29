@@ -24,10 +24,6 @@ class ViewDoc extends View {
     fun setDoc(doc) {
         BY_SetDocument(this.nativeView, doc);
     }
-    
-    fun removeView(view) {
-        BY_RemoveDocument(this.nativeView, view);
-    }
    
     fun itemByID(view, id) {
         var v = new(view);

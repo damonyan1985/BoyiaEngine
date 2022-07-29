@@ -57,4 +57,48 @@ LVoid FlexLayout::flexRowReverse(HtmlView* view)
         }
     }
 }
+
+// margin将失效
+LVoid FlexLayout::flexRowSpacebetween(HtmlView* view)
+{
+    const HtmlViewList& list = view->getChildren();
+    if (list.count() == 0) {
+        return;
+    }
+    
+    if (list.count() == 1) {
+        HtmlViewList::Iterator iter = list.begin();
+        (*iter)->setPos(0, 0);
+        return;
+    }
+    
+    HtmlViewList::Iterator iter = list.begin();
+    HtmlViewList::Iterator iterEnd = list.end();
+    
+    LInt childWidth = 0;
+    LInt childHeight = 0;
+    for (; iter != iterEnd; ++iter) {
+        HtmlView* child = (*iter);
+        child->layout();
+        childWidth += child->getWidth();
+        
+        if (childHeight < child->getHeight()) {
+            childHeight = child->getHeight();
+        }
+    }
+    
+    // style中没有指定height，则默认为子元素布局后的高度
+    if (!view->getStyle()->height) {
+        view->setHeight(childHeight);
+    }
+    
+    LInt deltaMargin = (view->getWidth() - childWidth) / (list.count() - 1);
+    LInt x = 0;
+    iter = list.begin();
+    for (; iter != iterEnd; ++iter) {
+        HtmlView* child = (*iter);
+        child->setXpos(x);
+        x += child->getWidth() + deltaMargin;
+    }
+}
 }

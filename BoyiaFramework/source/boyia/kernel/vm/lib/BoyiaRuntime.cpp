@@ -136,6 +136,7 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(GEN_ID("BY_toJson"), toJsonString);
     appendNative(GEN_ID("BY_CreateDocument"), createJSDocument);
     appendNative(GEN_ID("BY_AppendView"), appendView);
+    appendNative(GEN_ID("BY_RemoveView"), removeView);
     appendNative(GEN_ID("BY_GetRootDocument"), getRootDocument);
     appendNative(GEN_ID("BY_SetDocument"), setDocument);
     appendNative(GEN_ID("BY_RemoveDocument"), removeDocument);

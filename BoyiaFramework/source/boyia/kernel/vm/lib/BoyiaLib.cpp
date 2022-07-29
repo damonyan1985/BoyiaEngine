@@ -359,6 +359,14 @@ LInt removeDocument(LVoid* vm)
     return kOpResultSuccess;
 }
 
+LInt removeView(LVoid* vm)
+{
+    BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
+    boyia::BoyiaView* view = (boyia::BoyiaViewDoc*)val->mValue.mIntVal;
+    view->removeView();
+    return kOpResultSuccess;
+}
+
 LInt setViewXpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);

@@ -52,7 +52,9 @@ LVoid BlockView::layout()
     if (m_style.width) {
         m_width = m_style.width * m_style.scale;
     } else {
-        m_width = getParent() ? (getParent()->getWidth() - m_x) : m_doc->getViewPort().GetWidth();
+        m_width = getParent()
+            ? (getParent()->getWidth() - m_x - m_style.margin().leftMargin - m_style.margin().rightMargin)
+            : m_doc->getViewPort().GetWidth();
     }
 
     if (m_style.height) {
@@ -78,6 +80,8 @@ LVoid BlockView::layoutBlock(LBool relayoutChildren)
         BOYIA_LOG("layoutInlineBlock, m_height=%d selectable=%d", m_height, isSelectable());
     } else if (m_style.flexDirection == util::Style::FLEX_ROW_REVERSE) {
         FlexLayout::flexRowReverse(this);
+    } else if (m_style.flexDirection == util::Style::FLEX_ROW_SPACE_BETWEEN) {
+        FlexLayout::flexRowSpacebetween(this);
     } else {
         layoutBlockChildren(relayoutChildren);
     }
