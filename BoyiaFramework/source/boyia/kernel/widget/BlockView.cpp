@@ -163,7 +163,8 @@ LVoid BlockView::layoutInlineChildren()
 
     rc.addY(getStyle()->padding().bottomPadding);
 
-    m_height = rc.getY() > m_height ? rc.getY() : m_height;
+    //m_height = rc.getY() > m_height ? rc.getY() : m_height;
+    m_height = m_style.height ? m_style.height : (rc.getY() > m_height ? rc.getY() : m_height);
 }
 
 LVoid BlockView::layoutBlockChild(HtmlView* child, LayoutUnit& previousLogicalHeight)

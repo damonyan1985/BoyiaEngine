@@ -275,10 +275,11 @@ LVoid RenderEngineIOS::renderImage(RenderCommand* cmd)
         
         // 软裁剪
 //        CGImageCreateWithImageInRect(imageRef, CGRectMake(0, 0, image.size.width/2, image.size.height/2));
-        
+        float scaleFactor = PixelRatio::ratio() * [[UIScreen mainScreen] scale];
+                
         // 读取图片的宽高
-        size_t width = CGImageGetWidth(imageRef);
-        size_t height = CGImageGetHeight(imageRef);
+        size_t width = CGImageGetWidth(imageRef) * scaleFactor;
+        size_t height = CGImageGetHeight(imageRef) * scaleFactor;
         
         Byte* data = (Byte*) calloc(width * height * 4, sizeof(Byte)); //rgba共4个byte
         
@@ -327,22 +328,30 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         int scale = 1;
         UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
         //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
-        
-        int width = rect.GetWidth() * scale;
-        int height = rect.GetHeight() * scale;
+        //float scaleFactor = [[UIScreen mainScreen] scale];
+        float scaleFactor = PixelRatio::ratio() * [[UIScreen mainScreen] scale];
+        int width = round(rect.GetWidth() * scale * scaleFactor);
+        int height = round(rect.GetHeight() * scale * scaleFactor);
         Byte* data = (Byte*)malloc(width * height * 4); // rgba共4个byte
         memset(data, 0, width * height * 4);
+        
+        
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGContextRef context = CGBitmapContextCreate(data, width, height, 8, width*4,
-                                                           colorSpace,
-                                                           kCGImageAlphaPremultipliedLast);
+        CGContextRef context = CGBitmapContextCreate(data,
+                                                     width,
+                                                     height, 8, width*4,
+                                                     colorSpace,
+                                                     kCGImageAlphaPremultipliedLast);
         // push context之后才能绘制文字
         UIGraphicsPushContext(context);
         
         CGContextTranslateCTM(context, 0, height);
-        CGContextScaleCTM(context, 1.0, -1.0);
-        CGContextSetShouldAntialias(context, YES);
-        
+        //CGContextScaleCTM(context, 1.0, -1.0);
+        CGContextScaleCTM(context, scaleFactor, -scaleFactor);
+        CGContextSetShouldAntialias(context, true);
+        CGContextSetShouldSmoothFonts(context, true);
+        CGContextSetShouldSubpixelPositionFonts(context, true);
+        CGContextSetShouldSubpixelQuantizeFonts(context, true);
         //NSString* text = @"\U0000e800";
         // 文字颜色
         UIColor* uiColor = [UIColor colorWithRed:METAL_COLOR_BIT(textCmd->color.m_red)
@@ -356,10 +365,11 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
         [textAttributes setValue:uiColor forKey:NSForegroundColorAttributeName];
         //[textAttributes setValue:UIColor.blueColor forKey:NSForegroundColorAttributeName];
         
+    
         // 开始绘制文字
-    //    [text drawInRect:CGRectMake(0, 0, width * 2, height)
-    //      withAttributes:textAttributes];
-        [text drawAtPoint:CGPointMake(0, 0) withAttributes:textAttributes];
+        [text drawInRect:CGRectMake(0, 0, width, height)
+          withAttributes:textAttributes];
+        //[text drawAtPoint:CGPointMake(0, 0) withAttributes:textAttributes];
 
         UIGraphicsPopContext();
         
@@ -426,7 +436,6 @@ LVoid RenderEngineIOS::renderRoundImage(RenderCommand* cmd)
         
         // 软裁剪
 //        CGImageCreateWithImageInRect(imageRef, CGRectMake(0, 0, image.size.width/2, image.size.height/2));
-        
         // 读取图片的宽高
         size_t width = CGImageGetWidth(imageRef);
         size_t height = CGImageGetHeight(imageRef);

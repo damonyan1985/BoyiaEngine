@@ -36,11 +36,6 @@ enum KeyEventType {
 
 bool JNI_LOG_ON = true;
 
-static LVoid boyiaSocketTest()
-{
-    boyia::BoyiaSocket* socket = new boyia::BoyiaSocket(_CS("ws://192.168.0.10:6666"), kBoyiaNull);
-}
-
 static void nativeSetGLSurface(
     JNIEnv* env,
     jobject obj,
@@ -85,8 +80,7 @@ static void nativeInitUIView(
 
     JNI_LOG_ON = isDebug;
     //ArmMemeset(NULL, 0, 0);
-    boyiaSocketTest();
-
+    
     if (!FileUtil::isExist(yanbo::PlatformBridge::getAppRoot())) {
         FileUtil::createDirs(yanbo::PlatformBridge::getAppRoot());
     }

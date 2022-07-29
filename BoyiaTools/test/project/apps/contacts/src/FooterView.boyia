@@ -1,26 +1,26 @@
 class FooterView extends ViewDoc {
-	prop mytab = null;
+	prop msgTab = null;
+    prop contactsTab = null;
     prop newsTab = null;
-    prop appTab = null;
-    prop videoTab = null;
+    prop mineTab = null;
     //prop chatPage = null;
 
     prop listener = null;
     
     fun initView() {
-        if (!this.mytab) {
-        	this.mytab = this.itemByID(ViewGroup, "my_tab");
-            this.mytab.addEventListener(TOUCH_UP, this.myTabClick);
+        if (!this.msgTab) {
+        	this.msgTab = this.itemByID(ViewGroup, "msg_tab");
+            this.msgTab.addEventListener(TOUCH_UP, this.myTabClick);
+        }
+        if (!this.contactsTab) {
+        	this.contactsTab = this.itemByID(ViewGroup, "contacts_tab");
         }
         if (!this.newsTab) {
-        	this.newsTab = this.itemByID(ViewGroup, "news_tab");
-        }
-        if (!this.appTab) {
-            this.appTab = this.itemByID(ViewGroup, "app_tab");
+            this.newsTab = this.itemByID(ViewGroup, "news_tab");
         }
         
-        if (!this.videoTab) {
-            this.videoTab = this.itemByID(ViewGroup, "video_tab");
+        if (!this.mineTab) {
+            this.mineTab = this.itemByID(ViewGroup, "mine_tab");
         }
     }
 

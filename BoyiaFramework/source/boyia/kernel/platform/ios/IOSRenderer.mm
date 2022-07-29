@@ -175,7 +175,7 @@ private:
     NSSet *set = [[UIApplication sharedApplication] connectedScenes];
     UIWindowScene* windowScene = [set anyObject];
     UIStatusBarManager* statusBarManager =  windowScene.statusBarManager;
-    return statusBarManager.statusBarFrame.size.height;
+    return statusBarManager.statusBarFrame.size.height * [UIScreen mainScreen].scale;
 }
 
 void testHashMap()
@@ -196,9 +196,12 @@ void testHashMap()
     //CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
 //    UIStatusBarManager* statusBarManager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
     //CGFloat statusBarHeight = statusBarManager.statusBarFrame.size.height;
+    CGFloat scaleFactor = [UIScreen mainScreen].scale;
+    
+    
     CGFloat statusBarHeight = [IOSRenderer getStatusBarHeight];
-    CGFloat w = [UIScreen mainScreen].bounds.size.width;
-    CGFloat h = [UIScreen mainScreen].bounds.size.height - statusBarHeight;
+    CGFloat w = [UIScreen mainScreen].bounds.size.width * scaleFactor;
+    CGFloat h = [UIScreen mainScreen].bounds.size.height * scaleFactor - statusBarHeight;
     
     NSLog(@"screen w=%f h=%f", w, h);
     
@@ -245,25 +248,30 @@ void testHashMap()
     return _cvTextureCache;
 }
 
--(void)onFling:(CGPoint)speed pointStart:(CGPoint)start pointEnd:(CGPoint)end{
+-(void)onFling:(CGPoint)speed pointStart:(CGPoint)start pointEnd:(CGPoint)end {
+    CGFloat scaleFactor = [UIScreen mainScreen].scale;
+    
     LFlingEvent* evt = new LFlingEvent();
-    evt->pt1.Set(yanbo::PixelRatio::viewX(start.x),
-                 yanbo::PixelRatio::viewY(start.y - self.statusBarHeight));
-    evt->pt2.Set(yanbo::PixelRatio::viewX(end.x),
-                 yanbo::PixelRatio::viewY(end.y - self.statusBarHeight));
+    evt->pt1.Set(yanbo::PixelRatio::viewX(start.x * scaleFactor),
+                 yanbo::PixelRatio::viewY(start.y * scaleFactor - self.statusBarHeight));
+    evt->pt2.Set(yanbo::PixelRatio::viewX(end.x * scaleFactor),
+                 yanbo::PixelRatio::viewY(end.y * scaleFactor - self.statusBarHeight));
 
     // 速度是秒级别的，换算成毫秒级别
 //    velocityX = velocityX / 1000;
 //    velocityY = velocityY / 1000;
-    evt->velocityX = yanbo::PixelRatio::viewX(speed.x);
-    evt->velocityY = yanbo::PixelRatio::viewY(speed.y);
+    evt->velocityX = yanbo::PixelRatio::viewX(speed.x * scaleFactor);
+    evt->velocityY = yanbo::PixelRatio::viewY(speed.y * scaleFactor);
 
     yanbo::AppManager::instance()->uiThread()->handleFlingEvent(evt);
 }
 
--(void)handleTouchEvent:(int)type x:(int)x y:(int)y {
-    y -= self.statusBarHeight;
-    yanbo::AppManager::instance()->handleTouchEvent(type, x, y);
+-(void)handleTouchEvent:(int)type point:(CGPoint)point {
+    CGFloat scaleFactor = [UIScreen mainScreen].scale;
+    
+    yanbo::AppManager::instance()->handleTouchEvent(type,
+                                                    point.x * scaleFactor,
+                                                    point.y * scaleFactor - self.statusBarHeight);
 }
 
 -(instancetype)initWithLayer:(CAMetalLayer*)layer {
@@ -327,7 +335,7 @@ void testHashMap()
 -(void)onKeyboardWillShow:(NSNotification*)notification {
     NSDictionary* info = [notification userInfo];
     CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey]CGRectValue];
-    self.keyboardHeight = keyboardRect.size.height;
+    self.keyboardHeight = keyboardRect.size.height * [UIScreen mainScreen].scale;
     yanbo::AppManager::instance()->uiThread()->onKeyboardShow(0, yanbo::PixelRatio::viewY(self.keyboardHeight));
 }
 
@@ -431,6 +439,8 @@ void testHashMap()
 
     id device = MTLCreateSystemDefaultDevice();
     
+    // 使用真实像素，避免文字，图片绘制模糊
+    self.metalLayer.contentsScale = [UIScreen mainScreen].scale;
     self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
     self.metalLayer.device = device;
     

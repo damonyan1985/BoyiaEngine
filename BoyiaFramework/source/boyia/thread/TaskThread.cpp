@@ -20,6 +20,9 @@ TaskThread::TaskThread(BlockQueue* queue, LBool isOwner)
 
 TaskThread::~TaskThread()
 {
+    if (m_isOwner) {
+        delete m_queue;
+    }
 }
 
 LBool TaskThread::working()
@@ -37,7 +40,7 @@ void TaskThread::run()
 {
     while (m_continue) {
         if (!m_queue) {
-            return;
+            break;
         }
 
         BoyiaPtr<TaskBase> task = m_queue->pollTask();

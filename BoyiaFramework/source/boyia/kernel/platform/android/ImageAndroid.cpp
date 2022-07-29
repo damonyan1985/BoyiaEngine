@@ -147,7 +147,8 @@ void ImageAndroid::drawText(const String& text,
         rect.GetWidth(),
         rect.GetHeight(),
         font.getFontSize(),
-        (jint)LColorUtil::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha),
+        //(jint)LColorUtil::rgb(penColor.m_red, penColor.m_green, penColor.m_blue, penColor.m_alpha),
+        (jint)value,
         (jint)font.getFontStyle());
     env->DeleteLocalRef(strText);
 }

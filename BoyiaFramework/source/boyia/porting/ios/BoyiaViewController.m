@@ -37,7 +37,7 @@
     UITouch* touch = [allTouches anyObject];
     CGPoint touchPoint = [touch preciseLocationInView:[touch view]];
     if (self.renderer) {
-        [self.renderer handleTouchEvent:type x:touchPoint.x y:touchPoint.y];
+        [self.renderer handleTouchEvent:type point:touchPoint];
     }
     NSLog(@"event: x=%f and y=%f", touchPoint.x, touchPoint.y);
 }

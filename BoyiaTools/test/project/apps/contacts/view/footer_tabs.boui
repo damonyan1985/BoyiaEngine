@@ -1,28 +1,23 @@
 <view class="tabs">
 
-<div class="tab_item" id="news_tab">
-<div class="my_tab_div"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
-<div class="my_tab_div">首页</div>
+<div class="tab_item" id="msg_tab">
+<div class="my_tab_div"><img class="my_tab_msg" src="boyia://apps/contacts/img/msg.png" /></div>
+<div class="my_tab_div">Message</div>
+</div>
+
+<div class="tab_item" id="contacts_tab">
+<div class="my_tab_div"><img class="my_tab_user" src="boyia://apps/contacts/img/user.png" /></div>
+<div class="my_tab_div">Contacts</div>
 </div>
 
 <div class="tab_item" id="news_tab">
-<div class="my_tab_div"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
-<div class="my_tab_div">咨询</div>
+<div class="my_tab_div"><img class="my_tab_news" src="boyia://apps/contacts/img/news.png" /></div>
+<div class="my_tab_div">News</div>
 </div>
 
-<div class="tab_item" id="video_tab">
-<div class="my_tab_div"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
-<div class="my_tab_div">视频</div>
-</div>
-
-<div class="tab_item" id="app_tab">
-<div class="my_tab_div"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
-<div class="my_tab_div">应用</div>
-</div>
-
-<div class="tab_item" id="my_tab">
-<div class="my_tab_div"><img class="my_tab_img" src="boyia://apps/contacts/img/user.png" /></div>
-<div class="my_tab_div">我的</div>
+<div class="tab_item" id="mine_tab">
+<div class="my_tab_div"><img class="my_tab_mine" src="boyia://apps/contacts/img/mine.png" /></div>
+<div class="my_tab_div">Mine</div>
 </div>
 
 </view>
