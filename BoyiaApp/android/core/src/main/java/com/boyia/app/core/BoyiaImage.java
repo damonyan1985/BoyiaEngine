@@ -86,6 +86,7 @@ public class BoyiaImage implements IBoyiaImage {
                 break;
         }
 
+        paint.setStrokeWidth(1F);
         paint.setTextSize(textSize);
         paint.setColor(Color.argb(Color.alpha(textColor), Color.red(textColor), Color.green(textColor),
                 Color.blue(textColor)));

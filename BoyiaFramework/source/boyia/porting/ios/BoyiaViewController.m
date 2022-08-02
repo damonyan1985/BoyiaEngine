@@ -132,8 +132,13 @@
 //    return YES;
 //}
 
--(void)viewDidAppear:(BOOL)animated;  {
+-(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.renderer cacheCode];
 }
 
 @end

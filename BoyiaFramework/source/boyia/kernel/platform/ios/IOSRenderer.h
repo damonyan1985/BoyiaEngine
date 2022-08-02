@@ -68,7 +68,7 @@ typedef NS_ENUM(NSInteger, BatchCommandType) {
 -(void)setInputText:(NSString*)text cursor:(NSUInteger)cursor;
 
 -(CVMetalTextureCacheRef)cvTextureCache;
-
+-(void)cacheCode;
 @end
 
 

@@ -1,4 +1,5 @@
 <view class="dialog-container">
+<link rel="stylesheet" type="text/css" href="boyia://apps/sdk/css/dialog.boss" />
 <div class="dialog">
     <div class="dialog-title">Can you sure?</div>
     <div class="dialog-button-container">

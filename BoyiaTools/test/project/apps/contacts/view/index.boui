@@ -38,6 +38,7 @@
 <script src="boyia://apps/sdk/App.boyia" />
 <script src="boyia://apps/sdk/ViewController.boyia" />
 <script src="boyia://apps/sdk/ViewRoot.boyia" />
+<script src="boyia://apps/sdk/Dialog.boyia" />
 
 <script src="boyia://apps/contacts/src/bean/UserInfo.boyia" />
 <script src="boyia://apps/contacts/src/chat/ChatPage.boyia" />
@@ -46,7 +47,6 @@
 <script src="boyia://apps/contacts/src/CategoryItem.boyia" />
 <script src="boyia://apps/contacts/src/SearchHeader.boyia" />
 <script src="boyia://apps/contacts/src/FooterView.boyia" />
-<script src="boyia://apps/contacts/src/Dialog.boyia" />
 <script src="boyia://apps/contacts/src/MainView.boyia" />
 <script src="boyia://apps/contacts/src/Main.boyia" />
 </html>

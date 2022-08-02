@@ -723,4 +723,13 @@ void testHashMap()
 -(void)doesNotRecognizeSelector:(SEL)aSelector {
     NSLog(@"Cannot find method %@", NSStringFromSelector(aSelector));
 }
+
+-(void)cacheCode {    
+    if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
+        return;
+    }
+
+    CacheVMCode(yanbo::AppManager::instance()->currentApp()->runtime()->vm());
+}
+
 @end
