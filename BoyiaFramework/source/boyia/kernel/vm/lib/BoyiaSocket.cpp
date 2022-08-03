@@ -105,7 +105,9 @@ LVoid BoyiaSocket::run()
 LVoid BoyiaSocket::release()
 {
     onlyDeref();
-    m_socket->close();
+    if (m_socket) {
+        m_socket->close();
+    }
 }
 
 BoyiaSocket::~BoyiaSocket()

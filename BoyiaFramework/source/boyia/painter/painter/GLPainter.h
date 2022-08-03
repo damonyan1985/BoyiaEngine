@@ -88,6 +88,7 @@ public:
         EShapeRoundRect,
         EShapeString,
         EShapeImage,
+        EShapeRoundImage,
         EShapeExternal,
     };
 
@@ -111,6 +112,11 @@ public:
 
     void setLine(const LPoint& p1, const LPoint& p2);
     void setImage(Texture* tex, const LRect& rect);
+    void setImage(Texture* tex, const LRect& rect, const LRect& clipRect,
+        LInt topLeftRadius, 
+        LInt topRightRadius, 
+        LInt bottomRightRadius, 
+        LInt bottomLeftRadius);
     void setImage(Texture* tex, const LRect& rect, const LRect& clipRect);
     void setExternal(Texture* tex, const LRect& rect);
 

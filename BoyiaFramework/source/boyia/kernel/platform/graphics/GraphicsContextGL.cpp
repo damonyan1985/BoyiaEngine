@@ -158,6 +158,30 @@ LVoid GraphicsContextGL::drawRoundRect(const LRect& aRect, LInt topLeftRadius, L
     painter->painters.push(shapeRect);
 }
 
+LVoid GraphicsContextGL::drawRoundImage(const LImage* image, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius)
+{
+    if (!image) {
+        return;
+    }
+
+    yanbo::Texture* tex = yanbo::TextureCache::getInst()->putImage(image);
+
+    ItemPainter* painter = currentPainter();
+    BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+    paint->setColor(m_brushColor);
+    //paint->setImage(tex, image->rect(), *m_clipRect);
+    if (m_clipRect) {
+        paint->setImage(tex, image->rect(), *m_clipRect, 
+            topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+    } else {
+        paint->setImage(tex, image->rect(), image->rect(), 
+            topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+    }
+    painter->painters.push(paint);
+
+    KLOG("GraphicsContextGL::drawBitmap end");
+}
+
 LVoid GraphicsContextGL::drawText(const String& aText, const LRect& aRect)
 {
 }

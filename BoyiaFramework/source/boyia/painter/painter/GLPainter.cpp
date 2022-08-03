@@ -163,6 +163,20 @@ void GLPainter::setImage(Texture* tex, const LRect& rect)
     setTexture(tex, rect, rect);
 }
 
+void GLPainter::setImage(Texture* tex, const LRect& rect, const LRect& clipRect, 
+        LInt topLeftRadius, 
+        LInt topRightRadius, 
+        LInt bottomRightRadius, 
+        LInt bottomLeftRadius)
+{
+    m_cmd.type = EShapeRoundImage;
+    m_cmd.round.topLeftRadius = ShaderUtil::screenToGlWidth(topLeftRadius);
+    m_cmd.round.topRightRadius = ShaderUtil::screenToGlWidth(topRightRadius);
+    m_cmd.round.bottomRightRadius = ShaderUtil::screenToGlWidth(bottomRightRadius);
+    m_cmd.round.bottomLeftRadius = ShaderUtil::screenToGlWidth(bottomLeftRadius);
+    setTexture(tex, rect, clipRect);
+}
+
 void GLPainter::setImage(Texture* tex, const LRect& rect, const LRect& clipRect)
 {
     m_cmd.type = EShapeImage;
@@ -287,6 +301,11 @@ void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRec
     // quad.topLeft.texCoord.u = 0.0f;
     // quad.topLeft.texCoord.v = 0.0f;
 
+    m_cmd.round.left = quad.topLeft.vec3D.x;
+    m_cmd.round.top = quad.topLeft.vec3D.y;
+    m_cmd.round.right = quad.bottomRight.vec3D.x; // right
+    m_cmd.round.bottom = quad.bottomRight.vec3D.y; // bottom
+
     quad.bottomLeft.texCoord.u = texL;
     quad.bottomLeft.texCoord.v = texB;
 
@@ -378,6 +397,27 @@ void GLPainter::paintCommand()
                 cmd.round.right,
                 cmd.round.bottom);
             glUniform1f(program->ratio(), (PixelRatio::logicWidth() * 1.0f) / PixelRatio::logicHeight());
+        } break;
+        case EShapeRoundImage: {
+            glUniformMatrix4fv(program->matrix(), 1, GL_FALSE, MatrixState::getFinalMatrix()->getBuffer());
+            glUniform1i(program->texFlag(), 3);
+
+            glUniform1i(program->sampler2D(), 0);
+
+            glUniform4f(program->radius(),
+                cmd.round.topLeftRadius,
+                cmd.round.topRightRadius,
+                cmd.round.bottomRightRadius,
+                cmd.round.bottomLeftRadius);
+            glUniform4f(program->rect(), 
+                cmd.round.left,
+                cmd.round.top,
+                cmd.round.right,
+                cmd.round.bottom);
+            glUniform1f(program->ratio(), (PixelRatio::logicWidth() * 1.0f) / PixelRatio::logicHeight());
+            //绑定纹理
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, cmd.texId);
         } break;
         }
 
