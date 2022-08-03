@@ -492,6 +492,9 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     case StyleTags::BORDER_BOTTOM_RIGHT_RADIUS: {
         style.radius().bottomRightRadius = value.intVal;
     } break;
+    case StyleTags::FLEX_GROW: {
+        style.flex().flexGrow = value.intVal;
+    } break;
     default:
         break;
     }

@@ -72,6 +72,14 @@ public:
     LInt rightPadding;
 };
 
+class Flex {
+public:
+    Flex();
+    LVoid copy(const Flex& flex);
+    
+    LInt flexGrow;
+};
+
 class Style {
 public:
     // must be used with absolute or fixed
@@ -122,8 +130,9 @@ public:
     Margin& margin() const;
     Padding& padding() const;
     
+    Flex& flex() const;
     LBool hasRadius() const;
-
+    
 public:
     LColor color; // foreground color
     LColor bgColor; // background color
@@ -153,6 +162,7 @@ private:
     mutable BorderRadius* m_radius;
     mutable Margin* m_margin;
     mutable Padding* m_padding;
+    mutable Flex* m_flex;
 };
 }
 #endif

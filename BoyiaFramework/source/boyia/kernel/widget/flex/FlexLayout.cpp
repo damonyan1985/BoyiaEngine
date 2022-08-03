@@ -58,7 +58,7 @@ LVoid FlexLayout::flexRowReverse(HtmlView* view)
     }
 }
 
-// margin将失效
+// margin将失效，忽略margin的作用
 LVoid FlexLayout::flexRowSpacebetween(HtmlView* view)
 {
     const HtmlViewList& list = view->getChildren();
@@ -100,5 +100,43 @@ LVoid FlexLayout::flexRowSpacebetween(HtmlView* view)
         child->setXpos(x);
         x += child->getWidth() + deltaMargin;
     }
+}
+
+// 从上到下使用列排版
+LVoid FlexLayout::flexColumnLayout(HtmlView* view)
+{
+    const HtmlViewList& list = view->getChildren();
+    HtmlViewList::Iterator iter = list.begin();
+    HtmlViewList::Iterator iterEnd = list.end();
+    LInt x = view->getStyle()->padding().leftPadding;
+    LInt y = view->getStyle()->border().topWidth + view->getStyle()->padding().topPadding;
+    BOYIA_LOG("layoutInlineBlock, child size=%d", list.count());
+    for (; iter != iterEnd; ++iter) {
+        HtmlView* child = (*iter);
+        //LInt x = child->getStyle()->margin().leftMargin;
+        y += child->getStyle()->margin().topMargin;
+        child->setPos(x, y);
+        BOYIA_LOG("layoutInlineBlock, x=%d, y=%d", x, y);
+        child->layout();
+        y += child->getHeight() + child->getStyle()->margin().bottomMargin;
+        if (view->getWidth() < child->getWidth() + x) {
+            view->setWidth(child->getWidth() + x);
+        }
+    }
+    
+    // 如果style中没有设置宽度，则flex布局宽高根据元素自己的宽高来限定
+    if (!view->getStyle()->height) {
+        view->setHeight(x);
+    }
+}
+// 从下到上使用列排版
+LVoid FlexLayout::flexColumnReverseLayout(HtmlView* view)
+{
+    
+}
+// 等间距列排版
+LVoid FlexLayout::flexColumnSpacebetween(HtmlView* view)
+{
+    
 }
 }

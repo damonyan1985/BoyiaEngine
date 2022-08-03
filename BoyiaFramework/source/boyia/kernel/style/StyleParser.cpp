@@ -515,6 +515,9 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;
+    case StyleTags::FLEX_GROW: {
+        rule->addProperty(cssTag, StringUtils::stringToInt(value));
+    } break;
     }
 }
 

@@ -71,6 +71,7 @@ StyleTags* StyleTags::getInstance()
         s_tags->defineInitialSymbol(_CS("z-index"), Z_INDEX);
         s_tags->defineInitialSymbol(_CS("focusable"), FOCUSABLE);
         s_tags->defineInitialSymbol(_CS("flex-direction"), FLEX_DIRECTION);
+        s_tags->defineInitialSymbol(_CS("flex-grow"), FLEX_GROW);
         
         // 圆角
         s_tags->defineInitialSymbol(_CS("border-radius"), BORDER_RADIUS);

@@ -130,6 +130,16 @@ LVoid Padding::copy(const Padding &padding)
     rightPadding = padding.rightPadding;
 }
 
+Flex::Flex()
+    : flexGrow(0)
+{
+}
+
+LVoid Flex::copy(const Flex& flex)
+{
+    flexGrow = flex.flexGrow;
+}
+
 Style::Style()
 {
     init();
@@ -162,11 +172,13 @@ Style::Style(const Style& style)
     focusable = style.focusable;
     flexDirection = style.flexDirection;
     align = style.align;
+
     //border = style.getBorder();
     border().copy(style.border());
     radius().copy(style.radius());
     margin().copy(style.margin());
     padding().copy(style.padding());
+    flex().copy(style.flex());
 }
 
 const Style& Style::operator=(const Style& style)
@@ -186,11 +198,13 @@ const Style& Style::operator=(const Style& style)
     displayType = style.displayType;
     focusable = style.focusable;
     flexDirection = style.flexDirection;
+    
     align = style.align;
     border().copy(style.border());
     radius().copy(style.radius());
     margin().copy(style.margin());
     padding().copy(style.padding());
+    flex().copy(style.flex());
     return *this;
 }
 
@@ -206,16 +220,19 @@ void Style::init()
     top = 0;
     width = 0;
     height = 0;
+    
     transparent = LTrue;
     textAlignement = LGraphicsContext::kTextLeft;
     focusable = LFalse;
     scale = 1;
     flexDirection = FLEX_NONE;
     align = ALIGN_NONE;
+    
     m_border = kBoyiaNull;
     m_radius = kBoyiaNull;
     m_margin = kBoyiaNull;
     m_padding = kBoyiaNull;
+    m_flex = kBoyiaNull;
 }
 
 Border& Style::border() const
@@ -260,6 +277,15 @@ LBool Style::hasRadius() const
         || radius().topRightRadius
         || radius().bottomLeftRadius
         || radius().bottomRightRadius;
+}
+
+Flex& Style::flex() const
+{
+    if (!m_flex) {
+        m_flex = new Flex();
+    }
+    
+    return *m_flex;
 }
 
 }
