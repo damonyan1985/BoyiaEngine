@@ -27,11 +27,10 @@ import com.boyia.app.shell.service.BoyiaNotifyService
 import com.boyia.app.shell.util.CommonFeatures
 
 // 主页面，用来呈现应用列表信息
-class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
+class BoyiaHomeActivity: BoyiaShellActivity() {
     companion object {
         const val TAG = "BoyiaHomeActivity"
     }
-    private var rootView: CoordinatorLayout? = null
 
 //    activity已经创建，并且persistableMode设置persistAcrossReboots才会调用
 //    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -64,14 +63,6 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
 
     private fun initHome() {
         BoyiaLog.d(TAG, "BoyiaHomeActivity initHome")
-        rootView = CoordinatorLayout(this)
-        rootView?.id = View.generateViewId()
-        rootView?.setBackgroundColor(Color.WHITE)
-        rootView?.fitsSystemWindows = false
-        rootView?.clipToPadding = false
-
-        setContentView(rootView)
-
         val ipcModule = ModuleManager.instance().getModule(ModuleManager.IPC)
         ipcModule?.show(this)
 
@@ -79,14 +70,6 @@ class BoyiaHomeActivity: AppCompatActivity(), IModuleContext {
         homeModule?.show(this)
 
         HandlerFoundation.setStatusbarTextColor(this, true)
-    }
-
-    override fun rootId(): Int {
-        return rootView?.id!!
-    }
-
-    override fun getActivity(): AppCompatActivity {
-        return this
     }
 
     override fun pickImage(loader: IPickImageLoader) {

@@ -42,9 +42,7 @@ class LoginModule: ILoginModule {
                 it.onLogined(info)
             }
 
-            MainScheduler.mainScheduler().sendJob {
-                hide()
-            }
+            hide()
         }
     }
 

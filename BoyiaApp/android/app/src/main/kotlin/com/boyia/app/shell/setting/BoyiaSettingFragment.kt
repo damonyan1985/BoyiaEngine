@@ -277,7 +277,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
     @SuppressLint("SetTextI18n")
     fun setUserInfo(info: BoyiaUserInfo?) {
-        avatarView?.load(info?.avatar ?: DEFAULT_AVATAR)
+        avatarView?.load(BoyiaModelUtil.getImageUrlWithToken(info?.avatar) ?: DEFAULT_AVATAR)
         nameView?.text = info?.nickname ?: "Anonymous"
 
         loginButton?.text =  if (info == null) "login" else "logout"

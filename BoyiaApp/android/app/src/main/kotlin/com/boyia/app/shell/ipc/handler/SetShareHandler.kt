@@ -6,6 +6,7 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaShare
 import com.boyia.app.core.api.ApiConstants.ApiKeys
 import com.boyia.app.shell.ipc.IBoyiaIPCHandler
+import com.boyia.app.shell.module.IPCModule
 
 class SetShareHandler: IBoyiaIPCHandler {
     companion object {

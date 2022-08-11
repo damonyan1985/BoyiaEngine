@@ -66,6 +66,7 @@ public class BoyiaActivity extends Activity {
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
         mApiImplementation = new ApiImplementation(sender, this);
+        mApiImplementation.sendAsyncCallbackBinder(mAppInfo.mAppId);
         BoyiaBridge.setIPCSender(mApiImplementation);
 
         justForTest();

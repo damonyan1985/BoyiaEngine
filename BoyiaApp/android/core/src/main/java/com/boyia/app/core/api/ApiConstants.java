@@ -21,6 +21,16 @@ public class ApiConstants {
          * 获取用户信息
          */
         public static final String USER_INFO = "user_info";
+
+        /**
+         * 发送ipc binder
+         */
+        public static final String SEND_BINDER = "send_binder";
+
+        /**
+         * 用户登录界面调用
+         */
+        public static final String USER_LOGIN = "user_login";
     }
 
     public static class ApiKeys {
@@ -33,6 +43,15 @@ public class ApiConstants {
         public static final String NOTIFICATION_ACTION = "notification_action";
         public static final String NOTIFICATION_TITLE = "notification_title";
         public static final String NOTIFICATION_ICON = "notification_icon";
+
+        /**
+         * 发送给宿主的binder是属于那个aid的
+         */
+        public static final String BINDER_AID = "binder_aid";
+        /**
+         * 跨端异步调用回调id
+         */
+        public static final String CALLBACK_ID = "callback_id";
     }
 
     public static class ApiRequestCode {

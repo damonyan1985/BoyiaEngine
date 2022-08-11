@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.R
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.UnderlineEditText
@@ -15,6 +16,10 @@ import com.mikepenz.iconics.typeface.library.googlematerial.OutlinedGoogleMateri
 import com.mikepenz.iconics.utils.colorInt
 
 class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() {
+    companion object {
+        const val TAG = "BoyiaLoginFragment"
+    }
+
     private var rootLayout: RelativeLayout? = null
     private var userInput: EditText? = null
     private var passwordInput: EditText? = null
@@ -116,6 +121,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         //forwardButton.setImageDrawable(forwardDrawable)
         forwardButton.setColorFilter(0xFFCAE1FF.toInt())
         forwardButton.setOnClickListener {
+            BoyiaLog.d(TAG, "username=" + userInput?.text.toString())
             module.login(userInput?.text.toString(), passwordInput?.text.toString())
         }
         val forwardButtonParam = LinearLayout.LayoutParams(

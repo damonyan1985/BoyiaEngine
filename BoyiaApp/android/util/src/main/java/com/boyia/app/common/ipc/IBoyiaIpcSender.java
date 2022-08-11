@@ -161,12 +161,15 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
             try {
                 data.writeInterfaceToken(DESCRIPTOR);
                 message.writeToParcel(data, 0);
+                //mRemote.transact(code, data, reply, code == SEND_MESSAGE_ASYNC ? 1 : 0);
                 mRemote.transact(code, data, reply, 0);
                 reply.readException();
                 // 非0表示数据不为null
                 if (reply.readInt() != SEND_RESULT_NULL_CODE) {
                     result = BoyiaIpcData.CREATOR.createFromParcel(reply);
                 }
+
+                BoyiaLog.d(TAG, "sendMessageImpl received finished");
             } finally {
                 reply.recycle();
                 data.recycle();

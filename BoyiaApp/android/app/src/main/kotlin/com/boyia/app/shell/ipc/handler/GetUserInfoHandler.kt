@@ -7,6 +7,7 @@ import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.shell.ipc.IBoyiaIPCHandler
 import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserData
+import com.boyia.app.shell.module.IPCModule
 
 // 获取本地用户信息
 class GetUserInfoHandler: IBoyiaIPCHandler {

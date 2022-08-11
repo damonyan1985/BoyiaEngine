@@ -8,6 +8,35 @@
 #include "IOSRenderer.h"
 #include "BoyiaBridge.h"
 
+@interface BoyiaHandlerCallbackImpl : NSObject<BoyiaApiHandlerCB>
+-(instancetype)initWithCallbackId:(long)callbackId;
+-(long)callbackId;
+-(void)callback:(NSString*)json;
+@end
+
+@implementation BoyiaHandlerCallbackImpl {
+    int _callbackId;
+}
+
+-(long)callbackId {
+    return _callbackId;
+}
+
+-(void)callback:(NSString*)json {
+    
+}
+
+-(instancetype)initWithCallbackId:(int)callbackId {
+    self = [super init];
+    if (self) {
+        _callbackId = callbackId;
+    }
+    
+    return self;
+}
+
+@end
+
 namespace yanbo {
 // TODO
 const char* kZipPassword = "123456";
@@ -199,6 +228,12 @@ const LReal PlatformBridge::getDisplayDensity()
 PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 {
     return kPlatformIos;
+}
+
+void PlatformBridge::handleApi(const String& params, LIntPtr callback)
+{
+    [BoyiaBridge handleApi:STR_TO_OCSTR(params)
+                  callback:[[BoyiaHandlerCallbackImpl alloc]initWithCallbackId:callback]];
 }
 }
 

@@ -29,7 +29,6 @@ typedef id<BoyiaApiHandler> (^BoyiaApiCreator)(void);
 +(NSString*)getSSLCertPath;
 +(void)registerApi:(NSString*)apiName creator:(BoyiaApiCreator)creator;
 +(void)handleApi:(NSString*)params callback:(id<BoyiaApiHandlerCB>)cb;
-
 @end
 
 

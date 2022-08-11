@@ -4,6 +4,7 @@ import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.http.HTTPFactory
+import com.boyia.app.loader.mue.MainScheduler
 
 object BoyiaLoginModel {
     const val TAG = "BoyiaLoginModel"
@@ -25,10 +26,12 @@ object BoyiaLoginModel {
                             return
                         }
 
-                        BoyiaLoginInfo.instance().token = data.userToken
-                        BoyiaLoginInfo.instance().user = data.data
+                        MainScheduler.mainScheduler().sendJob {
+                            BoyiaLoginInfo.instance().token = data.userToken
+                            BoyiaLoginInfo.instance().user = data.data
 
-                        data.data?.let { callback(it) }
+                            data.data?.let { callback(it) }
+                        }
                     }
                 },
                 method = HTTPFactory.HTTP_POST_METHOD,

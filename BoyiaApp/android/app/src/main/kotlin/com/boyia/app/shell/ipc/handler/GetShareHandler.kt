@@ -7,6 +7,7 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaShare
 import com.boyia.app.core.api.ApiConstants.ApiKeys
 import com.boyia.app.shell.ipc.IBoyiaIPCHandler
+import com.boyia.app.shell.module.IPCModule
 
 class GetShareHandler: IBoyiaIPCHandler {
     override fun handle(data: BoyiaIpcData?, cb: IBoyiaIpcCallback) {
@@ -20,6 +21,8 @@ class GetShareHandler: IBoyiaIPCHandler {
             val bundle = Bundle()
             putValue(bundle, value)
             cb.callback(BoyiaIpcData(data.method, bundle))
+        } else {
+            cb.callback(null)
         }
     }
 

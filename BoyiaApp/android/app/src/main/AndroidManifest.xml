@@ -75,6 +75,18 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.boyia.app.shell.login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.boyia.app.shell.login.action" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name="com.boyia.app.shell.service.BoyiaNotifyService"
             android:exported="false" />

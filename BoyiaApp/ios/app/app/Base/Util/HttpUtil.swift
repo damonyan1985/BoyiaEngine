@@ -142,6 +142,7 @@ class HttpUtil {
         static let UPDATE_USER_URL = "\(HTTP_DOMAIN)/user/\(API_VERSION)/updateAdmin"
     }
     
+    // 获取非权限图片，如应用图标
     static func getRemoteUrl(url: String?) -> String? {
         if (url == nil || url?.isEmpty == true) {
             return nil
@@ -150,12 +151,14 @@ class HttpUtil {
         return "\(HttpConstants.HTTP_DOMAIN)\(url!)"
     }
     
+    // 用来获取头像，需要加入权限
     static func getImageUrlWithToken(url: String?) -> String? {
         guard var imageUrl = getRemoteUrl(url: url) else {
             return nil
         }
         
         let uid = BoyiaLoginInfo.shared.user?.uid ?? 0
+        // 对token进行md5加密
         let md5 = BoyiaLoginInfo.shared.token?.md5 ?? ""
         
         imageUrl = "\(imageUrl)?uid=\(uid)&token=\(md5)"        

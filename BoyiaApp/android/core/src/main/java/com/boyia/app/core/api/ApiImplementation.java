@@ -34,13 +34,33 @@ public class ApiImplementation {
     private Map<String, ApiCreator> mHandlerMap;
     // 处理activityresult
     private List<ApiHandler> mResultHandlers;
+    private ApiAsyncCallbackBinder mCallbackBinder;
 
     public ApiImplementation(IBoyiaSender sender, Activity activity) {
         mSender = sender;
+        mCallbackBinder = new ApiAsyncCallbackBinder();
         mActivityRef = new WeakReference<>(activity);
         mHandlerMap = new HashMap<>();
         mResultHandlers = new ArrayList<>();
         initCommon();
+    }
+
+    /**
+     * 如果，宿主binder也需要异步处理事务，则需要将寄生引擎的binder传给宿主进程
+     */
+    public void sendAsyncCallbackBinder(int aid) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ApiKeys.BINDER_AID, aid);
+        bundle.putBinder(ApiNames.SEND_BINDER, mCallbackBinder);
+        BoyiaIpcData data = new BoyiaIpcData(
+                ApiNames.SEND_BINDER,
+                bundle
+        );
+        try {
+            mSender.sendMessageSync(data);
+        } catch (RemoteException e) {
+            BoyiaLog.e(TAG, "sendAsyncCallbackBinder error", e);
+        }
     }
 
     private void initCommon() {
@@ -80,9 +100,9 @@ public class ApiImplementation {
             }
         });
 
-        registerHandler(ApiNames.USER_INFO, () -> (params, callback) -> {
-            getUserInfo(callback);
-        });
+        registerHandler(ApiNames.USER_INFO, () -> (params, callback) -> getUserInfo(callback));
+
+        registerHandler(ApiNames.USER_LOGIN, () -> (params, callback) -> userLogin());
     }
 
     public void registerHandler(String method, ApiCreator creator) {
@@ -174,6 +194,15 @@ public class ApiImplementation {
 
         sendData(data, message -> apiCB.callback(
                 message.getParams().get(ApiNames.USER_INFO).toString()));
+    }
+
+    public void userLogin() {
+        BoyiaIpcData data = new BoyiaIpcData(
+                ApiNames.USER_LOGIN,
+                null
+        );
+
+        sendData(data);
     }
 
 
