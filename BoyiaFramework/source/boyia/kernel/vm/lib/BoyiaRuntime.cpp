@@ -7,6 +7,7 @@
 #include "BoyiaAsyncEvent.h"
 #include "SystemUtil.h"
 #include "StringUtils.h"
+#include "BoyiaAsyncEvent.h"
 
 const LInt kMemoryPoolSize = 1024 * 1024 * 6;
 const LInt kGcMemorySize = 1024 * 8;
@@ -33,6 +34,27 @@ public:
 
 private:
     BoyiaRuntime* m_runtime;
+};
+
+class PlatformApiCallback : public BoyiaAsyncEvent {
+public:
+    PlatformApiCallback(BoyiaValue* obj, BoyiaValue* cb, BoyiaRuntime* runtime)
+        : BoyiaAsyncEvent(obj, runtime)
+    {
+        if (cb != kBoyiaNull) {
+            ValueCopy(&m_cb, cb);
+        } else {
+            m_cb.mValue.mObj.mPtr = kBoyiaNull;
+        }
+    }
+    
+    virtual LVoid callback()
+    {
+        
+    }
+    
+private:
+    BoyiaValue m_cb;
 };
 
 #define GEN_ID(key) m_idCreator->genIdentByStr(key, StringUtils::StringSize(key))
@@ -215,5 +237,15 @@ BoyiaAsyncEventManager* BoyiaRuntime::eventManager() const
 BoyiaDomMap* BoyiaRuntime::domMap() const
 {
     return m_domMap;
+}
+
+LVoid BoyiaRuntime::callPlatformApi(const String& params, BoyiaValue* propCB)
+{
+    BoyiaValue cbObj;
+    cbObj.mValueType = BY_CLASS;
+    cbObj.mValue.mObj.mPtr = propCB->mValue.mObj.mSuper;
+    
+    PlatformApiCallback* cb = new PlatformApiCallback(&cbObj, propCB, this);
+    yanbo::PlatformBridge::handleApi(params, (LIntPtr)cb);
 }
 }

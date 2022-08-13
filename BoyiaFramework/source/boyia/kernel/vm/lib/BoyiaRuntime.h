@@ -12,6 +12,7 @@ class Application;
 }
 
 namespace boyia {
+
 using BoyiaDomMap = HashMap<HashString, yanbo::DOMBuilder*>;
 class BoyiaAsyncEventManager;
 class BoyiaRuntime {
@@ -34,6 +35,8 @@ public:
     LVoid collectGarbage();
     BoyiaAsyncEventManager* eventManager() const;
     BoyiaDomMap* domMap() const;
+    // 调用平台相关API
+    LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
 
 private:
     LVoid initNativeFunction();

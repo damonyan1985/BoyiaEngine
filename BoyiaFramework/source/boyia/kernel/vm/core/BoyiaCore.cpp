@@ -1503,6 +1503,7 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = isProp ? BY_PROP_FUNC : BY_FUNC;
         func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
+        // 属性函数的mSuper指针指向对象实例
         func->mParams[func->mParamSize++].mValue.mObj.mSuper = isProp ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
@@ -1681,6 +1682,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     }
     
     if (value->mValueType == BY_PROP_FUNC) {
+        // 用属性对象指向的对象实例构造一个对象引用
         BoyiaValue val;
         val.mValueType = BY_CLASS;
         BoyiaFunction* objBody = (BoyiaFunction*)value->mValue.mObj.mSuper;

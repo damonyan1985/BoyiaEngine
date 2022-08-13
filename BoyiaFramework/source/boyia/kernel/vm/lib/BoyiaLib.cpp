@@ -31,6 +31,12 @@ char* convertMStr2Str(BoyiaStr* str)
     return newStr;
 }
 
+LVoid boyiaStrToNativeStr(BoyiaValue* strVal, String& str)
+{
+    BoyiaStr* bstr = GetStringBuffer(strVal);
+    str.Copy(_CS(convertMStr2Str(bstr)), LTrue, bstr->mLen);
+}
+
 // 处理布尔类型返回
 static LInt resultInt(LInt result, LVoid* vm)
 {
@@ -860,9 +866,17 @@ LInt getPlatformType(LVoid* vm)
 
 LInt callPlatformApiHandler(LVoid* vm)
 {
-    // 方法名
-    BoyiaValue* method = (BoyiaValue*)GetLocalValue(0, vm);
     // 方法参数
-    BoyiaValue* params = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaValue* params = (BoyiaValue*)GetLocalValue(0, vm);
+    // 回调, 必须是属性函数
+    BoyiaValue* callback = (BoyiaValue*)GetLocalValue(1, vm);
+    
+    if (callback->mValueType != BY_PROP_FUNC) {
+        return kOpResultSuccess;
+    }
+
+    String paramStr;
+    boyiaStrToNativeStr(params, paramStr);
+    static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm))->callPlatformApi(paramStr, callback);
     return kOpResultSuccess;
 }

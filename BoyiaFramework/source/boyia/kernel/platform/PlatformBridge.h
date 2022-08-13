@@ -5,7 +5,6 @@
 #include <functional>
 
 namespace yanbo {
-
 class PlatformBridge {
 public:
     enum PlatformType {

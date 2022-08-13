@@ -14,6 +14,7 @@ public class GraphicsConst {
     public static final int NULL_PEN = 1;
     public static final int SOLID_PEN = 2;
 
+    public static final int PEN_STYLE_NORMAL = 0;
     public static final int PEN_STYLE_ITALIC = 1;
     public static final int PEN_STYLE_BOLD = 2;
     public static final int PEN_STYLE_UNDERLINE = 3;
