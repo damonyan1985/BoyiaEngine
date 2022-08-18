@@ -47,7 +47,6 @@ public:
     LInt getScrollYPos() const;
     LBool canScroll() const;
 
-    virtual LInt getHeight() const;
     // Can scroll max height
     LInt scrollHeight() const;
     LVoid insertChild(HtmlViewList::Iterator& iter, HtmlView* child);

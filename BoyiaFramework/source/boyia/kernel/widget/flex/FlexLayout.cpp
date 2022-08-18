@@ -108,25 +108,50 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
     HtmlViewList::Iterator iterEnd = list.end();
+    // 将没有flex-grow的元素统一计算
+    LInt noGrowHeight = 0;
+    for (; iter != iterEnd; ++iter) {
+        HtmlView* child = (*iter);
+        if (!child->getStyle()->flex().flexGrow) {
+            noGrowHeight += child->getStyle()->margin().topMargin;
+            child->layout();
+            noGrowHeight += child->getHeight() + child->getStyle()->margin().bottomMargin;
+        }
+    }
+    
+    // 剩余高度为flex-grow元素所分配的高度
+    LInt leftHeight = view->getHeight() - noGrowHeight;
+    LInt flexGrowTotal = 0;
+    for (; iter != iterEnd; ++iter) {
+        HtmlView* child = (*iter);
+        if (child->getStyle()->flex().flexGrow) {
+            flexGrowTotal += child->getStyle()->flex().flexGrow;
+        }
+    }
+    
+    LInt perGrowHeight = 0;
+    if (flexGrowTotal > 0) {
+        perGrowHeight = leftHeight / flexGrowTotal;
+    }
+    
     LInt x = view->getStyle()->padding().leftPadding;
     LInt y = view->getStyle()->border().topWidth + view->getStyle()->padding().topPadding;
     BOYIA_LOG("layoutInlineBlock, child size=%d", list.count());
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
         //LInt x = child->getStyle()->margin().leftMargin;
+        // 元素的top margin加入位移
         y += child->getStyle()->margin().topMargin;
         child->setPos(x, y);
         BOYIA_LOG("layoutInlineBlock, x=%d, y=%d", x, y);
         child->layout();
-        y += child->getHeight() + child->getStyle()->margin().bottomMargin;
-        if (view->getWidth() < child->getWidth() + x) {
-            view->setWidth(child->getWidth() + x);
+        
+        // 弹性布局高度重新计算
+        if (child->getStyle()->flex().flexGrow) {
+            child->setHeight(child->getStyle()->flex().flexGrow * perGrowHeight
+                             - child->getStyle()->margin().bottomMargin
+                             - child->getStyle()->margin().topMargin);
         }
-    }
-    
-    // 如果style中没有设置宽度，则flex布局宽高根据元素自己的宽高来限定
-    if (!view->getStyle()->height) {
-        view->setHeight(x);
     }
 }
 // 从下到上使用列排版

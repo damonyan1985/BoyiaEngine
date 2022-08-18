@@ -38,6 +38,11 @@ Defines Module改为YES, 会自动生成app-Swift.h
 自动生成app-Bridging-Header.h
 ```
 
+5. 预编译宏添加
+```
+TARGETS --- build settings --- preprocessor macros中添加预编译宏
+```
+
 ## Android环境变量配置
 1. 配置ANDROID_HOME
 2. 配置NDK_HOME

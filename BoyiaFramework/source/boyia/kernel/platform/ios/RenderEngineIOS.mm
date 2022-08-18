@@ -314,6 +314,7 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     RenderTextCommand* textCmd = static_cast<RenderTextCommand*>(cmd);
     LRect& rect = textCmd->rect;
     LColor& color = textCmd->color;
+    LFont& textFont = textCmd->font;
     
     if (!rect.GetWidth() || !rect.GetHeight()) {
         return;
@@ -326,7 +327,10 @@ LVoid RenderEngineIOS::renderText(RenderCommand* cmd)
     id tex = [m_renderer getTexture:text];
     if (!tex) {
         int scale = 1;
-        UIFont* font = [UIFont systemFontOfSize:textCmd->font.getFontSize()*scale];
+        UIFont* font = [UIFont systemFontOfSize:textFont.getFontSize()*scale
+                                         weight:(textFont.getFontStyle() == LFont::FONT_STYLE_BOLD
+                                                 ? UIFontWeightBold
+                                                 : UIFontWeightRegular)];
         //UIFont* font = [UIFont fontWithName:@"BoyiaFont" size:textCmd->font.getFontSize()*scale];
         //float scaleFactor = [[UIScreen mainScreen] scale];
         float scaleFactor = PixelRatio::ratio() * [[UIScreen mainScreen] scale];

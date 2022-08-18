@@ -18,6 +18,7 @@
     color: #FFF;
     font-size: 54px;
     text-align: center;
+    font-style: bold;
 }
 
 .dialog-button-container {
