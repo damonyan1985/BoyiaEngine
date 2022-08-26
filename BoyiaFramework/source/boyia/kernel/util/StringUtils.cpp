@@ -53,32 +53,24 @@ LInt StringUtils::stringToInt(const String& src, LInt radix)
 
 KVector<String>* StringUtils::split(const String& src, const String& splitSrc)
 {
-    String srcTmp = src;
     KVector<String>* splits = new KVector<String>();
 
-    LInt strLen = srcTmp.GetLength();
+    LInt strLen = src.GetLength();
     LInt splitLen = splitSrc.GetLength();
 
-    LInt i = srcTmp.Find(splitSrc);
-    while (i >= 0) {
-        String str = srcTmp.Mid(0, i);
-        splits->addElement(str);
-
-        if (i + splitLen < strLen) {
-            srcTmp = srcTmp.Mid(i + splitLen);
-            strLen = srcTmp.GetLength();
-        } else {
-            srcTmp = (const LUint8*)kBoyiaNull;
-            break;
+    LInt begin = 0;
+    LInt i = 0;
+    while ((i = src.Find(splitSrc, begin)) >= begin) {
+        if (i > begin) {
+            splits->addElement(src.Mid(begin, i - begin));
         }
-
-        if (srcTmp.GetLength() > 0) {
-            i = srcTmp.Find(splitSrc);
-        }
+        
+        
+        begin = i + splitLen;
     }
-
-    if (srcTmp.GetLength() > 0) {
-        splits->addElement(srcTmp);
+    
+    if (i == -1 && begin < strLen) {
+        splits->addElement(src.Mid(begin, strLen - begin));
     }
 
     return splits;
