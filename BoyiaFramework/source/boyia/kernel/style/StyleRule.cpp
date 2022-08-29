@@ -27,7 +27,7 @@ void SimpleSelector::setSelectorText(const String& selectorText)
 {
     m_selectorText = selectorText;
 
-    int index = m_selectorText.FindNoCase(_CS(":"));
+    int index = m_selectorText.Find(_CS(":"));
     if (index > 0) {
         setMatch(SimpleSelector::PseudoClass);
         // such as a:active

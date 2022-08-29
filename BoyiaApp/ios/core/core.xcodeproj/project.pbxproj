@@ -12,6 +12,7 @@
 		4C7AE80926CF837300946197 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C7AE80726CF837300946197 /* core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4CA51455287C740800A4F301 /* cert in Resources */ = {isa = PBXBuildFile; fileRef = 4CA51454287C740800A4F301 /* cert */; };
 		4CA99D952726C5A4004FAD07 /* BoyiaTextInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA99D942726C5A4004FAD07 /* BoyiaTextInputView.m */; };
+		4CB0171828B90A6B0039F675 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 4CB0171728B90A6B0039F675 /* dist */; };
 		4CB3239F26EE1490005568CD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB3239E26EE1490005568CD /* AVFoundation.framework */; };
 		4CB323A126EE14EA005568CD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB323A026EE14EA005568CD /* CoreMedia.framework */; };
 		4CB46AAB26E751E8002407C1 /* SalLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB46AAA26E751E8002407C1 /* SalLog.h */; };
@@ -261,6 +262,7 @@
 		4CA51454287C740800A4F301 /* cert */ = {isa = PBXFileReference; lastKnownFileType = folder; path = cert; sourceTree = "<group>"; };
 		4CA99D932726C552004FAD07 /* BoyiaTextInputView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BoyiaTextInputView.h; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaTextInputView.h; sourceTree = "<group>"; };
 		4CA99D942726C5A4004FAD07 /* BoyiaTextInputView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BoyiaTextInputView.m; path = ../../../BoyiaFramework/source/boyia/porting/ios/BoyiaTextInputView.m; sourceTree = "<group>"; };
+		4CB0171728B90A6B0039F675 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; path = dist; sourceTree = "<group>"; };
 		4CB3239E26EE1490005568CD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		4CB323A026EE14EA005568CD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		4CB46AAA26E751E8002407C1 /* SalLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SalLog.h; path = ../../../BoyiaFramework/source/boyia/kernel/platform/SalLog.h; sourceTree = "<group>"; };
@@ -1075,6 +1077,7 @@
 		4CFDE65726D8CC2100A01683 /* metal */ = {
 			isa = PBXGroup;
 			children = (
+				4CB0171728B90A6B0039F675 /* dist */,
 				4CA51454287C740800A4F301 /* cert */,
 				4CB46AB326EB46F9002407C1 /* apps */,
 				4CB46AB126EB46F4002407C1 /* boyia.json */,
@@ -1304,6 +1307,7 @@
 			files = (
 				4CB46AB426EB46F9002407C1 /* apps in Resources */,
 				4CB46AB226EB46F4002407C1 /* boyia.json in Resources */,
+				4CB0171828B90A6B0039F675 /* dist in Resources */,
 				4CA51455287C740800A4F301 /* cert in Resources */,
 				4CB46AB026EB46EC002407C1 /* net_boyia.json in Resources */,
 			);

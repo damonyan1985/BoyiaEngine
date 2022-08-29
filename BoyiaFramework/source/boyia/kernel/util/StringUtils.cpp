@@ -61,14 +61,10 @@ KVector<String>* StringUtils::split(const String& src, const String& splitSrc)
     LInt begin = 0;
     LInt i = 0;
     while ((i = src.Find(splitSrc, begin)) >= begin) {
-        if (i > begin) {
-            splits->addElement(src.Mid(begin, i - begin));
-        }
-        
-        
+        splits->addElement(src.Mid(begin, i - begin));
         begin = i + splitLen;
     }
-    
+
     if (i == -1 && begin < strLen) {
         splits->addElement(src.Mid(begin, strLen - begin));
     }

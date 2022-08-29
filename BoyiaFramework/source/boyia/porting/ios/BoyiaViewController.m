@@ -138,7 +138,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidAppear:animated];
-    //[self.renderer cacheCode];
+    [self.renderer cacheCode];
 }
 
 @end
