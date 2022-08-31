@@ -595,7 +595,7 @@ template <class T>
 LInt LString<T>::Find(const LString<T>& str, LInt nPos) const
 {
     LInt nLen = str.GetLength();
-    if (GetLength() >= nLen && nLen && nPos < GetLength() - nLen) {
+    if (GetLength() >= nLen && nLen) {
         T* str_beg = m_pchData + nPos;
         T* str_end = m_pchData + GetLength() - nLen;
         for (; str_beg <= str_end; ++str_beg) {
@@ -613,7 +613,7 @@ template <class T>
 LInt LString<T>::FindNoCase(const LString<T>& str, LInt nPos) const
 {
     LInt nLen = str.GetLength();
-    if (GetLength() >= nLen && nLen && nPos < GetLength() - nLen) {
+    if (GetLength() >= nLen && nLen) {
         T* str_beg = m_pchData + nPos;
         // 当begin = end的时候，正好等于过滤字符串的长度
         T* str_end = m_pchData + GetLength() - nLen;
