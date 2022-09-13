@@ -48,3 +48,6 @@ TARGETS --- build settings --- preprocessor macros中添加预编译宏
 2. 配置NDK_HOME
 
 ## Rust环境搭建
+
+## git小记
+1. git cat-file -p commit-id，查看commit name与author name

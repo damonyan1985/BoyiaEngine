@@ -652,7 +652,7 @@ static LVoid ExecInstruction(BoyiaVM* vm)
         OPHandler handler = vm->mHandlers[es->mPC->mOPCode];
         if (handler) {
             LInt result = handler(es->mPC, vm);
-            if (result == 0) { // 指令运行出错跳出循环
+            if (result == kOpResultFail) { // 指令运行出错跳出循环
                 break;
             } else if (es->mPC && result == kOpResultJumpFun) { // 函数跳转
                 continue;

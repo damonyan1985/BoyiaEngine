@@ -399,11 +399,12 @@ LInt getViewXpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaView* jsDoc = (boyia::BoyiaView*)doc->mValue.mIntVal;
-    BoyiaValue val;
-    val.mValueType = BY_INT;
-    val.mValue.mIntVal = jsDoc->left();
-    SetNativeResult(&val, vm);
-
+//    BoyiaValue val;
+//    val.mValueType = BY_INT;
+//    val.mValue.mIntVal = jsDoc->left();
+//    SetNativeResult(&val, vm);
+    
+    resultInt(jsDoc->left(), vm);
     return kOpResultSuccess;
 }
 
@@ -411,11 +412,12 @@ LInt getViewYpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-    BoyiaValue val;
-    val.mValueType = BY_INT;
-    val.mValue.mIntVal = jsDoc->top();
-    SetNativeResult(&val, vm);
-
+//    BoyiaValue val;
+//    val.mValueType = BY_INT;
+//    val.mValue.mIntVal = jsDoc->top();
+//    SetNativeResult(&val, vm);
+    
+    resultInt(jsDoc->top(), vm);
     return kOpResultSuccess;
 }
 
@@ -423,11 +425,12 @@ LInt getViewWidth(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-    BoyiaValue val;
-    val.mValueType = BY_INT;
-    val.mValue.mIntVal = jsDoc->width();
-    SetNativeResult(&val, vm);
+//    BoyiaValue val;
+//    val.mValueType = BY_INT;
+//    val.mValue.mIntVal = jsDoc->width();
+//    SetNativeResult(&val, vm);
 
+    resultInt(jsDoc->width(), vm);
     return kOpResultSuccess;
 }
 
@@ -435,12 +438,13 @@ LInt getViewHeight(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-    BoyiaValue val;
-    val.mValueType = BY_INT;
-    val.mValue.mIntVal = jsDoc->height();
-    SetNativeResult(&val, vm);
-
-    return 1;
+//    BoyiaValue val;
+//    val.mValueType = BY_INT;
+//    val.mValue.mIntVal = jsDoc->height();
+//    SetNativeResult(&val, vm);
+    
+    resultInt(jsDoc->height(), vm);
+    return kOpResultSuccess;
 }
 
 LInt setViewStyle(LVoid* vm)
