@@ -124,6 +124,8 @@ public:
     LInt FindNoCase(const LString<T>& str, LInt nPos = 0) const;
     LInt ReverseFind(const LString<T>& str) const;
     LInt ReverseFindNoCase(const LString<T>& str) const;
+    
+    LInt QuickFind(const LString<T>& pattern, LInt nPos = 0) const;
 
     LBool EndWith(const LString<T>& sEnd) const;
     LBool EndWithNoCase(const LString<T>& sEnd);
@@ -663,6 +665,56 @@ LInt LString<T>::ReverseFindNoCase(const LString<T>& str) const
         }
     }
 
+    return -1;
+}
+
+template <class T>
+LInt LString<T>::QuickFind(const LString<T>& pattern, LInt nPos) const
+{
+    // source串匹配的首字母对应的位置
+    LInt nLen = pattern.GetLength();
+    LInt srcLen = GetLength() - nPos;
+    if (srcLen >= 0 && nLen) {
+        T* srcBuffer = GetBuffer() + nPos;
+        T* patternBuffer = pattern.GetBuffer();
+        // next数组表示pattern匹配失败后需要移动的距离
+        // 暂定next数组长度不超过32，本工程暂时没有超出32长度的模式串
+        LInt next[32];
+        {
+            LInt i = 1;
+            next[1] = 0;
+            LInt j = 0;
+            while (i < nLen) {
+                if (j == 0 || patternBuffer[i-1] == patternBuffer[j-1]) {
+                    i++;
+                    j++;
+                    next[i] = j;
+                } else {
+                    j = next[j];
+                }
+            }
+        }
+        
+        // 匹配失败后，不需要调整srcBuffer的索引i
+        LInt i = 1;
+        LInt j = 1;
+        while (i <= srcLen && j <= nLen) {
+            if (j == 0 || srcBuffer[i-1] == patternBuffer[j-1]) {
+                i++;
+                j++;
+            } else {
+                j = next[j];
+            }
+        }
+        
+        // 如果条件为真，说明匹配成功
+        if (j > nLen) {
+            LInt result = nPos + i - nLen - 1;
+            String str = Mid(nPos, result);
+            return result;
+        }
+    }
+    
     return -1;
 }
 
