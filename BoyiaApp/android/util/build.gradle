@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply from: "$rootDir/library.gradle"
+apply from: "$rootDir/scripts/library.gradle"
 
 android {
     compileSdkVersion gradle.constants.sdkVersion
@@ -8,7 +7,7 @@ android {
         minSdkVersion 23
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
     }
 
     buildTypes {
@@ -27,17 +26,19 @@ android {
 println "library dir:"
 println library_dir
 
-uploadArchives {
-    repositories.mavenDeployer {
-        repository(url:"file://${maven_dir}")
-        pom.project {
-            groupId "com.boyia.app.common" // can write any name, but now we use library package name
-            artifactId "util" // can write any name, but now we use library name
-            version "1.0.0" // version name
-        }
-    }
-}
+//uploadArchives {
+//    repositories.mavenDeployer {
+//        repository(url:"file://${maven_dir}")
+//        pom.project {
+//            groupId "com.boyia.app.common" // can write any name, but now we use library package name
+//            artifactId "util" // can write any name, but now we use library name
+//            version "1.0.0" // version name
+//        }
+//    }
+//}
 
 dependencies {
     implementation gradle.library.zip4jLib
 }
+
+apply from: "${rootDir}/scripts/upload.gradle"

@@ -13,7 +13,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.9'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.19'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -27,9 +27,9 @@ allprojects {
         google()
         jcenter()
         maven { url uri("$rootDir/maven/BoyiaMaven") } // 优先读本地仓库
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
         maven { url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/" }
-        maven { url "http://maven.oschina.net/content/groups/public/" }
+        maven { url "https://maven.oschina.net/content/groups/public/" }
         maven { url 'https://dl.bintray.com/umsdk/release' } // umeng sdk maven
 
         //maven { url "https://raw.githubusercontent.com/damonyan1985/BoyiaMaven/master/" }

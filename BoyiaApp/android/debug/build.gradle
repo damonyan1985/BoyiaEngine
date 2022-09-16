@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply from: "$rootDir/library.gradle"
+apply from: "$rootDir/scripts/library.gradle"
 
 android {
     compileSdkVersion gradle.constants.sdkVersion
@@ -8,7 +7,7 @@ android {
         minSdkVersion 23
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,18 +26,20 @@ android {
     }
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        repository(url:"file://${maven_dir}")
-        pom.project {
-            groupId "com.boyia.app.debug" // can write any name, but now we use library package name
-            artifactId "debugger" // can write any name, but now we use library name
-            version "1.0.0" // version name
-        }
-    }
-}
+//uploadArchives {
+//    repositories.mavenDeployer {
+//        repository(url:"file://${maven_dir}")
+//        pom.project {
+//            groupId "com.boyia.app.debug" // can write any name, but now we use library package name
+//            artifactId "debugger" // can write any name, but now we use library name
+//            version "1.0.0" // version name
+//        }
+//    }
+//}
 
 dependencies {
     compileOnly gradle.library.boyia_common
     compileOnly gradle.library.boyia_loader
 }
+
+apply from: "${rootDir}/scripts/upload.gradle"

@@ -68,20 +68,22 @@ permission_gradlew_cmd = (
 )
 
 # add --rerun-tasks to resolute externalNativeBuild not exist
+# archives = 'uploadArchives', support for gradle 6.0
+archives = 'publishReleasePublicationToMavenRepository'
 upload_core_library_cmd = (
-    f'{gradle_cmd} :core:uploadArchives --rerun-tasks'
+    f'{gradle_cmd} :core:{archives} --rerun-tasks'
 )
 
 upload_util_library_cmd = (
-    f'{gradle_cmd} :util:uploadArchives'
+    f'{gradle_cmd} :util:{archives}'
 )
 
 upload_loader_library_cmd = (
-    f'{gradle_cmd} :loader:uploadArchives'
+    f'{gradle_cmd} :loader:{archives}'
 )
 
 upload_debugger_library_cmd = (
-    f'{gradle_cmd} :debug:uploadArchives'
+    f'{gradle_cmd} :debug:{archives}'
 )
 
 build_app_cmd = (

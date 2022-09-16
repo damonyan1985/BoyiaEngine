@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply from: "$rootDir/library.gradle"
+apply from: "$rootDir/scripts/library.gradle"
 
 android {
     compileSdkVersion gradle.constants.sdkVersion
@@ -8,7 +7,7 @@ android {
         minSdkVersion 23
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -71,16 +70,16 @@ configurations {
 
 println "$rootDir/../BoyiaFramework/buildtool/CMakeLists.txt"
 
-uploadArchives {
-    repositories.mavenDeployer {
-        repository(url:"file://${maven_dir}")
-        pom.project {
-            groupId "com.boyia.app.core" // can write any name, but now we use library package name
-            artifactId "core" // can write any name, but now we use library name
-            version "1.0.0" // version name
-        }
-    }
-}
+//uploadArchives {
+//    repositories.mavenDeployer {
+//        repository(url:"file://${maven_dir}")
+//        pom.project {
+//            groupId "com.boyia.app.core" // can write any name, but now we use library package name
+//            artifactId "core" // can write any name, but now we use library name
+//            version "1.0.0" // version name
+//        }
+//    }
+//}
 
 dependencies {
     //compileOnly 'com.boyia.app.common:common:1.0.0'
@@ -89,3 +88,5 @@ dependencies {
     compileOnly gradle.library.boyia_loader
     //compileOnly project(':loader')
 }
+
+apply from: "${rootDir}/scripts/upload.gradle"

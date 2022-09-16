@@ -1,0 +1,42 @@
+apply plugin: 'maven-publish'
+
+println("upload maven_dir=${maven_dir} GROUP_ID=${GROUP_ID} ARTIFACT_ID=${ARTIFACT_ID}")
+
+//uploadArchives {
+//   repositories.mavenDeployer {
+//       repository(url:"file://${maven_dir}")
+//       pom.project {
+//           groupId GROUP_ID // can write any name, but now we use library package name
+//           artifactId ARTIFACT_ID // can write any name, but now we use library name
+//           version VERSION_NAME // version name
+//       }
+//   }
+//}
+
+afterEvaluate {
+    println("Components: " + components*.name)
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version VERSION_NAME
+            }
+
+            debug(MavenPublication) {
+                from components.debug
+
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version VERSION_NAME
+            }
+        }
+        repositories {
+            maven {
+                url = "file://${maven_dir}"
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.protobuf'
-apply from: "$rootDir/library.gradle"
+apply from: "$rootDir/scripts/library.gradle"
 
 //def getCurrentTime() {
 //    Date date = new Date(System.currentTimeMillis())
