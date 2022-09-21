@@ -26,6 +26,7 @@
 #include "AppManager.h"
 #include "BoyiaSocket.h"
 #include "Animation.h"
+#include "JSONParser.h"
 
 @interface BoyiaTextInputViewHider : UIView
 @end
@@ -223,7 +224,12 @@ void testHashMap()
 //    new yanbo::Timer(600, [socket]() -> LVoid {
 //        socket->send(_CS("hello world"));
 //    }, LTrue);
+    String appPath = _DSTR(_CS(yanbo::PlatformBridge::getAppPath())) + _CS("contacts/view/main.boui");
+    boyia::JSONParser parser(appPath, boyia::JSONParser::kSourceXmlFile);
     
+    String json;
+    parser.toJson(json);
+    BOYIA_LOG("xml to json = %s", GET_STR(json));
     return renderer;
 }
 

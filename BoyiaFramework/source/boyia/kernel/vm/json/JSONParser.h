@@ -20,15 +20,26 @@ private:
 
 class JSONParser {
 public:
-    JSONParser(const String& str, LBool isFile = LTrue);
+    enum SourceType {
+        kSourceJsonFile,
+        kSourceJsonText,
+        kSourceXmlFile,
+        kSourceXmlText // 将xml文本转换成json
+    };
+    
+    JSONParser(const String& str, SourceType type = kSourceJsonFile);
     ~JSONParser();
 
     const cJSON* json() const;
     cJSON* get(const char* key) const;
 
     JSONIterator begin() const;
+    
+    LVoid toJson(String& json) const;
 
 private:
+    LVoid parseXml(const String& path);
+    
     cJSON* m_json;
 };
 }
