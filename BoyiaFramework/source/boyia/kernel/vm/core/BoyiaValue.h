@@ -3,6 +3,7 @@
 
 #include "PlatformLib.h"
 
+// BY_PROP_FUNC，属性方法类型，一般用于对象回调
 enum KeyWord {
     BY_ARG = 0,
     BY_CHAR,

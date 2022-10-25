@@ -14,6 +14,7 @@ use jni::JNIEnv;
 use jni::objects::{JClass};
 use jni::sys::jstring;
 
+#[cfg(target_os = "android")]
 #[no_mangle]
 pub extern "system" fn Java_com_boyia_app_core_BoyiaCoreJNI_nativeInitSdk(env: JNIEnv, _clzz: JClass) -> jstring {
   logger_init();

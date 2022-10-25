@@ -94,6 +94,16 @@
             android:name="com.boyia.app.shell.update.UpdateApkService"
             android:process="@string/boyia_app_upgrade_process"
             android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/shell_provider_paths" />
+        </provider>
     </application>
 
 </manifest>

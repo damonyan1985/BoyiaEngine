@@ -14,6 +14,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -233,6 +236,7 @@ public class BoyiaUtils {
         }
     }
 
+    // 获取status bar高度
     public static int getStatusBarHeight(Activity activity) {
         int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
@@ -241,7 +245,7 @@ public class BoyiaUtils {
         return 0;
     }
 
-    //获取虚拟按键的高度
+    // 获取虚拟按键的高度
     public static int getNavigationBarHeight(Activity context) {
         int result = 0;
         if (checkNavigationBarShow(context)) {
@@ -254,6 +258,7 @@ public class BoyiaUtils {
         return result;
     }
 
+    // 检查虚拟导航键是否显示
     public static boolean checkNavigationBarShow(Activity context) {
         boolean show;
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
@@ -271,5 +276,20 @@ public class BoyiaUtils {
             show = (rect.bottom != point.y);
         }
         return show;
+    }
+
+    public static boolean isAppInstalled(Context context, String packageName) {
+        if (isTextEmpty(packageName)) {
+            return false;
+        }
+
+        try {
+            context.getPackageManager().getPackageInfo(packageName, 0);
+        } catch (NameNotFoundException e) {
+            BoyiaLog.e(TAG, "invoke isAppInstalled error", e);
+            return false;
+        }
+
+        return true;
     }
 }

@@ -15,3 +15,7 @@ pub fn logger_init() {
 #[cfg(target_os = "windows")]
 pub fn logger_init() {
 }
+
+#[cfg(target_os = "ios")]
+pub fn logger_init() {
+}

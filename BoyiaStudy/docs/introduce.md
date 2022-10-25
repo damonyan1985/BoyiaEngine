@@ -35,7 +35,8 @@ Defines Module改为YES, 会自动生成app-Swift.h
 
 4. Swift调用OC
 ```
-自动生成app-Bridging-Header.h
+1. 自动生成app-Bridging-Header.h
+2. swift属于单继承，父类在继承列表首位，如果有protocol则放在父类的后面
 ```
 
 5. 预编译宏添加

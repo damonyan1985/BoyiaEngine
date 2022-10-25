@@ -21,11 +21,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberImagePainter
 import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.shell.R
 import com.boyia.app.shell.home.BoyiaDownloadMask
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.update.Downloader
 import com.boyia.app.shell.update.Downloader.DownLoadProgressListener
+import com.boyia.app.shell.util.BoyiaAppShare
 import com.boyia.app.shell.util.dpx
 import com.boyia.app.shell.util.toDp
 
@@ -110,7 +112,11 @@ class BoyiaAboutFragment: NavigationFragment() {
                 Spacer(modifier = Modifier.height(dpx(1)))
 
                 TextButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            BoyiaAppShare.shareInstagram(activity, BoyiaBridge.getAppRoot() + "apps/contacts/img/artcle.png", "hello")
+                            //BoyiaAppShare.shareToSMS(activity, "hello world")
+                            //BoyiaAppShare.shareWhatsup(activity, null, "helloworld")
+                        },
                         modifier = Modifier
                                 .background(Color.White)
                                 .fillMaxWidth()
