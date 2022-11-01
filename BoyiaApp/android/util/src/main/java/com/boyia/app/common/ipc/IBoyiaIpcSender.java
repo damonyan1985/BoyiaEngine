@@ -176,5 +176,37 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
             }
             return result;
         }
+
+        @Override
+        public void whileSenderEnd(IBoyiaSenderListener listener) {
+            BoyiaLog.d(TAG, "call whileSenderEnd");
+            if (mRemote == null || listener == null) {
+                return;
+            }
+
+            try {
+                BoyiaLog.d(TAG, "add death listener");
+                mRemote.linkToDeath(new BoyiaSenderDeathRecipient(listener, mRemote), 0);
+            } catch (RemoteException e) {
+                BoyiaLog.e(TAG, "linkToDeath error", e);
+            }
+        }
+    }
+
+    class BoyiaSenderDeathRecipient implements IBinder.DeathRecipient {
+        private IBoyiaSenderListener mListener;
+        private IBinder mRemote;
+
+        public BoyiaSenderDeathRecipient(IBoyiaSenderListener listener, IBinder binder) {
+            mListener = listener;
+            mRemote = binder;
+        }
+
+        @Override
+        public void binderDied() {
+            BoyiaLog.d(TAG, "linkToDeath callback");
+            mRemote.unlinkToDeath(this, 0);
+            mListener.onSenderEnd();
+        }
     }
 }

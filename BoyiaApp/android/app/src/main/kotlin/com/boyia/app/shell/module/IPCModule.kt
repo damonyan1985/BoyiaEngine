@@ -15,4 +15,9 @@ interface IPCModule : IModule {
      * 注册sender
      */
     fun registerSender(aid: Int, sender: IBoyiaSender)
+
+    /**
+     * 删除sender
+     */
+    fun removeSender(aid: Int)
 }

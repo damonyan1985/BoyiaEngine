@@ -2,6 +2,7 @@ package com.boyia.app.shell.ipc
 
 import android.os.IBinder
 import com.boyia.app.common.ipc.IBoyiaSender
+import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.shell.ipc.handler.*
@@ -12,6 +13,10 @@ import java.lang.reflect.Constructor
 import java.util.concurrent.ConcurrentHashMap
 
 class BoyiaIPCModule : IPCModule {
+    companion object {
+        const val TAG = "BoyiaIPCModule"
+    }
+
     private var binder: BoyiaHostBinder? = null
     private var context: WeakReference<IModuleContext>? = null
     private lateinit var handlerMap: ConcurrentHashMap<String?, IBoyiaHandlerCreator>
@@ -41,6 +46,10 @@ class BoyiaIPCModule : IPCModule {
         appSenderMap[aid] = sender
     }
 
+    override fun removeSender(aid: Int) {
+        appSenderMap.remove(aid);
+    }
+
     /**
      * 内部包一个handler对象生成器，获取handler时通过生成器生成
      */
@@ -48,7 +57,9 @@ class BoyiaIPCModule : IPCModule {
         handlerMap[method] = object : IBoyiaHandlerCreator {
             override fun create(): IBoyiaIPCHandler {
                 if (async) {
-                    return type.getConstructor(IPCModule::class.java).newInstance(this)
+                    val handler = type.getConstructor(IPCModule::class.java).newInstance(this@BoyiaIPCModule)
+                    BoyiaLog.d(TAG, "BoyiaIPCModule register handler=$handler")
+                    return handler
                 }
 
                 return type.newInstance();

@@ -13,9 +13,9 @@ import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.loader.job.JobScheduler;
-import com.boyia.app.core.api.ApiConstants.ApiKeys;
-import com.boyia.app.core.api.ApiConstants.ApiNames;
-import com.boyia.app.core.api.ApiConstants.ApiRequestCode;
+//import com.boyia.app.core.api.ApiConstants.ApiKeys;
+//import com.boyia.app.core.api.ApiConstants.ApiNames;
+//import com.boyia.app.core.api.ApiConstants.ApiRequestCode;
 import com.boyia.app.core.api.ApiHandler.ApiHandlerCallback;
 
 import org.json.JSONException;
@@ -50,35 +50,32 @@ public class ApiImplementation {
      */
     public void sendAsyncCallbackBinder(int aid) {
         Bundle bundle = new Bundle();
-        bundle.putInt(ApiKeys.BINDER_AID, aid);
-        bundle.putBinder(ApiNames.SEND_BINDER, mCallbackBinder);
+        bundle.putInt(ApiConstants.ApiKeys.BINDER_AID, aid);
+        bundle.putBinder(ApiConstants.ApiNames.SEND_BINDER, mCallbackBinder);
         BoyiaIpcData data = new BoyiaIpcData(
-                ApiNames.SEND_BINDER,
+                ApiConstants.ApiNames.SEND_BINDER,
                 bundle
         );
-        try {
-            mSender.sendMessageSync(data);
-        } catch (RemoteException e) {
-            BoyiaLog.e(TAG, "sendAsyncCallbackBinder error", e);
-        }
+        sendData(data);
     }
 
     private void initCommon() {
-        registerHandler(ApiNames.NOTIFICATION_NAME, () -> (params, callback) -> {
+        registerHandler(ApiConstants.ApiNames.NOTIFICATION_NAME, () -> (params, callback) -> {
             sendNotification(null, null);
             callback.callback(null);
         });
 
-        registerHandler(ApiNames.LOCAL_SHARE_SET, () -> (params, callback) -> {
+        registerHandler(ApiConstants.ApiNames.LOCAL_SHARE_SET, () -> (params, callback) -> {
             try {
-                setShare(params.getString(ApiKeys.IPC_SHARE_KEY), params.getString(ApiKeys.IPC_SHARE_VALUE));
+                setShare(params.getString(ApiConstants.ApiKeys.IPC_SHARE_KEY),
+                        params.getString(ApiConstants.ApiKeys.IPC_SHARE_VALUE));
             } catch (JSONException e) {
                 e.printStackTrace();
-                BoyiaLog.e(TAG, ApiNames.LOCAL_SHARE_SET + " error: ", e);
+                BoyiaLog.e(TAG, ApiConstants.ApiNames.LOCAL_SHARE_SET + " error: ", e);
             }
         });
 
-        registerHandler(ApiNames.PICK_IMAGE, () -> new ApiHandler() {
+        registerHandler(ApiConstants.ApiNames.PICK_IMAGE, () -> new ApiHandler() {
             private ApiHandlerCallback mCallback;
             @Override
             public void handle(JSONObject params, ApiHandlerCallback callback) {
@@ -89,7 +86,7 @@ public class ApiImplementation {
 
             @Override
             public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-                if (requestCode == ApiRequestCode.PHOTO_CODE) {
+                if (requestCode == ApiConstants.ApiRequestCode.PHOTO_CODE) {
                     Uri uri = data.getData();
                     BoyiaLog.d(TAG, "image uri = " + uri);
                     mCallback.callback(null);
@@ -100,9 +97,11 @@ public class ApiImplementation {
             }
         });
 
-        registerHandler(ApiNames.USER_INFO, () -> (params, callback) -> getUserInfo(callback));
+        registerHandler(ApiConstants.ApiNames.USER_INFO,
+                () -> (params, callback) -> getUserInfo(callback));
 
-        registerHandler(ApiNames.USER_LOGIN, () -> (params, callback) -> userLogin());
+        registerHandler(ApiConstants.ApiNames.USER_LOGIN,
+                () -> (params, callback) -> userLogin());
     }
 
     public void registerHandler(String method, ApiCreator creator) {
@@ -111,11 +110,11 @@ public class ApiImplementation {
 
     public void sendNotification(String action, BoyiaAppInfo info) {
         Bundle bundle = new Bundle();
-        bundle.putString(ApiKeys.NOTIFICATION_ACTION, action);
-        bundle.putString(ApiKeys.NOTIFICATION_TITLE, info.mAppName);
-        bundle.putString(ApiKeys.NOTIFICATION_ICON, info.mAppCover);
+        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_ACTION, action);
+        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_TITLE, info.mAppName);
+        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_ICON, info.mAppCover);
         BoyiaIpcData data =
-                new BoyiaIpcData(ApiNames.NOTIFICATION_NAME, bundle);
+                new BoyiaIpcData(ApiConstants.ApiNames.NOTIFICATION_NAME, bundle);
         sendData(data);
     }
 
@@ -126,10 +125,10 @@ public class ApiImplementation {
      */
     public void setShare(String key, String value) {
         Bundle bundle = new Bundle();
-        bundle.putString(ApiKeys.IPC_SHARE_KEY, key);
-        bundle.putString(ApiKeys.IPC_SHARE_VALUE, value);
+        bundle.putString(ApiConstants.ApiKeys.IPC_SHARE_KEY, key);
+        bundle.putString(ApiConstants.ApiKeys.IPC_SHARE_VALUE, value);
         BoyiaIpcData data = new BoyiaIpcData(
-                ApiNames.LOCAL_SHARE_SET,
+                ApiConstants.ApiNames.LOCAL_SHARE_SET,
                 bundle
         );
 
@@ -146,7 +145,7 @@ public class ApiImplementation {
         Intent pickIntent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        mActivityRef.get().startActivityForResult(pickIntent, ApiRequestCode.PHOTO_CODE);
+        mActivityRef.get().startActivityForResult(pickIntent, ApiConstants.ApiRequestCode.PHOTO_CODE);
     }
 
     private void sendData(BoyiaIpcData data) {
@@ -188,17 +187,17 @@ public class ApiImplementation {
      */
     public void getUserInfo(ApiHandlerCallback apiCB) {
         BoyiaIpcData data = new BoyiaIpcData(
-                ApiNames.USER_INFO,
+                ApiConstants.ApiNames.USER_INFO,
                 null
         );
 
         sendData(data, message -> apiCB.callback(
-                message.getParams().get(ApiNames.USER_INFO).toString()));
+                message.getParams().get(ApiConstants.ApiNames.USER_INFO).toString()));
     }
 
     public void userLogin() {
         BoyiaIpcData data = new BoyiaIpcData(
-                ApiNames.USER_LOGIN,
+                ApiConstants.ApiNames.USER_LOGIN,
                 null
         );
 

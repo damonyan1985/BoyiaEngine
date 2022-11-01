@@ -59,7 +59,7 @@ public class BoyiaApplication extends BaseApplication {
             public void onActivityDestroyed(@NonNull Activity activity) {
                 BoyiaLog.d(TAG, String.format("activity destroyed name = %s and action = %s", activity.getClass().getCanonicalName(), activity.getIntent().getAction()));
                 //BoyiaLog.d(TAG, String.format("activity destroyed action = %s", activity.getIntent().getAction()));
-                // 监控activity是否被熊辉
+                // 监控activity是否被销毁
                 new LeakChecker().watch(activity, () -> {
                     // 此处可以上报内存泄露
                     BoyiaLog.d(TAG, String.format("Leak activity %s", activity.getClass().getCanonicalName()));

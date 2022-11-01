@@ -15,4 +15,9 @@ public interface IBoyiaSender {
      * 异步发消息
      */
     void sendMessageAsync(BoyiaIpcData message, IBoyiaIpcCallback callback) throws RemoteException;
+
+    /**
+     * 通知应用当前binder挂掉
+     */
+    default void whileSenderEnd(IBoyiaSenderListener callback) {}
 }

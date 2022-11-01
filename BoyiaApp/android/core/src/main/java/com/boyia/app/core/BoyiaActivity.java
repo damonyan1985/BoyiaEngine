@@ -64,7 +64,8 @@ public class BoyiaActivity extends Activity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
-        IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+        //IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+        IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(mAppInfo.mHostBinder);
         mApiImplementation = new ApiImplementation(sender, this);
         mApiImplementation.sendAsyncCallbackBinder(mAppInfo.mAppId);
         BoyiaBridge.setIPCSender(mApiImplementation);
@@ -167,8 +168,8 @@ public class BoyiaActivity extends Activity {
         BoyiaLog.d(TAG, "onKeyDown");
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                //backExit();
-                backToBackground();
+                backExit();
+                //backToBackground();
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_UP:

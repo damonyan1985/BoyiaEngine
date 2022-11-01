@@ -70,9 +70,9 @@ public class BoyiaAppLauncher {
     /**
      * 当进程被杀死时，从缓存中移除
      */
-    private static void onDestroyApp() {
+    public static void notifyAppExit(int appId) {
         BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
-
+            sActions.remove(appId);
         });
     }
 
@@ -128,7 +128,6 @@ public class BoyiaAppLauncher {
      */
     private static void launchImpl(BoyiaAppInfo info) {
         List<ProcessInfo> list = getRunningBoyiaProcessList();
-
         for (int i = 0; i < BOYIA_APP_PROCESS_ENDS.length; i++) {
             if (canUse(list, BOYIA_APP_PROCESS_ENDS[i])) {
                 launchApp(BOYIA_APP_PROCESS_ENDS[i], info);
@@ -180,7 +179,7 @@ public class BoyiaAppLauncher {
         debugBuilder.append("ProcessList:");
         ActivityManager am = (ActivityManager) BaseApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningAppProcessInfo info : am.getRunningAppProcesses()) {
-            if (info.processName.startsWith(BOYIA_APP_PROCESS_PREFIX)) {
+            if (info.processName.contains(BOYIA_APP_PROCESS_PREFIX)) {
                 list.add(new ProcessInfo(info.pid, info.processName));
                 debugBuilder.append("-" + info.processName);
             }

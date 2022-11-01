@@ -82,11 +82,8 @@ println "$rootDir/../BoyiaFramework/buildtool/CMakeLists.txt"
 //}
 
 dependencies {
-    //compileOnly 'com.boyia.app.common:common:1.0.0'
-    //compileOnly project(':util')
     compileOnly gradle.library.boyia_common
     compileOnly gradle.library.boyia_loader
-    //compileOnly project(':loader')
 }
 
 apply from: "${rootDir}/scripts/upload.gradle"

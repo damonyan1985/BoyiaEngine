@@ -113,7 +113,7 @@ class BoyiaAboutFragment: NavigationFragment() {
 
                 TextButton(
                         onClick = {
-                            BoyiaAppShare.shareInstagram(activity, BoyiaBridge.getAppRoot() + "apps/contacts/img/artcle.png", "hello")
+                            BoyiaAppShare.shareInstagramContacts(activity, BoyiaBridge.getAppRoot() + "apps/contacts/img/artcle.png", "hello")
                             //BoyiaAppShare.shareToSMS(activity, "hello world")
                             //BoyiaAppShare.shareWhatsup(activity, null, "helloworld")
                         },
