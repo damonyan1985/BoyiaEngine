@@ -4,6 +4,7 @@ package com.boyia.app.core;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -212,8 +213,9 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
     // 这个方法继承自View。把自定义的BaseInputConnection通道传递给InputMethodService
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        BoyiaLog.d(TAG, "create inputConnection");
         if (mInputConnect == null) {
-            mInputConnect = new BoyiaInputConnection(this, false);
+            mInputConnect = new BoyiaInputConnection(this, outAttrs);
         }
 
         return mInputConnect;

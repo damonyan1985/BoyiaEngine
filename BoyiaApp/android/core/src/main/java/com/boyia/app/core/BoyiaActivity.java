@@ -168,8 +168,8 @@ public class BoyiaActivity extends Activity {
         BoyiaLog.d(TAG, "onKeyDown");
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                backExit();
-                //backToBackground();
+                //backExit();
+                backToBackground();
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -219,6 +219,13 @@ public class BoyiaActivity extends Activity {
         super.onStop();
         mApiImplementation.sendNotification(
                 getIntent().getAction(), mAppInfo);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 执行到onDestroy时进程必须被清除
+        Process.killProcess(Process.myPid());
     }
 
     @Override

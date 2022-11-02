@@ -111,7 +111,8 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent
                     ),
-                    placeholder = { Text("Please input search key")}
+                    placeholder = { Text("Please input search key")},
+                    maxLines = 1
             )
             Spacer(modifier = Modifier.width(dpx(10)))
             TextButton(onClick = { model.searchAppList(searchKey)},
