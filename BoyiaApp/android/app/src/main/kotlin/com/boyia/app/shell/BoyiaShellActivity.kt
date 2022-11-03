@@ -8,12 +8,18 @@ import android.os.Environment
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.common.utils.ProcessUtil
 import com.boyia.app.shell.module.IModuleContext
 
 /**
  * shell程序共用activity基类
  */
 open class BoyiaShellActivity: AppCompatActivity(), IModuleContext {
+    companion object {
+        const val TAG = ""
+    }
     protected var rootView: CoordinatorLayout? = null
 
     override fun onCreate(bundle: Bundle?) {

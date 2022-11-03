@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.common.utils.ProcessUtil;
 import com.boyia.app.core.api.ApiImplementation;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
@@ -58,6 +60,8 @@ public class BoyiaActivity extends Activity {
     protected void initBoyiaView() {
         initContainer();
         startBoyiaUI();
+        BoyiaLog.d(TAG, "BoyiaActivity is main process:" + ProcessUtil.isMainProcess()
+                + ", processname=" + ProcessUtil.getCurrentProcessName() + ", is boyia app:" + ProcessUtil.isBoyiaAppProcess());
     }
 
     private void fetchAppInfo() {

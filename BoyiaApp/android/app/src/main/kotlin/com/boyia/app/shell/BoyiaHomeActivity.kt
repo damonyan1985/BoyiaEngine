@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
+import com.boyia.app.common.utils.ProcessUtil
 import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.BaseFragment
@@ -59,6 +60,7 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
         initHome()
         initNotifyService()
         BoyiaUtils.setStatusbarTransparent(this)
+        BoyiaLog.d(TAG, "BoyiaHomeActivity is main process:" + ProcessUtil.isMainProcess())
     }
 
     private fun initHome() {

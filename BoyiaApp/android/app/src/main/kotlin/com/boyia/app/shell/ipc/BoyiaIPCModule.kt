@@ -20,6 +20,7 @@ class BoyiaIPCModule : IPCModule {
     private var binder: BoyiaHostBinder? = null
     private var context: WeakReference<IModuleContext>? = null
     private lateinit var handlerMap: ConcurrentHashMap<String?, IBoyiaHandlerCreator>
+    // 简版AMS
     private lateinit var appSenderMap: ConcurrentHashMap<Int, IBoyiaSender>
 
     override fun getBinder(): IBinder? {
