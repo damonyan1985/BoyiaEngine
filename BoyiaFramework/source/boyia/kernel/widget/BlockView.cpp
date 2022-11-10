@@ -82,6 +82,8 @@ LVoid BlockView::layoutBlock(LBool relayoutChildren)
         FlexLayout::flexRowReverse(this);
     } else if (m_style.flexDirection == util::Style::FLEX_ROW_SPACE_BETWEEN) {
         FlexLayout::flexRowSpacebetween(this);
+    } else if (m_style.flexDirection == util::Style::FLEX_COLUMN) {
+        FlexLayout::flexColumnLayout(this);
     } else {
         layoutBlockChildren(relayoutChildren);
     }

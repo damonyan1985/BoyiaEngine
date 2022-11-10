@@ -11,12 +11,12 @@ class UnderlineEditText(context: Context): AppCompatEditText(context) {
 
     init {
         paint = Paint()
-        paint?.style = Paint.Style.STROKE;
-        paint?.color = 0xFFCAE1FF.toInt();
+        paint?.style = Paint.Style.STROKE
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawLine(0F, (this.height - 2).toFloat(), (this.width -2).toFloat(), (this.height -2).toFloat(), paint!!)
+        paint?.color = if (isFocused) 0xFF7FFFD4.toInt() else 0xFFCAE1FF.toInt()
+        canvas.drawLine(0F, (this.height - 2).toFloat(), (this.width - 2).toFloat(), (this.height - 2).toFloat(), paint!!)
     }
 }

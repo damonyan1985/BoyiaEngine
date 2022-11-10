@@ -122,6 +122,7 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
     // 剩余高度为flex-grow元素所分配的高度
     LInt leftHeight = view->getHeight() - noGrowHeight;
     LInt flexGrowTotal = 0;
+    iter = list.begin();
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
         if (child->getStyle()->flex().flexGrow) {
@@ -137,6 +138,8 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
     LInt x = view->getStyle()->padding().leftPadding;
     LInt y = view->getStyle()->border().topWidth + view->getStyle()->padding().topPadding;
     BOYIA_LOG("layoutInlineBlock, child size=%d", list.count());
+    
+    iter = list.begin();
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
         //LInt x = child->getStyle()->margin().leftMargin;
@@ -152,6 +155,8 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
                              - child->getStyle()->margin().bottomMargin
                              - child->getStyle()->margin().topMargin);
         }
+        
+        y += child->getHeight();
     }
 }
 // 从下到上使用列排版

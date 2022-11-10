@@ -2,6 +2,7 @@ package com.boyia.app.shell.login
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
 import android.widget.*
 import com.boyia.app.common.utils.BoyiaLog
@@ -78,19 +79,22 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         imageView.setImageResource(rid)
         imageView.setColorFilter(0xFFCAE1FF.toInt())
         val imageViewParam = LinearLayout.LayoutParams(
-                36.dp,
-                36.dp
+                48.dp,
+                48.dp
         )
-        imageViewParam.gravity = Gravity.CENTER_VERTICAL
+        imageViewParam.gravity = Gravity.BOTTOM
         inputLayout.addView(imageView, imageViewParam)
 
         val editText = UnderlineEditText(requireContext())
+        editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         editText.setBackgroundColor(Color.TRANSPARENT)
+        editText.gravity = Gravity.BOTTOM
         val editTextParam = LinearLayout.LayoutParams(
                 400.dp,
                 120.dp
         )
-        editTextParam.gravity = Gravity.CENTER_VERTICAL
+        editTextParam.leftMargin = 2.dp
+        editTextParam.gravity = Gravity.BOTTOM
         inputLayout.addView(editText, editTextParam)
 
         viewCallback(editText)

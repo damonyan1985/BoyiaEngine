@@ -89,6 +89,7 @@
 	position:absolute;
 	align: all;
 	width: 720px;
+    flex-direction: column;
 }
 .image_poster {
     background-color:#FFFFFFFF;
@@ -123,14 +124,9 @@ body {
 	width: 480px;
 	height: 150px;
 }
-#header {
-	position: absolute;
-}
 .items {
-    position: absolute;
-    top: 155px;
     background-color:#FFFFFFFF;
-    height: 1200px;
+    flex-grow: 1;
 }
 .video {
 	position:absolute;
@@ -183,7 +179,6 @@ body {
 }
 
 #footer {
-	position: absolute;
 	align: bottom;
 	width: 720px;
 	height: 150px;
