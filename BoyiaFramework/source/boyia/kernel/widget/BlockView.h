@@ -23,7 +23,7 @@ public:
     LBool isChildrenInline();
 
     // add create anonymous or normal child
-    virtual LVoid addChild(HtmlView* child);
+    virtual LVoid addChild(HtmlView* child) LOverride;
     LVoid addChild(HtmlView* child, LBool isAnonymousBlock);
 
     // layer layout
@@ -38,7 +38,7 @@ public:
     LVoid makeChildrenNonInline(HtmlView* block);
     BlockView* createAnonymousBlock();
 
-    virtual LBool isBlockView() const;
+    virtual LBool isBlockView() const LOverride;
     LVoid setIsAnonymousBlock(LBool isAnonymous);
     virtual LBool isAnonymousBlock();
 

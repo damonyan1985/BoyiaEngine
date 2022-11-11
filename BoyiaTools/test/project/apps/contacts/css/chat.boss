@@ -10,11 +10,15 @@
 	background-color: #EDEDED;
 }
 
+.edit_container {
+    position: absolute;
+    align: bottom;
+    background-color: #EDEDED;
+    height: 200px;
+}
+
 .edit_view {
-	position: absolute;
-	height: 100px;
-	background-color: #EDEDED;
-	align: bottom;
+	height: 120px;
 }
 
 #chat_view {
@@ -32,6 +36,14 @@
 #chat_edit {
 	width: 600px;
 	height: 80px;
+    border: 0px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+}
+
+.edit_center {
+    position: absolute;
+    align: center;
 }
 
 .avatar_center {

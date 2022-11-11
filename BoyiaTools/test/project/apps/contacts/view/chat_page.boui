@@ -3,8 +3,14 @@
 	<div id="chat_msg_view" />
 </div>
 <div id="chat_header" />
-<div class="edit_view">
-	<input id="chat_edit" type="password" value="" />
-	<img class="msg_submit" src="boyia://apps/contacts/img/send.png" />
+
+<div class="edit_container">
+    <div class="edit_view">
+        <div class="edit_center">
+            <input id="chat_edit" type="password" value="" />
+            <img class="msg_submit" src="boyia://apps/contacts/img/send.png" />
+        </div>
+    </div>
+    <div class="edit_tool"></div>
 </div>
 </view>

@@ -9,7 +9,7 @@ namespace yanbo {
 // 本引擎内容宽高是需要计算才能得出的
 
 
-LVoid FlexLayout::flexRowLayout(HtmlView* view)
+LVoid FlexLayout::flexRowLayout(BlockView* view)
 {
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
@@ -36,7 +36,7 @@ LVoid FlexLayout::flexRowLayout(HtmlView* view)
     }
 }
 
-LVoid FlexLayout::flexRowReverse(HtmlView* view)
+LVoid FlexLayout::flexRowReverse(BlockView* view)
 {
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
@@ -59,7 +59,7 @@ LVoid FlexLayout::flexRowReverse(HtmlView* view)
 }
 
 // margin将失效，忽略margin的作用
-LVoid FlexLayout::flexRowSpacebetween(HtmlView* view)
+LVoid FlexLayout::flexRowSpacebetween(BlockView* view)
 {
     const HtmlViewList& list = view->getChildren();
     if (list.count() == 0) {
@@ -103,7 +103,7 @@ LVoid FlexLayout::flexRowSpacebetween(HtmlView* view)
 }
 
 // 从上到下使用列排版
-LVoid FlexLayout::flexColumnLayout(HtmlView* view)
+LVoid FlexLayout::flexColumnLayout(BlockView* view)
 {
     const HtmlViewList& list = view->getChildren();
     HtmlViewList::Iterator iter = list.begin();
@@ -112,9 +112,16 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
     LInt noGrowHeight = 0;
     for (; iter != iterEnd; ++iter) {
         HtmlView* child = (*iter);
+        
+        // 如果是position元素，则单独layout
+        if (child->isPositioned()) {
+            view->layoutPositionChild(child);
+            continue;
+        }
+        
+        child->layout();
         if (!child->getStyle()->flex().flexGrow) {
             noGrowHeight += child->getStyle()->margin().topMargin;
-            child->layout();
             noGrowHeight += child->getHeight() + child->getStyle()->margin().bottomMargin;
         }
     }
@@ -147,7 +154,7 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
         y += child->getStyle()->margin().topMargin;
         child->setPos(x, y);
         BOYIA_LOG("layoutInlineBlock, x=%d, y=%d", x, y);
-        child->layout();
+        //child->layout();
         
         // 弹性布局高度重新计算
         if (child->getStyle()->flex().flexGrow) {
@@ -160,12 +167,12 @@ LVoid FlexLayout::flexColumnLayout(HtmlView* view)
     }
 }
 // 从下到上使用列排版
-LVoid FlexLayout::flexColumnReverseLayout(HtmlView* view)
+LVoid FlexLayout::flexColumnReverseLayout(BlockView* view)
 {
     
 }
 // 等间距列排版
-LVoid FlexLayout::flexColumnSpacebetween(HtmlView* view)
+LVoid FlexLayout::flexColumnSpacebetween(BlockView* view)
 {
     
 }

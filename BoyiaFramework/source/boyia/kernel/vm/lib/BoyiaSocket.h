@@ -24,7 +24,7 @@ private:
     ~BoyiaSocket();
     
     LVoid onListen();
-    LVoid onMessage(const String& message);
+    LVoid onMessage(String& message);
     
     yanbo::WebSocket* m_socket;
     String m_wsUrl;

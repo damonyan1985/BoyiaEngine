@@ -163,4 +163,5 @@ BoyiaFunction* CreatMapObject(LVoid* vm);
 BoyiaFunction* CreatArrayObject(LVoid* vm);
 
 LVoid SystemGC(LVoid* vm);
+
 #endif

@@ -1,6 +1,7 @@
 #include "BoyiaSocket.h"
 #include "UIThread.h"
 #include "SalLog.h"
+#include "BoyiaAsyncEvent.h"
 
 namespace boyia {
 BoyiaSocket::BoyiaSocket(const String& url, BoyiaValue* msgCB, BoyiaRuntime* runtime)
@@ -50,26 +51,28 @@ LVoid BoyiaSocket::handleMessage(const String& message)
     });
 }
 
-LVoid BoyiaSocket::onMessage(const String& message)
+LVoid BoyiaSocket::onMessage(String& message)
 {
     if (!m_msgCB.mValue.mObj.mPtr) {
         return;
     }
     
-    BoyiaValue msg;
-    CreateNativeString(&msg,
-        (LInt8*)message.GetBuffer(), message.GetLength(), m_runtime->vm());
-    // 保存当前栈
-    SaveLocalSize(m_runtime->vm());
-    // callback函数压栈
-    LocalPush(&m_msgCB, m_runtime->vm());
-    LocalPush(&msg, m_runtime->vm());
+//    BoyiaValue msg;
+//    CreateNativeString(&msg,
+//        (LInt8*)message.GetBuffer(), message.GetLength(), m_runtime->vm());
+//    // 保存当前栈
+//    SaveLocalSize(m_runtime->vm());
+//    // callback函数压栈
+//    LocalPush(&m_msgCB, m_runtime->vm());
+//    LocalPush(&msg, m_runtime->vm());
+//
+//    BoyiaValue obj;
+//    obj.mValueType = BY_CLASS;
+//    obj.mValue.mObj.mPtr = m_msgCB.mValue.mObj.mSuper;
+//
+//    NativeCall(&obj, m_runtime->vm());
     
-    BoyiaValue obj;
-    obj.mValueType = BY_CLASS;
-    obj.mValue.mObj.mPtr = m_msgCB.mValue.mObj.mSuper;
-    
-    NativeCall(&obj, m_runtime->vm());
+    BoyiaAsyncEvent::callbackString(message, &m_msgCB, m_runtime);
 }
 
 LVoid BoyiaSocket::run()

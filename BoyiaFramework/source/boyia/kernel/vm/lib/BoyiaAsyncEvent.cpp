@@ -148,6 +148,32 @@ BoyiaAsyncEvent::~BoyiaAsyncEvent()
 {
 }
 
+LVoid BoyiaAsyncEvent::callbackString(String& result, BoyiaValue* callback, BoyiaRuntime* runtime)
+{
+    if (!callback->mValue.mObj.mPtr) {
+        return;
+    }
+    
+    BoyiaValue value;
+    CreateNativeString(&value,
+        (LInt8*)result.GetBuffer(), result.GetLength(), runtime->vm());
+    BOYIA_LOG("BoyiaAsyncEvent::callbackString, data=%s", (const char*)result.GetBuffer());
+    // 释放字符串控制权
+    result.ReleaseBuffer();
+    // 保存当前栈
+    SaveLocalSize(runtime->vm());
+    // callback函数压栈
+    LocalPush(callback, runtime->vm());
+    // 参数压栈
+    LocalPush(&value, runtime->vm());
+    //BoyiaValue* cbObj = obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &obj;
+    BoyiaValue obj;
+    obj.mValueType = BY_CLASS;
+    obj.mValue.mObj.mPtr = callback->mValue.mObj.mSuper;
+    // 调用callback函数
+    NativeCall(&obj, runtime->vm());
+}
+
 // In UI thread
 LVoid BoyiaAsyncEvent::run()
 {

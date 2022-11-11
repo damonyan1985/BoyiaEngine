@@ -468,6 +468,12 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
                 rule->addProperty(StyleTags::BORDER_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_STYLE, LGraphicsContext::kSolidPen);
+            } else if (oneValue.EndWithNoCase(_CS("px"))) {
+                LInt width = GetPropertyPixel(oneValue);
+                rule->addProperty(StyleTags::BORDER_TOP_WIDTH, width);
+                rule->addProperty(StyleTags::BORDER_LEFT_WIDTH, width);
+                rule->addProperty(StyleTags::BORDER_RIGHT_WIDTH, width);
+                rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, width);
             }
         }
     } break;

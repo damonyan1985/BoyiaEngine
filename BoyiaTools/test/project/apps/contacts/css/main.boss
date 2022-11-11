@@ -89,6 +89,8 @@
 	position:absolute;
 	align: all;
 	width: 720px;
+}
+.main_view {
     flex-direction: column;
 }
 .image_poster {

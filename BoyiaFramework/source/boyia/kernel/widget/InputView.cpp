@@ -319,9 +319,17 @@ public:
             gc.setBrushColor(getStyle()->bgColor);
 
             gc.setPenStyle(LGraphicsContext::kNullPen);
-            gc.drawRect(point.iX, point.iY, m_width, m_height);
+            if (getStyle()->hasRadius()) {
+                gc.drawRoundRect(LRect(point.iX, point.iY, m_width, m_height),
+                                 getStyle()->radius().topLeftRadius,
+                                 getStyle()->radius().topRightRadius,
+                                 getStyle()->radius().bottomRightRadius,
+                                 getStyle()->radius().bottomLeftRadius);
+            } else {
+                gc.drawRect(point.iX, point.iY, m_width, m_height);
+            }
         }
-
+        
         // 绘制边界
         paintBorder(gc, getStyle()->border(), point.iX, point.iY);
         
@@ -354,6 +362,7 @@ public:
             //LInt y = topLeft.iY + getYpos();
             
             LInt deltaX = point.iX - x;
+            // 通过点击位置判断焦点是在哪个文字后面
             LInt index = m_text->getIndexByOffset(0, deltaX);
             
             m_cursor->setTextIndexCursor(index);

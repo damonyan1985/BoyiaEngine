@@ -258,8 +258,8 @@ LVoid TextView::paint(LGraphicsContext& gc)
             gc.setFont(*m_newFont);
 
             LColor color = m_style.color;
-            color.m_alpha = color.m_alpha * ((float)m_style.drawOpacity / 255.0f);
-
+            color.m_alpha = color.m_alpha * ((LReal)m_style.drawOpacity / 255.0f);
+            
             gc.setPenColor(color);
             BOYIA_LOG("text length=%d", line->m_lineLength);
             BOYIA_LOG("text x=%d, y=%d", x, y);
@@ -271,6 +271,7 @@ LVoid TextView::paint(LGraphicsContext& gc)
         }
     }
 
+    
     gc.restore();
 }
 

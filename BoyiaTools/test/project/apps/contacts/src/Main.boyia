@@ -104,7 +104,7 @@ class MainViewController extends ViewController {
         Util.log("token=" + Global.userToken);
     }
 
-    fun loadCallback(data) {
+    prop fun loadCallback(data) {
         Util.log("test loadCallback");
         var obj = Util.json(data);
         Util.log("test loadCallback5");

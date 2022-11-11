@@ -410,6 +410,12 @@ void StyleRule::setStyleProperties(Style& style, LInt property,
     case StyleTags::BORDER_TOP_WIDTH: {
         style.border().topWidth = value.intVal;
     } break;
+    case StyleTags::BORDER_LEFT_WIDTH: {
+        style.border().leftWidth = value.intVal;
+    } break;
+    case StyleTags::BORDER_RIGHT_WIDTH: {
+        style.border().rightWidth = value.intVal;
+    } break;
     case StyleTags::BORDER_TOP_STYLE: {
         style.border().topStyle = value.intVal;
         if (value.intVal == LGraphicsContext::kSolidPen) {

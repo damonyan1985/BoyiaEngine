@@ -26,6 +26,8 @@ class FooterView extends ViewDoc {
 
     fun myTabClick() {
         Util.showToast("My Tab Show");
+        
+        Util.log("My Tab Show");
 
         var chatPage = ViewDoc.createView(ChatPage, "boyia://apps/contacts/view/chat_page.boui");
         chatPage.initView();
@@ -34,5 +36,7 @@ class FooterView extends ViewDoc {
         rootView.appendView(chatPage);
         rootView.draw();
         rootView.commit();
+        
+        Util.log("My Tab Show1");
     }
 }

@@ -15,6 +15,8 @@ class BoyiaAsyncEvent;
 class BoyiaAsyncMapTable;
 class BoyiaAsyncEvent : public yanbo::UIEvent {
 public:
+    static LVoid callbackString(String& result, BoyiaValue* callback, BoyiaRuntime* runtime);
+    
     BoyiaAsyncEvent(BoyiaValue* obj, BoyiaRuntime* runtime);
 
     virtual ~BoyiaAsyncEvent();

@@ -10,6 +10,10 @@ import com.boyia.app.shell.login.LoginActivity
 import com.boyia.app.shell.module.IPCModule
 
 class LoginHandler: IBoyiaIPCHandler {
+    companion object {
+        const val ACTION = "com.boyia.app.shell.login.action"
+    }
+
     /**
      * 使用aid启动登录页面，告诉登录页面是哪个boyia app需要获取登录信息
      */
@@ -17,7 +21,7 @@ class LoginHandler: IBoyiaIPCHandler {
         val bundle = data?.params
 
         val intent = Intent()
-        intent.action = "com.boyia.app.shell.login.action"
+        intent.action = ACTION
         // 使用application的context来启动activity时必须加入FLAG_ACTIVITY_NEW_TASK
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.putExtra(ApiConstants.ApiKeys.BINDER_AID, bundle?.getInt(ApiConstants.ApiKeys.BINDER_AID))
