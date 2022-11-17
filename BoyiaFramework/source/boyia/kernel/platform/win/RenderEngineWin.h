@@ -25,11 +25,13 @@ private:
     LVoid renderImage(RenderCommand* cmd, Gdiplus::Graphics& gc);
     LVoid renderText(RenderCommand* cmd, Gdiplus::Graphics& gc);
     LVoid renderRoundRect(RenderCommand* cmd, Gdiplus::Graphics& gc);
+    LVoid renderVideo(RenderCommand* cmd, Gdiplus::Graphics& gc);
+    LVoid renderRoundImage(RenderCommand* cmd, Gdiplus::Graphics& gc);
 
     HWND m_hwnd;
     ULONG_PTR m_gdiplusToken;
     Gdiplus::Bitmap* m_cacheBitmap;
-    RenderFunction m_functions[6];
+    RenderFunction m_functions[7];
 };
 }
 #endif

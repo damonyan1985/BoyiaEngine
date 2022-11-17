@@ -85,6 +85,8 @@ LVoid RenderEngineWin::init()
     m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineWin::renderText;
     m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineWin::renderImage;
     m_functions[RenderCommand::kRenderRoundRect] = (RenderFunction)& RenderEngineWin::renderRoundRect;
+    m_functions[RenderCommand::kRenderVideo] = (RenderFunction)&RenderEngineWin::renderVideo;
+    m_functions[RenderCommand::kRenderRoundImage] = (RenderFunction)&RenderEngineWin::renderRoundImage;
 }
 
 LVoid RenderEngineWin::reset()
@@ -218,6 +220,14 @@ LVoid RenderEngineWin::renderRoundRect(RenderCommand* cmd, Gdiplus::Graphics& gc
         roundCmd->color.m_blue
     ));
     gc.FillPath(&brush, &path);
+}
+
+LVoid RenderEngineWin::renderVideo(RenderCommand* cmd, Gdiplus::Graphics& gc)
+{
+}
+
+LVoid RenderEngineWin::renderRoundImage(RenderCommand* cmd, Gdiplus::Graphics& gc)
+{
 }
 
 IRenderEngine* IRenderEngine::create()

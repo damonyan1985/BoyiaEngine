@@ -7,14 +7,14 @@ namespace util {
 class EditorWin : public Editor {
 public:
     EditorWin();
-    virtual LVoid showKeyboard(const String& text);
+    virtual LVoid showKeyboard(const String& text, LInt cursor);
 };
 
 EditorWin::EditorWin()
 {
 }
 
-LVoid EditorWin::showKeyboard(const String& text)
+LVoid EditorWin::showKeyboard(const String& text, LInt cursor)
 {
 }
 
