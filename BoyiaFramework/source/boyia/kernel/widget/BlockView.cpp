@@ -48,6 +48,14 @@ LBool BlockView::isBlockView() const
 
 LVoid BlockView::layout()
 {
+    // 测量宽高
+    measureBlock();
+    // 布局子元素
+    layoutBlock(LFalse);
+}
+
+LVoid BlockView::measureBlock()
+{
     // style属性优先级最高
     if (m_style.width) {
         m_width = m_style.width * m_style.scale;
@@ -64,8 +72,6 @@ LVoid BlockView::layout()
     } else if (m_style.align == util::Style::ALIGN_ALL) {
         m_height = getParent() ? getParent()->getHeight() : m_doc->getViewPort().GetHeight();
     }
-
-    layoutBlock(LFalse);
 }
 
 LVoid BlockView::layoutBlock(LBool relayoutChildren)

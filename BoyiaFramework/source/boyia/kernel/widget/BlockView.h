@@ -28,6 +28,7 @@ public:
 
     // layer layout
     virtual LVoid layout() LOverride;
+    LVoid measureBlock();
     LVoid layoutBlock(LBool relayoutChildren);
     LVoid layoutBlockChildren(LBool relayoutChildren);
     LVoid layoutInlineChildren();
