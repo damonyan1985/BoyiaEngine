@@ -239,6 +239,17 @@ BoyiaDomMap* BoyiaRuntime::domMap() const
     return m_domMap;
 }
 
+LVoid* BoyiaRuntime::createMemoryBackup()
+{
+    return InitMemoryPool(kMemoryPoolSize);
+}
+
+LVoid BoyiaRuntime::changeMemoryPool(LVoid* pool)
+{
+    FreeMemoryPool(pool);
+    m_memoryPool = pool;
+}
+
 LVoid BoyiaRuntime::callPlatformApi(const String& params, BoyiaValue* propCB)
 {
     BoyiaValue cbObj;

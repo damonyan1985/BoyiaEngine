@@ -21,4 +21,6 @@ LInt GetUsedMemory(LVoid* mempool);
 
 LVoid PrintPoolSize(LVoid* mempool);
 
+LVoid* MigrateMemory(LVoid* srcMem, LVoid* fromPool, LVoid* toPool);
+
 #endif // Boyia_Memory_h

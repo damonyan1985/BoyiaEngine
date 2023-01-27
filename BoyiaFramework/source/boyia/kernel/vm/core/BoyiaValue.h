@@ -156,8 +156,14 @@ LVoid CreateStringValue(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm);
 LVoid SetStringResult(LInt8* buffer, LInt len, LVoid* vm);
 
+LVoid* CreateRuntimeToMemory(LVoid* vm);
+
 LVoid BuiltinMapClass(LVoid* vm);
 BoyiaFunction* CreatMapObject(LVoid* vm);
+
+// 迁移内存
+LVoid* MigrateRuntimeMemory(LVoid* addr, LVoid* pool, LVoid* vm);
+LVoid UpdateRuntimeMemory(LVoid* pool, LVoid* vm);
 
 // 创建数组对象
 BoyiaFunction* CreatArrayObject(LVoid* vm);

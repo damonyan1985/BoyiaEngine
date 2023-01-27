@@ -36,6 +36,7 @@ const LInt kMemoryAlignNum = sizeof(LUintPtr);
 
 #define ADDR_DELTA(addr1, addr2) ((LIntPtr)(addr1) - (LIntPtr)(addr2))
 
+// VM中固定不变的内存块使用FastMalloc
 LVoid* FastMalloc(LInt size)
 {
     return malloc(size);
@@ -178,6 +179,18 @@ LInt GetUsedMemory(LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
     return pool->mUsed;
+}
+
+LVoid* MigrateMemory(LVoid* srcMem, LVoid* fromPool, LVoid* toPool)
+{
+    // 获取内存块头部
+    MemoryBlockHeader* srcHeader = (MemoryBlockHeader*)((LUintPtr)srcMem - kMemoryHeaderLen);
+    // 根据大小从新内存池中生成一个新的内存块
+    LVoid* destMem = NewData(srcHeader->mSize, toPool);
+    // 拷贝内存
+    LMemcpy(destMem, srcMem, srcHeader->mSize);
+    // 返回地址
+    return destMem;
 }
 
 LVoid PrintPoolSize(LVoid* mempool)

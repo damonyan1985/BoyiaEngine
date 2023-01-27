@@ -35,6 +35,8 @@ public:
     LVoid collectGarbage();
     BoyiaAsyncEventManager* eventManager() const;
     BoyiaDomMap* domMap() const;
+    LVoid* createMemoryBackup();
+    LVoid changeMemoryPool(LVoid* pool);
     // 调用平台相关API
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
 

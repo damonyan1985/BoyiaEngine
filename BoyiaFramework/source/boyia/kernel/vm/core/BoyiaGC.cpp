@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MIGRATE_SIZE (6*1024)
+
 typedef struct BoyiaRef {
     LVoid* mAddress;
     LUint8 mType;
@@ -17,6 +19,7 @@ typedef struct BoyiaGC {
     BoyiaRef* mEnd;
     LInt mSize;
     LVoid* mBoyiaVM;
+    LVoid* mMigrates[MIGRATE_SIZE];
 } BoyiaGC;
 
 // 0000 0000 0000 0011
@@ -32,6 +35,9 @@ enum BoyiaGcColor {
 #define IS_OBJECT_INVALID(fun) (((fun->mParamCount >> 16) & kBoyiaGcMask) == kBoyiaGcWhite)
 #define IS_NATIVE_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kNativeStringBuffer)
 #define IS_BOYIA_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kBoyiaStringBuffer)
+
+// 计算迁移标记,后16位为迁移标记
+#define MIGRATE_FLAG(fun) (fun->mParamCount >> 16)
 
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
@@ -224,11 +230,94 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     gc->mEnd = prev;
 }
 
-// 挤压内存
-//static LVoid CompactMemory()
-//{
-//
-//}
+static LVoid ResetMigrateAddress(BoyiaValue* value, BoyiaFunction* fun, BoyiaGC* gc)
+{
+    LInt index = MIGRATE_FLAG(fun);
+    LIntPtr address = (LIntPtr)gc->mMigrates[index];
+
+    if (value->mValueType == BY_CLASS) {
+        value->mValue.mObj.mPtr = address;
+    } else {
+        value->mValue.mObj.mSuper = address;
+    }
+}
+
+// 返回值表示是否需要遍历对象
+static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+{
+    BoyiaFunction* fun = (BoyiaFunction*)(value->mValueType == BY_CLASS 
+        ? value->mValue.mObj.mPtr
+        : value->mValue.mObj.mSuper);
+    if (!MIGRATE_FLAG(fun)) {
+        gc->mMigrates[*migrateIndexPtr] = MigrateRuntimeMemory(fun, toPool, gc->mBoyiaVM);
+        fun->mParamCount = GET_FUNCTION_COUNT(fun) | (*migrateIndexPtr) << 16;
+        (*migrateIndexPtr)++;
+    }
+
+    ResetMigrateAddress(value, fun, gc);
+}
+
+static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+{
+    BoyiaFunction* fun = kBoyiaNull;
+    if (value->mValueType == BY_CLASS) {
+        fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
+    } else if (value->mValueType == BY_PROP_FUNC) {
+        fun = (BoyiaFunction*)value->mValue.mObj.mSuper;
+    }
+
+    if (!fun) {
+        return;
+    }
+
+    // 如果没有标记才需要迁移属性
+    if (!MIGRATE_FLAG(fun)) {
+        // 迁移对象属性
+        LInt pIdx = 0;
+        for (; pIdx < fun->mParamSize; ++pIdx) {
+            MigrateValue(&fun->mParams[pIdx], migrateIndexPtr, toPool, gc);
+        }
+    }
+    
+    // 迁移对象
+    // 1,如果对象没有被迁移，则迁移对象，但需要标记迁移过对象对应的引用
+    // 2,判断标记，如果对象被迁移过了，则根据标记取出全局引用对应的新的对象地址
+    MigrateObject(value, migrateIndexPtr, toPool, gc);
+}
+
+static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+{
+    LInt idx = 0;
+    for (; idx < size; idx++) {
+        MigrateObject(table + idx, migrateIndexPtr, toPool, gc);
+    }
+}
+
+// 内存碎片整理
+// 1，当剩余内存不足以分配空间时，gc一次，如果还不行，则执行次操作
+// 2，如果碎片整理后还无法分配内存，则VM将报OOM
+static LVoid CompactMemory(BoyiaGC* gc)
+{
+    LInt migrateIndex = 0;
+    LMemset(gc->mMigrates, 0, MIGRATE_SIZE);
+    // 切换from与to内存空间
+    LVoid* toPool = CreateRuntimeToMemory(gc->mBoyiaVM);
+
+    LIntPtr tableAddr;
+    LInt size = 0;
+
+    // 获取全局对象引用
+    GetGlobalTable(&tableAddr, &size, gc->mBoyiaVM);
+    BoyiaValue* global = (BoyiaValue*)tableAddr;
+    MigrateValueTable(global, size, &migrateIndex, toPool, gc);
+
+    // 标记栈
+    GetLocalStack(&tableAddr, &size, gc->mBoyiaVM);
+    BoyiaValue* stack = (BoyiaValue*)tableAddr;
+    MigrateValueTable(global, size, &migrateIndex, toPool, gc);
+
+    UpdateRuntimeMemory(toPool, gc->mBoyiaVM);
+}
 
 // 标记boyia对象
 static LVoid ResetBoyiaObject(BoyiaFunction* fun)

@@ -553,6 +553,20 @@ LVoid* GetVMCreator(LVoid* vm)
 
 LVoid DestroyVM(LVoid* vm)
 {
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    FAST_DELETE(vmPtr->mGlobals);
+    FAST_DELETE(vmPtr->mLocals);
+    FAST_DELETE(vmPtr->mCpu);
+    FAST_DELETE(vmPtr->mEntry);
+    FAST_DELETE(vmPtr->mEState);
+    FAST_DELETE(vmPtr->mExecStack);
+    FAST_DELETE(vmPtr->mFunTable);
+    FAST_DELETE(vmPtr->mHandlers);
+    FAST_DELETE(vmPtr->mLoopStack);
+    FAST_DELETE(vmPtr->mStrTable);
+    FAST_DELETE(vmPtr->mOpStack);
+    FAST_DELETE(vmPtr->mVMCode);
+    
     FAST_DELETE(vm);
 }
 

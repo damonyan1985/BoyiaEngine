@@ -121,6 +121,21 @@ LVoid* BoyiaNew(LInt size, LVoid* vm)
     return NewData(size, GetRuntime(vm)->memoryPool());
 }
 
+LVoid* CreateRuntimeToMemory(LVoid* vm)
+{
+    return GetRuntime(vm)->createMemoryBackup();
+}
+
+LVoid* MigrateRuntimeMemory(LVoid* addr, LVoid* pool, LVoid* vm)
+{
+    return MigrateMemory(addr, GetRuntime(vm)->memoryPool(), pool);
+}
+
+LVoid UpdateRuntimeMemory(LVoid* pool, LVoid* vm)
+{
+    GetRuntime(vm)->changeMemoryPool(pool);
+}
+
 // 删除挂载在对象上的所有事件
 LVoid BoyiaPreDelete(LVoid* ptr, LVoid* vm)
 {
