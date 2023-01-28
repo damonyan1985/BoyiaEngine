@@ -36,8 +36,10 @@ enum BoyiaGcColor {
 #define IS_NATIVE_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kNativeStringBuffer)
 #define IS_BOYIA_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kBoyiaStringBuffer)
 
-// 计算迁移标记,后16位为迁移标记
-#define MIGRATE_FLAG(fun) (fun->mParamCount >> 16)
+// 计算迁移标记,后20位为迁移标记
+#define MIGRATE_FLAG(fun) (fun->mParamCount >> 20)
+// 设置迁移标记
+#define SET_MIGRATE_FLAG(fun, flag) (fun->mParamCount |= (flag << 20))
 
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
@@ -230,13 +232,22 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     gc->mEnd = prev;
 }
 
-static LVoid ResetMigrateAddress(BoyiaValue* value, BoyiaFunction* fun, BoyiaGC* gc)
+static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaFunction* fun, BoyiaGC* gc)
 {
     LInt index = MIGRATE_FLAG(fun);
     LIntPtr address = (LIntPtr)gc->mMigrates[index];
 
     if (value->mValueType == BY_CLASS) {
         value->mValue.mObj.mPtr = address;
+        BoyiaValue* kclass = (BoyiaValue*)fun->mFuncBody;
+        LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
+        if (classId == kBoyiaString) {
+            BoyiaStr* buffer = GetStringBufferFromBody(fun);
+            if (IS_BOYIA_STRING(fun)) {
+                buffer->mPtr = (LInt8*)MigrateRuntimeMemory(buffer->mPtr, toPool, gc->mBoyiaVM);
+            }
+            // TODO 常量字符串表需要改造，不处理迁移
+        }
     } else {
         value->mValue.mObj.mSuper = address;
     }
@@ -250,11 +261,11 @@ static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPo
         : value->mValue.mObj.mSuper);
     if (!MIGRATE_FLAG(fun)) {
         gc->mMigrates[*migrateIndexPtr] = MigrateRuntimeMemory(fun, toPool, gc->mBoyiaVM);
-        fun->mParamCount = GET_FUNCTION_COUNT(fun) | (*migrateIndexPtr) << 16;
+        SET_MIGRATE_FLAG(fun, (*migrateIndexPtr));
         (*migrateIndexPtr)++;
     }
 
-    ResetMigrateAddress(value, fun, gc);
+    ResetMigrateAddress(value, migrateIndexPtr, toPool, fun, gc);
 }
 
 static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
@@ -283,6 +294,7 @@ static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPoo
     // 1,如果对象没有被迁移，则迁移对象，但需要标记迁移过对象对应的引用
     // 2,判断标记，如果对象被迁移过了，则根据标记取出全局引用对应的新的对象地址
     MigrateObject(value, migrateIndexPtr, toPool, gc);
+    
 }
 
 static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
@@ -290,6 +302,22 @@ static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexP
     LInt idx = 0;
     for (; idx < size; idx++) {
         MigrateObject(table + idx, migrateIndexPtr, toPool, gc);
+    }
+}
+
+static LVoid ResetGCRef(BoyiaGC* gc)
+{
+    BoyiaRef* ref = gc->mBegin;
+    while (ref) {
+        if (ref->mType == BY_CLASS) {
+            BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
+            if (MIGRATE_FLAG(fun)) {
+                LInt index = MIGRATE_FLAG(fun);
+                ref->mAddress = gc->mMigrates[index];
+            }
+        }
+
+        ref = ref->mNext;
     }
 }
 
@@ -317,6 +345,8 @@ static LVoid CompactMemory(BoyiaGC* gc)
     MigrateValueTable(global, size, &migrateIndex, toPool, gc);
 
     UpdateRuntimeMemory(toPool, gc->mBoyiaVM);
+
+    ResetGCRef(gc);
 }
 
 // 标记boyia对象
