@@ -175,9 +175,6 @@ typedef StringA String;
 
 #define GET_STR(str) ((const char*)str.GetBuffer())
 
-#define NEW_BUFFER(type, size) ((type*)malloc(sizeof(type) * (size)))
-#define FREE_BUFFER(buffer) (free(buffer))
-
 template <class T>
 LString<T>::LString()
     : m_pchData(kBoyiaNull)

@@ -178,7 +178,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
         BoyiaStr* buffer = GetStringBufferFromBody(objBody);
         // 删除字符串对象中的缓冲数据
         if (IS_NATIVE_STRING(objBody)) {
-            free(buffer->mPtr);
+            FREE_BUFFER(buffer->mPtr);
         } else if (IS_BOYIA_STRING(objBody)) {
             VM_DELETE(buffer->mPtr, vm);
         } // 常量字符串不做任何处理
@@ -241,6 +241,7 @@ static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid
         value->mValue.mObj.mPtr = address;
         BoyiaValue* kclass = (BoyiaValue*)fun->mFuncBody;
         LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
+        // 如果是字符串对象
         if (classId == kBoyiaString) {
             BoyiaStr* buffer = GetStringBufferFromBody(fun);
             if (IS_BOYIA_STRING(fun)) {

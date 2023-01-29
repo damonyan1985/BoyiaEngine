@@ -396,7 +396,7 @@ LVoid LoadVMCode(LVoid* vm)
 
     BoyiaStr* strTable = new BoyiaStr[stringTable->size()];
     for (LInt i = 0; i < stringTable->size(); i++) {
-        strTable[i].mPtr = NEW_ARRAY(LInt8, stringTable->elementAt(i).GetLength(), vm);
+        strTable[i].mPtr = FAST_NEW_ARRAY(LInt8, stringTable->elementAt(i).GetLength());
         strTable[i].mLen = stringTable->elementAt(i).GetLength();
         LMemcpy(strTable[i].mPtr, stringTable->elementAt(i).GetBuffer(), strTable[i].mLen);
     }

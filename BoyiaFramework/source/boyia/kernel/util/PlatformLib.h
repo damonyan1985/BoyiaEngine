@@ -44,6 +44,9 @@ namespace util {
 
 #define LMin(a, b) ((a) >= (b) ? (b) : (a))
 
+#define NEW_BUFFER(type, size) ((type*)malloc(sizeof(type) * (size)))
+#define FREE_BUFFER(buffer) (free(buffer))
+
 //
 //using LInt8 = char;
 typedef char LInt8;

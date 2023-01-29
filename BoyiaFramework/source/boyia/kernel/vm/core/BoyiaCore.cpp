@@ -2400,7 +2400,7 @@ static LVoid EvalGetValue(CompileState* cs, LUintPtr objKey)
 static LVoid CopyStringFromToken(CompileState* cs, BoyiaStr* str)
 {
     str->mLen = cs->mToken.mTokenName.mLen - 2;
-    str->mPtr = NEW_ARRAY(LInt8, str->mLen, cs->mVm);
+    str->mPtr = FAST_NEW_ARRAY(LInt8, str->mLen);
     LMemcpy(str->mPtr, cs->mToken.mTokenName.mPtr, str->mLen * sizeof(LInt8));
 }
 
