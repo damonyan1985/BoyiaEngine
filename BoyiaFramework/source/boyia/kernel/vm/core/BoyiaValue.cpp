@@ -25,7 +25,6 @@
 
 #define MAX_INT_LEN 20
 #define MEMORY_SIZE (LInt)1024 * 1024 * 6
-#define MAX_INLINE_CACHE 5
 
 #define GEN_ID(key, vm) GenIdentByStr(key, StringUtils::StringSize(key), vm)
 
@@ -254,9 +253,8 @@ LUintPtr GenIdentifier(BoyiaStr* str, LVoid* vm)
 
 InlineCache* CreateInlineCache(LVoid* vm)
 {
-    InlineCache* cache = NEW(InlineCache, vm);
+    InlineCache* cache = FAST_NEW(InlineCache);
     cache->mSize = 0;
-    cache->mItems = NEW_ARRAY(InlineCacheItem, MAX_INLINE_CACHE, vm);
     return cache;
 }
 

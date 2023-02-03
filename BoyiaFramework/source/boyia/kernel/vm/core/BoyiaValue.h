@@ -3,6 +3,8 @@
 
 #include "PlatformLib.h"
 
+#define MAX_INLINE_CACHE 5
+
 // BY_PROP_FUNC，属性方法类型，一般用于对象回调
 enum KeyWord {
     BY_ARG = 0,
@@ -91,7 +93,7 @@ typedef struct {
 } InlineCacheItem;
 
 typedef struct {
-    InlineCacheItem* mItems;
+    InlineCacheItem mItems[MAX_INLINE_CACHE];
     LInt mSize;
 } InlineCache;
 

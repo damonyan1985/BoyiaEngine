@@ -2878,7 +2878,11 @@ LVoid CacheVMCode(LVoid* vm)
 
     // clear inline cache
     for (LInt i = 0; i < vmPtr->mVMCode->mSize; i++) {
-        vmPtr->mVMCode->mCode[i].mCache = kBoyiaNull;
+        InlineCache* cache = vmPtr->mVMCode->mCode[i].mCache;
+        if (cache) {
+            vmPtr->mVMCode->mCode[i].mCache = kBoyiaNull;
+            FAST_DELETE(cache);
+        }
     }
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);
 }
