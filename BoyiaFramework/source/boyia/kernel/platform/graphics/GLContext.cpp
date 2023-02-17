@@ -83,10 +83,17 @@ void GLContext::initGL(EGLType type)
 
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 
+#ifdef OPENGLES_3    
     const EGLint version[] = {
         EGL_CONTEXT_CLIENT_VERSION, 3,
         EGL_NONE
     };
+#else
+    const EGLint version[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE
+    };
+#endif    
     // 下一步，准备进行通过共享EGLContext，来完成
     // 普通纹理和视频纹理在多线程中传递过程
     if (EWindow == type) {

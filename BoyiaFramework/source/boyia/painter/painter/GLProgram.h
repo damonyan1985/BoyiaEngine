@@ -1,9 +1,15 @@
 #ifndef GLProgram_h
 #define GLProgram_h
 
+
+#include "PlatformLib.h"
+
+#ifdef OPENGLES_3
 #include <GLES3/gl3.h>
-//#include <GLES2/gl2ext.h>
-//#include "PlatformLib.h"
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
 
 namespace yanbo {
 class GLProgram {

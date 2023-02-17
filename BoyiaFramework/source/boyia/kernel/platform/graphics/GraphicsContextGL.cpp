@@ -17,10 +17,16 @@
 #include "PlatformView.h"
 #endif
 
-#include <GLES3/gl3.h>
+
 #include <android/bitmap.h>
 #include <stdlib.h>
-//#include <GLES2/gl2ext.h>
+#ifdef OPENGLES_3
+#include <GLES3/gl3.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
 
 namespace util {
 

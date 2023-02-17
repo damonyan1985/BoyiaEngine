@@ -2,8 +2,6 @@
 #define GLQuad_h
 
 #include "LGdi.h"
-//#include <GLES2/gl2.h>
-//#include <GLES2/gl2ext.h>
 
 #define VBO_SIZE 1024
 #define INDEX_SIZE (VBO_SIZE * 6)

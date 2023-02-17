@@ -1,14 +1,22 @@
 #include "BoyiaRenderer.h"
 #include "GLProgram.h"
+
+#ifdef OPENGLES_3
 #include <GLES3/gl3.h>
+#else
+#ifndef GL_GLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES 1
+#endif
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+//#define glGenVertexArrays glGenVertexArraysOES
+//#define glBindVertexArray glBindVertexArrayOES
+//#define glDeleteVertexArrays glDeleteVertexArraysOES
+#endif
 
 #define offsetProps(st, m) ((unsigned)((char*)&((st*)0)->m - (char*)0))
 
 #define VERTEX_SIZE sizeof(Vertex)
-
-//#define glGenVertexArrays glGenVertexArraysOES
-//#define glBindVertexArray glBindVertexArrayOES
-//#define glDeleteVertexArrays glDeleteVertexArraysOES
 
 namespace yanbo {
 Vec3D::Vec3D()
@@ -31,22 +39,26 @@ BoyiaRenderer::BoyiaRenderer()
 
 BoyiaRenderer::~BoyiaRenderer()
 {
+#ifdef OPENGLES_3    
     // 解除VAO对应的属性
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
+    glDeleteVertexArrays(1, &m_buffersVAO);
+#endif    
 
     glDeleteBuffers(2, m_buffersVBO);
-    glDeleteVertexArrays(1, &m_buffersVAO);
 }
 
 // 使用VAO定义数据含义
 LVoid BoyiaRenderer::bindPosition()
 {
+#ifdef OPENGLES_3       
     // 启动顶点索引
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
+#endif    
 
     // vertices
     glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*)offsetProps(Vertex, vec3D));
@@ -60,11 +72,13 @@ LVoid BoyiaRenderer::bindPosition()
 
 LVoid BoyiaRenderer::createVBO()
 {
+#ifdef OPENGLES_3    
     // 创建VAO
     // VAO的作用是描述VBO中的数据，如果数据中既包含顶点坐标，顶点颜色，纹理坐标
     // 则需要VAO来进行分类描述
     glGenVertexArrays(1, &m_buffersVAO);
     glBindVertexArray(m_buffersVAO);
+#endif    
 
     // 创建VBO
     glGenBuffers(2, m_buffersVBO);
@@ -82,7 +96,9 @@ LVoid BoyiaRenderer::createVBO()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+#ifdef OPENGLES_3  
     glBindVertexArray(0);
+#endif    
 }
 
 LVoid BoyiaRenderer::appendQuad(const Quad& quad)
@@ -94,8 +110,10 @@ LVoid BoyiaRenderer::appendQuad(const Quad& quad)
 
 LVoid BoyiaRenderer::bind()
 {
+#ifdef OPENGLES_3    
     // 绑定VAO
     glBindVertexArray(m_buffersVAO);
+#endif    
 
     // 绑定顶点缓冲区
     glBindBuffer(GL_ARRAY_BUFFER, m_buffersVBO[0]);
@@ -108,8 +126,10 @@ LVoid BoyiaRenderer::bind()
 
 LVoid BoyiaRenderer::unbind()
 {
+#ifdef OPENGLES_3    
     // 解绑VAO
     glBindVertexArray(0);
+#endif    
 
     // 解绑VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);

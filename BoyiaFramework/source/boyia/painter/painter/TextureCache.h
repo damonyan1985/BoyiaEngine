@@ -6,9 +6,14 @@
 #include "HashUtil.h"
 #include "HtmlView.h"
 #include "KList.h"
+
+#ifdef OPENGLES_3
 #include <GLES3/gl3.h>
-//#include <GLES2/gl2ext.h>
 #define GL_TEXTURE_EXTERNAL_OES 0x8D65
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
 
 namespace yanbo {
 class Texture : public BoyiaRef {
