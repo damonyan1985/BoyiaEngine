@@ -321,6 +321,7 @@ void GLPainter::setTexture(Texture* tex, const LRect& rect, const LRect& clipRec
 
 void GLPainter::reset()
 {
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     s_buffer.reset();
 }
 
@@ -330,6 +331,7 @@ void GLPainter::paintCommand()
         return;
     }
 
+    glEnable(GL_BLEND);
     GLProgram* program = BoyiaPainterEnv::instance()->program();
     LInt drawQuadIndex = 0;
     for (LInt i = 0; i < s_buffer.size; i++) {
@@ -426,6 +428,8 @@ void GLPainter::paintCommand()
         MatrixState::popMatrix();
         drawQuadIndex += cmd.size;
     }
+
+    glDisable(GL_BLEND);
 }
 
 void GLPainter::appendToBuffer()

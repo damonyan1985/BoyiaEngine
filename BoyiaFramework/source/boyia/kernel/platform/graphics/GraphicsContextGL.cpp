@@ -414,18 +414,18 @@ LVoid GraphicsContextGL::fillBuffer(LVoid* ptr)
 
 LVoid GraphicsContextGL::submit()
 {
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     yanbo::GLPainter::reset();
     fillBuffer(yanbo::UIView::current()->getDocument()->getRenderTreeRoot());
     yanbo::GLPainter::bindVBO();
-    glEnable(GL_BLEND);
+    // glEnable(GL_BLEND);
     // glEnable(GL_CULL_FACE);
     // glFrontFace(GL_CCW);
     // glCullFace(GL_BACK);
 
     yanbo::GLPainter::paintCommand();
-    //glDisable(GL_CULL_FACE);
-    glDisable(GL_BLEND);
+    // glDisable(GL_CULL_FACE);
+    // glDisable(GL_BLEND);
 
     yanbo::GLPainter::unbindVBO();
 
