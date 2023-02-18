@@ -4,14 +4,8 @@
 #ifdef OPENGLES_3
 #include <GLES3/gl3.h>
 #else
-#ifndef GL_GLEXT_PROTOTYPES
-#define GL_GLEXT_PROTOTYPES 1
-#endif
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-//#define glGenVertexArrays glGenVertexArraysOES
-//#define glBindVertexArray glBindVertexArrayOES
-//#define glDeleteVertexArrays glDeleteVertexArraysOES
 #endif
 
 #define offsetProps(st, m) ((unsigned)((char*)&((st*)0)->m - (char*)0))
@@ -39,11 +33,11 @@ BoyiaRenderer::BoyiaRenderer()
 
 BoyiaRenderer::~BoyiaRenderer()
 {
-#ifdef OPENGLES_3    
-    // 解除VAO对应的属性
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
     glDisableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
+#ifdef OPENGLES_3     
+    // 解除VAO对应的属性
     glDeleteVertexArrays(1, &m_buffersVAO);
 #endif    
 
@@ -52,22 +46,22 @@ BoyiaRenderer::~BoyiaRenderer()
 
 // 使用VAO定义数据含义
 LVoid BoyiaRenderer::bindPosition()
-{
-#ifdef OPENGLES_3       
+{      
     // 启动顶点索引
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_POSITION);
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_COLOR);
     glEnableVertexAttribArray(GLProgram::PROGRAM_ATTRIB_TEX_COORD);
-#endif    
+    
 
-    // vertices
+    // 绘制顶点时会从缓冲区对应偏移获取相关属性
+    // vertices, 设置顶点偏移量
     glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*)offsetProps(Vertex, vec3D));
 
-    // colors
+    // colors, 设置颜色偏移量
     glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, VERTEX_SIZE, (GLvoid*)offsetProps(Vertex, color));
 
-    // tex coords
-    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*)offsetProps(Vertex, texCoord));
+    // tex coords, 设置纹理偏移量
+    glVertexAttribPointer(GLProgram::PROGRAM_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, VERTEX_SIZE, (GLvoid*)offsetProps(Vertex, texCoord));    
 }
 
 LVoid BoyiaRenderer::createVBO()

@@ -123,7 +123,7 @@ target_link_libraries(
     boyia
     log
     EGL
-    GLESv3
+    GLESv2
     android
     jnigraphics
     cjson

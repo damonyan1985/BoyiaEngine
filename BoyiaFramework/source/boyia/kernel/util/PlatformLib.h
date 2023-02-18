@@ -16,9 +16,6 @@
 //#pragma pack(4)
 
 namespace util {
-
-#define OPENGLES_3
-
 #define LConst const
 #define LFinal final
 #define LOverride override
