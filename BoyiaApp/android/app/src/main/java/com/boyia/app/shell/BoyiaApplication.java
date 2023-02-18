@@ -1,14 +1,9 @@
 package com.boyia.app.shell;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
 import com.boyia.app.common.BaseApplication;
-import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.debug.LeakChecker;
 import com.boyia.app.shell.home.HomeModule;
 import com.boyia.app.shell.ipc.BoyiaIPCModule;
@@ -26,46 +21,7 @@ public class BoyiaApplication extends BaseApplication {
         super.attachBaseContext(base);
         MultiDex.install(base);
         // 监控APP内activity销毁
-        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-            }
-
-            @Override
-            public void onActivityStarted(@NonNull Activity activity) {
-            }
-
-            @Override
-            public void onActivityResumed(@NonNull Activity activity) {
-            }
-
-            @Override
-            public void onActivityPaused(@NonNull Activity activity) {
-            }
-
-            @Override
-            public void onActivityStopped(@NonNull Activity activity) {
-            }
-
-            @Override
-            public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
-            }
-
-            /**
-             * app进程中的activity被杀死也会回调
-             * @param activity
-             */
-            @Override
-            public void onActivityDestroyed(@NonNull Activity activity) {
-                BoyiaLog.d(TAG, String.format("activity destroyed name = %s and action = %s", activity.getClass().getCanonicalName(), activity.getIntent().getAction()));
-                //BoyiaLog.d(TAG, String.format("activity destroyed action = %s", activity.getIntent().getAction()));
-                // 监控activity是否被销毁
-                new LeakChecker().watch(activity, () -> {
-                    // 此处可以上报内存泄露
-                    BoyiaLog.d(TAG, String.format("Leak activity %s", activity.getClass().getCanonicalName()));
-                });
-            }
-        });
+        LeakChecker.install(this);
     }
 
     @Override

@@ -1,19 +1,24 @@
 package com.boyia.app.loader.mue;
 
+import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.loader.job.JobScheduler;
 
 public class TestObservable {
+    private static final String TAG = "TestObservable";
     public static void test() {
         MueTask.create((Subscriber<String> subscriber) -> {
             // 对应subscribe中的onNext
-            subscriber.onNext("");
+            subscriber.onNext("123");
             // 对应subscribe中的onComplete
             subscriber.onComplete();
-        }).subscribeOn(JobScheduler.jobScheduler())
+        })
+        .map(s -> (Integer.valueOf(s) + 2))
+        .subscribeOn(JobScheduler.jobScheduler())
         .observeOn(MainScheduler.mainScheduler())
-        .subscribe(new Subscriber<String>() {
+        .subscribe(new Subscriber<Integer>() {
             @Override
-            public void onNext(String s) {
+            public void onNext(Integer s) {
+                BoyiaLog.d(TAG, "TestObservable result = " + s);
             }
 
             @Override

@@ -7,6 +7,7 @@ import com.boyia.app.loader.BoyiaLoader
 import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.job.JobScheduler
 import com.boyia.app.loader.mue.MainScheduler
+import com.boyia.app.loader.mue.MueFunction
 import com.boyia.app.loader.mue.MueTask
 import com.boyia.app.loader.mue.Subscriber
 import com.boyia.app.shell.client.BoyiaSimpleLoaderListener
@@ -42,6 +43,8 @@ object BoyiaModelUtil {
         return "$imageUrl?uid=${BoyiaLoginInfo.instance().user?.id}&token=${BoyiaUtils.getStringMD5(BoyiaLoginInfo.instance().token)}"
     }
 
+    // 使用reified修饰的T可以作为java类使用
+    // 例如可以使用T::class.java
     inline fun <reified T> request(
             url: String,
             cb: ModelDataCallback<T>? = null,
@@ -95,20 +98,20 @@ object BoyiaModelUtil {
                 }
             }
         }
-                .subscribeOn(JobScheduler.jobScheduler())
-                .observeOn(MainScheduler.mainScheduler())
-                .subscribe(object : Subscriber<T> {
-                    override fun onNext(result: T) {
-                        cb?.onLoadData(result)
-                    }
+        .subscribeOn(JobScheduler.jobScheduler())
+        .observeOn(MainScheduler.mainScheduler())
+        .subscribe(object : Subscriber<T> {
+            override fun onNext(result: T) {
+                cb?.onLoadData(result)
+            }
 
-                    override fun onError(error: Throwable?) {
-                    }
+            override fun onError(error: Throwable?) {
+            }
 
-                    override fun onComplete() {
-                        BoyiaLog.d(TAG, "Model data load complete")
-                    }
-                })
+            override fun onComplete() {
+                BoyiaLog.d(TAG, "Model data load complete")
+            }
+        })
     }
 
     interface ModelDataCallback<T> {

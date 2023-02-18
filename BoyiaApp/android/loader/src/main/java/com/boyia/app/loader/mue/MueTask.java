@@ -44,4 +44,15 @@ public abstract class MueTask<T> implements IMueTask<T> {
     public final MueTask<T> observeOn(IScheduler scheduler) {
         return new MueTaskObserveOn<>(this, scheduler);
     }
+
+    /**
+     * 进行类型转换
+     * @param source
+     * @param function
+     * @return
+     * @param <R>
+     */
+    public final <R> MueTaskMap<T, R> map(MueFunction<T, R> function) {
+        return new MueTaskMap<>(this, function);
+    }
 }

@@ -11,6 +11,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.common.utils.ProcessUtil
+import com.boyia.app.loader.mue.TestObservable
 import com.boyia.app.shell.module.IModuleContext
 
 /**
@@ -31,6 +32,8 @@ open class BoyiaShellActivity: AppCompatActivity(), IModuleContext {
         rootView?.clipToPadding = false
 
         setContentView(rootView)
+
+        TestObservable.test()
     }
 
     override fun rootId(): Int {
