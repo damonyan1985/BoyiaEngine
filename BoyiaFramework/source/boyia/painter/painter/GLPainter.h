@@ -103,6 +103,9 @@ public:
 
     static void bindVBO();
     static void unbindVBO();
+    static void init();
+    static void paintCommand();
+    static void reset();
 
 public:
     void setColor(const LColor& color);
@@ -124,10 +127,6 @@ public:
         LInt bottomLeftRadius);
     void setImage(Texture* tex, const LRect& rect, const LRect& clipRect);
     void setExternal(Texture* tex, const LRect& rect);
-
-    static void init();
-    static void paintCommand();
-    static void reset();
 
     void setScale(float scale);
     void appendToBuffer();

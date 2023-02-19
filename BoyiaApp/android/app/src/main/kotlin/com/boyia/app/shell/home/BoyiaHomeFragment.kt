@@ -38,7 +38,8 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
         const val TAG = "BoyiaHomeFragment"
         const val GRID_SPAN_NUM = 3
         const val HEADER_BG_COLOR = 0xFFEDEDED.toInt()
-        const val CONTAINER_BG_COLOR = 0xFF4F4F4F.toInt()
+        const val CONTAINER_BG_COLOR = 0xFFDCDCDC.toInt()
+        //const val CONTAINER_BG_COLOR = 0xFF4F4F4F.toInt()
     }
 
     private var headerView: BoyiaHomeHeader? = null

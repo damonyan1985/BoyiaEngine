@@ -24,6 +24,7 @@ gradle.ext.constants = [
     sdkVersion: 31,
     composeVersion: '1.1.0',
     coilVersion: '1.4.0',
+    protoVersion: '3.21.11',
 ]
 
 gradle.ext.library = [
@@ -36,7 +37,7 @@ gradle.ext.library = [
     okhttp_lib: 'com.squareup.okhttp3:okhttp:3.6.0',
     okio_lib: 'com.squareup.okio:okio:1.11.0',
     netty_lib: 'io.netty:netty-all:5.0.0.Alpha2',
-    protobuf_lib:  'com.google.protobuf:protobuf-java:3.4.0',
+    protobuf_lib:  "com.google.protobuf:protobuf-java:${gradle.constants.protoVersion}",
     leakcanary_debug: 'com.squareup.leakcanary:leakcanary-android:1.3',
     leakcanary_release: 'com.squareup.leakcanary:leakcanary-android-no-op:1.3',
     rxJavaLib: 'io.reactivex.rxjava2:rxjava:2.1.0',
