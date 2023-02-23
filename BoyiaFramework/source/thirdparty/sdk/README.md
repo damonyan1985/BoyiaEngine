@@ -20,3 +20,9 @@ CC_aarch64_linux_android=c:/xxx/clang90.exe
 同时需要将rust-tools中的编译器目录配置到path
 ```
 3. 最好把rust_tools/ndk/arm64/bin配置到环境变量中
+4. 编译打包
+```
+1. IOS模拟器编译，cargo build --target x86_64-apple-ios --release
+2. IOS真机编译，cargo build --target aarch64-apple-ios --release
+3. Android编译，cargo build --target aarch64-linux-android --release
+```

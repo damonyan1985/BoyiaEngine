@@ -81,7 +81,7 @@ public class OkEngine extends BaseEngine {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .readTimeout(600, TimeUnit.SECONDS)
-                .sslSocketFactory(info.mFactory, info.mTrustManager)
+                .sslSocketFactory(info.mFactory, info.mTrustManagers[0])
                 .hostnameVerifier((hostname, session) -> true)
                 .build();
 

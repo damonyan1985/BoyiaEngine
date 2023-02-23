@@ -33,6 +33,7 @@
 #define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
 #define CONST_CAPACITY ((LInt)1024)
 #define ENTRY_CAPACITY ((LInt)1024)
+#define MICRO_TASK_CAPACITY ((LInt)16)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -195,6 +196,8 @@ struct KeywordPair {
     { D_STR("for", 3), BY_FOR },
     { D_STR("break", 5), BY_BREAK },
     { D_STR("fun", 3), BY_FUNC },
+    { D_STR("async", 5), BY_ASYNC },
+    { D_STR("await", 5), BY_AWAIT },
     { D_STR("class", 5), BY_CLASS },
     { D_STR("extends", 7), BY_EXTEND },
     { D_STR("prop", 4), BY_PROP },
@@ -262,6 +265,18 @@ typedef struct {
     LInt mSize;
 } VMEntryTable;
 
+typedef struct MicroTask {
+    BoyiaValue mValue;
+    LBool mUse; // find task in cache
+    MicroTask* mNext;
+} MicroTask;
+
+typedef struct {
+    MicroTask mCache[MICRO_TASK_CAPACITY];
+    MicroTask* mHead;
+    LInt mSize;
+} MicroTaskQueue;
+
 /* Boyia VM Define
  * Member
  * 1, mPool
@@ -281,6 +296,7 @@ typedef struct BoyiaVM {
     VMStrTable* mStrTable;
     VMEntryTable* mEntry;
     OPHandler* mHandlers;
+    MicroTaskQueue* mTaskQueue;
     LVoid* mCreator; // 此处传入创建vm的外部对象
 } BoyiaVM;
 
@@ -519,6 +535,37 @@ static VMCpu* CreateVMCpu()
     return vmCpu;
 }
 
+static MicroTask* CreateMicroTask(BoyiaVM* vm)
+{
+    if (vm->mTaskQueue->mSize >= MICRO_TASK_CAPACITY) {
+        return kBoyiaNull;
+    }
+
+    LInt i = 0;
+    for (; i < MICRO_TASK_CAPACITY; i++) {
+        if (!vm->mTaskQueue->mCache[i].mUse) {
+            vm->mTaskQueue->mSize++;
+            return &vm->mTaskQueue->mCache[i];
+        }
+    }
+
+    return kBoyiaNull;
+}
+
+static MicroTaskQueue* CreateTaskQueue()
+{
+    MicroTaskQueue* queue = FAST_NEW(MicroTaskQueue);
+    queue->mHead = kBoyiaNull;
+    queue->mSize = 0;
+
+    LInt i = 0;
+    for (; i < MICRO_TASK_CAPACITY; i++) {
+        queue->mCache[i].mUse = LFalse;
+    }
+
+    return queue;
+}
+
 LVoid* InitVM(LVoid* creator)
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
@@ -538,6 +585,7 @@ LVoid* InitVM(LVoid* creator)
     vm->mHandlers = InitHandlers();
     vm->mStrTable = CreateVMStringTable();
     vm->mEntry = CreateVMEntryTable();
+    vm->mTaskQueue = CreateTaskQueue();
 
     vm->mEState->mGValSize = 0;
     vm->mEState->mFunSize = 0;

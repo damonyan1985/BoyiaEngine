@@ -63,36 +63,33 @@ public class SSLHelper {
 
     public static class SSLInfo {
         public SSLSocketFactory mFactory;
-        public X509TrustManager mTrustManager;
+        public X509TrustManager[] mTrustManagers;
 
         public SSLInfo() {
             try {
                 SSLContext context = SSLContext.getInstance("TLS");
                 TrustManagerFactory factory = getCertificates();
-                mTrustManager = factory != null ? (X509TrustManager) factory.getTrustManagers()[0] :  new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        // TODO 校验客户端证书
-                    }
+                mTrustManagers = factory != null ? (X509TrustManager[]) factory.getTrustManagers() : new X509TrustManager[] {
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                                // TODO 校验客户端证书
+                            }
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        // TODO 校验服务端证书
-                    }
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                                // TODO 校验服务端证书
+                            }
 
-                    // 返回授信证书列表
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        //return new X509Certificate[0];
-                        return new X509Certificate[]{};
-                    }
+                            // 返回授信证书列表
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                //return new X509Certificate[0];
+                                return new X509Certificate[] {};
+                            }
+                        }
                 };
-                context.init(
-                        null,
-                        factory != null ? factory.getTrustManagers() : new TrustManager[] { mTrustManager },
-                        new SecureRandom()
-                );
-
+                context.init(null, mTrustManagers, new SecureRandom());
                 //return context.getSocketFactory();
                 mFactory =  new TlsCompatSocketFactory(context.getSocketFactory());
             } catch (Exception ex) {
