@@ -9,9 +9,9 @@
 #include "StringUtils.h"
 #include "BoyiaAsyncEvent.h"
 
-const LInt kMemoryPoolSize = 1024 * 1024 * 6;
-const LInt kGcMemorySize = 1024 * 8;
-//const LInt kGcMemorySize = 1024 * 1024 * 2;
+const LInt kMemoryPoolSize = (6 * MB);
+const LInt kGcMemorySize = (8 * KB);
+//const LInt kGcMemorySize = (2 * MB);
 const LInt kNativeFunctionCapacity = 100;
 
 extern LVoid* CreateGC(LVoid* vm);

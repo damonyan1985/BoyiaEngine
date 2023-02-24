@@ -47,6 +47,9 @@ namespace util {
 #define NEW_BUFFER(type, size) ((type*)malloc(sizeof(type) * (size)))
 #define FREE_BUFFER(buffer) (free(buffer))
 
+#define KB (1024)
+#define MB (1024*1024)
+
 //
 //using LInt8 = char;
 typedef char LInt8;

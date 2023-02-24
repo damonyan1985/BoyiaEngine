@@ -142,7 +142,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     printf("%s", pInfoBuffer);
     free(pInfoBuffer);
 	// Get Response Body
-    DWORD bufferSize = 1024;
+    DWORD bufferSize = 1 * KB;
     LByte* buffer = new LByte[bufferSize];
     /*
 	while (InternetQueryDataAvailable(request, &dwBytesAvailable, 0, 0)) {
