@@ -8,7 +8,7 @@
 
 namespace yanbo {
 
-const int KThreadPoolSize = 9;
+const int kThreadPoolSize = 9;
 ThreadPool::ThreadPool()
 {
     m_queue = new BlockQueue();
@@ -52,7 +52,7 @@ void ThreadPool::sendTask(TaskBase* task)
         }
     }
 
-    if (m_threadList.count() < KThreadPoolSize) {
+    if (m_threadList.count() < kThreadPoolSize) {
         TaskThread* thread = new TaskThread(m_queue.get());
         m_threadList.push(thread);
         thread->start();

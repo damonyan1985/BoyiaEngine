@@ -17,10 +17,6 @@
 
 namespace boyia {
 typedef LInt32 Instr;
-
-const LInt KB = 1024;
-const LInt MB = KB * KB;
-const LInt GB = KB * KB * KB;
 const LInt kMaxInt = 0x7FFFFFFF;
 const LInt kMinInt = -kMaxInt - 1;
 

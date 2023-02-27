@@ -1,11 +1,14 @@
 package com.boyia.app.shell.login
 
+import android.app.ActionBar.LayoutParams
+import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import android.widget.*
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.R
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.UnderlineEditText
@@ -44,6 +47,15 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
                 ViewGroup.LayoutParams.MATCH_PARENT
         )
 
+        val loginHeader = initLoginHeader()
+        val loginHeaderParam = RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                //ViewGroup.LayoutParams.WRAP_CONTENT,
+                120.dp
+        )
+        loginHeaderParam.topMargin = BoyiaUtils.getStatusBarHeight(context as Activity)
+        rootLayout?.addView(loginHeader, loginHeaderParam)
+
         val loginInputLayout = LinearLayout(context)
         loginInputLayout.orientation = LinearLayout.VERTICAL
         loginInputLayout.id = View.generateViewId()
@@ -69,6 +81,23 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         rootLayout?.addView(loginInputLayout, loginInputParam)
 
         initLoginButton(loginInputLayout.id)
+    }
+
+    private fun initLoginHeader(): View {
+        val headerLayout = LinearLayout(context)
+        headerLayout.orientation = LinearLayout.HORIZONTAL
+        headerLayout.gravity = Gravity.CENTER
+        val title = TextView(context)
+        title.setTextColor(0xFFCAE1FF.toInt())
+        title.textSize = 23.0F
+        title.text = "User quick login"
+
+        val titleLayout = LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+        )
+        headerLayout.addView(title, titleLayout)
+        return headerLayout
     }
 
     private fun initInputItem(rid: Int, viewCallback: (edit: EditText) -> Unit): View {
