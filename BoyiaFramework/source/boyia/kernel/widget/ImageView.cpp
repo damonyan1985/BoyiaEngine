@@ -18,10 +18,13 @@ ImageView::ImageView(
     const String& id,
     LBool selectable,
     const String& src)
-    : InlineView(id, LFalse)
-    , m_image(kBoyiaNull) // img item can't be selected
+    : InlineView(id, LFalse) // img item can't be selected
+    , m_image(LImage::create(this))
     , m_src(src)
 {
+    if (m_src.GetLength()) {
+        m_image->load(m_src, this);
+    }
 }
 
 ImageView::~ImageView()
@@ -96,34 +99,17 @@ LVoid ImageView::layoutInline(RenderContext& rc)
 
     BOYIA_LOG("Image width=%d", m_width);
     BOYIA_LOG("Image height=%d", m_height);
-
-    if (m_src.GetLength()) {
-        loadImage(m_src);
-    }
 }
 
 LVoid ImageView::setUrl(const String& url)
 {
+    if (m_src.CompareCase(url)) {
+        return;
+    }
     m_src = url;
-    if (!m_image) {
-        m_image = LImage::create(this);
-    }
-
     m_image->setLoaded(LFalse);
-}
-
-LVoid ImageView::loadImage(const String& url)
-{
-    if (!m_image) {
-        m_image = LImage::create(this);
-    }
-
-    if (!m_image->isLoaded() || !m_src.CompareCase(url)) {
-        m_src = url;
-
-        BOYIA_LOG("ImageView::loadImage path=%s", GET_STR(m_src));
-        m_image->load(url, this);
-    }
+    m_image->load(url, this);
+    BOYIA_LOG("ImageView::setUrl path=%s", GET_STR(m_src));
 }
 
 LBool ImageView::isImage() const

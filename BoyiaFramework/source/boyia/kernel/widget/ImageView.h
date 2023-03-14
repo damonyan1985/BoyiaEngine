@@ -26,7 +26,6 @@ public:
     virtual LBool isImage() const;
     const String& url() const;
     LVoid setUrl(const String& url);
-    LVoid loadImage(const String& url);
 
     virtual LVoid paint(LGraphicsContext& gc);
     virtual LVoid layoutInline(RenderContext& rc);

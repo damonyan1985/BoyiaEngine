@@ -37,8 +37,14 @@ public:
         }
     }
 
+    // 与冒泡不同，冒泡是每一轮比较将最大或是最小排到最顶端
+    // 建立子数组，后面的数据与前面数据相比较，不满足排序要求时进行交换
+    // 此例中。i表示后一个元素，j表示排好序中数组元素
     static LVoid insertSort(IdentityPair* pairs, LInt size)
     {
+        if (size <= 1) {
+            return;
+        }
         for (LInt i = 1; i < size; ++i) {
             for (LInt j = i; j - 1 >= 0 && pairs[j].key < pairs[j - 1].key; --j) {
                 /*
@@ -74,17 +80,22 @@ private:
         id.key = array[right].key;
         id.value = array[right].value;
         while (left < right) {
+            // 从左边开始向右移动下标，直到不满足排序要求时，进行占坑
+            // 将占坑元素放至最右端
             while (left < right && array[left].key <= id.key) {
                 ++left;
             }
 
+            // 占坑元素移至右端
             array[right].key = array[left].key;
             array[right].value = array[left].value;
 
+            // 从右往左
             while (left < right && array[right].key >= id.key) {
                 --right;
             }
 
+            // 占坑元素移至左端
             array[left].key = array[right].key;
             array[left].value = array[right].value;
         }
@@ -174,7 +185,7 @@ LIntPtr IdentityMap::get(const LUint key)
     LInt low = 0, high = m_size - 1, mid;
 
     while (low <= high) {
-        mid = low + (high - low) / 2;
+        mid = low + (high - low) / 2; // 避免使用(high + low)/2出现超出整数范围的情况
         if (key < m_pairs[mid].key) {
             high = mid - 1;
         } else if (key > m_pairs[mid].key) {

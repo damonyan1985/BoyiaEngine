@@ -140,7 +140,7 @@ LVoid UIOperation::execute()
             String url(_CS(msg->obj), LTrue, msg->arg0);
             WeakPtr<HtmlView>* view = reinterpret_cast<WeakPtr<HtmlView>*>(msg->arg1);
             if (*view) {
-                static_cast<ImageView*>(view->get())->loadImage(url);
+                static_cast<ImageView*>(view->get())->setUrl(url);
             }
             delete view;
         } break;

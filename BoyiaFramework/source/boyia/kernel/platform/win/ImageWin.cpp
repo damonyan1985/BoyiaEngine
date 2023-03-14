@@ -48,8 +48,6 @@ LVoid ImageWin::setLoaded(LBool loaded)
 {
     LImage::setLoaded(loaded);
     if (m_image && loaded) {
-        //unlockPixels();
-        //yanbo::UIView::getInstance()->getLoader()->repaint(m_image);
         yanbo::AppManager::instance()->uiThread()->drawUI(m_image);
     }
 }
