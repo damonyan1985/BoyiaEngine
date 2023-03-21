@@ -1,7 +1,6 @@
 # ![Logo](https://github.com/damonyan1985/BoyiaEngine/blob/dev/BoyiaApp/android/app/src/main/res/drawable/ic_launcher.png?raw=true) BoyiaEngine
 
-BoyiaEngine is a cross-platform framework for building mobile app, but now it's only implements
-android platform.
+BoyiaEngine is a cross-platform framework for building mobile app, for android, ios and windows.
 
 **Boyia Framework Architecture**:
 ![Architecture](https://github.com/damonyan1985/BoyiaEngine/blob/dev/BoyiaStudy/images/Architecture.png?raw=true)
