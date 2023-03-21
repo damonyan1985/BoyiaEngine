@@ -9,6 +9,7 @@
 #define ImageView_h
 
 #include "InlineView.h"
+#include "OwnerPtr.h"
 
 namespace yanbo {
 
@@ -31,7 +32,7 @@ public:
     virtual LVoid layoutInline(RenderContext& rc);
 
 private:
-    LImage* m_image;
+    OwnerPtr<LImage> m_image;
     String m_src;
 };
 }

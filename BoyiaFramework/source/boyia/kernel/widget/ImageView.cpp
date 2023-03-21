@@ -29,9 +29,6 @@ ImageView::ImageView(
 
 ImageView::~ImageView()
 {
-    if (m_image) {
-        delete m_image;
-    }
 }
 
 LVoid ImageView::paint(LGraphicsContext& gc)
