@@ -54,7 +54,7 @@ class MainViewController extends ViewController {
             items : ["123", "456"]
         };
         
-        this.fetch("https://47.98.206.177:8443/user/v1/login", this.testCallback, params);
+        this.fetch("https://192.168.2.5:8443/user/v1/login", this.testCallback, params);
         
         
         var bodyJson = Util.toJson(body);

@@ -10,9 +10,9 @@ import UIKit
 import core
 
 class BoyiaAppListModel: ObservableObject {
-    //private let APP_LIST_URL = "http://47.98.206.177/test.json"
+    //private let APP_LIST_URL = "http://192.168.2.5/test.json"
     //private let APP_LIST_URL = "https://127.0.0.1:8443/app/v1/appList"
-    private let APP_LIST_URL = "https://47.98.206.177:8443/app/v1/appList"
+    private let APP_LIST_URL = "https://192.168.2.5:8443/app/v1/appList"
     @Published var appList: [BoyiaAppItem] = []
     
     init(autoLoad: Bool = true) {

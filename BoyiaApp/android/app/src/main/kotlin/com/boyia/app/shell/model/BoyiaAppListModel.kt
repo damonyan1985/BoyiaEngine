@@ -9,7 +9,7 @@ import com.boyia.app.shell.model.BoyiaModelUtil.SEARCH_APP_LIST_URL
 class BoyiaAppListModel {
     companion object {
         const val TAG = "BoyiaAppListModel"
-        //const val APP_LIST_URL = "http://47.98.206.177/test.json"
+        //const val APP_LIST_URL = "http://192.168.2.5/test.json"
         const val APP_LIST_URL = "boyia_assets://boyia.json";
     }
 

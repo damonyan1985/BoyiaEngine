@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream
 
 object BoyiaModelUtil {
     const val TAG = "BoyiaModelUtil"
-    private const val HTTP_DOMAIN = "https://47.98.206.177:8443"
+    private const val HTTP_DOMAIN = "https://192.168.2.5:8443"
     //private const val HTTP_DOMAIN = "https://192.168.121.103:8443"
     private const val API_VERSION = "v1"
 
