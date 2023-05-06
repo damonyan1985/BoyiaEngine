@@ -1,5 +1,6 @@
 package com.boyia.app.shell.home
 
+import androidx.fragment.app.FragmentManager
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.model.BoyiaAppItem
 import com.boyia.app.shell.model.BoyiaAppListModel
@@ -10,6 +11,10 @@ import java.lang.ref.WeakReference
 
 // module类似presenter
 class HomeModule: IHomeModule {
+    companion object {
+        const val TAG = "HomeModule"
+    }
+
     private var context: WeakReference<IModuleContext>? = null
     private var appListModel: BoyiaAppListModel? = null
     private var fragment: BoyiaHomeFragment? = null
@@ -19,11 +24,17 @@ class HomeModule: IHomeModule {
     }
 
     override fun show(ctx: IModuleContext) {
+        fragment = ctx.getActivity().supportFragmentManager.findFragmentByTag(TAG) as BoyiaHomeFragment
+        if (fragment != null) {
+            // 全部清空，重新開始
+            ctx.getActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+
         context = WeakReference(ctx)
         fragment = BoyiaHomeFragment(this)
 
         val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(ctx.rootId(), fragment!!)
+        fragmentTransaction.add(ctx.rootId(), fragment!!, TAG)
         fragmentTransaction.commit()
     }
 

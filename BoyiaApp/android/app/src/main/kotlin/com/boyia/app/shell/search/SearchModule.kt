@@ -6,6 +6,9 @@ import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
 
 class SearchModule : IUIModule {
+    companion object {
+        const val TAG = "SearchModule"
+    }
     override fun init() {
     }
 
@@ -13,7 +16,7 @@ class SearchModule : IUIModule {
         val search = SearchFragment(this)
         val fragmentTransaction = context.getActivity().supportFragmentManager.beginTransaction()
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        fragmentTransaction.add(context.rootId(), search)
+        fragmentTransaction.add(context.rootId(), search, TAG)
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
