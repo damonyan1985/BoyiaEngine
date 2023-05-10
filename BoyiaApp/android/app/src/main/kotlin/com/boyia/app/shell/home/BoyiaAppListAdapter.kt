@@ -34,7 +34,7 @@ class BoyiaAppListAdapter(
         view.appNameView?.text = item.name
         view.appIconView?.load(item.cover)
         view.container?.setOnClickListener {
-            BoyiaAppLauncher.launch(getAppInfo(item))
+            BoyiaAppLauncher.launcher().launch(getAppInfo(item))
         }
 
         //view.initDownloadMask(TEST_URL)

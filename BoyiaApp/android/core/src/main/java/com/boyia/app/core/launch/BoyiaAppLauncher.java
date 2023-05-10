@@ -19,6 +19,7 @@ import com.boyia.app.common.utils.ZipOperation;
 import com.boyia.app.core.BoyiaBridge;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -33,30 +34,37 @@ public class BoyiaAppLauncher {
     private static final String[] BOYIA_APP_PROCESS_ENDS = {"a", "b", "c", "d", "e", "f"};
     private static final String BOYIA_APP_SDK_UNZIP_KEY = "boyia_app_sdk_unzip";
 
-    private static HandlerThread sLaunchThread;
-    private static SparseArray<String> sActions = null;
+    private HandlerThread mLaunchThread;
+    private SparseArray<String> mActions = null;
+
+    private Handler mHandler = null;
+
+    private LinkedHashMap<String, BoyiaAppInfo> mManager;
 
     private static class BoyiaAppLauncherHolder {
-        private static final Handler LAUNCH_HANDLER = createLaunchHandler();
+        private static final BoyiaAppLauncher APP_LAUNCHER = new BoyiaAppLauncher();
     }
 
-    private static Handler createLaunchHandler() {
-        sActions = new SparseArray<>();
-        sLaunchThread = new HandlerThread(TAG);
-        sLaunchThread.start();
-        Handler handler = new Handler(sLaunchThread.getLooper());
-        handler.post(BoyiaAppLauncher::initSdk);
-        return handler;
+    public static BoyiaAppLauncher launcher() {
+        return BoyiaAppLauncherHolder.APP_LAUNCHER;
     }
 
-    public static void launch(BoyiaAppInfo info) {
-        BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
+    private BoyiaAppLauncher() {
+        mActions = new SparseArray<>();
+        mLaunchThread = new HandlerThread(TAG);
+        mLaunchThread.start();
+        mHandler = new Handler(mLaunchThread.getLooper());
+        mHandler.post(BoyiaAppLauncher::initSdk);
+    }
+
+    public void launch(BoyiaAppInfo info) {
+        mHandler.post(() -> {
             if (!BoyiaShare.getImpl(BOYIA_APP_SDK_UNZIP_KEY, false)) {
                 BoyiaLog.d(TAG, "sdk is not init");
                 return;
             }
 
-            String end = sActions.get(info.mAppId);
+            String end = mActions.get(info.mAppId);
             if (end != null) {
                 launchApp(end, info);
                 return;
@@ -70,9 +78,9 @@ public class BoyiaAppLauncher {
     /**
      * 当进程被杀死时，从缓存中移除
      */
-    public static void notifyAppExit(int appId) {
-        BoyiaAppLauncherHolder.LAUNCH_HANDLER.post(() -> {
-            sActions.remove(appId);
+    public void notifyAppExit(int appId) {
+        mHandler.post(() -> {
+            mActions.remove(appId);
         });
     }
 
@@ -81,7 +89,7 @@ public class BoyiaAppLauncher {
      * 如果没有解压就进行解压
      * @param info
      */
-    private static void initApp(BoyiaAppInfo info) {
+    private void initApp(BoyiaAppInfo info) {
         String appPath = BoyiaBridge.getAppRoot() + "apps" + File.separator + info.mAppName;
         File file = new File(appPath);
         if (file.exists()) {
@@ -126,7 +134,7 @@ public class BoyiaAppLauncher {
      * 只允许主进程进行调用，其他进程可以通过IPC来调用此方法
      * @param info
      */
-    private static void launchImpl(BoyiaAppInfo info) {
+    private void launchImpl(BoyiaAppInfo info) {
         List<ProcessInfo> list = getRunningBoyiaProcessList();
         for (int i = 0; i < BOYIA_APP_PROCESS_ENDS.length; i++) {
             if (canUse(list, BOYIA_APP_PROCESS_ENDS[i])) {
@@ -140,7 +148,7 @@ public class BoyiaAppLauncher {
         launchApp(BOYIA_APP_PROCESS_ENDS[random], info);
     }
 
-    private static boolean canUse(List<ProcessInfo> list, String processEnd) {
+    private boolean canUse(List<ProcessInfo> list, String processEnd) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).mName.endsWith(processEnd)) {
                 return false;
@@ -150,7 +158,7 @@ public class BoyiaAppLauncher {
         return true;
     }
 
-    private static void launchApp(String processEnd, BoyiaAppInfo info) {
+    private void launchApp(String processEnd, BoyiaAppInfo info) {
         String actionName = String.format(BOYIA_APP_ACTION_FORMAT, processEnd);
         BoyiaLog.d(TAG,"launchApp action = " + processEnd);
         Intent intent = new Intent();
@@ -166,7 +174,7 @@ public class BoyiaAppLauncher {
         }
 
         BaseApplication.getInstance().startActivity(intent);
-        sActions.put(info.mAppId, processEnd);
+        mActions.put(info.mAppId, processEnd);
     }
 
     /**

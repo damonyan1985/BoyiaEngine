@@ -28,7 +28,7 @@ class GetSenderHandler(private val module: IPCModule): IBoyiaIPCHandler {
             BoyiaLog.d(TAG, "boyia app exit and appid is: $aid")
             if (aid != null) {
                 module.removeSender(aid)
-                BoyiaAppLauncher.notifyAppExit(aid)
+                BoyiaAppLauncher.launcher().notifyAppExit(aid)
             }
         }
 

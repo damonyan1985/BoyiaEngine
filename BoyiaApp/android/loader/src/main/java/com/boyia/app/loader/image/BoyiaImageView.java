@@ -29,6 +29,10 @@ import com.boyia.app.loader.mue.MainScheduler;
 public class BoyiaImageView extends ImageView implements IBoyiaImage {
     private static final String TAG = "BoyiaImageView";
     private int mRadius = 0;
+    private RectF mImageRect = new RectF();
+    private Path mRoundedPath = new Path();
+    private Path mDrawPath = new Path();
+    private Paint mPaint = new Paint();
 
     public BoyiaImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -40,6 +44,10 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
 
     public BoyiaImageView(Context context, int radius) {
         this(context, null);
+        initImageView(radius);
+    }
+
+    private void initImageView(int radius) {
         mRadius = radius;
         // Auto fit the size
         setAdjustViewBounds(true);
@@ -96,23 +104,24 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
         invalidate();
     }
 
-    private Paint getPaint() {
-        Paint paint = new Paint();
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-        paint.setStyle(Paint.Style.FILL);
-        paint.setAntiAlias(true);
-
-        return paint;
+    private void resetPaint() {
+        mPaint.reset();
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setAntiAlias(true);
     }
 
-    private Path preparePathToDraw(Path roundedPath) {
-        Path pathToDraw = new Path();
-        pathToDraw.reset();
-        pathToDraw.addRect(0, 0, getWidth(), getHeight(), Path.Direction.CW);
-        pathToDraw.op(roundedPath, Path.Op.DIFFERENCE);
-        return pathToDraw;
+    private void preparePathToDraw(Path roundedPath) {
+        mDrawPath.reset();
+        mDrawPath.addRect(0, 0, getWidth(), getHeight(), Path.Direction.CW);
+        mDrawPath.op(roundedPath, Path.Op.DIFFERENCE);
     }
 
+    /**
+     * 优化，将onDraw中所有new对象的地方去掉，换成内部成员
+     * ondraw操作频繁，不适合在函数中创建对象
+     * @param canvas the canvas on which the background will be drawn
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         if (mRadius == 0) {
@@ -123,18 +132,18 @@ public class BoyiaImageView extends ImageView implements IBoyiaImage {
         canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
         super.onDraw(canvas);
 
-        Paint paint = getPaint();
-        RectF rect = new RectF();
-        rect.left = 0;
-        rect.top = 0;
-        rect.right = getWidth();
-        rect.bottom = getHeight();
-        Path roundedPath = new Path();
-        roundedPath.reset();
-        roundedPath.addRoundRect(rect, mRadius, mRadius, Path.Direction.CW);
+        resetPaint();
 
-        Path pathToDraw = preparePathToDraw(roundedPath);
-        canvas.drawPath(pathToDraw, paint);
+        mImageRect.left = 0;
+        mImageRect.top = 0;
+        mImageRect.right = getWidth();
+        mImageRect.bottom = getHeight();
+
+        mRoundedPath.reset();
+        mRoundedPath.addRoundRect(mImageRect, mRadius, mRadius, Path.Direction.CW);
+
+        preparePathToDraw(mRoundedPath);
+        canvas.drawPath(mDrawPath, mPaint);
         canvas.restore();
     }
 

@@ -24,8 +24,8 @@ class HomeModule: IHomeModule {
     }
 
     override fun show(ctx: IModuleContext) {
-        fragment = ctx.getActivity().supportFragmentManager.findFragmentByTag(TAG) as BoyiaHomeFragment
-        if (fragment != null) {
+        val frag = ctx.getActivity().supportFragmentManager.findFragmentByTag(TAG)
+        if (frag != null) {
             // 全部清空，重新開始
             ctx.getActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
