@@ -17,8 +17,10 @@ import com.boyia.app.common.utils.ProcessUtil;
 import com.boyia.app.common.utils.ProcessUtil.ProcessInfo;
 import com.boyia.app.common.utils.ZipOperation;
 import com.boyia.app.core.BoyiaBridge;
+import com.boyia.app.core.launch.BoyiaAppCache.BoyiaAppCacheInfo;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +37,11 @@ public class BoyiaAppLauncher {
     private static final String BOYIA_APP_SDK_UNZIP_KEY = "boyia_app_sdk_unzip";
 
     private HandlerThread mLaunchThread;
-    private SparseArray<String> mActions = null;
+    //private SparseArray<String> mActions;
 
-    private Handler mHandler = null;
+    private Handler mHandler;
 
-    private LinkedHashMap<String, BoyiaAppInfo> mManager;
+    private BoyiaAppCache mAppCache;
 
     private static class BoyiaAppLauncherHolder {
         private static final BoyiaAppLauncher APP_LAUNCHER = new BoyiaAppLauncher();
@@ -50,7 +52,8 @@ public class BoyiaAppLauncher {
     }
 
     private BoyiaAppLauncher() {
-        mActions = new SparseArray<>();
+        //mActions = new SparseArray<>();
+        mAppCache = new BoyiaAppCache(BOYIA_APP_PROCESS_ENDS.length, BoyiaAppLauncher::onProgressReuse);
         mLaunchThread = new HandlerThread(TAG);
         mLaunchThread.start();
         mHandler = new Handler(mLaunchThread.getLooper());
@@ -64,9 +67,9 @@ public class BoyiaAppLauncher {
                 return;
             }
 
-            String end = mActions.get(info.mAppId);
-            if (end != null) {
-                launchApp(end, info);
+            BoyiaAppCacheInfo cacheInfo = mAppCache.get(info.mAppId);
+            if (cacheInfo != null && cacheInfo.progressEnd != null) {
+                launchApp(cacheInfo.progressEnd, info);
                 return;
             }
 
@@ -80,7 +83,7 @@ public class BoyiaAppLauncher {
      */
     public void notifyAppExit(int appId) {
         mHandler.post(() -> {
-            mActions.remove(appId);
+            mAppCache.remove(appId);
         });
     }
 
@@ -130,6 +133,10 @@ public class BoyiaAppLauncher {
         }
     }
 
+    private static void onProgressReuse(BoyiaAppCacheInfo cacheInfo) {
+        launchApp(cacheInfo.progressEnd, cacheInfo.appInfo);
+    }
+
     /**
      * 只允许主进程进行调用，其他进程可以通过IPC来调用此方法
      * @param info
@@ -139,13 +146,13 @@ public class BoyiaAppLauncher {
         for (int i = 0; i < BOYIA_APP_PROCESS_ENDS.length; i++) {
             if (canUse(list, BOYIA_APP_PROCESS_ENDS[i])) {
                 launchApp(BOYIA_APP_PROCESS_ENDS[i], info);
+                mAppCache.put(info.mAppId, new BoyiaAppCacheInfo(info, BOYIA_APP_PROCESS_ENDS[i]));
                 return;
             }
         }
 
-        // 没有空进程可以使用了，随机选一个最先使用的进程进行复用
-        int random = new Random().nextInt(BOYIA_APP_PROCESS_ENDS.length);
-        launchApp(BOYIA_APP_PROCESS_ENDS[random], info);
+        // 没有空进程可以使用了，则使用最近最少算法进行进程复用
+        mAppCache.put(info.mAppId, new BoyiaAppCacheInfo(info, null));
     }
 
     private boolean canUse(List<ProcessInfo> list, String processEnd) {
@@ -158,7 +165,7 @@ public class BoyiaAppLauncher {
         return true;
     }
 
-    private void launchApp(String processEnd, BoyiaAppInfo info) {
+    private static void launchApp(String processEnd, BoyiaAppInfo info) {
         String actionName = String.format(BOYIA_APP_ACTION_FORMAT, processEnd);
         BoyiaLog.d(TAG,"launchApp action = " + processEnd);
         Intent intent = new Intent();
@@ -174,7 +181,6 @@ public class BoyiaAppLauncher {
         }
 
         BaseApplication.getInstance().startActivity(intent);
-        mActions.put(info.mAppId, processEnd);
     }
 
     /**

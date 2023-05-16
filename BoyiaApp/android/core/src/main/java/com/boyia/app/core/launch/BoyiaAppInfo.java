@@ -77,4 +77,6 @@ public class BoyiaAppInfo implements Parcelable {
             return new BoyiaAppInfo[size];
         }
     };
+
+
 }
