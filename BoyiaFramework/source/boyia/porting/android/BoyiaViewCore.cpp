@@ -22,6 +22,7 @@
 #include "ThreadPool.h"
 #include "UIThread.h"
 #include "UIView.h"
+#include "TextureCache.h"
 #include <jni.h>
 
 const char* kBoyiaCoreJNIClass = "com/boyia/app/core/BoyiaCoreJNI";

@@ -3,12 +3,14 @@
 #include "ImageView.h"
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "JNIUtil.h"
 
 namespace yanbo {
 Texture::Texture()
     : texId(0)
     , width(0)
     , height(0)
+    , attached(LFalse)
 {
 }
 
@@ -17,7 +19,22 @@ Texture::~Texture()
     glDeleteTextures(1, &texId);
 }
 
-LVoid Texture::initWithData(LInt width, LInt height)
+LVoid Texture::attach(const HashPtr& ptr)
+{
+    if (attached) {
+        return;
+    }
+
+    BOYIA_LOG("Texture attach id=%ld and tid=%d", (jlong)ptr.value(), (jint)texId);
+    JNIUtil::callStaticVoidMethod(
+        "com/boyia/app/core/BoyiaBridge",
+        "attachTexture",
+        "(JI)V", (jlong)ptr.value(), (jint)texId);
+
+    attached = LTrue;
+}
+
+LVoid Texture::initExternal(LInt width, LInt height)
 {
     this->width = width;
     this->height = height;
@@ -150,5 +167,18 @@ Texture* TextureCache::putImage(const LImage* image)
     }
 
     return tex;
+}
+
+Texture* TextureCache::createExternal(const HashPtr& ptr, LInt width, LInt height)
+{
+    Texture* tex = new yanbo::Texture();
+    tex->initExternal(width, width);
+    m_externalCache.put(ptr, tex);
+    return tex;
+}
+
+Texture* TextureCache::findExternal(const HashPtr& ptr)
+{
+    return m_externalCache.get(ptr).get();
 }
 } // namespace yanbo

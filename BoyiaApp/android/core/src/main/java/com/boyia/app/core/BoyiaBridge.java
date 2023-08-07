@@ -1,19 +1,15 @@
 package com.boyia.app.core;
 
-import android.content.Intent;
 import android.widget.Toast;
 
 import com.boyia.app.common.BaseApplication;
-import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaFileUtil;
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.common.BaseApplication;
 import com.boyia.app.core.api.ApiHandler;
 import com.boyia.app.core.api.ApiImplementation;
-import com.boyia.app.core.launch.BoyiaAppInfo;
+import com.boyia.app.core.texture.BoyiaTextureManager;
 import com.boyia.app.loader.mue.MainScheduler;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -64,6 +60,11 @@ public class BoyiaBridge {
         sApiImplementation = new WeakReference<>(implementation);
     }
 
+    /**
+     * Boyia native engine反射调用系统api
+     * @param json
+     * @param nativeCB
+     */
     public static void callApi(String json, long nativeCB) {
         if (sApiImplementation != null && sApiImplementation.get() != null) {
             sApiImplementation.get().handleApi(json, new ApiHandler.ApiHandlerCallback() {
@@ -80,5 +81,27 @@ public class BoyiaBridge {
                 }
             });
         }
+    }
+
+    /**
+     * Call by engine native code
+     */
+    public static void attachTexture(long textureId, int textName) {
+        BoyiaLog.d(TAG, "textureId = " + textureId + "; and textName = " + textName);
+        BoyiaTextureManager.getInstance().attach(textureId, textName);
+    }
+
+    /**
+     * Call by engine native code
+     */
+    public static void detachTexture(long textureId) {
+        BoyiaTextureManager.getInstance().detach(textureId);
+    }
+
+    /**
+     * Call by engine native code
+     */
+    public static float[] updateTexture(long textureId) {
+        return BoyiaTextureManager.getInstance().update(textureId);
     }
 }

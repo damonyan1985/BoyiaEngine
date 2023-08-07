@@ -25,6 +25,8 @@ gradle.ext.constants = [
     composeVersion: '1.1.0',
     coilVersion: '1.4.0',
     protoVersion: '3.21.11',
+    javaassistVersion: '3.20.0-GA',
+    coroutinesVersion: '1.4.3'
 ]
 
 gradle.ext.library = [
@@ -58,6 +60,7 @@ gradle.ext.library = [
     icon_foundation_lib: 'com.mikepenz:foundation-icons-typeface:3.0.0.7-kotlin',
     icon_material_lib: 'com.mikepenz:material-design-iconic-typeface:2.2.0.8-kotlin@aar',
     coordinator_lib: 'androidx.coordinatorlayout:coordinatorlayout:1.2.0',
+    // compose相关
     compose_ui: "androidx.compose.ui:ui:${gradle.constants.composeVersion}",
     compose_foundation: "androidx.compose.foundation:foundation:${gradle.constants.composeVersion}",
     compose_material: "androidx.compose.material:material:${gradle.constants.composeVersion}",
@@ -67,4 +70,9 @@ gradle.ext.library = [
     compose_uitool: "androidx.compose.ui:ui-tooling:${gradle.constants.composeVersion}",
     coil_lib: "io.coil-kt:coil:${gradle.constants.coilVersion}",
     compose_coil_lib: "io.coil-kt:coil-compose:${gradle.constants.coilVersion}",
+    javaassist: "org.javassist:javassist:${gradle.constants.javaassistVersion}",
+    // 协程
+    coroutines_coreLib: "org.jetbrains.kotlinx:kotlinx-coroutines-core:${gradle.constants.coroutinesVersion}",
+    coroutines_androidLib: "org.jetbrains.kotlinx:kotlinx-coroutines-android:${gradle.constants.coroutinesVersion}",
+    coroutines_jdkLib: "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${gradle.constants.coroutinesVersion}",
 ]

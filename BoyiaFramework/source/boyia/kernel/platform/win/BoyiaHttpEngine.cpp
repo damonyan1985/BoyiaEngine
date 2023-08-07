@@ -47,16 +47,16 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         return;
     }
 
-    // ����Url
+    // 转换成宽字符串Url
     wstring wurl = CharConvertor::CharToWchar(GET_STR(url));
     Uri uri;
     UrlParser::parse(wurl, uri);
 
-    // ��ʼ��wininet
+    // 打开wininet
     HINTERNET internet = ::InternetOpen(L"WinInetGet/0.1", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
     BOYIA_LOG("BoyiaHttpEngine---request Open Internet %d", 1);
 
-    // ��������
+    // 连接网络地址
     DWORD dwConnectContext = 0;
     HINTERNET connect = ::InternetConnect(internet, uri.host.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, dwConnectContext);
 
@@ -74,12 +74,12 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         pathUrl += L"?" + uri.query;
     }
 
-    // ������
+    // 创建发送请求
     HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", pathUrl.c_str(), NULL,
 	    NULL, NULL,
 	    dwOpenRequestFlags, dwConnectContext);
 
-    // ����HTTP����ͷ
+    // 初始化请求同
     if (m_header.GetLength() > 0) {
         wstring header = CharConvertor::CharToWchar(GET_STR(m_header));
         BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
@@ -93,7 +93,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         }
     }
 
-    // ������������
+    // 发送请求
     DWORD dwError = 0;
     LByte* dataBuffer = m_data.get() ? m_data->GetBuffer() : NULL;
     LInt dataSize = m_data.get() ? m_data->GetLength() : 0;

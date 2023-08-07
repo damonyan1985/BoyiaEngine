@@ -226,4 +226,8 @@ dependencies {
     // compose coil
     implementation gradle.library.coil_lib
     implementation gradle.library.compose_coil_lib
+
+    // 协程
+    implementation gradle.library.coroutines_coreLib
+    implementation gradle.library.coroutines_androidLib
 }

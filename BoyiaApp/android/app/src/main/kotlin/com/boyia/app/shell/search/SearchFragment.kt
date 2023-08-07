@@ -79,6 +79,7 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
 
     @Composable
     fun buildHeader() {
+        // by 表示委托
         var searchKey by remember { mutableStateOf("") }
         Row {
             Spacer(modifier = Modifier.width(dpx(20)))

@@ -18,7 +18,7 @@ struct JMediaPlayer {
     //jmethodID   m_texId;
     jmethodID m_setNativePtr;
     jmethodID m_updateTexture;
-    jmethodID m_setTextureId;
+    jmethodID m_getPlayerId;
     jmethodID m_canDraw;
     AutoJObject object(JNIEnv* env)
     {
@@ -44,14 +44,19 @@ MediaPlayerAndroid::MediaPlayerAndroid(LVoid* view)
     //m_player->m_texId = GetJMethod(env, clazz, "getTextureId", "()I");
     m_player->m_setNativePtr = GetJMethod(env, clazz, "setNativePtr", "(J)V");
     m_player->m_updateTexture = GetJMethod(env, clazz, "updateTexture", "()[F");
-    m_player->m_setTextureId = GetJMethod(env, clazz, "setTextureId", "(I)V");
+    m_player->m_getPlayerId = GetJMethod(env, clazz, "getPlayerId", "()J");
     m_player->m_canDraw = GetJMethod(env, clazz, "canDraw", "()Z");
 
     // env->CallVoidMethod(obj, m_player->m_setNativePtr,
     //     (jlong)view);
-    //yanbo::UIThreadClientMap::instance()->registerClient(this);
+    // 视频相关回调信息，比如进度，缓冲，开始，结束
+    yanbo::UIThreadClientMap::instance()->registerClient(this);
     env->CallVoidMethod(obj, m_player->m_setNativePtr,
         (jlong)getClientId());
+
+    // 获取textureId；
+    LIntPtr playId = env->CallLongMethod(obj, m_player->m_getPlayerId);
+    setPlayerId(playId);
 
     env->DeleteLocalRef(obj);
     env->DeleteLocalRef(clazz);
@@ -69,9 +74,10 @@ bool MediaPlayerAndroid::canDraw()
 
 void MediaPlayerAndroid::createTexture()
 {
+    /*
     yanbo::VideoView* view = static_cast<yanbo::VideoView*>(m_view);
     m_texture = new yanbo::Texture();
-    m_texture->initWithData(view->getWidth(), view->getHeight());
+    m_texture->initExternal(view->getWidth(), view->getHeight());
     // glGenTextures(1, &m_texID);
     // glBindTexture(GL_TEXTURE_EXTERNAL_OES, m_texID);
 
@@ -86,7 +92,7 @@ void MediaPlayerAndroid::createTexture()
     if (!javaObject.get())
         return;
 
-    env->CallVoidMethod(javaObject.get(), m_player->m_setTextureId, m_texture->texId);
+    env->CallVoidMethod(javaObject.get(), m_player->m_setTextureId, m_texture->texId);*/
 }
 
 MediaPlayerAndroid::~MediaPlayerAndroid()
@@ -97,16 +103,16 @@ MediaPlayerAndroid::~MediaPlayerAndroid()
 
 LVoid MediaPlayerAndroid::start(const String& url)
 {
-    if (!texture()) {
-        createTexture();
-    }
+    // if (!texture()) {
+    //     createTexture();
+    // }
     JNIEnv* env = JNIUtil::getEnv();
     AutoJObject javaObject = m_player->object(env);
     if (!javaObject.get())
         return;
 
     jstring strPath = strToJstring(env, url);
-    KFORMATLOG("MediaPlayerAndroid::start path=%s", (const char*)url.GetBuffer());
+    BOYIA_LOG("MediaPlayerAndroid::start path=%s", (const char*)url.GetBuffer());
     env->CallVoidMethod(javaObject.get(), m_player->m_start,
         strPath);
 
@@ -115,21 +121,21 @@ LVoid MediaPlayerAndroid::start(const String& url)
 
 void MediaPlayerAndroid::updateTexture(float* matrix)
 {
-    JNIEnv* env = JNIUtil::getEnv();
-    AutoJObject javaObject = m_player->object(env);
-    if (!javaObject.get())
-        return;
-    if (!matrix)
-        return;
+    // JNIEnv* env = JNIUtil::getEnv();
+    // AutoJObject javaObject = m_player->object(env);
+    // if (!javaObject.get())
+    //     return;
+    // if (!matrix)
+    //     return;
 
-    jfloatArray arr = (jfloatArray)env->CallObjectMethod(javaObject.get(), m_player->m_updateTexture);
+    // jfloatArray arr = (jfloatArray)env->CallObjectMethod(javaObject.get(), m_player->m_updateTexture);
 
-    int count = env->GetArrayLength(arr);
-    jfloat* ptr = env->GetFloatArrayElements(arr, JNI_FALSE);
+    // int count = env->GetArrayLength(arr);
+    // jfloat* ptr = env->GetFloatArrayElements(arr, JNI_FALSE);
 
-    LMemcpy(matrix, ptr, sizeof(float) * count);
-    env->ReleaseFloatArrayElements(arr, ptr, 0);
-    env->DeleteLocalRef(arr);
+    // LMemcpy(matrix, ptr, sizeof(float) * count);
+    // env->ReleaseFloatArrayElements(arr, ptr, 0);
+    // env->DeleteLocalRef(arr);
 }
 
 LVoid MediaPlayerAndroid::seek(int progress)

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.SparseArray;
 
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaFileUtil;
@@ -20,11 +19,7 @@ import com.boyia.app.core.BoyiaBridge;
 import com.boyia.app.core.launch.BoyiaAppCache.BoyiaAppCacheInfo;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class BoyiaAppLauncher {
     private static final String TAG = "BoyiaAppLauncher";
@@ -37,7 +32,6 @@ public class BoyiaAppLauncher {
     private static final String BOYIA_APP_SDK_UNZIP_KEY = "boyia_app_sdk_unzip";
 
     private HandlerThread mLaunchThread;
-    //private SparseArray<String> mActions;
 
     private Handler mHandler;
 
@@ -52,7 +46,6 @@ public class BoyiaAppLauncher {
     }
 
     private BoyiaAppLauncher() {
-        //mActions = new SparseArray<>();
         mAppCache = new BoyiaAppCache(BOYIA_APP_PROCESS_ENDS.length, BoyiaAppLauncher::onProgressReuse);
         mLaunchThread = new HandlerThread(TAG);
         mLaunchThread.start();

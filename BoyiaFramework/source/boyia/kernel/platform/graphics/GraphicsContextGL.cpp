@@ -229,18 +229,42 @@ LVoid GraphicsContextGL::drawImage(const LRect& aDestRect, const LImage* aSource
 LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
 {
     MediaPlayerAndroid* amp = (MediaPlayerAndroid*)mp;
-    if (!amp->texture())
+    if (!amp)
         return;
 
     ItemPainter* painter = currentPainter();
+
+    LIntPtr texId = amp->playerId();
+    yanbo::Texture* texture = yanbo::TextureCache::getInst()->findExternal((LUintPtr)texId);
+    if (!texture) {
+        texture = yanbo::TextureCache::getInst()->createExternal(texId, rect.GetWidth(), rect.GetHeight());
+    }
+    texture->attach(texId);
+
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LColor(0, 0, 0, 0xFF));
 
-    paint->setExternal(amp->texture(), rect);
-    amp->updateTexture(paint->stMatrix());
-    //KFORMATLOG("GraphicsContextGL drawVideo error=%d texId=%d", glGetError(), tex->texId);
+    paint->setExternal(texture, rect);
+    painter->painters.push(paint);    
 
-    painter->painters.push(paint);
+    // 获取矩阵变换数组
+    jfloatArray arr = (jfloatArray)JNIUtil::callStaticObjectMethod(
+        "com/boyia/app/core/BoyiaBridge",
+        "updateTexture",
+        "(J)[F;", (jlong)texId);
+
+    if (arr) {
+        JNIEnv* env = JNIUtil::getEnv();
+        int count = env->GetArrayLength(arr);
+        jfloat* ptr = env->GetFloatArrayElements(arr, JNI_FALSE);   
+        LMemcpy(paint->stMatrix(), ptr, sizeof(float) * count); 
+        env->ReleaseFloatArrayElements(arr, ptr, 0);
+        env->DeleteLocalRef(arr);
+    }
+    
+    //amp->updateTexture(paint->stMatrix());
+    //KFORMATLOG("GraphicsContextGL drawVideo error=%d texId=%d", glGetError(), tex->texId);
+    
 }
 
 #if ENABLE(BOYIA_PLATFORM_VIEW)

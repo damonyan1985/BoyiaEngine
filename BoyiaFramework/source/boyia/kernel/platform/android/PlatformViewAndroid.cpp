@@ -17,7 +17,7 @@ public:
     LVoid initView(LInt width, LInt height)
     {
         texture = new Texture();
-        texture->initWithData(width, height);
+        texture->initExternal(width, height);
 
         JNIEnv* env = JNIUtil::getEnv();
 

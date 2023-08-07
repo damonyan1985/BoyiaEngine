@@ -3,18 +3,60 @@ package com.boyia.app.core.texture;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
+import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.BoyiaBridge;
+import com.boyia.app.core.BoyiaCoreJNI;
+
+import java.util.concurrent.atomic.AtomicLong;
+
 public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
+    private static final String TAG = "BoyiaTexture";
+    private static final AtomicLong nextTextureId = new AtomicLong(1L);
     private SurfaceTexture mTexture;
+
+    private long mTextureId;
     private Surface mSurface;
     private float[] mSTMatrix = new float[16];
     private boolean mUpdateSurface = false;
     private static long mLastPlayTime = 0;
     private TextureUpdateNotifier mNotifier = null;
 
+    public static BoyiaTexture createTexture() {
+        BoyiaTexture texture = new BoyiaTexture(0);
+        texture.mTextureId = nextTextureId.getAndIncrement();
+        BoyiaLog.d(TAG, "createTexture tid=" +texture.mTextureId);
+
+        BoyiaTextureManager.getInstance().registerTexture(texture);
+        return texture;
+    }
+
     public BoyiaTexture(int textureId) {
         mTexture = new SurfaceTexture(textureId);
         mTexture.setOnFrameAvailableListener(this);
         mSurface = new Surface(mTexture);
+    }
+
+    public long getTextureId() {
+        return mTextureId;
+    }
+
+    /**
+     * use opengl texture id to attach to gl context
+     * @param texName
+     */
+    public void attach(int texName) {
+        synchronized (this) {
+            mTexture.attachToGLContext(texName);
+        }
+    }
+
+    /**
+     * detach from gl context
+     */
+    public void detach() {
+        synchronized (this) {
+            mTexture.detachFromGLContext();
+        }
     }
 
     public Surface getSurface() {
@@ -51,19 +93,19 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     }
 
     public float[] updateTexture() {
-        try {
-            mTexture.updateTexImage();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            mTexture.getTransformMatrix(mSTMatrix);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         synchronized (this) {
+            try {
+                mTexture.updateTexImage();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            try {
+                mTexture.getTransformMatrix(mSTMatrix);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
             mUpdateSurface = false;
         }
 

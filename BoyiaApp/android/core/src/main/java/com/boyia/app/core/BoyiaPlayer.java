@@ -29,8 +29,9 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     private long mNativePtr = 0;
     private HandlerThread mThread;
     private Handler mHandler;
-    private int mTextureID = 0;
     private BoyiaTexture mTexture;
+
+    private long mPlayerId = 0;
 
     private static class PlayerHandler extends Handler {
         public static final int GL_VIDEO_START = 0;
@@ -64,7 +65,11 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     }
 
     public BoyiaPlayer() {
-        mThread = new HandlerThread(this.toString());
+        mTexture = BoyiaTexture.createTexture();
+        mTexture.setTextureUpdateNotifier(this);
+
+        mPlayerId = mTexture.getTextureId();
+        mThread = new HandlerThread(String.valueOf(mPlayerId));
         mThread.start();
         mHandler = new PlayerHandler(mThread.getLooper());
     }
@@ -74,7 +79,12 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mNativePtr = nativePtr;
     }
 
+    /**
+     * Call by native player start
+     * @param url
+     */
     public void start(String url) {
+        BoyiaLog.d(TAG, "BoyiaPlayer start url = " + url);
         mPlayerUri = Uri.parse(url);
 
         Message msg = Message.obtain();
@@ -83,6 +93,9 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mHandler.sendMessage(msg);
     }
 
+    /**
+     * Call by native player pause
+     */
     public void pause() {
         Message msg = Message.obtain();
         msg.what = PlayerHandler.GL_VIDEO_PAUSE;
@@ -90,6 +103,9 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mHandler.sendMessage(msg);
     }
 
+    /**
+     * Call by native player stop
+     */
     public void stop() {
         Message msg = Message.obtain();
         msg.what = PlayerHandler.GL_VIDEO_PAUSE;
@@ -97,6 +113,10 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mHandler.sendMessage(msg);
     }
 
+    /**
+     * Call by native player seek
+     * @param progress
+     */
     public void seek(int progress) {
         Message msg = Message.obtain();
         msg.what = PlayerHandler.GL_VIDEO_PAUSE;
@@ -107,8 +127,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
     private void initPlayer() {
         if (mPlayer == null) {
-            mTexture = new BoyiaTexture(mTextureID);
-            mTexture.setTextureUpdateNotifier(this);
+            BoyiaLog.d(TAG, "BoyiaPlayer initPlayer");
 
             mPlayer = new MediaPlayer();
             mPlayer.setSurface(mTexture.getSurface());
@@ -116,9 +135,11 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         }
     }
 
-    // Call by native mediaplayer
-    public void setTextureId(int id) {
-        mTextureID = id;
+    /**
+     * Call by native player getPlayerId
+     */
+    public long getPlayerId() {
+        return mPlayerId;
     }
 
     public void prepare() {
@@ -132,7 +153,6 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         } catch (Throwable e) {
             BoyiaLog.e(TAG, "BoyiaPlayer prepare error, context = " + BaseApplication.getInstance(), e);
         }
-
     }
 
     private void initListener() {
@@ -168,7 +188,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        BoyiaLog.d("libboyia", "onPrepared");
+        BoyiaLog.d(TAG, "onPrepared");
         mp.start();
     }
 
@@ -184,7 +204,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     // Call by native mediaplayer
     public float[] updateTexture() {
         BoyiaLog.d("libboyia",
-                "BoyiaPlayer updateTexImage texId=" + mTextureID + " threadId=" + Thread.currentThread().getId());
+                "BoyiaPlayer updateTexImage texId=" + mTexture.getTextureId() + " threadId=" + Thread.currentThread().getId());
         return mTexture.updateTexture();
     }
 
@@ -199,7 +219,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
     @Override
     public void onTextureUpdate() {
-        BoyiaLog.d("libboyia", "onFrameAvailable id=" + this.mTextureID + " threadId=" + Thread.currentThread().getId());
+        BoyiaLog.d("libboyia", "onFrameAvailable id=" + mTexture.getTextureId() + " threadId=" + Thread.currentThread().getId());
         BoyiaCoreJNI.nativeVideoTextureUpdate(mNativePtr);
     }
 }

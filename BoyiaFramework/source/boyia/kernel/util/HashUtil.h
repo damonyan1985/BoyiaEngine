@@ -73,6 +73,10 @@ public:
         return (LUint)m_ptr;
     }
 
+    LUintPtr value() const {
+        return m_ptr;
+    }
+
 private:
     LUintPtr m_ptr;
 };

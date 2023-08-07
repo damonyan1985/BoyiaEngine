@@ -2,26 +2,14 @@ package com.boyia.app.shell
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowManager
-import android.widget.FrameLayout
-import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Text
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.common.utils.ProcessUtil
 import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.BaseFragment
-import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.permission.BoyiaPermissions
 import com.boyia.app.shell.service.BoyiaNotifyService
@@ -110,7 +98,7 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
-            BoyiaPermissions.PHOTO_REQUEST_CODE -> {
+            BoyiaPermissions.CAMERA_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     pickLauncher.launch(null)
                 }

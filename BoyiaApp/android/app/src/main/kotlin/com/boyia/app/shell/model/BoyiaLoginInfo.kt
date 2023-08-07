@@ -3,6 +3,10 @@ package com.boyia.app.shell.model
 import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaShare
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 class BoyiaLoginInfo {
@@ -21,21 +25,34 @@ class BoyiaLoginInfo {
     var user: BoyiaUserInfo? = null
         get() {
             if (field == null) {
-                val info = BoyiaShare.getImpl(USER_KEY, null)
-                BoyiaLog.d(TAG, "get field = $info")
-                field = BoyiaJson.jsonParse(info, BoyiaUserInfo::class.java)
+                CoroutineScope(Dispatchers.Main).launch {
+                    // 跨线程获取存储对象
+                    val job = async(Dispatchers.IO) {
+                        val info = BoyiaShare.getImpl(USER_KEY, null)
+                        BoyiaLog.d(TAG, "get field = $info")
+                        BoyiaJson.jsonParse(info, BoyiaUserInfo::class.java)
+                    }
+
+                    // 使用await在主线程得到该对象
+                    field = job.await()
+                }
             }
 
             return field
         }
         set(value) {
             field = value
-            if (value == null) {
-                BoyiaShare.remove(USER_KEY)
-            } else {
-                val data = BoyiaJson.toJson(value)
-                BoyiaLog.d(TAG, "set field = $data")
-                BoyiaShare.putImpl(USER_KEY, BoyiaJson.toJson(value))
+
+            CoroutineScope(Dispatchers.Main).launch {
+                async(Dispatchers.IO) {
+                    if (value == null) {
+                        BoyiaShare.remove(USER_KEY)
+                    } else {
+                        val data = BoyiaJson.toJson(value)
+                        BoyiaLog.d(TAG, "set field = $data")
+                        BoyiaShare.putImpl(USER_KEY, BoyiaJson.toJson(value))
+                    }
+                }
             }
         }
 

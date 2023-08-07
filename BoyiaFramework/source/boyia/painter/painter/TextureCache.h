@@ -21,7 +21,10 @@ public:
     Texture();
 
     // For external texture
-    LVoid initWithData(LInt width, LInt height);
+    LVoid initExternal(LInt width, LInt height);
+
+    // 外接纹理需要attach
+    LVoid attach(const HashPtr& ptr);
 
     // For image texture
     LVoid initWithData(LVoid* data, LInt width, LInt height);
@@ -35,6 +38,7 @@ public:
     GLuint texId;
     LInt width;
     LInt height;
+    LBool attached;
 };
 
 class TexturePair : public BoyiaRef {
@@ -49,6 +53,9 @@ public:
 typedef KList<BoyiaPtr<TexturePair>> TextTextureCache;
 // 图片产生的纹理
 typedef HashMap<HashString, BoyiaPtr<Texture>> ImageTextureCache;
+// 外接纹理
+typedef HashMap<HashPtr, BoyiaPtr<Texture>> ExternalTextureCache;
+
 class TextureCache {
 public:
     static TextureCache* getInst();
@@ -62,9 +69,13 @@ public:
     Texture* putImage(const LImage* image);
     Texture* findImage(const String& url);
 
+    Texture* createExternal(const HashPtr& ptr, LInt width, LInt height);
+    Texture* findExternal(const HashPtr& ptr);
+
 private:
     ImageTextureCache m_imageCache;
     TextTextureCache m_textCache;
+    ExternalTextureCache m_externalCache;
 };
 }
 #endif
