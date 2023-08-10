@@ -20,12 +20,13 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     private boolean mUpdateSurface = false;
     private static long mLastPlayTime = 0;
     private TextureUpdateNotifier mNotifier = null;
+    // 是否attach至GLContext
+    private boolean mIsAttached = false;
 
     public static BoyiaTexture createTexture() {
         BoyiaTexture texture = new BoyiaTexture(0);
         texture.mTextureId = nextTextureId.getAndIncrement();
         BoyiaLog.d(TAG, "createTexture tid=" +texture.mTextureId);
-
         BoyiaTextureManager.getInstance().registerTexture(texture);
         return texture;
     }
@@ -34,6 +35,7 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
         mTexture = new SurfaceTexture(textureId);
         mTexture.setOnFrameAvailableListener(this);
         mSurface = new Surface(mTexture);
+        mTexture.detachFromGLContext();
     }
 
     public long getTextureId() {
@@ -46,7 +48,13 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
      */
     public void attach(int texName) {
         synchronized (this) {
+            if (mIsAttached) {
+                mTexture.detachFromGLContext();
+            }
+
+            BoyiaLog.d(TAG, "BoyiaTexture attached texName = " + texName);
             mTexture.attachToGLContext(texName);
+            mIsAttached = true;
         }
     }
 
