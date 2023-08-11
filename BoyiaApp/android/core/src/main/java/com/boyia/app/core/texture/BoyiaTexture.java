@@ -81,26 +81,15 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
 
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-        // Notify Boyia Framework To Renderer
-        synchronized (this) {
-            mUpdateSurface = true;
-        }
-
-        if (0 == mLastPlayTime) {
-            mLastPlayTime = System.currentTimeMillis();
-        } else {
-            // 小于16毫秒再来一次，就放弃绘制
-            if (System.currentTimeMillis() - mLastPlayTime < 16) {
-                return;
-            }
-        }
-
+        BoyiaLog.d(TAG, "onFrameAvailable call");
         if (mNotifier != null) {
             mNotifier.onTextureUpdate();
         }
     }
 
+    // 必须调用updateTexImage, onFrameAvailable才会继续被调用
     public float[] updateTexture() {
+        BoyiaLog.d(TAG, "updateTexture call");
         synchronized (this) {
             try {
                 mTexture.updateTexImage();
@@ -113,8 +102,6 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-            mUpdateSurface = false;
         }
 
         return mSTMatrix;

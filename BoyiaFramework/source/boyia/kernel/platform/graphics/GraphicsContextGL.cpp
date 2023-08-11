@@ -238,8 +238,8 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
     yanbo::Texture* texture = yanbo::TextureCache::getInst()->findExternal((LUintPtr)texId);
     if (!texture) {
         texture = yanbo::TextureCache::getInst()->createExternal(texId, rect.GetWidth(), rect.GetHeight());
+        texture->attach(texId);
     }
-    texture->attach(texId);
 
     BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
     paint->setColor(LColor(0, 0, 0, 0xFF));
@@ -251,7 +251,7 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
     jfloatArray arr = (jfloatArray)JNIUtil::callStaticObjectMethod(
         "com/boyia/app/core/BoyiaBridge",
         "updateTexture",
-        "(J)[F;", (jlong)texId);
+        "(J)[F", (jlong)texId);
 
     if (arr) {
         JNIEnv* env = JNIUtil::getEnv();

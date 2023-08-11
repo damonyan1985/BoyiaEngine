@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.view.Surface;
 
 public class BoyiaPlayer implements OnBufferingUpdateListener,
         OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener,
@@ -131,7 +132,6 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
 
             mPlayer = new MediaPlayer();
             mPlayer.setSurface(mTexture.getSurface());
-            mTexture.getSurface().release();
         }
     }
 
