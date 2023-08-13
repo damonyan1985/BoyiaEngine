@@ -1,11 +1,9 @@
 package com.boyia.app.core;
 
 import com.boyia.app.common.utils.BoyiaLog;
-import com.boyia.app.common.utils.BoyiaUtils;
 
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +119,12 @@ public class BoyiaFont {
         return i;
     }
 
+    /**
+     * 根据索引找到所在x坐标的相对位移
+     * @param line
+     * @param index
+     * @return
+     */
     public int getOffsetByIndex(int line, int index) {
         if (mList.size() == 0) {
             return 0;

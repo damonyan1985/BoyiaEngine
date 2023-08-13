@@ -34,7 +34,6 @@ public class PlatformViewController {
 
     // 创建VirtualDisplay
     private VirtualDisplay createVirtualDisplay(Context context, PlatformViewCreationRequest request) {
-//        SurfaceTexture texture = new SurfaceTexture(request.textureId);
         mTexture = new BoyiaTexture(request.textureId);
         mTexture.getSurfaceTexture().setDefaultBufferSize(request.logicalWidth, request.logicalHeight);
         mTexture.setTextureUpdateNotifier(() -> {

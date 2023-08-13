@@ -25,6 +25,7 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
 
     public static BoyiaTexture createTexture() {
         BoyiaTexture texture = new BoyiaTexture(0);
+        texture.mTexture.detachFromGLContext();
         texture.mTextureId = nextTextureId.getAndIncrement();
         BoyiaLog.d(TAG, "createTexture tid=" +texture.mTextureId);
         BoyiaTextureManager.getInstance().registerTexture(texture);
@@ -35,7 +36,6 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
         mTexture = new SurfaceTexture(textureId);
         mTexture.setOnFrameAvailableListener(this);
         mSurface = new Surface(mTexture);
-        mTexture.detachFromGLContext();
     }
 
     public long getTextureId() {
@@ -64,6 +64,7 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     public void detach() {
         synchronized (this) {
             mTexture.detachFromGLContext();
+            mIsAttached = false;
         }
     }
 
