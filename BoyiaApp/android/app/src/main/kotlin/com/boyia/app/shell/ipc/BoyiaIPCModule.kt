@@ -8,6 +8,7 @@ import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.shell.ipc.handler.*
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
+import com.boyia.app.shell.util.PermissionCallback
 import java.lang.ref.WeakReference
 import java.lang.reflect.Constructor
 import java.util.concurrent.ConcurrentHashMap
@@ -37,9 +38,9 @@ class BoyiaIPCModule : IPCModule {
         appSenderMap = ConcurrentHashMap<Int, IBoyiaSender>()
         register(ApiConstants.ApiNames.LOCAL_SHARE_SET, SetShareHandler::class.java)
         register(ApiConstants.ApiNames.LOCAL_SHARE_GET, GetShareHandler::class.java)
-        register(ApiConstants.ApiNames.NOTIFICATION_NAME, SendNotificationHandler::class.java)
+        register(ApiConstants.ApiNames.NOTIFICATION_NAME, SendNotificationHandler::class.java, true)
         register(ApiConstants.ApiNames.USER_INFO, GetUserInfoHandler::class.java)
-        register(ApiConstants.ApiNames.USER_LOGIN, LoginHandler::class.java)
+        register(ApiConstants.ApiNames.USER_LOGIN, LoginHandler::class.java, true)
         register(ApiConstants.ApiNames.SEND_BINDER, GetSenderHandler::class.java, true)
     }
 
@@ -49,6 +50,14 @@ class BoyiaIPCModule : IPCModule {
 
     override fun removeSender(aid: Int) {
         appSenderMap.remove(aid);
+    }
+
+    override fun sendNotification(permissionCallback: PermissionCallback) {
+        context?.get()?.let {
+            it.sendNotification {
+                permissionCallback()
+            }
+        }
     }
 
     /**

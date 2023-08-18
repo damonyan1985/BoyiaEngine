@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.shell.model.BoyiaAppSearchModel
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
+import com.boyia.app.shell.route.Navigator
 
 class SearchModule : IUIModule {
     companion object {
@@ -13,12 +14,7 @@ class SearchModule : IUIModule {
     }
 
     override fun show(context: IModuleContext) {
-        val search = SearchFragment(this)
-        val fragmentTransaction = context.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        fragmentTransaction.add(context.rootId(), search, TAG)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        Navigator(context).push(SearchFragment(this), TAG)
     }
 
     override fun hide() {

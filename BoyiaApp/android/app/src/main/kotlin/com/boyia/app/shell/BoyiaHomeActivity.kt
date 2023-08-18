@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.common.utils.ProcessUtil
@@ -14,6 +16,7 @@ import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.permission.BoyiaPermissions
 import com.boyia.app.shell.service.BoyiaNotifyService
 import com.boyia.app.shell.util.CommonFeatures
+import com.boyia.app.shell.util.PermissionCallback
 
 // 主页面，用来呈现应用列表信息
 class BoyiaHomeActivity: BoyiaShellActivity() {
@@ -32,7 +35,7 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
 //        }
 //    }
 
-    private val pickerLoaders = ArrayList<IPickImageLoader>()
+    private val pickerLoaders = mutableListOf<IPickImageLoader>()
     private val pickLauncher = CommonFeatures.registerPickerImage(this) { path ->
         BoyiaLog.d(CommonFeatures.TAG, "registerPickerImage path = $path")
         pickerLoaders.forEach { it
@@ -41,6 +44,8 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
 
         pickerLoaders.clear()
     }
+
+    private val permissionCallbacks = mutableListOf<PermissionCallback>()
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
@@ -66,6 +71,18 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
         pickerLoaders.add(loader)
         if (BoyiaPermissions.requestPhotoPermissions(this)) {
             pickLauncher.launch(null)
+        }
+    }
+
+    override fun sendNotification(callback: PermissionCallback) {
+        permissionCallbacks.add(callback)
+        if (NotificationManagerCompat.from(this).areNotificationsEnabled()
+                || BoyiaPermissions.requestNotificationPermissions(this)) {
+            permissionCallbacks.forEach {
+                it()
+            }
+
+            permissionCallbacks.clear()
         }
     }
 
@@ -101,6 +118,15 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
             BoyiaPermissions.CAMERA_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     pickLauncher.launch(null)
+                }
+            }
+            BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    permissionCallbacks.forEach {
+                        it()
+                    }
+
+                    permissionCallbacks.clear()
                 }
             }
         }

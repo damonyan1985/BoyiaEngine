@@ -9,7 +9,7 @@ import com.boyia.app.shell.ipc.IBoyiaIPCHandler
 import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.util.CommonFeatures
 
-class SendNotificationHandler: IBoyiaIPCHandler {
+class SendNotificationHandler(private val module: IPCModule): IBoyiaIPCHandler {
     companion object {
         const val TAG = "SendNotificationHandler"
     }
@@ -29,7 +29,10 @@ class SendNotificationHandler: IBoyiaIPCHandler {
 
         BoyiaLog.d(TAG, "title = $title, icon = $icon, action = $action")
 
-        CommonFeatures.sendNotification(action!!, title!!, icon!!)
+        module.sendNotification {
+            CommonFeatures.sendNotification(action!!, title!!, icon!!)
+        }
+
         cb.callback(null)
     }
 }

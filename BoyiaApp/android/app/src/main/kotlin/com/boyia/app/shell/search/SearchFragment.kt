@@ -120,7 +120,7 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
                     modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .background(Color.Gray, RoundedCornerShape(50)) // 要先设置背景再设置宽高，不然背景会超出宽高
-                            .width(dpx(120))
+                            .width(dpx(124))
                             .height(dpx(72)),
                     border = BorderStroke(dpx(4), Color(0xFFD3D3D3)),
                     shape = RoundedCornerShape(dpx(36)),

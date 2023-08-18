@@ -20,6 +20,14 @@ public class BoyiaPermissions {
      * 存储器权限请求
      */
     public static final int STORYAGE_REQUEST_CODE = 3;
+    /**
+     * 获取位置权限
+     */
+    public static final int LOCATION_REQUEST_CODE = 4;
+    /**
+     * Notification消息通知
+     */
+    public static final int NOTIFICATION_REQUEST_CODE = 5;
 
     private static final String[] CAMERA_PERMISSIONS = {
             Manifest.permission.CAMERA,
@@ -46,6 +54,11 @@ public class BoyiaPermissions {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
 
+    // 通知
+    private static final String[] NOTIFICATION_PERMISSIONS = {
+            "android.permission.POST_NOTIFICATIONS"
+    };
+
     public static boolean requestPhotoPermissions(Activity context) {
         for (int i = 0; i < CAMERA_PERMISSIONS.length; i++) {
             if (!requestPermission(context, CAMERA_PERMISSIONS[i], CAMERA_REQUEST_CODE)) {
@@ -68,7 +81,22 @@ public class BoyiaPermissions {
 
     public static boolean requestLocationPermissions(Activity context) {
         for (int i = 0; i < LOCATION_PERMISSIONS.length; i++) {
-            if (!requestPermission(context, LOCATION_PERMISSIONS[i], STORYAGE_REQUEST_CODE)) {
+            if (!requestPermission(context, LOCATION_PERMISSIONS[i], LOCATION_REQUEST_CODE)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 申请通知权限
+     * @param context
+     * @return
+     */
+    public static boolean requestNotificationPermissions(Activity context) {
+        for (int i = 0; i < NOTIFICATION_PERMISSIONS.length; i++) {
+            if (!requestPermission(context, NOTIFICATION_PERMISSIONS[i], NOTIFICATION_REQUEST_CODE)) {
                 return false;
             }
         }

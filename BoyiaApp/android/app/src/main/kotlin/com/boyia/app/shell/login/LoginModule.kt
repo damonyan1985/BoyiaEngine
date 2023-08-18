@@ -1,12 +1,11 @@
 package com.boyia.app.shell.login
 
-import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.common.utils.BoyiaLog
-import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.model.BoyiaLoginModel
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.ILoginModule
 import com.boyia.app.shell.module.IModuleContext
+import com.boyia.app.shell.route.Navigator
 import java.lang.ref.WeakReference
 
 class LoginModule: ILoginModule {
@@ -23,16 +22,7 @@ class LoginModule: ILoginModule {
 
     override fun show(ctx: IModuleContext) {
         context = WeakReference(ctx)
-
-        fragment = BoyiaLoginFragment(this)
-
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        //fragmentTransaction.setCustomAnimations(R.anim.page_in, R.anim.page_out)
-        //fragmentTransaction.add(ctx.rootId(), fragment!!)
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        fragmentTransaction.add(ctx.rootId(), fragment!!)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        Navigator(ctx).push(BoyiaLoginFragment(this), TAG)
     }
 
     fun login(name: String?, password: String?) {

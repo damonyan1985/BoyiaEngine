@@ -9,7 +9,7 @@ import com.boyia.app.shell.ipc.IBoyiaIPCHandler
 import com.boyia.app.shell.login.LoginActivity
 import com.boyia.app.shell.module.IPCModule
 
-class LoginHandler: IBoyiaIPCHandler {
+class LoginHandler(private val module: IPCModule): IBoyiaIPCHandler {
     companion object {
         const val ACTION = "com.boyia.app.shell.login.action"
     }

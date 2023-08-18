@@ -11,9 +11,9 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.widget.LinearLayout
+import android.widget.RemoteViews
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
@@ -28,18 +28,22 @@ import com.boyia.app.common.BaseApplication
 import com.boyia.app.common.utils.BoyiaFileUtil
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
-import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.loader.image.BoyiaImageView
 import com.boyia.app.loader.image.BoyiaImager
 import com.boyia.app.loader.image.IBoyiaImage
+import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.R
-import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaModelUtil
 import com.boyia.app.shell.service.BoyiaNotifyService
+import java.text.SimpleDateFormat
+import java.util.concurrent.atomic.AtomicInteger
+
+typealias PermissionCallback = () -> Unit
 
 // 共用功能
 object CommonFeatures {
     const val TAG = "CommonFeatures"
+    var notifyCounter = AtomicInteger(1)
     /**
      * 发送推送信息
      */
@@ -63,16 +67,23 @@ object CommonFeatures {
             }
 
             override fun setImage(bitmap: Bitmap?) {
-                val notification = NotificationCompat.Builder(context, BoyiaNotifyService.BOYIA_APP_CHANNEL_ID)
-                        .setAutoCancel(true)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setLargeIcon(bitmap)
-                        //.setWhen(System.currentTimeMillis())
-                        .setContentIntent(pendingIntent)
-                        .setContentTitle(title)
-                        .build()
+                MainScheduler.mainScheduler().sendJob {
+                    val id = notifyCounter.getAndIncrement()
+                    BoyiaLog.d(TAG, "notify layout = ${R.layout.notify} id = $id")
+                    val remoteViews = RemoteViews(context.packageName, R.layout.notify)
+                    remoteViews.setTextViewText(R.id.boyia_app_title, title)
+                    remoteViews.setTextViewText(R.id.boyia_app_msg, "Boyia App Msg")
+                    remoteViews.setImageViewBitmap(R.id.boyia_app_icon, bitmap)
+                    remoteViews.setTextViewText(R.id.boyia_app_time, SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(System.currentTimeMillis()))
+                    val notification = NotificationCompat.Builder(context, BoyiaNotifyService.BOYIA_APP_CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentIntent(pendingIntent)
+                            .setContent(remoteViews)
+                            .build()
 
-                manager.notify(0, notification)
+                    manager.notify(id, notification)
+                }
             }
 
             override fun getImageWidth(): Int {
@@ -96,19 +107,41 @@ object CommonFeatures {
         view.clipToOutline = true
     }
 
-    fun registerPickerImage(context: AppCompatActivity, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?> {
-        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Uri?>() {
+    fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any?, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
+        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Any>() {
             override fun createIntent(context: Context, input: Unit?): Intent {
-                return Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                return intent
             }
 
-            override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-                return intent?.data
+            override fun parseResult(resultCode: Int, resultIntent: Intent?): Any? {
+                return handler(resultIntent)
             }
-        }) { uri: Uri? ->
-            if (uri != null) {
-                pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
+        }) { data: Any? ->
+            data?.let {
+                resultCB(data)
             }
+        }
+    }
+
+    fun registerPickerImage(context: AppCompatActivity, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?> {
+//        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Uri?>() {
+//            override fun createIntent(context: Context, input: Unit?): Intent {
+//                return Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+//            }
+//
+//            override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+//                return intent?.data
+//            }
+//        }) { uri: Uri? ->
+//            if (uri != null) {
+//                pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
+//            }
+//        }
+        return registerActivityResult(context,
+                Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
+                { it?.data }
+        ) {
+            pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
         }
     }
 

@@ -40,12 +40,13 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
     }
 
     private fun initLayout() {
-        rootLayout = RelativeLayout(context)
-        rootLayout?.setBackgroundColor(0xFF4F4F4F.toInt())
-        rootLayout?.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        rootLayout = RelativeLayout(context).apply {
+            setBackgroundColor(0xFF4F4F4F.toInt())
+            layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
 
         val loginHeader = initLoginHeader()
         val loginHeaderParam = RelativeLayout.LayoutParams(
@@ -56,9 +57,10 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         loginHeaderParam.topMargin = BoyiaUtils.getStatusBarHeight(context as Activity)
         rootLayout?.addView(loginHeader, loginHeaderParam)
 
-        val loginInputLayout = LinearLayout(context)
-        loginInputLayout.orientation = LinearLayout.VERTICAL
-        loginInputLayout.id = View.generateViewId()
+        val loginInputLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            id = View.generateViewId()
+        }
 
         val userItem = initInputItem(R.drawable.person) { edit ->
             userInput = edit
