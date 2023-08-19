@@ -31,6 +31,10 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     private HandlerThread mThread;
     private Handler mHandler;
     private BoyiaTexture mTexture;
+    /**
+     * 视频图像绘制在surface上
+     */
+    private Surface mSurface;
 
     private long mPlayerId = 0;
 
@@ -39,6 +43,10 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         public static final int GL_VIDEO_PAUSE = 1;
         public static final int GL_VIDEO_STOP = 2;
         public static final int GL_VIDEO_SEEK = 3;
+        /**
+         * 播放器释放时回调
+         */
+        public static final int GL_VIDEO_DESTROY = 4;
 
         public PlayerHandler(Looper looper) {
             super(looper);
@@ -61,7 +69,21 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
                 case GL_VIDEO_SEEK:
                     player.mPlayer.seekTo((int) msg.arg1);
                     break;
+                case GL_VIDEO_DESTROY:
+                    player.destroyPlayer();
+                    break;
             }
+        }
+    }
+
+    private void destroyPlayer() {
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+        }
+        if (mSurface != null) {
+            mSurface.release();
+            mSurface = null;
         }
     }
 
@@ -126,12 +148,20 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         mHandler.sendMessage(msg);
     }
 
+    public void destroy() {
+        Message msg = Message.obtain();
+        msg.what = PlayerHandler.GL_VIDEO_DESTROY;
+        msg.obj = this;
+        mHandler.sendMessage(msg);
+    }
+
     private void initPlayer() {
         if (mPlayer == null) {
             BoyiaLog.d(TAG, "BoyiaPlayer initPlayer");
 
             mPlayer = new MediaPlayer();
-            mPlayer.setSurface(mTexture.getSurface());
+            mSurface = new Surface(mTexture.getSurfaceTexture());
+            mPlayer.setSurface(mSurface);
         }
     }
 
@@ -206,15 +236,6 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
         BoyiaLog.d("libboyia",
                 "BoyiaPlayer updateTexImage texId=" + mTexture.getTextureId() + " threadId=" + Thread.currentThread().getId());
         return mTexture.updateTexture();
-    }
-
-    // Call by native mediaplayer
-    public boolean canDraw() {
-        if (mTexture == null) {
-            return false;
-        }
-
-        return mTexture.canDraw();
     }
 
     @Override

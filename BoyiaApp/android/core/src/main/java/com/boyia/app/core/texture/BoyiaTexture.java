@@ -13,14 +13,21 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     private static final String TAG = "BoyiaTexture";
     private static final AtomicLong nextTextureId = new AtomicLong(1L);
     private SurfaceTexture mTexture;
-
+    /**
+     * 自增id，非真实的纹理ID
+     */
     private long mTextureId;
-    private Surface mSurface;
+    /**
+     * 获取图形的变换举证
+     */
     private float[] mSTMatrix = new float[16];
-    private boolean mUpdateSurface = false;
-    private static long mLastPlayTime = 0;
+    /**
+     * 变化通知
+     */
     private TextureUpdateNotifier mNotifier = null;
-    // 是否attach至GLContext
+    /**
+     * 是否attach至GLContext
+     */
     private boolean mIsAttached = false;
 
     public static BoyiaTexture createTexture() {
@@ -35,7 +42,6 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     public BoyiaTexture(int textureId) {
         mTexture = new SurfaceTexture(textureId);
         mTexture.setOnFrameAvailableListener(this);
-        mSurface = new Surface(mTexture);
     }
 
     public long getTextureId() {
@@ -66,10 +72,6 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
             mTexture.detachFromGLContext();
             mIsAttached = false;
         }
-    }
-
-    public Surface getSurface() {
-        return mSurface;
     }
 
     public SurfaceTexture getSurfaceTexture() {
@@ -106,10 +108,6 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
         }
 
         return mSTMatrix;
-    }
-
-    public boolean canDraw() {
-        return mUpdateSurface;
     }
 
     public interface TextureUpdateNotifier {

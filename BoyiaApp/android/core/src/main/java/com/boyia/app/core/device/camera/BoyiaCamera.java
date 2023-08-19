@@ -19,6 +19,7 @@ import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
+import android.view.Surface;
 
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
@@ -54,6 +55,8 @@ public class BoyiaCamera {
     // 相机视频对应的纹理ID
     private int mTextureId;
     private Semaphore mLock = new Semaphore(1);
+
+    private Surface mSurface;
 
     private CameraCaptureSession.StateCallback mCaptureSessionStateCallback = new CameraCaptureSession.StateCallback() {
         @Override
@@ -222,12 +225,13 @@ public class BoyiaCamera {
     private void createCameraPreview() {
         try {
             mTexture = new BoyiaTexture(mTextureId);
+            mSurface = new Surface(mTexture.getSurfaceTexture());
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewBuilder.addTarget(mTexture.getSurface());
+            mPreviewBuilder.addTarget(mSurface);
 
             // 创建session
             mCameraDevice.createCaptureSession(
-                    Arrays.asList(mTexture.getSurface()),
+                    Arrays.asList(mSurface),
                     mCaptureSessionStateCallback,
                     mCameraHandler
             );
@@ -245,6 +249,11 @@ public class BoyiaCamera {
         if (null != mCameraDevice) {
             mCameraDevice.close();
             mCameraDevice = null;
+        }
+
+        if (null != mSurface) {
+            mSurface.release();
+            mSurface = null;
         }
     }
 

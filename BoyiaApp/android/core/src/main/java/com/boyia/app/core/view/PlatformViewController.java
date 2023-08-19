@@ -3,6 +3,7 @@ package com.boyia.app.core.view;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.view.Surface;
 
 import com.boyia.app.core.BoyiaCoreJNI;
 import com.boyia.app.core.texture.BoyiaTexture;
@@ -14,6 +15,8 @@ public class PlatformViewController {
     private Context mContext;
     private PlatformPresentation mPresentation;
     private BoyiaTexture mTexture;
+
+    private Surface mSurface;
 
     public PlatformViewController(Context context) {
         mContext = context;
@@ -39,6 +42,7 @@ public class PlatformViewController {
         mTexture.setTextureUpdateNotifier(() -> {
             BoyiaCoreJNI.nativePlatformViewUpdate(request.viewId);
         });
+        mSurface = new Surface(mTexture.getSurfaceTexture());
 
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
@@ -49,7 +53,7 @@ public class PlatformViewController {
                 physicalWidth,
                 physicalHeight,
                 densityDpi,
-                mTexture.getSurface(),
+                mSurface,
                 0);
     }
 

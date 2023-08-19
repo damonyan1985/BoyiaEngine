@@ -18,15 +18,9 @@ public:
     virtual LVoid pause();
     virtual LVoid stop();
     virtual LVoid seek(LInt progress);
-    virtual LVoid updateTexture(float* matrix);
     virtual LVoid onClientCallback();
 
-    bool canDraw();
-    yanbo::Texture* texture();
-
 private:
-    void createTexture();
-
     struct JMediaPlayer* m_player;
     BoyiaPtr<yanbo::Texture> m_texture;
     LVoid* m_view;

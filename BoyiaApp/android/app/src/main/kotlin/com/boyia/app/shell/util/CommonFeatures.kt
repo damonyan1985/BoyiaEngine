@@ -108,7 +108,7 @@ object CommonFeatures {
         view.clipToOutline = true
     }
 
-    fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any?, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
+    private fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any?, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
         return context.registerForActivityResult(object: ActivityResultContract<Unit?, Any>() {
             override fun createIntent(context: Context, input: Unit?): Intent {
                 return intent
