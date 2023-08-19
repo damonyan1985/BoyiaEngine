@@ -1,5 +1,6 @@
 package com.boyia.app.shell.permission;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.boyia.app.core.device.permission.IDevicePermission;
@@ -7,11 +8,11 @@ import com.boyia.app.core.device.permission.IDevicePermission;
 public class BoyiaDevicePermission implements IDevicePermission {
     @Override
     public boolean requestBluetooth(Context context) {
-        return false;
+        return BoyiaPermissions.requestBluetoothPermissions((Activity) context);
     }
 
     @Override
     public boolean requestLocation(Context context) {
-        return false;
+        return BoyiaPermissions.requestPhotoPermissions((Activity) context);
     }
 }

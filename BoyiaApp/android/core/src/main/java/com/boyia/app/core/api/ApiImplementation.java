@@ -11,6 +11,8 @@ import com.boyia.app.common.ipc.BoyiaIpcData;
 import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
+import com.boyia.app.core.device.permission.DevicePermissionWrapper;
+import com.boyia.app.core.device.permission.IDevicePermission;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.loader.job.JobScheduler;
 //import com.boyia.app.core.api.ApiConstants.ApiKeys;
@@ -35,6 +37,11 @@ public class ApiImplementation {
     // 处理activityresult
     private List<ApiHandler> mResultHandlers;
     private ApiAsyncCallbackBinder mCallbackBinder;
+
+    /**
+     * 权限获取类
+     */
+    private DevicePermissionWrapper mPermissionWrapper;
 
     // BoyiaApp信息
     private BoyiaAppInfo mAppInfo;
@@ -68,10 +75,24 @@ public class ApiImplementation {
                 ApiConstants.ApiNames.SEND_BINDER,
                 bundle
         );
-        sendData(data);
+        sendData(data, message -> {
+            String permissionImplName = message.getParams().get(ApiConstants.ApiNames.SEND_BINDER).toString();
+            try {
+                /**
+                 * 反射获取权限类
+                 */
+                IDevicePermission permission = (IDevicePermission) Class.forName(permissionImplName).newInstance();
+                mPermissionWrapper = new DevicePermissionWrapper(permission);
+                BoyiaLog.d(TAG, "mPermissionWrapper = " + permission.getClass().getCanonicalName());
+            } catch (Exception e) {
+                BoyiaLog.e(TAG, "reflect class name error", e);
+            }
+        });
     }
 
-    ///
+    /**
+     * 初始化BoyiaApp需要调用的API
+     */
     private void initCommon() {
         registerHandler(ApiConstants.ApiNames.NOTIFICATION_NAME, () -> (params, callback) -> {
             sendNotification(

@@ -1,5 +1,6 @@
 package com.boyia.app.shell.ipc.handler
 
+import android.os.Bundle
 import com.boyia.app.common.ipc.BoyiaIpcData
 import com.boyia.app.common.ipc.IBoyiaIpcCallback
 import com.boyia.app.common.ipc.IBoyiaIpcSender
@@ -8,6 +9,7 @@ import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.core.launch.BoyiaAppLauncher
 import com.boyia.app.shell.ipc.IBoyiaIPCHandler
 import com.boyia.app.shell.module.IPCModule
+import com.boyia.app.shell.permission.BoyiaDevicePermission
 
 class GetSenderHandler(private val module: IPCModule): IBoyiaIPCHandler {
     companion object {
@@ -35,6 +37,9 @@ class GetSenderHandler(private val module: IPCModule): IBoyiaIPCHandler {
         if (aid != null) {
             module.registerSender(aid, sender)
         }
-        cb.callback(null)
+
+        val result = Bundle()
+        result.putString(data?.method, BoyiaDevicePermission::class.java.name)
+        cb.callback(BoyiaIpcData(data?.method, result))
     }
 }
