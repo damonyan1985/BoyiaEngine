@@ -4,6 +4,9 @@ import androidx.fragment.app.FragmentTransaction
 import com.boyia.app.shell.module.BaseFragment
 import com.boyia.app.shell.module.IModuleContext
 
+/**
+ * 导航
+ */
 class Navigator(private val context: IModuleContext) {
     fun push(fragment: BaseFragment, tag: String) {
         context.getActivity().supportFragmentManager.beginTransaction().apply {

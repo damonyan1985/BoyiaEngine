@@ -61,15 +61,16 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         }
 
         rootLayout = RelativeLayout(context)
-        rootLayout?.id = View.generateViewId()
-        val lp = ViewGroup.LayoutParams(
-            SETTING_WIDTH,
-            CommonFeatures.getFragmentHeight(requireActivity())
-        )
-
-        rootLayout?.x = -1 * SETTING_WIDTH.toFloat()
-        rootLayout?.layoutParams = lp
-        rootLayout?.setBackgroundColor(0xFFEEE9E9.toInt())
+        rootLayout?.let {
+            it.id = View.generateViewId()
+            val lp = ViewGroup.LayoutParams(
+                    SETTING_WIDTH,
+                    CommonFeatures.getFragmentHeight(requireActivity())
+            )
+            it.x = -1 * SETTING_WIDTH.toFloat()
+            it.layoutParams = lp
+            it.setBackgroundColor(0xFFEEE9E9.toInt())
+        }
 
         listener?.setSlideCallback(object: SlideCallback {
             override fun doHide() {
@@ -97,19 +98,23 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
 
         initAvatar(info, container)
 
-        nameView = TextView(context)
-        nameView?.text = info.user?.nickname ?: "Anonymous"
-        nameView?.setTextColor(Color.BLACK)
+        nameView = TextView(context).apply {
+            text = info.user?.nickname ?: "Anonymous"
+            setTextColor(Color.BLACK)
+        }
 
         val nameParam = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        nameParam.addRule(RelativeLayout.BELOW, avatarContainer!!.id)
-        nameParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        nameParam.topMargin = 12.dp
-        nameParam.bottomMargin = 12.dp
+        ).apply {
+            addRule(RelativeLayout.BELOW, avatarContainer!!.id)
+            addRule(RelativeLayout.CENTER_HORIZONTAL)
+            topMargin = 12.dp
+            bottomMargin = 12.dp
+        }
+
         container.addView(nameView, nameParam)
+
 
         val loginText = if (info.token == null) "login" else "logout"
         loginButton = buildButton(loginText, 32.dp, container.id)

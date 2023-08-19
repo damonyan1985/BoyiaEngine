@@ -47,7 +47,8 @@ object CommonFeatures {
     /**
      * 发送推送信息
      */
-    fun sendNotification(action: String, title: String, icon: String) {
+    fun sendNotification(action: String, title: String, icon: String, msg: String) {
+        BoyiaLog.d(TAG, "sendNotification begin action=$action")
         val context = BaseApplication.getInstance()
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -72,7 +73,7 @@ object CommonFeatures {
                     BoyiaLog.d(TAG, "notify layout = ${R.layout.notify} id = $id")
                     val remoteViews = RemoteViews(context.packageName, R.layout.notify)
                     remoteViews.setTextViewText(R.id.boyia_app_title, title)
-                    remoteViews.setTextViewText(R.id.boyia_app_msg, "Boyia App Msg")
+                    remoteViews.setTextViewText(R.id.boyia_app_msg, msg)
                     remoteViews.setImageViewBitmap(R.id.boyia_app_icon, bitmap)
                     remoteViews.setTextViewText(R.id.boyia_app_time, SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(System.currentTimeMillis()))
                     val notification = NotificationCompat.Builder(context, BoyiaNotifyService.BOYIA_APP_CHANNEL_ID)

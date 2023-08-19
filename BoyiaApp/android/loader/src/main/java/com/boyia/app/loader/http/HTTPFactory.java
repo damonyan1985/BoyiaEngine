@@ -17,7 +17,7 @@ public class HTTPFactory {
 
     public static final String HTTP_GET_METHOD_STR = "GET";
     public static final String HTTP_POST_METHOD_STR = "POST";
-    public static final int HTTP_TIME_OUT = 10 * 1000;
+    public static final int HTTP_TIME_OUT = 3 * 1000;
     public static final String HTTP_CHARSET_UTF8 = "utf-8";
 
     // HTTP协议头部

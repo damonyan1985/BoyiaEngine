@@ -1,6 +1,7 @@
 package com.boyia.app.shell.login
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.boyia.app.common.ipc.BoyiaIpcData
 import com.boyia.app.common.ipc.IBoyiaIpcCallback
 import com.boyia.app.common.json.BoyiaJson
@@ -12,6 +13,7 @@ import com.boyia.app.shell.BoyiaShellActivity
 import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserData
 import com.boyia.app.shell.model.BoyiaUserInfo
+import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.module.ModuleManager
 import com.boyia.app.shell.util.PermissionCallback
@@ -19,7 +21,7 @@ import com.boyia.app.shell.util.PermissionCallback
 /**
  * 提供给boyia app调用
  */
-class LoginActivity: BoyiaShellActivity() {
+class LoginActivity: BoyiaShellActivity(), IModuleContext {
     companion object {
         const val TAG = "LoginActivity"
     }
@@ -57,5 +59,9 @@ class LoginActivity: BoyiaShellActivity() {
             }
         })
         loginModule.show(this)
+    }
+
+    override fun getActivity(): AppCompatActivity {
+        return this
     }
 }

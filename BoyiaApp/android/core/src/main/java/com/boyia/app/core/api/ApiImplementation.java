@@ -36,21 +36,33 @@ public class ApiImplementation {
     private List<ApiHandler> mResultHandlers;
     private ApiAsyncCallbackBinder mCallbackBinder;
 
-    public ApiImplementation(IBoyiaSender sender, Activity activity) {
+    // BoyiaApp信息
+    private BoyiaAppInfo mAppInfo;
+
+    public ApiImplementation(IBoyiaSender sender, Activity activity, BoyiaAppInfo info) {
         mSender = sender;
         mCallbackBinder = new ApiAsyncCallbackBinder();
         mActivityRef = new WeakReference<>(activity);
         mHandlerMap = new HashMap<>();
         mResultHandlers = new ArrayList<>();
+        mAppInfo = info;
         initCommon();
+    }
+
+    public void updateAppInfo(BoyiaAppInfo info) {
+        mAppInfo = info;
+    }
+
+    public BoyiaAppInfo getAppInfo() {
+        return mAppInfo;
     }
 
     /**
      * 如果，宿主binder也需要异步处理事务，则需要将寄生引擎的binder传给宿主进程
      */
-    public void sendAsyncCallbackBinder(int aid) {
+    public void sendAsyncCallbackBinder() {
         Bundle bundle = new Bundle();
-        bundle.putInt(ApiConstants.ApiKeys.BINDER_AID, aid);
+        bundle.putInt(ApiConstants.ApiKeys.BINDER_AID, mAppInfo.mAppId);
         bundle.putBinder(ApiConstants.ApiNames.SEND_BINDER, mCallbackBinder);
         BoyiaIpcData data = new BoyiaIpcData(
                 ApiConstants.ApiNames.SEND_BINDER,
@@ -59,9 +71,11 @@ public class ApiImplementation {
         sendData(data);
     }
 
+    ///
     private void initCommon() {
         registerHandler(ApiConstants.ApiNames.NOTIFICATION_NAME, () -> (params, callback) -> {
-            sendNotification(null, null);
+            sendNotification(
+                    mActivityRef.get().getIntent().getAction(), "");
             callback.callback(null);
         });
 
@@ -102,17 +116,19 @@ public class ApiImplementation {
 
         registerHandler(ApiConstants.ApiNames.USER_LOGIN,
                 () -> (params, callback) -> userLogin());
+
+        sendAsyncCallbackBinder();
     }
 
     public void registerHandler(String method, ApiCreator creator) {
         mHandlerMap.put(method, creator);
     }
 
-    public void sendNotification(String action, BoyiaAppInfo info) {
+    public void sendNotification(String action, String msg) {
         Bundle bundle = new Bundle();
         bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_ACTION, action);
-        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_TITLE, info.mAppName);
-        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_ICON, info.mAppCover);
+        bundle.putString(ApiConstants.ApiKeys.NOTIFICATION_MSG, msg);
+        bundle.putParcelable(ApiConstants.ApiKeys.NOTIFICATION_APP_INFO, mAppInfo);
         BoyiaIpcData data =
                 new BoyiaIpcData(ApiConstants.ApiNames.NOTIFICATION_NAME, bundle);
         sendData(data);

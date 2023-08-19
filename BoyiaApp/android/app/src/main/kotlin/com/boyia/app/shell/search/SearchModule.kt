@@ -1,11 +1,12 @@
 package com.boyia.app.shell.search
 
-import androidx.fragment.app.FragmentTransaction
-import com.boyia.app.shell.model.BoyiaAppSearchModel
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
 import com.boyia.app.shell.route.Navigator
 
+/**
+ * 搜索模块
+ */
 class SearchModule : IUIModule {
     companion object {
         const val TAG = "SearchModule"

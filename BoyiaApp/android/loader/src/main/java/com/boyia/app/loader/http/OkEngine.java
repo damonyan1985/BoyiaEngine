@@ -79,8 +79,8 @@ public class OkEngine extends BaseEngine {
         SSLHelper.SSLInfo info = SSLHelper.getSSLInfo();
         okhttp3.Request.Builder builder = setHeader(request);
         OkHttpClient client = new OkHttpClient().newBuilder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
+                .connectTimeout(HTTPFactory.HTTP_TIME_OUT, TimeUnit.SECONDS)
+                .readTimeout(HTTPFactory.HTTP_TIME_OUT, TimeUnit.SECONDS)
                 .sslSocketFactory(info.mFactory, info.mTrustManagers[0])
                 .hostnameVerifier((hostname, session) -> true)
                 .build();

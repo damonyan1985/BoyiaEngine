@@ -41,8 +41,9 @@ public class ApiConstants {
         public static final String IPC_SHARE_VALUE = "ipc_value";
 
         public static final String NOTIFICATION_ACTION = "notification_action";
-        public static final String NOTIFICATION_TITLE = "notification_title";
-        public static final String NOTIFICATION_ICON = "notification_icon";
+        public static final String NOTIFICATION_APP_INFO = "notification_app_info";
+        public static final String NOTIFICATION_MSG = "notification_msg";
+        //public static final String NOTIFICATION_ICON = "notification_icon";
 
         /**
          * 发送给宿主的binder是属于那个aid的

@@ -2,6 +2,9 @@ package com.boyia.app.shell.module
 
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * 模块管理
+ */
 class ModuleManager {
     companion object {
         const val LOGIN = "login"

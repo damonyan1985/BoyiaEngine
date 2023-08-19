@@ -17,9 +17,9 @@ import com.boyia.app.shell.module.IModuleContext
 /**
  * shell程序共用activity基类
  */
-open class BoyiaShellActivity: AppCompatActivity(), IModuleContext {
+open class BoyiaShellActivity: AppCompatActivity() {
     companion object {
-        const val TAG = ""
+        const val TAG = "BoyiaShellActivity"
     }
     protected var rootView: CoordinatorLayout? = null
 
@@ -36,11 +36,7 @@ open class BoyiaShellActivity: AppCompatActivity(), IModuleContext {
         TestObservable.test()
     }
 
-    override fun rootId(): Int {
+    fun rootId(): Int {
         return rootView?.id!!
-    }
-
-    override fun getActivity(): AppCompatActivity {
-        return this
     }
 }

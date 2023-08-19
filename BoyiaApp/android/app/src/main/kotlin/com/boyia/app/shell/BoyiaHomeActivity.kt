@@ -17,6 +17,7 @@ import com.boyia.app.shell.permission.BoyiaPermissions
 import com.boyia.app.shell.service.BoyiaNotifyService
 import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.PermissionCallback
+import java.lang.ref.WeakReference
 
 // 主页面，用来呈现应用列表信息
 class BoyiaHomeActivity: BoyiaShellActivity() {
@@ -35,6 +36,7 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
 //        }
 //    }
 
+    private val proxy = BoyiaHomeProxy(WeakReference(this))
     private val pickerLoaders = mutableListOf<IPickImageLoader>()
     private val pickLauncher = CommonFeatures.registerPickerImage(this) { path ->
         BoyiaLog.d(CommonFeatures.TAG, "registerPickerImage path = $path")
@@ -45,45 +47,16 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
         pickerLoaders.clear()
     }
 
-    private val permissionCallbacks = mutableListOf<PermissionCallback>()
+    private val notifyCallbacks = mutableListOf<PermissionCallback>()
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         BoyiaLog.d(TAG, "BoyiaHomeActivity onCreate")
-        initHome()
+        //initHome()
+        proxy.onCreate()
         initNotifyService()
         BoyiaUtils.setStatusbarTransparent(this)
         BoyiaLog.d(TAG, "BoyiaHomeActivity is main process:" + ProcessUtil.isMainProcess())
-    }
-
-    private fun initHome() {
-        BoyiaLog.d(TAG, "BoyiaHomeActivity initHome")
-        val ipcModule = ModuleManager.instance().getModule(ModuleManager.IPC)
-        ipcModule?.show(this)
-
-        val homeModule = ModuleManager.instance().getModule(ModuleManager.HOME)
-        homeModule?.show(this)
-
-        HandlerFoundation.setStatusbarTextColor(this, true)
-    }
-
-    override fun pickImage(loader: IPickImageLoader) {
-        pickerLoaders.add(loader)
-        if (BoyiaPermissions.requestPhotoPermissions(this)) {
-            pickLauncher.launch(null)
-        }
-    }
-
-    override fun sendNotification(callback: PermissionCallback) {
-        permissionCallbacks.add(callback)
-        if (NotificationManagerCompat.from(this).areNotificationsEnabled()
-                || BoyiaPermissions.requestNotificationPermissions(this)) {
-            permissionCallbacks.forEach {
-                it()
-            }
-
-            permissionCallbacks.clear()
-        }
     }
 
     private fun initNotifyService() {
@@ -112,23 +85,9 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
         super.onDestroy()
     }
 
+    // 处理权限
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
-            BoyiaPermissions.CAMERA_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    pickLauncher.launch(null)
-                }
-            }
-            BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    permissionCallbacks.forEach {
-                        it()
-                    }
-
-                    permissionCallbacks.clear()
-                }
-            }
-        }
+        proxy.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

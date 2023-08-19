@@ -45,7 +45,7 @@ import com.boyia.app.loader.mue.MainScheduler;
 public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
-    private BoyiaAppInfo mAppInfo;
+    //private BoyiaAppInfo mAppInfo;
     private boolean mNeedExit = false;
     private static final int EXIT_DELAY_TIME = 3000;
     private ApiImplementation mApiImplementation;
@@ -67,11 +67,10 @@ public class BoyiaActivity extends Activity {
     private void fetchAppInfo() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        mAppInfo = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
+        BoyiaAppInfo info = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
         //IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
-        IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(mAppInfo.mHostBinder);
-        mApiImplementation = new ApiImplementation(sender, this);
-        mApiImplementation.sendAsyncCallbackBinder(mAppInfo.mAppId);
+        IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(info.mHostBinder);
+        mApiImplementation = new ApiImplementation(sender, this, info);
         BoyiaBridge.setIPCSender(mApiImplementation);
 
         justForTest();
@@ -102,7 +101,7 @@ public class BoyiaActivity extends Activity {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             );
-            mContainer.addView(new BoyiaView(this, mAppInfo), params);
+            mContainer.addView(new BoyiaView(this, mApiImplementation.getAppInfo()), params);
         });
     }
 
@@ -122,9 +121,9 @@ public class BoyiaActivity extends Activity {
         }
 
 
-        if (mAppInfo.mAppId != info.mAppId) {
+        if (mApiImplementation.getAppInfo().mAppId != info.mAppId) {
             // TODO 如果appid不一样，则重新刷新应用
-            mAppInfo = info;
+           mApiImplementation.updateAppInfo(info);
         }
     }
 
@@ -222,7 +221,7 @@ public class BoyiaActivity extends Activity {
     public void onStop() {
         super.onStop();
         mApiImplementation.sendNotification(
-                getIntent().getAction(), mAppInfo);
+                getIntent().getAction(), "resume the application");
     }
 
     @Override
