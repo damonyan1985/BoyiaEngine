@@ -32,6 +32,8 @@ import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.loader.mue.MainScheduler;
 
+import java.lang.ref.WeakReference;
+
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
 // 主要使用来与AMS进行通信的，AMS的任务栈中持有的ActivitRecord与Activity一一对应
 // ActivitRecord中持有的appToken为IApplicationToken.Stub, 在C++底层体现就是一个BBinder(服务)
@@ -45,15 +47,15 @@ import com.boyia.app.loader.mue.MainScheduler;
 public class BoyiaActivity extends Activity {
     private static final String TAG = "BoyiaActivity";
     private FrameLayout mContainer;
-    //private BoyiaAppInfo mAppInfo;
     private boolean mNeedExit = false;
     private static final int EXIT_DELAY_TIME = 3000;
-    private ApiImplementation mApiImplementation;
+
+    private BoyiaActivityProxy mProxy = new BoyiaActivityProxy(new WeakReference<>(this));
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        fetchAppInfo();
+        mProxy.onCreate();
         initBoyiaView();
     }
 
@@ -62,22 +64,6 @@ public class BoyiaActivity extends Activity {
         startBoyiaUI();
         BoyiaLog.d(TAG, "BoyiaActivity is main process:" + ProcessUtil.isMainProcess()
                 + ", processname=" + ProcessUtil.getCurrentProcessName() + ", is boyia app:" + ProcessUtil.isBoyiaAppProcess());
-    }
-
-    private void fetchAppInfo() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        BoyiaAppInfo info = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
-        //IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
-        IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(info.mHostBinder);
-        mApiImplementation = new ApiImplementation(sender, this, info);
-        BoyiaBridge.setIPCSender(mApiImplementation);
-
-        justForTest();
-    }
-
-    private void justForTest() {
-        mApiImplementation.setShare("key1", "value1");
     }
 
     protected void initContainer() {
@@ -101,30 +87,14 @@ public class BoyiaActivity extends Activity {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             );
-            mContainer.addView(new BoyiaView(this, mApiImplementation.getAppInfo()), params);
+            mContainer.addView(new BoyiaView(this, mProxy.getAppInfo()), params);
         });
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        BoyiaLog.d(TAG, "onNewIntent intent action = " + intent.getAction());
-
-        Bundle bundle = intent.getExtras();
-        if (bundle == null) {
-            return;
-        }
-
-        BoyiaAppInfo info = (BoyiaAppInfo) bundle.get(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
-        if (info == null) {
-            return;
-        }
-
-
-        if (mApiImplementation.getAppInfo().mAppId != info.mAppId) {
-            // TODO 如果appid不一样，则重新刷新应用
-           mApiImplementation.updateAppInfo(info);
-        }
+        mProxy.onNewIntent(intent);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -171,8 +141,7 @@ public class BoyiaActivity extends Activity {
         BoyiaLog.d(TAG, "onKeyDown");
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                //backExit();
-                backToBackground();
+                mProxy.backToBackground();
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -182,14 +151,6 @@ public class BoyiaActivity extends Activity {
         }
 
         return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * 退到后台不销毁
-     */
-    public void backToBackground() {
-        moveTaskToBack(true);
-        BoyiaCoreJNI.nativeCacheCode();
     }
 
     public void backExit() {
@@ -211,17 +172,13 @@ public class BoyiaActivity extends Activity {
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        BoyiaLog.d(TAG, "onTrimMemory level=" + level);
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
-            BoyiaImager.getInstance().clearMemoryCache();
-        }
+        mProxy.onTrimMemory(level);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mApiImplementation.sendNotification(
-                getIntent().getAction(), "resume the application");
+        mProxy.onStop();
     }
 
     @Override
@@ -233,8 +190,107 @@ public class BoyiaActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!mApiImplementation.onActivityResult(requestCode, resultCode, data)) {
+        if (!mProxy.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 抽象一个代理层，优化activity职责
+     */
+    public static class BoyiaActivityProxy {
+        private ApiImplementation mApiImplementation;
+
+        private WeakReference<BoyiaActivity> mActivity;
+
+        public BoyiaActivityProxy(WeakReference<BoyiaActivity> activity) {
+            mActivity = activity;
+        }
+
+        public void onCreate() {
+            fetchAppInfo();
+        }
+
+        private void fetchAppInfo() {
+            BoyiaActivity activity = mActivity.get();
+            if (activity == null) {
+                return;
+            }
+            Intent intent = activity.getIntent();
+            Bundle bundle = intent.getExtras();
+            BoyiaAppInfo info = bundle.getParcelable(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
+            //IBoyiaSender sender = IBoyiaIpcSender.BoyiaSenderStub.asInterface(mAppInfo.mHostBinder);
+            IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(info.mHostBinder);
+            mApiImplementation = new ApiImplementation(sender, activity, info);
+            BoyiaBridge.setIPCSender(mApiImplementation);
+
+            justForTest();
+        }
+
+        private void justForTest() {
+            mApiImplementation.setShare("key1", "value1");
+        }
+
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+            return mApiImplementation.onActivityResult(requestCode, resultCode, data);
+        }
+
+        public void onStop() {
+            BoyiaActivity activity = mActivity.get();
+            if (activity == null) {
+                return;
+            }
+            Intent intent = activity.getIntent();
+            mApiImplementation.sendNotification(
+                    intent.getAction(), "resume the application");
+        }
+
+        public void onTrimMemory(int level) {
+            BoyiaLog.d(TAG, "onTrimMemory level=" + level);
+            if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+                BoyiaImager.getInstance().clearMemoryCache();
+            }
+        }
+
+        /**
+         * 退到后台不销毁
+         */
+        public void backToBackground() {
+            BoyiaActivity activity = mActivity.get();
+            if (activity == null) {
+                return;
+            }
+            activity.moveTaskToBack(true);
+            BoyiaCoreJNI.nativeCacheCode();
+        }
+
+        protected void onNewIntent(Intent intent) {
+            BoyiaLog.d(TAG, "onNewIntent intent action = " + intent.getAction());
+
+            Bundle bundle = intent.getExtras();
+            if (bundle == null) {
+                return;
+            }
+
+            BoyiaAppInfo info = (BoyiaAppInfo) bundle.get(BoyiaAppLauncher.BOYIA_APP_INFO_KEY);
+            if (info == null) {
+                return;
+            }
+
+
+            if (mApiImplementation.getAppInfo().mAppId != info.mAppId) {
+                // TODO 如果appid不一样，则重新刷新应用
+                mApiImplementation.updateAppInfo(info);
+            }
+        }
+
+        public BoyiaAppInfo getAppInfo() {
+            return mApiImplementation.getAppInfo();
         }
     }
 
