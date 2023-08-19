@@ -25,29 +25,7 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
         const val TAG = "BoyiaHomeActivity"
     }
 
-//    activity已经创建，并且persistableMode设置persistAcrossReboots才会调用
-//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onCreate(savedInstanceState, persistentState)
-//    }
-
-//    private val pickLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
-//        uri?.let { it ->
-//            BoyiaLog.d("tag", it.toString())
-//        }
-//    }
-
     private val proxy = BoyiaHomeProxy(WeakReference(this))
-    private val pickerLoaders = mutableListOf<IPickImageLoader>()
-    private val pickLauncher = CommonFeatures.registerPickerImage(this) { path ->
-        BoyiaLog.d(CommonFeatures.TAG, "registerPickerImage path = $path")
-        pickerLoaders.forEach { it
-            it.onImage(path)
-        }
-
-        pickerLoaders.clear()
-    }
-
-    private val notifyCallbacks = mutableListOf<PermissionCallback>()
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
