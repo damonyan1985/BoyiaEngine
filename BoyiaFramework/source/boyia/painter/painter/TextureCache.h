@@ -27,7 +27,7 @@ public:
     LVoid attach(const HashPtr& ptr);
 
     // For image texture
-    LVoid initWithData(LVoid* data, LInt width, LInt height);
+    LVoid initWithData(const LVoid* data, LInt width, LInt height);
 
 protected:
     // avoid to use delete to free memory
@@ -67,6 +67,7 @@ public:
     Texture* createText(ViewPainter* item, const LImage* image);
 
     Texture* putImage(const LImage* image);
+    Texture* putImage(const String& url, const LVoid* pixels, LInt width, LInt height);
     Texture* findImage(const String& url);
 
     Texture* createExternal(const HashPtr& ptr, LInt width, LInt height);

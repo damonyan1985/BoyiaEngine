@@ -3,8 +3,14 @@
 
 #include "IRenderEngine.h"
 #include "GLContext.h"
+#include "GLPainter.h"
+#include "KList.h"
+#include "BoyiaPtr.h"
 
 namespace yanbo {
+
+typedef KList<BoyiaPtr<GLPainter>> ListPainter;
+
 // Android平台渲染引擎
 class RenderEngineAndroid;
 typedef LVoid (RenderEngineAndroid::*RenderFunction)(RenderCommand* cmd);
@@ -30,6 +36,7 @@ private:
 
 
     util::GLContext m_context;
+    ListPainter m_painters;
 };
 }
 #endif

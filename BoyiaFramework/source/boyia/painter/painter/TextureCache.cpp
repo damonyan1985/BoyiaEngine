@@ -60,7 +60,7 @@ LVoid Texture::initExternal(LInt width, LInt height)
         kBoyiaNull);
 }
 
-LVoid Texture::initWithData(LVoid* data, LInt width, LInt height)
+LVoid Texture::initWithData(const LVoid* data, LInt width, LInt height)
 {
     this->width = width;
     this->height = height;
@@ -164,6 +164,19 @@ Texture* TextureCache::putImage(const LImage* image)
         tex->initWithData(image->pixels(), image->width(), image->height());
 
         m_imageCache.put(HashString(image->url()), tex);
+    }
+
+    return tex;
+}
+
+Texture* TextureCache::putImage(const String& url, const LVoid* pixels, LInt width, LInt height)
+{
+    Texture* tex = findImage(url);
+    if (!tex) {
+        tex = new Texture();
+        tex->initWithData(pixels, width, height);
+
+        m_imageCache.put(HashString(url), tex);
     }
 
     return tex;
