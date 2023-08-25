@@ -33,6 +33,8 @@ file(
     "${BOYIA_KERNEL_PATH}/dom/*.cpp"
     "${BOYIA_KERNEL_PATH}/gui/*.cpp"
     "${BOYIA_KERNEL_PATH}/loader/*.cpp"
+    "${BOYIA_KERNEL_PATH}/render/*.cpp"
+    "${BOYIA_KERNEL_PATH}/render/layer/*.cpp"
     "${BOYIA_KERNEL_PATH}/platform/*.cpp"
     "${BOYIA_KERNEL_PATH}/platform/android/*.cpp"
     "${BOYIA_KERNEL_PATH}/platform/arm/*.cpp"
@@ -99,6 +101,8 @@ target_include_directories(
     ${BOYIA_KERNEL_PATH}/style
     ${BOYIA_KERNEL_PATH}/util
     ${BOYIA_KERNEL_PATH}/view
+    ${BOYIA_KERNEL_PATH}/render
+    ${BOYIA_KERNEL_PATH}/render/layer
     ${BOYIA_KERNEL_PATH}/widget
     ${BOYIA_KERNEL_PATH}/widget/flex
     ${BOYIA_SRC_PATH}/painter/core

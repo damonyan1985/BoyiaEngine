@@ -321,7 +321,10 @@ VsyncWaiter* RenderGraphicsContext::vsyncWaiter() const
 
 }
 
+
+#if UNABLE(BOYIA_ANDROID)
 LGraphicsContext* LGraphicsContext::create()
 {
     return new yanbo::RenderGraphicsContext();
 }
+#endif

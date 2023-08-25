@@ -16,7 +16,7 @@ RenderEngineAndroid::~RenderEngineAndroid()
 {
 }
 
-LVoid RenderEngineWin::init()
+LVoid RenderEngineAndroid::init()
 {
     // 初始化渲染函数
     m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineAndroid::renderRect;
@@ -25,6 +25,7 @@ LVoid RenderEngineWin::init()
     m_functions[RenderCommand::kRenderRoundRect] = (RenderFunction)& RenderEngineAndroid::renderRoundRect;
     m_functions[RenderCommand::kRenderVideo] = (RenderFunction)&RenderEngineAndroid::renderVideo;
     m_functions[RenderCommand::kRenderRoundImage] = (RenderFunction)&RenderEngineAndroid::renderRoundImage;
+    m_functions[RenderCommand::kRenderPlatform] = (RenderFunction)&RenderEngineAndroid::renderPlatform;
 }
 
 LVoid RenderEngineAndroid::reset()
@@ -76,8 +77,13 @@ LVoid RenderEngineAndroid::renderVideo(RenderCommand* cmd)
 {
 }
 
-LVoid RenderEnRenderEngineAndroidgineWin::renderRoundImage(RenderCommand* cmd)
+LVoid RenderEngineAndroid::renderRoundImage(RenderCommand* cmd)
 {
+}
+
+LVoid RenderEngineAndroid::renderPlatform(RenderCommand* cmd)
+{
+
 }
 
 IRenderEngine* IRenderEngine::create()

@@ -23,6 +23,7 @@ private:
     LVoid renderRoundRect(RenderCommand* cmd);
     LVoid renderVideo(RenderCommand* cmd);
     LVoid renderRoundImage(RenderCommand* cmd);
+    LVoid renderPlatform(RenderCommand* cmd);
 
     RenderFunction m_functions[7];
 };
