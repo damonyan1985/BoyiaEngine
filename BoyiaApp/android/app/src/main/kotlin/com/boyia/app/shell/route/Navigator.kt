@@ -8,12 +8,15 @@ import com.boyia.app.shell.module.IModuleContext
  * 导航
  */
 class Navigator(private val context: IModuleContext) {
-    fun push(fragment: BaseFragment, tag: String) {
-        context.getActivity().supportFragmentManager.beginTransaction().apply {
-            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            add(context.rootId(), fragment, tag)
-            addToBackStack(null)
-            commit()
+    fun push(fragment: BaseFragment?, tag: String) {
+        fragment?.let {
+            context.getActivity().supportFragmentManager.beginTransaction().apply {
+                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                add(context.rootId(), it, tag)
+                addToBackStack(null)
+                commit()
+            }
         }
+
     }
 }

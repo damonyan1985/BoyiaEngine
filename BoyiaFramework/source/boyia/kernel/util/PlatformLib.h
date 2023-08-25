@@ -194,6 +194,7 @@ using util::LIsSpace;
 using util::LMemcpy;
 using util::LMemset;
 using util::LReal;
+using util::LReal32;
 using util::LStr2Int;
 using util::LStrcpy;
 using util::LStrlen;

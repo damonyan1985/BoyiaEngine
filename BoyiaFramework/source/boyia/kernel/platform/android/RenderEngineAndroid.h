@@ -2,6 +2,7 @@
 #define RenderEngineAndroid_h
 
 #include "IRenderEngine.h"
+#include "GLContext.h"
 
 namespace yanbo {
 // Android平台渲染引擎
@@ -26,6 +27,9 @@ private:
     LVoid renderPlatform(RenderCommand* cmd);
 
     RenderFunction m_functions[7];
+
+
+    util::GLContext m_context;
 };
 }
 #endif

@@ -22,7 +22,8 @@ class LoginModule: ILoginModule {
 
     override fun show(ctx: IModuleContext) {
         context = WeakReference(ctx)
-        Navigator(ctx).push(BoyiaLoginFragment(this), TAG)
+        fragment = BoyiaLoginFragment(this)
+        Navigator(ctx).push(fragment, TAG)
     }
 
     fun login(name: String?, password: String?) {

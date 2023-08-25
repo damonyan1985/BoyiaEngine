@@ -29,6 +29,7 @@ RenderGraphicsContext::RenderGraphicsContext()
     , m_collectBuffers(new KVector<LUintPtr>(0, 20))
     , m_vsync(kBoyiaNull)
 {
+    RenderThread::instance()->renderInit();
 }
 
 RenderGraphicsContext::~RenderGraphicsContext()

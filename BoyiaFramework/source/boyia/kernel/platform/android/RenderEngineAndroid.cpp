@@ -1,6 +1,19 @@
 #include "RenderEngineAndroid.h"
 #include "PixelRatio.h"
 
+#include "JNIUtil.h"
+#include "MatrixState.h"
+#include "TextureCache.h"
+#include "ShaderUtil.h"
+#include "GLPainter.h"
+
+#ifdef OPENGLES_3
+#include <GLES3/gl3.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
 namespace yanbo {
 static inline LInt RealLength(LInt length) 
 {
@@ -9,7 +22,6 @@ static inline LInt RealLength(LInt length)
 
 RenderEngineAndroid::RenderEngineAndroid()
 {
-    init();
 }
 
 RenderEngineAndroid::~RenderEngineAndroid()
@@ -26,10 +38,29 @@ LVoid RenderEngineAndroid::init()
     m_functions[RenderCommand::kRenderVideo] = (RenderFunction)&RenderEngineAndroid::renderVideo;
     m_functions[RenderCommand::kRenderRoundImage] = (RenderFunction)&RenderEngineAndroid::renderRoundImage;
     m_functions[RenderCommand::kRenderPlatform] = (RenderFunction)&RenderEngineAndroid::renderPlatform;
+
+    m_context.initGL(util::GLContext::EWindow);
 }
 
 LVoid RenderEngineAndroid::reset()
 {
+    TextureCache::getInst()->clear();
+
+    glViewport(0, 0, m_context.viewWidth(), m_context.viewHeight());
+    ShaderUtil::setRealScreenSize(m_context.viewWidth(), m_context.viewHeight());
+    MatrixState::init();
+
+    LReal32 ratio = 1.0f;
+    // 设置透视投影
+    MatrixState::setProjectFrustum(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, 1.0f, 50);
+    //yanbo::MatrixState::setProjectOrtho(-1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f, -1.0f, 1.0f);
+
+    MatrixState::setCamera(0, 0, 1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    MatrixState::copyMVMatrix();
+
+    MatrixState::setInitStack();
+
+    GLPainter::init();
 }
 
 LVoid RenderEngineAndroid::render(RenderLayer* layer)
