@@ -30,7 +30,7 @@ namespace util {
 #endif
 
 #define ENABLE(FEATURE) (defined ENABLE_##FEATURE && ENABLE_##FEATURE)
-#define UNABLE(FEATURE) (defined ENABLE_##FEATURE && !ENABLE_##FEATURE)
+#define UNABLE(FEATURE) (!defined ENABLE_##FEATURE || !ENABLE_##FEATURE)
 
 #define LCHARSW(CHARS) L##CHARS
 

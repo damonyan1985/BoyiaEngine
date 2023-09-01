@@ -32,6 +32,8 @@ private:
     LVoid renderRoundImage(RenderCommand* cmd);
     LVoid renderPlatform(RenderCommand* cmd);
 
+    LVoid renderSubmit();
+
     RenderFunction m_functions[7];
 
 

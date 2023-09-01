@@ -37,9 +37,9 @@ enum BoyiaGcColor {
 #define IS_BOYIA_STRING(fun) (((fun->mParamCount >> 18) & kBoyiaGcMask) == kBoyiaStringBuffer)
 
 // 计算迁移标记,后20位为迁移标记
-#define MIGRATE_FLAG(fun) (fun->mParamCount >> 20)
+#define MIGRATE_FLAG(fun) ((fun->mParamCount >> 20) & 0x1)
 // 设置迁移标记
-#define SET_MIGRATE_FLAG(fun, flag) (fun->mParamCount |= (flag << 20))
+#define SET_MIGRATE_FLAG(fun) (fun->mParamCount |= (0x1 << 20))
 
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
@@ -302,7 +302,7 @@ static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexP
 {
     LInt idx = 0;
     for (; idx < size; idx++) {
-        MigrateObject(table + idx, migrateIndexPtr, toPool, gc);
+        MigrateValue(table + idx, migrateIndexPtr, toPool, gc);
     }
 }
 

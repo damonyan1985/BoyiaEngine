@@ -65,6 +65,20 @@ LVoid RenderEngineAndroid::reset()
 
 LVoid RenderEngineAndroid::render(RenderLayer* layer)
 {
+    m_painters.clear();
+    renderImpl(layer);
+    renderSubmit();
+}
+
+LVoid RenderEngineAndroid::renderSubmit()
+{
+    GLPainter::reset();
+    GLPainter::bindVBO();
+
+    GLPainter::paintCommand();
+    GLPainter::unbindVBO();
+
+    m_context.postBuffer();
 }
 
 LVoid RenderEngineAndroid::renderImpl(RenderLayer* layer)
