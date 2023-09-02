@@ -262,7 +262,7 @@ static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPo
         : value->mValue.mObj.mSuper);
     if (!MIGRATE_FLAG(fun)) {
         gc->mMigrates[*migrateIndexPtr] = MigrateRuntimeMemory(fun, toPool, gc->mBoyiaVM);
-        SET_MIGRATE_FLAG(fun, (*migrateIndexPtr));
+        SET_MIGRATE_FLAG(fun);
         (*migrateIndexPtr)++;
     }
 

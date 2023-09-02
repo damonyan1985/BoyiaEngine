@@ -5,10 +5,11 @@ import shutil
 import platform
 
 current_path = os.getcwd()
-# 用户目录
-user_path = os.environ['HOME']
+
 # boyia project path
 project_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
+# 需要在环境变量中添加[ANDROID_HOME]与[NDK_HOME]，与[CARGO_HOME]即.cargo目录所在路径
+cargo_path = os.getenv('CARGO_HOME')
 android_sdk_path = os.getenv('ANDROID_HOME')
 android_ndk_path = os.getenv('NDK_HOME')
 
@@ -33,7 +34,7 @@ gradle_cmd = os.path.join(boyia_app_android_path, 'gradlew')
 
 boyia_rust_tools_path = os.path.join(project_path, 'BoyiaTools/rust-tools')
 boyia_rust_tools_ndk_path = os.path.join(boyia_rust_tools_path, 'ndk')
-boyia_rust_tools_config_path = os.path.join(user_path, '.cargo/config')
+boyia_rust_tools_config_path = os.path.join(cargo_path, '.cargo/config')
 boyia_rust_sdk_lib_path = os.path.join(core_dir, 'libs/arm64-v8a')
 boyia_rust_sdk_lib_name = 'libsdk_main.so'
 
@@ -179,7 +180,7 @@ def install_boyia_rust_config():
 # 前提是系统已经安装了rust开发环境
 def install_and_build_rust():
     install_boyia_rust_environment()
-    print(user_path)
+    print(cargo_path)
     install_boyia_rust_config()
     do_build_boyia_rust_sdk()
 
