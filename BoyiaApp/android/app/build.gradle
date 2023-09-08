@@ -17,7 +17,8 @@ android {
             keyAlias BOYIA_APP_ALIAS
         }
     }
-    compileSdkVersion gradle.constants.sdkVersion
+    compileSdk(gradle.constants.sdkVersion)
+    //compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
         applicationId "com.boyia.app.shell"
         minSdkVersion 24

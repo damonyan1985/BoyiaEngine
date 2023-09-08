@@ -73,6 +73,12 @@ LVoid RenderEngineAndroid::render(RenderLayer* layer)
 LVoid RenderEngineAndroid::renderSubmit()
 {
     GLPainter::reset();
+    ListPainter::Iterator iter = m_painters.begin();
+    ListPainter::Iterator end = m_painters.end();
+    for (; iter != end; ++iter) {
+        (*iter)->appendToBuffer();
+    }
+
     GLPainter::bindVBO();
 
     GLPainter::paintCommand();
