@@ -13,7 +13,10 @@ public class HTTPFactory {
     public static final int HTTP_GET_METHOD = 0;
     public static final int HTTP_POST_METHOD = 1;
     public static final int HTTP_PUT_METHOD = 2;
+    // 使用post方式上传文件
     public static final int HTTP_POST_UPLOAD_METHOD = 3;
+    // 使用put方式上传文件
+    public static final int HTTP_PUT_UPLOAD_METHOD = 4;
 
     public static final String HTTP_GET_METHOD_STR = "GET";
     public static final String HTTP_POST_METHOD_STR = "POST";

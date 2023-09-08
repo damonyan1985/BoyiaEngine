@@ -106,6 +106,13 @@ public class OkEngine extends BaseEngine {
                 builder.post(postBodyBuilder.build());
             }
                 break;
+            case HTTPFactory.HTTP_PUT_UPLOAD_METHOD: {
+                RequestBody body = createUpload(request, MediaType.parse(
+                        request.mHeaders.get(HTTPFactory.HeaderKeys.CONTENT_TYPE)),
+                        new File(request.mPostData));
+                builder.put(body);
+            }
+                break;
         }
 
         return handleResponse(client, builder);
