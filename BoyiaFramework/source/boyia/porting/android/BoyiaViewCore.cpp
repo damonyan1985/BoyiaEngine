@@ -9,7 +9,12 @@
 #include "BoyiaSocket.h"
 #include "FileUtil.h"
 #include "GLContext.h"
+#if OLD_RENDER_FEATURE
 #include "GraphicsContextGL.h"
+#else
+#include "RenderThread.h"
+#include "RenderEngineAndroid.h"
+#endif
 #include "JNIUtil.h"
 #include "LEvent.h"
 #include "LGdi.h"
@@ -25,6 +30,7 @@
 #include "TextureCache.h"
 #include <jni.h>
 
+#if OLD_RENDER_FEATURE 1
 const char* kBoyiaCoreJNIClass = "com/boyia/app/core/BoyiaCoreJNI";
 const char* kBoyiaUtilClass = "com/boyia/app/common/utils/BoyiaUtils";
 
@@ -42,8 +48,13 @@ static void nativeSetGLSurface(
     jobject obj,
     jobject surface)
 {
+#if OLD_RENDER_FEATURE    
     util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
     static_cast<util::GraphicsContextGL*>(gc)->setContextWin(surface);
+#else
+    yanbo::IRenderEngine* engine = yanbo::RenderThread::instance()->getRenderer();
+    static_cast<yanbo::RenderEngineAndroid*>(engine)->setContextWin(surface);
+#endif   
     yanbo::AppManager::instance()->uiThread()->initContext();
 }
 
@@ -52,8 +63,13 @@ static void nativeResetGLSurface(
     jobject obj,
     jobject surface)
 {
+#if OLD_RENDER_FEATURE    
     util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
     static_cast<util::GraphicsContextGL*>(gc)->setContextWin(surface);
+#else
+    yanbo::IRenderEngine* engine = yanbo::RenderThread::instance()->getRenderer();
+    static_cast<yanbo::RenderEngineAndroid*>(engine)->setContextWin(surface);
+#endif   
     yanbo::AppManager::instance()->uiThread()->resetContext();
 }
 

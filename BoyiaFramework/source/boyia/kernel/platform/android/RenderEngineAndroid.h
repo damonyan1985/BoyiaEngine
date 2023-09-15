@@ -18,6 +18,10 @@ class RenderEngineAndroid : public IRenderEngine {
 public:
     RenderEngineAndroid();
     virtual ~RenderEngineAndroid();
+
+    // 设置ANativeWindow
+    LVoid setContextWin(LVoid* win);
+
     virtual LVoid init();
     virtual LVoid reset();
     virtual LVoid render(RenderLayer* layer);

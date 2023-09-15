@@ -320,13 +320,15 @@ static LVoid DoStatement(CompileState* cs);
 
 static LVoid BlockStatement(CompileState* cs);
 
-static LVoid FunStatement(CompileState* cs, LBool isProp);
+static LVoid FunStatement(CompileState* cs, LInt funType);
 
 static LInt NextToken(CompileState* cs);
 
 static LVoid EvalExpression(CompileState* cs);
 
 static LVoid EvalAssignment(CompileState* cs);
+
+static LVoid Atom(CompileState* cs);
 
 static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm);
 
@@ -883,7 +885,9 @@ static LVoid PropStatement(CompileState* cs)
     } else if (cs->mToken.mTokenType == KEYWORD) {
         // 属性方法，初始化的时候会被拷贝到对象属性中，用于做回调使用
         if (cs->mToken.mTokenValue == BY_FUNC) {
-            FunStatement(cs, LTrue);
+            FunStatement(cs, BY_PROP_FUNC);
+        } else if (cs->mToken.mTokenValue = BY_ASYNC_PROP) {
+            FunStatement(cs, BY_ASYNC_PROP);
         }
     } else {
         SntxErrorBuild(SYNTAX, cs);
@@ -1119,6 +1123,7 @@ static LVoid BlockStatement(CompileState* cs)
         /* If interpreting single statement, return on first semicolon. */
         /* see what kind of token is up */
         if (cs->mToken.mTokenType == IDENTIFIER) {
+            // such as i=a+b; expression
             /* Not a keyword, so process expression. */
             Putback(cs); /* restore token to input stream for further processing by EvalExpression() */
             //EngineStrLog("token name=%s", cs->mToken.mTokenName);
@@ -1135,10 +1140,12 @@ static LVoid BlockStatement(CompileState* cs)
         } else if (cs->mToken.mTokenType == KEYWORD) { /* is keyword */
             switch (cs->mToken.mTokenValue) {
             case BY_VAR:
+                // such as var i=a+b;
                 LocalStatement(cs);
                 break;
             case BY_FUNC:
-                FunStatement(cs, LFalse);
+            case BY_ASYNC:    
+                FunStatement(cs, cs->mToken.mTokenValue);
                 break;
             case BY_PROP:
                 PropStatement(cs);
@@ -1165,6 +1172,9 @@ static LVoid BlockStatement(CompileState* cs)
             case BY_BREAK:
                 BOYIA_LOG("BREAK BreakStatement %d \n", 1);
                 BreakStatement(cs);
+                break;
+            case BY_AWAIT:
+                EvalExpression(cs);
                 break;
             }
         }
@@ -1559,14 +1569,14 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
     if (vm->mEState->mClass.mValue.mObj.mPtr) {
-        LIntPtr isProp = inst->mOPRight.mValue;
+        LIntPtr funType = inst->mOPRight.mValue;
         
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass.mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
-        func->mParams[func->mParamSize].mValueType = isProp ? BY_PROP_FUNC : BY_FUNC;
+        func->mParams[func->mParamSize].mValueType = funType;
         func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
         // 属性函数的mSuper指针指向对象实例
-        func->mParams[func->mParamSize++].mValue.mObj.mSuper = isProp ? (LIntPtr)func : kBoyiaNull;
+        func->mParams[func->mParamSize++].mValue.mObj.mSuper = funType == BY_PROP_FUNC ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
     } else {
@@ -1576,13 +1586,14 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
-static LVoid FunStatement(CompileState* cs, LBool isProp)
+// funType可以是function，prop function, prop async
+static LVoid FunStatement(CompileState* cs, LInt funType)
 {
     NextToken(cs);
     //EngineStrLog("HandlePushParams FunStatement name %s", cs->mToken.mTokenName);
     // 第一步，Function变量
     OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
-    OpCommand propCmd = { OP_CONST_NUMBER, isProp };
+    OpCommand propCmd = { OP_CONST_NUMBER, funType };
     PutInstruction(&cmd, &propCmd, kCmdCreateFunction, cs);
     //EngineStrLog("FunctionName=%s", cs->mToken.mTokenName);
     // 第二步，初始化函数参数
@@ -1677,7 +1688,7 @@ static LVoid ParseStatement(CompileState* cs)
         if (cs->mToken.mTokenValue == BY_VAR) {
             GlobalStatement(cs);
         } else if (cs->mToken.mTokenValue == BY_FUNC) {
-            FunStatement(cs, LFalse);
+            FunStatement(cs, BY_FUNC);
         } else if (cs->mToken.mTokenValue == BY_CLASS) {
             ClassStatement(cs);
         } else if (cs->mToken.mTokenType == IDENTIFIER) {
@@ -2186,9 +2197,25 @@ static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+
+static LVoid EvalAwait(CompileState* cs) 
+{
+    NextToken(cs);
+    Atom(cs);
+}
+
+
 /* parser lib define */
+// 不能直接使用await方法来做运算，例如await function() * 32
+// 需要在await function()两侧加括号，表示这是一个表达式，例如
+// (await function()) * 32; boyia语言将严格这一范式
 static LVoid EvalExpression(CompileState* cs)
 {
+    if (cs->mToken.mTokenValue == BY_AWAIT) {
+        EvalAwait(cs);
+        return;
+    }
+
     NextToken(cs);
     if (!cs->mToken.mTokenName.mLen) {
         SntxErrorBuild(NO_EXP, cs);

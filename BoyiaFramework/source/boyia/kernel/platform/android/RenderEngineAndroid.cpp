@@ -28,6 +28,11 @@ RenderEngineAndroid::~RenderEngineAndroid()
 {
 }
 
+LVoid RenderEngineAndroid::setContextWin(LVoid* win)
+{
+    m_context.setWindow(win);
+}
+
 LVoid RenderEngineAndroid::init()
 {
     // 初始化渲染函数
@@ -42,6 +47,7 @@ LVoid RenderEngineAndroid::init()
     m_context.initGL(util::GLContext::EWindow);
 }
 
+// 初始化GL环境
 LVoid RenderEngineAndroid::reset()
 {
     TextureCache::getInst()->clear();
@@ -63,6 +69,7 @@ LVoid RenderEngineAndroid::reset()
     GLPainter::init();
 }
 
+// 开始渲染
 LVoid RenderEngineAndroid::render(RenderLayer* layer)
 {
     m_painters.clear();
@@ -70,6 +77,7 @@ LVoid RenderEngineAndroid::render(RenderLayer* layer)
     renderSubmit();
 }
 
+// 提交渲染指令
 LVoid RenderEngineAndroid::renderSubmit()
 {
     GLPainter::reset();
