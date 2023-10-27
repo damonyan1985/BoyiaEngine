@@ -154,6 +154,7 @@ enum CmdType {
     kCmdSetMapValue,
     kCmdCreateArray,
     kCmdAddArrayItem,
+    kCmdAwait
 };
 
 typedef struct {
@@ -220,8 +221,8 @@ typedef struct {
 } BoyiaToken;
 
 typedef struct {
-    LInt mLoopSize;
-    LInt mFunctos;
+    LInt mLoopSize; // loop层次
+    LInt mFrameIndex;
     LInt mFunSize; /* index to top of function call stack */
     LInt mGValSize; /* count of function table */
     LInt mTmpLValSize;
@@ -229,18 +230,18 @@ typedef struct {
     LInt mResultNum;
     BoyiaValue mClass;
     CommandTable* mContext;
-    CommandTable* mCmds;
+    BoyiaFunction* mFun;
     Instruction* mPC; // pc , 指令计数器
 } ExecState;
 
 typedef struct {
-    Instruction* mPC;
-    LInt mLValSize;
-    LInt mTmpLValSize;
-    LInt mLoopSize;
-    CommandTable* mContext;
-    BoyiaValue mClass;
-} ExecScene;
+    Instruction* mPC; // 指向异步函数中指令集
+    LInt mLValSize;  // 局部变量个数
+    LInt mTmpLValSize; // 临时变量个数
+    LInt mLoopSize; // loop层次
+    CommandTable* mContext; // 函数指令集
+    BoyiaValue mClass; // 函数所属对象
+} StackFrame;
 
 // 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
 // Reg的mNameKey没有任何意义，
@@ -265,15 +266,22 @@ typedef struct {
     LInt mSize;
 } VMEntryTable;
 
+typedef struct {
+    StackFrame mStackFrame;
+    BoyiaValue mLocals[NUM_LOCAL_VARS];
+} AsyncExecScene;
+
 typedef struct MicroTask {
-    BoyiaValue mValue;
+    BoyiaValue mValue; // 微任务执行完后回调
     LBool mUse; // find task in cache
+    AsyncExecScene mAsyncEs; // 保存当前状态
     MicroTask* mNext;
 } MicroTask;
 
 typedef struct {
     MicroTask mCache[MICRO_TASK_CAPACITY];
     MicroTask* mHead;
+    MicroTask* mEnd;
     LInt mSize;
 } MicroTaskQueue;
 
@@ -289,7 +297,7 @@ typedef struct BoyiaVM {
     BoyiaValue* mLocals;
     VMCpu* mCpu;
     ExecState* mEState;
-    ExecScene* mExecStack;
+    StackFrame* mExecStack;
     LIntPtr* mLoopStack;
     BoyiaValue* mOpStack;
     VMCode* mVMCode;
@@ -418,6 +426,8 @@ static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm);
 static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm);
 
 static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleAwait(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
 static LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src);
@@ -438,7 +448,7 @@ static LVoid AssignStateClass(BoyiaVM* vm, BoyiaValue* value)
 static LVoid ResetScene(BoyiaVM* vm)
 {
     vm->mEState->mLValSize = 0; /* Initialize local variable stack index */
-    vm->mEState->mFunctos = 0; /* Initialize the call stack index */
+    vm->mEState->mFrameIndex = 0; /* Initialize the call stack index */
     vm->mEState->mLoopSize = 0;
     vm->mEState->mResultNum = 0;
     vm->mEState->mTmpLValSize = 0;
@@ -508,6 +518,7 @@ static OPHandler* InitHandlers()
     handlers[kCmdSetMapValue] = HandleSetMapValue;
     handlers[kCmdCreateArray] = HandleCreateArray;
     handlers[kCmdAddArrayItem] = HandleAddArrayItem;
+    handlers[kCmdAwait] = HandleAwait;
 
     return handlers;
 }
@@ -558,14 +569,31 @@ static MicroTaskQueue* CreateTaskQueue()
 {
     MicroTaskQueue* queue = FAST_NEW(MicroTaskQueue);
     queue->mHead = kBoyiaNull;
+    queue->mEnd = kBoyiaNull;
     queue->mSize = 0;
 
     LInt i = 0;
     for (; i < MICRO_TASK_CAPACITY; i++) {
         queue->mCache[i].mUse = LFalse;
+        queue->mCache[i].mNext = kBoyiaNull;
+        queue->mCache[i].mValue.mValueType = BY_ARG;
     }
 
     return queue;
+}
+
+static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
+{
+    MicroTaskQueue* queue = vm->mTaskQueue;
+    if (queue->mHead) {
+        queue->mEnd->mNext = task;
+        queue->mEnd = task;
+    } else {
+        queue->mHead = task;
+        queue->mEnd = task;
+    }
+     
+    ++queue->mSize;
 }
 
 LVoid* InitVM(LVoid* creator)
@@ -579,7 +607,7 @@ LVoid* InitVM(LVoid* creator)
 
     vm->mOpStack = FAST_NEW_ARRAY(BoyiaValue, NUM_RESULT);
 
-    vm->mExecStack = FAST_NEW_ARRAY(ExecScene, FUNC_CALLS);
+    vm->mExecStack = FAST_NEW_ARRAY(StackFrame, FUNC_CALLS);
     vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
     vm->mEState = FAST_NEW(ExecState);
     vm->mCpu = CreateVMCpu();
@@ -667,14 +695,14 @@ static Instruction* PutInstruction(
 
 static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
 {
-    if (vm->mEState->mFunctos > 0) {
-        vm->mEState->mLValSize = vm->mExecStack[--vm->mEState->mFunctos].mLValSize;
-        vm->mEState->mPC = vm->mExecStack[vm->mEState->mFunctos].mPC;
-        vm->mEState->mContext = vm->mExecStack[vm->mEState->mFunctos].mContext;
-        vm->mEState->mLoopSize = vm->mExecStack[vm->mEState->mFunctos].mLoopSize;
-        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFunctos].mClass;
-        vm->mEState->mTmpLValSize = vm->mExecStack[vm->mEState->mFunctos].mTmpLValSize;
-        AssignStateClass(vm, &vm->mExecStack[vm->mEState->mFunctos].mClass);
+    if (vm->mEState->mFrameIndex > 0) {
+        vm->mEState->mLValSize = vm->mExecStack[--vm->mEState->mFrameIndex].mLValSize;
+        vm->mEState->mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
+        vm->mEState->mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
+        vm->mEState->mLoopSize = vm->mExecStack[vm->mEState->mFrameIndex].mLoopSize;
+        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFrameIndex].mClass;
+        vm->mEState->mTmpLValSize = vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize;
+        AssignStateClass(vm, &vm->mExecStack[vm->mEState->mFrameIndex].mClass);
     }
 
     return kOpResultSuccess;
@@ -694,7 +722,7 @@ static LVoid ExecPopFunction(BoyiaVM* vm)
     // 指令为空，则判断是否处于函数范围中，是则pop，
     // 从而取得调用之前的运行环境, 即之前指向的pc指令
     // 如果不为空，就获取下一条指令，递归调用本函数
-    if (!vm->mEState->mPC && vm->mEState->mFunctos > 0) {
+    if (!vm->mEState->mPC && vm->mEState->mFrameIndex > 0) {
         HandlePopScene(kBoyiaNull, vm);
         if (vm->mEState->mPC) {
             vm->mEState->mPC = NextInstruction(vm->mEState->mPC, vm); // vm->mEState->mPC->mNext;
@@ -927,8 +955,8 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm)
     }
 
     /* second, see if it's a local variable */
-    if (vm->mEState->mFunctos > 0) {
-        LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
+    if (vm->mEState->mFrameIndex > 0) {
+        LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
         LInt idx = vm->mEState->mLValSize - 1;
         // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
         for (; idx > start; --idx) {
@@ -988,23 +1016,23 @@ static LInt HandleCallInternal(LVoid* ins, BoyiaVM* vm)
 
 static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm)
 {
-    vm->mExecStack[vm->mEState->mFunctos].mTmpLValSize = vm->mEState->mTmpLValSize;
+    vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize = vm->mEState->mTmpLValSize;
     vm->mEState->mTmpLValSize = vm->mEState->mLValSize;
     return kOpResultSuccess;
 }
 
 static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
 {
-    if (vm->mEState->mFunctos >= FUNC_CALLS) {
+    if (vm->mEState->mFrameIndex >= FUNC_CALLS) {
         SntxError(NEST_FUNC, vm->mEState->mPC->mCodeLine);
         return kOpResultFail;
     }
 
     Instruction* inst = (Instruction*)ins;
-    vm->mExecStack[vm->mEState->mFunctos].mLValSize = vm->mEState->mTmpLValSize;
-    vm->mExecStack[vm->mEState->mFunctos].mPC = (Instruction*)(inst + inst->mOPLeft.mValue);
-    vm->mExecStack[vm->mEState->mFunctos].mContext = vm->mEState->mContext;
-    vm->mExecStack[vm->mEState->mFunctos++].mLoopSize = vm->mEState->mLoopSize;
+    vm->mExecStack[vm->mEState->mFrameIndex].mLValSize = vm->mEState->mTmpLValSize;
+    vm->mExecStack[vm->mEState->mFrameIndex].mPC = (Instruction*)(inst + inst->mOPLeft.mValue);
+    vm->mExecStack[vm->mEState->mFrameIndex].mContext = vm->mEState->mContext;
+    vm->mExecStack[vm->mEState->mFrameIndex++].mLoopSize = vm->mEState->mLoopSize;
 
     return kOpResultSuccess;
 }
@@ -1023,7 +1051,7 @@ static LInt HandlePushArg(LVoid* ins, BoyiaVM* vm)
 
 static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
 {
-    vm->mExecStack[vm->mEState->mFunctos].mClass = vm->mEState->mClass;
+    vm->mExecStack[vm->mEState->mFrameIndex].mClass = vm->mEState->mClass;
     Instruction* inst = (Instruction*)ins;
 
     if (inst->mOPLeft.mType == OP_VAR) {
@@ -1052,7 +1080,7 @@ static LVoid ElseStatement(CompileState* cs)
 static LInt HandleReturn(LVoid* ins, BoyiaVM* vm)
 {
     vm->mEState->mPC = vm->mEState->mContext->mEnd;
-    return 1;
+    return kOpResultSuccess;
 }
 
 static LVoid ReturnStatement(CompileState* cs)
@@ -1570,13 +1598,14 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
 
     if (vm->mEState->mClass.mValue.mObj.mPtr) {
         LIntPtr funType = inst->mOPRight.mValue;
+        LBool isProp = BY_PROP_FUNC || BY_ASYNC_PROP;
         
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mClass.mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = funType;
         func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mEState->mFunSize];
         // 属性函数的mSuper指针指向对象实例
-        func->mParams[func->mParamSize++].mValue.mObj.mSuper = funType == BY_PROP_FUNC ? (LIntPtr)func : kBoyiaNull;
+        func->mParams[func->mParamSize++].mValue.mObj.mSuper = isProp ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mEState->mFunSize], vm);
     } else {
@@ -1741,7 +1770,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
 {
     //EngineLog("HandleFunction begin %d \n", 1);
     // localstack第一个值为函数指针
-    LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
+    LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
     // 内置类产生的对象，调用其方法
@@ -1752,9 +1781,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         // native函数没有instruction，所以pc置为null
         vm->mEState->mPC = kBoyiaNull;
         return navFun(vm);
-    }
-    
-    if (value->mValueType == BY_PROP_FUNC) {
+    } else if (value->mValueType == BY_PROP_FUNC) {
         // 用属性对象指向的对象实例构造一个对象引用
         BoyiaValue val;
         val.mValueType = BY_CLASS;
@@ -1763,7 +1790,9 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         val.mValue.mObj.mPtr = value->mValue.mObj.mSuper;
         val.mValue.mObj.mSuper = objBody->mFuncBody;
         AssignStateClass(vm, &val);
-    }
+    } else if (value->mValueType == BY_ASYNC_PROP) {
+        vm->mEState->mFun = func;
+    } else if (value->mValueType == BY_ASYNC) {}
     
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
     vm->mEState->mPC = vm->mEState->mContext->mBegin;
@@ -1774,7 +1803,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
 static LInt HandlePushParams(LVoid* ins, BoyiaVM* vm)
 {
     // 第一个参数为调用该函数的函数指针
-    LInt start = vm->mExecStack[vm->mEState->mFunctos - 1].mLValSize;
+    LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
     if (value->mValueType == BY_FUNC || value->mValueType == BY_PROP_FUNC) { // BY_NAV_FUNC不需要对参数名进行赋值
@@ -2197,11 +2226,34 @@ static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
+{
+    Instruction* pc = vm->mEState->mPC;
+    // 保存栈帧
+    AsyncExecScene* aes = FAST_NEW(AsyncExecScene);
+    aes->mStackFrame.mPC = pc;
+    aes->mStackFrame.mContext = vm->mEState->mContext;
+    aes->mStackFrame.mLoopSize = vm->mEState->mLoopSize;
+    aes->mStackFrame.mClass = vm->mEState->mClass;
+    aes->mStackFrame.mLValSize = vm->mEState->mLValSize;
+    aes->mStackFrame.mTmpLValSize = vm->mEState->mTmpLValSize;
 
+    
+    LInt i = vm->mExecStack[vm->mEState->mFrameIndex].mLValSize;
+    for (; i < vm->mEState->mLValSize; i++) {
+        ValueCopy(&aes->mLocals[i], &vm->mLocals[i]);
+    }
+    return HandleReturn(ins, vm);
+}
+
+// 执行到await，当前调用栈将被中断
 static LVoid EvalAwait(CompileState* cs) 
 {
     NextToken(cs);
+    // 先执行异步函数，强制认为其后是一个函数
     Atom(cs);
+    // 挂起程序
+    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdAwait, cs);
 }
 
 
@@ -2874,14 +2926,14 @@ LVoid* GetLocalValue(LInt idx, LVoid* vm)
         return kBoyiaNull;
     }
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    LInt start = vmPtr->mExecStack[vmPtr->mEState->mFunctos - 1].mLValSize;
+    LInt start = vmPtr->mExecStack[vmPtr->mEState->mFrameIndex - 1].mLValSize;
     return &vmPtr->mLocals[start + idx];
 }
 
 LInt GetLocalSize(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    return vmPtr->mEState->mLValSize - vmPtr->mExecStack[vmPtr->mEState->mFunctos - 1].mLValSize;
+    return vmPtr->mEState->mLValSize - vmPtr->mExecStack[vmPtr->mEState->mFrameIndex - 1].mLValSize;
 }
 
 LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm)
@@ -2912,13 +2964,13 @@ LVoid SaveLocalSize(LVoid* vm)
 LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    //vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass = vmPtr->mEState->mClass;
-    ValueCopyNoName(&vmPtr->mExecStack[vmPtr->mEState->mFunctos].mClass, &vmPtr->mEState->mClass);
+    //vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mClass = vmPtr->mEState->mClass;
+    ValueCopyNoName(&vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mClass, &vmPtr->mEState->mClass);
     
-    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mLValSize = vmPtr->mEState->mTmpLValSize;
-    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mPC = vmPtr->mEState->mPC;
-    vmPtr->mExecStack[vmPtr->mEState->mFunctos].mContext = vmPtr->mEState->mContext;
-    vmPtr->mExecStack[vmPtr->mEState->mFunctos++].mLoopSize = vmPtr->mEState->mLoopSize;
+    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mLValSize = vmPtr->mEState->mTmpLValSize;
+    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mPC = vmPtr->mEState->mPC;
+    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mContext = vmPtr->mEState->mContext;
+    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex++].mLoopSize = vmPtr->mEState->mLoopSize;
     //vmPtr->mEState->mClass = obj;
     AssignStateClass(vmPtr, obj);
 
@@ -2992,4 +3044,43 @@ LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm)
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     // 创建一个类对象
     return CreateFunVal(key, BY_CLASS, vmPtr);
+}
+
+// 执行异步任务完成后，需要将使用接过来创建一个微任务
+// 同时添加到微任务列表中
+LVoid PushMicroTask(LVoid* vmPtr, BoyiaValue* value)
+{
+    BoyiaVM* vm = (BoyiaVM*)vmPtr;
+    MicroTask* task = CreateMicroTask(vm);
+    ValueCopyNoName(&task->mValue, value);
+    AddMicroTask(vm, task);
+}
+
+// 消费微任务，若选择支持微任务，则宏任务结束后执行该函数
+LVoid ConsumeMicroTask(LVoid* vmPtr)
+{
+    BoyiaVM* vm = (BoyiaVM*)vmPtr;
+    MicroTaskQueue* queue = vm->mTaskQueue;
+    MicroTask* task = queue->mHead;
+    MicroTask* prev = task;
+    while (task) {
+        // 如果异步任务完成
+        if (task->mValue.mValueType) {
+            // 若任务在头部
+            if (queue->mHead == task) {
+                queue->mHead = task->mNext;
+            } else {
+                // 不是头部
+                prev->mNext = task->mNext;
+            }
+
+            // 释放任务
+            task->mUse = LFalse;
+            task->mNext = kBoyiaNull;
+            task->mValue.mValueType = BY_ARG;
+        } else {
+            prev = task;
+        }
+        task = task->mNext;
+    }
 }

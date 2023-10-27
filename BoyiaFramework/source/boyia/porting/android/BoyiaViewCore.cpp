@@ -1,6 +1,8 @@
 #ifndef BoyiaViewCore_h
 #define BoyiaViewCore_h
 
+#define OLD_RENDER_FEATURE 1
+
 #include "AppManager.h"
 #include "ArmFunction.h"
 #include "AutoObject.h"
@@ -30,7 +32,6 @@
 #include "TextureCache.h"
 #include <jni.h>
 
-#if OLD_RENDER_FEATURE 1
 const char* kBoyiaCoreJNIClass = "com/boyia/app/core/BoyiaCoreJNI";
 const char* kBoyiaUtilClass = "com/boyia/app/common/utils/BoyiaUtils";
 

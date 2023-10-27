@@ -88,7 +88,7 @@ upload_debugger_library_cmd = (
 )
 
 build_app_cmd = (
-    f'{gradle_cmd} assembleDebug'
+    f'{gradle_cmd} -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 assembleDebug'
 )
 
 # build app bundle

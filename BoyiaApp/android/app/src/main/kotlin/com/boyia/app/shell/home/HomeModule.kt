@@ -24,32 +24,34 @@ class HomeModule: IHomeModule {
     }
 
     override fun show(ctx: IModuleContext) {
-        val frag = ctx.getActivity().supportFragmentManager.findFragmentByTag(TAG)
+        val frag = ctx.getActivity()?.supportFragmentManager?.findFragmentByTag(TAG)
         if (frag != null) {
             // 全部清空，重新開始
-            ctx.getActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            ctx.getActivity()?.supportFragmentManager?.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
 
         context = WeakReference(ctx)
         fragment = BoyiaHomeFragment(this)
 
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(ctx.rootId(), fragment!!, TAG)
-        fragmentTransaction.commit()
+        ctx.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
+            it.add(ctx.rootId(), fragment!!, TAG)
+            it.commit()
+        }
     }
 
     override fun hide() {
         val ctx = context?.get() ?: return
         fragment ?: return
 
-        if (ctx.getActivity().supportFragmentManager.isDestroyed) {
+        if (ctx.getActivity()?.supportFragmentManager?.isDestroyed == true) {
             fragment = null
             return
         }
 
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.remove(fragment!!)
-        fragmentTransaction.commitAllowingStateLoss()
+        ctx.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
+            it.remove(fragment!!)
+            it.commitAllowingStateLoss()
+        }
 
         fragment = null
     }

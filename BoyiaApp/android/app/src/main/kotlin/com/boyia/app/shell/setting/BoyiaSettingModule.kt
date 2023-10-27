@@ -1,17 +1,19 @@
 package com.boyia.app.shell.setting
 
-import androidx.fragment.app.FragmentTransaction
-import com.boyia.app.loader.mue.MainScheduler
+
 import com.boyia.app.shell.login.LoginModule
 import com.boyia.app.shell.login.LoginModule.LoginListener
-import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.route.Navigator
 import java.lang.ref.WeakReference
 
 class BoyiaSettingModule : IUIModule {
+    companion object {
+        const val ABOUT_TAG = "about"
+    }
     private var fragment: BoyiaSettingFragment? = null
     private var context: WeakReference<IModuleContext>? = null
 
@@ -35,23 +37,25 @@ class BoyiaSettingModule : IUIModule {
         context = WeakReference(ctx)
 
         fragment = BoyiaSettingFragment(this)
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(ctx.rootId(), fragment!!)
-        fragmentTransaction.commit()
+        ctx.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
+            it.add(ctx.rootId(), fragment!!)
+            it.commit()
+        }
     }
 
     override fun hide() {
         val ctx = context?.get() ?: return
         fragment ?: return
 
-        if (ctx.getActivity().supportFragmentManager.isDestroyed) {
+        if (ctx.getActivity()?.supportFragmentManager?.isDestroyed == true) {
             fragment = null
             return
         }
 
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.remove(fragment!!)
-        fragmentTransaction.commitAllowingStateLoss()
+        ctx.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
+            it.remove(fragment!!)
+            it.commitAllowingStateLoss()
+        }
 
         fragment = null
     }
@@ -79,11 +83,12 @@ class BoyiaSettingModule : IUIModule {
 
         val about = BoyiaAboutFragment()
 
-        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        fragmentTransaction.add(ctx.rootId(), about)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+//        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
+//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//        fragmentTransaction.add(ctx.rootId(), about)
+//        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.commit()
+        Navigator(ctx).push(about, ABOUT_TAG)
     }
 
     interface SlideCallback {

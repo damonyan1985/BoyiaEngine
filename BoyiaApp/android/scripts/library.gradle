@@ -75,4 +75,8 @@ gradle.ext.library = [
     coroutines_coreLib: "org.jetbrains.kotlinx:kotlinx-coroutines-core:${gradle.constants.coroutinesVersion}",
     coroutines_androidLib: "org.jetbrains.kotlinx:kotlinx-coroutines-android:${gradle.constants.coroutinesVersion}",
     coroutines_jdkLib: "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${gradle.constants.coroutinesVersion}",
+    // 字节码插桩
+    transform_lib: 'com.android.tools.build:transform-api:1.5.0',
+    asm_lib: 'org.ow2.asm:asm:9.3',
+    asm_common_lib: 'org.ow2.asm:asm-commons:9.3',
 ]

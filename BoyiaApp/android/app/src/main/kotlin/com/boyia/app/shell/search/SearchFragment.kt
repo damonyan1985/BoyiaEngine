@@ -80,6 +80,7 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
     @Composable
     fun buildHeader() {
         // by 表示委托
+        // remember将数据进行缓存
         var searchKey by remember { mutableStateOf("") }
         Row {
             Spacer(modifier = Modifier.width(dpx(20)))
@@ -116,7 +117,7 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
                     maxLines = 1
             )
             Spacer(modifier = Modifier.width(dpx(10)))
-            TextButton(onClick = { model.searchAppList(searchKey)},
+            TextButton(onClick = { model.searchAppList(searchKey) },
                     modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .background(Color.Gray, RoundedCornerShape(50)) // 要先设置背景再设置宽高，不然背景会超出宽高

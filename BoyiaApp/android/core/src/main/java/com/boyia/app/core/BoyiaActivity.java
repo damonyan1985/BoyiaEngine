@@ -7,6 +7,7 @@ import android.app.IntentService;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -29,6 +30,8 @@ import com.boyia.app.core.api.ApiImplementation;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
 import com.boyia.app.loader.image.BoyiaImager;
+import com.boyia.app.loader.image.IBoyiaImage;
+import com.boyia.app.loader.job.IJob;
 import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.loader.mue.MainScheduler;
 
@@ -228,8 +231,44 @@ public class BoyiaActivity extends Activity {
             IBoyiaSender sender = new IBoyiaIpcSender.BoyiaSenderProxy(info.mHostBinder);
             mApiImplementation = new ApiImplementation(sender, activity, info);
             BoyiaBridge.setIPCSender(mApiImplementation);
+            setAppTaskHeader(info);
 
             justForTest();
+        }
+
+        private void setAppTaskHeader(BoyiaAppInfo info) {
+            BoyiaLog.d(TAG, "setAppTaskHeader icon=" + info.mAppCover);
+            BoyiaImager.loadImage(info.mAppCover, new IBoyiaImage() {
+                @Override
+                public void setImageURL(String s) {
+                }
+
+                @Override
+                public String getImageURL() {
+                    return info.mAppCover;
+                }
+
+                @Override
+                public void setImage(Bitmap bitmap) {
+                    MainScheduler.mainScheduler().sendJob(() -> {
+                        if (null != mActivity.get()) {
+                            mActivity.get().setTaskDescription(new ActivityManager.TaskDescription(
+                                    info.mAppName, bitmap
+                            ));
+                        }
+                    });
+                }
+
+                @Override
+                public int getImageWidth() {
+                    return 128;
+                }
+
+                @Override
+                public int getImageHeight() {
+                    return 128;
+                }
+            });
         }
 
         private void justForTest() {

@@ -10,11 +10,11 @@ import com.boyia.app.shell.module.IModuleContext
 class Navigator(private val context: IModuleContext) {
     fun push(fragment: BaseFragment?, tag: String) {
         fragment?.let {
-            context.getActivity().supportFragmentManager.beginTransaction().apply {
-                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                add(context.rootId(), it, tag)
-                addToBackStack(null)
-                commit()
+            context.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
+                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                it.add(context.rootId(), fragment, tag)
+                it.addToBackStack(null)
+                it.commit()
             }
         }
 

@@ -224,6 +224,7 @@ dependencies {
     implementation gradle.library.compose_uitool
     implementation gradle.library.compose_rxjava
     implementation gradle.library.compose_activity
+    implementation gradle.library.compose_livedata
     // compose coil
     implementation gradle.library.coil_lib
     implementation gradle.library.compose_coil_lib

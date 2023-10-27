@@ -57,30 +57,33 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
     override fun pickImage(loader: IPickImageLoader) {
         pickerLoaders.add(loader)
         if (BoyiaPermissions.requestPhotoPermissions(getActivity())) {
-            pickLauncher.launch(null)
+            pickLauncher?.launch(null)
         }
     }
 
     // 发送通知，通知程序在回调中处理
     override fun sendNotification(callback: PermissionCallback) {
-        notifyCallbacks.add(callback)
-        if (NotificationManagerCompat.from(getActivity()).areNotificationsEnabled()
-                || BoyiaPermissions.requestNotificationPermissions(getActivity())) {
-            BoyiaLog.d(TAG, "sendNotification by permission")
-            notifyCallbacks.forEach {
-                it()
-            }
+        getActivity()?.let {
+            notifyCallbacks.add(callback)
+            if (NotificationManagerCompat.from(it).areNotificationsEnabled()
+                    || BoyiaPermissions.requestNotificationPermissions(it)) {
+                BoyiaLog.d(TAG, "sendNotification by permission")
+                notifyCallbacks.forEach {
+                    it()
+                }
 
-            notifyCallbacks.clear()
+                notifyCallbacks.clear()
+            }
         }
+
     }
 
     override fun rootId(): Int {
         return context.get()!!.rootId()
     }
 
-    override fun getActivity(): AppCompatActivity {
-        return context.get()!!
+    override fun getActivity(): AppCompatActivity? {
+        return context.get()
     }
 
     // 处理权限回调
@@ -88,7 +91,7 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
         when(requestCode) {
             BoyiaPermissions.CAMERA_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    pickLauncher.launch(null)
+                    pickLauncher?.launch(null)
                 }
             }
             BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {

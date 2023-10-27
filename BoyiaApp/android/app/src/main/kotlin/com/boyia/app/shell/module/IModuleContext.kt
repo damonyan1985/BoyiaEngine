@@ -6,7 +6,7 @@ import com.boyia.app.shell.util.PermissionCallback
 
 interface IModuleContext {
     fun rootId(): Int
-    fun getActivity(): AppCompatActivity
+    fun getActivity(): AppCompatActivity?
     fun pickImage(loader: IPickImageLoader) {}
 
     fun sendNotification(callback: PermissionCallback) {}

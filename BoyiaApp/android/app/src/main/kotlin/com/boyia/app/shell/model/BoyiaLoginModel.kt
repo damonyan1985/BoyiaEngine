@@ -5,9 +5,51 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.mue.MainScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 object BoyiaLoginModel {
     const val TAG = "BoyiaLoginModel"
+
+    /**
+     * 使用协程做登录请求
+     */
+    fun loginEx(name: String?, password: String?, callback: (info: BoyiaUserInfo) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = withContext(Dispatchers.IO) {
+                /**
+                 * 处理回调
+                 */
+                suspendCoroutine<BoyiaUserData> {
+                    BoyiaModelUtil.request(
+                            BoyiaModelUtil.LOGIN_URL,
+                            object: BoyiaModelUtil.ModelDataCallback<BoyiaUserData> {
+                                override fun onLoadData(data: BoyiaUserData) {
+                                    BoyiaLog.d(TAG, "retCode = " + data.retCode)
+                                    if (data.retCode != 200) {
+                                        return
+                                    }
+
+                                    it.resume(data)
+                                }
+                            },
+                            method = HTTPFactory.HTTP_POST_METHOD,
+                            headers = mapOf(HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.FORM, "User-Token" to "none"),
+                            data = "name=${name}&pwd=${password}"
+                    )
+                }
+            }
+
+            BoyiaLoginInfo.instance().token = result.userToken
+            BoyiaLoginInfo.instance().user = result.data
+
+            result.data?.let { callback(it) }
+        }
+    }
 
     fun login(name: String?, password: String?, callback: (info: BoyiaUserInfo) -> Unit) {
         if (BoyiaUtils.isTextEmpty(name)

@@ -81,6 +81,7 @@ object CommonFeatures {
                             .setSmallIcon(R.drawable.ic_launcher)
                             .setContentIntent(pendingIntent)
                             .setContent(remoteViews)
+                            .setOngoing(true)
                             .build()
 
                     manager.notify(id, notification)
@@ -124,7 +125,7 @@ object CommonFeatures {
         }
     }
 
-    fun registerPickerImage(context: AppCompatActivity, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?> {
+    fun registerPickerImage(context: AppCompatActivity?, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?>? {
 //        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Uri?>() {
 //            override fun createIntent(context: Context, input: Unit?): Intent {
 //                return Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
@@ -138,12 +139,17 @@ object CommonFeatures {
 //                pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
 //            }
 //        }
-        return registerActivityResult(context,
-                Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
-                { it?.data }
-        ) {
-            pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
+
+        context?.let {
+            return registerActivityResult(context,
+                    Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
+                    { it?.data }
+            ) {
+                pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
+            }
         }
+
+        return null
     }
 
     fun getFragmentHeight(activity: Activity) : Int {
