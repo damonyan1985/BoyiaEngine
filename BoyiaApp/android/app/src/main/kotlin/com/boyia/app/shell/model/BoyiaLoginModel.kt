@@ -18,36 +18,29 @@ object BoyiaLoginModel {
     /**
      * 使用协程做登录请求
      */
-    fun loginEx(name: String?, password: String?, callback: (info: BoyiaUserInfo) -> Unit) {
-        CoroutineScope(Dispatchers.Main).launch {
-            val result = withContext(Dispatchers.IO) {
-                /**
-                 * 处理回调
-                 */
-                suspendCoroutine<BoyiaUserData> {
-                    BoyiaModelUtil.request(
-                            BoyiaModelUtil.LOGIN_URL,
-                            object: BoyiaModelUtil.ModelDataCallback<BoyiaUserData> {
-                                override fun onLoadData(data: BoyiaUserData) {
-                                    BoyiaLog.d(TAG, "retCode = " + data.retCode)
-                                    if (data.retCode != 200) {
-                                        return
-                                    }
-
-                                    it.resume(data)
+    suspend fun suspendLogin(name: String?, password: String?) : BoyiaUserData {
+        return withContext(Dispatchers.IO) {
+            /**
+             * 处理回调
+             */
+            suspendCoroutine {
+                BoyiaModelUtil.request(
+                        BoyiaModelUtil.LOGIN_URL,
+                        object: BoyiaModelUtil.ModelDataCallback<BoyiaUserData> {
+                            override fun onLoadData(data: BoyiaUserData) {
+                                BoyiaLog.d(TAG, "retCode = " + data.retCode)
+                                if (data.retCode != 200) {
+                                    return
                                 }
-                            },
-                            method = HTTPFactory.HTTP_POST_METHOD,
-                            headers = mapOf(HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.FORM, "User-Token" to "none"),
-                            data = "name=${name}&pwd=${password}"
-                    )
-                }
+
+                                it.resume(data)
+                            }
+                        },
+                        method = HTTPFactory.HTTP_POST_METHOD,
+                        headers = mapOf(HTTPFactory.HeaderKeys.CONTENT_TYPE to HTTPFactory.HeaderValues.FORM, "User-Token" to "none"),
+                        data = "name=${name}&pwd=${password}"
+                )
             }
-
-            BoyiaLoginInfo.instance().token = result.userToken
-            BoyiaLoginInfo.instance().user = result.data
-
-            result.data?.let { callback(it) }
         }
     }
 

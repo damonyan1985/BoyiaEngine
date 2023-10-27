@@ -81,7 +81,7 @@ object CommonFeatures {
                             .setSmallIcon(R.drawable.ic_launcher)
                             .setContentIntent(pendingIntent)
                             .setContent(remoteViews)
-                            .setOngoing(true)
+                            .setOngoing(true) // 红米不显示，需要设置setOngoing
                             .build()
 
                     manager.notify(id, notification)
