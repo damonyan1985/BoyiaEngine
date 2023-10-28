@@ -2,7 +2,8 @@ apply plugin: 'com.android.library'
 apply from: "$rootDir/scripts/library.gradle"
 
 android {
-    compileSdkVersion gradle.constants.sdkVersion
+    namespace gradle.constants.boyiaLoaderLib
+    compileSdk(gradle.constants.sdkVersion)
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion gradle.constants.sdkVersion

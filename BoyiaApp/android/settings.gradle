@@ -1,2 +1,3 @@
 //include ':advert'
 include ':app', ':core', ':util', ':debug', ':loader'
+include ':bytrace'

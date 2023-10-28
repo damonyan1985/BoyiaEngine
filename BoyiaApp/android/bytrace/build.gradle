@@ -1,0 +1,25 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+apply plugin: 'java'
+apply from: "$rootDir/scripts/library.gradle"
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation gradle.library.asm_lib
+    implementation gradle.library.asm_common_lib
+    implementation 'com.android.tools.build:gradle:8.0.0'
+}

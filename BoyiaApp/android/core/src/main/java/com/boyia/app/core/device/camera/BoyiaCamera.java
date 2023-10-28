@@ -32,7 +32,7 @@ import java.util.concurrent.Semaphore;
 public class BoyiaCamera {
     private static final String TAG = "BoyiaCamera";
     private static final String CAMERA_ID = "0";
-    // 在显示上实时绘制图像，类似视频
+    // 在显示上实时绘制图像，类似视频, 相机使用的纹理
     private BoyiaTexture mTexture;
     // 捕捉某一时刻的图像
     private ImageReader mImageReader;
@@ -52,8 +52,6 @@ public class BoyiaCamera {
     private CaptureRequest.Builder mPreviewBuilder;
     private String mCameraId;
 
-    // 相机视频对应的纹理ID
-    private int mTextureId;
     private Semaphore mLock = new Semaphore(1);
 
     private Surface mSurface;
@@ -122,13 +120,9 @@ public class BoyiaCamera {
 
     };
 
-    public BoyiaCamera(int textureId, boolean needCapture) {
-        mTextureId = textureId;
+    public BoyiaCamera(boolean needCapture) {
+        mTexture = BoyiaTexture.createTexture();
         mIsNeedCapture = needCapture;
-    }
-
-    public BoyiaCamera(int textureId) {
-        this(textureId, false);
     }
 
     boolean configCamera(CameraManager cameraManager, String cameraId) throws CameraAccessException {
@@ -155,7 +149,7 @@ public class BoyiaCamera {
     // 初始化线程
     @SuppressLint("DefaultLocale")
     void initThread() {
-        mCameraThread = new HandlerThread(String.format("boyia-camera-%d", mTextureId));
+        mCameraThread = new HandlerThread(String.format("boyia-camera-%d", mTexture.getTextureId()));
         mCameraHandler = new Handler(mCameraThread.getLooper());
     }
 
@@ -224,7 +218,6 @@ public class BoyiaCamera {
 
     private void createCameraPreview() {
         try {
-            mTexture = new BoyiaTexture(mTextureId);
             mSurface = new Surface(mTexture.getSurfaceTexture());
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewBuilder.addTarget(mSurface);

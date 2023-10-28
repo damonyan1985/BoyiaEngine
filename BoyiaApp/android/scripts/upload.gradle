@@ -12,6 +12,19 @@ println("upload maven_dir=${maven_dir} GROUP_ID=${GROUP_ID} ARTIFACT_ID=${ARTIFA
 //       }
 //   }
 //}
+android {
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        singleVariant('debug') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
 
 afterEvaluate {
     println("Components: " + components*.name)
