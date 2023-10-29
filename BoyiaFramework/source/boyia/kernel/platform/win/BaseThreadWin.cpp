@@ -77,6 +77,7 @@ void BaseThread::notify()
 // millisecond
 void BaseThread::waitTimeOut(long timeout)
 {
+    ::ResetEvent(m_condition->winEvent);
     WaitForSingleObject(m_condition->winEvent, timeout);
     ::ResetEvent(m_condition->winEvent);
 }

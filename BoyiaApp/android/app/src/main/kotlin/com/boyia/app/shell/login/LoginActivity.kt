@@ -8,15 +8,15 @@ import com.boyia.app.common.json.BoyiaJson
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.core.api.ApiConstants
 import com.boyia.app.loader.job.JobScheduler
-import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.BoyiaShellActivity
 import com.boyia.app.shell.model.BoyiaLoginInfo
 import com.boyia.app.shell.model.BoyiaUserData
 import com.boyia.app.shell.model.BoyiaUserInfo
+import com.boyia.app.shell.module.ILoginModule
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
+import com.boyia.app.shell.module.LoginListener
 import com.boyia.app.shell.module.ModuleManager
-import com.boyia.app.shell.util.PermissionCallback
 
 /**
  * 提供给boyia app调用
@@ -34,8 +34,8 @@ class LoginActivity: BoyiaShellActivity(), IModuleContext {
         val callbackId = intent.getLongExtra(ApiConstants.ApiKeys.CALLBACK_ID, 0)
         val sender = ipcModule.appSender(aid)
 
-        val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as LoginModule
-        loginModule.addLoginLisnter(object: LoginModule.LoginListener {
+        val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as ILoginModule
+        loginModule.addLoginListener(object: LoginListener {
             override fun onLogined(info: BoyiaUserInfo) {
                 // 使用sender回传给boyia app
                 val userData = BoyiaUserData()

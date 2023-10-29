@@ -38,9 +38,6 @@ open class BoyiaShellActivity: AppCompatActivity() {
         rootView?.clipToPadding = false
 
         setContentView(rootView)
-
-        TestObservable.test()
-        val l = MutableLiveData<String>()
     }
 
     fun rootId(): Int {

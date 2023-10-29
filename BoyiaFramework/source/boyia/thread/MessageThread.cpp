@@ -26,8 +26,8 @@ public:
         
         // when thread is over, delete the message queue
         delete m_queue;
-        delete this;
         delete m_thread;
+        delete this;
     }
     
     Message* obtain() LOverride

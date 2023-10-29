@@ -5,6 +5,7 @@ import com.boyia.app.shell.model.BoyiaLoginModel
 import com.boyia.app.shell.model.BoyiaUserInfo
 import com.boyia.app.shell.module.ILoginModule
 import com.boyia.app.shell.module.IModuleContext
+import com.boyia.app.shell.module.LoginListener
 import com.boyia.app.shell.route.Navigator
 import java.lang.ref.WeakReference
 
@@ -26,7 +27,7 @@ class LoginModule: ILoginModule {
         Navigator(ctx).push(fragment, TAG)
     }
 
-    fun login(name: String?, password: String?) {
+    override fun login(name: String?, password: String?) {
         BoyiaLoginModel.login(name, password) { info ->
             BoyiaLog.d(TAG, "login nickname = ${info.nickname}")
             listeners.forEach {
@@ -46,11 +47,9 @@ class LoginModule: ILoginModule {
         hide()
     }
 
-    open fun addLoginLisnter(listener: LoginListener) {
+    override fun addLoginListener(listener: LoginListener) {
         listeners.add(listener)
     }
 
-    interface LoginListener {
-        fun onLogined(info: BoyiaUserInfo);
-    }
+
 }

@@ -1,5 +1,12 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+    google()
 }
 
 apply plugin: 'java'
@@ -22,4 +29,23 @@ dependencies {
     implementation gradle.library.asm_lib
     implementation gradle.library.asm_common_lib
     implementation 'com.android.tools.build:gradle:8.0.0'
+}
+
+group 'com.boyia.app.bytrace'
+version '1.0.0'
+
+gradlePlugin {
+    plugins {
+        BoyiaTracePlugin {
+            id = 'com.boyia.app.bytrace'
+            implementationClass = 'com.boyia.app.bytrace.BoyiaTracePlugin'
+        }
+    }
+}
+publishing {
+    repositories {
+        maven {
+            url = "file://${maven_dir}"
+        }
+    }
 }

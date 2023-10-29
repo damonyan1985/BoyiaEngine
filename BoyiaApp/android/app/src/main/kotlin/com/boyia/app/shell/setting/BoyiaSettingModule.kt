@@ -1,9 +1,9 @@
 package com.boyia.app.shell.setting
 
 
-import com.boyia.app.shell.login.LoginModule
-import com.boyia.app.shell.login.LoginModule.LoginListener
 import com.boyia.app.shell.model.BoyiaUserInfo
+import com.boyia.app.shell.module.ILoginModule
+import com.boyia.app.shell.module.LoginListener
 import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IUIModule
 import com.boyia.app.shell.module.ModuleManager
@@ -68,26 +68,21 @@ class BoyiaSettingModule : IUIModule {
      * 显示登录界面
      */
     fun showLogin() {
-        val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as LoginModule
+        val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as ILoginModule
         val ctx = context?.get() ?: return
         loginModule.show(ctx)
-        loginModule.addLoginLisnter(object: LoginListener {
+        loginModule.addLoginListener(object: LoginListener {
             override fun onLogined(info: BoyiaUserInfo) {
                 fragment?.setUserInfo(info)
             }
         })
     }
 
+    // 显示关于页面
     fun showAbout() {
         val ctx = context?.get() ?: return
 
         val about = BoyiaAboutFragment()
-
-//        val fragmentTransaction = ctx.getActivity().supportFragmentManager.beginTransaction()
-//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//        fragmentTransaction.add(ctx.rootId(), about)
-//        fragmentTransaction.addToBackStack(null)
-//        fragmentTransaction.commit()
         Navigator(ctx).push(about, ABOUT_TAG)
     }
 

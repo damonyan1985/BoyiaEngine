@@ -7,7 +7,7 @@ import platform
 current_path = os.getcwd()
 
 # boyia project path
-project_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
+project_path = os.path.abspath(os.path.join(os.getcwd(), '../../..'))
 # 需要在环境变量中添加[ANDROID_HOME]与[NDK_HOME]，与[CARGO_HOME]即.cargo目录所在路径
 cargo_path = os.getenv('CARGO_HOME')
 android_sdk_path = os.getenv('ANDROID_HOME')
@@ -87,8 +87,16 @@ upload_debugger_library_cmd = (
     f'{gradle_cmd} :debug:{archives}'
 )
 
+upload_bytrace_library_cmd = (
+    f'{gradle_cmd} :bytrace:publish'
+)
+
+# build_app_cmd = (
+#     f'{gradle_cmd} -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 assembleDebug'
+# )
+
 build_app_cmd = (
-    f'{gradle_cmd} -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 assembleDebug'
+    f'{gradle_cmd} assembleDebug'
 )
 
 # build app bundle
@@ -109,7 +117,7 @@ create_rust_environment = (
 )
 
 boyia_rust_sdk_cmd = (
-    "cargo build --target aarch64-linux-android --release"
+    'cargo build --target aarch64-linux-android --release'
 )
 
 boyia_install_ndk_cmd = (
@@ -127,7 +135,7 @@ def del_file(path, isDel):
     ls = os.listdir(path)
     for i in ls:
         c_path = os.path.join(path, i)
-        print("i=" + i)
+        print('i=' + i)
         if operator.eq(i, '.git') == True:
             continue
         if operator.eq(i, '.gitignore') == True:
@@ -154,10 +162,14 @@ def do_build_boyia_rust_sdk():
 
 
 def do_single_cmd(cmd):
-    if cmd == "sdk":
+    print('do_single_cmd cmd=' + cmd)
+    if cmd == 'sdk':
         do_build_boyia_rust_sdk()
-    elif cmd == "bundle":
+    elif cmd == 'bundle':
         os.system(build_bundle_cmd)
+    elif cmd == 'trace':
+        os.chdir(boyia_app_android_path)
+        os.system(upload_bytrace_library_cmd)   
 
 # 安装boyia工程中的rust ndk环境
 def install_boyia_rust_environment():
@@ -222,13 +234,21 @@ def main():
     if platform.system().lower() != 'windows':
         os.system(permission_gradlew_cmd)
 
+    # 编译公共库
     os.system(upload_util_library_cmd)
+    # 编译资源加载库
     os.system(upload_loader_library_cmd)
-    # os.system(upload_core_native_sync_cmd)
+    # 编译调试库
     os.system(upload_debugger_library_cmd)
+    # 编译引擎核心库
     os.system(upload_core_library_cmd)
+    # 编译日志追踪库
+    # os.system(upload_bytrace_library_cmd)
+    # 编译壳工程
     os.system(build_app_cmd)
+    # 安装壳工程
     os.system(install_apk_cmd)
+    # 启动壳工程
     os.system(launch_app_cmd)
     print('Build Finished!')
     print(boyia_app_sdk_config)
