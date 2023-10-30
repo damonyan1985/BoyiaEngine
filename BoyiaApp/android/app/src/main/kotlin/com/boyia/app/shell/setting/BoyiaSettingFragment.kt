@@ -210,11 +210,11 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
                 duration = 300
                 interpolator = LinearInterpolator()
                 addListener(object: Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {
+                    override fun onAnimationStart(animation: Animator) {
                         listener?.onStart(animator!!.animatedValue as Float)
                     }
 
-                    override fun onAnimationEnd(animation: Animator?) {
+                    override fun onAnimationEnd(animation: Animator) {
                         val value = animator!!.animatedValue as Float
                         val show = value > 0F
                         listener?.onEnd(show)
@@ -223,10 +223,10 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
                         }
                     }
 
-                    override fun onAnimationCancel(animation: Animator?) {
+                    override fun onAnimationCancel(animation: Animator) {
                     }
 
-                    override fun onAnimationRepeat(animation: Animator?) {
+                    override fun onAnimationRepeat(animation: Animator) {
                     }
 
                 })

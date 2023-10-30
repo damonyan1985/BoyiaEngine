@@ -109,13 +109,13 @@ object CommonFeatures {
         view.clipToOutline = true
     }
 
-    private fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any?, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
+    private fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
         return context.registerForActivityResult(object: ActivityResultContract<Unit?, Any>() {
             override fun createIntent(context: Context, input: Unit?): Intent {
                 return intent
             }
 
-            override fun parseResult(resultCode: Int, resultIntent: Intent?): Any? {
+            override fun parseResult(resultCode: Int, resultIntent: Intent?): Any {
                 return handler(resultIntent)
             }
         }) { data: Any? ->
@@ -143,7 +143,7 @@ object CommonFeatures {
         context?.let {
             return registerActivityResult(context,
                     Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
-                    { it?.data }
+                    { it?.data as Any }
             ) {
                 pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
             }

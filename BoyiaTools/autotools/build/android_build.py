@@ -133,20 +133,27 @@ def add_boyia_app_android_config():
 # 删除目录下所以文件
 def del_file(path, isDel):
     ls = os.listdir(path)
+    canDel = isDel
     for i in ls:
+        # 拼接路径
         c_path = os.path.join(path, i)
         print('i=' + i)
+        # 判断目录名是否需要过滤
+        if operator.eq(i, 'bytrace') == True:
+            canDel = False
+            continue
         if operator.eq(i, '.git') == True:
             continue
         if operator.eq(i, '.gitignore') == True:
             continue
         print("c_path=" + c_path)
         if os.path.isdir(c_path):
-            del_file(c_path, True)
+            canDel = canDel and del_file(c_path, True)
         else:
             os.remove(c_path)
-    if isDel:
+    if isDel and canDel:
         os.rmdir(path)
+    return canDel
 
 # 编译boyia工程中的rust子工程
 def do_build_boyia_rust_sdk():

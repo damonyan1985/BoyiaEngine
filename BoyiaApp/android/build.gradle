@@ -3,12 +3,13 @@
 
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.8.10'
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         mavenCentral()
         google()
         jcenter()
+        maven { url uri("$rootDir/maven/BoyiaMaven") }
     }
 
     dependencies {
@@ -19,6 +20,7 @@ buildscript {
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         //classpath ext.kotlin
+        classpath 'com.boyia.app.bytrace:bytrace:1.0.0'
     }
 }
 

@@ -1,6 +1,5 @@
 package com.boyia.app.shell.module
 
-import com.boyia.app.shell.login.LoginModule
 import com.boyia.app.shell.model.BoyiaUserInfo
 
 interface LoginListener {

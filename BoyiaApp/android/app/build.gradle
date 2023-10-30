@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'com.boyia.app.bytrace'
 apply from: "$rootDir/scripts/library.gradle"
 
 //def getCurrentTime() {
@@ -109,18 +110,18 @@ android {
         }
     }
 
-//    compileOptions {
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
-//    }
-//
-//    kotlinOptions {
-//        jvmTarget = '1.8'
-//    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
     composeOptions {
         kotlinCompilerExtensionVersion gradle.constants.composeVersion
-        kotlinCompilerVersion '1.6.10'
+        kotlinCompilerVersion '1.8.10'
     }
 
     buildFeatures {

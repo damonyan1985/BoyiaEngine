@@ -21,8 +21,8 @@ def initExtension() {
 initExtension()
 
 gradle.ext.constants = [
-    sdkVersion: 31,
-    composeVersion: '1.1.0',
+    sdkVersion: 33,
+    composeVersion: '1.4.3',
     coilVersion: '1.4.0',
     protoVersion: '3.21.11',
     javaassistVersion: '3.20.0-GA',

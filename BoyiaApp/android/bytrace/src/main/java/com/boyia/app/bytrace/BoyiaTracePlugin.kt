@@ -12,7 +12,7 @@ class BoyiaTracePlugin : Plugin<Project> {
         val components = project.extensions.getByType(AndroidComponentsExtension::class.java)
         components.onVariants { variant ->
             if (variant is ApplicationVariant) {
-                variant.instrumentation.transformClassesWith(BoyiaTraceTransform::class.java, InstrumentationScope.ALL) {}
+                variant.instrumentation.transformClassesWith(BoyiaTraceTransform::class.java, InstrumentationScope.PROJECT) {}
                 variant.instrumentation.setAsmFramesComputationMode(
                         FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
                 )

@@ -13,7 +13,7 @@ class BoyiaTraceClassVisitor(nextVisitor: ClassVisitor, private val className: S
     override fun visitMethod(access: Int, methodName: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
         //return super.visitMethod(access, methodName, descriptor, signature, exceptions)
         val methodVisitor = cv.visitMethod(access, methodName, desc, signature, exceptions)
-        return BoyiaTraceMethodVisitor(methodVisitor, className, methodName)
+        return BoyiaTraceMethodVisitor(methodVisitor, className, methodName, access, desc)
     }
 
     override fun visitEnd() {

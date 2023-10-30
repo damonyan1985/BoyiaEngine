@@ -1,8 +1,6 @@
 package com.boyia.app.bytrace
 
-import com.android.build.api.instrumentation.AsmClassVisitorFactory
-import com.android.build.api.instrumentation.ClassContext
-import com.android.build.api.instrumentation.InstrumentationParameters
+import com.android.build.api.instrumentation.*
 import org.objectweb.asm.ClassVisitor
 
 abstract class BoyiaTraceTransform : AsmClassVisitorFactory<InstrumentationParameters.None> {
@@ -11,5 +9,9 @@ abstract class BoyiaTraceTransform : AsmClassVisitorFactory<InstrumentationParam
             nextClassVisitor: ClassVisitor
     ): ClassVisitor {
         return BoyiaTraceClassVisitor(nextClassVisitor, classContext.currentClassData.className)
+    }
+
+    override fun isInstrumentable(classData: ClassData): Boolean {
+        return (classData.className.startsWith("com.boyia.app.shell.login"))
     }
 }
