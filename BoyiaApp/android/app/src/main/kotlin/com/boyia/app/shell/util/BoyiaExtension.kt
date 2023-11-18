@@ -3,8 +3,9 @@ package com.boyia.app.shell.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import com.boyia.app.common.utils.BoyiaUtils
-import java.nio.channels.FileLock
 
 /**
  * boyia dp扩展属性
@@ -34,4 +35,12 @@ fun dpx(value: Int): Dp {
 @Composable
 fun toDp(value: Int): Dp {
     return with(LocalDensity.current) { value.toDp() }
+}
+
+/**
+ * px转sp
+ */
+@Composable
+fun dsp(value: Int): TextUnit {
+    return with(LocalDensity.current) { BoyiaUtils.px2sp(value.toFloat()).sp }
 }
