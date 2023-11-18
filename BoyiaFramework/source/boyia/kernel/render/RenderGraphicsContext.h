@@ -33,6 +33,7 @@ public:
     virtual LVoid drawRoundImage(const LImage* image, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius);
 
     virtual LVoid drawVideo(const LRect& rect, const LMediaPlayer* mp);
+    virtual LVoid drawCamera(const LRect& rect, const LCamera* camera);
 #if ENABLE(BOYIA_PLATFORM_VIEW)
     virtual LVoid drawPlatform(const LRect& rect, LVoid* platformView);
 #endif

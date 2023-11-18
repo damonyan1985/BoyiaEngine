@@ -1,6 +1,7 @@
 package com.boyia.app.core.device.bluetooth;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -21,6 +22,7 @@ public class BoyiaBluetooth {
             mAdapter = bluetoothManager.getAdapter();
         }
     }
+    @SuppressLint("MissingPermission")
     public void openBluetooth(Context context) {
         if (mAdapter.isEnabled()) {
             return;

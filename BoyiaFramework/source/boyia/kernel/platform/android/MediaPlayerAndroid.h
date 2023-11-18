@@ -2,7 +2,6 @@
 #define MediaPlayerAndroid_h
 
 #include "LGdi.h"
-#include "TextureCache.h"
 #include "UIThreadClientMap.h"
 
 namespace util {
@@ -22,7 +21,6 @@ public:
 
 private:
     struct JMediaPlayer* m_player;
-    BoyiaPtr<yanbo::Texture> m_texture;
     LVoid* m_view;
 };
 }

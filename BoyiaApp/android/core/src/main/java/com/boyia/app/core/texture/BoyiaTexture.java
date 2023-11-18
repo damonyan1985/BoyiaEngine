@@ -82,6 +82,10 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
         mNotifier = notifier;
     }
 
+    /**
+     * 下一帧回调
+     * @param surfaceTexture
+     */
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
         BoyiaLog.d(TAG, "onFrameAvailable call");
@@ -90,11 +94,15 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
         }
     }
 
-    // 必须调用updateTexImage, onFrameAvailable才会继续被调用
+    /**
+     * 获取当前帧
+     * @return
+     */
     public float[] updateTexture() {
         BoyiaLog.d(TAG, "updateTexture call");
         synchronized (this) {
             try {
+                // 必须调用updateTexImage, onFrameAvailable才会继续被调用
                 mTexture.updateTexImage();
             } catch (Exception ex) {
                 ex.printStackTrace();

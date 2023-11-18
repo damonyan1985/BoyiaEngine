@@ -267,6 +267,42 @@ LVoid GraphicsContextGL::drawVideo(const LRect& rect, const LMediaPlayer* mp)
     
 }
 
+LVoid GraphicsContextGL::drawCamera(const LRect& rect, const LCamera* camera)
+{
+    if (!camera)
+        return;
+
+    ItemPainter* painter = currentPainter();
+
+    LIntPtr texId = amp->cameraId();
+    yanbo::Texture* texture = yanbo::TextureCache::getInst()->findExternal((LUintPtr)texId);
+    if (!texture) {
+        texture = yanbo::TextureCache::getInst()->createExternal(texId, rect.GetWidth(), rect.GetHeight());
+        texture->attach(texId);
+    }
+
+    BoyiaPtr<yanbo::GLPainter> paint = new yanbo::GLPainter();
+    paint->setColor(LColor(0, 0, 0, 0xFF));
+
+    paint->setExternal(texture, rect);
+    painter->painters.push(paint);    
+
+    // 获取矩阵变换数组
+    jfloatArray arr = (jfloatArray)JNIUtil::callStaticObjectMethod(
+        "com/boyia/app/core/BoyiaBridge",
+        "updateTexture",
+        "(J)[F", (jlong)texId);
+
+    if (arr) {
+        JNIEnv* env = JNIUtil::getEnv();
+        int count = env->GetArrayLength(arr);
+        jfloat* ptr = env->GetFloatArrayElements(arr, JNI_FALSE);   
+        LMemcpy(paint->stMatrix(), ptr, sizeof(float) * count); 
+        env->ReleaseFloatArrayElements(arr, ptr, 0);
+        env->DeleteLocalRef(arr);
+    }
+}
+
 #if ENABLE(BOYIA_PLATFORM_VIEW)
 LVoid GraphicsContextGL::drawPlatform(const LRect& rect, LVoid* platformView)
 {

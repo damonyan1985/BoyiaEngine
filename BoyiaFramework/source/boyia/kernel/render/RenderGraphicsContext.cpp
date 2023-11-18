@@ -185,6 +185,11 @@ LVoid RenderGraphicsContext::drawVideo(const LRect& rect, const LMediaPlayer* mp
     painter->buffer->addElement(cmd);
 }
 
+LVoid RenderGraphicsContext::drawCamera(const LRect& rect, const LCamera* camera)
+{
+
+}
+
 #if ENABLE(BOYIA_PLATFORM_VIEW)
 LVoid RenderGraphicsContext::drawPlatform(const LRect& rect, LVoid* platformView)
 {

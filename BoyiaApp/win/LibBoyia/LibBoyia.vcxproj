@@ -185,7 +185,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\VsyncWaiter.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h" />
@@ -311,7 +310,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\EditorWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp" />

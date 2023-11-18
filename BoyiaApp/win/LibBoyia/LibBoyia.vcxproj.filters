@@ -411,9 +411,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.h">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
@@ -759,9 +756,6 @@
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\GraphicsContextWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp">

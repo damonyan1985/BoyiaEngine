@@ -1,6 +1,5 @@
 #include "BoyiaOnLoadWin.h"
 #include "AppManager.h"
-#include "GraphicsContextWin.h"
 #include "PlatformBridge.h"
 #include "PixelRatio.h"
 #include "BoyiaSocket.h"
@@ -26,12 +25,7 @@ public:
     // Run In UIThread
     virtual LVoid run() LOverride
     {
-#if OLD_RENDER_FEATURE
-        util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
-        static_cast<util::GraphicsContextWin*>(gc)->repaint();
-#else
         yanbo::RenderThread::instance()->renderReset();
-#endif
     }
 };
 
@@ -39,13 +33,9 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {
     yanbo::PixelRatio::setWindowSize(width, height);
     yanbo::PixelRatio::setLogicWindowSize(720, 1280);
-#if OLD_RENDER_FEATURE
-	util::LGraphicsContext* gc = yanbo::AppManager::instance()->uiThread()->graphics();
-	static_cast<util::GraphicsContextWin*>(gc)->setContextWin(hwnd);
-#else
+
     yanbo::IRenderEngine* engine = yanbo::RenderThread::instance()->getRenderer();
     static_cast<yanbo::RenderEngineWin*>(engine)->setContextWin(hwnd);
-#endif
     
     BOYIA_LOG("hello world apppath=%s\n", yanbo::PlatformBridge::getAppPath());
 
@@ -56,11 +46,7 @@ void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 
 void BoyiaOnLoadWin::repaint()
 {
-#if OLD_RENDER_FEATURE
-    yanbo::AppManager::instance()->uiThread()->sendUIEvent(new WindowRepaintEvent());
-#else
     yanbo::RenderThread::instance()->renderReset();
-#endif
 }
 
 void BoyiaOnLoadWin::connectServer()

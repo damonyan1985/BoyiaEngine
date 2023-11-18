@@ -24,6 +24,7 @@ class LImage;
 class LFont;
 class LColor;
 class LMediaPlayer;
+class LCamera;
 class ViewPainter {
 public:
     ViewPainter()
@@ -109,6 +110,7 @@ public:
     virtual LVoid drawRoundImage(const LImage* image, LInt topLeftRadius, LInt topRightRadius, LInt bottomRightRadius, LInt bottomLeftRadius) {}
 
     virtual LVoid drawVideo(const LRect& rect, const LMediaPlayer* mp) = 0;
+    virtual LVoid drawCamera(const LRect& rect, const LCamera* camera) = 0;
 
 #if ENABLE(BOYIA_PLATFORM_VIEW)
     virtual LVoid drawPlatform(const LRect& rect, LVoid* platformView) = 0;
@@ -384,6 +386,7 @@ public:
     }
     
 private:
+    // 传入的虚拟纹理ID,非真实纹理id，但却与纹理id一一对应
     LIntPtr m_id = 0;
 };
 
@@ -447,6 +450,38 @@ private:
     WeakPtr<BoyiaRef> m_view;
     //LVoid* m_view;
 };
+
+class LCamera {
+public:
+#if ENABLE(BOYIA_KERNEL)
+    static LCamera* create(LVoid* view)
+    {
+        return kBoyiaNull;
+    }
+#else
+    static LCamera* create(LVoid* view); // instance a platform camera
+#endif
+    // 启动摄像头
+    virtual LVoid start() = 0;
+    // 开始录制视频
+    virtual LVoid startRecording() = 0;
+    // 停止录制视频
+    virtual LVoid stopRecording() = 0;
+
+    virtual LVoid setCameraId(LIntPtr id)
+    {
+        m_id = id;
+    }
+
+    virtual LIntPtr cameraId() const
+    {
+        return m_id;
+    }
+
+private:
+    // 传入的虚拟纹理ID,非真实纹理id，但却与纹理id一一对应
+    LIntPtr m_id = 0;
+};
 }
 
 using util::Editor;
@@ -456,6 +491,7 @@ using util::LGraphicsContext;
 using util::LImage;
 using util::LMediaPlayer;
 using util::ViewPainter;
+using util::LCamera;
 
 #endif // LGDI_H
 

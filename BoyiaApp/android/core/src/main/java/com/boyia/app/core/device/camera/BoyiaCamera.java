@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -13,6 +14,8 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.OutputConfiguration;
+import android.hardware.camera2.params.SessionConfiguration;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -24,9 +27,14 @@ import android.view.Surface;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.texture.BoyiaTexture;
+import com.boyia.app.loader.job.IJob;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 public class BoyiaCamera {
@@ -54,7 +62,8 @@ public class BoyiaCamera {
 
     private Semaphore mLock = new Semaphore(1);
 
-    private Surface mSurface;
+    // 视频录制
+    private BoyiaCameraRecorder mRecorder;
 
     private CameraCaptureSession.StateCallback mCaptureSessionStateCallback = new CameraCaptureSession.StateCallback() {
         @Override
@@ -73,6 +82,10 @@ public class BoyiaCamera {
                         mCaptureCallback,
                         mCameraHandler
                 );
+
+                if (mRecorder != null) {
+                    mRecorder.start();
+                }
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -88,6 +101,7 @@ public class BoyiaCamera {
         @Override
         public void onOpened(CameraDevice camera) {
             mCameraDevice = camera;
+            // 创建摄像头预览
             createCameraPreview();
         }
 
@@ -117,12 +131,18 @@ public class BoyiaCamera {
                                        CaptureRequest request,
                                        TotalCaptureResult result) {
         }
-
     };
 
-    public BoyiaCamera(boolean needCapture) {
+    public BoyiaCamera() {
         mTexture = BoyiaTexture.createTexture();
-        mIsNeedCapture = needCapture;
+    }
+
+    public long getCamerId() {
+        return mTexture.getTextureId();
+    }
+
+    public void setIsNeedCapture(boolean isNeedCapture) {
+        mIsNeedCapture = isNeedCapture;
     }
 
     boolean configCamera(CameraManager cameraManager, String cameraId) throws CameraAccessException {
@@ -178,7 +198,7 @@ public class BoyiaCamera {
         setUpCameraOutputs(cameraManager);
 
         try {
-            // 打开摄像头
+            // 打开摄像头, 当摄像头启动时会回调StateCallback，第三个参数是线程的handler
             cameraManager.openCamera(mCameraId, mDeviceStateCallback, mCameraHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -203,7 +223,7 @@ public class BoyiaCamera {
                 }
 
                 if (mIsNeedCapture) {
-                    mImageReader = ImageReader.newInstance(300, 300, ImageFormat.YUV_420_888, 2);
+                    mImageReader = ImageReader.newInstance(300, 300, ImageFormat.JPEG, 1);
                     mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mCameraHandler);
                 }
                 mCameraId = cameraId;
@@ -218,13 +238,13 @@ public class BoyiaCamera {
 
     private void createCameraPreview() {
         try {
-            mSurface = new Surface(mTexture.getSurfaceTexture());
+            Surface surface = new Surface(mTexture.getSurfaceTexture());
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewBuilder.addTarget(mSurface);
+            mPreviewBuilder.addTarget(surface);
 
             // 创建session
             mCameraDevice.createCaptureSession(
-                    Arrays.asList(mSurface),
+                    Arrays.asList(surface),
                     mCaptureSessionStateCallback,
                     mCameraHandler
             );
@@ -243,11 +263,6 @@ public class BoyiaCamera {
             mCameraDevice.close();
             mCameraDevice = null;
         }
-
-        if (null != mSurface) {
-            mSurface.release();
-            mSurface = null;
-        }
     }
 
     private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
@@ -258,76 +273,161 @@ public class BoyiaCamera {
                 return;
             }
 
-            Image.Plane[] planes = image.getPlanes();
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            byte[] yBytes = new byte[width * height];
-            byte[] uBytes = new byte[width * height / 4];
-            byte[] vBytes = new byte[width * height / 4];
-            byte[] i420 = new byte[width * height * 3 / 2];
-
-
-
-            for (int i = 0; i < planes.length; i++) {
-                int dstIndex = 0;
-                int uIndex = 0;
-                int vIndex = 0;
-                int pixelStride = planes[i].getPixelStride();
-                int rowStride = planes[i].getRowStride();
-
-                ByteBuffer buffer = planes[i].getBuffer();
-
-                byte[] bytes = new byte[buffer.capacity()];
-
-                buffer.get(bytes);
-                int srcIndex = 0;
-                if (i == 0) {
-                    for (int j = 0; j < height; j++) {
-                        System.arraycopy(bytes, srcIndex, yBytes, dstIndex, width);
-                        srcIndex += rowStride;
-                        dstIndex += width;
-                    }
-                } else if (i == 1) {
-                    for (int j = 0; j < height / 2; j++) {
-                        for (int k = 0; k < width / 2; k++) {
-                            uBytes[dstIndex++] = bytes[srcIndex];
-                            srcIndex += pixelStride;
+            mCameraHandler.post(new BoyiaCameraImageSaver(
+                    image,
+                    new BoyiaCameraImageSaver.Callback() {
+                        @Override
+                        public void onComplete(String absolutePath) {
+                            // TODO 回调文件地址
                         }
 
-                        if (pixelStride == 2) {
-                            srcIndex += rowStride - width;
-                        } else if (pixelStride == 1) {
-                            srcIndex += rowStride - width / 2;
+                        @Override
+                        public void onError(String errorCode, String errorMessage) {
                         }
-                    }
-                } else if (i == 2) {
-                    for (int j = 0; j < height / 2; j++) {
-                        for (int k = 0; k < width / 2; k++) {
-                            vBytes[dstIndex++] = bytes[srcIndex];
-                            srcIndex += pixelStride;
-                        }
-
-                        if (pixelStride == 2) {
-                            srcIndex += rowStride - width;
-                        } else if (pixelStride == 1) {
-                            srcIndex += rowStride - width / 2;
-                        }
-                    }
-                }
-                System.arraycopy(yBytes, 0, i420, 0, yBytes.length);
-                System.arraycopy(uBytes, 0, i420, yBytes.length, uBytes.length);
-                System.arraycopy(vBytes, 0, i420, yBytes.length + uBytes.length, vBytes.length);
-
-                if (mOnPreviewListener != null) {
-                    mOnPreviewListener.onPreviewFrame(i420, i420.length);
-                }
-
-
-            }
-            image.close();
+                    }));
         }
     };
+
+    /**
+     * Call by JNI
+     * 获取截图
+     * @param autoFocus 是否自动聚焦
+     */
+    public void takePicture(boolean autoFocus) {
+        try {
+            mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mCameraHandler);
+            if (autoFocus) {
+                mPreviewBuilder.set(
+                        CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
+
+                mCaptureSession.capture(mPreviewBuilder.build(), null, mCameraHandler);
+            } else {
+
+                mPreviewBuilder.set(
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+                mCaptureSession.capture(mPreviewBuilder.build(), mCaptureCallback, mCameraHandler);
+                mCaptureSession.setRepeatingRequest(
+                        mPreviewBuilder.build(), mCaptureCallback, mCameraHandler);
+
+                mPreviewBuilder.set(
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+
+                mCaptureSession.capture(mPreviewBuilder.build(), mCaptureCallback, mCameraHandler);
+            }
+
+        } catch (CameraAccessException e) {
+            BoyiaLog.e(TAG, "takePicture error", e);
+        }
+    }
+
+    // Call by JNI
+    // 开启视频录制
+    public void startRecording() {
+        mRecorder = new BoyiaCameraRecorder(mCameraId);
+        mRecorder.prepare();
+
+        if (mRecorder.getSurface() != null) {
+            List<Surface> surfaces = new ArrayList<>();
+            surfaces.add(mRecorder.getSurface());
+            surfaces.add(mImageReader.getSurface());
+
+            try {
+                createCaptureSession(surfaces, CameraDevice.TEMPLATE_RECORD, () -> mRecorder.start());
+            } catch (CameraAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    // Call by JNI
+    public void stopRecording() {
+        if (mRecorder != null) {
+            mRecorder.stop();
+            mRecorder = null;
+        }
+    }
+
+    private void createCaptureSession(List<Surface> remainingSurfaces, int templateType, IJob job) throws CameraAccessException {
+        // Close any existing capture session.
+        mCaptureSession = null;
+
+        // Create a new capture builder.
+        mPreviewBuilder = mCameraDevice.createCaptureRequest(templateType);
+
+        Surface flutterSurface = new Surface(mTexture.getSurfaceTexture());
+        mPreviewBuilder.addTarget(flutterSurface);
+
+        if (templateType != CameraDevice.TEMPLATE_PREVIEW) {
+            // If it is not preview mode, add all surfaces as targets
+            // except the surface used for still capture as this should
+            // not be part of a repeating request.
+            Surface pictureImageReaderSurface = mImageReader.getSurface();
+            for (Surface surface : remainingSurfaces) {
+                if (surface == pictureImageReaderSurface) {
+                    continue;
+                }
+                mPreviewBuilder.addTarget(surface);
+            }
+        }
+        // Prepare the callback.
+        CameraCaptureSession.StateCallback callback =
+                new CameraCaptureSession.StateCallback() {
+                    boolean captureSessionClosed = false;
+
+                    @Override
+                    public void onConfigured(CameraCaptureSession session) {
+                        BoyiaLog.i(TAG, "CameraCaptureSession onConfigured");
+                        mCaptureSession = session;
+
+
+                        try {
+                            mCaptureSession.setRepeatingRequest(
+                                    mPreviewBuilder.build(), mCaptureCallback, mCameraHandler);
+
+                            if (job != null) {
+                                job.exec();
+                            }
+                        } catch (CameraAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    @Override
+                    public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
+                        BoyiaLog.i(TAG, "CameraCaptureSession onConfigureFailed");
+                    }
+
+                    @Override
+                    public void onClosed(CameraCaptureSession session) {
+                        BoyiaLog.i(TAG, "CameraCaptureSession onClosed");
+                        captureSessionClosed = true;
+                    }
+                };
+
+        // Start the session.
+        if (BoyiaCameraRecorder.SdkCapabilityChecker.supportsSessionConfiguration()) {
+            // Collect all surfaces to render to.
+            List<OutputConfiguration> configs = new ArrayList<>();
+            configs.add(new OutputConfiguration(flutterSurface));
+            for (Surface surface : remainingSurfaces) {
+                configs.add(new OutputConfiguration(surface));
+            }
+            mCameraDevice.createCaptureSession(
+                    new SessionConfiguration(
+                            SessionConfiguration.SESSION_REGULAR,
+                            configs,
+                            Executors.newSingleThreadExecutor(),
+                            callback));
+        } else {
+            // Collect all surfaces to render to.
+            List<Surface> surfaceList = new ArrayList<>();
+            surfaceList.add(flutterSurface);
+            surfaceList.addAll(remainingSurfaces);
+            mCameraDevice.createCaptureSession(surfaceList, callback, mCameraHandler);
+        }
+    }
 
     public void setOnPreviewListener(OnPreviewListener onPreviewListener) {
         this.mOnPreviewListener = onPreviewListener;

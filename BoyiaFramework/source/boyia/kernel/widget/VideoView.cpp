@@ -19,18 +19,18 @@ VideoView::~VideoView()
     }
 }
 
-void VideoView::loadVideo()
+LVoid VideoView::loadVideo()
 {
     m_mediaPlayer->start(m_src);
 }
 
-void VideoView::layout()
+LVoid VideoView::layout()
 {
     //loadVideo();
     BlockView::layout();
 }
 
-void VideoView::paint(LGraphicsContext& gc)
+LVoid VideoView::paint(LGraphicsContext& gc)
 {
     BlockView::paint(gc);
     //gc.setHtmlView(this);

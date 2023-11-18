@@ -13,11 +13,11 @@ public:
 
     ~VideoView();
 
-    virtual void layout();
-    virtual void paint(LGraphicsContext& gc);
+    virtual LVoid layout();
+    virtual LVoid paint(LGraphicsContext& gc);
 
 private:
-    void loadVideo();
+    LVoid loadVideo();
 
 private:
     String m_src;

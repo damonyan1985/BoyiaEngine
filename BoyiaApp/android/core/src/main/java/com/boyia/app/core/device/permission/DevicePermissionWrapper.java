@@ -18,4 +18,9 @@ public class DevicePermissionWrapper implements IDevicePermission {
     public boolean requestLocation(Context context) {
         return mDevicePermissionImpl.requestLocation(context);
     }
+
+    @Override
+    public boolean requestCamera(Context context) {
+        return mDevicePermissionImpl.requestCamera(context);
+    }
 }

@@ -15,4 +15,8 @@ public class BoyiaDevicePermission implements IDevicePermission {
     public boolean requestLocation(Context context) {
         return BoyiaPermissions.requestPhotoPermissions((Activity) context);
     }
+
+    public boolean requestCamera(Context context) {
+        return BoyiaPermissions.requestCameraPermissions((Activity) context);
+    }
 }

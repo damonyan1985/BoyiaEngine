@@ -16,24 +16,24 @@ class SendNotificationHandler(private val module: IPCModule): IBoyiaIPCHandler {
     }
 
     override fun handle(data: BoyiaIpcData?, cb: IBoyiaIpcCallback) {
-        val bundle = data?.params
+        val bundle = data?.params ?: return
         // kotlin必须设置classloader，否则getParcelable时无法找到实体类
-        bundle?.classLoader = BoyiaAppInfo::class.java.classLoader
-        val appInfo = bundle?.getParcelable<BoyiaAppInfo>(ApiKeys.NOTIFICATION_APP_INFO) as BoyiaAppInfo
-        val msg = bundle?.getString(ApiKeys.NOTIFICATION_MSG)
-        val action = bundle?.getString(ApiKeys.NOTIFICATION_ACTION)
+        bundle.classLoader = BoyiaAppInfo::class.java.classLoader
+        val appInfo = bundle.getParcelable<BoyiaAppInfo>(ApiKeys.NOTIFICATION_APP_INFO) as BoyiaAppInfo
+        val msg = bundle.getString(ApiKeys.NOTIFICATION_MSG)
+        val action = bundle.getString(ApiKeys.NOTIFICATION_ACTION)
 
         if (BoyiaUtils.isTextEmpty(msg)
-                || BoyiaUtils.isTextEmpty(appInfo?.mAppCover)
+                || BoyiaUtils.isTextEmpty(appInfo.mAppCover)
                 || BoyiaUtils.isTextEmpty(action)) {
             cb.callback(null)
             return
         }
 
-        BoyiaLog.d(TAG, "title = ${appInfo?.mAppName}, icon = ${appInfo?.mAppCover}, action = $action msg=$msg")
+        BoyiaLog.d(TAG, "title = ${appInfo.mAppName}, icon = ${appInfo.mAppCover}, action = $action msg=$msg")
 
         module.sendNotification {
-            CommonFeatures.sendNotification(action!!, appInfo!!.mAppName, appInfo.mAppCover, msg!!)
+            CommonFeatures.sendNotification(action!!, appInfo.mAppName, appInfo.mAppCover, msg!!)
         }
 
         cb.callback(null)

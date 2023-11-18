@@ -9,6 +9,7 @@ buildscript {
         mavenCentral()
         google()
         jcenter()
+        // com.boyia.app.bytrace插件在该目录
         maven { url uri("$rootDir/maven/BoyiaMaven") }
     }
 
@@ -19,7 +20,8 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        //classpath ext.kotlin
+        // classpath ext.kotlin
+        // 依赖bytrace插件
         classpath 'com.boyia.app.bytrace:bytrace:1.0.0'
     }
 }

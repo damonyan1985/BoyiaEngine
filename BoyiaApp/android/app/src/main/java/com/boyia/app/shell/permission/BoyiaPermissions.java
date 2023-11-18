@@ -29,10 +29,14 @@ public class BoyiaPermissions {
      */
     public static final int NOTIFICATION_REQUEST_CODE = 5;
 
+    /**
+     * 摄像头权限
+     */
     private static final String[] CAMERA_PERMISSIONS = {
             Manifest.permission.CAMERA,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO,
     };
 
     // 蓝牙权限
@@ -97,6 +101,21 @@ public class BoyiaPermissions {
     public static boolean requestNotificationPermissions(Activity context) {
         for (int i = 0; i < NOTIFICATION_PERMISSIONS.length; i++) {
             if (!requestPermission(context, NOTIFICATION_PERMISSIONS[i], NOTIFICATION_REQUEST_CODE)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 请求摄像头权限
+     * @param context
+     * @return
+     */
+    public static boolean requestCameraPermissions(Activity context) {
+        for (int i = 0; i < CAMERA_PERMISSIONS.length; i++) {
+            if (!requestPermission(context, CAMERA_PERMISSIONS[i], CAMERA_REQUEST_CODE)) {
                 return false;
             }
         }
