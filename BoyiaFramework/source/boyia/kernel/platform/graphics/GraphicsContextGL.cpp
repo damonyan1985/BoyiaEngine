@@ -274,7 +274,7 @@ LVoid GraphicsContextGL::drawCamera(const LRect& rect, const LCamera* camera)
 
     ItemPainter* painter = currentPainter();
 
-    LIntPtr texId = amp->cameraId();
+    LIntPtr texId = camera->cameraId();
     yanbo::Texture* texture = yanbo::TextureCache::getInst()->findExternal((LUintPtr)texId);
     if (!texture) {
         texture = yanbo::TextureCache::getInst()->createExternal(texId, rect.GetWidth(), rect.GetHeight());

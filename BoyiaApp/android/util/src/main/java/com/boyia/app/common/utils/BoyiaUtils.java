@@ -151,22 +151,8 @@ public class BoyiaUtils {
     }
 
     public static Display getDisplay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return getDisplayR();
-        }
-
-        return getDisplayL();
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static Display getDisplayL() {
         WindowManager wm = (WindowManager) BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
         return wm.getDefaultDisplay();
-    }
-
-    @TargetApi(Build.VERSION_CODES.R)
-    public static Display getDisplayR() {
-        return BaseApplication.getInstance().getDisplay();
     }
 
     // 获取应用显示宽高，不包含系统装饰，如底部导航之类
@@ -305,5 +291,15 @@ public class BoyiaUtils {
         }
 
         return true;
+    }
+
+    public static int px2sp(float pxValue) {
+        final float fontScale = BaseApplication.getInstance().getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    public static int sp2px(float spValue) {
+        final float fontScale = BaseApplication.getInstance().getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
     }
 }

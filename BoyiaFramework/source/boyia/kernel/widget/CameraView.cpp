@@ -17,7 +17,7 @@ CameraView::~CameraView()
     }
 }
 
-LVoid CameraView::CameraView()
+LVoid CameraView::start()
 {
     m_camera->start();
 }

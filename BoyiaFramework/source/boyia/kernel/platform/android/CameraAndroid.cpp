@@ -84,8 +84,9 @@ private:
     LVoid* m_view;
 };
 
-LCamera* Camera::create(LVoid* view)
+LCamera* LCamera::create(LVoid* view)
 {
-    return CameraAndroid(view);
+    return new CameraAndroid(view);
 }
+
 }

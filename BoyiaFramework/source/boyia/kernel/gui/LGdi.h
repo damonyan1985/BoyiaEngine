@@ -461,6 +461,7 @@ public:
 #else
     static LCamera* create(LVoid* view); // instance a platform camera
 #endif
+    virtual ~LCamera() {}
     // 启动摄像头
     virtual LVoid start() = 0;
     // 开始录制视频

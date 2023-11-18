@@ -4,6 +4,10 @@ import com.boyia.app.common.utils.BoyiaLog
 
 object BoyiaTraceTimeLog {
     private const val TAG = "BoyiaTrace"
+
+    /**
+     * timeLocalMap key: 唯一标识，value: 时间
+     */
     private val timeLocalMap = ThreadLocal<HashMap<Int, Long>>()
     private const val LINE = "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 
