@@ -275,6 +275,7 @@ typedef struct MicroTask {
     BoyiaValue mValue; // 微任务执行完后回调
     LBool mUse; // find task in cache
     AsyncExecScene mAsyncEs; // 保存当前状态
+    LBool mResume;
     MicroTask* mNext;
 } MicroTask;
 
@@ -2228,9 +2229,19 @@ static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
 
 static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
 {
+    Instruction* inst = (Instruction*)ins;
+    BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
+
+
     Instruction* pc = vm->mEState->mPC;
+    // 获取对象
+    BoyiaFunction* fun = (BoyiaFunction*)left->mValue.mObj.mPtr;
+
+    // 获取微任务
+    MicroTask* task = (MicroTask*)fun->mParams[0].mValue.mIntVal;
+   
     // 保存栈帧
-    AsyncExecScene* aes = FAST_NEW(AsyncExecScene);
+    AsyncExecScene* aes = &task->mAsyncEs;
     aes->mStackFrame.mPC = pc;
     aes->mStackFrame.mContext = vm->mEState->mContext;
     aes->mStackFrame.mLoopSize = vm->mEState->mLoopSize;
@@ -2238,7 +2249,6 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     aes->mStackFrame.mLValSize = vm->mEState->mLValSize;
     aes->mStackFrame.mTmpLValSize = vm->mEState->mTmpLValSize;
 
-    
     LInt i = vm->mExecStack[vm->mEState->mFrameIndex].mLValSize;
     for (; i < vm->mEState->mLValSize; i++) {
         ValueCopy(&aes->mLocals[i], &vm->mLocals[i]);
@@ -2252,8 +2262,8 @@ static LVoid EvalAwait(CompileState* cs)
     NextToken(cs);
     // 先执行异步函数，强制认为其后是一个函数
     Atom(cs);
-    // 挂起程序
-    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdAwait, cs);
+    // Atom创建函数执行指令，执行函数后返回一个微任务，同时将这个微任务挂起，阻塞当前函数的执行
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdAwait, cs);
 }
 
 
@@ -3048,12 +3058,20 @@ LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm)
 
 // 执行异步任务完成后，需要将使用接过来创建一个微任务
 // 同时添加到微任务列表中
-LVoid PushMicroTask(LVoid* vmPtr, BoyiaValue* value)
+LVoid* PushMicroTask(LVoid* vmPtr)
 {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = CreateMicroTask(vm);
-    ValueCopyNoName(&task->mValue, value);
+    task->mResume = LFalse;
     AddMicroTask(vm, task);
+    return task;
+}
+
+LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value)
+{
+    MicroTask* task = (MicroTask*)taskPtr;
+    task->mResume = LTrue;
+    ValueCopyNoName(&task->mValue, value);
 }
 
 // 消费微任务，若选择支持微任务，则宏任务结束后执行该函数
@@ -3065,7 +3083,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
     MicroTask* prev = task;
     while (task) {
         // 如果异步任务完成
-        if (task->mValue.mValueType) {
+        if (task->mResume) {
             // 若任务在头部
             if (queue->mHead == task) {
                 queue->mHead = task->mNext;
@@ -3073,7 +3091,19 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
                 // 不是头部
                 prev->mNext = task->mNext;
             }
+            // 恢复await中断的程序
+            vm->mEState->mPC = task->mAsyncEs.mStackFrame.mPC;
+            vm->mEState->mContext = task->mAsyncEs.mStackFrame.mContext;
+            vm->mEState->mLoopSize = task->mAsyncEs.mStackFrame.mLoopSize;
+            vm->mEState->mClass = task->mAsyncEs.mStackFrame.mClass;
+            vm->mEState->mLValSize = task->mAsyncEs.mStackFrame.mLValSize;
+            vm->mEState->mTmpLValSize = task->mAsyncEs.mStackFrame.mTmpLValSize;
 
+
+            LInt i = vm->mExecStack[vm->mEState->mFrameIndex].mLValSize;
+            for (; i < vm->mEState->mLValSize; i++) {
+                ValueCopy(&vm->mLocals[i], &task->mAsyncEs.mLocals[i]);
+            }
             // 释放任务
             task->mUse = LFalse;
             task->mNext = kBoyiaNull;

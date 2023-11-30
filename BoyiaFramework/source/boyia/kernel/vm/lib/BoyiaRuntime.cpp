@@ -127,6 +127,7 @@ LVoid BoyiaRuntime::init()
     GEN_ID("String");
     GEN_ID("Array");
     GEN_ID("Map");
+    GEN_ID("MicroTask");
     // end builtins id
 
     initNativeFunction();

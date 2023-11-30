@@ -2,7 +2,7 @@ package com.boyia.app.shell.search
 
 import android.view.View
 import androidx.compose.foundation.*
-
+// mutableStateOf必须添加androidx.compose.runtime.*
 import androidx.compose.runtime.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*

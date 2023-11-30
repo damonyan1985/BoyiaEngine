@@ -793,6 +793,91 @@ BoyiaFunction* CreatMapObject(LVoid* vm)
 }
 // end map builtin
 
+// begin microtask builtin
+LInt BoyiaMicroTaskResolve(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 索引1，2为两个传入的参数key,value，
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    // 索引0为map函数指针
+    // 第一个参数是微任务执行完毕后，返回的结果
+    BoyiaValue* result = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+    
+    // 设置恢复微任务标记
+    ResumeMicroTask(&fun->mParams[0].mValue.mIntVal, result);
+
+    return kOpResultSuccess;
+}
+
+LInt BoyiaMicroTaskInit(LVoid* vm)
+{
+    LInt size = GetLocalSize(vm);
+    // 索引0为put函数指针
+    // 索引1，2为两个传入的参数key,value，
+    // 最后一个索引是调用时添加的对象
+    BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
+    // 索引0为map函数指针
+    // 第一个参数是worker
+    // Such as: fun worker(resolve) { dosomething(resolve); }
+    BoyiaValue* worker = (BoyiaValue*)GetLocalValue(1, vm);
+    BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
+
+    LVoid* task = PushMicroTask(vm);
+    fun->mParams[0].mValueType = BY_INT;
+    fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
+
+    // TODO 执行worker
+    // 保存当前栈
+    SaveLocalSize(vm);
+    // worker压栈
+    LocalPush(worker, vm);
+    // 参数压栈,将resolve属性函数作为参数压栈
+    LocalPush(&fun->mParams[1], vm);
+    // 构造回调对象引用
+    BoyiaValue cbObj;
+    cbObj.mValueType = BY_CLASS;
+    cbObj.mValue.mObj.mPtr = worker->mValue.mObj.mSuper;
+
+    // 调用callback函数
+    NativeCall(&cbObj, vm);
+
+    return kOpResultSuccess;
+}
+
+
+LVoid BuiltinMicroTaskClass(LVoid* vm)
+{
+    BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kMicroTask, vm);
+    // 没有父类
+    classRef->mValue.mObj.mSuper = kBoyiaNull;
+
+    BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
+
+    // task prop
+    {
+        classBody->mParams[classBody->mParamSize].mValueType = BY_INT;
+        // 第一个成员是task, 用于保存创建的c++ microtask
+        classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("task", vm);
+        classBody->mParams[classBody->mParamSize].mValue.mIntVal = kBoyiaNull;
+    }
+
+    // map api
+    {
+        // resume function implementation begin， 唤醒函数
+        GenBuiltinClassFunction(GEN_ID("init", vm), BoyiaMicroTaskInit, classBody, vm);
+        // resume function implementation end
+    }
+    {
+        // resume function implementation begin， 唤醒函数
+        GenBuiltinClassFunction(GEN_ID("resolve", vm), BoyiaMicroTaskResolve, classBody, vm);
+        // resume function implementation end
+    }
+}
+// end microtask builtin
+
 
 // 内置Array Class builtin
 BoyiaFunction* CreatArrayObject(LVoid* vm)

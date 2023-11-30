@@ -72,4 +72,10 @@ LVoid ExecuteGlobalCode(LVoid* vm);
 // 创建全局类引用
 LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm);
 
+// 添加一个微任务
+LVoid* PushMicroTask(LVoid* vmPtr);
+
+// 恢复微任务
+LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value);
+
 #endif
