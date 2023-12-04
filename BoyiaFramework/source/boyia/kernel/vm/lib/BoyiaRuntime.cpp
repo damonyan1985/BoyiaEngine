@@ -135,6 +135,7 @@ LVoid BoyiaRuntime::init()
     // add builtin classes
     BuiltinStringClass(m_vm);
     BuiltinMapClass(m_vm);
+    BuiltinMicroTaskClass(m_vm);
 }
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)

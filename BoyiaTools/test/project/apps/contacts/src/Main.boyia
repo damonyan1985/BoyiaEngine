@@ -14,6 +14,9 @@ class MainViewController extends ViewController {
         var a = 9; 
         var b = 5;
         var c = a % b;
+
+        this.testAwait();
+
         //log(c);
         Util.showToast("MainViewController dev="+c);
 
@@ -83,6 +86,25 @@ class MainViewController extends ViewController {
         
         this.socket = BoyiaSocket.create("ws://127.0.0.1:8445/contacts?uid=123", this.onSocketMsg);
         this.socket.sendMsg("hello world boyia");
+    }
+
+    prop async testAwait() {
+        var result = await this.load();
+    }
+ 
+    prop async load() {
+        Util.newMicrotask(this.awaitCallback);
+    }
+
+    prop fun awaitCallback(resolve) {
+        var params = new(NetParams);
+        params.method = "post";
+        params.headers = new(Map);
+        params.headers.put("Content-Type", "application/x-www-form-urlencoded");
+        params.headers.put("User-Token", "none");
+        params.body = "name=test&pwd=test";
+
+        this.fetch("https://192.168.2.5:8443/user/v1/login", resolve, params);
     }
     
     prop fun onSocketMsg(msg) {

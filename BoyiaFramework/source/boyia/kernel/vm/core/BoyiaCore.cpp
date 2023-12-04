@@ -854,6 +854,7 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         break;
     case BY_PROP_FUNC:
+    case BY_ASYNC_PROP:
     case BY_CLASS: {
         //dest->mValue.mIntVal = src->mValue.mIntVal;
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
@@ -915,7 +916,7 @@ static LVoid PropStatement(CompileState* cs)
         // 属性方法，初始化的时候会被拷贝到对象属性中，用于做回调使用
         if (cs->mToken.mTokenValue == BY_FUNC) {
             FunStatement(cs, BY_PROP_FUNC);
-        } else if (cs->mToken.mTokenValue = BY_ASYNC_PROP) {
+        } else if (cs->mToken.mTokenValue = BY_ASYNC) {
             FunStatement(cs, BY_ASYNC_PROP);
         }
     } else {

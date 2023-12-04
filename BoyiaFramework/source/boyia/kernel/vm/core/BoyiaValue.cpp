@@ -834,8 +834,9 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
     SaveLocalSize(vm);
     // worker压栈
     LocalPush(worker, vm);
+    // fun->mParams[1]是init函数，fun->mParams[1]是resolve函数
     // 参数压栈,将resolve属性函数作为参数压栈
-    LocalPush(&fun->mParams[1], vm);
+    LocalPush(&fun->mParams[2], vm);
     // 构造回调对象引用
     BoyiaValue cbObj;
     cbObj.mValueType = BY_CLASS;

@@ -173,6 +173,8 @@ LVoid UpdateRuntimeMemory(LVoid* pool, LVoid* vm);
 
 // 创建数组对象
 BoyiaFunction* CreatArrayObject(LVoid* vm);
+// 内置微任务
+LVoid BuiltinMicroTaskClass(LVoid* vm);
 
 LVoid SystemGC(LVoid* vm);
 

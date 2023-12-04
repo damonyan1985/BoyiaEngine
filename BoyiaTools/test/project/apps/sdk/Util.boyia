@@ -41,4 +41,10 @@ class Util {
     fun isWindows() {
         return BY_GetPlatformType() == PLATFORM_WINDOWS;
     }
+
+    fun newMicrotask(worker) {
+        var task = new(MicroTask);
+        task.init(worker);
+        return task;
+    }
 }
