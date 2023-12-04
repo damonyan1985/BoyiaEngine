@@ -2232,11 +2232,14 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
 
-
     Instruction* pc = vm->mEState->mPC;
     // 获取对象
     BoyiaFunction* fun = (BoyiaFunction*)left->mValue.mObj.mPtr;
-
+    BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
+    if (klass->mValueType != kBoyiaMicroTask) {
+        return HandleReturn(ins, vm);
+    }
+    
     // 获取微任务
     MicroTask* task = (MicroTask*)fun->mParams[0].mValue.mIntVal;
    

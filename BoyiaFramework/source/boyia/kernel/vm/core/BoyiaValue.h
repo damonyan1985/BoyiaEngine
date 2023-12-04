@@ -48,7 +48,7 @@ enum BuiltinId {
     kBoyiaString,
     kBoyiaArray,
     kBoyiaMap,
-    kMicroTask,
+    kBoyiaMicroTask,
 };
 
 // 字符串类型含义

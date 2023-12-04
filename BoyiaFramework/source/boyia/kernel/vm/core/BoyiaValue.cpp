@@ -435,7 +435,7 @@ LVoid GenBuiltinClassFunction(LUintPtr key, NativePtr func, BoyiaFunction* class
     
     BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
     putFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-    putFuncVal->mNameKey = key; //GenIdentByStr("put", vm);
+    putFuncVal->mNameKey = key; // GenIdentByStr("put", vm);
     putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
 }
 
@@ -829,7 +829,7 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
     fun->mParams[0].mValueType = BY_INT;
     fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
 
-    // TODO 执行worker
+    // 执行worker
     // 保存当前栈
     SaveLocalSize(vm);
     // worker压栈
@@ -850,7 +850,7 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
 
 LVoid BuiltinMicroTaskClass(LVoid* vm)
 {
-    BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kMicroTask, vm);
+    BoyiaValue* classRef = (BoyiaValue*)CreateGlobalClass(kBoyiaMicroTask, vm);
     // 没有父类
     classRef->mValue.mObj.mSuper = kBoyiaNull;
 
