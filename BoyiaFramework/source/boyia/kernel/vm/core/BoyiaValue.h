@@ -16,6 +16,7 @@ enum KeyWord {
     BY_ASYNC,
     BY_ASYNC_PROP,
     BY_NAV_FUNC,
+    BY_NAV_PROP,
     BY_AWAIT,
     BY_NAVCLASS,
     BY_CLASS,

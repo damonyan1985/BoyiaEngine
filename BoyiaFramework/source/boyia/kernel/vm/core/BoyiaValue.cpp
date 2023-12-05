@@ -439,6 +439,21 @@ LVoid GenBuiltinClassFunction(LUintPtr key, NativePtr func, BoyiaFunction* class
     putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
 }
 
+LVoid GenBuiltinClassPropFunction(LUintPtr key, NativePtr func, BoyiaFunction* classBody, LVoid* vm)
+{
+    BoyiaFunction* function = NEW(BoyiaFunction, vm);
+    function->mParams = kBoyiaNull;
+    function->mParamSize = 0;
+    // 实际调用的函数
+    function->mFuncBody = (LIntPtr)func;
+
+    BoyiaValue* putFuncVal = &classBody->mParams[classBody->mParamSize++];
+    putFuncVal->mValueType = BY_NAV_PROP; // 内置类的函数类型
+    putFuncVal->mNameKey = key; // GenIdentByStr("put", vm);
+    putFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
+    putFuncVal->mValue.mObj.mSuper = (LIntPtr)classBody;
+}
+
 // 获取唯一标识class的class id
 LUintPtr GetBoyiaClassId(BoyiaValue* obj)
 {
@@ -873,7 +888,7 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
     }
     {
         // resume function implementation begin， 唤醒函数
-        GenBuiltinClassFunction(GEN_ID("resolve", vm), BoyiaMicroTaskResolve, classBody, vm);
+        GenBuiltinClassPropFunction(GEN_ID("resolve", vm), BoyiaMicroTaskResolve, classBody, vm);
         // resume function implementation end
     }
 }

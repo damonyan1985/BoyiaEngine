@@ -230,7 +230,7 @@ typedef struct {
     LInt mResultNum;
     BoyiaValue mClass;
     CommandTable* mContext;
-    BoyiaFunction* mFun;
+    BoyiaValue mFun;
     Instruction* mPC; // pc , 指令计数器
 } ExecState;
 
@@ -804,7 +804,9 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm)
             
             BoyiaValue* prop = newFunc->mParams + newFunc->mParamSize++;
             ValueCopy(prop, func->mParams + idx);
-            if (type == BY_PROP_FUNC) {
+            if (type == BY_PROP_FUNC 
+                || type == BY_ASYNC_PROP
+                || type == BY_NAV_PROP) {
                 prop->mValue.mObj.mSuper = (LIntPtr)newFunc;
             }
         }
@@ -855,6 +857,7 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
         break;
     case BY_PROP_FUNC:
     case BY_ASYNC_PROP:
+    case BY_NAV_PROP:
     case BY_CLASS: {
         //dest->mValue.mIntVal = src->mValue.mIntVal;
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
@@ -1775,6 +1778,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
     BoyiaValue* value = &vm->mLocals[start];
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
+    ValueCopy(&vm->mEState->mFun, value);
     // 内置类产生的对象，调用其方法
     if (value->mValueType == BY_NAV_FUNC) {
         // 将对象作为最后一个参数传入
@@ -1783,7 +1787,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         // native函数没有instruction，所以pc置为null
         vm->mEState->mPC = kBoyiaNull;
         return navFun(vm);
-    } else if (value->mValueType == BY_PROP_FUNC) {
+    } else if (value->mValueType == BY_PROP_FUNC || value->mValueType == BY_ASYNC_PROP) {
         // 用属性对象指向的对象实例构造一个对象引用
         BoyiaValue val;
         val.mValueType = BY_CLASS;
@@ -1792,8 +1796,6 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         val.mValue.mObj.mPtr = value->mValue.mObj.mSuper;
         val.mValue.mObj.mSuper = objBody->mFuncBody;
         AssignStateClass(vm, &val);
-    } else if (value->mValueType == BY_ASYNC_PROP) {
-        vm->mEState->mFun = func;
     } else if (value->mValueType == BY_ASYNC) {}
     
     vm->mEState->mContext = (CommandTable*)func->mFuncBody;
