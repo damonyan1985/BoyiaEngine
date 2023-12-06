@@ -453,6 +453,9 @@ static LVoid ResetScene(BoyiaVM* vm)
     vm->mEState->mLoopSize = 0;
     vm->mEState->mResultNum = 0;
     vm->mEState->mTmpLValSize = 0;
+
+    vm->mEState->mFun.mValue.mObj.mPtr = kBoyiaNull;
+    vm->mEState->mFun.mValueType = BY_ARG;
     //vm->mEState->mClass = kBoyiaNull;
     AssignStateClass(vm, kBoyiaNull);
 }
@@ -1085,6 +1088,21 @@ static LVoid ElseStatement(CompileState* cs)
 static LInt HandleReturn(LVoid* ins, BoyiaVM* vm)
 {
     vm->mEState->mPC = vm->mEState->mContext->mEnd;
+    if (vm->mEState->mFun.mValueType == BY_ASYNC_PROP) {
+        BoyiaValue* result = &vm->mCpu->mReg0;
+        // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
+        if (result->mValueType != kBoyiaMicroTask) {
+            BoyiaFunction* fun = CreateMicroTaskObject(vm);
+            MicroTask* task = CreateMicroTask(vm);
+            task->mResume = true;
+            ValueCopy(&task->mValue, result);
+            fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
+
+            result->mValueType = kBoyiaMicroTask;
+            result->mValue.mObj.mPtr = (LIntPtr)fun;
+            result->mValue.mObj.mSuper = kBoyiaNull;
+        }
+    }
     return kOpResultSuccess;
 }
 
@@ -2469,7 +2487,7 @@ static LInt HandleSetMapValue(LVoid* ins, BoyiaVM* vm)
 static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
-    BoyiaFunction* fun = CreatArrayObject(vm);
+    BoyiaFunction* fun = CreateArrayObject(vm);
     
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     

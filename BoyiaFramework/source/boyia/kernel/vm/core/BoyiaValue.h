@@ -173,10 +173,13 @@ LVoid* MigrateRuntimeMemory(LVoid* addr, LVoid* pool, LVoid* vm);
 LVoid UpdateRuntimeMemory(LVoid* pool, LVoid* vm);
 
 // 创建数组对象
-BoyiaFunction* CreatArrayObject(LVoid* vm);
+BoyiaFunction* CreateArrayObject(LVoid* vm);
 // 内置微任务
 LVoid BuiltinMicroTaskClass(LVoid* vm);
 
 LVoid SystemGC(LVoid* vm);
+
+// 创建微任务
+BoyiaFunction* CreateMicroTaskObject(LVoid* vm);
 
 #endif

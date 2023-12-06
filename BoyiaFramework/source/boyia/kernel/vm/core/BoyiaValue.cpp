@@ -892,11 +892,18 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
         // resume function implementation end
     }
 }
+
+BoyiaFunction* CreateMicroTaskObject(LVoid* vm)
+{
+    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaMicroTask, 32, vm);
+    GCAppendRef(objBody, BY_CLASS, vm);
+    return objBody;
+}
 // end microtask builtin
 
 
 // 内置Array Class builtin
-BoyiaFunction* CreatArrayObject(LVoid* vm)
+BoyiaFunction* CreateArrayObject(LVoid* vm)
 {
     BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaArray, 32, vm);
     GCAppendRef(objBody, BY_CLASS, vm);
