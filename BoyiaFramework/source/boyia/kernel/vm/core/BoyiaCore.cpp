@@ -1093,19 +1093,7 @@ static LInt HandleReturn(LVoid* ins, BoyiaVM* vm)
 {
     vm->mEState->mPC = vm->mEState->mContext->mEnd;
     if (vm->mEState->mFun.mValueType == BY_ASYNC_PROP) {
-        BoyiaValue* result = &vm->mCpu->mReg0;
-        // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
-        if (result->mValueType != kBoyiaMicroTask) {
-            BoyiaFunction* fun = CreateMicroTaskObject(vm);
-            MicroTask* task = CreateMicroTask(vm);
-            task->mResume = true;
-            ValueCopy(&task->mValue, result);
-            fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
-
-            result->mValueType = kBoyiaMicroTask;
-            result->mValue.mObj.mPtr = (LIntPtr)fun;
-            result->mValue.mObj.mSuper = kBoyiaNull;
-        }
+        return HandleAsyncEnd(ins, vm);
     }
     return kOpResultSuccess;
 }
