@@ -154,7 +154,8 @@ enum CmdType {
     kCmdSetMapValue,
     kCmdCreateArray,
     kCmdAddArrayItem,
-    kCmdAwait
+    kCmdAwait,
+    kCmdAsyncEnd
 };
 
 typedef struct {
@@ -429,6 +430,8 @@ static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm);
 static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm);
 
 static LInt HandleAwait(LVoid* ins, BoyiaVM* vm);
+
+static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
 static LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src);
@@ -523,6 +526,7 @@ static OPHandler* InitHandlers()
     handlers[kCmdCreateArray] = HandleCreateArray;
     handlers[kCmdAddArrayItem] = HandleAddArrayItem;
     handlers[kCmdAwait] = HandleAwait;
+    handlers[kCmdAsyncEnd] = HandleAsyncEnd;
 
     return handlers;
 }
@@ -1638,6 +1642,25 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm)
+{
+    BoyiaValue* result = &vm->mCpu->mReg0;
+    // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
+    if (result->mValueType != kBoyiaMicroTask) {
+        BoyiaFunction* fun = CreateMicroTaskObject(vm);
+        MicroTask* task = CreateMicroTask(vm);
+        task->mResume = true;
+        ValueCopy(&task->mValue, result);
+        fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
+
+        result->mValueType = kBoyiaMicroTask;
+        result->mValue.mObj.mPtr = (LIntPtr)fun;
+        result->mValue.mObj.mSuper = kBoyiaNull;
+    }
+
+    return kOpResultSuccess;
+}
+
 // funType可以是function，prop function, prop async
 static LVoid FunStatement(CompileState* cs, LInt funType)
 {
@@ -1653,6 +1676,10 @@ static LVoid FunStatement(CompileState* cs, LInt funType)
     InitParams(cs); //  初始化参数
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
+
+    if (funType == BY_ASYNC_PROP) {
+        PutInstruction(kBoyiaNull, kBoyiaNull, kCmdAsyncEnd, cs);
+    }
 }
 
 /*
