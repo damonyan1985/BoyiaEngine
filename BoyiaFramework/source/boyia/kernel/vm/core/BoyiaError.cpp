@@ -49,3 +49,11 @@ LVoid PrintErrorKey(LUintPtr key, LInt error, LInt lineNum, LVoid* vm)
     GetIdentName(key, &name, vm);
     BOYIA_LOG("BoyiaVM RuntimeError=%s lineno=%d key=%s", FindErrorInfo(error), lineNum, name.mPtr);
 }
+
+LVoid PrintValueKey(LVoid* value, LVoid* vm)
+{
+    BoyiaValue* val = (BoyiaValue*)value;
+    BoyiaStr name;
+    GetIdentName(val->mNameKey, &name, vm);
+    BOYIA_LOG("BoyiaVM Value Key=%s", name.mPtr);
+}

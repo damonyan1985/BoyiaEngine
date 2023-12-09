@@ -1634,14 +1634,14 @@ static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm)
 {
     BoyiaValue* result = &vm->mCpu->mReg0;
     // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
-    if (result->mValueType != kBoyiaMicroTask) {
+    if (result->mValueType != BY_CLASS || GetBoyiaClassId(result) != kBoyiaMicroTask) {
         BoyiaFunction* fun = CreateMicroTaskObject(vm);
         MicroTask* task = CreateMicroTask(vm);
         task->mResume = true;
         ValueCopy(&task->mValue, result);
-        fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
+        fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
 
-        result->mValueType = kBoyiaMicroTask;
+        result->mValueType = BY_CLASS;
         result->mValue.mObj.mPtr = (LIntPtr)fun;
         result->mValue.mObj.mSuper = kBoyiaNull;
     }
@@ -1813,7 +1813,7 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
     ValueCopy(&vm->mEState->mFun, value);
     // 内置类产生的对象，调用其方法
-    if (value->mValueType == BY_NAV_FUNC) {
+    if (value->mValueType == BY_NAV_FUNC || value->mValueType == BY_NAV_PROP) {
         // 将对象作为最后一个参数传入
         LocalPush(&vm->mEState->mClass, vm);
         NativePtr navFun = (NativePtr)func->mFuncBody;
@@ -2272,12 +2272,13 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     // 获取对象
     BoyiaFunction* fun = (BoyiaFunction*)left->mValue.mObj.mPtr;
     BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
-    if (klass->mValueType != kBoyiaMicroTask) {
+    PrintValueKey(klass, vm);
+    if (GetBoyiaClassId(klass) != kBoyiaMicroTask) {
         return HandleReturn(ins, vm);
     }
     
     // 获取微任务
-    MicroTask* task = (MicroTask*)fun->mParams[0].mValue.mIntVal;
+    MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
    
     // 保存栈帧
     AsyncExecScene* aes = &task->mAsyncEs;
@@ -2312,12 +2313,12 @@ static LVoid EvalAwait(CompileState* cs)
 // (await function()) * 32; boyia语言将严格这一范式
 static LVoid EvalExpression(CompileState* cs)
 {
+    NextToken(cs); // var or await
     if (cs->mToken.mTokenValue == BY_AWAIT) {
         EvalAwait(cs);
         return;
     }
 
-    NextToken(cs);
     if (!cs->mToken.mTokenName.mLen) {
         SntxErrorBuild(NO_EXP, cs);
         return;
@@ -2646,9 +2647,10 @@ static LVoid Atom(CompileState* cs)
 static LVoid EvalSubexpr(CompileState* cs)
 {
     if (cs->mToken.mTokenValue == LPTR) {
-        NextToken(cs);
+        //NextToken(cs);
         //EngineStrLog("EvalSubexpr %s", cs->mToken.mTokenName);
-        EvalAssignment(cs);
+        //EvalAssignment(cs);
+        EvalExpression(cs);
         //EngineStrLog("EvalSubexpr %s", cs->mToken.mTokenName);
         if (cs->mToken.mTokenValue != RPTR) {
             SntxErrorBuild(PAREN_EXPECTED, cs);
@@ -3024,9 +3026,11 @@ LVoid NativeCall(BoyiaValue* obj, LVoid* vm)
     AssignStateClass(vmPtr, obj);
 
     HandlePushParams(kBoyiaNull, vmPtr);
-    HandleCallFunction(kBoyiaNull, vmPtr);
+    LInt result = HandleCallFunction(kBoyiaNull, vmPtr);
 
-    ExecInstruction(vmPtr);
+    if (result == kOpResultJumpFun) {
+        ExecInstruction(vmPtr);
+    }
 }
 
 LVoid ExecuteGlobalCode(LVoid* vm)

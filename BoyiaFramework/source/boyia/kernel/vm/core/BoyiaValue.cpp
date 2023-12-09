@@ -15,6 +15,7 @@
 #include "StringUtils.h"
 #include "SystemUtil.h"
 #include "BoyiaCore.h"
+#include "BoyiaError.h"
 #include <stdio.h>
 #include <stdlib.h>
 #if ENABLE(BOYIA_WINDOWS)
@@ -822,7 +823,7 @@ LInt BoyiaMicroTaskResolve(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     
     // 设置恢复微任务标记
-    ResumeMicroTask(&fun->mParams[0].mValue.mIntVal, result);
+    ResumeMicroTask(&fun->mParams[1].mValue.mIntVal, result);
 
     return kOpResultSuccess;
 }
@@ -841,17 +842,19 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
 
     LVoid* task = PushMicroTask(vm);
-    fun->mParams[0].mValueType = BY_INT;
-    fun->mParams[0].mValue.mIntVal = (LIntPtr)task;
+    fun->mParams[1].mValueType = BY_INT;
+    fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
 
     // 执行worker
     // 保存当前栈
     SaveLocalSize(vm);
     // worker压栈
     LocalPush(worker, vm);
-    // fun->mParams[1]是init函数，fun->mParams[1]是resolve函数
+    // fun->mParams[0]是resolve函数
     // 参数压栈,将resolve属性函数作为参数压栈
-    LocalPush(&fun->mParams[2], vm);
+    LocalPush(&fun->mParams[0], vm);
+
+    PrintValueKey(&fun->mParams[0], vm);
     // 构造回调对象引用
     BoyiaValue cbObj;
     cbObj.mValueType = BY_CLASS;
@@ -877,12 +880,12 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
         classBody->mParams[classBody->mParamSize].mValueType = BY_INT;
         // 第一个成员是task, 用于保存创建的c++ microtask
         classBody->mParams[classBody->mParamSize].mNameKey = GEN_ID("task", vm);
-        classBody->mParams[classBody->mParamSize].mValue.mIntVal = kBoyiaNull;
+        classBody->mParams[classBody->mParamSize++].mValue.mIntVal = kBoyiaNull;
     }
 
     // map api
     {
-        // resume function implementation begin， 唤醒函数
+        // resume function implementation begin， init函数
         GenBuiltinClassFunction(GEN_ID("init", vm), BoyiaMicroTaskInit, classBody, vm);
         // resume function implementation end
     }

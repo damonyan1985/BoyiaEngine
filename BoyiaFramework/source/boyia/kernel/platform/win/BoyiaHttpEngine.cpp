@@ -42,7 +42,7 @@ LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
 
 LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
-    BOYIA_LOG("BoyiaHttpEngine---request url: %s callback�� %d", GET_STR(url), (LIntPtr)m_callback);
+    BOYIA_LOG("BoyiaHttpEngine---request url: %s callback %d", GET_STR(url), (LIntPtr)m_callback);
     if (!m_callback) {
         return;
     }
@@ -101,6 +101,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         dwError = GetLastError();
         BOYIA_LOG("HttpSendRequest error: ", dwError);
         m_callback->onLoadError(NetworkClient::kNetworkFileError);
+        InternetCloseHandle(request);
+        InternetCloseHandle(connect);
+        InternetCloseHandle(internet);
         return;
     }
 
@@ -137,9 +140,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
             break;
         }
     }
-    pInfoBuffer[dwInfoBufferLength] = '/0';
-    pInfoBuffer[dwInfoBufferLength + 1] = '/0';
-    printf("%s", pInfoBuffer);
+    //pInfoBuffer[dwInfoBufferLength] = 0;
+    //pInfoBuffer[dwInfoBufferLength + 1] = 0;
+    //printf("%s", pInfoBuffer);
     free(pInfoBuffer);
 	// Get Response Body
     DWORD bufferSize = 1 * KB;
@@ -166,6 +169,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         DWORD readSize;
         if (!InternetReadFile(request, buffer, bufferSize, &readSize)) {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);
+            InternetCloseHandle(request);
+            InternetCloseHandle(connect);
+            InternetCloseHandle(internet);
             return;
         }
 

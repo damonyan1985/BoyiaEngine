@@ -8,6 +8,7 @@
 #include "BoyiaViewDoc.h"
 #include "BoyiaViewGroup.h"
 #include "PlatformBridge.h"
+#include "BoyiaError.h"
 #if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
 #endif
@@ -511,10 +512,16 @@ LInt loadDataFromNative(LVoid* vm)
     BoyiaStr* urlStr = GetStringBuffer(val);
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
+
+
+    boyia::BoyiaRuntime* runtime = static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
+    BoyiaFunction* fun = (BoyiaFunction*)callback->mValue.mObj.mSuper;
+    BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
     
+    PrintValueKey(klass, vm);
     boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(
         callback, obj,
-        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+        runtime);
     
     // 默认是get请求，如果参数包含params，按照params中包含的属性进行处理
     if (GetLocalSize(vm) > 3) {

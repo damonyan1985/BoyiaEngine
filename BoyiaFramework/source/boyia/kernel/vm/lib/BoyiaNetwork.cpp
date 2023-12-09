@@ -4,6 +4,7 @@
 #include "BoyiaAsyncEvent.h"
 #include "BoyiaLib.h"
 #include "UIView.h"
+#include "BoyiaError.h"
 
 namespace boyia {
 BoyiaNetwork::BoyiaNetwork(BoyiaValue* callback, BoyiaValue* obj, BoyiaRuntime* runtime)
