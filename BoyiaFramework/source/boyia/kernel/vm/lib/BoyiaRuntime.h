@@ -39,6 +39,7 @@ public:
     LVoid changeMemoryPool(LVoid* pool);
     // 调用平台相关API
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
+    LVoid consumeMicroTask();
 
 private:
     LVoid initNativeFunction();

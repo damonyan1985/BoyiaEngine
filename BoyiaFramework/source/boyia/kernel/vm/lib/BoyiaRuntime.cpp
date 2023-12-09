@@ -261,4 +261,9 @@ LVoid BoyiaRuntime::callPlatformApi(const String& params, BoyiaValue* propCB)
     PlatformApiCallback* cb = new PlatformApiCallback(&cbObj, propCB, this);
     yanbo::PlatformBridge::handleApi(params, (LIntPtr)cb);
 }
+
+LVoid BoyiaRuntime::consumeMicroTask()
+{
+    ConsumeMicroTask(m_vm);
+}
 }

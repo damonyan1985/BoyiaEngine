@@ -89,6 +89,8 @@ class MainViewController extends ViewController {
 
     prop async testAwait() {
         var result = (await this.load());
+
+        Util.log("testAwait result:" + result);
     }
  
     prop async load() {

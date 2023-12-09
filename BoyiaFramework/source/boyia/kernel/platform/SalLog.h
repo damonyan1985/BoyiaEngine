@@ -52,6 +52,7 @@ extern bool JNI_LOG_ON;
 #define BOYIA_LOG KFORMATLOG
 #elif ENABLE(BOYIA_WINDOWS)
 #include <stdio.h>
+
 #define INIT_KLOG(file_name, is_open)
 #define SHUT_KLOG()
 #define KLOG(log_str)

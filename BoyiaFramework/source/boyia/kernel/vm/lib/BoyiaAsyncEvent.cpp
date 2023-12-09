@@ -186,5 +186,8 @@ LVoid BoyiaAsyncEvent::run()
     callback();
     // Remove this on UI thread
     m_runtime->eventManager()->removeEvent(this);
+
+    // Consume microtask
+    m_runtime->consumeMicroTask();
 }
 }

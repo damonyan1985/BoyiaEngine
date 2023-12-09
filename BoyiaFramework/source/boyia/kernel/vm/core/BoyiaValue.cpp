@@ -823,7 +823,7 @@ LInt BoyiaMicroTaskResolve(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     
     // 设置恢复微任务标记
-    ResumeMicroTask(&fun->mParams[1].mValue.mIntVal, result);
+    ResumeMicroTask((LVoid*)fun->mParams[1].mValue.mIntVal, result);
 
     return kOpResultSuccess;
 }

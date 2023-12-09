@@ -78,4 +78,7 @@ LVoid* PushMicroTask(LVoid* vmPtr);
 // 恢复微任务
 LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value);
 
+// 消费微任务
+LVoid ConsumeMicroTask(LVoid* vmPtr);
+
 #endif
