@@ -437,6 +437,10 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm);
 static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
+// Eval Begin
+static LVoid EvalAwait(CompileState* cs);
+// Eval End
+
 static LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src);
 
 static LVoid AssignStateClass(BoyiaVM* vm, BoyiaValue* value)
@@ -1074,7 +1078,8 @@ static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
         LUintPtr objKey = (LUintPtr)inst->mOPLeft.mValue;
         if (objKey != kBoyiaSuper) {
             //vm->mEState->mClass = (BoyiaValue*)vm->mCpu->mReg0.mNameKey;
-            AssignStateClass(vm, (BoyiaValue*)vm->mCpu->mReg0.mNameKey);
+            //AssignStateClass(vm, (BoyiaValue*)vm->mCpu->mReg0.mNameKey);
+            AssignStateClass(vm, &vm->mCpu->mReg0);
         }
     } else {
         //vm->mEState->mClass = kBoyiaNull;
@@ -1221,7 +1226,7 @@ static LVoid BlockStatement(CompileState* cs)
                 BreakStatement(cs);
                 break;
             case BY_AWAIT:
-                EvalExpression(cs);
+                EvalAwait(cs);
                 break;
             }
         }
@@ -1942,8 +1947,17 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
             return kOpResultFail;
         }
 
+        if (val->mValueType == BY_VAR) {
+            ValueCopy(left, val);
+        } else {
+            ValueCopyNoName(left, val);
+            left->mNameKey = (LUintPtr)val;
+        }
+
+        /*
         ValueCopyNoName(left, val);
         left->mNameKey = (LUintPtr)val;
+        */
     } break;
     case OP_REG0: {
         ValueCopyNoName(left, &vm->mCpu->mReg0);
@@ -2272,7 +2286,6 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
 
-    Instruction* pc = vm->mEState->mPC;
     // 获取对象
     BoyiaFunction* fun = (BoyiaFunction*)left->mValue.mObj.mPtr;
     BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
@@ -2294,7 +2307,7 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
         ValueCopy(&aes->mLocals[i - start], &vm->mLocals[i]);
     }
 
-    aes->mStackFrame.mPC = pc;
+    aes->mStackFrame.mPC = vm->mEState->mPC;
     aes->mStackFrame.mContext = vm->mEState->mContext;
     aes->mStackFrame.mLoopSize = vm->mEState->mLoopSize;
     aes->mStackFrame.mClass = vm->mEState->mClass;
@@ -2363,7 +2376,17 @@ static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
     if (!left || !result) {
         return kOpResultFail;
     }
-    BoyiaValue* value = (BoyiaValue*)left->mNameKey;
+
+    
+    BoyiaValue* value = kBoyiaNull;
+    if (left->mValueType == BY_VAR) {
+        value = FindVal(left->mNameKey, vm);
+    } else {
+        value = (BoyiaValue*)left->mNameKey;
+    }
+
+    //BoyiaValue* value = (BoyiaValue*)left->mNameKey;
+
     ValueCopyNoName(value, result);
     ValueCopy(&vm->mCpu->mReg0, value);
     return kOpResultSuccess;
@@ -2610,12 +2633,12 @@ static LVoid Atom(CompileState* cs)
 {
     switch (cs->mToken.mTokenType) {
     case IDENTIFIER: {
-        LInt idx = FindNativeFunc(GenIdentifier(&cs->mToken.mTokenName, cs->mVm), cs->mVm);
+        LUintPtr key = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
+        LInt idx = FindNativeFunc(key, cs->mVm);
         if (idx != -1) {
             CallNativeStatement(cs, idx);
             NextToken(cs);
         } else {
-            LUintPtr key = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
             NextToken(cs);
             if (cs->mToken.mTokenValue == LPTR) {
                 OpCommand cmd = { OP_VAR, (LIntPtr)key };
@@ -2623,6 +2646,7 @@ static LVoid Atom(CompileState* cs)
                 OpCommand objCmd = { OP_CONST_NUMBER, 0 };
                 CallStatement(cs, &objCmd);
                 NextToken(cs);
+                // fun(xxx).prop
                 if (cs->mToken.mTokenValue == DOT) {
                     EvalGetProp(cs);
                 }
@@ -3157,17 +3181,14 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
             LInt i = 0;
             for (; i < size; i++) {
                 ValueCopy(&vm->mLocals[vm->mEState->mLValSize + i], &aes->mLocals[i]);
-                vm->mEState->mLValSize++;
             }
 
             size = aes->mStackFrame.mResultNum;
             for (i = 0; i < size; i++) {
-                
                 ValueCopy(&vm->mOpStack[vm->mEState->mResultNum + i], &aes->mOpStack[i]);
-                vm->mEState->mResultNum++;
             }
 
-            PrintValueKey(&aes->mLocals[1], vm);
+            //PrintValueKey(&aes->mLocals[1], vm);
 
             // 恢复await中断的程序
             Instruction* pc = aes->mStackFrame.mPC;
