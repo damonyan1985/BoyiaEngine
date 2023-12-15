@@ -11,6 +11,9 @@ import androidx.core.app.NotificationCompat
 import com.boyia.app.shell.BoyiaConstants
 import com.boyia.app.shell.R
 
+/**
+ * 通知服务
+ */
 class BoyiaNotifyService: Service() {
     companion object {
         const val BOYIA_APP_CHANNEL_ID = "boyia_app_channel_id"

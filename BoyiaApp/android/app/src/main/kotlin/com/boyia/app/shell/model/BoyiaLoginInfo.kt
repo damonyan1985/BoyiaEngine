@@ -25,19 +25,9 @@ class BoyiaLoginInfo {
     var user: BoyiaUserInfo? = null
         get() {
             if (field == null) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    // 跨线程获取存储对象
-                    // async与withcontext区别是，withcontext会主动切换线程
-                    // async必须使用await方才能切换线程
-                    val job = async(Dispatchers.IO) {
-                        val info = BoyiaShare.getImpl(USER_KEY, null)
-                        BoyiaLog.d(TAG, "get field = $info")
-                        BoyiaJson.jsonParse(info, BoyiaUserInfo::class.java)
-                    }
-
-                    // 使用await在主线程得到该对象
-                    field = job.await()
-                }
+                val info = BoyiaShare.getImpl(USER_KEY, null)
+                BoyiaLog.d(TAG, "get field = $info")
+                field = BoyiaJson.jsonParse(info, BoyiaUserInfo::class.java)
             }
 
             return field

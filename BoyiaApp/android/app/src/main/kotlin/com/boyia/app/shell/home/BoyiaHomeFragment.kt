@@ -51,6 +51,8 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
     private var maskView: FrameLayout? = null
     private var listener: SlideListener? = null
 
+    override fun customTag(): String = TAG
+
     // 要防止onCreateView被多次调用
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootLayout != null) {

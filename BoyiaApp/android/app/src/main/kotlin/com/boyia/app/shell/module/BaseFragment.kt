@@ -8,4 +8,6 @@ open class BaseFragment: Fragment() {
     }
 
     open fun hide() {}
+
+    open fun customTag() : String = ""
 }

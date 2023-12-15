@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.boyia.app.common.utils.BoyiaLog
+import com.boyia.app.core.device.permission.IDevicePermission
 import com.boyia.app.shell.api.IPickImageLoader
 import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.IModuleContext
@@ -12,6 +13,8 @@ import com.boyia.app.shell.permission.BoyiaPermissions
 import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.PermissionCallback
 import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * 分离BoyiaHomeActivity功能
@@ -32,8 +35,9 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
         pickerLoaders.clear()
     }
 
-    // 消息通知
-    private val notifyCallbacks = mutableListOf<PermissionCallback>()
+    // 权限申请
+    private val nextPermissionCode = AtomicInteger(1)
+    private val permissionsMap = HashMap<Int, PermissionCallback>()
 
     fun onCreate() {
         initHome()
@@ -53,10 +57,23 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
         }
     }
 
+    /**
+     * 封装权限控制
+     */
+    override fun requestPermissions(permissions: Array<String>, onPermissionCallback: PermissionCallback) {
+        getActivity()?.let {
+            val requestCode = nextPermissionCode.getAndIncrement()
+            permissionsMap[requestCode] = onPermissionCallback;
+            if (BoyiaPermissions.requestPermission(it, permissions, requestCode)) {
+                onPermissionCallback()
+            }
+        }
+    }
+
     // 打开图库
     override fun pickImage(loader: IPickImageLoader) {
         pickerLoaders.add(loader)
-        if (BoyiaPermissions.requestPhotoPermissions(getActivity())) {
+        requestPermissions(IDevicePermission.STORAGE_PERMISSIONS) {
             pickLauncher?.launch(null)
         }
     }
@@ -64,18 +81,13 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
     // 发送通知，通知程序在回调中处理
     override fun sendNotification(callback: PermissionCallback) {
         getActivity()?.let {
-            notifyCallbacks.add(callback)
-            if (NotificationManagerCompat.from(it).areNotificationsEnabled()
-                    || BoyiaPermissions.requestNotificationPermissions(it)) {
-                BoyiaLog.d(TAG, "sendNotification by permission")
-                notifyCallbacks.forEach {
-                    it()
-                }
-
-                notifyCallbacks.clear()
+            if (NotificationManagerCompat.from(it).areNotificationsEnabled()) {
+                callback()
+                return
             }
-        }
 
+            requestPermissions(BoyiaPermissions.NOTIFICATION_PERMISSIONS, callback)
+        }
     }
 
     override fun rootId(): Int {
@@ -88,21 +100,28 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
 
     // 处理权限回调
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(requestCode) {
-            BoyiaPermissions.CAMERA_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    pickLauncher?.launch(null)
-                }
-            }
-            BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    BoyiaLog.d(TAG, "sendNotification by granted")
-                    notifyCallbacks.forEach {
-                        it()
-                    }
-                    notifyCallbacks.clear()
-                }
+//        when(requestCode) {
+//            BoyiaPermissions.CAMERA_REQUEST_CODE -> {
+//                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                    pickLauncher?.launch(null)
+//                }
+//            }
+//            BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {
+//                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                    BoyiaLog.d(TAG, "sendNotification by granted")
+//                    notifyCallbacks.forEach {
+//                        it()
+//                    }
+//                    notifyCallbacks.clear()
+//                }
+//            }
+//        }
+        val permissionCallback = permissionsMap[requestCode]
+        permissionCallback?.let {
+            if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                permissionCallback()
             }
         }
+        permissionsMap.remove(requestCode)
     }
 }

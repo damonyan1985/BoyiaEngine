@@ -17,6 +17,7 @@ import com.boyia.app.shell.module.IModuleContext
 import com.boyia.app.shell.module.IPCModule
 import com.boyia.app.shell.module.LoginListener
 import com.boyia.app.shell.module.ModuleManager
+import com.boyia.app.shell.util.PermissionCallback
 
 /**
  * 提供给boyia app调用

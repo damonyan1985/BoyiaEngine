@@ -25,6 +25,7 @@ import com.boyia.app.core.BoyiaBridge
 import com.boyia.app.shell.R
 import com.boyia.app.shell.home.BoyiaDownloadMask
 import com.boyia.app.shell.module.NavigationFragment
+import com.boyia.app.shell.search.SearchFragment
 import com.boyia.app.shell.update.Downloader
 import com.boyia.app.shell.update.Downloader.DownLoadProgressListener
 import com.boyia.app.shell.util.BoyiaAppShare
@@ -35,6 +36,10 @@ import com.boyia.app.shell.util.toDp
  * 使用compose来编写关于页面
  */
 class BoyiaAboutFragment: NavigationFragment() {
+    companion object {
+        const val TAG = "BoyiaAboutFragment"
+    }
+    override fun customTag(): String = TAG
     override fun createView(): View {
         val view = ComposeView(requireContext()).apply {
             setContent {

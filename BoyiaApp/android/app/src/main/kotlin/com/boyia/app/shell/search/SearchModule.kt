@@ -15,7 +15,7 @@ class SearchModule : IUIModule {
     }
 
     override fun show(context: IModuleContext) {
-        Navigator(context).push(SearchFragment(this), TAG)
+        Navigator(context).push(SearchFragment(this))
     }
 
     override fun hide() {

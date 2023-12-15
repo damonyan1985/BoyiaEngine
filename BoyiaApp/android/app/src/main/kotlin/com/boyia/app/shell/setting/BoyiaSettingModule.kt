@@ -83,7 +83,7 @@ class BoyiaSettingModule : IUIModule {
         val ctx = context?.get() ?: return
 
         val about = BoyiaAboutFragment()
-        Navigator(ctx).push(about, ABOUT_TAG)
+        Navigator(ctx).push(about)
     }
 
     interface SlideCallback {

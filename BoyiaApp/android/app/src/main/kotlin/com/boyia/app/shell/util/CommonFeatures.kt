@@ -109,13 +109,13 @@ object CommonFeatures {
         view.clipToOutline = true
     }
 
-    private fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
-        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Any>() {
+    private fun registerActivityResult(context: AppCompatActivity, intent: Intent, handler: (intent: Intent?) -> Any?, resultCB: (data: Any?) -> Unit): ActivityResultLauncher<Unit?> {
+        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Any?>() {
             override fun createIntent(context: Context, input: Unit?): Intent {
                 return intent
             }
 
-            override fun parseResult(resultCode: Int, resultIntent: Intent?): Any {
+            override fun parseResult(resultCode: Int, resultIntent: Intent?): Any? {
                 return handler(resultIntent)
             }
         }) { data: Any? ->
@@ -126,26 +126,14 @@ object CommonFeatures {
     }
 
     fun registerPickerImage(context: AppCompatActivity?, pickerCB: (path: String) -> Unit): ActivityResultLauncher<Unit?>? {
-//        return context.registerForActivityResult(object: ActivityResultContract<Unit?, Uri?>() {
-//            override fun createIntent(context: Context, input: Unit?): Intent {
-//                return Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-//            }
-//
-//            override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-//                return intent?.data
-//            }
-//        }) { uri: Uri? ->
-//            if (uri != null) {
-//                pickerCB(BoyiaFileUtil.getRealFilePath(context, uri))
-//            }
-//        }
-
         context?.let {
             return registerActivityResult(context,
                     Intent(Intent.ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
-                    { it?.data as Any }
+                    { it?.data }
             ) {
-                pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
+                it?.let {
+                    pickerCB(BoyiaFileUtil.getRealFilePath(context, it as Uri))
+                }
             }
         }
 

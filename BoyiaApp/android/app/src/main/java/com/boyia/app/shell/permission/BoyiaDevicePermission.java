@@ -7,16 +7,7 @@ import com.boyia.app.core.device.permission.IDevicePermission;
 
 public class BoyiaDevicePermission implements IDevicePermission {
     @Override
-    public boolean requestBluetooth(Context context) {
-        return BoyiaPermissions.requestBluetoothPermissions((Activity) context);
-    }
-
-    @Override
-    public boolean requestLocation(Context context) {
-        return BoyiaPermissions.requestPhotoPermissions((Activity) context);
-    }
-
-    public boolean requestCamera(Context context) {
-        return BoyiaPermissions.requestCameraPermissions((Activity) context);
+    public boolean requestPermissions(Activity context, String[] permissions, int requestCode) {
+        return BoyiaPermissions.requestPermission(context, permissions, requestCode);
     }
 }

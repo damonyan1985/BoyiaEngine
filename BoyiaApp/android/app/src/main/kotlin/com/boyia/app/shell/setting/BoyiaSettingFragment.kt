@@ -40,6 +40,8 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         val SETTING_WIDTH = 320.dp
     }
 
+    override fun customTag(): String = TAG
+
     private var rootLayout: RelativeLayout? = null
     private var animator: ValueAnimator? = null
     private var listener: SlideListener? = null
@@ -140,7 +142,7 @@ class BoyiaSettingFragment(private val module: BoyiaSettingModule) : BaseFragmen
         avatarView = BoyiaImageView(context, 54.dp)
         avatarView?.id = View.generateViewId()
         avatarView?.setOnClickListener {
-            if (!info.isLogin()) {
+            if (info.isLogin()) {
                 module.moduleContext()?.pickImage(object : IPickImageLoader {
                     override fun onImage(path: String) {
                         BoyiaModelUtil.request(

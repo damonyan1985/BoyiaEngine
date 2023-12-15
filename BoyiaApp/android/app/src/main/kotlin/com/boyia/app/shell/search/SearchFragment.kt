@@ -36,6 +36,7 @@ import com.boyia.app.loader.http.HTTPFactory
 import com.boyia.app.loader.mue.MainScheduler
 import com.boyia.app.shell.R
 import com.boyia.app.shell.home.BoyiaDownloadMask
+import com.boyia.app.shell.home.BoyiaHomeFragment
 import com.boyia.app.shell.model.*
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.update.Downloader
@@ -52,6 +53,8 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
         const val TAG = "SearchFragment"
     }
     var model = BoyiaAppSearchModel()
+
+    override fun customTag(): String = TAG
 
     override fun createView(): View {
         val view = ComposeView(requireContext()).apply {

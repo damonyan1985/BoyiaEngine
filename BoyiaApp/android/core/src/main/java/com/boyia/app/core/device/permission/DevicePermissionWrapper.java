@@ -1,6 +1,6 @@
 package com.boyia.app.core.device.permission;
 
-import android.content.Context;
+import android.app.Activity;
 
 public class DevicePermissionWrapper implements IDevicePermission {
     private IDevicePermission mDevicePermissionImpl;
@@ -10,17 +10,7 @@ public class DevicePermissionWrapper implements IDevicePermission {
     }
 
     @Override
-    public boolean requestBluetooth(Context context) {
-        return mDevicePermissionImpl.requestBluetooth(context);
-    }
-
-    @Override
-    public boolean requestLocation(Context context) {
-        return mDevicePermissionImpl.requestLocation(context);
-    }
-
-    @Override
-    public boolean requestCamera(Context context) {
-        return mDevicePermissionImpl.requestCamera(context);
+    public boolean requestPermissions(Activity context, String[] permissions, int requestCode) {
+        return mDevicePermissionImpl.requestPermissions(context, permissions, requestCode);
     }
 }

@@ -28,6 +28,8 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
     private var userInput: EditText? = null
     private var passwordInput: EditText? = null
 
+    override fun customTag(): String = TAG
+
     override fun createView(): View? {
         if (rootLayout != null) {
             val parant = rootLayout?.parent as ViewGroup
