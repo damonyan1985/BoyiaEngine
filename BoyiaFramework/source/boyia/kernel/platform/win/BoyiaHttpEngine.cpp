@@ -49,16 +49,47 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
     // 转换成宽字符串Url
     wstring wurl = CharConvertor::CharToWchar(GET_STR(url));
-    Uri uri;
-    UrlParser::parse(wurl, uri);
+    //Uri uri;
+    //UrlParser::parse(wurl, uri);
 
     // 打开wininet
     HINTERNET internet = ::InternetOpen(L"WinInetGet/0.1", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
     BOYIA_LOG("BoyiaHttpEngine---request Open Internet %d", 1);
 
-    // 连接网络地址
+    // 获取网络地址相关参数
+    WCHAR hostName[INTERNET_MAX_HOST_NAME_LENGTH] = { 0 };
+    WCHAR userName[INTERNET_MAX_USER_NAME_LENGTH] = { 0 };
+    WCHAR password[INTERNET_MAX_PASSWORD_LENGTH] = { 0 };
+    WCHAR urlPath[INTERNET_MAX_URL_LENGTH] = { 0 };
+    WCHAR schema[INTERNET_MAX_SCHEME_LENGTH] = { 0 };
+    URL_COMPONENTS urlComponents;
+    ZeroMemory(&urlComponents, sizeof(urlComponents));
+    urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
+    urlComponents.lpszHostName = hostName;
+    urlComponents.dwHostNameLength = INTERNET_MAX_HOST_NAME_LENGTH;
+    urlComponents.lpszUserName = userName;
+    urlComponents.dwUserNameLength = INTERNET_MAX_USER_NAME_LENGTH;
+    urlComponents.lpszPassword = password;
+    urlComponents.dwPasswordLength = INTERNET_MAX_PASSWORD_LENGTH;
+    urlComponents.lpszUrlPath = urlPath;
+    urlComponents.dwUrlPathLength = INTERNET_MAX_URL_LENGTH;
+    urlComponents.lpszScheme = schema;
+    urlComponents.dwSchemeLength = INTERNET_MAX_SCHEME_LENGTH;
+    BOOL result = InternetCrackUrl(wurl.data(), 0, NULL, &urlComponents);
+    if (!result) {
+        InternetCloseHandle(internet);
+        m_callback->onLoadError(NetworkClient::kNetworkFileError);
+        return;
+    }
+
+    // 连接网络地址 INTERNET_DEFAULT_HTTPS_PORT
     DWORD dwConnectContext = 0;
-    HINTERNET connect = ::InternetConnect(internet, uri.host.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, dwConnectContext);
+    HINTERNET connect = ::InternetConnect(internet, 
+        urlComponents.lpszHostName, 
+        urlComponents.nPort, 
+        urlComponents.lpszUserName, 
+        urlComponents.lpszPassword, 
+        INTERNET_SERVICE_HTTP, 0, dwConnectContext);
 
     DWORD dwOpenRequestFlags = INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP |
 	    INTERNET_FLAG_KEEP_CONNECTION |
@@ -67,15 +98,17 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 	    INTERNET_FLAG_NO_UI |
 	    // Set https
 	    INTERNET_FLAG_SECURE |
+        INTERNET_FLAG_IGNORE_CERT_CN_INVALID |
 	    INTERNET_FLAG_RELOAD;
 
+    /*
     wstring pathUrl = uri.path;
     if (uri.query.length() > 0) {
         pathUrl += L"?" + uri.query;
-    }
+    }*/
 
     // 创建发送请求
-    HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", pathUrl.c_str(), NULL,
+    HINTERNET request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", urlComponents.lpszUrlPath, NULL,
 	    NULL, NULL,
 	    dwOpenRequestFlags, dwConnectContext);
 
@@ -99,31 +132,46 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     LInt dataSize = m_data.get() ? m_data->GetLength() : 0;
     if (!HttpSendRequest(request, NULL, 0, dataBuffer, dataSize)) {
         dwError = GetLastError();
-        BOYIA_LOG("HttpSendRequest error: ", dwError);
-        m_callback->onLoadError(NetworkClient::kNetworkFileError);
-        InternetCloseHandle(request);
-        InternetCloseHandle(connect);
-        InternetCloseHandle(internet);
-        return;
+        BOYIA_LOG("HttpSendRequest error: %d %s", dwError, GET_STR(url));
+        if (dwError == ERROR_INTERNET_INVALID_CA) {
+            fprintf(stderr, "HttpSendRequest failed, error: %d (0x%x)/n",
+                dwError, dwError);
+
+            // 忽略证书
+            DWORD dwFlags;
+            DWORD dwBuffLen = sizeof(dwFlags);
+            InternetQueryOption(request, INTERNET_OPTION_SECURITY_FLAGS,
+                (LPVOID)&dwFlags, &dwBuffLen);
+
+            dwFlags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+            InternetSetOption(request, INTERNET_OPTION_SECURITY_FLAGS,
+                &dwFlags, sizeof(dwFlags));
+
+            /*
+            request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", urlComponents.lpszUrlPath, NULL,
+                NULL, NULL,
+                dwOpenRequestFlags, dwConnectContext);*/
+
+            if (!HttpSendRequest(request, NULL, 0, dataBuffer, dataSize)) {
+                dwError = GetLastError();
+                fprintf(stderr, "HttpSendRequest ignore ssl failed, error: %d (0x%x)/n",
+                    dwError, dwError);
+                m_callback->onLoadError(NetworkClient::kNetworkFileError);
+                InternetCloseHandle(request);
+                InternetCloseHandle(connect);
+                InternetCloseHandle(internet);
+                return;
+            }
+        } else {
+            m_callback->onLoadError(NetworkClient::kNetworkFileError);
+            InternetCloseHandle(request);
+            InternetCloseHandle(connect);
+            InternetCloseHandle(internet);
+            return;
+        }
     }
 
-    if (dwError == ERROR_INTERNET_INVALID_CA) {
-        fprintf(stderr, "HttpSendRequest failed, error: %d (0x%x)/n",
-	        dwError, dwError);
-
-        DWORD dwFlags;
-        DWORD dwBuffLen = sizeof(dwFlags);
-        InternetQueryOption(request, INTERNET_OPTION_SECURITY_FLAGS,
-	        (LPVOID)& dwFlags, &dwBuffLen);
-
-        dwFlags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-        InternetSetOption(request, INTERNET_OPTION_SECURITY_FLAGS,
-	        &dwFlags, sizeof(dwFlags));
-
-        request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", pathUrl.c_str(), NULL,
-	        NULL, NULL,
-	        dwOpenRequestFlags, dwConnectContext);
-    }
+    
 
     // Get HTTP Response Header
     DWORD dwInfoLevel = HTTP_QUERY_RAW_HEADERS_CRLF;
@@ -140,9 +188,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
             break;
         }
     }
-    //pInfoBuffer[dwInfoBufferLength] = 0;
-    //pInfoBuffer[dwInfoBufferLength + 1] = 0;
-    //printf("%s", pInfoBuffer);
+    pInfoBuffer[dwInfoBufferLength] = 0;
+    pInfoBuffer[dwInfoBufferLength + 1] = 0;
+    printf("%s", pInfoBuffer);
     free(pInfoBuffer);
 	// Get Response Body
     DWORD bufferSize = 1 * KB;
@@ -190,6 +238,6 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     InternetCloseHandle(connect);
     InternetCloseHandle(internet);
 
-    BOYIA_LOG("BoyiaHttpEngine---request end %d", 2);
+    BOYIA_LOG("BoyiaHttpEngine---request end %s", GET_STR(url));
 }
 }

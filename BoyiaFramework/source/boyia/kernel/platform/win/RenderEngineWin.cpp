@@ -228,6 +228,18 @@ LVoid RenderEngineWin::renderVideo(RenderCommand* cmd, Gdiplus::Graphics& gc)
 
 LVoid RenderEngineWin::renderRoundImage(RenderCommand* cmd, Gdiplus::Graphics& gc)
 {
+    RenderRoundImageCommand* resource = static_cast<RenderRoundImageCommand*>(cmd);
+    RenderRoundRectPath path(resource);
+    gc.SetClip(&path);
+
+    Gdiplus::Rect rect(
+        resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
+        resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
+        resource->rect.GetWidth() * yanbo::PixelRatio::ratio(),
+        resource->rect.GetHeight() * yanbo::PixelRatio::ratio()
+    );
+    gc.DrawImage(static_cast<Gdiplus::Image*>(resource->image), rect);
+    gc.ResetClip();
 }
 
 IRenderEngine* IRenderEngine::create()

@@ -10,7 +10,7 @@ class Util {
         BY_Log(info);
     }
     
-    fun json(info) {
+    fun fromJson(info) {
         BY_Json(info);
     }
 

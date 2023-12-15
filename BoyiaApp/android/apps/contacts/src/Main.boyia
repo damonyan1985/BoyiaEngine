@@ -40,7 +40,7 @@ class MainActivity extends Activity {
 	
 	fun loadCallback(data) {
 		
-	    var obj = Util.json(data);
+	    var obj = Util.fromJson(data);
 	    //Util.log(obj.app_version.last);
 	    var categoryView = this.main.headerView.categoryView;
 			

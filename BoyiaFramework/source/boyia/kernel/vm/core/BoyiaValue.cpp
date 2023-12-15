@@ -875,7 +875,7 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
 
     BoyiaFunction* classBody = (BoyiaFunction*)classRef->mValue.mObj.mPtr;
 
-    // task prop
+    // microtask prop
     {
         classBody->mParams[classBody->mParamSize].mValueType = BY_INT;
         // 第一个成员是task, 用于保存创建的c++ microtask
@@ -883,16 +883,16 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
         classBody->mParams[classBody->mParamSize++].mValue.mIntVal = kBoyiaNull;
     }
 
-    // map api
+    // microtask api
     {
-        // resume function implementation begin， init函数
+        // init function implementation begin， init函数
         GenBuiltinClassFunction(GEN_ID("init", vm), BoyiaMicroTaskInit, classBody, vm);
-        // resume function implementation end
+        // init function implementation end
     }
     {
-        // resume function implementation begin， 唤醒函数
+        // resume prop function implementation begin， 唤醒函数
         GenBuiltinClassPropFunction(GEN_ID("resolve", vm), BoyiaMicroTaskResolve, classBody, vm);
-        // resume function implementation end
+        // resume prop function implementation end
     }
 }
 

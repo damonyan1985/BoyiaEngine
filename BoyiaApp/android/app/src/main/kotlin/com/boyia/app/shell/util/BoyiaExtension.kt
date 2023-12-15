@@ -40,7 +40,12 @@ fun toDp(value: Int): Dp {
 /**
  * px转sp
  */
-@Composable
-fun dsp(value: Int): TextUnit {
-    return with(LocalDensity.current) { BoyiaUtils.px2sp(value.toFloat()).sp }
+fun bsp(value: Int): TextUnit {
+    return BoyiaUtils.px2sp(value.toFloat()).sp
 }
+
+/**
+ * fontsize px to sp
+ */
+val Int.bsp: TextUnit
+    get() = bsp(this)

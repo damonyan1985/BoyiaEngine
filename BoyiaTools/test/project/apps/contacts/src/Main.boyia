@@ -29,13 +29,11 @@ class MainViewController extends ViewController {
         this.mainView = ViewDoc.createView(MainView, "boyia://apps/contacts/view/main.boui");
         this.mainView.initView();
 
-        //appBox.appendView(this.mainView);
-
         this.setContent(this.mainView);
 
         //Util.showToast("test boyia callstaticmethod");
         //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
-        //this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
+        this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
         Util.log("test super begin");
         super.test();
 
@@ -57,7 +55,7 @@ class MainViewController extends ViewController {
             items : ["123", "456"]
         };
         
-        //this.fetch("https://192.168.0.105:8443/user/v1/login", this.testCallback, params);
+        this.fetch("https://192.168.0.105:8443/user/v1/login", this.testCallback, params);
         
         var bodyJson = Util.toJson(body);
         Util.log("bodyJson=" + bodyJson);
@@ -123,14 +121,14 @@ class MainViewController extends ViewController {
     
     prop fun testCallback(data) {
         Util.log("testCallback data=" + data);
-        var result = Util.json(data);
+        var result = Util.fromJson(data);
         Global.userToken = result.userToken;
         Util.log("token=" + Global.userToken);
     }
 
     prop fun loadCallback(data) {
         Util.log("test loadCallback");
-        var obj = Util.json(data);
+        var obj = Util.fromJson(data);
         Util.log("test loadCallback5");
         //Util.log(obj.app_version.last);
         Util.log("test loadCallback6");
