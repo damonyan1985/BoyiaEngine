@@ -2,8 +2,6 @@
 #define BoyiaHttpEngine_h
 
 #include "NetworkBase.h"
-#include <windows.h>
-#include <WinInet.h>
 
 namespace yanbo {
 class HttpCallback {

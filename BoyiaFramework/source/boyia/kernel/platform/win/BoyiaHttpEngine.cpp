@@ -2,6 +2,8 @@
 #include "SalLog.h"
 #include "CharConvertor.h"
 #include "UrlParser.h"
+#include <windows.h>
+#include <WinInet.h>
 
 //#define FORM_HEADER_VALUE "Content-Type:application/x-www-form-urlencoded"
 namespace yanbo {
@@ -10,6 +12,54 @@ inline LVoid CloseHandles(HINTERNET request, HINTERNET connect, HINTERNET intern
     InternetCloseHandle(request);
     InternetCloseHandle(connect);
     InternetCloseHandle(internet);
+}
+
+inline LBool SendRequest(
+    HINTERNET request,
+    HINTERNET connect,
+    HINTERNET internet,
+    const String& url, 
+    LByte* buffer, 
+    LInt size, 
+    HttpCallback* callback)
+{
+    DWORD dwError = 0;
+    BOOL result = HttpSendRequest(request, NULL, 0, buffer, size);
+    if (result) {
+        return LTrue;
+    }
+
+    dwError = GetLastError();
+    BOYIA_LOG("HttpSendRequest error: %d %s", dwError, GET_STR(url));
+    if (dwError != ERROR_INTERNET_INVALID_CA) {
+        callback->onLoadError(NetworkClient::kNetworkFileError);
+        CloseHandles(request, connect, internet);
+        return LFalse;
+    }
+
+    fprintf(stderr, "HttpSendRequest failed, error: %d (0x%x)/n",
+        dwError, dwError);
+
+    // 忽略证书
+    DWORD dwFlags;
+    DWORD dwBuffLen = sizeof(dwFlags);
+    InternetQueryOption(request, INTERNET_OPTION_SECURITY_FLAGS,
+        (LPVOID)&dwFlags, &dwBuffLen);
+
+    dwFlags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+    InternetSetOption(request, INTERNET_OPTION_SECURITY_FLAGS,
+        &dwFlags, sizeof(dwFlags));
+
+    if (!HttpSendRequest(request, NULL, 0, buffer, size)) {
+        dwError = GetLastError();
+        fprintf(stderr, "HttpSendRequest ignore ssl failed, error: %d (0x%x)/n",
+            dwError, dwError);
+        callback->onLoadError(NetworkClient::kNetworkFileError);
+        CloseHandles(request, connect, internet);
+        return LFalse;
+    }
+    
+    return LTrue;
 }
 
 BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
@@ -68,8 +118,10 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     WCHAR password[INTERNET_MAX_PASSWORD_LENGTH] = { 0 };
     WCHAR urlPath[INTERNET_MAX_URL_LENGTH] = { 0 };
     WCHAR schema[INTERNET_MAX_SCHEME_LENGTH] = { 0 };
+
     URL_COMPONENTS urlComponents;
     ZeroMemory(&urlComponents, sizeof(urlComponents));
+
     urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
     urlComponents.lpszHostName = hostName;
     urlComponents.dwHostNameLength = INTERNET_MAX_HOST_NAME_LENGTH;
@@ -81,6 +133,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     urlComponents.dwUrlPathLength = INTERNET_MAX_URL_LENGTH;
     urlComponents.lpszScheme = schema;
     urlComponents.dwSchemeLength = INTERNET_MAX_SCHEME_LENGTH;
+
     BOOL result = InternetCrackUrl(wurl.data(), 0, NULL, &urlComponents);
     if (!result) {
         InternetCloseHandle(internet);
@@ -131,47 +184,12 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     }
 
     // 发送请求
-    DWORD dwError = 0;
     LByte* dataBuffer = m_data.get() ? m_data->GetBuffer() : NULL;
     LInt dataSize = m_data.get() ? m_data->GetLength() : 0;
-    if (!HttpSendRequest(request, NULL, 0, dataBuffer, dataSize)) {
-        dwError = GetLastError();
-        BOYIA_LOG("HttpSendRequest error: %d %s", dwError, GET_STR(url));
-        if (dwError == ERROR_INTERNET_INVALID_CA) {
-            fprintf(stderr, "HttpSendRequest failed, error: %d (0x%x)/n",
-                dwError, dwError);
 
-            // 忽略证书
-            DWORD dwFlags;
-            DWORD dwBuffLen = sizeof(dwFlags);
-            InternetQueryOption(request, INTERNET_OPTION_SECURITY_FLAGS,
-                (LPVOID)&dwFlags, &dwBuffLen);
-
-            dwFlags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-            InternetSetOption(request, INTERNET_OPTION_SECURITY_FLAGS,
-                &dwFlags, sizeof(dwFlags));
-
-            /*
-            request = HttpOpenRequest(connect, method == NetworkBase::GET ? L"GET" : L"POST", urlComponents.lpszUrlPath, NULL,
-                NULL, NULL,
-                dwOpenRequestFlags, dwConnectContext);*/
-
-            if (!HttpSendRequest(request, NULL, 0, dataBuffer, dataSize)) {
-                dwError = GetLastError();
-                fprintf(stderr, "HttpSendRequest ignore ssl failed, error: %d (0x%x)/n",
-                    dwError, dwError);
-                m_callback->onLoadError(NetworkClient::kNetworkFileError);
-                CloseHandles(request, connect, internet);
-                return;
-            }
-        } else {
-            m_callback->onLoadError(NetworkClient::kNetworkFileError);
-            CloseHandles(request, connect, internet);
-            return;
-        }
+    if (!SendRequest(request, connect, internet, url, dataBuffer, dataSize, m_callback)) {
+        return;
     }
-
-    
 
     // Get HTTP Response Header
     DWORD dwInfoLevel = HTTP_QUERY_RAW_HEADERS_CRLF;
