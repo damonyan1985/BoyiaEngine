@@ -4,8 +4,14 @@
 #include "UrlParser.h"
 
 //#define FORM_HEADER_VALUE "Content-Type:application/x-www-form-urlencoded"
-
 namespace yanbo {
+inline LVoid CloseHandles(HINTERNET request, HINTERNET connect, HINTERNET internet)
+{
+    InternetCloseHandle(request);
+    InternetCloseHandle(connect);
+    InternetCloseHandle(internet);
+}
+
 BoyiaHttpEngine::BoyiaHttpEngine(HttpCallback* callback)
     : m_callback(callback)
     , m_size(0)
@@ -42,7 +48,7 @@ LVoid BoyiaHttpEngine::setPostData(const OwnerPtr<String>& data)
 
 LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 {
-    BOYIA_LOG("BoyiaHttpEngine---request url: %s callback %d", GET_STR(url), (LIntPtr)m_callback);
+    BOYIA_LOG("BoyiaHttpEngine---request url: %s callback %ld", GET_STR(url), (LIntPtr)m_callback);
     if (!m_callback) {
         return;
     }
@@ -115,13 +121,11 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     // 初始化请求同
     if (m_header.GetLength() > 0) {
         wstring header = CharConvertor::CharToWchar(GET_STR(m_header));
-        BOOL res = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
-    
-        if (!res) {
+        BOOL result = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
+        
+        if (!result) {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);
-            InternetCloseHandle(request);
-            InternetCloseHandle(connect);
-            InternetCloseHandle(internet);
+            CloseHandles(request, connect, internet);
             return;
         }
     }
@@ -157,16 +161,12 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
                 fprintf(stderr, "HttpSendRequest ignore ssl failed, error: %d (0x%x)/n",
                     dwError, dwError);
                 m_callback->onLoadError(NetworkClient::kNetworkFileError);
-                InternetCloseHandle(request);
-                InternetCloseHandle(connect);
-                InternetCloseHandle(internet);
+                CloseHandles(request, connect, internet);
                 return;
             }
         } else {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);
-            InternetCloseHandle(request);
-            InternetCloseHandle(connect);
-            InternetCloseHandle(internet);
+            CloseHandles(request, connect, internet);
             return;
         }
     }
@@ -217,9 +217,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
         DWORD readSize;
         if (!InternetReadFile(request, buffer, bufferSize, &readSize)) {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);
-            InternetCloseHandle(request);
-            InternetCloseHandle(connect);
-            InternetCloseHandle(internet);
+            CloseHandles(request, connect, internet);
             return;
         }
 
@@ -234,9 +232,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     m_callback->onLoadFinished();
 
     // Close Http resource
-    InternetCloseHandle(request);
-    InternetCloseHandle(connect);
-    InternetCloseHandle(internet);
+    CloseHandles(request, connect, internet);
 
     BOYIA_LOG("BoyiaHttpEngine---request end %s", GET_STR(url));
 }
