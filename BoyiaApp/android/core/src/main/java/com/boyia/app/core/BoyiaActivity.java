@@ -3,39 +3,37 @@ package com.boyia.app.core;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.IntentService;
 import android.content.ComponentCallbacks2;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Process;
-import android.os.RemoteException;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.boyia.app.common.BaseApplication;
-import com.boyia.app.common.ipc.BoyiaIpcData;
-import com.boyia.app.common.ipc.IBoyiaIpcCallback;
 import com.boyia.app.common.ipc.IBoyiaIpcSender;
 import com.boyia.app.common.ipc.IBoyiaSender;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.common.utils.ProcessUtil;
 import com.boyia.app.core.api.ApiImplementation;
+import com.boyia.app.core.device.permission.DevicePermissionWrapper;
+import com.boyia.app.core.device.permission.IDevicePermissionsResult;
 import com.boyia.app.core.launch.BoyiaAppInfo;
 import com.boyia.app.core.launch.BoyiaAppLauncher;
 import com.boyia.app.loader.image.BoyiaImager;
 import com.boyia.app.loader.image.IBoyiaImage;
-import com.boyia.app.loader.job.IJob;
-import com.boyia.app.loader.job.JobScheduler;
 import com.boyia.app.loader.mue.MainScheduler;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // Activity持有的mToken是一个IBinder，在C++底层体现就是一个BpBinder(远程服务代理)
 // 主要使用来与AMS进行通信的，AMS的任务栈中持有的ActivitRecord与Activity一一对应
@@ -201,6 +199,7 @@ public class BoyiaActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mProxy.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -211,12 +210,31 @@ public class BoyiaActivity extends Activity {
 
         private WeakReference<BoyiaActivity> mActivity;
 
+
+        private AtomicInteger mNextPermissionCode = new AtomicInteger(1);
+        private SparseArray<IDevicePermissionsResult> mPermissionsMap = new SparseArray<>();
+
         public BoyiaActivityProxy(WeakReference<BoyiaActivity> activity) {
             mActivity = activity;
         }
 
         public void onCreate() {
             fetchAppInfo();
+        }
+
+        /**
+         * 抽象权限获取类
+         * @param permissions
+         * @param result
+         */
+        public void requestPermissions(String[] permissions, IDevicePermissionsResult result) {
+            DevicePermissionWrapper permissionWrapper = mApiImplementation.getPermissionWrapper();
+            if (permissionWrapper != null) {
+                int requestCode = mNextPermissionCode.getAndIncrement();
+                if (permissionWrapper.requestPermissions(mActivity.get(), permissions, requestCode)) {
+                    result.onSuccess();
+                }
+            }
         }
 
         private void fetchAppInfo() {
@@ -325,6 +343,18 @@ public class BoyiaActivity extends Activity {
             if (mApiImplementation.getAppInfo().mAppId != info.mAppId) {
                 // TODO 如果appid不一样，则重新刷新应用
                 mApiImplementation.updateAppInfo(info);
+            }
+        }
+
+        // 权限回调
+        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+            IDevicePermissionsResult result = mPermissionsMap.get(requestCode);
+            if (result == null) {
+                return;
+            }
+
+            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                result.onSuccess();
             }
         }
 

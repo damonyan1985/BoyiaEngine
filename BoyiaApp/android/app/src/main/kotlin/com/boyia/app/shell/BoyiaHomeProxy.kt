@@ -1,6 +1,7 @@
 package com.boyia.app.shell
 
 import android.content.pm.PackageManager
+import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.boyia.app.common.utils.BoyiaLog
@@ -37,7 +38,7 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
 
     // 权限申请
     private val nextPermissionCode = AtomicInteger(1)
-    private val permissionsMap = HashMap<Int, PermissionCallback>()
+    private val permissionsMap = SparseArray<PermissionCallback>()
 
     fun onCreate() {
         initHome()
@@ -66,6 +67,7 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
             permissionsMap[requestCode] = onPermissionCallback;
             if (BoyiaPermissions.requestPermission(it, permissions, requestCode)) {
                 onPermissionCallback()
+                permissionsMap.remove(requestCode)
             }
         }
     }

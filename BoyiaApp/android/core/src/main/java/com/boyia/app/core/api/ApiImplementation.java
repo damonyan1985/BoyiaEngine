@@ -90,6 +90,10 @@ public class ApiImplementation {
         });
     }
 
+    public DevicePermissionWrapper getPermissionWrapper() {
+        return mPermissionWrapper;
+    }
+
     /**
      * 初始化BoyiaApp需要调用的API
      */
