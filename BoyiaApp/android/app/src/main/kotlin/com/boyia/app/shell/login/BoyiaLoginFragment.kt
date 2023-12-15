@@ -13,6 +13,7 @@ import com.boyia.app.shell.R
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.util.UnderlineEditText
 import com.boyia.app.shell.util.dp
+import com.boyia.app.shell.util.sp
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.iconics.typeface.ITypeface
@@ -56,7 +57,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
                 //ViewGroup.LayoutParams.WRAP_CONTENT,
                 120.dp
         )
-        loginHeaderParam.topMargin = BoyiaUtils.getStatusBarHeight(context as Activity)
+        loginHeaderParam.topMargin = BoyiaUtils.getStatusBarHeight(context as Activity) + 300.dp
         rootLayout?.addView(loginHeader, loginHeaderParam)
 
         val loginInputLayout = LinearLayout(context).apply {
@@ -80,11 +81,12 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         )
 
         loginInputParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        loginInputParam.topMargin = 540.dp
+        loginInputParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        loginInputParam.bottomMargin = 540.dp
 
         rootLayout?.addView(loginInputLayout, loginInputParam)
 
-        initLoginButton(loginInputLayout.id)
+        initLoginButton()
     }
 
     private fun initLoginHeader(): View {
@@ -93,8 +95,8 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         headerLayout.gravity = Gravity.CENTER
         val title = TextView(context)
         title.setTextColor(0xFFCAE1FF.toInt())
-        title.textSize = 23.0F
-        title.text = "User quick login"
+        title.textSize = 23.dp.toFloat()
+        title.text = "Quick Login"
 
         val titleLayout = LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
@@ -126,7 +128,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
                 400.dp,
                 120.dp
         )
-        editTextParam.leftMargin = 2.dp
+        editTextParam.leftMargin = 10.dp
         editTextParam.gravity = Gravity.BOTTOM
         inputLayout.addView(editText, editTextParam)
 
@@ -134,7 +136,7 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
         return inputLayout;
     }
 
-    private fun initLoginButton(id: Int) {
+    private fun initLoginButton() {
         val backButton = ImageView(context)
         backButton.setImageResource(R.drawable.login_back)
         backButton.setColorFilter(0xFFCAE1FF.toInt())
@@ -178,9 +180,9 @@ class BoyiaLoginFragment(private val module: LoginModule): NavigationFragment() 
                 ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        buttonLayoutParam.addRule(RelativeLayout.BELOW, id)
+        buttonLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         buttonLayoutParam.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        buttonLayoutParam.topMargin = 132.dp
+        buttonLayoutParam.bottomMargin = 400.dp
 
         rootLayout?.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

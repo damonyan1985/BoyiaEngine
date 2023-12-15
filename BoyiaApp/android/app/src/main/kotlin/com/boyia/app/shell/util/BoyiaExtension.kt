@@ -24,6 +24,10 @@ val Int.dpf: Float
 /**
  * boyia dp转compose dp
  */
+val Int.bpx: Dp
+    @Composable
+    get() = dpx(this)
+
 @Composable
 fun dpx(value: Int): Dp {
     return with(LocalDensity.current) { value.dp.toDp() }
@@ -49,3 +53,6 @@ fun bsp(value: Int): TextUnit {
  */
 val Int.bsp: TextUnit
     get() = bsp(this)
+
+val Int.sp: Float
+    get() = BoyiaUtils.px2sp(this.toFloat())

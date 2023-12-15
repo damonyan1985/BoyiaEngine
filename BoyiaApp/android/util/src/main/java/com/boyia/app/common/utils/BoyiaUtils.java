@@ -293,13 +293,13 @@ public class BoyiaUtils {
         return true;
     }
 
-    public static int px2sp(float pxValue) {
+    public static float px2sp(float pxValue) {
         final float fontScale = BaseApplication.getInstance().getResources().getDisplayMetrics().scaledDensity;
-        return (int) (pxValue / fontScale + 0.5f);
+        return (float) ((pxValue * radio()) / fontScale + 0.5f);
     }
 
-    public static int sp2px(float spValue) {
+    public static float sp2px(float spValue) {
         final float fontScale = BaseApplication.getInstance().getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
+        return (spValue * fontScale + 0.5f);
     }
 }

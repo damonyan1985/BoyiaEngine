@@ -153,7 +153,10 @@ body {
     width: 450px;
     height: 70px;
     color: #777;
-    font-size: 32px; 
+    font-size: 32px;
+	border: 0px;
+	border-radius: 12px;
+	background-color: #FFFFFF;
 }
 .header_img {
     width: 70px;

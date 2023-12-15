@@ -38,6 +38,8 @@ import com.boyia.app.shell.service.BoyiaNotifyService
 import java.text.SimpleDateFormat
 import java.util.concurrent.atomic.AtomicInteger
 
+typealias VoidCallback = () -> Unit
+typealias StringCallback = (String) -> Unit
 typealias PermissionCallback = () -> Unit
 
 // 共用功能
@@ -159,11 +161,11 @@ object CommonFeatures {
 
     @Composable
     fun marginTop(top: Int) {
-        Spacer(modifier = Modifier.height(dpx(value = top)))
+        Spacer(modifier = Modifier.height(top.bpx))
     }
 
     @Composable
     fun marginLeft(left: Int) {
-        Spacer(modifier = Modifier.width(dpx(value = left)))
+        Spacer(modifier = Modifier.width(left.bpx))
     }
 }

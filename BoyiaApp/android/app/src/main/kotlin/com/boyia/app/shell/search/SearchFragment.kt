@@ -40,11 +40,13 @@ import com.boyia.app.shell.home.BoyiaHomeFragment
 import com.boyia.app.shell.model.*
 import com.boyia.app.shell.module.NavigationFragment
 import com.boyia.app.shell.update.Downloader
+import com.boyia.app.shell.util.BoyiaTextField
 import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dpx
 import com.boyia.app.shell.util.toDp
 import com.boyia.app.shell.util.CommonFeatures.marginTop
 import com.boyia.app.shell.util.CommonFeatures.marginLeft
+import com.boyia.app.shell.util.bpx
 import com.boyia.app.shell.util.dpf
 
 class SearchFragment(private val module: SearchModule): NavigationFragment() {
@@ -85,8 +87,10 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
         // by 表示委托
         // remember将数据进行缓存
         var searchKey by remember { mutableStateOf("") }
-        Row {
-            Spacer(modifier = Modifier.width(dpx(20)))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(80.bpx)) {
+            Spacer(modifier = Modifier.width(20.bpx))
             Image(
                     //painter = rememberImagePainter(data = "https://img1.baidu.com/it/u=4216761644,15569246&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500"),
                     painter = painterResource(id = R.drawable.login_back),
@@ -102,22 +106,21 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
                     contentDescription = "",
             )
             Spacer(modifier = Modifier.width(dpx(10)))
-            TextField(searchKey,
-                    { searchKey = it },
-                    shape = CircleShape,
-                    modifier = Modifier
-                            .width(dpx(460)),
-                            //.height(dpx(70)),
-                    colors = TextFieldDefaults.textFieldColors(
-                            //textColor = Color.Gray,
-                            disabledTextColor = Color.Transparent,
-                            //backgroundColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                    ),
-                    placeholder = { Text("Please input search key")},
-                    maxLines = 1
+            BoyiaTextField(searchKey,
+                { searchKey = it },
+                modifier = Modifier
+                    .width(460.bpx)
+                    .background(Color(0x22000000), RoundedCornerShape(40.bpx)),
+                        //.height(dpx(70)),
+                colors = TextFieldDefaults.textFieldColors(
+                    disabledTextColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
+                placeholder = { Text("Please input search key")},
+                maxLines = 1,
+                paddingValues = PaddingValues(horizontal = 20.bpx)
             )
             Spacer(modifier = Modifier.width(dpx(10)))
             TextButton(onClick = { model.searchAppList(searchKey) },
@@ -147,9 +150,9 @@ class SearchFragment(private val module: SearchModule): NavigationFragment() {
     @Composable
     fun buildSearchAppItem(item: BoyiaAppItem) {
         Row(modifier = Modifier
-                .height(dpx(164))
+                .height(164.bpx)
                 .fillMaxWidth()
-                .padding(start = dpx(20), end = dpx(20))
+                .padding(start = 20.bpx, end = 20.bpx)
                 .clickable {
                     // TODO
                 },
