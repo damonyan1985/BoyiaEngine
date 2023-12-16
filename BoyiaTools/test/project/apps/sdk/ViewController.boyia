@@ -26,6 +26,9 @@ class ViewController extends Object {
     fun onResume() {
         if (this.contentView) {
             this.contentView.setVisible(true);
+            // 重绘
+            this.contentView.draw();
+            this.contentView.commit();
         }
     }
 
@@ -44,6 +47,9 @@ class ViewController extends Object {
     }
     
     fun onDestroy() {
+        if (this.contentView) {
+            ViewRoot.getRoot().removeView(this.contentView);
+        }
     }
 
     fun test() {

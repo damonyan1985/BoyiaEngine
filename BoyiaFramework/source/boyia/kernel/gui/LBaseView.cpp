@@ -137,4 +137,14 @@ const String& LBaseView::getTagName() const
 {
     return m_tagName;
 }
+
+LInt LBaseView::getScaleWidth() const
+{
+    return m_style.width * m_style.scale;
+}
+
+LInt LBaseView::getScaleHeight() const
+{
+    return m_style.height * m_style.scale;
+}
 }

@@ -63,7 +63,7 @@ class View {
 
     // TODO 设置不显示，底层引擎不会进行渲染
     fun setVisible(visible) {
-        BY_SetViewVisible(visible);
+        BY_SetViewVisible(this.nativeView, visible);
     }
     
     fun removeView() {
@@ -97,5 +97,12 @@ class ViewGroup extends View {
             this.children.put(view);
         }
         BY_AppendView(this.nativeView, view.nativeView);
+    }
+
+    fun removeView(view) {
+         if (this.children && view) {
+            this.children.remove(view);
+            view.removeView();
+        }
     }
 }

@@ -18,7 +18,7 @@ class ViewDoc extends View {
     }
     
     fun createDoc(docText) {
-        nativeView = BY_CreateDocument(docText);
+        this.nativeView = BY_CreateDocument(docText);
     }
     
     fun setDoc(doc) {

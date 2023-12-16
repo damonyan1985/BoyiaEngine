@@ -58,7 +58,7 @@ LVoid BlockView::measureBlock()
 {
     // style属性优先级最高
     if (m_style.width) {
-        m_width = m_style.width * m_style.scale;
+        m_width = getScaleWidth();
     } else {
         m_width = getParent()
             ? (getParent()->getWidth() - m_x - m_style.margin().leftMargin - m_style.margin().rightMargin)
@@ -66,7 +66,7 @@ LVoid BlockView::measureBlock()
     }
 
     if (m_style.height) {
-        m_height = m_style.height * m_style.scale;
+        m_height = getScaleHeight();
     } else if (HtmlTags::BODY == m_type) {
         m_height = m_doc->getViewPort().GetHeight();
     } else if (m_style.align == util::Style::ALIGN_ALL) {

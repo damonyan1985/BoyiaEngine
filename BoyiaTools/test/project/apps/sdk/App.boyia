@@ -12,6 +12,14 @@ class App {
     fun runApp(entryCtrl) {
         this.navigator.push(entryCtrl);
     }
+
+    fun push(entryCtrl) {
+        this.navigator.push(entryCtrl);
+    }
+
+    fun pop() {
+        this.navigator.pop();
+    }
 }
 
 // 应用程序默认调用initApp

@@ -47,6 +47,9 @@ public:
     virtual LInt getWidth() const;
     virtual LInt getHeight() const;
 
+    virtual LInt getScaleWidth() const;
+    virtual LInt getScaleHeight() const;
+
     LVoid setWidth(LInt width);
     LVoid setHeight(LInt height);
 

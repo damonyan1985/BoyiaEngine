@@ -2,7 +2,6 @@ package com.boyia.app.shell.util
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import androidx.appcompat.widget.AppCompatEditText
 

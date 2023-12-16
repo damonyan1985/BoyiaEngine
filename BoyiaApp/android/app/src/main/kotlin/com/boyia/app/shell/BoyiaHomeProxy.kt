@@ -102,22 +102,6 @@ class BoyiaHomeProxy(private val context: WeakReference<BoyiaHomeActivity>) : IM
 
     // 处理权限回调
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-//        when(requestCode) {
-//            BoyiaPermissions.CAMERA_REQUEST_CODE -> {
-//                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                    pickLauncher?.launch(null)
-//                }
-//            }
-//            BoyiaPermissions.NOTIFICATION_REQUEST_CODE -> {
-//                if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                    BoyiaLog.d(TAG, "sendNotification by granted")
-//                    notifyCallbacks.forEach {
-//                        it()
-//                    }
-//                    notifyCallbacks.clear()
-//                }
-//            }
-//        }
         val permissionCallback = permissionsMap[requestCode]
         permissionCallback?.let {
             if ((grantResults.isNotEmpty()).and(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {

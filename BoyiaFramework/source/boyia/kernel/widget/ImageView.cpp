@@ -72,8 +72,8 @@ LVoid ImageView::paint(LGraphicsContext& gc)
 LVoid ImageView::layoutInline(RenderContext& rc)
 {
     KLOG("ImageView::layout begin");
-    m_width = getStyle()->width > 0 ? (getStyle()->width * getStyle()->scale) : getParent()->getWidth();
-    m_height = getStyle()->height > 0 ? (getStyle()->height * getStyle()->scale) : getParent()->getHeight();
+    m_width = getStyle()->width > 0 ? getScaleWidth() : getParent()->getWidth();
+    m_height = getStyle()->height > 0 ? getScaleHeight() : getParent()->getHeight();
 
     //rc.addLineItem(this);
     BOYIA_LOG("ImageView::layout handleBefore getXpos()=%d rc.X=%d", getXpos(), rc.getX());

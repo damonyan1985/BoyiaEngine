@@ -19,7 +19,7 @@ LInt logPrint(LVoid* vm);
 
 LInt jsonParseWithCJSON(LVoid* vm);
 
-LInt createJSDocument(LVoid* vm);
+LInt createBoyiaDocument(LVoid* vm);
 
 LInt appendView(LVoid* vm);
 

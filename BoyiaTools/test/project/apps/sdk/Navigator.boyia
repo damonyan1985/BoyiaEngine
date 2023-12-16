@@ -32,10 +32,10 @@ class Navigator {
         var controller = this.controllerStack.get(size - 1);
         // 调用界面onStop回调
         controller.onStop();
+        // 从栈中删除
         this.controllerStack.remove(size - 1);
-        
-        //var root = ViewRoot.getRoot();
-        //root.removeView(controller.contentView);
+        // 从视图中移除
+        controller.onDestroy();
 
         // 唤醒之前的页面
         var size = this.controllerStack.size();

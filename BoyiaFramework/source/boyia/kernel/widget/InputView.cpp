@@ -144,9 +144,6 @@ LVoid InputView::initView()
 
 InputView::~InputView()
 {
-    if (m_text) {
-        delete m_text;
-    }
 }
 
 LVoid InputView::setInputValue(const String& text)

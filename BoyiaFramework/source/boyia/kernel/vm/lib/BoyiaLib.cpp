@@ -298,7 +298,7 @@ LInt jsonParseWithCJSON(LVoid* vm)
     return kOpResultSuccess;
 }
 
-LInt createJSDocument(LVoid* vm)
+LInt createBoyiaDocument(LVoid* vm)
 {
     KFORMATLOG("BoyiaViewDoc::loadHTML createBoyiaViewDoc %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
@@ -369,7 +369,7 @@ LInt removeDocument(LVoid* vm)
 LInt removeView(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
-    boyia::BoyiaView* view = (boyia::BoyiaViewDoc*)val->mValue.mIntVal;
+    boyia::BoyiaView* view = (boyia::BoyiaView*)val->mValue.mIntVal;
     view->removeView();
     return kOpResultSuccess;
 }
