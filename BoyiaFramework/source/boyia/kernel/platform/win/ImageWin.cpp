@@ -9,6 +9,27 @@
 
 namespace util {
 
+Gdiplus::Image* ImageWin::createWinImage(const OwnerPtr<String>& data)
+{
+    HGLOBAL hmem = GlobalAlloc(GMEM_FIXED, data->GetLength());
+    BYTE* pmem = (BYTE*)GlobalLock(hmem);
+    if (!pmem) {
+        return kBoyiaNull;
+    }
+    memcpy(pmem, data->GetBuffer(), data->GetLength());
+    IStream* pstm;
+    HRESULT ht = ::CreateStreamOnHGlobal(hmem, FALSE, &pstm);
+    if (ht != S_OK) {
+        GlobalFree(hmem);
+        return kBoyiaNull;
+    }
+
+    Gdiplus::Image* image = Gdiplus::Image::FromStream(pstm);
+    ::GlobalUnlock(hmem);
+
+    return image;
+}
+
 ImageWin::ImageWin()
     : m_image(kBoyiaNull)
     , m_winImage(kBoyiaNull)
@@ -64,20 +85,7 @@ LVoid ImageWin::setItem(yanbo::HtmlView* item)
 
 LVoid ImageWin::setData(const OwnerPtr<String>& data)
 {
-    HGLOBAL hmem = GlobalAlloc(GMEM_FIXED, data->GetLength());
-    BYTE* pmem = (BYTE*)GlobalLock(hmem);
-    if (!pmem) {
-        return;
-    }
-    memcpy(pmem, data->GetBuffer(), data->GetLength());
-    IStream* pstm;
-    HRESULT ht = ::CreateStreamOnHGlobal(hmem, FALSE, &pstm);
-    if (ht != S_OK) {
-        GlobalFree(hmem);
-        return;
-    }
-    m_winImage = Gdiplus::Image::FromStream(pstm);
-    ::GlobalUnlock(hmem);
+    m_winImage = createWinImage(data);
 }
 
 LVoid ImageWin::setImage(Gdiplus::Image* image)

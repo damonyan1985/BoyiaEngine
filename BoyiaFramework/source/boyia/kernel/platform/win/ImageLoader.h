@@ -2,6 +2,7 @@
 #define ImageLoader_h
 
 #include "UtilString.h"
+#include "OwnerPtr.h"
 
 namespace yanbo {
 class HashImageCacheMap;
@@ -10,9 +11,12 @@ class ImageLoader {
 public:
     static ImageLoader* instance();
     LVoid loadImage(const String& url, LInt clientId);
+    LVoid flushImageLoading(const String& url, const OwnerPtr<String>& data);
 
 private:
-    HashImageCacheMap* m_imageMap;
+    ImageLoader();
+   
+    HashImageCacheMap* m_imageCache;
     HashImageLoadingMap* m_loadingMap;
 };
 }

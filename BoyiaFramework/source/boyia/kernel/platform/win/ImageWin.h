@@ -15,6 +15,8 @@ public:
     ImageWin();
     virtual ~ImageWin();
 
+    static Gdiplus::Image* createWinImage(const OwnerPtr<String>& data);
+
 public:
     virtual LVoid load(const String& aPath, LVoid* image);
     virtual const String& url() const;

@@ -8,8 +8,8 @@ namespace util {
 class HashString {
 public:
     HashString(const HashString& str, LBool deep = LTrue)
-        : HashString(str.m_value, deep)
     {
+        Copy(str, deep);
     }
 
     HashString(const String& value, LBool deep = LTrue)
@@ -17,6 +17,18 @@ public:
     {
         Copy(value, deep);
     }
+
+    LVoid Copy(const HashString& hashString, LBool deep = LTrue)
+    {
+        if (deep) {
+            m_value = hashString.value();            
+        } else {
+            m_value.Copy(hashString.GetBuffer(), LFalse, hashString.length());
+        }
+
+        m_hash = hashString.hash();
+    }
+
 
     LVoid Copy(const String& value, LBool deep = LTrue)
     {
@@ -49,6 +61,16 @@ public:
     LInt GetStringSize() const
     {
         return yanbo::PlatformBridge::getTextSize(m_value);
+    }
+
+    const String& value() const
+    {
+        return m_value;
+    }
+
+    LInt length() const
+    {
+        return m_value.GetLength();
     }
     
 private:
