@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import kotlinx.coroutines.MainScope
 
 /**
  * shell程序共用activity基类

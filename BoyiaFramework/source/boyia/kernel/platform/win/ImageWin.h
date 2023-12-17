@@ -31,6 +31,7 @@ public:
     LVoid setItem(yanbo::HtmlView* item);
     LVoid* pixels() const;
     LVoid setData(const OwnerPtr<String>& data);
+    LVoid setImage(Gdiplus::Image* image);
 
     virtual LVoid onClientCallback();
 

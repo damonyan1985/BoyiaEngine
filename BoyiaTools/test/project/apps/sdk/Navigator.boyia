@@ -33,7 +33,7 @@ class Navigator {
         // 调用界面onStop回调
         controller.onStop();
         // 从栈中删除
-        this.controllerStack.remove(size - 1);
+        this.controllerStack.removeIndex(size - 1);
         // 从视图中移除
         controller.onDestroy();
 

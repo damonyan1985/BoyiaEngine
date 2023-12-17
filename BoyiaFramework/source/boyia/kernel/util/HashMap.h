@@ -188,6 +188,31 @@ public:
         }
     }
 
+    // 是否包含key
+    LBool contains(const K& key)
+    {
+        LUint hash = genHash(key);
+        // 利用hash找到索引
+        LUint index = indexHash(hash);
+        // 得到表头
+        HashMapEntryPtr header = m_table[index];
+        // 如果链表头为空，则证明hash表中没有这个元素
+        if (!header) {
+            return LFalse;
+        }
+
+        HashMapEntryPtr current = header;
+        while (current) {
+            if (hash == current->hash && key == current->key) {
+                return LTrue;
+            }
+
+            current = current->next;
+        }
+
+        return LFalse;
+    }
+
 private:
     LUint genHash(const K& key)
     {

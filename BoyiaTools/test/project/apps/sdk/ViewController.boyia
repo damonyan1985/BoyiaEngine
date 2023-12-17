@@ -27,8 +27,7 @@ class ViewController extends Object {
         if (this.contentView) {
             this.contentView.setVisible(true);
             // 重绘
-            this.contentView.draw();
-            this.contentView.commit();
+            this.draw();
         }
     }
 

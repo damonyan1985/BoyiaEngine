@@ -3,8 +3,38 @@
 #include "ImageWin.h"
 #include "StringBuilder.h"
 #include "UIThreadClientMap.h"
+#include "HashMap.h"
+#include "HashUtil.h"
+#include <windows.h>
+#include <GdiPlus.h>
 
 namespace yanbo {
+class HashImageCacheMap {
+public:
+    Gdiplus::Image* get(const String& url)
+    {
+        return m_map.get(HashString(url, LFalse)).get();
+    }
+
+    LVoid put(const String& url, Gdiplus::Image* image) 
+    {
+        m_map.put(url, image);
+    }
+
+private:
+    HashMap<HashString, OwnerPtr<Gdiplus::Image>> m_map;
+};
+
+class HashImageLoadingMap {
+public:
+    LBool hasLoading(const String& url)
+    {
+        return m_loadingMap.contains(url);
+    }
+private:
+    HashMap<HashString, OwnerPtr<KVector<LInt>>> m_loadingMap;
+};
+
 class ImageLoaderClient : public NetworkClient, public UIEvent {
 public:
     ImageLoaderClient(LInt id)

@@ -80,6 +80,11 @@ LVoid ImageWin::setData(const OwnerPtr<String>& data)
     ::GlobalUnlock(hmem);
 }
 
+LVoid ImageWin::setImage(Gdiplus::Image* image)
+{
+    m_winImage = image;
+}
+
 const String& ImageWin::url() const
 {
     return static_cast<yanbo::ImageView*>(m_image)->url();
