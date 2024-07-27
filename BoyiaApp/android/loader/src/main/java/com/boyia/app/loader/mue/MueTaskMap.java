@@ -29,6 +29,7 @@ public class MueTaskMap<T, R> extends MueTask<R> {
         }
         @Override
         public void onNext(T t) {
+            // apply在onnext的时候处理
             R result = mFunction.apply(t);
             mObserver.onNext(result);
         }

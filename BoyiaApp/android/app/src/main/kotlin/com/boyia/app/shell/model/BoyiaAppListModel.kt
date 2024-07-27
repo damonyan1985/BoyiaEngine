@@ -22,12 +22,10 @@ class BoyiaAppListModel {
         BoyiaModelUtil.request(APP_LIST_URL, object: ModelDataCallback<BoyiaAppListData> {
             override fun onLoadData(data: BoyiaAppListData) {
                 BoyiaLog.d(TAG, "BoyiaAppListData retMsg = ${data.retMsg}")
-                if (data.data == null || data.data!!.isEmpty()) {
-                    return
+                data.data?.let {
+                    appList.addAll(data.data)
+                    callback.onLoaded()
                 }
-
-                appList.addAll(data.data!!)
-                callback.onLoaded()
             }
         })
     }

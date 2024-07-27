@@ -52,7 +52,7 @@ object BoyiaAppShare {
         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
         ctx.grantUriPermission(
-                "com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            INSTAGRAM_PACKAGE_NAME, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         if (ctx.packageManager?.resolveActivity(intent, 0) != null) {
             BoyiaLog.d(TAG, "start Instagram")
             ctx.startActivityForResult(intent, 0);
