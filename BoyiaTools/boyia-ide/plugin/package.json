@@ -30,7 +30,8 @@
 				"id": "boyia",
 				"extensions": [
 					".boyia"
-				]
+				],
+				"configuration": "./language/language.json"
 			}
 		],
 		"grammars": [

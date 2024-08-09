@@ -8,6 +8,10 @@ class UtilApiRegister extends BaseRegister {
 
     return this.getAssist([]);
   }
+
+  isApi() {
+    return true;
+  }
 }
 
 module.exports = UtilApiRegister;

@@ -21,6 +21,7 @@ class CodeAssist {
     console.log('CodeAssist::provideDefinition');
     const line = document.lineAt(position);
     const lineText = line.text.substring(0, position.character);
+    console.log('CodeAssist::provideDefinition---lineText=' + lineText);
     const text = lineText.replace(/^\s*|\s*$/g, '');
 
     console.log('CodeAssist::provideDefinition---config=' + JSON.stringify(CodeAssist.config));
@@ -33,7 +34,6 @@ class CodeAssist {
     if (reg.test(keys[keys.length - 1])) {
       return CodeRegistry.keyword.exec(keys[keys.length - 1], null);
     }
-
 
     if (CodeRegistry.registers[text]) {
       return CodeRegistry.registers[text].exec(text, CodeAssist.config);

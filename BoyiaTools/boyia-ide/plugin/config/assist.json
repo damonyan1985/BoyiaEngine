@@ -3,6 +3,13 @@
     "instanceof",
     "json",
     "showToast",
-    "log"
+    "log",
+    "fromJson",
+    "toJson",
+    "startApp",
+    "isIOS",
+    "isAndroid",
+    "isWindows",
+    "newMicrotask"
   ]
 }

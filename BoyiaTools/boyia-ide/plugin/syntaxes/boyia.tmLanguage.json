@@ -15,7 +15,7 @@
           "include": "#keyword-control"
         },
         {
-          "include": "#string-expression"
+          "include": "#strings"
         },
         {
           "include": "#paren-expression"
@@ -36,7 +36,7 @@
           "include": "#code-expression"
         },
         {
-          "include": "#comments-single-line"
+          "include": "#comments"
         }
       ]
     },
@@ -96,42 +96,185 @@
         }
       ]
     },
-    "string-expression": {
-      "begin": "\"",
-      "end": "\"",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.string.begin.boyia"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.string.end.boyia"
-        }
-      },
-      "name": "string.quoted.double.boyia",
-      "patterns": [
-        {
-          "match": "\\.",
-          "name": "constant.character.escape.boyia"
-        }
-      ]
-    },
-    "comments-single-line": {
-      "name": "comment.line.number-sign.python",
-      "begin": "(\\#)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.comment.python"
-        }
-      },
-      "end": "($|(?='''))",
-      "patterns": [
-        {
-          "include": "#codetags"
-        }
-      ]
-    },
+    "expressions": {
+			"patterns": [
+				{
+					"include": "#constants-and-special-vars"
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"name": "variable.parameter.boyia",
+					"match": "[a-zA-Z0-9_]+"
+				},
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"patterns": [
+						{
+							"include": "#expressions"
+						}
+					]
+				}
+			]
+		},
+		"string-interp": {
+			"patterns": [
+				{
+					"name": "meta.embedded.expression.boyia",
+					"match": "\\$([a-zA-Z0-9_]+)",
+					"captures": {
+						"1": {
+							"name": "variable.parameter.boyia"
+						}
+					}
+				},
+				{
+					"name": "meta.embedded.expression.boyia",
+					"begin": "\\$\\{",
+					"end": "\\}",
+					"patterns": [
+						{
+							"include": "#expressions"
+						}
+					]
+				},
+				{
+					"name": "constant.character.escape.boyia",
+					"match": "\\\\."
+				}
+			]
+		},
+    "strings": {
+			"patterns": [
+				{
+					"name": "string.interpolated.triple.double.boyia",
+					"begin": "(?<!r)\"\"\"",
+					"end": "\"\"\"(?!\")",
+					"patterns": [
+						{
+							"include": "#string-interp"
+						}
+					]
+				},
+				{
+					"name": "string.interpolated.triple.single.boyia",
+					"begin": "(?<!r)'''",
+					"end": "'''(?!')",
+					"patterns": [
+						{
+							"include": "#string-interp"
+						}
+					]
+				},
+				{
+					"name": "string.quoted.triple.double.boyia",
+					"begin": "r\"\"\"",
+					"end": "\"\"\"(?!\")"
+				},
+				{
+					"name": "string.quoted.triple.single.boyia",
+					"begin": "r'''",
+					"end": "'''(?!')"
+				},
+				{
+					"name": "string.interpolated.double.boyia",
+					"begin": "(?<!\\|r)\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "invalid.string.newline",
+							"match": "\\n"
+						},
+						{
+							"include": "#string-interp"
+						}
+					]
+				},
+				{
+					"name": "string.quoted.double.boyia",
+					"begin": "r\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "invalid.string.newline",
+							"match": "\\n"
+						}
+					]
+				},
+				{
+					"name": "string.interpolated.single.boyia",
+					"begin": "(?<!\\|r)'",
+					"end": "'",
+					"patterns": [
+						{
+							"name": "invalid.string.newline",
+							"match": "\\n"
+						},
+						{
+							"include": "#string-interp"
+						}
+					]
+				},
+				{
+					"name": "string.quoted.single.boyia",
+					"begin": "r'",
+					"end": "'",
+					"patterns": [
+						{
+							"name": "invalid.string.newline",
+							"match": "\\n"
+						}
+					]
+				}
+			]
+		},
+    "comments": {
+			"patterns": [
+				{
+					"name": "comment.block.empty.boyia",
+					"match": "/\\*\\*/",
+					"captures": {
+						"0": {
+							"name": "punctuation.definition.comment.boyia"
+						}
+					}
+				},
+				{
+					"include": "#comments-inline"
+				}
+			]
+		},
+    "comments-inline": {
+			"patterns": [
+				{
+					"include": "#comments-block"
+				},
+				{
+					"match": "((//).*)$",
+					"captures": {
+						"1": {
+							"name": "comment.line.double-slash.boyia"
+						}
+					}
+				}
+			]
+		},
+		"comments-block": {
+			"patterns": [
+				{
+					"name": "comment.block.boyia",
+					"begin": "/\\*",
+					"end": "\\*/",
+					"patterns": [
+						{
+							"include": "#comments-block"
+						}
+					]
+				}
+			]
+		},
     "paren-expression": {
       "begin": "\\(",
       "end": "\\)",

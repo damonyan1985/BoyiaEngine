@@ -25,6 +25,10 @@ class KeyworkRegister extends BaseRegister {
 
     return this.getAssist([]);
   }
+
+  isKeyword() {
+    return true;
+  }
 }
 
 module.exports = KeyworkRegister;
