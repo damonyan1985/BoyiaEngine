@@ -12,7 +12,7 @@
       "url": "https://damonyan1985.github.io/app/out/contacts.zip",
       "name": "contacts",
       "cover": "https://i-1-lanrentuku.52tup.com/2020/12/22/cd2c65fa-55b1-4944-acad-c9a0efee646e.jpg?imageView2/2/w/500",
-      "isEntry": false
+      "isEntry": true
     },
     {
       "id": 10001,
@@ -24,11 +24,11 @@
     },
     {
       "id": 10002,
-      "versionCode": 1,
-      "url": "https://damonyan1985.github.io/app/out/lufo.zip",
-      "name": "lufo",
+      "versionCode": 13,
+      "url": "https://damonyan1985.github.io/app/out/photo.zip",
+      "name": "photo",
       "cover": "https://i-1-lanrentuku.52tup.com/2020/12/22/cd2c65fa-55b1-4944-acad-c9a0efee646e.jpg?imageView2/2/w/500",
-      "isEntry": true
+      "isEntry": false
     }
   ]
 }
