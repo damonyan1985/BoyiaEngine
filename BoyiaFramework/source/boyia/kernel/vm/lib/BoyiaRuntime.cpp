@@ -107,9 +107,9 @@ LVoid BoyiaRuntime::setGcRuning(LBool isRuning)
 // TODO GC目前还有点问题，暂不执行gc
 LBool BoyiaRuntime::needCollect() const
 {
-    //return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
-    // GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
-    return LFalse;
+    // return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
+    return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
+    //return LTrue;
 }
 
 // Prepare delete the object

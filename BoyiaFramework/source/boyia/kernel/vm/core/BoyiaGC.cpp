@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #define MIGRATE_SIZE (6*1024)
+#define kBoyiaRefPageSize (64 * 1024)
 
 typedef struct BoyiaRef {
     LVoid* mAddress;
@@ -14,13 +15,17 @@ typedef struct BoyiaRef {
     BoyiaRef* mNext;
 } BoyiaRef;
 
-typedef struct BoyiaGC {
+typedef struct BoyiaGc {
     BoyiaRef* mBegin;
     BoyiaRef* mEnd;
     LInt mSize;
+
+    LInt mUseIndex;
+    BoyiaRef* mRefs;
+    BoyiaRef* mFreeRefs;
     LVoid* mBoyiaVM;
     LVoid* mMigrates[MIGRATE_SIZE];
-} BoyiaGC;
+} BoyiaGc;
 
 // 0000 0000 0000 0011
 // 清除高14位所用
@@ -41,36 +46,63 @@ enum BoyiaGcColor {
 // 设置迁移标记
 #define SET_MIGRATE_FLAG(fun) (fun->mParamCount |= (0x1 << 20))
 
+static BoyiaRef* AllocateRef(BoyiaGc* gc)
+{
+    BoyiaRef* ref = gc->mFreeRefs;
+    if (gc->mFreeRefs->mNext) {
+        gc->mFreeRefs = gc->mFreeRefs->mNext;
+    } else {
+        if (gc->mUseIndex >= kBoyiaRefPageSize - 1) {
+            // (TODO) Out of Memory
+            return kBoyiaNull;
+        }
+        gc->mFreeRefs = &gc->mRefs[++gc->mUseIndex];
+        gc->mFreeRefs->mNext = kBoyiaNull;
+    }
+
+    return ref;
+}
+
+static LVoid FreeRef(BoyiaRef* ref, BoyiaGc* gc)
+{
+    ref->mNext = gc->mFreeRefs->mNext;
+    gc->mFreeRefs = ref;
+}
+
 // 收集器
 extern LVoid NativeDelete(LVoid* data);
 
 extern LVoid* CreateGC(LVoid* vm)
 {
-    BoyiaGC* gc = FAST_NEW(BoyiaGC);
+    BoyiaGc* gc = FAST_NEW(BoyiaGc);
     gc->mBegin = kBoyiaNull;
     gc->mEnd = kBoyiaNull;
     gc->mSize = 0;
+    gc->mRefs = FAST_NEW_ARRAY(BoyiaRef, kBoyiaRefPageSize);
+    gc->mUseIndex = 0;
+
+    gc->mFreeRefs = &gc->mRefs[0];
+    {
+        gc->mFreeRefs->mNext = kBoyiaNull;
+    }
     gc->mBoyiaVM = vm;
     return gc;
 }
 
 extern LVoid DestroyGC(LVoid* vm)
 {
-    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
+    BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
     BoyiaRef* ref = gc->mBegin;
-    while (ref) {
-        BoyiaRef* tmp = ref;
-        ref = ref->mNext;
-        FAST_DELETE(tmp);
-    }
-
+    FAST_DELETE(gc->mRefs);
     FAST_DELETE(gc);
 }
 
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
 {
-    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
-    BoyiaRef* ref = FAST_NEW(BoyiaRef);
+    BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
+    //BoyiaRef* ref = FAST_NEW(BoyiaRef);
+    BoyiaRef* ref = AllocateRef(gc);
+
     ref->mAddress = address;
     ref->mType = type;
     ref->mNext = kBoyiaNull;
@@ -188,7 +220,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
 }
 
 // 清除所有需要回收的对象
-static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
+static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
 {
     BoyiaRef* prev = gc->mBegin;
     while (prev) {
@@ -198,7 +230,8 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
             // begin标记置为下一个元素
             gc->mBegin = prev->mNext;
             // 删除链表中的元素
-            FAST_DELETE(prev);
+            //FAST_DELETE(prev);
+            FreeRef(prev, gc);
             --gc->mSize;
             prev = gc->mBegin;
         } else {
@@ -218,7 +251,8 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
             // 指向下一个引用
             prev->mNext = current->mNext;
             // 删除引用节点
-            FAST_DELETE(current);
+            //FAST_DELETE(current);
+            FreeRef(current, gc);
             // gc中引用数量减一
             --gc->mSize;
             // 切换当前指针
@@ -232,7 +266,7 @@ static LVoid ClearAllGarbage(BoyiaGC* gc, LVoid* vm)
     gc->mEnd = prev;
 }
 
-static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaFunction* fun, BoyiaGC* gc)
+static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaFunction* fun, BoyiaGc* gc)
 {
     LInt index = MIGRATE_FLAG(fun);
     LIntPtr address = (LIntPtr)gc->mMigrates[index];
@@ -255,7 +289,7 @@ static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid
 }
 
 // 返回值表示是否需要遍历对象
-static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGc* gc)
 {
     BoyiaFunction* fun = (BoyiaFunction*)(value->mValueType == BY_CLASS 
         ? value->mValue.mObj.mPtr
@@ -269,7 +303,7 @@ static LVoid MigrateObject(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPo
     ResetMigrateAddress(value, migrateIndexPtr, toPool, fun, gc);
 }
 
-static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGc* gc)
 {
     BoyiaFunction* fun = kBoyiaNull;
     if (value->mValueType == BY_CLASS) {
@@ -298,7 +332,7 @@ static LVoid MigrateValue(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPoo
     
 }
 
-static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGC* gc)
+static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexPtr, LVoid* toPool, BoyiaGc* gc)
 {
     LInt idx = 0;
     for (; idx < size; idx++) {
@@ -306,7 +340,7 @@ static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexP
     }
 }
 
-static LVoid ResetGCRef(BoyiaGC* gc)
+static LVoid ResetGCRef(BoyiaGc* gc)
 {
     BoyiaRef* ref = gc->mBegin;
     while (ref) {
@@ -325,7 +359,7 @@ static LVoid ResetGCRef(BoyiaGC* gc)
 // 内存碎片整理
 // 1，当剩余内存不足以分配空间时，gc一次，如果还不行，则执行次操作
 // 2，如果碎片整理后还无法分配内存，则VM将报OOM
-static LVoid CompactMemory(BoyiaGC* gc)
+static LVoid CompactMemory(BoyiaGc* gc)
 {
     LInt migrateIndex = 0;
     LMemset(gc->mMigrates, 0, MIGRATE_SIZE);
@@ -360,7 +394,7 @@ static LVoid ResetBoyiaObject(BoyiaFunction* fun)
 }
 
 // 重置对象内存颜色位白色
-static LVoid ResetMemoryColor(BoyiaGC* gc)
+static LVoid ResetMemoryColor(BoyiaGc* gc)
 {
     // 在GC列表中的都是动态生成的对象
     BoyiaRef* ref = gc->mBegin;
@@ -393,7 +427,7 @@ static LVoid ResetMemoryColor(BoyiaGC* gc)
 // 标记gcroots中引用的对象，垃圾回收标记清除
 extern LVoid GCollectGarbage(LVoid* vm)
 {
-    BoyiaGC* gc = (BoyiaGC*)GetGabargeCollect(vm);
+    BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
     // 重置对象内存颜色
     ResetMemoryColor(gc);
     
