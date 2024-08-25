@@ -831,12 +831,11 @@ LInt BoyiaMicroTaskResolve(LVoid* vm)
 LInt BoyiaMicroTaskInit(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
-    // 索引1，2为两个传入的参数key,value，
+    // 索引0为init函数指针
+    // 第一个参数是worker
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
-    // 索引0为map函数指针
-    // 第一个参数是worker
+
     // Such as: fun worker(resolve) { dosomething(resolve); }
     BoyiaValue* worker = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;

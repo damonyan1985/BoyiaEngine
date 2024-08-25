@@ -573,8 +573,12 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
         queue->mFreeTasks = queue->mFreeTasks->mNext;
     } else {
         if (queue->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
-            // (TODO) Out of Memory
-            return kBoyiaNull;
+            
+            if (!task) {
+                // (TODO) Out of Memory
+                return kBoyiaNull;
+            }
+            return task;
         }
         queue->mFreeTasks = &queue->mCache[++queue->mUseIndex];
         {
@@ -1664,7 +1668,12 @@ static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm)
     if (result->mValueType != BY_CLASS || GetBoyiaClassId(result) != kBoyiaMicroTask) {
         BoyiaFunction* fun = CreateMicroTaskObject(vm);
         MicroTask* task = AllocMicroTask(vm);
-        task->mResume = true;
+        // 执行到async函数末尾，非微任务类型直接resume，resume设置为true
+        task->mResume = LTrue;
+        // 匿名微任务创建时设置pc为null
+        task->mAsyncEs.mStackFrame.mPC = kBoyiaNull;
+        AddMicroTask(vm, task);
+        //AddMicroTask(vm, task);
         ValueCopy(&task->mValue, result);
         fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
 
@@ -3194,34 +3203,34 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
             }
 
             AsyncExecScene* aes = &task->mAsyncEs;
-
-            LInt size = aes->mStackFrame.mLValSize;
-            LInt i = 0;
-            for (; i < size; i++) {
-                ValueCopy(&vm->mLocals[vm->mEState->mLValSize + i], &aes->mLocals[i]);
-            }
-
-            size = aes->mStackFrame.mResultNum;
-            for (i = 0; i < size; i++) {
-                ValueCopy(&vm->mOpStack[vm->mEState->mResultNum + i], &aes->mOpStack[i]);
-            }
-
-            //PrintValueKey(&aes->mLocals[1], vm);
-
-            // 恢复await中断的程序
             Instruction* pc = aes->mStackFrame.mPC;
-            vm->mEState->mPC = NextInstruction(pc, vm);
-            vm->mEState->mContext = aes->mStackFrame.mContext;
-            vm->mEState->mLoopSize = aes->mStackFrame.mLoopSize;
-            vm->mEState->mClass = aes->mStackFrame.mClass;
-            vm->mEState->mLValSize += aes->mStackFrame.mLValSize;
-            vm->mEState->mResultNum += aes->mStackFrame.mResultNum;
-            vm->mEState->mTmpLValSize = aes->mStackFrame.mTmpLValSize;
-            BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
+            if (pc) {
+                LInt size = aes->mStackFrame.mLValSize;
+                LInt i = 0;
+                for (; i < size; i++) {
+                    ValueCopy(&vm->mLocals[vm->mEState->mLValSize + i], &aes->mLocals[i]);
+                }
 
-            ValueCopy(&vm->mCpu->mReg0, &task->mValue);
-            // TODO handleassignvar需要优化
-            ExecInstruction(vm);
+                size = aes->mStackFrame.mResultNum;
+                for (i = 0; i < size; i++) {
+                    ValueCopy(&vm->mOpStack[vm->mEState->mResultNum + i], &aes->mOpStack[i]);
+                }
+
+                //PrintValueKey(&aes->mLocals[1], vm);
+                // 恢复await中断的程序
+                vm->mEState->mPC = NextInstruction(pc, vm);
+                vm->mEState->mContext = aes->mStackFrame.mContext;
+                vm->mEState->mLoopSize = aes->mStackFrame.mLoopSize;
+                vm->mEState->mClass = aes->mStackFrame.mClass;
+                vm->mEState->mLValSize += aes->mStackFrame.mLValSize;
+                vm->mEState->mResultNum += aes->mStackFrame.mResultNum;
+                vm->mEState->mTmpLValSize = aes->mStackFrame.mTmpLValSize;
+                BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
+
+                ValueCopy(&vm->mCpu->mReg0, &task->mValue);
+                // TODO handleassignvar需要优化
+                ExecInstruction(vm);
+            }
             // 释放任务
             FreeMicroTask(task, vm);
         } else {

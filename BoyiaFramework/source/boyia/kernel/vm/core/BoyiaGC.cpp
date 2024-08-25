@@ -53,8 +53,11 @@ static BoyiaRef* AllocateRef(BoyiaGc* gc)
         gc->mFreeRefs = gc->mFreeRefs->mNext;
     } else {
         if (gc->mUseIndex >= kBoyiaRefPageSize - 1) {
-            // (TODO) Out of Memory
-            return kBoyiaNull;
+            if (!ref) {
+                // (TODO) Out of Memory
+                return kBoyiaNull;
+            }
+            return ref;
         }
         gc->mFreeRefs = &gc->mRefs[++gc->mUseIndex];
         gc->mFreeRefs->mNext = kBoyiaNull;
