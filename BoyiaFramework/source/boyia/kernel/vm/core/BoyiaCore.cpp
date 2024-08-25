@@ -600,6 +600,7 @@ static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
         queue->mFreeTasks->mUse = LFalse;
         queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
+    --queue->mSize;
 }
 
 static MicroTaskQueue* CreateTaskQueue()
@@ -1124,7 +1125,10 @@ static LInt HandleReturn(LVoid* ins, BoyiaVM* vm)
 {
     vm->mEState->mPC = vm->mEState->mContext->mEnd;
     if (vm->mEState->mFun.mValueType == BY_ASYNC_PROP) {
-        return HandleAsyncEnd(ins, vm);
+        BoyiaValue* result = &vm->mCpu->mReg0;
+        if (result->mValueType != kBoyiaMicroTask) {
+            return HandleAsyncEnd(ins, vm);
+        }
     }
     return kOpResultSuccess;
 }
@@ -1700,10 +1704,6 @@ static LVoid FunStatement(CompileState* cs, LInt funType)
     InitParams(cs); //  初始化参数
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
-
-    if (funType == BY_ASYNC_PROP) {
-        PutInstruction(kBoyiaNull, kBoyiaNull, kCmdAsyncEnd, cs);
-    }
 }
 
 /*
@@ -2349,7 +2349,11 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     for (i = start; i < vm->mEState->mResultNum; i++) {
         ValueCopy(&aes->mOpStack[i - start], &vm->mOpStack[i]);
     }
-    return HandleReturn(ins, vm);
+    
+    // (TODO):BUG, 这里有BUG后期需要优化，await后当前函数是中断了，但外层async函数带await并没有被中断
+    // 此处需要修复
+    vm->mEState->mPC = vm->mEState->mContext->mEnd;
+    return kOpResultSuccess;
 }
 
 // 执行到await，当前调用栈将被中断
@@ -3190,7 +3194,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTaskQueue* queue = vm->mTaskQueue;
     MicroTask* task = queue->mHead;
-    MicroTask* prev = task;
+    MicroTask* prev = queue->mHead;
     while (task) {
         // 如果异步任务完成，处理完任务后，任务需要被回收
         if (task->mResume) {
@@ -3236,6 +3240,6 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
         } else {
             prev = task;
         }
-        task = task->mNext;
+        task = prev->mNext;
     }
 }

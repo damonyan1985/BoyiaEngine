@@ -15,7 +15,7 @@ class MainViewController extends ViewController {
         var b = 5;
         var c = a % b;
 
-        this.testAwait();
+        this.helloAwait();
 
         //log(c);
         Util.showToast("MainViewController dev="+c);
@@ -83,6 +83,13 @@ class MainViewController extends ViewController {
         
         this.socket = BoyiaSocket.create("ws://127.0.0.1:8445/contacts?uid=123", this.onSocketMsg);
         this.socket.sendMsg("hello world boyia");
+    }
+
+    prop async helloAwait() {
+        var result = (await this.testAwait());
+
+        Util.log("helloAwait result:" + result);
+        return result;
     }
 
     prop async testAwait() {
