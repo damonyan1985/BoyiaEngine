@@ -50,7 +50,7 @@ enum TokenType {
     STRING_VALUE,
 };
 
-enum LogicValue {
+enum TokenLogicValue {
     AND = BY_END + 1,
     OR,
     NOT,
@@ -62,7 +62,7 @@ enum LogicValue {
     NE
 }; // 26
 
-enum MathValue {
+enum TokenMathValue {
     ADD = NE + 1,
     SUB,
     MUL,
@@ -72,7 +72,7 @@ enum MathValue {
     ASSIGN
 }; // 33
 // 标点符号
-enum DelimiValue {
+enum TokenDelimiValue {
     SEMI = ASSIGN + 1, // 分号
     COMMA, // 逗号
     QUOTE, // 引号
@@ -80,7 +80,7 @@ enum DelimiValue {
     COLON  // 冒号
 }; // 38
 // 小括号，中括号，大括号
-enum BracketValue {
+enum TokenBracketValue {
     LPTR = COLON + 1,
     RPTR,
     ARRAY_BEGIN,
@@ -287,6 +287,8 @@ typedef struct {
     MicroTask mCache[MICRO_TASK_CAPACITY];
     MicroTask* mHead;
     MicroTask* mEnd;
+    MicroTask* mFreeTasks;
+    LInt mUseIndex;
     LInt mSize;
 } MicroTaskQueue;
 
@@ -563,21 +565,37 @@ static VMCpu* CreateVMCpu()
     return vmCpu;
 }
 
-static MicroTask* CreateMicroTask(BoyiaVM* vm)
+static MicroTask* AllocMicroTask(BoyiaVM* vm)
 {
-    if (vm->mTaskQueue->mSize >= MICRO_TASK_CAPACITY) {
-        return kBoyiaNull;
-    }
-
-    LInt i = 0;
-    for (; i < MICRO_TASK_CAPACITY; i++) {
-        if (!vm->mTaskQueue->mCache[i].mUse) {
-            vm->mTaskQueue->mSize++;
-            return &vm->mTaskQueue->mCache[i];
+    MicroTaskQueue* queue = vm->mTaskQueue;
+    MicroTask* task = queue->mFreeTasks;
+    if (queue->mFreeTasks->mNext) {
+        queue->mFreeTasks = queue->mFreeTasks->mNext;
+    } else {
+        if (queue->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
+            // (TODO) Out of Memory
+            return kBoyiaNull;
+        }
+        queue->mFreeTasks = &queue->mCache[++queue->mUseIndex];
+        {
+            queue->mFreeTasks->mNext = kBoyiaNull;
+            queue->mFreeTasks->mUse = LFalse;
+            queue->mFreeTasks->mValue.mValueType = BY_ARG;
         }
     }
 
-    return kBoyiaNull;
+    return task;
+}
+
+static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
+{
+    MicroTaskQueue* queue = vm->mTaskQueue;
+    task->mNext = queue->mFreeTasks->mNext;
+    queue->mFreeTasks = task;
+    {
+        queue->mFreeTasks->mUse = LFalse;
+        queue->mFreeTasks->mValue.mValueType = BY_ARG;
+    }
 }
 
 static MicroTaskQueue* CreateTaskQueue()
@@ -586,12 +604,12 @@ static MicroTaskQueue* CreateTaskQueue()
     queue->mHead = kBoyiaNull;
     queue->mEnd = kBoyiaNull;
     queue->mSize = 0;
-
-    LInt i = 0;
-    for (; i < MICRO_TASK_CAPACITY; i++) {
-        queue->mCache[i].mUse = LFalse;
-        queue->mCache[i].mNext = kBoyiaNull;
-        queue->mCache[i].mValue.mValueType = BY_ARG;
+    queue->mUseIndex = 0;
+    queue->mFreeTasks = &queue->mCache[0];
+    {
+        queue->mFreeTasks->mNext = kBoyiaNull;
+        queue->mFreeTasks->mUse = LFalse;
+        queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
 
     return queue;
@@ -1645,7 +1663,7 @@ static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm)
     // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
     if (result->mValueType != BY_CLASS || GetBoyiaClassId(result) != kBoyiaMicroTask) {
         BoyiaFunction* fun = CreateMicroTaskObject(vm);
-        MicroTask* task = CreateMicroTask(vm);
+        MicroTask* task = AllocMicroTask(vm);
         task->mResume = true;
         ValueCopy(&task->mValue, result);
         fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
@@ -3144,7 +3162,7 @@ LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm)
 LVoid* PushMicroTask(LVoid* vmPtr)
 {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
-    MicroTask* task = CreateMicroTask(vm);
+    MicroTask* task = AllocMicroTask(vm);
     task->mResume = LFalse;
     AddMicroTask(vm, task);
     return task;
@@ -3165,7 +3183,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
     MicroTask* task = queue->mHead;
     MicroTask* prev = task;
     while (task) {
-        // 如果异步任务完成
+        // 如果异步任务完成，处理完任务后，任务需要被回收
         if (task->mResume) {
             // 若任务在头部
             if (queue->mHead == task) {
@@ -3205,9 +3223,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
             // TODO handleassignvar需要优化
             ExecInstruction(vm);
             // 释放任务
-            task->mUse = LFalse;
-            task->mNext = kBoyiaNull;
-            task->mValue.mValueType = BY_ARG;
+            FreeMicroTask(task, vm);
         } else {
             prev = task;
         }
