@@ -306,7 +306,7 @@ typedef struct BoyiaVM {
     ExecState* mEState;
     StackFrame* mExecStack;
     LIntPtr* mLoopStack;
-    BoyiaValue* mOpStack;
+    BoyiaValue* mOpStack; // 指令运算压栈
     VMCode* mVMCode;
     VMStrTable* mStrTable;
     VMEntryTable* mEntry;
@@ -573,7 +573,7 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
         queue->mFreeTasks = queue->mFreeTasks->mNext;
     } else {
         if (queue->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
-            
+            queue->mFreeTasks = kBoyiaNull;
             if (!task) {
                 // (TODO) Out of Memory
                 return kBoyiaNull;

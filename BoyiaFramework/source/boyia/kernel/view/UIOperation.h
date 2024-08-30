@@ -30,8 +30,7 @@ public:
 
     LVoid execute();
     LInt createView();
-    
-    virtual Message* obtain();
+
     LVoid swapBuffer();
 
     // operation

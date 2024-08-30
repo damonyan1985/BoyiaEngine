@@ -18,7 +18,7 @@ public:
             Message* msg = m_queue->poll();
             if (msg) {
                 m_thread->handleMessage(msg);
-                msg->msgRecycle();
+                m_queue->freeMessage(msg);
             } else {
                 m_thread->waitOnNotify();
             }

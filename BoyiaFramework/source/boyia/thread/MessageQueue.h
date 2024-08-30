@@ -9,7 +9,6 @@ namespace yanbo {
 class Message {
 public:
     Message();
-    LVoid msgRecycle();
 
 public:
     LInt type;
@@ -17,24 +16,30 @@ public:
     LIntPtr arg0;
     LIntPtr arg1;
     long when;
-    LBool recycle;
     LBool inCache;
+    Message* next;
 };
 
 class MessageCache {
 public:
     MessageCache();
     virtual Message* obtain();
-    LVoid initCache();
+    virtual LVoid freeMessage(Message* msg);
 
 private:
+    LVoid initCache();
+
     Message* m_cache;
+    Message* m_freeList;
+    LInt m_useIndex;
 };
 
 typedef KList<Message*> MessageList;
 class MessageQueue : public MessageCache {
 public:
     Message* obtain();
+    LVoid freeMessage(Message* msg);
+
     LVoid push(Message* msg);
     LVoid removeMessage(LInt type);
     LBool hasMessage(LInt type);

@@ -27,11 +27,6 @@ LInt UIOperation::createView()
     return 0;
 }
 
-Message* UIOperation::obtain()
-{
-    return MessageCache::obtain();
-}
-
 LVoid UIOperation::opSetText(HtmlView* view, const String& text)
 {
     Message* msg = obtain();
@@ -161,7 +156,7 @@ LVoid UIOperation::execute()
         } break;
         }
 
-        msg->msgRecycle();
+        freeMessage(msg);
     }
 
     m_msgs->clear();

@@ -2,35 +2,26 @@
 
 namespace yanbo {
 
-#define MAX_MESSAGE_SIZE 50
+const LInt kMessageCapacity = 50;
 Message::Message()
     : type(0)
     , obj(kBoyiaNull)
-    , recycle(LTrue)
-    , inCache(LFalse)
+    , inCache(LTrue)
 {
-}
-
-LVoid Message::msgRecycle()
-{
-    if (inCache) {
-        recycle = LTrue;
-    } else {
-        delete this;
-    }
 }
 
 MessageCache::MessageCache()
     : m_cache(kBoyiaNull)
+    , m_useIndex(0)
 {
 }
 
 LVoid MessageCache::initCache()
 {
-    m_cache = new Message[MAX_MESSAGE_SIZE];
-    LInt size = MAX_MESSAGE_SIZE;
-    while (size--) {
-        m_cache[size].inCache = LTrue;
+    m_cache = new Message[kMessageCapacity];
+    m_freeList = &m_cache[0];
+    {
+        m_freeList->next = kBoyiaNull;
     }
 }
 
@@ -40,18 +31,47 @@ Message* MessageCache::obtain()
         initCache();
     }
 
-    LInt size = MAX_MESSAGE_SIZE;
-    while (size--) {
-        if (m_cache[size].recycle) {
-            m_cache[size].recycle = LFalse;
-            return m_cache + size;
+    Message* msg = m_freeList;
+    if (m_freeList && m_freeList->next) {
+        m_freeList = m_freeList->next;
+    } else {
+        // 如果free用完了，而且m_useIndex已经达到最大容量了, 将freelist头部设置为null
+        if (m_useIndex >= kMessageCapacity - 1) {
+            if (m_freeList) {
+                m_freeList = kBoyiaNull;
+            }
+            if (!msg) {
+                msg = new Message();
+                msg->inCache = LFalse;
+            }
+        } else {
+            // 如果m_useIndex还没用完, 继续分配
+            m_freeList = &m_cache[++m_useIndex];
+            m_freeList->next = kBoyiaNull;
         }
+        
     }
 
-    return new Message();
+    return msg;
 }
 
-void MessageQueue::push(Message* msg)
+LVoid MessageCache::freeMessage(Message* msg)
+{
+    if (!msg->inCache) {
+        delete msg;
+        return;
+    }
+    
+    if (m_freeList) {
+        msg->next = m_freeList->next;
+    } else {
+        msg->next = kBoyiaNull;
+    }
+    
+    m_freeList = msg;
+}
+
+LVoid MessageQueue::push(Message* msg)
 {
     AutoLock lock(&m_queueLock);
     m_list.push(msg);
@@ -79,6 +99,12 @@ Message* MessageQueue::obtain()
 {
     AutoLock lock(&m_queueLock);
     return MessageCache::obtain();
+}
+
+LVoid MessageQueue::freeMessage(Message* msg)
+{
+    AutoLock lock(&m_queueLock);
+    return MessageCache::freeMessage(msg);
 }
 
 LBool MessageQueue::hasMessage(LInt type)
@@ -110,7 +136,7 @@ LVoid MessageQueue::removeMessage(LInt type)
             MessageList::Iterator tmpIter = iter++;
             m_list.erase(tmpIter);
 
-            msg->msgRecycle();
+            freeMessage(msg);
         } else {
             ++iter;
         }
