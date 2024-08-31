@@ -225,7 +225,7 @@ typedef struct {
 typedef struct {
     Instruction* mPC; // pc, 指令计数器
     LInt mLValSize;  // 局部变量个数
-    LInt mTmpLValSize; // 临时变量个数
+    LInt mTmpLValSize; // 函数调用前, 保存当前栈帧局部变量个数, 保存执行现场后，使用tmp设置上一个栈帧的变量个数
     LInt mLoopSize; // loop层次
     CommandTable* mContext; // 函数指令集
     BoyiaValue mClass; // 函数所属对象
@@ -738,21 +738,6 @@ static Instruction* PutInstruction(
     return newIns;
 }
 
-static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
-{
-    if (vm->mEState->mFrameIndex > 0) {
-        vm->mEState->mStackFrame.mLValSize = vm->mExecStack[--vm->mEState->mFrameIndex].mLValSize;
-        vm->mEState->mStackFrame.mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
-        vm->mEState->mStackFrame.mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
-        vm->mEState->mStackFrame.mLoopSize = vm->mExecStack[vm->mEState->mFrameIndex].mLoopSize;
-        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFrameIndex].mClass;
-        vm->mEState->mStackFrame.mTmpLValSize = vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize;
-        AssignStateClass(vm, &vm->mExecStack[vm->mEState->mFrameIndex].mClass);
-    }
-
-    return kOpResultSuccess;
-}
-
 static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm)
 {
     if (instruction->mNext == kInvalidInstruction) {
@@ -1065,6 +1050,8 @@ static LInt HandleCallInternal(LVoid* ins, BoyiaVM* vm)
 
 static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm)
 {
+    // mTmpLValSize要存入栈帧中，因为如果存储在vm->mEState的变量中时，函数调用前的实参如果也是函数调用，其popscene时会将这个数据重写掉.
+    // 会导致执行该函数的pushscene时出现mLValSize错乱问题，因而当执行该函数时必须将mTmpLValSize也存入栈帧中，保证其调用时的正确性.
     vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize = vm->mEState->mStackFrame.mTmpLValSize;
     vm->mEState->mStackFrame.mTmpLValSize = vm->mEState->mStackFrame.mLValSize;
     return kOpResultSuccess;
@@ -1083,6 +1070,21 @@ static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
     vm->mExecStack[vm->mEState->mFrameIndex].mContext = vm->mEState->mStackFrame.mContext;
     vm->mExecStack[vm->mEState->mFrameIndex].mResultNum = vm->mEState->mStackFrame.mResultNum;
     vm->mExecStack[vm->mEState->mFrameIndex++].mLoopSize = vm->mEState->mStackFrame.mLoopSize;
+
+    return kOpResultSuccess;
+}
+
+static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
+{
+    if (vm->mEState->mFrameIndex > 0) {
+        vm->mEState->mStackFrame.mLValSize = vm->mExecStack[--vm->mEState->mFrameIndex].mLValSize;
+        vm->mEState->mStackFrame.mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
+        vm->mEState->mStackFrame.mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
+        vm->mEState->mStackFrame.mLoopSize = vm->mExecStack[vm->mEState->mFrameIndex].mLoopSize;
+        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFrameIndex].mClass;
+        vm->mEState->mStackFrame.mTmpLValSize = vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize;
+        AssignStateClass(vm, &vm->mExecStack[vm->mEState->mFrameIndex].mClass);
+    }
 
     return kOpResultSuccess;
 }
@@ -1918,6 +1920,9 @@ static LInt HandlePop(LVoid* ins, BoyiaVM* vm)
 /* Call a function. */
 static void CallStatement(CompileState* cs, OpCommand* objCmd)
 {
+    // 之所以要先用tmp保存当前局部变量个数，在于当前函数可能存在obj对象上下文
+    // 如果直接pushscene，这个上下文就会消失，所以需要tmp先保存局部变量个数，
+    // 在pushscene的时候恢复上一帧的局部变量个数
     PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
     // 设置参数
     PushArgStatement(cs);
