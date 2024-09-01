@@ -49,7 +49,7 @@ LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 // 获取全局表地址及其大小
 LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm);
 // 调用Boyia函数
-LVoid NativeCall(BoyiaValue* obj, LVoid* vm);
+LInt NativeCall(BoyiaValue* obj, LVoid* vm);
 // Push函数参数
 LVoid LocalPush(BoyiaValue* value, LVoid* vm);
 // 保存当前scope调用栈大小
@@ -76,7 +76,7 @@ LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm);
 LVoid* PushMicroTask(LVoid* vmPtr);
 
 // 恢复微任务
-LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value);
+LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr);
 
 // 消费微任务
 LVoid ConsumeMicroTask(LVoid* vmPtr);

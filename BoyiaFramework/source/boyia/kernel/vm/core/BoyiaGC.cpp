@@ -49,8 +49,8 @@ enum BoyiaGcColor {
 static BoyiaRef* AllocateRef(BoyiaGc* gc)
 {
     BoyiaRef* ref = gc->mFreeRefs;
-    if (gc->mFreeRefs->mNext) {
-        gc->mFreeRefs = gc->mFreeRefs->mNext;
+    if (ref && ref->mNext) {
+        gc->mFreeRefs = ref->mNext;
     } else {
         if (gc->mUseIndex >= kBoyiaRefPageSize - 1) {
             gc->mFreeRefs = kBoyiaNull;

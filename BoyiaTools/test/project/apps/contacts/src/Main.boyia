@@ -15,7 +15,7 @@ class MainViewController extends ViewController {
         var b = 5;
         var c = a % b;
 
-        this.helloAwait();
+        this.testAwait();
 
         //log(c);
         Util.showToast("MainViewController dev="+c);
@@ -77,7 +77,7 @@ class MainViewController extends ViewController {
         Util.log("string length = " + params.body.length());
         
         this.viewId = 30;
-        body.map(this.testMapFunc);
+        //body.map(this.testMapFunc);
         
         this.testCall(this.testMapFunc, "hello testCall");
         
@@ -86,13 +86,13 @@ class MainViewController extends ViewController {
     }
 
     prop async helloAwait() {
-        var result = (await this.testAwait());
-
-        Util.log("helloAwait result:" + result);
+        //var result = (await this.testAwait());
+        //Util.log("helloAwait result:" + result);
         return result;
     }
 
     prop async testAwait() {
+        //var result = 1;
         var result = (await this.load());
 
         Util.log("testAwait result:" + result);
