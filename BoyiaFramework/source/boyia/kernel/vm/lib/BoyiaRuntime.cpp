@@ -108,8 +108,10 @@ LVoid BoyiaRuntime::setGcRuning(LBool isRuning)
 LBool BoyiaRuntime::needCollect() const
 {
     // return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
-    return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
+    //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
     //return LTrue;
+
+    return LFalse;
 }
 
 // Prepare delete the object

@@ -1751,10 +1751,6 @@ static LVoid FunStatement(CompileState* cs, LInt funType)
     InitParams(cs); //  初始化参数
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
-
-    if (funType == BY_ASYNC_PROP) {
-        //cs->mVm->mEState->mStackFrame.mContext->mEnd = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdAsyncEnd, cs);
-    }
 }
 
 /*
@@ -2434,6 +2430,23 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     // 获取微任务
     MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
     task->mAsyncEs = vm->mEState;
+
+    // 设置顶层async与task之间的联系
+    BoyiaFunction* taskObj = CreateMicroTaskObject(vm);
+    BoyiaValue* result = &vm->mCpu->mReg0;
+    MicroTask* topTask = vm->mEState->mTopTask;
+    // 执行到async函数末尾，非微任务类型直接resume，resume设置为true
+    //task->mResume = LTrue;
+    // 匿名微任务创建时设置pc为null
+    //task->mAsyncEs.mStackFrame.mPC = kBoyiaNull;
+    //AddMicroTask(vm, task);
+    //ValueCopy(&task->mValue, result);
+    taskObj->mParams[1].mValue.mIntVal = (LIntPtr)topTask;
+
+    result->mValueType = BY_CLASS;
+    result->mValue.mObj.mPtr = (LIntPtr)taskObj;
+    result->mValue.mObj.mSuper = kBoyiaNull;
+    SetNativeResult(result, vm);
     
     if (vm->mEState->mPrevious) {
         SwitchExecState(vm->mEState->mPrevious, vm);
@@ -3325,7 +3338,8 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
                 // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
                 if (!aes->mStackFrame.mContext) {
                     aes->mTopTask->mResume = LTrue;
-                    ValueCopy(&task->mValue, &vm->mCpu->mReg0);
+                    ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
+                    AddMicroTask(vm, aes->mTopTask);
                     // TODO 销毁ExecState
                     //DestroyExecState(aes);
                 }
