@@ -232,21 +232,20 @@ typedef struct {
     LInt mResultNum;
 } StackFrame;
 
-typedef struct {
-    // Instruction* mPC; // pc , 指令计数器
-    // LInt mLValSize; /* count of global variable stack */
-    // LInt mTmpLValSize;
-    // LInt mLoopSize; // loop层次
-    
-    // CommandTable* mContext;
-    // BoyiaValue mClass;
-    // LInt mResultNum;
-    StackFrame mStackFrame;
+struct MicroTask;
 
+typedef struct ExecState {
+    StackFrame mStackFrame;
     LInt mFrameIndex;
     LInt mFunSize; /* index to top of function call stack */
     LInt mGValSize; /* count of global variable stack */
+    BoyiaValue mLocals[NUM_LOCAL_VARS];
+    BoyiaValue mOpStack[NUM_RESULT];
+    LIntPtr mLoopStack[LOOP_NEST];
     BoyiaValue mFun;
+    BoyiaValue mReg1;
+    MicroTask* mMicroTask;
+    ExecState* mPrevious;
 } ExecState;
 
 
@@ -274,18 +273,11 @@ typedef struct {
     LInt mSize;
 } VMEntryTable;
 
-typedef struct {
-    StackFrame mStackFrame;
-    BoyiaValue mLocals[NUM_LOCAL_VARS];
-    BoyiaValue mOpStack[NUM_RESULT];
-    BoyiaValue mReg1;
-} AsyncExecScene;
-
 typedef struct MicroTask {
     BoyiaValue mValue; // 微任务执行完后回调
-    LBool mUse; // find task in cache
-    AsyncExecScene mAsyncEs; // 保存当前状态
+    //LBool mUse; // find task in cache
     LBool mResume;
+    ExecState mAsyncEs; // 保存当前状态
     MicroTask* mNext;
 } MicroTask;
 
@@ -590,7 +582,7 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
         queue->mFreeTasks = &queue->mCache[++queue->mUseIndex];
         {
             queue->mFreeTasks->mNext = kBoyiaNull;
-            queue->mFreeTasks->mUse = LFalse;
+            //queue->mFreeTasks->mUse = LFalse;
             queue->mFreeTasks->mValue.mValueType = BY_ARG;
         }
     }
@@ -604,7 +596,7 @@ static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
     task->mNext = queue->mFreeTasks->mNext;
     queue->mFreeTasks = task;
     {
-        queue->mFreeTasks->mUse = LFalse;
+        //queue->mFreeTasks->mUse = LFalse;
         queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
     --queue->mSize;
@@ -620,7 +612,7 @@ static MicroTaskQueue* CreateTaskQueue()
     queue->mFreeTasks = &queue->mCache[0];
     {
         queue->mFreeTasks->mNext = kBoyiaNull;
-        queue->mFreeTasks->mUse = LFalse;
+        //queue->mFreeTasks->mUse = LFalse;
         queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
 
@@ -641,20 +633,32 @@ static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
     ++queue->mSize;
 }
 
+static ExecState* CreateExecState(ExecState* previous)
+{
+    ExecState* execState = FAST_NEW(ExecState);
+    execState->mPrevious = previous;
+    execState->mMicroTask = kBoyiaNull;
+    return execState;
+}
+
 LVoid* InitVM(LVoid* creator)
 {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mCreator = creator;
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = FAST_NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
-    vm->mLocals = FAST_NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
+    //vm->mLocals = FAST_NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
     vm->mFunTable = FAST_NEW_ARRAY(BoyiaFunction, NUM_FUNC);
 
-    vm->mOpStack = FAST_NEW_ARRAY(BoyiaValue, NUM_RESULT);
+    //vm->mOpStack = FAST_NEW_ARRAY(BoyiaValue, NUM_RESULT);
 
     vm->mExecStack = FAST_NEW_ARRAY(StackFrame, FUNC_CALLS);
-    vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
-    vm->mEState = FAST_NEW(ExecState);
+    //vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
+    vm->mEState = CreateExecState(kBoyiaNull);
+    vm->mLocals = vm->mEState->mLocals;
+    vm->mOpStack = vm->mEState->mOpStack;
+    vm->mLoopStack = vm->mEState->mLoopStack;
+
     vm->mCpu = CreateVMCpu();
     vm->mVMCode = CreateVMCode();
     vm->mHandlers = InitHandlers();
@@ -1849,6 +1853,27 @@ static LVoid LocalStatement(CompileState* cs)
     }
 }
 
+static LVoid HandleCallAsyncFunction(BoyiaValue* funValue, BoyiaVM* vm)
+{
+    // 异步函数的返回值，始终都是MicroTask
+    MicroTask* task = AllocMicroTask(vm);
+    task->mResume = LFalse;
+
+    // 设置当前vm的ExecState为微任务的ExecState
+    vm->mEState->mPrevious = vm->mEState;
+    vm->mEState = &task->mAsyncEs;
+
+
+    BoyiaValue val;
+    val.mValueType = BY_CLASS;
+    BoyiaFunction* objBody = (BoyiaFunction*)funValue->mValue.mObj.mSuper;
+
+    val.mValue.mObj.mPtr = funValue->mValue.mObj.mSuper;
+    val.mValue.mObj.mSuper = objBody->mFuncBody;
+
+    AssignStateClass(vm, &val);
+}
+
 static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
 {
     //EngineLog("HandleFunction begin %d \n", 1);
@@ -1866,6 +1891,8 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mStackFrame.mPC = kBoyiaNull;
         return navFun(vm);
     } else if (value->mValueType == BY_PROP_FUNC || value->mValueType == BY_ASYNC_PROP) {
+        // TODO 异步函数调用时需要创建一个MicroTask
+
         // 用属性对象指向的对象实例构造一个对象引用
         BoyiaValue val;
         val.mValueType = BY_CLASS;
@@ -2337,7 +2364,7 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
    
     // 保存栈帧
-    AsyncExecScene* aes = &task->mAsyncEs;
+    ExecState* aes = &task->mAsyncEs;
     LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
     aes->mStackFrame.mLValSize = vm->mEState->mStackFrame.mLValSize - start;
     // 保存变量
@@ -3218,7 +3245,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
                 prev->mNext = task->mNext;
             }
 
-            AsyncExecScene* aes = &task->mAsyncEs;
+            ExecState* aes = &task->mAsyncEs;
             Instruction* pc = aes->mStackFrame.mPC;
             if (pc) {
                 LInt size = aes->mStackFrame.mLValSize;
