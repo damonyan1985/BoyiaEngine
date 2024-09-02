@@ -3234,6 +3234,7 @@ LInt NativeCallImpl(BoyiaValue* obj, LVoid* vm)
         vmPtr->mEState->mStackFrame.mPC = cmds->mBegin;
 
         ExecInstruction(vmPtr);
+        DestroyExecState(state);
     }
     
     SwitchExecState(current, vmPtr);
