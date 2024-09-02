@@ -36,7 +36,7 @@ enum KeyWord {
 
 enum OpHandleResult {
     // Handle执行失败
-    kOpResultFail = 0,
+    kOpResultEnd = 0,
     // Handle执行成功
     kOpResultSuccess,
     // Handle跳转到函数进行执行

@@ -286,6 +286,7 @@ typedef struct ExecState {
     MicroTask* mTopTask;
     ExecState* mPrevious;
     StackFrame mExecStack[FUNC_CALLS];
+    LBool mWait;
 } ExecState;
 
 /* Boyia VM Define
@@ -469,6 +470,7 @@ static LVoid ResetScene(ExecState* state)
     state->mStackFrame.mResultNum = 0;
     state->mStackFrame.mTmpLValSize = 0;
     state->mStackFrame.mContext = kBoyiaNull;
+    state->mStackFrame.mPC = kBoyiaNull;
     state->mPrevious = kBoyiaNull;
     state->mTopTask = kBoyiaNull;
 
@@ -476,6 +478,7 @@ static LVoid ResetScene(ExecState* state)
 
     state->mFun.mValue.mObj.mPtr = kBoyiaNull;
     state->mFun.mValueType = BY_ARG;
+    state->mWait = LFalse;
     //vm->mEState->mClass = kBoyiaNull;
     AssignStateClass(state, kBoyiaNull);
 }
@@ -602,6 +605,8 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
 static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
 {
     MicroTaskQueue* queue = vm->mTaskQueue;
+    queue->mHead = task->mNext;
+    
     task->mNext = queue->mFreeTasks->mNext;
     queue->mFreeTasks = task;
     {
@@ -778,7 +783,8 @@ static LVoid ExecPopFunction(BoyiaVM* vm)
     // 如果不为空，就获取下一条指令，递归调用本函数
     if (!vm->mEState->mStackFrame.mPC) {
         if (vm->mEState->mFrameIndex <= 0
-            && vm->mEState->mPrevious) {
+            && vm->mEState->mPrevious
+            && !vm->mEState->mPrevious->mWait) {
             SwitchExecState(vm->mEState->mPrevious, vm);
         }
 
@@ -788,7 +794,7 @@ static LVoid ExecPopFunction(BoyiaVM* vm)
                 vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); // vm->mEState->mPC->mNext;
                 ExecPopFunction(vm);
             } else {
-                if (vm->mEState->mPrevious) {
+                if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
                     ExecPopFunction(vm);
                 }
             }
@@ -808,7 +814,7 @@ static LVoid ExecInstruction(BoyiaVM* vm)
         OPHandler handler = vm->mHandlers[vm->mEState->mStackFrame.mPC->mOPCode];
         if (handler) {
             LInt result = handler(vm->mEState->mStackFrame.mPC, vm);
-            if (result == kOpResultFail) { // 指令运行出错跳出循环
+            if (result == kOpResultEnd) { // 指令运行出错跳出循环
                 break;
             } else if (vm->mEState->mStackFrame.mPC && result == kOpResultJumpFun) { // 函数跳转
                 continue;
@@ -886,7 +892,7 @@ LInt CreateObject(LVoid* vm)
     BOYIA_LOG("HandleCallInternal CreateObject %d", 1);
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
     if (!value || value->mValueType != BY_CLASS) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     BOYIA_LOG("HandleCallInternal CreateObject %d", 2);
@@ -1100,7 +1106,7 @@ static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm)
 {
     if (vm->mEState->mFrameIndex >= FUNC_CALLS) {
         SntxError(NEST_FUNC, vm->mEState->mStackFrame.mPC->mCodeLine);
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     Instruction* inst = (Instruction*)ins;
@@ -1137,7 +1143,7 @@ static LInt HandlePushArg(LVoid* ins, BoyiaVM* vm)
         return kOpResultSuccess;
     }
 
-    return kOpResultFail;
+    return kOpResultEnd;
 }
 
 static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
@@ -1915,11 +1921,11 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm)
     // 异步函数的返回值，始终都是MicroTask
     MicroTask* topTask = AllocMicroTask(vm);
     topTask->mResume = LFalse;
+    topTask->mAsyncEs = kBoyiaNull;
 
     ExecState* execState = vm->mEState;
     // 保存异步函数顶层MicroTask
     execState->mTopTask = topTask;
-    topTask->mAsyncEs = execState;
 
     BoyiaValue val;
     val.mValueType = BY_CLASS;
@@ -2063,7 +2069,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
     Instruction* inst = (Instruction*)ins;
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     if (!left)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     switch (inst->mOPRight.mType) {
     case OP_CONST_STRING: { // 字符串是存在全局表中
@@ -2077,7 +2083,7 @@ static LInt HandleAssignment(LVoid* ins, BoyiaVM* vm)
     case OP_VAR: {
         BoyiaValue* val = FindVal((LUintPtr)inst->mOPRight.mValue, vm);
         if (!val) {
-            return kOpResultFail;
+            return kOpResultEnd;
         }
 
         if (val->mValueType == BY_VAR) {
@@ -2246,7 +2252,7 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
     //EngineLog("HandleAdd left=%d \n", left->mValue.mIntVal);
     //EngineLog("HandleAdd right=%d \n", right->mValue.mIntVal);
@@ -2257,7 +2263,7 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
     }
 
     if (left->mValueType != BY_CLASS && right->mValueType != BY_CLASS) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     if (GetBoyiaClassId(left) == kBoyiaString || GetBoyiaClassId(right) == kBoyiaString) {
@@ -2266,7 +2272,7 @@ static LInt HandleAdd(LVoid* ins, BoyiaVM* vm)
         return kOpResultSuccess;
     }
 
-    return kOpResultFail;
+    return kOpResultEnd;
 }
 
 static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
@@ -2275,11 +2281,11 @@ static LInt HandleSub(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
     BOYIA_LOG("HandleSub R0=>%d", vm->mCpu->mReg0.mValue.mIntVal);
@@ -2293,13 +2299,13 @@ static LInt HandleMul(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     BOYIA_LOG("HandleMul left=%d \n", left->mValue.mIntVal);
     BOYIA_LOG("HandleMul right=%d \n", right->mValue.mIntVal);
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     right->mValue.mIntVal *= left->mValue.mIntVal;
     BOYIA_LOG("HandleMul result=%d \n", right->mValue.mIntVal);
@@ -2313,14 +2319,14 @@ static LInt HandleDiv(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     if (right->mValue.mIntVal == 0)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     right->mValue.mIntVal = left->mValue.mIntVal / right->mValue.mIntVal;
     return kOpResultSuccess;
@@ -2333,14 +2339,14 @@ static LInt HandleMod(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     if (left->mValueType != BY_INT || right->mValueType != BY_INT)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     if (right->mValue.mIntVal == 0)
-        return kOpResultFail;
+        return kOpResultEnd;
 
     right->mValue.mIntVal = left->mValue.mIntVal % right->mValue.mIntVal;
     return kOpResultSuccess;
@@ -2353,34 +2359,34 @@ static LInt HandleRelational(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     BOYIA_LOG("HandleLogic left=%d \n", left->mValue.mIntVal);
     BOYIA_LOG("HandleLogic right=%d \n", right->mValue.mIntVal);
 
-    LInt result = kOpResultFail;
+    LInt result = kOpResultEnd;
     switch (inst->mOPCode) {
     case kCmdNotRelation:
-        result = right->mValue.mIntVal ? kOpResultFail : kOpResultSuccess;
+        result = right->mValue.mIntVal ? kOpResultEnd : kOpResultSuccess;
         break;
     case kCmdLtRelation:
-        result = left->mValue.mIntVal < right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal < right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdLeRelation:
-        result = left->mValue.mIntVal <= right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal <= right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdGtRelation:
-        result = left->mValue.mIntVal > right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal > right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdGeRelation:
-        result = left->mValue.mIntVal >= right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal >= right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdEqRelation:
-        result = left->mValue.mIntVal == right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal == right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdNeRelation:
-        result = left->mValue.mIntVal != right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal != right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     }
 
@@ -2396,16 +2402,16 @@ static LInt HandleLogic(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
     if (!left || !right) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
-    LInt result = kOpResultFail;
+    LInt result = kOpResultEnd;
     switch (inst->mOPCode) {
     case kCmdAndLogic:
-        result = left->mValue.mIntVal && right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal && right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdOrLogic:
-        result = left->mValue.mIntVal || right->mValue.mIntVal ? kOpResultSuccess : kOpResultFail;
+        result = left->mValue.mIntVal || right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     }
 
@@ -2426,6 +2432,8 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     if (GetBoyiaClassId(klass) != kBoyiaMicroTask) {
         return HandleReturn(ins, vm);
     }
+
+    vm->mEState->mWait = LTrue;
     
     // 获取微任务
     MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
@@ -2448,10 +2456,11 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     result->mValue.mObj.mSuper = kBoyiaNull;
     SetNativeResult(result, vm);
     
-    if (vm->mEState->mPrevious) {
+    if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
         SwitchExecState(vm->mEState->mPrevious, vm);
-        //HandlePopScene(kBoyiaNull, vm);
         vm->mEState->mStackFrame.mPC = kBoyiaNull;
+    } else {
+        return kOpResultEnd;
     }
 
     return kOpResultSuccess;
@@ -2506,7 +2515,7 @@ static LInt HandleAssignVar(LVoid* ins, BoyiaVM* vm)
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* result = GetOpValue(inst, OpRight, vm);
     if (!left || !result) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     
@@ -2608,7 +2617,7 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
     // r0 -> lVal
     BoyiaValue* lVal = GetOpValue(inst, OpLeft, vm);
     if (!lVal) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     // fetch value from inline cache
@@ -2627,7 +2636,7 @@ static LInt HandleGetProp(LVoid* ins, BoyiaVM* vm)
     }
 
     RuntimeError(rVal, RUNTIME_NO_PROP, vm);
-    return kOpResultFail;
+    return kOpResultEnd;
 }
 
 static LInt HandleCreateMap(LVoid* ins, BoyiaVM* vm)
@@ -3184,6 +3193,59 @@ LVoid SaveLocalSize(LVoid* vm)
     HandleTempLocalSize(kBoyiaNull, (BoyiaVM*)vm);
 }
 
+LInt NativeCallImpl(BoyiaValue* obj, LVoid* vm)
+{
+    BoyiaVM* vmPtr = (BoyiaVM*)vm;
+    ExecState* current = vmPtr->mEState;
+    {
+        // Save Current StackFrame
+        ValueCopyNoName(&vmPtr->mExecStack[current->mFrameIndex].mClass, &current->mStackFrame.mClass);
+
+        vmPtr->mExecStack[current->mFrameIndex].mLValSize = current->mStackFrame.mTmpLValSize;
+        vmPtr->mExecStack[current->mFrameIndex].mPC = current->mStackFrame.mPC;
+        vmPtr->mExecStack[current->mFrameIndex].mContext = current->mStackFrame.mContext;
+        vmPtr->mExecStack[current->mFrameIndex].mResultNum = current->mStackFrame.mResultNum;
+        vmPtr->mExecStack[current->mFrameIndex++].mLoopSize = current->mStackFrame.mLoopSize;
+
+        HandlePushParams(kBoyiaNull, vmPtr);
+    }
+
+    {
+        // 第一个参数为调用该函数的函数指针
+        LInt first = current->mExecStack[current->mFrameIndex - 1].mLValSize;
+        BoyiaValue* value = &current->mLocals[first];
+        BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
+
+        ExecState* state = CreateExecState();
+
+        SwitchExecState(state, vmPtr);
+        HandlePushScene(kBoyiaNull, vmPtr);
+
+        BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
+        // 从第二个参数开始，将形参key赋给实参
+        LInt start = state->mExecStack[state->mFrameIndex - 1].mLValSize;
+        LInt idx = start;
+        LInt end = idx + func->mParamSize + 1;
+        for (; idx < end; ++idx) {
+            ValueCopy(&state->mLocals[idx], &current->mLocals[idx + first]);
+        }
+        state->mStackFrame.mLValSize = func->mParamSize + 1;
+
+        AssignStateClass(vmPtr->mEState, obj);
+
+        CommandTable* cmds = (CommandTable*)func->mFuncBody;
+        vmPtr->mEState->mStackFrame.mContext = cmds;
+        vmPtr->mEState->mStackFrame.mPC = cmds->mBegin;
+
+        ExecInstruction(vmPtr);
+    }
+    
+    SwitchExecState(current, vmPtr);
+    // pop current StackFrame
+    HandlePopScene(kBoyiaNull, vmPtr);
+    return kOpResultSuccess;
+}
+
 LInt NativeCall(BoyiaValue* obj, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
@@ -3306,51 +3368,42 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTaskQueue* queue = vm->mTaskQueue;
     MicroTask* task = queue->mHead;
-    MicroTask* prev = queue->mHead;
     while (task) {
-        // 如果异步任务完成，处理完任务后，任务需要被回收
-        if (task->mResume) {
-            // 若任务在头部
-            if (queue->mHead == task) {
-                queue->mHead = task->mNext;
-            } else {
-                // 不是头部
-                prev->mNext = task->mNext;
-            }
+        BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
+
+        ExecState* aes = task->mAsyncEs;
+        if (aes && aes->mStackFrame.mPC) {
+            //PrintValueKey(&aes->mLocals[1], vm);
+            // 恢复await中断的程序
+            ExecState* currentState = vm->mEState;
+            SwitchExecState(aes, vm);
+            aes->mWait = LFalse;
+            aes->mStackFrame.mPC = NextInstruction(aes->mStackFrame.mPC, vm);
 
             BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
-
-            ExecState* aes = task->mAsyncEs;
-            Instruction* pc = aes->mStackFrame.mPC;
-            if (pc) {
-                //PrintValueKey(&aes->mLocals[1], vm);
-                // 恢复await中断的程序
-                ExecState* currentState = vm->mEState;
-                SwitchExecState(aes, vm);
-                aes->mStackFrame.mPC = NextInstruction(pc, vm);
-
-                BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
-                // await执行完成后，将结果赋值给R0虚拟寄存器
-                ValueCopy(&vm->mCpu->mReg0, &task->mValue);
-                // TODO handleassignvar需要优化
-                ExecInstruction(vm);
-                // 执行过程中可能会遇到其他Async函数，因而必须使用aes变量，而不是vm->mEState
-                // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
-                if (!aes->mStackFrame.mContext) {
-                    aes->mTopTask->mResume = LTrue;
-                    ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
-                    AddMicroTask(vm, aes->mTopTask);
-                    // TODO 销毁ExecState
-                    //DestroyExecState(aes);
-                }
-
-                SwitchExecState(currentState, vm);
+            // await执行完成后，将结果赋值给R0虚拟寄存器
+            ValueCopy(&vm->mCpu->mReg0, &task->mValue);
+            // TODO handleassignvar需要优化
+            //ExecInstruction(vm);
+            ExecInstruction(vm);
+                
+                
+            // 执行过程中可能会遇到其他Async函数，因而必须使用aes变量，而不是vm->mEState
+            // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
+            if (!aes->mStackFrame.mContext) {
+                aes->mTopTask->mResume = LTrue;
+                ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
+                AddMicroTask(vm, aes->mTopTask);
+                // TODO 销毁ExecState
+                DestroyExecState(aes);
             }
-            // 释放任务
-            FreeMicroTask(task, vm);
-        } else {
-            prev = task;
+
+            SwitchExecState(currentState, vm);
         }
-        task = prev->mNext;
+
+        MicroTask* tmp = task;
+        task = task->mNext;
+        // 释放任务
+        FreeMicroTask(tmp, vm);
     }
 }

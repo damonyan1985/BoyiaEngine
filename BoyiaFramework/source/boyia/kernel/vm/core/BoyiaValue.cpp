@@ -747,8 +747,9 @@ LInt BoyiaMapMap(LVoid* vm)
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
     // Map对象地址
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
-    for (LInt i = 0; i < fun->mParamSize; i++) {
-        if (cb->mValueType == BY_PROP_FUNC) {
+    if (cb->mValueType == BY_PROP_FUNC) {
+        for (LInt i = 0; i < fun->mParamSize; i++) {
+
             // 保存当前栈
             SaveLocalSize(vm);
             // callback函数压栈
@@ -759,11 +760,12 @@ LInt BoyiaMapMap(LVoid* vm)
             BoyiaValue cbObj;
             cbObj.mValueType = BY_CLASS;
             cbObj.mValue.mObj.mPtr = cb->mValue.mObj.mSuper;
-            
+
             // 调用callback函数
-            NativeCall(&cbObj, vm);
+            NativeCallImpl(&cbObj, vm);
         }
     }
+    
     //fun->mParamSize = 0;
 
     return kOpResultSuccess;

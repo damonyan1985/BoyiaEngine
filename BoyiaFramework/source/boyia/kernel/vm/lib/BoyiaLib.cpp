@@ -53,7 +53,7 @@ LInt getFileContent(LVoid* vm)
     // 0 索引第一个参数
     BoyiaValue* value = (BoyiaValue*)GetLocalValue(0, vm);
     if (!value) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     //char* fileName = convertMStr2Str(&value->mValue.mStrVal);
@@ -303,7 +303,7 @@ LInt createBoyiaDocument(LVoid* vm)
     KFORMATLOG("BoyiaViewDoc::loadHTML createBoyiaViewDoc %d", 1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     if (!val) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     BoyiaStr* urlStr = GetStringBuffer(val);
@@ -319,7 +319,7 @@ LInt appendView(LVoid* vm)
     BoyiaValue* parent = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* child = (BoyiaValue*)GetLocalValue(1, vm);
     if (!parent || !child) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     boyia::BoyiaViewGroup* parentView = (boyia::BoyiaViewGroup*)parent->mValue.mIntVal;
@@ -822,7 +822,7 @@ LInt toJsonString(LVoid* vm)
 
     // convert json error
     if (!json) {
-        return kOpResultFail;
+        return kOpResultEnd;
     }
 
     char* out = cJSON_Print(json);
