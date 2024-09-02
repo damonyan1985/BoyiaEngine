@@ -258,9 +258,6 @@ typedef struct {
 struct ExecState;
 typedef struct MicroTask {
     BoyiaValue mValue; // 微任务执行完后回调
-    //LBool mUse; // find task in cache
-    LBool mResume;
-    //ExecState mAsyncEs; // 保存当前状态
     ExecState* mAsyncEs; // 保存当前状态
     MicroTask* mNext;
 } MicroTask;
@@ -1920,7 +1917,6 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm)
         
     // 异步函数的返回值，始终都是MicroTask
     MicroTask* topTask = AllocMicroTask(vm);
-    topTask->mResume = LFalse;
     topTask->mAsyncEs = kBoyiaNull;
 
     ExecState* execState = vm->mEState;
@@ -3348,7 +3344,6 @@ LVoid* PushMicroTask(LVoid* vmPtr)
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = AllocMicroTask(vm);
     task->mAsyncEs = vm->mEState;
-    task->mResume = LFalse;
     //AddMicroTask(vm, task);
     return task;
 }
@@ -3357,7 +3352,6 @@ LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr)
 {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = (MicroTask*)taskPtr;
-    task->mResume = LTrue;
     ValueCopyNoName(&task->mValue, value);
     AddMicroTask(vm, task);
 }
@@ -3391,7 +3385,6 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
             // 执行过程中可能会遇到其他Async函数，因而必须使用aes变量，而不是vm->mEState
             // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
             if (!aes->mStackFrame.mContext) {
-                aes->mTopTask->mResume = LTrue;
                 ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
                 AddMicroTask(vm, aes->mTopTask);
                 // TODO 销毁ExecState
