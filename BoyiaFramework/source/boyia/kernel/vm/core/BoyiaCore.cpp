@@ -782,7 +782,11 @@ static LVoid ExecPopFunction(BoyiaVM* vm)
         if (vm->mEState->mFrameIndex <= 0
             && vm->mEState->mPrevious
             && !vm->mEState->mPrevious->mWait) {
-            SwitchExecState(vm->mEState->mPrevious, vm);
+            ExecState* currentState = vm->mEState;
+            SwitchExecState(currentState->mPrevious, vm);
+            if (!currentState->mWait) {
+                DestroyExecState(currentState);
+            }
         }
 
         if (vm->mEState->mFrameIndex > 0) {
