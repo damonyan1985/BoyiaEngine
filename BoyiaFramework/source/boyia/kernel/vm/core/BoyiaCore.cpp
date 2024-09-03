@@ -3189,42 +3189,28 @@ LVoid SaveLocalSize(LVoid* vm)
     HandleTempLocalSize(kBoyiaNull, (BoyiaVM*)vm);
 }
 
-LInt NativeCallImpl(BoyiaValue* obj, LVoid* vm)
+LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     ExecState* current = vmPtr->mEState;
     {
-        // Save Current StackFrame
-        ValueCopyNoName(&vmPtr->mExecStack[current->mFrameIndex].mClass, &current->mStackFrame.mClass);
-
-        vmPtr->mExecStack[current->mFrameIndex].mLValSize = current->mStackFrame.mTmpLValSize;
-        vmPtr->mExecStack[current->mFrameIndex].mPC = current->mStackFrame.mPC;
-        vmPtr->mExecStack[current->mFrameIndex].mContext = current->mStackFrame.mContext;
-        vmPtr->mExecStack[current->mFrameIndex].mResultNum = current->mStackFrame.mResultNum;
-        vmPtr->mExecStack[current->mFrameIndex++].mLoopSize = current->mStackFrame.mLoopSize;
-
-        HandlePushParams(kBoyiaNull, vmPtr);
-    }
-
-    {
         // 第一个参数为调用该函数的函数指针
-        LInt first = current->mExecStack[current->mFrameIndex - 1].mLValSize;
-        BoyiaValue* value = &current->mLocals[first];
+        //LInt first = current->mExecStack[current->mFrameIndex - 1].mLValSize;
+        BoyiaValue* value = &args[0];
         BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
         ExecState* state = CreateExecState();
 
         SwitchExecState(state, vmPtr);
         HandlePushScene(kBoyiaNull, vmPtr);
+        LInt start = state->mExecStack[state->mFrameIndex - 1].mLValSize;
+
+        LInt idx = 0;
+        for (; idx < argc; idx++) {
+            ValueCopy(&state->mLocals[idx + start], &args[idx]);
+        }
 
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
-        // 从第二个参数开始，将形参key赋给实参
-        LInt start = state->mExecStack[state->mFrameIndex - 1].mLValSize;
-        LInt idx = start;
-        LInt end = idx + func->mParamSize + 1;
-        for (; idx < end; ++idx) {
-            ValueCopy(&state->mLocals[idx], &current->mLocals[idx + first]);
-        }
         state->mStackFrame.mLValSize = func->mParamSize + 1;
 
         AssignStateClass(vmPtr->mEState, obj);
@@ -3238,8 +3224,6 @@ LInt NativeCallImpl(BoyiaValue* obj, LVoid* vm)
     }
     
     SwitchExecState(current, vmPtr);
-    // pop current StackFrame
-    HandlePopScene(kBoyiaNull, vmPtr);
     return kOpResultSuccess;
 }
 

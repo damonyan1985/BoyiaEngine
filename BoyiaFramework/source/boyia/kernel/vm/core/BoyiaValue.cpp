@@ -749,20 +749,20 @@ LInt BoyiaMapMap(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     if (cb->mValueType == BY_PROP_FUNC) {
         for (LInt i = 0; i < fun->mParamSize; i++) {
-
-            // 保存当前栈
-            SaveLocalSize(vm);
-            // callback函数压栈
-            LocalPush(cb, vm);
-            // 参数压栈
-            LocalPush(&fun->mParams[i], vm);
             // 构造回调对象引用
             BoyiaValue cbObj;
             cbObj.mValueType = BY_CLASS;
             cbObj.mValue.mObj.mPtr = cb->mValue.mObj.mSuper;
 
+            BoyiaFunction* cbFun = (BoyiaFunction*)cb->mValue.mObj.mPtr;
+            BoyiaValue args[2];
+            ValueCopy(&args[0], cb);
+            ValueCopy(&args[1], &fun->mParams[i]);
+            args[1].mNameKey = cbFun->mParams[0].mNameKey;
+
+
             // 调用callback函数
-            NativeCallImpl(&cbObj, vm);
+            NativeCallImpl(args, 2, &cbObj, vm);
         }
     }
     
