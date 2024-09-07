@@ -112,8 +112,6 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
         initEventListener();
 
         PlatformViewManager.getInstance().registerFactory("test-view", new TestPlatformViewFactory());
-        BoyiaLog.i(TAG, "init rust " + BoyiaCoreJNI.nativeInitSdk());
-
         mAppInfo = info;
     }
 

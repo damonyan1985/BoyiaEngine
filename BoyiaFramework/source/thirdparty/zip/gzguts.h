@@ -222,3 +222,8 @@ unsigned ZLIB_INTERNAL gz_intmax OF((void));
 #include <fcntl.h>
 #include <unistd.h>
 #endif
+
+#ifdef ENABLE_BOYIA_ANDROID
+#include <sys/types.h>
+#include <unistd.h>
+#endif

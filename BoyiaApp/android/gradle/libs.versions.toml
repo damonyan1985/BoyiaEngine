@@ -20,7 +20,9 @@ glide_lib_version = "4.9.0"
 zip4j_lib_version = "1.3.2"
 recycler_view_lib_version = "1.1.0"
 coordinator_lib = "1.2.0"
-compose_version = "1.4.3"
+compose_version = "1.6.6"
+activity_compose_version = "1.8.0"
+
 coil_version = "1.4.0"
 javaassist_lib_version = "3.20.0-GA"
 coroutines_version = "1.4.3"
@@ -33,7 +35,10 @@ boyia_debug_lib_version = "1.0.0"
 boyia_loader_lib_version = "1.0.0"
 androidx_lib_version = "1.3.1"
 proto_plugin_version = "0.9.1"
-
+icon_core_version = "3.5.3"
+icon_google_version = "4.0.0.2-kotlin@aar"
+icon_google_extend_version = "4.0.0.1-kotlin@aar"
+icon_material_version ="2.2.0.8-kotlin@aar"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -73,7 +78,7 @@ compose_material = {group = "androidx.compose.material", name = "material", vers
 
 compose_livedata = {group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose_version" }
 compose_rxjava = {group = "androidx.compose.runtime", name = "runtime-rxjava2", version.ref = "compose_version" }
-compose_activity = {group = "androidx.activity", name = "activity-compose", version.ref = "compose_version" }
+compose_activity = {group = "androidx.activity", name = "activity-compose", version.ref = "activity_compose_version" }
 compose_uitool = {group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose_version" }
 coil = {group = "io.coil-kt", name = "coil", version.ref = "coil_version" }
 
@@ -94,6 +99,11 @@ boyia_loader = {group = "com.boyia.app.loader", name = "loader", version.ref = "
 boyia_util = {group = "com.boyia.app.common", name = "util", version.ref = "boyia_core_lib_version" }
 
 androidx = {group = "androidx.appcompat", name = "appcompat", version.ref = "androidx_lib_version" }
+
+icon_google = {group = "com.mikepenz", name = "google-material-typeface", version.ref = "icon_google_version" }
+icon_google_extend = {group = "com.mikepenz", name = "google-material-typeface-outlined", version.ref = "icon_google_extend_version" }
+icon_material = {group = "com.mikepenz", name = "material-design-iconic-typeface", version.ref = "androidx_lib_version" }
+icon_core = {group = "com.mikepenz", name = "iconics-core", version.ref = "icon_core_version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

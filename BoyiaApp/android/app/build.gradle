@@ -73,6 +73,7 @@ android {
                     'src/main/aidl',
                     'src/main/kotlin'
             ]
+            jniLibs.srcDirs = ['libs', 'jniLibs']
         }
 
         boyiaPlugin {

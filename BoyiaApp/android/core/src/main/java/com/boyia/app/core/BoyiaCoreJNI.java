@@ -14,10 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BoyiaCoreJNI {
     private static AtomicBoolean sHasInit = new AtomicBoolean(false);
 
-   static {
-       System.loadLibrary("sdk_main");
-   }
-
     public interface LibraryInitCallback {
         void initOk();
     }
@@ -76,9 +72,6 @@ public class BoyiaCoreJNI {
     public static native void nativeCacheCode();
     
     public static native void nativePlatformViewUpdate(String viewId);
-
-    // 此处初始化rust sdk
-    public static native String nativeInitSdk();
 
     // 滚动接口
     public static native void nativeOnFling(int type1, int x1, int y1,

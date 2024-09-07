@@ -8,7 +8,7 @@ plugins {
 apply(from = "$rootDir/scripts/config.gradle.kts")
 android {
     namespace =  "com.boyia.app.shell"
-    compileSdk = 33
+    compileSdk = 34
 
     signingConfigs {
         create("release") {
@@ -110,6 +110,10 @@ android {
         compose = true
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+
     ndkVersion = "26.1.10909125"
 }
 
@@ -157,7 +161,7 @@ dependencies {
     implementation(libs.recycler.view)
     implementation(libs.coordinator)
     implementation(libs.multidex)
-
+    implementation(libs.androidx)
 
     //implementation gradle.library.constraintlayout
 //    implementation gradle.library.icon_core
@@ -175,10 +179,18 @@ dependencies {
     implementation(libs.compose.rxjava)
     implementation(libs.compose.activity)
     implementation(libs.multidex)
-    implementation(libs.multidex)
     // compose coil
     implementation(libs.coil)
     implementation(libs.compose.coil)
+    // umeng
+    implementation(libs.umeng.common)
+    implementation(libs.umeng.sdk)
+
+    // google icon
+    implementation(libs.icon.google)
+    implementation(libs.umeng.sdk)
+    implementation(libs.umeng.sdk)
+    implementation(libs.umeng.sdk)
 
     // 协程
     implementation(libs.coroutines.core)

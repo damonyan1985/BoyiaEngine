@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(zip)
 
-add_definitions(-DIOAPI_NO_64)
+add_definitions(-DIOAPI_NO_64 -DENABLE_BOYIA_ANDROID=1)
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wno-unused-parameter")
 set(ZIP_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../source/thirdparty/zip")
 
