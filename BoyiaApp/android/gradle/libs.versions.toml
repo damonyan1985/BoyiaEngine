@@ -1,0 +1,102 @@
+[versions]
+agp = "8.6.0"
+kotlin = "1.9.0"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+lifecycleRuntimeKtx = "2.6.1"
+activityCompose = "1.8.0"
+composeBom = "2024.04.01"
+
+# library迁移
+okio_version = "1.11.0"
+ok_http_version = "3.6.0"
+netty_lib_version = "5.0.0.Alpha2"
+proto_version = "3.21.11"
+leakcanary_debug_version = "1.3"
+rxjava_lib_version = "2.1.0"
+glide_lib_version = "4.9.0"
+zip4j_lib_version = "1.3.2"
+recycler_view_lib_version = "1.1.0"
+coordinator_lib = "1.2.0"
+compose_version = "1.4.3"
+coil_version = "1.4.0"
+javaassist_lib_version = "3.20.0-GA"
+coroutines_version = "1.4.3"
+multidex_lib_version = "2.0.1"
+umeng_common_lib_version = "9.3.8"
+umeng_sdk_lib_version = "1.2.2"
+boyia_core_lib_version = "1.0.0"
+boyia_common_lib_version = "1.0.0"
+boyia_debug_lib_version = "1.0.0"
+boyia_loader_lib_version = "1.0.0"
+androidx_lib_version = "1.3.1"
+proto_plugin_version = "0.9.1"
+
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "ok_http_version" }
+
+okio = {group = "com.squareup.okio", name = "okio", version.ref = "okio_version" }
+
+
+netty = { group = "io.netty", name = "netty-all", version.ref = "netty_lib_version"}
+protobuf = { group = "com.google.protobuf", name = "protobuf-java", version.ref = "proto_version"}
+
+leakcanary_debug = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary_debug_version" }
+leakcanary_release = { group = "com.squareup.leakcanary", name = "leakcanary-android-no-op", version.ref = "leakcanary_debug_version" }
+
+rxJava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjava_lib_version"}
+glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "glide_lib_version" }
+zip4j = {group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j_lib_version" }
+recycler_view = {group = "androidx.recyclerview", name = "recyclerview", version.ref = "recycler_view_lib_version"}
+coordinator = {group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinator_lib" }
+
+#compose ui
+compose_ui = { group = "androidx.compose.ui", name = "ui" }
+compose_foundation = {group = "androidx.compose.foundation", name = "foundation", version.ref = "compose_version" }
+compose_material = {group = "androidx.compose.material", name = "material", version.ref = "compose_version" }
+
+compose_livedata = {group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose_version" }
+compose_rxjava = {group = "androidx.compose.runtime", name = "runtime-rxjava2", version.ref = "compose_version" }
+compose_activity = {group = "androidx.activity", name = "activity-compose", version.ref = "compose_version" }
+compose_uitool = {group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose_version" }
+coil = {group = "io.coil-kt", name = "coil", version.ref = "coil_version" }
+
+
+compose_coil = {group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version" }
+javaassist = {group = "org.javassist", name = "javassist", version.ref = "javaassist_lib_version" }
+coroutines_core = {group = "org.jetbrains.kotlinx", name = "otlinx-coroutines-core", version.ref = "coroutines_version" }
+coroutines_android = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines_version" }
+coroutines_jdk = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "coroutines_version" }
+
+multidex = {group = "androidx.multidex", name = "multidex", version.ref = "multidex_lib_version" }
+umeng_common = {group = "com.umeng.umsdk", name = "common", version.ref = "umeng_common_lib_version" }
+umeng_sdk = {group = "com.umeng.umsdk", name = "asms", version.ref = "umeng_sdk_lib_version" }
+
+boyia_core = {group = "com.boyia.app.core", name = "core", version.ref = "boyia_core_lib_version" }
+boyia_debug = {group = "com.boyia.app.debug", name = "debugger", version.ref = "boyia_core_lib_version" }
+boyia_loader = {group = "com.boyia.app.loader", name = "loader", version.ref = "boyia_core_lib_version" }
+boyia_util = {group = "com.boyia.app.common", name = "util", version.ref = "boyia_core_lib_version" }
+
+androidx = {group = "androidx.appcompat", name = "appcompat", version.ref = "androidx_lib_version" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+protobuf_plugin = { id = "com.google.protobuf", version.ref = "proto_plugin_version"}
+

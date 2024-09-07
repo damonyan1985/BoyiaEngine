@@ -28,7 +28,7 @@ dependencies {
     implementation gradleApi()
     implementation gradle.library.asm_lib
     implementation gradle.library.asm_common_lib
-    implementation 'com.android.tools.build:gradle:8.0.0'
+    implementation 'com.android.tools.build:gradle:8.5.0'
 }
 
 group 'com.boyia.app.bytrace'

@@ -3,6 +3,7 @@ package com.boyia.app.shell.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
@@ -23,7 +24,12 @@ class BoyiaNotifyService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //return super.onStartCommand(intent, flags, startId)
         initNotificationManager()
-        startForeground(Process.myPid(), createNotification())
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            startForeground(Process.myPid(), createNotification())
+        } else {
+            startForeground(Process.myPid(), createNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        }
+
         // 服务被中止后不再重启该服务
         return START_NOT_STICKY
     }

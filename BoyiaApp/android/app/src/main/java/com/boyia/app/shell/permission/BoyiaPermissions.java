@@ -16,6 +16,12 @@ public class BoyiaPermissions {
             "android.permission.POST_NOTIFICATIONS"
     };
 
+    public static final String[] NOTIFICATION_SERVICES_PERMISSIONS = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    };
+
     private static boolean checkPermissions(Activity context, String[] permissions) {
         for (String permission : permissions) {
             // 如果没有授权，则返回false

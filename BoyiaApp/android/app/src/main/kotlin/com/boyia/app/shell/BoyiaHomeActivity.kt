@@ -38,6 +38,16 @@ class BoyiaHomeActivity: BoyiaShellActivity() {
     }
 
     private fun initNotifyService() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            proxy.requestPermissions(BoyiaPermissions.NOTIFICATION_SERVICES_PERMISSIONS) {
+//                val intent = Intent(this, BoyiaNotifyService::class.java)
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                    startForegroundService(intent)
+//                } else {
+//                    startService(intent)
+//                }
+//            }
+//        }
         val intent = Intent(this, BoyiaNotifyService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)

@@ -22,8 +22,8 @@ android {
     compileSdk(gradle.constants.sdkVersion)
     //compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
-        applicationId "com.boyia.app.shell"
-        minSdkVersion 24
+        applicationId gradle.constants.boyiaAppShell
+        minSdkVersion 29
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
         versionName "1.0"
@@ -120,13 +120,14 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion gradle.constants.composeVersion
-        kotlinCompilerVersion '1.8.10'
+        kotlinCompilerExtensionVersion "1.5.1"
+        kotlinCompilerVersion '1.9.0'
     }
 
     buildFeatures {
         compose true
     }
+    ndkVersion '26.1.10909125'
 }
 
 repositories {

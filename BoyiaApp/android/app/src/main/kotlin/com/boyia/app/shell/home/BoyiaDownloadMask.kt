@@ -42,7 +42,7 @@ class BoyiaDownloadMask(url: String, context: Context, private val downloadCallb
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (progress == 1F) {
             return

@@ -5,7 +5,7 @@ android {
     namespace gradle.constants.boyiaUtilLib
     compileSdk(gradle.constants.sdkVersion)
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion gradle.constants.minSdkVersion
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
         versionName VERSION_NAME
