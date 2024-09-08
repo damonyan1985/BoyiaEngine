@@ -73,7 +73,8 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
                 new GestureDetector.OnGestureListener() {
                     // 按下屏幕就会触发
                     @Override
-                    public boolean onDown(MotionEvent e) {
+                    public boolean onDown(MotionEvent event) {
+                        onNativeTouch(event);
                         return false;
                     }
 
@@ -85,6 +86,7 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
                     // 按下弹起时会触发
                     @Override
                     public boolean onSingleTapUp(MotionEvent e) {
+                        onNativeTouch(e);
                         return false;
                     }
 
@@ -119,7 +121,6 @@ public class BoyiaView extends SurfaceView implements SurfaceHolder.Callback {
         mInputManager = new BoyiaInputManager(this);
         setOnTouchListener((v, event) -> {
             mGestureDetector.onTouchEvent(event);
-            onNativeTouch(event);
             return true;
         });
 
