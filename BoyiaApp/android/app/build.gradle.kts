@@ -22,7 +22,7 @@ android {
     //compileSdkVersion gradle.constants.sdkVersion
     defaultConfig {
         applicationId = "com.boyia.app.shell"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -53,12 +53,14 @@ android {
         }
     }
 
+    flavorDimensions += "shell"
     productFlavors {
         create("boyia") {
             applicationId = "com.boyia.app.shell"
             versionName = "1.0"
             versionCode = 1
             manifestPlaceholders["boyiaChannel"] = "BoyiaApp"
+            dimension = "shell"
         }
 
         create("boyiaPlugin") {
@@ -66,6 +68,7 @@ android {
             versionName = "1.0"
             versionCode = 1
             manifestPlaceholders["boyiaChannel"] = "BoyiaPluginApp"
+            dimension = "plugin"
         }
     }
 
@@ -188,9 +191,10 @@ dependencies {
 
     // google icon
     implementation(libs.icon.google)
-    implementation(libs.umeng.sdk)
-    implementation(libs.umeng.sdk)
-    implementation(libs.umeng.sdk)
+    implementation(libs.icon.material)
+    implementation(libs.icon.google.extend)
+    implementation(libs.icon.core)
+    implementation(libs.typeface.api)
 
     // 协程
     implementation(libs.coroutines.core)

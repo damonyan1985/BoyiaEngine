@@ -34,6 +34,7 @@ allprojects {
         jcenter()
         maven { url uri("$rootDir/maven/BoyiaMaven") } // 优先读本地仓库
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo1.maven.org/maven2/" }
         maven { url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/" }
         maven { url "https://maven.oschina.net/content/groups/public/" }
         maven { url 'https://dl.bintray.com/umsdk/release' } // umeng sdk maven
