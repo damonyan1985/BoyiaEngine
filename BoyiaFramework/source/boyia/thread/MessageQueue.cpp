@@ -2,7 +2,7 @@
 
 namespace yanbo {
 
-const LInt kMessageCapacity = 50;
+const LInt kMessageCapacity = 256;
 Message::Message()
     : type(0)
     , obj(kBoyiaNull)

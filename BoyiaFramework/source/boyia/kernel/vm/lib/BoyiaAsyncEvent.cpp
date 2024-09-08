@@ -150,7 +150,8 @@ BoyiaAsyncEvent::~BoyiaAsyncEvent()
 
 LVoid BoyiaAsyncEvent::callbackString(String& result, BoyiaValue* callback, BoyiaRuntime* runtime)
 {
-    if (!callback->mValue.mObj.mPtr) {
+    BoyiaFunction* cbFun = (BoyiaFunction*)callback->mValue.mObj.mPtr;
+    if (!cbFun) {
         return;
     }
     
@@ -161,17 +162,28 @@ LVoid BoyiaAsyncEvent::callbackString(String& result, BoyiaValue* callback, Boyi
     // 释放字符串控制权
     result.ReleaseBuffer();
     // 保存当前栈
-    SaveLocalSize(runtime->vm());
+    //SaveLocalSize(runtime->vm());
     // callback函数压栈
-    LocalPush(callback, runtime->vm());
+    //LocalPush(callback, runtime->vm());
     // 参数压栈
-    LocalPush(&value, runtime->vm());
+    //LocalPush(&value, runtime->vm());
     //BoyiaValue* cbObj = obj.mValue.mObj.mPtr == 0 ? kBoyiaNull : &obj;
+    BoyiaValue args[2];
+    ValueCopy(&args[0], callback);
+    ValueCopy(&args[1], &value);
+
+    // 一些callback函数是由native控制的，这部分函数设计时是手动去栈上拿压栈的参数，而不需要知道参数名，
+    // 因而这样的callback函数mParams设计为空，就比如MicroTask的resolve函数
+    if (cbFun->mParams) {
+        // 设置参数名
+        args[1].mNameKey = cbFun->mParams[0].mNameKey;
+    }
+
     BoyiaValue obj;
     obj.mValueType = BY_CLASS;
     obj.mValue.mObj.mPtr = callback->mValue.mObj.mSuper;
     // 调用callback函数
-    NativeCall(&obj, runtime->vm());
+    NativeCallImpl(args, 2, &obj, runtime->vm());
 }
 
 // In UI thread

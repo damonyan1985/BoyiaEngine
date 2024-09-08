@@ -49,7 +49,6 @@ LVoid ValueCopy(BoyiaValue* dest, BoyiaValue* src);
 // 获取全局表地址及其大小
 LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm);
 // 调用Boyia函数
-LInt NativeCall(BoyiaValue* obj, LVoid* vm);
 LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm);
 // Push函数参数
 LVoid LocalPush(BoyiaValue* value, LVoid* vm);

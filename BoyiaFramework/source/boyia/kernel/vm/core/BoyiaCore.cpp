@@ -1939,7 +1939,6 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm)
 
 static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
 {
-    //EngineLog("HandleFunction begin %d \n", 1);
     // localstack第一个值为函数指针
     LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
 
@@ -1952,13 +1951,8 @@ static LInt HandleCallFunction(LVoid* ins, BoyiaVM* vm)
         LocalPush(&vm->mEState->mStackFrame.mClass, vm);
         NativePtr navFun = (NativePtr)func->mFuncBody;
         // native函数没有instruction，所以pc置为null
-        //vm->mEState->mStackFrame.mPC = kBoyiaNull;
-        LInt result = navFun(vm);
-        if (result != kOpResultJumpFun) {
-            vm->mEState->mStackFrame.mPC = kBoyiaNull;
-        }
-
-        return result;
+        vm->mEState->mStackFrame.mPC = kBoyiaNull;
+        return navFun(vm);
     } else if (value->mValueType == BY_PROP_FUNC) {
         BoyiaValue val;
         val.mValueType = BY_CLASS;
@@ -3193,71 +3187,47 @@ LVoid SaveLocalSize(LVoid* vm)
     HandleTempLocalSize(kBoyiaNull, (BoyiaVM*)vm);
 }
 
+// 针对回调函数单独设计
 LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     ExecState* current = vmPtr->mEState;
     {
         // 第一个参数为调用该函数的函数指针
-        //LInt first = current->mExecStack[current->mFrameIndex - 1].mLValSize;
         BoyiaValue* value = &args[0];
         BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
+        // C++栈上分配执行栈
         ExecState* state = CreateExecState();
 
+        // 切换执行栈
         SwitchExecState(state, vmPtr);
         HandlePushScene(kBoyiaNull, vmPtr);
         LInt start = state->mExecStack[state->mFrameIndex - 1].mLValSize;
 
+        // 拷贝参数到新的执行栈
         LInt idx = 0;
         for (; idx < argc; idx++) {
             ValueCopy(&state->mLocals[idx + start], &args[idx]);
         }
-
+        state->mStackFrame.mLValSize = argc;
+        
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
-        state->mStackFrame.mLValSize = func->mParamSize + 1;
-
-        AssignStateClass(vmPtr->mEState, obj);
-
-        CommandTable* cmds = (CommandTable*)func->mFuncBody;
-        vmPtr->mEState->mStackFrame.mContext = cmds;
-        vmPtr->mEState->mStackFrame.mPC = cmds->mBegin;
-
-        ExecInstruction(vmPtr);
+        if (value->mValueType == BY_NAV_PROP) {
+            LocalPush(obj, vm);
+            NativePtr navFun = (NativePtr)func->mFuncBody;
+            navFun(vm);
+        } else {
+            AssignStateClass(vmPtr->mEState, obj);
+            CommandTable* cmds = (CommandTable*)func->mFuncBody;
+            vmPtr->mEState->mStackFrame.mContext = cmds;
+            vmPtr->mEState->mStackFrame.mPC = cmds->mBegin;
+            ExecInstruction(vmPtr);
+        }
         DestroyExecState(state);
     }
-    
     SwitchExecState(current, vmPtr);
     return kOpResultSuccess;
-}
-
-LInt NativeCall(BoyiaValue* obj, LVoid* vm)
-{
-    BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    Instruction* pc = vmPtr->mEState->mStackFrame.mPC;
-
-    ValueCopyNoName(&vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mClass, &vmPtr->mEState->mStackFrame.mClass);
-    
-    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mLValSize = vmPtr->mEState->mStackFrame.mTmpLValSize;
-    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mPC = pc;
-    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mContext = vmPtr->mEState->mStackFrame.mContext;
-    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mResultNum = vmPtr->mEState->mStackFrame.mResultNum;
-    vmPtr->mExecStack[vmPtr->mEState->mFrameIndex++].mLoopSize = vmPtr->mEState->mStackFrame.mLoopSize;
-
-    //vmPtr->mExecStack[vmPtr->mEState->mFrameIndex].mClass = vmPtr->mEState->mClass;
-    
-    
-    //vmPtr->mEState->mClass = obj;
-    AssignStateClass(vmPtr->mEState, obj);
-
-    HandlePushParams(kBoyiaNull, vmPtr);
-    LInt result = HandleCallFunction(kBoyiaNull, vmPtr);
-
-    if (result == kOpResultJumpFun && !pc) {
-        ExecInstruction(vmPtr);
-    }
-
-    return result;
 }
 
 LVoid ExecuteGlobalCode(LVoid* vm)
@@ -3332,7 +3302,7 @@ LVoid* PushMicroTask(LVoid* vmPtr)
 {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = AllocMicroTask(vm);
-    task->mAsyncEs = vm->mEState;
+    task->mAsyncEs = kBoyiaNull;
     //AddMicroTask(vm, task);
     return task;
 }
@@ -3367,9 +3337,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
             // await执行完成后，将结果赋值给R0虚拟寄存器
             ValueCopy(&vm->mCpu->mReg0, &task->mValue);
             // TODO handleassignvar需要优化
-            //ExecInstruction(vm);
             ExecInstruction(vm);
-                
                 
             // 执行过程中可能会遇到其他Async函数，因而必须使用aes变量，而不是vm->mEState
             // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
@@ -3377,7 +3345,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
                 ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
                 AddMicroTask(vm, aes->mTopTask);
                 // TODO 销毁ExecState
-                DestroyExecState(aes);
+                //DestroyExecState(aes);
             }
 
             SwitchExecState(currentState, vm);

@@ -141,13 +141,16 @@ LVoid BoyiaView::startTranslate(const LPoint& point, LInt duration)
 
 LVoid BoyiaView::onTouchEventCallback(BoyiaValue* cb)
 {
-    SaveLocalSize(m_runtime->vm());
-    LocalPush(cb, m_runtime->vm());
+    //SaveLocalSize(m_runtime->vm());
+    //LocalPush(cb, m_runtime->vm());
     
     // 保存当前栈
-    SaveLocalSize(m_runtime->vm());
+    //SaveLocalSize(m_runtime->vm());
     // callback函数压栈
-    LocalPush(cb, m_runtime->vm());
+    //LocalPush(cb, m_runtime->vm());
+
+    BoyiaValue args[1];
+    ValueCopy(&args[0], cb);
     
     if (cb->mValueType == BY_PROP_FUNC) {
         // 构造回调对象引用
@@ -156,13 +159,14 @@ LVoid BoyiaView::onTouchEventCallback(BoyiaValue* cb)
         cbObj.mValue.mObj.mPtr = cb->mValue.mObj.mSuper;
         
         // 调用callback函数
-        NativeCall(&cbObj, m_runtime->vm());
+        NativeCallImpl(args, 1, &cbObj, m_runtime->vm());
     } else {
         BoyiaValue* obj = m_boyiaView.mValue.mObj.mPtr == 0 ? kBoyiaNull : &m_boyiaView;
-        NativeCall(obj, m_runtime->vm());
+        NativeCallImpl(args, 1, obj, m_runtime->vm());
     }
 }
 
+// 鼠标点击事件
 LVoid BoyiaView::onPressDown(LVoid* view)
 {
     if (m_type & LTouchEvent::ETOUCH_DOWN) {

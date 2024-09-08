@@ -815,11 +815,9 @@ BoyiaFunction* CreatMapObject(LVoid* vm)
 LInt BoyiaMicroTaskResolve(LVoid* vm)
 {
     LInt size = GetLocalSize(vm);
-    // 索引0为put函数指针
-    // 索引1，2为两个传入的参数key,value，
     // 最后一个索引是调用时添加的对象
     BoyiaValue* obj = (BoyiaValue*)GetLocalValue(size - 1, vm);
-    // 索引0为map函数指针
+    // 索引0为函数指针
     // 第一个参数是微任务执行完毕后，返回的结果
     BoyiaValue* result = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
@@ -848,12 +846,16 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
 
     // 执行worker
     // 保存当前栈
-    SaveLocalSize(vm);
+    //SaveLocalSize(vm);
     // worker压栈
-    LocalPush(worker, vm);
+    //LocalPush(worker, vm);
     // fun->mParams[0]是resolve函数
     // 参数压栈,将resolve属性函数作为参数压栈
-    LocalPush(&fun->mParams[0], vm);
+    //LocalPush(&fun->mParams[0], vm);
+
+    BoyiaValue args[2];
+    ValueCopy(&args[0], worker);
+    ValueCopy(&args[1], &fun->mParams[0]);
 
     PrintValueKey(&fun->mParams[0], vm);
     // 构造回调对象引用
@@ -862,7 +864,7 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
     cbObj.mValue.mObj.mPtr = worker->mValue.mObj.mSuper;
 
     // 调用callback函数
-    return NativeCall(&cbObj, vm);
+    return NativeCallImpl(args, 2, &cbObj, vm);
 }
 
 
