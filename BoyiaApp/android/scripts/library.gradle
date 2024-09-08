@@ -35,6 +35,7 @@ gradle.ext.constants = [
     boyiaLoaderLib: 'com.boyia.app.loader',
     boyiaDebugLib: 'com.boyia.app.debug',
     boyiaAppShell: 'com.boyia.app.shell',
+    appVersionName: '1.0'
 ]
 
 gradle.ext.library = [

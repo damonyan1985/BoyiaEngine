@@ -26,7 +26,7 @@ android {
         minSdkVersion 29
         targetSdkVersion gradle.constants.sdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName gradle.constants.appVersionName
         flavorDimensions "default"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -94,7 +94,7 @@ android {
                 outputFileName = outputFile.name.substring(0, outputFile.name.indexOf('.'))
                 println("outputFileName="+outputFileName)
                 //it.outputFileName = outputFileName + "-" + getCurrentTime() + ".apk"
-                it.outputFileName = outputFileName + ".apk"
+                it.outputFileName = outputFileName + gradle.constants.appVersionName + "-DEV.apk"
             }
         }
     }

@@ -95,7 +95,7 @@ android {
             if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
                 this.outputFileName?.let {
                     val name = this.outputFileName.substring(0, this.outputFileName.indexOf("-"))
-                    this.outputFileName = "${name}-${versionCode}-${flavorName}-${buildType}.apk"
+                    this.outputFileName = "${name}-${flavorName}-${buildType}${versionName}.apk"
                 }
             }
         }

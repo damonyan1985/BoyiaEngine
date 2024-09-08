@@ -105,7 +105,7 @@ build_bundle_cmd = (
 )
 
 install_apk_cmd = (
-    f'adb install -t {boyia_app_android_path}/app/build/outputs/apk/boyia/debug/app-boyia-debug.apk'
+    f'adb install -t {boyia_app_android_path}/app/build/outputs/apk/boyia/debug/app-boyia-debug1.0-DEV.apk'
 )
 
 launch_app_cmd = (
