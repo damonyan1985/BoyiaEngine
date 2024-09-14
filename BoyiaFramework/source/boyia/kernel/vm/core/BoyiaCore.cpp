@@ -755,14 +755,15 @@ static Instruction* PutInstruction(
     //newIns->mHandler = kBoyiaNull;
     newIns->mNext = kInvalidInstruction;
     newIns->mCache = kBoyiaNull;
-    Instruction* ins = cs->mVm->mEState->mStackFrame.mContext->mEnd;
+    CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
+    Instruction* ins = cmds->mEnd;
     if (!ins) {
-        cs->mVm->mEState->mStackFrame.mContext->mBegin = newIns;
+        cmds->mBegin = newIns;
     } else {
         ins->mNext = cs->mVm->mVMCode->mSize - 1;
     }
 
-    cs->mVm->mEState->mStackFrame.mContext->mEnd = newIns;
+    cmds->mEnd = newIns;
     return newIns;
 }
 
