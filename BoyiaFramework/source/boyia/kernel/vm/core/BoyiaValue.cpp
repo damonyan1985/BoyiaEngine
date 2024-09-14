@@ -613,12 +613,7 @@ LVoid CreateNativeString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 LVoid CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm)
 {
     BoyiaFunction* objBody = CreateStringObject(buffer, len, vm);
-//    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaString, 32, vm);
-//    objBody->mParams[0].mValue.mStrVal.mPtr = buffer;
-//    objBody->mParams[0].mValue.mStrVal.mLen = len;
-//
-//    objBody->mParams[1].mValue.mIntVal = GenHashCode(buffer, len);
-
+    
     value->mValueType = BY_CLASS;
     value->mValue.mObj.mPtr = (LIntPtr)objBody;
     value->mValue.mObj.mSuper = kBoyiaNull;
@@ -635,8 +630,6 @@ BoyiaFunction* CreateStringObject(LInt8* buffer, LInt len, LVoid* vm)
     objBody->mParams[1].mValue.mStrVal.mLen = len;
     
     objBody->mParams[0].mValue.mIntVal = GenHashCode(buffer, len);
-
-    GCAppendRef(objBody, BY_CLASS, vm);
     return objBody;
 }
 
@@ -805,9 +798,7 @@ LVoid BuiltinMapClass(LVoid* vm)
 
 BoyiaFunction* CreatMapObject(LVoid* vm)
 {
-    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaMap, 32, vm);
-    GCAppendRef(objBody, BY_CLASS, vm);
-    return objBody;
+    return (BoyiaFunction*)CopyObject(kBoyiaMap, 32, vm);
 }
 // end map builtin
 
@@ -899,9 +890,7 @@ LVoid BuiltinMicroTaskClass(LVoid* vm)
 
 BoyiaFunction* CreateMicroTaskObject(LVoid* vm)
 {
-    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaMicroTask, 32, vm);
-    GCAppendRef(objBody, BY_CLASS, vm);
-    return objBody;
+    return (BoyiaFunction*)CopyObject(kBoyiaMicroTask, 32, vm);
 }
 // end microtask builtin
 
@@ -909,7 +898,5 @@ BoyiaFunction* CreateMicroTaskObject(LVoid* vm)
 // 内置Array Class builtin
 BoyiaFunction* CreateArrayObject(LVoid* vm)
 {
-    BoyiaFunction* objBody = (BoyiaFunction*)CopyObject(kBoyiaArray, 32, vm);
-    GCAppendRef(objBody, BY_CLASS, vm);
-    return objBody;
+    return (BoyiaFunction*)CopyObject(kBoyiaArray, 32, vm);
 }

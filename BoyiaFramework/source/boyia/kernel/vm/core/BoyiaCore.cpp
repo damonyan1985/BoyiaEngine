@@ -264,8 +264,11 @@ typedef struct MicroTask {
 
 typedef struct {
     MicroTask mCache[MICRO_TASK_CAPACITY];
-    MicroTask* mHead;
-    MicroTask* mEnd;
+    struct {
+        MicroTask* mHead;
+        MicroTask* mEnd;
+    } mUsedTasks;
+    
     MicroTask* mFreeTasks;
     LInt mUseIndex;
     LInt mSize;
@@ -279,7 +282,7 @@ typedef struct ExecState {
     BoyiaValue mOpStack[NUM_RESULT];
     LIntPtr mLoopStack[LOOP_NEST];
     BoyiaValue mFun;
-    BoyiaValue mReg1;
+
     MicroTask* mTopTask;
     ExecState* mPrevious;
     StackFrame mExecStack[FUNC_CALLS];
@@ -602,12 +605,11 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
 static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
 {
     MicroTaskQueue* queue = vm->mTaskQueue;
-    queue->mHead = task->mNext;
+    queue->mUsedTasks.mHead = task->mNext;
     
     task->mNext = queue->mFreeTasks->mNext;
     queue->mFreeTasks = task;
     {
-        //queue->mFreeTasks->mUse = LFalse;
         queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
     --queue->mSize;
@@ -616,8 +618,8 @@ static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
 static MicroTaskQueue* CreateTaskQueue()
 {
     MicroTaskQueue* queue = FAST_NEW(MicroTaskQueue);
-    queue->mHead = kBoyiaNull;
-    queue->mEnd = kBoyiaNull;
+    queue->mUsedTasks.mHead = kBoyiaNull;
+    queue->mUsedTasks.mEnd = kBoyiaNull;
     queue->mSize = 0;
     queue->mUseIndex = 0;
     queue->mFreeTasks = &queue->mCache[0];
@@ -633,12 +635,12 @@ static MicroTaskQueue* CreateTaskQueue()
 static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
 {
     MicroTaskQueue* queue = vm->mTaskQueue;
-    if (queue->mHead) {
-        queue->mEnd->mNext = task;
-        queue->mEnd = task;
+    if (queue->mUsedTasks.mHead) {
+        queue->mUsedTasks.mEnd->mNext = task;
+        queue->mUsedTasks.mEnd = task;
     } else {
-        queue->mHead = task;
-        queue->mEnd = task;
+        queue->mUsedTasks.mHead = task;
+        queue->mUsedTasks.mEnd = task;
     }
      
     ++queue->mSize;
@@ -3101,7 +3103,9 @@ LVoid SetNativeResult(LVoid* result, LVoid* vm)
 
 LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm)
 {
-    return CopyFunction(FindGlobal(hashKey, (BoyiaVM*)vm), size, (BoyiaVM*)vm);
+    BoyiaFunction* objBody = CopyFunction(FindGlobal(hashKey, (BoyiaVM*)vm), size, (BoyiaVM*)vm);
+    GCAppendRef(objBody, BY_CLASS, vm);
+    return objBody;
 }
 
 LVoid* GetNativeResult(LVoid* vm)
@@ -3320,7 +3324,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr)
 {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTaskQueue* queue = vm->mTaskQueue;
-    MicroTask* task = queue->mHead;
+    MicroTask* task = queue->mUsedTasks.mHead;
     while (task) {
         BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
 

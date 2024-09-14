@@ -255,7 +255,6 @@ LVoid jsonParse(cJSON* json, BoyiaValue* value, LVoid* vm)
         value->mValueType = BY_CLASS;
         value->mValue.mObj.mPtr = (LIntPtr)fun;
         value->mValue.mObj.mSuper = 0;
-        GCAppendRef(fun, BY_CLASS, vm);
 
         cJSON* child = json->child;
         while (child) {
