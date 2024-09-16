@@ -479,7 +479,7 @@ static LVoid ResetScene(ExecState* state)
     state->mFun.mValue.mObj.mPtr = kBoyiaNull;
     state->mFun.mValueType = BY_ARG;
     state->mWait = LFalse;
-    //vm->mEState->mClass = kBoyiaNull;
+
     AssignStateClass(state, kBoyiaNull);
 }
 
@@ -3137,11 +3137,7 @@ LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm)
 LVoid CompileCode(LInt8* code, LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    vmPtr->mEState->mStackFrame.mTmpLValSize = 0;
-    vmPtr->mEState->mStackFrame.mResultNum = 0;
-    vmPtr->mEState->mStackFrame.mLoopSize = 0;
-    //vmPtr->mEState->mClass = kBoyiaNull;
-    AssignStateClass(vmPtr->mEState, kBoyiaNull);
+    ResetScene(vmPtr->mEState);
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
@@ -3239,8 +3235,6 @@ LVoid ExecuteGlobalCode(LVoid* vm)
 {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
 
-    //vmPtr->mGValSize = 0;
-    //vmPtr->mFunSize = 0;
     vmPtr->mEState->mStackFrame.mLoopSize = 0;
     ResetScene(vmPtr->mEState);
     CommandTable cmds;
