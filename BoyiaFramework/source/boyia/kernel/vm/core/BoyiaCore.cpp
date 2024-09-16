@@ -1730,12 +1730,7 @@ static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm)
     if (result->mValueType != BY_CLASS || GetBoyiaClassId(result) != kBoyiaMicroTask) {
         BoyiaFunction* fun = CreateMicroTaskObject(vm);
         MicroTask* task = vm->mEState->mTopTask;
-        // 执行到async函数末尾，非微任务类型直接resume，resume设置为true
-        //task->mResume = LTrue;
-        // 匿名微任务创建时设置pc为null
-        //task->mAsyncEs.mStackFrame.mPC = kBoyiaNull;
-        //AddMicroTask(vm, task);
-        //ValueCopy(&task->mValue, result);
+
         fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
 
         result->mValueType = BY_CLASS;
@@ -1763,19 +1758,6 @@ static LVoid FunStatement(CompileState* cs, LInt funType)
     BodyStatement(cs, LTrue);
 }
 
-/*
-static LVoid DeleteExecutor(CommandTable* table)
-{
-    Instruction* pc = table->mBegin;
-    while (pc != table->mEnd) {
-        Instruction* next = NextInstruction(pc);//pc->mNext;
-        VM_DELETE(pc);
-        pc = next;
-    }
-
-    VM_DELETE(table);
-}
-*/
 // 执行全局的调用
 static LVoid ExecuteCode(BoyiaVM* vm)
 {
