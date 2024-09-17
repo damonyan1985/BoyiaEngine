@@ -89,8 +89,10 @@ enum TokenBracketValue {
     BLOCK_END
 };
 struct BoyiaVM;
+// 操作指令处理器
 typedef LInt (*OPHandler)(LVoid* instruction, BoyiaVM* vm);
 
+// 操作类型
 enum OpType {
     OP_NONE,
     OP_CONST_NUMBER,
@@ -100,6 +102,7 @@ enum OpType {
     OP_VAR,
 };
 
+// 指令类型
 enum CmdType {
     kCmdJmpTrue = 0,
     kCmdIfEnd,
@@ -594,7 +597,6 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm)
         queue->mFreeTasks = &queue->mCache[++queue->mUseIndex];
         {
             queue->mFreeTasks->mNext = kBoyiaNull;
-            //queue->mFreeTasks->mUse = LFalse;
             queue->mFreeTasks->mValue.mValueType = BY_ARG;
         }
     }
@@ -625,7 +627,6 @@ static MicroTaskQueue* CreateTaskQueue()
     queue->mFreeTasks = &queue->mCache[0];
     {
         queue->mFreeTasks->mNext = kBoyiaNull;
-        //queue->mFreeTasks->mUse = LFalse;
         queue->mFreeTasks->mValue.mValueType = BY_ARG;
     }
 
@@ -673,13 +674,7 @@ LVoid* InitVM(LVoid* creator)
     vm->mCreator = creator;
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = FAST_NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
-    //vm->mLocals = FAST_NEW_ARRAY(BoyiaValue, NUM_LOCAL_VARS);
     vm->mFunTable = FAST_NEW_ARRAY(BoyiaFunction, NUM_FUNC);
-
-    //vm->mOpStack = FAST_NEW_ARRAY(BoyiaValue, NUM_RESULT);
-
-    //vm->mExecStack = FAST_NEW_ARRAY(StackFrame, FUNC_CALLS);
-    //vm->mLoopStack = FAST_NEW_ARRAY(LIntPtr, LOOP_NEST);
     ExecState* execState = CreateExecState();
     SwitchExecState(execState, vm);
 
@@ -752,7 +747,6 @@ static Instruction* PutInstruction(
 
     newIns->mCodeLine = cs->mLineNum;
     newIns->mOPCode = op;
-    //newIns->mHandler = kBoyiaNull;
     newIns->mNext = kInvalidInstruction;
     newIns->mCache = kBoyiaNull;
     CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
@@ -932,7 +926,6 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src)
     case BY_ASYNC_PROP:
     case BY_NAV_PROP:
     case BY_CLASS: {
-        //dest->mValue.mIntVal = src->mValue.mIntVal;
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
     } break;
@@ -1130,7 +1123,6 @@ static LInt HandlePopScene(LVoid* ins, BoyiaVM* vm)
         vm->mEState->mStackFrame.mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
         vm->mEState->mStackFrame.mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
         vm->mEState->mStackFrame.mLoopSize = vm->mExecStack[vm->mEState->mFrameIndex].mLoopSize;
-        //vm->mEState->mClass = vm->mExecStack[vm->mEState->mFrameIndex].mClass;
         vm->mEState->mStackFrame.mTmpLValSize = vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize;
         AssignStateClass(vm->mEState, &vm->mExecStack[vm->mEState->mFrameIndex].mClass);
     }
@@ -1158,12 +1150,9 @@ static LInt HandlePushObj(LVoid* ins, BoyiaVM* vm)
     if (inst->mOPLeft.mType == OP_VAR) {
         LUintPtr objKey = (LUintPtr)inst->mOPLeft.mValue;
         if (objKey != kBoyiaSuper) {
-            //vm->mEState->mClass = (BoyiaValue*)vm->mCpu->mReg0.mNameKey;
-            //AssignStateClass(vm, (BoyiaValue*)vm->mCpu->mReg0.mNameKey);
             AssignStateClass(vm->mEState, &vm->mCpu->mReg0);
         }
     } else {
-        //vm->mEState->mClass = kBoyiaNull;
         AssignStateClass(vm->mEState, kBoyiaNull);
     }
 
@@ -1250,6 +1239,7 @@ static LVoid ForStatement(CompileState* cs)
     endInst->mOPLeft.mValue = (LIntPtr)(endInst - logicInst);
 }
 
+// 解析块{}中的内容
 static LVoid BlockStatement(CompileState* cs)
 {
     LBool block = LFalse;
@@ -1317,6 +1307,7 @@ static LVoid BlockStatement(CompileState* cs)
     } while (cs->mToken.mTokenValue != BY_END && block);
 }
 
+// 过滤注释
 static LVoid SkipComment(CompileState* cs)
 {
     if (*cs->mProg == '/') {
@@ -1348,6 +1339,7 @@ static LVoid SkipComment(CompileState* cs)
     }
 }
 
+// 逻辑运算符
 static LInt GetLogicValue(CompileState* cs)
 {
     if (MStrchr("&|!<>=", *cs->mProg)) {
@@ -1419,6 +1411,7 @@ static LInt GetLogicValue(CompileState* cs)
     return 0;
 }
 
+// 算数运算符
 static LInt GetDelimiter(CompileState* cs)
 {
     const char* delimiConst = "+-*/%^=;,'.:()[]{}";
@@ -1576,6 +1569,7 @@ static CommandTable* CreateExecutor(CompileState* cs)
     return newTable;
 }
 
+// 初始化函数
 static LVoid InitFunction(BoyiaFunction* fun, BoyiaVM* vm)
 {
     fun->mParamSize = 0;
@@ -1584,6 +1578,7 @@ static LVoid InitFunction(BoyiaFunction* fun, BoyiaVM* vm)
     ++vm->mFunSize;
 }
 
+// 创建函数
 static BoyiaValue* CreateFunVal(LUintPtr hashKey, LUint8 type, BoyiaVM* vm)
 {
     // 初始化class类或函数变量
@@ -1618,6 +1613,7 @@ static LInt HandleCreateExecutor(LVoid* ins, BoyiaVM* vm)
     return kOpResultSuccess;
 }
 
+// 解析函数体或者类体中的内容
 static LVoid BodyStatement(CompileState* cs, LBool isFunction)
 {
     CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
@@ -1638,7 +1634,7 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction)
     // 拷贝tmpTable中的offset给instruction, 非空函数
     if (funInst && tmpTable.mBegin) {
         funInst->mOPLeft.mType = OP_CONST_NUMBER;
-        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - cs->mVm->mVMCode->mCode); //(LIntPtr)es->mContext->mBegin;
+        funInst->mOPLeft.mValue = (LIntPtr)(tmpTable.mBegin - cs->mVm->mVMCode->mCode);
 
         funInst->mOPRight.mType = OP_CONST_NUMBER;
         funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - cs->mVm->mVMCode->mCode);
@@ -1650,12 +1646,10 @@ static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm)
 {
     Instruction* inst = (Instruction*)ins;
     if (inst->mOPLeft.mType == OP_NONE) {
-        //vm->mEState->mClass = kBoyiaNull;
         AssignStateClass(vm->mEState, kBoyiaNull);
         return kOpResultSuccess;
     }
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
-    //vm->mEState->mClass = CreateFunVal(hashKey, BY_CLASS, vm);
     AssignStateClass(vm->mEState, CreateFunVal(hashKey, BY_CLASS, vm));
     return kOpResultSuccess;
 }
@@ -1761,11 +1755,9 @@ static LVoid FunStatement(CompileState* cs, LInt funType)
 // 执行全局的调用
 static LVoid ExecuteCode(BoyiaVM* vm)
 {
-    //vm->mEState->mContext = vm->mEState->mContext;
     vm->mEState->mStackFrame.mPC = vm->mEState->mStackFrame.mContext->mBegin;
     ExecInstruction(vm);
-    // 删除执行体
-    //DeleteExecutor(cmds);
+    // 执行完指令后重置现场
     ResetScene(vm->mEState);
 }
 
@@ -3180,7 +3172,7 @@ LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm)
         BoyiaValue* value = &args[0];
         BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
-        // C++栈上分配执行栈
+        // 因为ExecState相对较大，因而在C++堆上分配执行栈
         ExecState* state = CreateExecState();
 
         // 切换执行栈
