@@ -34,6 +34,7 @@
 #define CONST_CAPACITY ((LInt)1024)
 #define ENTRY_CAPACITY ((LInt)1024)
 #define MICRO_TASK_CAPACITY ((LInt)1024)
+#define EXEC_STATE_CAPACITY ((LInt)64)
 
 #define STR2_INT(str) Str2Int(str.mPtr, str.mLen, 10)
 
@@ -288,9 +289,22 @@ typedef struct ExecState {
 
     MicroTask* mTopTask;
     ExecState* mPrevious;
+    ExecState* mNext;
     StackFrame mExecStack[FUNC_CALLS];
     LBool mWait;
 } ExecState;
+
+typedef struct {
+    ExecState mCache[EXEC_STATE_CAPACITY];
+    struct {
+        ExecState* mHead;
+        ExecState* mEnd;
+    } mUsedStates;
+
+    LInt mUseIndex;
+    LInt mSize;
+    ExecState* mFreeStates;
+} ExecStateCache;
 
 /* Boyia VM Define
  * Member
@@ -312,6 +326,7 @@ typedef struct BoyiaVM {
 
     VMCpu* mCpu;
     ExecState* mEState;
+    ExecStateCache* mEStateCache;
     
     VMCode* mVMCode;
     VMStrTable* mStrTable;
@@ -647,16 +662,66 @@ static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
     ++queue->mSize;
 }
 
-static ExecState* CreateExecState()
+
+static ExecStateCache* CreateExecStateCache() {
+    ExecStateCache* cache = FAST_NEW(ExecStateCache);
+    cache->mUsedStates.mHead = kBoyiaNull;
+    cache->mUsedStates.mEnd = kBoyiaNull;
+    cache->mSize = 0;
+    cache->mUseIndex = 0;
+    cache->mFreeStates = &cache->mCache[0];
+    {
+        cache->mFreeStates->mNext = kBoyiaNull;
+    }
+
+    return cache;
+}
+
+
+static ExecState* AllocExecState(BoyiaVM* vm) {
+    ExecStateCache* cache = vm->mEStateCache;
+    ExecState* state = cache->mFreeStates;
+    if (state && state->mNext) {
+        cache->mFreeStates = state->mNext;
+    } else {
+        if (cache->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
+            cache->mFreeStates = kBoyiaNull;
+            if (!state) {
+                // (TODO) Out of Memory
+                return kBoyiaNull;
+            }
+            return state;
+        }
+        cache->mFreeStates = &cache->mCache[++cache->mUseIndex];
+        {
+            cache->mFreeStates->mNext = kBoyiaNull;
+        }
+    }
+
+    return state;
+}
+
+static LVoid FreeExecState(ExecState* state, BoyiaVM* vm) {
+    ExecStateCache* cache = vm->mEStateCache;
+    cache->mUsedStates.mHead = state->mNext;
+
+    state->mNext = cache->mFreeStates->mNext;
+    cache->mFreeStates = state;
+    --cache->mSize;
+}
+
+static ExecState* CreateExecState(BoyiaVM* vm)
 {
-    ExecState* execState = FAST_NEW(ExecState);
+    //ExecState* execState = FAST_NEW(ExecState);
+    ExecState* execState = AllocExecState(vm);
     ResetScene(execState);
     return execState;
 }
 
-static LVoid DestroyExecState(ExecState* execState)
+static LVoid DestroyExecState(ExecState* execState, BoyiaVM* vm)
 {
-    FAST_DELETE(execState);
+    //FAST_DELETE(execState);
+    FreeExecState(execState, vm);
 }
 
 static LVoid SwitchExecState(ExecState* execState, BoyiaVM* vm)
@@ -675,7 +740,8 @@ LVoid* InitVM(LVoid* creator)
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = FAST_NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
     vm->mFunTable = FAST_NEW_ARRAY(BoyiaFunction, NUM_FUNC);
-    ExecState* execState = CreateExecState();
+    vm->mEStateCache = CreateExecStateCache();
+    ExecState* execState = CreateExecState(vm);
     SwitchExecState(execState, vm);
 
     vm->mCpu = CreateVMCpu();
@@ -782,7 +848,7 @@ static LVoid ExecPopFunction(BoyiaVM* vm)
             ExecState* currentState = vm->mEState;
             SwitchExecState(currentState->mPrevious, vm);
             if (!currentState->mWait) {
-                DestroyExecState(currentState);
+                DestroyExecState(currentState, vm);
             }
         }
 
@@ -1879,7 +1945,7 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm)
     BoyiaValue* value = &current->mLocals[start];
     BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
-    ExecState* state = CreateExecState();
+    ExecState* state = CreateExecState(vm);
     state->mPrevious = current;
     SwitchExecState(state, vm);
     HandlePushScene(kBoyiaNull, vm);
@@ -3173,7 +3239,7 @@ LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm)
         BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
         // 因为ExecState相对较大，因而在C++堆上分配执行栈
-        ExecState* state = CreateExecState();
+        ExecState* state = CreateExecState(vmPtr);
 
         // 切换执行栈
         SwitchExecState(state, vmPtr);
@@ -3199,7 +3265,7 @@ LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm)
             vmPtr->mEState->mStackFrame.mPC = cmds->mBegin;
             ExecInstruction(vmPtr);
         }
-        DestroyExecState(state);
+        DestroyExecState(state, vmPtr);
     }
     SwitchExecState(current, vmPtr);
     return kOpResultSuccess;
