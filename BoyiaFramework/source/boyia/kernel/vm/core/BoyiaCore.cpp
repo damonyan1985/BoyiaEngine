@@ -684,7 +684,7 @@ static ExecState* AllocExecState(BoyiaVM* vm) {
     if (state && state->mNext) {
         cache->mFreeStates = state->mNext;
     } else {
-        if (cache->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
+        if (cache->mUseIndex >= EXEC_STATE_CAPACITY - 1) {
             cache->mFreeStates = kBoyiaNull;
             if (!state) {
                 // (TODO) Out of Memory
