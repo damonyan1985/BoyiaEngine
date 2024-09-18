@@ -2480,12 +2480,7 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm)
     BoyiaFunction* taskObj = CreateMicroTaskObject(vm);
     BoyiaValue* result = &vm->mCpu->mReg0;
     MicroTask* topTask = vm->mEState->mTopTask;
-    // 执行到async函数末尾，非微任务类型直接resume，resume设置为true
-    //task->mResume = LTrue;
-    // 匿名微任务创建时设置pc为null
-    //task->mAsyncEs.mStackFrame.mPC = kBoyiaNull;
-    //AddMicroTask(vm, task);
-    //ValueCopy(&task->mValue, result);
+
     taskObj->mParams[1].mValue.mIntVal = (LIntPtr)topTask;
 
     result->mValueType = BY_CLASS;
