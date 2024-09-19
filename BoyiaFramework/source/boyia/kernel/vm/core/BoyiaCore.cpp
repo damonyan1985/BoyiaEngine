@@ -636,62 +636,20 @@ static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
 
 
 static LVoid* CreateExecStateCache() {
-    /*
-    ExecStateCache* cache = FAST_NEW(ExecStateCache);
-    cache->mUsedStates.mHead = kBoyiaNull;
-    cache->mUsedStates.mEnd = kBoyiaNull;
-    cache->mSize = 0;
-    cache->mUseIndex = 0;
-    cache->mFreeStates = &cache->mCache[0];
-    {
-        cache->mFreeStates->mNext = kBoyiaNull;
-    }
-
-    return cache;*/
-
     return CREATE_MEMCACHE(ExecState, EXEC_STATE_CAPACITY);
 }
 
 
 static ExecState* AllocExecState(BoyiaVM* vm) {
-    /*
-    ExecStateCache* cache = vm->mEStateCache;
-    ExecState* state = cache->mFreeStates;
-    if (state && state->mNext) {
-        cache->mFreeStates = state->mNext;
-    } else {
-        if (cache->mUseIndex >= EXEC_STATE_CAPACITY - 1) {
-            cache->mFreeStates = kBoyiaNull;
-            if (!state) {
-                // (TODO) Out of Memory
-                return kBoyiaNull;
-            }
-            return state;
-        }
-        cache->mFreeStates = &cache->mCache[++cache->mUseIndex];
-        {
-            cache->mFreeStates->mNext = kBoyiaNull;
-        }
-    }
-
-    return state;*/
     return ALLOC_CHUNK(ExecState, vm->mEStateCache);
 }
 
 static LVoid FreeExecState(ExecState* state, BoyiaVM* vm) {
-    /*
-    ExecStateCache* cache = vm->mEStateCache;
-    cache->mUsedStates.mHead = state->mNext;
-
-    state->mNext = cache->mFreeStates->mNext;
-    cache->mFreeStates = state;
-    --cache->mSize;*/
     FREE_CHUNK(state, vm->mEStateCache);
 }
 
 static ExecState* CreateExecState(BoyiaVM* vm)
 {
-    //ExecState* execState = FAST_NEW(ExecState);
     ExecState* execState = AllocExecState(vm);
     ResetScene(execState);
     return execState;
