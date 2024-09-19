@@ -199,12 +199,28 @@ LVoid PrintPoolSize(LVoid* mempool)
     //BOYIA_LOG("BoyiaVM POOL addr=%x used=%d maxsize=%d", (LIntPtr)pool->mAddress, pool->mUsed, pool->mSize);
 }
 
-MemoryCache* CreateMemoryCache(LInt typeSize, LInt capacity) {
+typedef struct MemoryChunk {
+    LVoid* mMemoryAddr;
+    MemoryChunk* mNext;
+} MemoryChunk;
+
+typedef struct {
+    LVoid* mCacheAddr;
+    MemoryChunk* mChunkCache;
+    MemoryChunk* mFreeChunks;
+    LInt mUseIndex;
+
+    LInt mUnitSize;
+    LInt mCount;
+    LInt mCapacity;
+} MemoryCache;
+
+LVoid* CreateMemoryCache(LInt typeSize, LInt capacity) {
     MemoryCache* cache = FAST_NEW(MemoryCache);
     cache->mCacheAddr = FastMalloc(typeSize * capacity);
-    cache->mUsedChunks.mHead = kBoyiaNull;
-    cache->mUsedChunks.mEnd = kBoyiaNull;
-    cache->mSize = 0;
+    cache->mChunkCache = (MemoryChunk*)FastMalloc(sizeof(MemoryChunk) * capacity);
+    cache->mUnitSize = typeSize;
+    cache->mCount = 0;
     cache->mUseIndex = 0;
     cache->mCapacity = capacity;
     cache->mFreeChunks = &cache->mChunkCache[0];
@@ -216,7 +232,9 @@ MemoryCache* CreateMemoryCache(LInt typeSize, LInt capacity) {
     return cache;
 }
 
-LVoid* AllocMemoryChunk(LInt typeSize, MemoryCache* cache) {
+LVoid* AllocMemoryChunk(LVoid* cachePtr) {
+    MemoryCache* cache = (MemoryCache*)cachePtr;
+
     MemoryChunk* chunk = cache->mFreeChunks;
     if (chunk && chunk->mNext) {
         cache->mFreeChunks = chunk->mNext;
@@ -227,22 +245,29 @@ LVoid* AllocMemoryChunk(LInt typeSize, MemoryCache* cache) {
                 // (TODO) Out of Memory
                 return kBoyiaNull;
             }
-            return chunk;
+            return chunk->mMemoryAddr;
         }
         cache->mFreeChunks = &cache->mChunkCache[++cache->mUseIndex];
         {
-            cache->mFreeChunks->mMemoryAddr = (LByte*)cache->mCacheAddr + cache->mUseIndex * typeSize;
+            cache->mFreeChunks->mMemoryAddr = (LByte*)cache->mCacheAddr + cache->mUseIndex * cache->mUnitSize;
             cache->mFreeChunks->mNext = kBoyiaNull;
         }
     }
 
-    return chunk->mMemoryAddr;
+    ++cache->mCount;
+    return chunk ? chunk->mMemoryAddr : kBoyiaNull;
 }
 
-LVoid FreeMemoryChunk(MemoryChunk* chunk, MemoryCache* cache) {
-    cache->mUsedChunks.mHead = chunk->mNext;
+LVoid FreeMemoryChunk(LVoid* addr, LVoid* cachePtr) {
+    MemoryCache* cache = (MemoryCache*)cachePtr;
+
+    LUintPtr startAddrValue = (LUintPtr)((LByte*)cache->mCacheAddr);
+    LUintPtr addrValue = (LUintPtr)((LByte*)addr);
+    LInt index = (addrValue - startAddrValue) / cache->mUnitSize;
+
+    MemoryChunk* chunk = &cache->mChunkCache[index];
 
     chunk->mNext = cache->mFreeChunks->mNext;
     cache->mFreeChunks = chunk;
-    --cache->mSize;
+    --cache->mCount;
 }

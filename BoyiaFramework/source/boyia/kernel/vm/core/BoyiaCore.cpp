@@ -267,15 +267,11 @@ typedef struct MicroTask {
 } MicroTask;
 
 typedef struct {
-    MicroTask mCache[MICRO_TASK_CAPACITY];
     struct {
         MicroTask* mHead;
         MicroTask* mEnd;
     } mUsedTasks;
-    
-    MicroTask* mFreeTasks;
-    LInt mUseIndex;
-    LInt mSize;
+    LVoid* mTaskCache;
 } MicroTaskQueue;
 
 typedef struct ExecState {
@@ -326,7 +322,8 @@ typedef struct BoyiaVM {
 
     VMCpu* mCpu;
     ExecState* mEState;
-    ExecStateCache* mEStateCache;
+    LVoid* mEStateCache;
+    //ExecStateCache* mEStateCache;
     
     VMCode* mVMCode;
     VMStrTable* mStrTable;
@@ -597,23 +594,10 @@ static VMCpu* CreateVMCpu()
 static MicroTask* AllocMicroTask(BoyiaVM* vm)
 {
     MicroTaskQueue* queue = vm->mTaskQueue;
-    MicroTask* task = queue->mFreeTasks;
-    if (task && task->mNext) {
-        queue->mFreeTasks = task->mNext;
-    } else {
-        if (queue->mUseIndex >= MICRO_TASK_CAPACITY - 1) {
-            queue->mFreeTasks = kBoyiaNull;
-            if (!task) {
-                // (TODO) Out of Memory
-                return kBoyiaNull;
-            }
-            return task;
-        }
-        queue->mFreeTasks = &queue->mCache[++queue->mUseIndex];
-        {
-            queue->mFreeTasks->mNext = kBoyiaNull;
-            queue->mFreeTasks->mValue.mValueType = BY_ARG;
-        }
+    MicroTask* task = ALLOC_CHUNK(MicroTask, queue->mTaskCache);
+    if (task) {
+        task->mValue.mValueType = BY_ARG;
+        task->mNext = kBoyiaNull;
     }
 
     return task;
@@ -623,13 +607,9 @@ static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm)
 {
     MicroTaskQueue* queue = vm->mTaskQueue;
     queue->mUsedTasks.mHead = task->mNext;
+    task->mValue.mValueType = BY_ARG;
     
-    task->mNext = queue->mFreeTasks->mNext;
-    queue->mFreeTasks = task;
-    {
-        queue->mFreeTasks->mValue.mValueType = BY_ARG;
-    }
-    --queue->mSize;
+    FREE_CHUNK(task, queue->mTaskCache);
 }
 
 static MicroTaskQueue* CreateTaskQueue()
@@ -637,14 +617,8 @@ static MicroTaskQueue* CreateTaskQueue()
     MicroTaskQueue* queue = FAST_NEW(MicroTaskQueue);
     queue->mUsedTasks.mHead = kBoyiaNull;
     queue->mUsedTasks.mEnd = kBoyiaNull;
-    queue->mSize = 0;
-    queue->mUseIndex = 0;
-    queue->mFreeTasks = &queue->mCache[0];
-    {
-        queue->mFreeTasks->mNext = kBoyiaNull;
-        queue->mFreeTasks->mValue.mValueType = BY_ARG;
-    }
 
+    queue->mTaskCache = CREATE_MEMCACHE(MicroTask, MICRO_TASK_CAPACITY);
     return queue;
 }
 
@@ -657,13 +631,12 @@ static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task)
     } else {
         queue->mUsedTasks.mHead = task;
         queue->mUsedTasks.mEnd = task;
-    }
-     
-    ++queue->mSize;
+    }     
 }
 
 
-static ExecStateCache* CreateExecStateCache() {
+static LVoid* CreateExecStateCache() {
+    /*
     ExecStateCache* cache = FAST_NEW(ExecStateCache);
     cache->mUsedStates.mHead = kBoyiaNull;
     cache->mUsedStates.mEnd = kBoyiaNull;
@@ -674,11 +647,14 @@ static ExecStateCache* CreateExecStateCache() {
         cache->mFreeStates->mNext = kBoyiaNull;
     }
 
-    return cache;
+    return cache;*/
+
+    return CREATE_MEMCACHE(ExecState, EXEC_STATE_CAPACITY);
 }
 
 
 static ExecState* AllocExecState(BoyiaVM* vm) {
+    /*
     ExecStateCache* cache = vm->mEStateCache;
     ExecState* state = cache->mFreeStates;
     if (state && state->mNext) {
@@ -698,16 +674,19 @@ static ExecState* AllocExecState(BoyiaVM* vm) {
         }
     }
 
-    return state;
+    return state;*/
+    return ALLOC_CHUNK(ExecState, vm->mEStateCache);
 }
 
 static LVoid FreeExecState(ExecState* state, BoyiaVM* vm) {
+    /*
     ExecStateCache* cache = vm->mEStateCache;
     cache->mUsedStates.mHead = state->mNext;
 
     state->mNext = cache->mFreeStates->mNext;
     cache->mFreeStates = state;
-    --cache->mSize;
+    --cache->mSize;*/
+    FREE_CHUNK(state, vm->mEStateCache);
 }
 
 static ExecState* CreateExecState(BoyiaVM* vm)

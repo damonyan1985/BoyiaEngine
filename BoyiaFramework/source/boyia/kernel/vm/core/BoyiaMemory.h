@@ -3,33 +3,6 @@
 
 #include "PlatformLib.h"
 
-typedef struct MemoryChunk {
-    LVoid* mMemoryAddr;
-    MemoryChunk* mNext;
-} MemoryChunk;
-
-typedef struct {
-    LVoid* mCacheAddr;
-    MemoryChunk* mChunkCache;
-    struct {
-        MemoryChunk* mHead;
-        MemoryChunk* mEnd;
-    } mUsedChunks;
-
-    MemoryChunk* mFreeChunks;
-    LInt mUseIndex;
-    LInt mSize;
-    LInt mCapacity;
-} MemoryCache;
-
-#define CREATE_MEMCACHE(type, capacity) CreateMemoryCache(sizeof(type), capacity)
-#define ALLOC_CHUNK(type, cache) ((type*)AllocMemoryChunk(sizeof(type), cache))
-#define FREE_CHUNK(chunk, cache) FreeMemoryChunk(chunk, cache)
-
-MemoryCache* CreateMemoryCache(LInt typeSize, LInt capacity);
-LVoid* AllocMemoryChunk(LInt typeSize, MemoryCache* cache);
-LVoid FreeMemoryChunk(MemoryChunk* chunk, MemoryCache* cache);
-
 
 #define FAST_NEW(type) (type*)FastMalloc(sizeof(type))
 #define FAST_NEW_ARRAY(type, n) (type*)FastMalloc(n * sizeof(type))
@@ -50,5 +23,14 @@ LInt GetUsedMemory(LVoid* mempool);
 LVoid PrintPoolSize(LVoid* mempool);
 
 LVoid* MigrateMemory(LVoid* srcMem, LVoid* fromPool, LVoid* toPool);
+
+
+#define CREATE_MEMCACHE(type, capacity) CreateMemoryCache(sizeof(type), capacity)
+#define ALLOC_CHUNK(type, cache) ((type*)AllocMemoryChunk(cache))
+#define FREE_CHUNK(addr, cache) FreeMemoryChunk(addr, cache)
+
+LVoid* CreateMemoryCache(LInt typeSize, LInt capacity);
+LVoid* AllocMemoryChunk(LVoid* cache);
+LVoid FreeMemoryChunk(LVoid* addr, LVoid* cache);
 
 #endif // Boyia_Memory_h
