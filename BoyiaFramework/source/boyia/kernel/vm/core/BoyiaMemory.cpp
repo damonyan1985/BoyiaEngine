@@ -278,3 +278,7 @@ LVoid DestroyMemoryCache(LVoid* cachePtr) {
     FastFree(cache->mChunkCache);
     FastFree(cache);
 }
+
+LInt GetUsedChunkCount(LVoid* cachePtr) {
+    return ((MemoryCache*)cachePtr)->mCount;
+}

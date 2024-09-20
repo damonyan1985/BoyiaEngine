@@ -34,5 +34,6 @@ LVoid* CreateMemoryCache(LInt typeSize, LInt capacity);
 LVoid* AllocMemoryChunk(LVoid* cache);
 LVoid FreeMemoryChunk(LVoid* addr, LVoid* cache);
 LVoid DestroyMemoryCache(LVoid* cache);
+LInt GetUsedChunkCount(LVoid* cache);
 
 #endif // Boyia_Memory_h
