@@ -271,3 +271,10 @@ LVoid FreeMemoryChunk(LVoid* addr, LVoid* cachePtr) {
     cache->mFreeChunks = chunk;
     --cache->mCount;
 }
+
+LVoid DestroyMemoryCache(LVoid* cachePtr) {
+    MemoryCache* cache = (MemoryCache*)cachePtr;
+    FastFree(cache->mCacheAddr);
+    FastFree(cache->mChunkCache);
+    FastFree(cache);
+}

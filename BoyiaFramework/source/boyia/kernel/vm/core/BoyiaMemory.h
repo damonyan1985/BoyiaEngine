@@ -28,9 +28,11 @@ LVoid* MigrateMemory(LVoid* srcMem, LVoid* fromPool, LVoid* toPool);
 #define CREATE_MEMCACHE(type, capacity) CreateMemoryCache(sizeof(type), capacity)
 #define ALLOC_CHUNK(type, cache) ((type*)AllocMemoryChunk(cache))
 #define FREE_CHUNK(addr, cache) FreeMemoryChunk(addr, cache)
+#define DESTROY_MEMCACHE(cache) DestroyMemoryCache(cache);
 
 LVoid* CreateMemoryCache(LInt typeSize, LInt capacity);
 LVoid* AllocMemoryChunk(LVoid* cache);
 LVoid FreeMemoryChunk(LVoid* addr, LVoid* cache);
+LVoid DestroyMemoryCache(LVoid* cache);
 
 #endif // Boyia_Memory_h

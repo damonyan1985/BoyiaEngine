@@ -15,14 +15,19 @@ typedef struct BoyiaRef {
     BoyiaRef* mNext;
 } BoyiaRef;
 
-typedef struct BoyiaGc {
+typedef struct UsedRefs {
     BoyiaRef* mBegin;
     BoyiaRef* mEnd;
-    LInt mSize;
+} UsedRefs;
 
-    LInt mUseIndex;
-    BoyiaRef* mRefs;
-    BoyiaRef* mFreeRefs;
+typedef struct BoyiaGc {
+    UsedRefs mUsedRefs;
+    //LInt mSize;
+
+    //LInt mUseIndex;
+    //BoyiaRef* mRefs;
+    //BoyiaRef* mFreeRefs;
+    LVoid* mRefCache;
     LVoid* mBoyiaVM;
     LVoid* mMigrates[MIGRATE_SIZE];
 } BoyiaGc;
@@ -48,6 +53,7 @@ enum BoyiaGcColor {
 
 static BoyiaRef* AllocateRef(BoyiaGc* gc)
 {
+    /*
     BoyiaRef* ref = gc->mFreeRefs;
     if (ref && ref->mNext) {
         gc->mFreeRefs = ref->mNext;
@@ -62,6 +68,11 @@ static BoyiaRef* AllocateRef(BoyiaGc* gc)
         }
         gc->mFreeRefs = &gc->mRefs[++gc->mUseIndex];
         gc->mFreeRefs->mNext = kBoyiaNull;
+    }*/
+
+    BoyiaRef* ref = ALLOC_CHUNK(BoyiaRef, gc->mRefCache);
+    if (ref) {
+        ref->mNext = kBoyiaNull;
     }
 
     return ref;
@@ -69,8 +80,9 @@ static BoyiaRef* AllocateRef(BoyiaGc* gc)
 
 static LVoid FreeRef(BoyiaRef* ref, BoyiaGc* gc)
 {
-    ref->mNext = gc->mFreeRefs->mNext;
-    gc->mFreeRefs = ref;
+    //ref->mNext = gc->mFreeRefs->mNext;
+    //gc->mFreeRefs = ref;
+    FREE_CHUNK(ref, gc);
 }
 
 // 收集器
@@ -79,8 +91,13 @@ extern LVoid NativeDelete(LVoid* data);
 extern LVoid* CreateGC(LVoid* vm)
 {
     BoyiaGc* gc = FAST_NEW(BoyiaGc);
-    gc->mBegin = kBoyiaNull;
-    gc->mEnd = kBoyiaNull;
+
+    gc->mUsedRefs.mBegin = kBoyiaNull;
+    gc->mUsedRefs.mEnd = kBoyiaNull;
+
+    gc->mRefCache = CREATE_MEMCACHE(BoyiaRef, kBoyiaRefPageSize);
+
+    /*
     gc->mSize = 0;
     gc->mRefs = FAST_NEW_ARRAY(BoyiaRef, kBoyiaRefPageSize);
     gc->mUseIndex = 0;
@@ -89,15 +106,17 @@ extern LVoid* CreateGC(LVoid* vm)
     {
         gc->mFreeRefs->mNext = kBoyiaNull;
     }
-    gc->mBoyiaVM = vm;
+    gc->mBoyiaVM = vm;*/
+
     return gc;
 }
 
 extern LVoid DestroyGC(LVoid* vm)
 {
     BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
-    BoyiaRef* ref = gc->mBegin;
-    FAST_DELETE(gc->mRefs);
+    //BoyiaRef* ref = gc->mBegin;
+    //FAST_DELETE(gc->mRefs);
+    DESTROY_MEMCACHE(gc->mRefCache);
     FAST_DELETE(gc);
 }
 
@@ -111,14 +130,16 @@ extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
     ref->mType = type;
     ref->mNext = kBoyiaNull;
 
-    if (gc->mBegin) {
-        gc->mEnd->mNext = ref;
+    UsedRefs* refs = &gc->mUsedRefs;
+
+    if (refs->mBegin) {
+        refs->mEnd->mNext = ref;
     } else {
-        gc->mBegin = ref;
+        refs->mBegin = ref;
     }
 
-    gc->mEnd = ref;
-    ++gc->mSize;
+    refs->mEnd = ref;
+    //++gc->mSize;
 }
 
 static LVoid MarkValue(BoyiaValue* value);
@@ -226,25 +247,26 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
 // 清除所有需要回收的对象
 static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
 {
-    BoyiaRef* prev = gc->mBegin;
+    UsedRefs* refs = &gc->mUsedRefs;
+    BoyiaRef* prev = refs->mBegin;
     while (prev) {
         if (IsInValidObject(prev)) {
             // 删除对象内存
             DeleteObject(prev, vm);
             // begin标记置为下一个元素
-            gc->mBegin = prev->mNext;
+            refs->mBegin = prev->mNext;
             // 删除链表中的元素
             //FAST_DELETE(prev);
             FreeRef(prev, gc);
-            --gc->mSize;
-            prev = gc->mBegin;
+            //--gc->mSize;
+            prev = refs->mBegin;
         } else {
             break;
         }
     }
 
     if (!prev) {
-        gc->mEnd = kBoyiaNull;
+        refs->mEnd = kBoyiaNull;
         return;
     }
 
@@ -258,7 +280,7 @@ static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
             //FAST_DELETE(current);
             FreeRef(current, gc);
             // gc中引用数量减一
-            --gc->mSize;
+            //--gc->mSize;
             // 切换当前指针
             current = prev->mNext;
         } else {
@@ -267,7 +289,7 @@ static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
         }
     }
 
-    gc->mEnd = prev;
+    refs->mEnd = prev;
 }
 
 static LVoid ResetMigrateAddress(BoyiaValue* value, LInt* migrateIndexPtr, LVoid* toPool, BoyiaFunction* fun, BoyiaGc* gc)
@@ -346,7 +368,7 @@ static LVoid MigrateValueTable(BoyiaValue* table, LInt size, LInt* migrateIndexP
 
 static LVoid ResetGCRef(BoyiaGc* gc)
 {
-    BoyiaRef* ref = gc->mBegin;
+    BoyiaRef* ref = gc->mUsedRefs.mBegin;
     while (ref) {
         if (ref->mType == BY_CLASS) {
             BoyiaFunction* fun = (BoyiaFunction*)ref->mAddress;
@@ -401,7 +423,7 @@ static LVoid ResetBoyiaObject(BoyiaFunction* fun)
 static LVoid ResetMemoryColor(BoyiaGc* gc)
 {
     // 在GC列表中的都是动态生成的对象
-    BoyiaRef* ref = gc->mBegin;
+    BoyiaRef* ref = gc->mUsedRefs.mBegin;
     while (ref) {
         if (ref->mType == BY_NAVCLASS) {
             MarkNativeObject((LIntPtr)ref->mAddress, kBoyiaGcWhite);
