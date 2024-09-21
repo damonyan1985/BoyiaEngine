@@ -755,29 +755,32 @@ static Instruction* NextInstruction(Instruction* instruction, BoyiaVM* vm) {
 }
 
 static LVoid ExecPopFunction(BoyiaVM* vm) {
+    if (vm->mEState->mStackFrame.mPC) {
+        return;
+    }
+
     // 指令为空，则判断是否处于函数范围中，是则pop，
     // 从而取得调用之前的运行环境, 即之前指向的pc指令
     // 如果不为空，就获取下一条指令，递归调用本函数
-    if (!vm->mEState->mStackFrame.mPC) {
-        if (vm->mEState->mFrameIndex <= 0
-            && vm->mEState->mPrevious
-            && !vm->mEState->mPrevious->mWait) {
-            ExecState* currentState = vm->mEState;
-            SwitchExecState(currentState->mPrevious, vm);
-            if (!currentState->mWait) {
-                DestroyExecState(currentState, vm);
-            }
+    if (vm->mEState->mFrameIndex <= 0
+        && vm->mEState->mPrevious
+        && !vm->mEState->mPrevious->mWait) {
+        ExecState* currentState = vm->mEState;
+        SwitchExecState(currentState->mPrevious, vm);
+        if (!currentState->mWait) {
+            DestroyExecState(currentState, vm);
         }
+    }
 
-        if (vm->mEState->mFrameIndex > 0) {
-            HandlePopScene(kBoyiaNull, vm);
-            if (vm->mEState->mStackFrame.mPC) {
-                vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); // vm->mEState->mPC->mNext;
+    // SwitchExecState后mFrameIndex可能不为0
+    if (vm->mEState->mFrameIndex > 0) {
+        HandlePopScene(kBoyiaNull, vm);
+        if (vm->mEState->mStackFrame.mPC) {
+            vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); // vm->mEState->mPC->mNext;
+            ExecPopFunction(vm);
+        } else {
+            if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
                 ExecPopFunction(vm);
-            } else {
-                if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
-                    ExecPopFunction(vm);
-                }
             }
         }
     }
