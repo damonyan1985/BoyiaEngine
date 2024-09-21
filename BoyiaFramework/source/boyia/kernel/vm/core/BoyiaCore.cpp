@@ -2316,6 +2316,9 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm) {
     
     if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
         SwitchExecState(vm->mEState->mPrevious, vm);
+        // 切换到之前的ExecState，但由于函数调用前便执行了PopScene，
+        // 之前的ExecState的mFrameIndex是进行了+1，因而需要pc置为Null，
+        // 这样才会在执行命令时执行PopScene，返回到先前的场景
         vm->mEState->mStackFrame.mPC = kBoyiaNull;
     } else {
         return kOpResultEnd;
