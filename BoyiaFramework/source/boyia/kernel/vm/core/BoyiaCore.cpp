@@ -2305,15 +2305,14 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm) {
 
     // 设置顶层async与task之间的联系
     BoyiaFunction* taskObj = CreateMicroTaskObject(vm);
-    BoyiaValue* result = &vm->mCpu->mReg0;
     MicroTask* topTask = vm->mEState->mTopTask;
-
     taskObj->mParams[1].mValue.mIntVal = (LIntPtr)topTask;
 
-    result->mValueType = BY_CLASS;
-    result->mValue.mObj.mPtr = (LIntPtr)taskObj;
-    result->mValue.mObj.mSuper = kBoyiaNull;
-    SetNativeResult(result, vm);
+    BoyiaValue result;
+    result.mValueType = BY_CLASS;
+    result.mValue.mObj.mPtr = (LIntPtr)taskObj;
+    result.mValue.mObj.mSuper = kBoyiaNull;
+    SetNativeResult(&result, vm);
     
     if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
         SwitchExecState(vm->mEState->mPrevious, vm);
