@@ -3156,7 +3156,9 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
                 ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
                 AddMicroTask(vm, aes->mTopTask);
                 // TODO 销毁ExecState
-                //DestroyExecState(aes);
+                if (aes->mPrevious->mWait) {
+                    DestroyExecState(aes, vm);
+                }
             }
 
             SwitchExecState(currentState, vm);
