@@ -612,7 +612,7 @@ static MicroTaskQueue* CreateTaskQueue() {
     return queue;
 }
 
-static LVoid AddMicroTask(BoyiaVM* vm, MicroTask* task) {
+static LVoid AddMicroTask(MicroTask* task, BoyiaVM* vm) {
     MicroTaskQueue* queue = vm->mTaskQueue;
     if (queue->mUsedTasks.mHead) {
         queue->mUsedTasks.mEnd->mNext = task;
@@ -645,6 +645,7 @@ static ExecState* CreateExecState(BoyiaVM* vm)
 }
 
 static LVoid DestroyExecState(ExecState* execState, BoyiaVM* vm) {
+    execState->mTopTask = kBoyiaNull;
     FreeExecState(execState, vm);
 }
 
@@ -3125,7 +3126,7 @@ LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr) {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = (MicroTask*)taskPtr;
     ValueCopyNoName(&task->mValue, value);
-    AddMicroTask(vm, task);
+    AddMicroTask(task, vm);
 }
 
 // 消费微任务，若选择支持微任务，则宏任务结束后执行该函数
@@ -3148,15 +3149,20 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
             BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
             // await执行完成后，将结果赋值给R0虚拟寄存器
             ValueCopy(&vm->mCpu->mReg0, &task->mValue);
+            // 这个过程中可能会销毁处于最外层且没有被await的ExecState
             ExecInstruction(vm);
                 
             // 执行过程中可能会遇到其他Async函数，因而必须使用aes变量，而不是vm->mEState
             // 执行ExecInstruction, 如果整个异步函数执行到末尾了，则将结果输出给顶层microtask
+            // 这里之所以判断mContext为空，是因为异步函数执行到末尾时会pop一次，这一次mContext会置为空
             if (!aes->mStackFrame.mContext) {
-                ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
-                AddMicroTask(vm, aes->mTopTask);
+                // aes销毁时mTopTask会置为空
+                if (aes->mTopTask) {
+                    ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
+                    AddMicroTask(aes->mTopTask, vm);
+                }
                 // TODO 销毁ExecState
-                if (aes->mPrevious->mWait) {
+                if (aes->mPrevious && aes->mPrevious->mWait) {
                     DestroyExecState(aes, vm);
                 }
             }

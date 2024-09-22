@@ -1,5 +1,6 @@
 package com.boyia.app.shell.home
 
+import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.shell.model.BoyiaAppItem
@@ -31,7 +32,9 @@ class HomeModule: IHomeModule {
         }
 
         context = WeakReference(ctx)
-        fragment = BoyiaHomeFragment(this)
+
+        fragment = BoyiaHomeFragment()
+        fragment?.setUIModule(this)
 
         ctx.getActivity()?.supportFragmentManager?.beginTransaction()?.let {
             it.add(ctx.rootId(), fragment!!, TAG)

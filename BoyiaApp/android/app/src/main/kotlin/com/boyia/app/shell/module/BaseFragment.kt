@@ -1,5 +1,6 @@
 package com.boyia.app.shell.module
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 
 open class BaseFragment: Fragment() {

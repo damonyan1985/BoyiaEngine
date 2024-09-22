@@ -50,7 +50,7 @@ class BoyiaAppListAdapter(
         val name = BoyiaUtils.getStringMD5(appItem.url)
 
         val info = DownloadData()
-        info.fileName = name;
+        info.fileName = name
 
         val list = DownloadUtil.getDownloadList(info)
         val module = ModuleManager.instance().getModule(ModuleManager.IPC) as IPCModule

@@ -18,11 +18,9 @@ import com.boyia.app.common.utils.BoyiaLog
 import com.boyia.app.common.utils.BoyiaUtils
 import com.boyia.app.shell.model.BoyiaAppListModel.LoadCallback
 import com.boyia.app.shell.R
-import com.boyia.app.shell.ipc.handler.HandlerFoundation
 import com.boyia.app.shell.module.BaseFragment
-import com.boyia.app.shell.module.IHomeModule
+import com.boyia.app.shell.module.IUIModule
 import com.boyia.app.shell.module.ModuleManager
-import com.boyia.app.shell.setting.BoyiaSettingFragment
 import com.boyia.app.shell.setting.BoyiaSettingModule
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideCallback
 import com.boyia.app.shell.setting.BoyiaSettingModule.SlideListener
@@ -30,10 +28,8 @@ import com.boyia.app.shell.util.CommonFeatures
 import com.boyia.app.shell.util.dp
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
-import com.mikepenz.iconics.typeface.library.googlematerial.OutlinedGoogleMaterial
-import com.mikepenz.iconics.utils.colorInt
 
-class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
+class BoyiaHomeFragment: BaseFragment() {
     companion object {
         const val TAG = "BoyiaHomeFragment"
         const val GRID_SPAN_NUM = 3
@@ -50,8 +46,13 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
     private var contentLayout: LinearLayout? = null
     private var maskView: FrameLayout? = null
     private var listener: SlideListener? = null
+    private var module: HomeModule? = null
 
     override fun customTag(): String = TAG
+
+    fun setUIModule(uiModule: IUIModule) {
+        module = uiModule as HomeModule
+    }
 
     // 要防止onCreateView被多次调用
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -109,34 +110,36 @@ class BoyiaHomeFragment(private val module: HomeModule): BaseFragment() {
             }
         }
 
-        headerView = BoyiaHomeHeader(requireContext(), module, listener!!)
-        footerView = BoyiaHomeFooter(context)
+        module?.let {
+            headerView = BoyiaHomeHeader(requireContext(), it, listener!!)
+            footerView = BoyiaHomeFooter(context)
 
-        appListAdapter = BoyiaAppListAdapter(requireContext(), module)
-        middleView = RecyclerView(requireContext())
-        middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
-        middleView?.adapter = appListAdapter
-        middleView?.addItemDecoration(BoyiaGridSpaceItem(12.dp))
+            appListAdapter = BoyiaAppListAdapter(requireContext(), it)
+            middleView = RecyclerView(requireContext())
+            middleView?.layoutManager = StaggeredGridLayoutManager(GRID_SPAN_NUM, RecyclerView.VERTICAL)
+            middleView?.adapter = appListAdapter
+            middleView?.addItemDecoration(BoyiaGridSpaceItem(12.dp))
 
-        val headerParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
+            val headerParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 130.dp
-        )
-        contentLayout?.addView(headerView, headerParam)
+            )
+            contentLayout?.addView(headerView, headerParam)
 
-        val middleParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
+            val middleParam: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        contentLayout?.addView(middleView, middleParam)
-        contentLayout?.addView(footerView)
+            )
+            contentLayout?.addView(middleView, middleParam)
+            contentLayout?.addView(footerView)
 
-        module.clear()
-        module.loadAppList(object : LoadCallback {
-            override fun onLoaded() {
-                appListAdapter?.notifyDataSetChanged()
-            }
-        })
+            it.clear()
+            it.loadAppList(object : LoadCallback {
+                override fun onLoaded() {
+                    appListAdapter?.notifyDataSetChanged()
+                }
+            })
+        }
 
         rootLayout = FrameLayout(requireContext())
         rootLayout?.layoutParams = ViewGroup.LayoutParams(

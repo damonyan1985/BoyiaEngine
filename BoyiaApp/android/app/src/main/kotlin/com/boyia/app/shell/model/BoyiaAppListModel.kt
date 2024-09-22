@@ -19,6 +19,9 @@ class BoyiaAppListModel {
     val appList: CopyOnWriteArrayList<BoyiaAppItem> = CopyOnWriteArrayList()
 
     fun requestAppList(callback: LoadCallback) {
+        if (appList.isNotEmpty()) {
+            return
+        }
         BoyiaModelUtil.request(APP_LIST_URL, object: ModelDataCallback<BoyiaAppListData> {
             override fun onLoadData(data: BoyiaAppListData) {
                 BoyiaLog.d(TAG, "BoyiaAppListData retMsg = ${data.retMsg}")

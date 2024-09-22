@@ -1,10 +1,12 @@
 package com.boyia.app.shell
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.boyia.app.common.utils.BoyiaLog
 import kotlinx.coroutines.MainScope
 
 /**
@@ -29,5 +31,10 @@ open class BoyiaShellActivity: AppCompatActivity() {
 
     fun rootId(): Int {
         return rootView?.id!!
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onSaveInstanceState(outState: Bundle) {
+        BoyiaLog.d(TAG, "Do nothing to save state")
     }
 }

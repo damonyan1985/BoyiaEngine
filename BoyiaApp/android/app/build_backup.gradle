@@ -51,6 +51,8 @@ android {
             applicationId 'com.boyia.app.shell'
             versionName "1.0"
             versionCode 1
+            applicationIdSuffix ".dev"
+            versionNameSuffix = "-DEV"
             manifestPlaceholders = [
                     boyiaChannel: "BoyiaApp"
             ]
@@ -94,7 +96,7 @@ android {
                 outputFileName = outputFile.name.substring(0, outputFile.name.indexOf('.'))
                 println("outputFileName="+outputFileName)
                 //it.outputFileName = outputFileName + "-" + getCurrentTime() + ".apk"
-                it.outputFileName = outputFileName + gradle.constants.appVersionName + "-DEV.apk"
+                it.outputFileName = outputFileName + gradle.constants.appVersionName + ".apk"
             }
         }
     }

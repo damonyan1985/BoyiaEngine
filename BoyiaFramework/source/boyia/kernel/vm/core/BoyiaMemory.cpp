@@ -218,6 +218,8 @@ typedef struct {
 LVoid* CreateMemoryCache(LInt typeSize, LInt capacity) {
     MemoryCache* cache = FAST_NEW(MemoryCache);
     cache->mCacheAddr = FastMalloc(typeSize * capacity);
+    LMemset(cache->mCacheAddr, 0, typeSize * capacity);
+
     cache->mChunkCache = (MemoryChunk*)FastMalloc(sizeof(MemoryChunk) * capacity);
     cache->mUnitSize = typeSize;
     cache->mCount = 0;
@@ -264,6 +266,8 @@ LVoid FreeMemoryChunk(LVoid* addr, LVoid* cachePtr) {
     LUintPtr startAddrValue = (LUintPtr)((LByte*)cache->mCacheAddr);
     LUintPtr addrValue = (LUintPtr)((LByte*)addr);
     LInt index = (addrValue - startAddrValue) / cache->mUnitSize;
+
+    LMemset(addr, 0, cache->mUnitSize);
 
     MemoryChunk* chunk = &cache->mChunkCache[index];
 

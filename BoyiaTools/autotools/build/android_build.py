@@ -109,7 +109,7 @@ install_apk_cmd = (
 )
 
 launch_app_cmd = (
-    'adb shell am start -n com.boyia.app.shell/com.boyia.app.shell.BoyiaHomeActivity'
+    'adb shell am start -n com.boyia.app.shell.dev/com.boyia.app.shell.BoyiaHomeActivity'
 )
 
 create_rust_environment = (
