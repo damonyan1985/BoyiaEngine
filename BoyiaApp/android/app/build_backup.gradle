@@ -52,7 +52,7 @@ android {
             versionName "1.0"
             versionCode 1
             applicationIdSuffix ".dev"
-            versionNameSuffix = "-DEV"
+            versionNameSuffix "-DEV"
             manifestPlaceholders = [
                     boyiaChannel: "BoyiaApp"
             ]
