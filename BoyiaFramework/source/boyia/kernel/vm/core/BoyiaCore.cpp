@@ -646,6 +646,7 @@ static ExecState* CreateExecState(BoyiaVM* vm)
 
 static LVoid DestroyExecState(ExecState* execState, BoyiaVM* vm) {
     execState->mTopTask = kBoyiaNull;
+    execState->mPrevious = kBoyiaNull;
     FreeExecState(execState, vm);
 }
 
