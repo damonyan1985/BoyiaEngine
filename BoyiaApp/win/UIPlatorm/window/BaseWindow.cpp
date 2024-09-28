@@ -4,10 +4,12 @@ namespace yanbo {
 BaseWindow* BaseWindow::m_currWinPtr = NULL;
 HINSTANCE BaseWindow::m_hInst = NULL;
 
+const int kSuperClassMessageMapIndex = 0;
+
 const CommandMessageItem BaseWindow::messageEntries[] = {
     { (INT_PTR) nullptr, 0, 0 },
     WM_CLOSE_ITEM()
-        WM_DESTROY_ITEM() { 0, 0, 0 }
+    WM_DESTROY_ITEM() { 0, 0, 0 }
 };
 
 BaseWindow::BaseWindow()
@@ -100,7 +102,7 @@ LRESULT CALLBACK BaseWindow::BaseWndProc(HWND hWnd, UINT message, WPARAM wParam,
         const CommandMessageItem* msgItem = window->GetMessageEntries();
         while (msgItem) {
             // index 0 is super class message map
-            for (int i = 1; msgItem[i]._tfunc; i++) {
+            for (int i = kSuperClassMessageMapIndex + 1; msgItem[i]._tfunc; i++) {
                 if (msgItem[i].message != message) {
                     continue;
                 }
@@ -116,7 +118,7 @@ LRESULT CALLBACK BaseWindow::BaseWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 }
             }
 
-            msgItem = (const CommandMessageItem*)msgItem[0].message;
+            msgItem = (const CommandMessageItem*)msgItem[kSuperClassMessageMapIndex].message;
         }
     }
 
