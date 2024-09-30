@@ -770,6 +770,9 @@ static LVoid ExecPopFunction(BoyiaVM* vm) {
         ExecState* currentState = vm->mEState;
         SwitchExecState(currentState->mPrevious, vm);
         if (!currentState->mWait) {
+            if (currentState->mTopTask) {
+                FreeMicroTask(currentState->mTopTask, vm);
+            }
             DestroyExecState(currentState, vm);
         }
     }
