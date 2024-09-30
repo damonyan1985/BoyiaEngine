@@ -1821,12 +1821,12 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm) {
 
         
     // 异步函数的返回值，始终都是MicroTask
-    MicroTask* topTask = AllocMicroTask(vm);
-    topTask->mAsyncEs = kBoyiaNull;
+    //MicroTask* topTask = AllocMicroTask(vm);
+    //topTask->mAsyncEs = kBoyiaNull;
 
-    ExecState* execState = vm->mEState;
+    //ExecState* execState = vm->mEState;
     // 保存异步函数顶层MicroTask
-    execState->mTopTask = topTask;
+    // execState->mTopTask = topTask;
 
     BoyiaValue val;
     val.mValueType = BY_CLASS;
@@ -2303,6 +2303,9 @@ static LInt HandleAwait(LVoid* ins, BoyiaVM* vm) {
     }
 
     vm->mEState->mWait = LTrue;
+
+    vm->mEState->mTopTask = AllocMicroTask(vm);
+    vm->mEState->mTopTask->mAsyncEs = kBoyiaNull;
     
     // 获取微任务
     MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
