@@ -455,8 +455,6 @@ static LInt HandleCreateArray(LVoid* ins, BoyiaVM* vm);
 static LInt HandleAddArrayItem(LVoid* ins, BoyiaVM* vm);
 
 static LInt HandleAwait(LVoid* ins, BoyiaVM* vm);
-
-static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm);
 // Handler Declarations End
 
 // Eval Begin
@@ -557,7 +555,6 @@ static OPHandler* InitHandlers() {
     handlers[kCmdCreateArray] = HandleCreateArray;
     handlers[kCmdAddArrayItem] = HandleAddArrayItem;
     handlers[kCmdAwait] = HandleAwait;
-    handlers[kCmdAsyncEnd] = HandleAsyncEnd;
 
     return handlers;
 }
@@ -1132,12 +1129,6 @@ static LVoid ElseStatement(CompileState* cs) {
 
 static LInt HandleReturn(LVoid* ins, BoyiaVM* vm) {
     vm->mEState->mStackFrame.mPC = vm->mEState->mStackFrame.mContext->mEnd;
-    if (vm->mEState->mFun.mValueType == BY_ASYNC_PROP) {
-        BoyiaValue* result = &vm->mCpu->mReg0;
-        if (result->mValueType != kBoyiaMicroTask) {
-            return HandleAsyncEnd(ins, vm);
-        }
-    }
     return kOpResultSuccess;
 }
 
@@ -1649,23 +1640,6 @@ static LInt HandleFunCreate(LVoid* ins, BoyiaVM* vm) {
         InitFunction(&vm->mFunTable[vm->mFunSize], vm);
     } else {
         CreateFunVal(hashKey, BY_FUNC, vm);
-    }
-
-    return kOpResultSuccess;
-}
-
-static LInt HandleAsyncEnd(LVoid* ins, BoyiaVM* vm) {
-    BoyiaValue* result = &vm->mCpu->mReg0;
-    // 如果结果寄存器中存储的不是MicroTask，则生成一个匿名微任务
-    if (result->mValueType != BY_CLASS || GetBoyiaClassId(result) != kBoyiaMicroTask) {
-        BoyiaFunction* fun = CreateMicroTaskObject(vm);
-        MicroTask* task = vm->mEState->mTopTask;
-
-        fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
-
-        result->mValueType = BY_CLASS;
-        result->mValue.mObj.mPtr = (LIntPtr)fun;
-        result->mValue.mObj.mSuper = kBoyiaNull;
     }
 
     return kOpResultSuccess;
