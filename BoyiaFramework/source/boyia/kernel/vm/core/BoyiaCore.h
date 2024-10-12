@@ -38,7 +38,7 @@ LVoid* GetLocalValue(LInt idx, LVoid* vm);
 // 计算完设置结果给结果虚拟寄存器reg0
 LVoid SetNativeResult(LVoid* result, LVoid* vm);
 // 获取整个栈地址，及其大小
-LVoid GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm);
+LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr);
 // 获取结果虚拟寄存器地址
 LVoid* GetNativeResult(LVoid* vm);
 // 获取辅助虚拟寄存器地址
@@ -80,5 +80,7 @@ LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr);
 
 // 消费微任务
 LVoid ConsumeMicroTask(LVoid* vmPtr);
+
+LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr);
 
 #endif

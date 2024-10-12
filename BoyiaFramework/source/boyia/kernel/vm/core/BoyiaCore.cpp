@@ -284,23 +284,16 @@ typedef struct ExecState {
     BoyiaValue mFun;
 
     MicroTask* mTopTask;
+    // 保存上一个执行状态指针用于回溯
     ExecState* mPrevious;
+
+    // mPrev与mNext单纯只是对创建的ExecState进行记录
+    // 用于GC时使用
+    ExecState* mPrev;
     ExecState* mNext;
     StackFrame mExecStack[FUNC_CALLS];
     LBool mWait;
 } ExecState;
-
-typedef struct {
-    ExecState mCache[EXEC_STATE_CAPACITY];
-    struct {
-        ExecState* mHead;
-        ExecState* mEnd;
-    } mUsedStates;
-
-    LInt mUseIndex;
-    LInt mSize;
-    ExecState* mFreeStates;
-} ExecStateCache;
 
 /* Boyia VM Define
  * Member
@@ -321,9 +314,11 @@ typedef struct BoyiaVM {
     // Use ExecState end
 
     VMCpu* mCpu;
+    // mESLink是以最新创建的ExecState为head的双向链表
+    // 只要在GC时使用
+    ExecState* mESLink;
     ExecState* mEState;
     LVoid* mEStateCache;
-    //ExecStateCache* mEStateCache;
     
     VMCode* mVMCode;
     VMStrTable* mStrTable;
@@ -609,6 +604,28 @@ static MicroTaskQueue* CreateTaskQueue() {
     return queue;
 }
 
+LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr) {
+    *value = kBoyiaNull;
+    if (!ptr) {
+        return ptr;
+    }
+
+    MicroTask* task = kBoyiaNull;
+    if (vmPtr == ptr) {
+        BoyiaVM* vm = (BoyiaVM*)vmPtr;
+        task = vm->mTaskQueue->mUsedTasks.mHead;
+    } else {
+        task = (MicroTask*)ptr;
+    }
+
+    if (!task) {
+        return task;
+    }
+
+    *value = &task->mValue;
+    return task->mNext;
+}
+
 static LVoid AddMicroTask(MicroTask* task, BoyiaVM* vm) {
     MicroTaskQueue* queue = vm->mTaskQueue;
     if (queue->mUsedTasks.mHead) {
@@ -620,11 +637,9 @@ static LVoid AddMicroTask(MicroTask* task, BoyiaVM* vm) {
     }     
 }
 
-
 static LVoid* CreateExecStateCache() {
     return CREATE_MEMCACHE(ExecState, EXEC_STATE_CAPACITY);
 }
-
 
 static ExecState* AllocExecState(BoyiaVM* vm) {
     return ALLOC_CHUNK(ExecState, vm->mEStateCache);
@@ -634,17 +649,31 @@ static LVoid FreeExecState(ExecState* state, BoyiaVM* vm) {
     FREE_CHUNK(state, vm->mEStateCache);
 }
 
-static ExecState* CreateExecState(BoyiaVM* vm)
-{
-    ExecState* execState = AllocExecState(vm);
-    ResetScene(execState);
-    return execState;
+static ExecState* CreateExecState(BoyiaVM* vm) {
+    ExecState* state = AllocExecState(vm);
+    ResetScene(state);
+    if (vm->mESLink) {
+        vm->mESLink->mNext = state;
+    }
+    
+    state->mNext = kBoyiaNull;
+    state->mPrev = vm->mESLink;
+    vm->mESLink = state;
+    return state;
 }
 
-static LVoid DestroyExecState(ExecState* execState, BoyiaVM* vm) {
-    execState->mTopTask = kBoyiaNull;
-    execState->mPrevious = kBoyiaNull;
-    FreeExecState(execState, vm);
+static LVoid DestroyExecState(ExecState* state, BoyiaVM* vm) {
+    if (state->mNext) {
+        state->mNext->mPrevious = state->mPrevious;
+        state->mPrevious->mNext = state->mNext;
+    } else {
+        state->mPrev->mNext = kBoyiaNull;
+        vm->mESLink = state->mPrev;
+    }
+
+    state->mTopTask = kBoyiaNull;
+    state->mPrevious = kBoyiaNull;
+    FreeExecState(state, vm);
 }
 
 static LVoid SwitchExecState(ExecState* execState, BoyiaVM* vm) {
@@ -658,6 +687,7 @@ static LVoid SwitchExecState(ExecState* execState, BoyiaVM* vm) {
 LVoid* InitVM(LVoid* creator) {
     BoyiaVM* vm = FAST_NEW(BoyiaVM);
     vm->mCreator = creator;
+    vm->mESLink = kBoyiaNull;
     /* 一个页面只允许最多NUM_GLOBAL_VARS个函数 */
     vm->mGlobals = FAST_NEW_ARRAY(BoyiaValue, NUM_GLOBAL_VARS);
     vm->mFunTable = FAST_NEW_ARRAY(BoyiaFunction, NUM_FUNC);
@@ -780,10 +810,8 @@ static LVoid ExecPopFunction(BoyiaVM* vm) {
         if (vm->mEState->mStackFrame.mPC) {
             vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); // vm->mEState->mPC->mNext;
             ExecPopFunction(vm);
-        } else {
-            if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
-                ExecPopFunction(vm);
-            }
+        } else if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
+            ExecPopFunction(vm);
         }
     }
 }
@@ -2933,10 +2961,23 @@ LVoid* GetNativeHelperResult(LVoid* vm) {
     return &((BoyiaVM*)vm)->mCpu->mReg1;
 }
 
-LVoid GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm) {
-    BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    *stack = (LIntPtr)vmPtr->mLocals;
-    *size = vmPtr->mEState->mStackFrame.mLValSize;
+LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr) {
+    if (!ptr) {
+        return ptr;
+    }
+
+    ExecState* state = kBoyiaNull;
+    if (vm == ptr) {
+        BoyiaVM* vmPtr = (BoyiaVM*)vm;
+        state = vmPtr->mESLink;
+    } else {
+        state = (ExecState*)ptr;
+    }
+
+    *stack = (LIntPtr)state->mLocals;
+    *size = state->mStackFrame.mLValSize;
+
+    return (LVoid*)state->mPrev;
 }
 
 LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm) {

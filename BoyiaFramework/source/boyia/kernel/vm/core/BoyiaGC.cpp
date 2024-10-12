@@ -53,23 +53,6 @@ enum BoyiaGcColor {
 
 static BoyiaRef* AllocateRef(BoyiaGc* gc)
 {
-    /*
-    BoyiaRef* ref = gc->mFreeRefs;
-    if (ref && ref->mNext) {
-        gc->mFreeRefs = ref->mNext;
-    } else {
-        if (gc->mUseIndex >= kBoyiaRefPageSize - 1) {
-            gc->mFreeRefs = kBoyiaNull;
-            if (!ref) {
-                // (TODO) Out of Memory
-                return kBoyiaNull;
-            }
-            return ref;
-        }
-        gc->mFreeRefs = &gc->mRefs[++gc->mUseIndex];
-        gc->mFreeRefs->mNext = kBoyiaNull;
-    }*/
-
     BoyiaRef* ref = ALLOC_CHUNK(BoyiaRef, gc->mRefCache);
     if (ref) {
         ref->mNext = kBoyiaNull;
@@ -80,8 +63,6 @@ static BoyiaRef* AllocateRef(BoyiaGc* gc)
 
 static LVoid FreeRef(BoyiaRef* ref, BoyiaGc* gc)
 {
-    //ref->mNext = gc->mFreeRefs->mNext;
-    //gc->mFreeRefs = ref;
     FREE_CHUNK(ref, gc);
 }
 
@@ -96,26 +77,12 @@ extern LVoid* CreateGC(LVoid* vm)
     gc->mUsedRefs.mEnd = kBoyiaNull;
 
     gc->mRefCache = CREATE_MEMCACHE(BoyiaRef, kBoyiaRefPageSize);
-
-    /*
-    gc->mSize = 0;
-    gc->mRefs = FAST_NEW_ARRAY(BoyiaRef, kBoyiaRefPageSize);
-    gc->mUseIndex = 0;
-
-    gc->mFreeRefs = &gc->mRefs[0];
-    {
-        gc->mFreeRefs->mNext = kBoyiaNull;
-    }
-    gc->mBoyiaVM = vm;*/
-
     return gc;
 }
 
 extern LVoid DestroyGC(LVoid* vm)
 {
     BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
-    //BoyiaRef* ref = gc->mBegin;
-    //FAST_DELETE(gc->mRefs);
     DESTROY_MEMCACHE(gc->mRefCache);
     FAST_DELETE(gc);
 }
@@ -123,7 +90,6 @@ extern LVoid DestroyGC(LVoid* vm)
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
 {
     BoyiaGc* gc = (BoyiaGc*)GetGabargeCollect(vm);
-    //BoyiaRef* ref = FAST_NEW(BoyiaRef);
     BoyiaRef* ref = AllocateRef(gc);
 
     ref->mAddress = address;
@@ -139,7 +105,6 @@ extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm)
     }
 
     refs->mEnd = ref;
-    //++gc->mSize;
 }
 
 static LVoid MarkValue(BoyiaValue* value);
@@ -401,12 +366,14 @@ static LVoid CompactMemory(BoyiaGc* gc)
     MigrateValueTable(global, size, &migrateIndex, toPool, gc);
 
     // 标记栈
-    GetLocalStack(&tableAddr, &size, gc->mBoyiaVM);
-    BoyiaValue* stack = (BoyiaValue*)tableAddr;
-    MigrateValueTable(global, size, &migrateIndex, toPool, gc);
-
+    LVoid* ptr = gc->mBoyiaVM;
+    do {
+        ptr = GetLocalStack(&tableAddr, &size, gc->mBoyiaVM, ptr);
+        BoyiaValue* stack = (BoyiaValue*)tableAddr;
+        MigrateValueTable(global, size, &migrateIndex, toPool, gc);
+    } while (ptr);
+    
     UpdateRuntimeMemory(toPool, gc->mBoyiaVM);
-
     ResetGCRef(gc);
 }
 
@@ -460,15 +427,28 @@ extern LVoid GCollectGarbage(LVoid* vm)
     LIntPtr stackAddr;
     LInt size = 0;
 
-    // 标记栈
-    GetLocalStack(&stackAddr, &size, gc->mBoyiaVM);
+    // 标记全局区
+    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
     BoyiaValue* stack = (BoyiaValue*)stackAddr;
     MarkValueTable(stack, size);
 
-    // 标记全局区
-    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
-    stack = (BoyiaValue*)stackAddr;
-    MarkValueTable(stack, size);
+    // 标记栈
+    LVoid* ptr = gc->mBoyiaVM;
+    do {
+        ptr = GetLocalStack(&stackAddr, &size, gc->mBoyiaVM, ptr);
+        stack = (BoyiaValue*)stackAddr;
+        MarkValueTable(stack, size);
+    } while (ptr);
 
+    // 标记微任务
+    ptr = gc->mBoyiaVM;
+    do {
+        BoyiaValue* value;
+        ptr = IterateMicroTask(&value, gc->mBoyiaVM, ptr);
+        if (value) {
+            MarkValue(value);
+        }
+    } while (ptr);
+    
     ClearAllGarbage(gc, vm);
 }
