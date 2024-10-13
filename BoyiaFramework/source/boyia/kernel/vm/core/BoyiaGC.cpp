@@ -216,9 +216,7 @@ static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
             // begin标记置为下一个元素
             refs->mBegin = prev->mNext;
             // 删除链表中的元素
-            //FAST_DELETE(prev);
             FreeRef(prev, gc);
-            //--gc->mSize;
             prev = refs->mBegin;
         } else {
             break;
@@ -237,10 +235,7 @@ static LVoid ClearAllGarbage(BoyiaGc* gc, LVoid* vm)
             // 指向下一个引用
             prev->mNext = current->mNext;
             // 删除引用节点
-            //FAST_DELETE(current);
             FreeRef(current, gc);
-            // gc中引用数量减一
-            //--gc->mSize;
             // 切换当前指针
             current = prev->mNext;
         } else {
@@ -423,23 +418,25 @@ extern LVoid GCollectGarbage(LVoid* vm)
     LInt size = 0;
 
     // 标记全局区
-    GetGlobalTable(&stackAddr, &size, gc->mBoyiaVM);
+    GetGlobalTable(&stackAddr, &size, vm);
     BoyiaValue* stack = (BoyiaValue*)stackAddr;
     MarkValueTable(stack, size);
 
+
     // 标记栈
-    LVoid* ptr = gc->mBoyiaVM;
+    LVoid* ptr = vm;
+    
     do {
-        ptr = GetLocalStack(&stackAddr, &size, gc->mBoyiaVM, ptr);
+        ptr = GetLocalStack(&stackAddr, &size, vm, ptr);
         stack = (BoyiaValue*)stackAddr;
         MarkValueTable(stack, size);
     } while (ptr);
 
     // 标记微任务
-    ptr = gc->mBoyiaVM;
+    ptr = vm;
     do {
         BoyiaValue* value;
-        ptr = IterateMicroTask(&value, gc->mBoyiaVM, ptr);
+        ptr = IterateMicroTask(&value, vm, ptr);
         if (value) {
             MarkValue(value);
         }

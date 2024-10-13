@@ -589,7 +589,6 @@ static MicroTask* AllocMicroTask(BoyiaVM* vm) {
 
 static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm) {
     MicroTaskQueue* queue = vm->mTaskQueue;
-    queue->mUsedTasks.mHead = task->mNext;
     task->mValue.mValueType = BY_ARG;
     
     FREE_CHUNK(task, queue->mTaskCache);
@@ -664,8 +663,8 @@ static ExecState* CreateExecState(BoyiaVM* vm) {
 
 static LVoid DestroyExecState(ExecState* state, BoyiaVM* vm) {
     if (state->mNext) {
-        state->mNext->mPrevious = state->mPrevious;
-        state->mPrevious->mNext = state->mNext;
+        state->mNext->mPrev = state->mPrev;
+        state->mPrev->mNext = state->mNext;
     } else {
         state->mPrev->mNext = kBoyiaNull;
         vm->mESLink = state->mPrev;
@@ -3194,7 +3193,8 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
         }
 
         MicroTask* tmp = task;
-        task = task->mNext;
+        task = tmp->mNext;
+        queue->mUsedTasks.mHead = task;
         // 释放任务
         FreeMicroTask(tmp, vm);
     }
