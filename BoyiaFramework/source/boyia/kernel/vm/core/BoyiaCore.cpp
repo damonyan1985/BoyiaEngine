@@ -2963,6 +2963,7 @@ LVoid* GetNativeHelperResult(LVoid* vm) {
 
 LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr) {
     if (!ptr) {
+        *size = 0;
         return ptr;
     }
 

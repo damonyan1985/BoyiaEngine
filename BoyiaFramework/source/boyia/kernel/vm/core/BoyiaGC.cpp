@@ -22,11 +22,6 @@ typedef struct UsedRefs {
 
 typedef struct BoyiaGc {
     UsedRefs mUsedRefs;
-    //LInt mSize;
-
-    //LInt mUseIndex;
-    //BoyiaRef* mRefs;
-    //BoyiaRef* mFreeRefs;
     LVoid* mRefCache;
     LVoid* mBoyiaVM;
     LVoid* mMigrates[MIGRATE_SIZE];
@@ -63,7 +58,7 @@ static BoyiaRef* AllocateRef(BoyiaGc* gc)
 
 static LVoid FreeRef(BoyiaRef* ref, BoyiaGc* gc)
 {
-    FREE_CHUNK(ref, gc);
+    FREE_CHUNK(ref, gc->mRefCache);
 }
 
 // 收集器
@@ -72,7 +67,7 @@ extern LVoid NativeDelete(LVoid* data);
 extern LVoid* CreateGC(LVoid* vm)
 {
     BoyiaGc* gc = FAST_NEW(BoyiaGc);
-
+    gc->mBoyiaVM = vm;
     gc->mUsedRefs.mBegin = kBoyiaNull;
     gc->mUsedRefs.mEnd = kBoyiaNull;
 
