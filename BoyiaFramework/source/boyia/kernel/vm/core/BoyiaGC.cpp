@@ -201,7 +201,9 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
         } // 常量字符串不做任何处理
     }
 
-    VM_DELETE(ref->mAddress, vm);
+    if (classId != kBoyiaMicroTask) {
+        VM_DELETE(ref->mAddress, vm);
+    }
 }
 
 // 清除所有需要回收的对象
@@ -441,6 +443,16 @@ extern LVoid GCollectGarbage(LVoid* vm)
             MarkValue(value);
         }
     } while (ptr);
+
+    {
+        BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
+        MarkValue(value);
+    }
+
+    {
+        BoyiaValue* value = (BoyiaValue*)GetNativeHelperResult(vm);
+        MarkValue(value);
+    }
     
     ClearAllGarbage(gc, vm);
 }

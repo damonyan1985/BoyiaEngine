@@ -11,6 +11,7 @@
 
 typedef struct MemoryBlockHeader {
     LInt mSize;
+    LInt mFlag;
     MemoryBlockHeader* mNext;
     MemoryBlockHeader* mPrevious;
 } MemoryBlockHeader;
@@ -22,6 +23,8 @@ typedef struct BoyiaMemoryPool {
     BoyiaMemoryPool* mNext;
     MemoryBlockHeader* mFirstBlock;
 } BoyiaMemoryPool;
+
+const LInt kMemoryBlockHeaderFlag = 18;
 
 const LInt kMemoryHeaderLen = sizeof(MemoryBlockHeader);
 // 字节对齐数
@@ -93,6 +96,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
         pHeader->mSize = size;
         pHeader->mNext = kBoyiaNull;
         pHeader->mPrevious = kBoyiaNull;
+        pHeader->mFlag = kMemoryBlockHeaderFlag;
         pool->mFirstBlock = pHeader;
     } else {
         MemoryBlockHeader* current = pool->mFirstBlock;
@@ -105,6 +109,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
             pHeader->mNext = current;
             current->mPrevious = pHeader;
             pHeader->mPrevious = kBoyiaNull;
+            pHeader->mFlag = kMemoryBlockHeaderFlag;
 
             pool->mFirstBlock = pHeader;
             pool->mUsed += mallocSize;
@@ -122,6 +127,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                     pHeader->mSize = size;
                     pHeader->mPrevious = current;
                     pHeader->mNext = kBoyiaNull;
+                    pHeader->mFlag = kMemoryBlockHeaderFlag;
                     current->mNext = pHeader;
                     break;
                 }
@@ -137,6 +143,7 @@ LVoid* NewData(LInt size, LVoid* mempool)
                 pHeader->mSize = size;
                 pHeader->mPrevious = current;
                 pHeader->mNext = current->mNext;
+                pHeader->mFlag = kMemoryBlockHeaderFlag;
                 current->mNext->mPrevious = pHeader;
                 current->mNext = pHeader;
                 break;
@@ -160,15 +167,19 @@ LVoid DeleteData(LVoid* data, LVoid* mempool)
         return;
     }
 
+    if (pHeader->mFlag != kMemoryBlockHeaderFlag) {
+        return;
+    }
+
+    if (pHeader->mNext) {
+        pHeader->mNext->mPrevious = pHeader->mPrevious;
+    }
+
     if (pool->mFirstBlock == pHeader) {
         pool->mFirstBlock = pHeader->mNext;
-        if (pHeader->mNext) {
-            pHeader->mNext->mPrevious = kBoyiaNull;
-        }
     } else {
         if (pHeader->mNext) {
             pHeader->mPrevious->mNext = pHeader->mNext;
-            pHeader->mNext->mPrevious = pHeader->mPrevious;
         }
     }
 
