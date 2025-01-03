@@ -121,14 +121,14 @@ static LVoid MarkObjectProps(BoyiaValue* value)
     }
     
     // 标记为灰色
-    fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcGray << 16);
+    fun->mParamCount |= (kBoyiaGcGray << 16);
     LInt idx = 0;
     for (; idx < fun->mParamSize; ++idx) {
         MarkValue(&fun->mParams[idx]);
     }
 
     // 标记为黑色
-    fun->mParamCount = GET_FUNCTION_COUNT(fun) | (kBoyiaGcBlack << 16);
+    fun->mParamCount |= (kBoyiaGcBlack << 16);
 }
 
 // 标记对象

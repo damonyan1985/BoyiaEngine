@@ -5,7 +5,6 @@
 * Copyright (c) reserved
 */
 #include "BoyiaMemory.h"
-//#include <android/log.h>
 #include "SalLog.h"
 #include <stdlib.h>
 
