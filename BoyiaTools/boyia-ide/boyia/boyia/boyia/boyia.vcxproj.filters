@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{d31a1ddd-d2f4-406d-8073-8e666280be7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{3e934634-4d61-4339-8d28-62c2ce884961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\vm">
+      <UniqueIdentifier>{97cbb710-a143-42bc-982a-cf0c9e4d22a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\os">
+      <UniqueIdentifier>{42b2ce57-0fce-4065-989f-09e4f39f3fdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\thread">
+      <UniqueIdentifier>{593f655e-bad2-4a03-8e70-b2272d495a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\vm\core">
+      <UniqueIdentifier>{958a7410-8791-4f01-b6ee-b5f973c99a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\vm\lib">
+      <UniqueIdentifier>{b01ef911-c3a2-49a3-ac94-1b4a71092ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\vm\json">
+      <UniqueIdentifier>{cf1ad373-a0be-49a2-9b32-ccfde86406f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{9ff3c9bd-94c5-416c-aad1-1c0c1a3a8ca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\tinyxml">
+      <UniqueIdentifier>{ea0d9aa4-b28d-4bf8-8c69-b8a06f8219cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\cjson">
+      <UniqueIdentifier>{2f2ee4ca-a072-4f9f-b980-e9bb16ec0628}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="boyia.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BaseThreadWin.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.cpp">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.cpp">
+      <Filter>src\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.cpp">
+      <Filter>src\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaGC.cpp">
+      <Filter>src\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.cpp">
+      <Filter>src\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.cpp">
+      <Filter>src\vm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaAsyncEvent.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaBase.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaNetwork.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaRuntime.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaSocket.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp">
+      <Filter>src\vm\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.c">
+      <Filter>third_party\cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.cpp">
+      <Filter>third_party\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\os\PlatformBridgeWin.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp">
+      <Filter>src\os</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaPtr.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\HashMap.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\HashUtil.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KList.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KListMap.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KSet.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KVector.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\OwnerPtr.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\Stack.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\WeakPtr.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\SalLog.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\AutoLock.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\Lock.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.h">
+      <Filter>src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.h">
+      <Filter>src\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.h">
+      <Filter>src\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.h">
+      <Filter>src\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.h">
+      <Filter>src\vm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaAsyncEvent.h">
+      <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaBase.h">
+      <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaNetwork.h">
+      <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaRuntime.h">
+      <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaSocket.h">
+      <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h">
+      <Filter>src\vm\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.h">
+      <Filter>third_party\cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.h">
+      <Filter>third_party\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h">
+      <Filter>src\os</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

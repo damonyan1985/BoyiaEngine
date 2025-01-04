@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ede7545f-8beb-4dd6-adcf-d9efabbac214}</ProjectGuid>
+    <RootNamespace>boyia</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;ENABLE_BOYIA_WINDOWS=1;_CRT_SECURE_NO_DEPRECATE;ZLIB_WINAPI;WIN32;__LP64__;NONE_APP_FILE_SYNC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\core;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\util;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\win;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\thread;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\loader;$(BOYIA_UI_ROOT)\BoyiaTools\boyia-ide\boyia\src\lib;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\painter\utils;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\vm\json;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\cjson;$(BOYIA_UI_ROOT)\BoyiaFramework\source\thirdparty\tinyxml;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\ws;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wininet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BaseThreadWin.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaGC.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.cpp" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.c" />
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaAsyncEvent.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaBase.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaNetwork.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaRuntime.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaSocket.cpp" />
+    <ClCompile Include="..\..\src\os\PlatformBridgeWin.cpp" />
+    <ClCompile Include="boyia.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\SalLog.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaPtr.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaRef.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\FileUtil.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\HashMap.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\HashUtil.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IDCreator.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\IdentityMap.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\InputStream.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KList.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KListMap.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KSet.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\KVector.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\OwnerPtr.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\PlatformLib.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\RefCount.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\Stack.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\StringUtils.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\UtilString.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\WeakPtr.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaCore.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaError.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaMemory.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\core\BoyiaValue.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\json\JSONParser.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\painter\utils\SystemUtil.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\AutoLock.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BaseThread.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\BlockQueue.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\Lock.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageQueue.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\MessageThread.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\StringBuilder.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskBase.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\TaskThread.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\thread\ThreadPool.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\cjson\cJSON.h" />
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaAsyncEvent.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaBase.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaNetwork.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaRuntime.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaSocket.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
