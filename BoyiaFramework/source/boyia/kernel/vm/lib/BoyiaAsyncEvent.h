@@ -11,7 +11,6 @@
 #include "BoyiaRuntime.h"
 
 namespace boyia {
-class BoyiaAsyncEvent;
 class BoyiaAsyncMapTable;
 class BoyiaAsyncEvent : public yanbo::UIEvent {
 public:

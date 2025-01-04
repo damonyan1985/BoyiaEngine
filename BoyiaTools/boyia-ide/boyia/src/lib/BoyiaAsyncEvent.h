@@ -22,7 +22,6 @@ private:
     LVoid execute();
 };
 
-class BoyiaAsyncEvent;
 class BoyiaAsyncMapTable;
 class BoyiaAsyncEvent : public AsyncEvent {
 public:
