@@ -1,7 +1,5 @@
 #include "BoyiaBase.h"
-#include "AppManager.h"
 #include "BoyiaLib.h"
-#include "LEvent.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
 

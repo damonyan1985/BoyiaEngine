@@ -2,7 +2,6 @@
 #define BoyiaBase_h
 
 #include "BoyiaCore.h"
-#include "IViewListener.h"
 #include "KVector.h"
 #include "BoyiaRuntime.h"
 
