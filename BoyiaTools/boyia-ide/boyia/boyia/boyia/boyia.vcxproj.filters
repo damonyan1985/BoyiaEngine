@@ -162,6 +162,9 @@
     <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.cpp">
       <Filter>src\os</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lib\BoyiaLib.cpp">
+      <Filter>src\vm\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\util\BoyiaPtr.h">
@@ -310,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\ws\WebSocket.h">
       <Filter>src\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lib\BoyiaLib.h">
+      <Filter>src\vm\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

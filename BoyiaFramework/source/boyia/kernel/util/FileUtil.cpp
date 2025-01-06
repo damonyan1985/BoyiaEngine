@@ -15,7 +15,7 @@
 #include <windows.h>
 #endif
 
-const String kSourcePrefix(_CS("boyia://"), LTrue, 8);
+const String kSourcePrefix(_CS("boyia://"), LFalse, 8);
 
 namespace util {
 const String& FileUtil::fileSchema()

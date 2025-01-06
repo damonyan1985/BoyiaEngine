@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>wininet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;ws2_32.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,6 +162,7 @@
     <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.cpp" />
     <ClCompile Include="..\..\src\lib\BoyiaAsyncEvent.cpp" />
     <ClCompile Include="..\..\src\lib\BoyiaBase.cpp" />
+    <ClCompile Include="..\..\src\lib\BoyiaLib.cpp" />
     <ClCompile Include="..\..\src\lib\BoyiaNetwork.cpp" />
     <ClCompile Include="..\..\src\lib\BoyiaRuntime.cpp" />
     <ClCompile Include="..\..\src\lib\BoyiaSocket.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\tinyxml\TinyXml2.h" />
     <ClInclude Include="..\..\src\lib\BoyiaAsyncEvent.h" />
     <ClInclude Include="..\..\src\lib\BoyiaBase.h" />
+    <ClInclude Include="..\..\src\lib\BoyiaLib.h" />
     <ClInclude Include="..\..\src\lib\BoyiaNetwork.h" />
     <ClInclude Include="..\..\src\lib\BoyiaRuntime.h" />
     <ClInclude Include="..\..\src\lib\BoyiaSocket.h" />

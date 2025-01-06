@@ -7,6 +7,7 @@
 #include <ShlObj.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <Shlwapi.h>
 
 #define CSIDL_LOCAL_APPDATA 0x001c
 #define MAX_PATH 260
@@ -18,6 +19,11 @@ static String sAppPath((LUint8)0, MAX_PATH);
 static String sBoyiaJsonPath((LUint8)0, MAX_PATH);
 static String sSdkPath((LUint8)0, MAX_PATH);
 static String sAppRootPath((LUint8)0, MAX_PATH);
+
+static String sInstructPath((LUint8)0, MAX_PATH);
+static String sStringTablePath((LUint8)0, MAX_PATH);
+static String sEntryCodePath((LUint8)0, MAX_PATH);
+static String sSymbolTablePath((LUint8)0, MAX_PATH);
 
 const char* kZipPassword = "123456";
 
@@ -96,95 +102,67 @@ const LInt PlatformBridge::getTextSize(const String& text)
 
 const char* PlatformBridge::getInstructionCachePath()
 {
-    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
-    //if (!info->appCodePath.instructPath.GetLength()) {
-    //    info->appCodePath.instructPath = _CS(getAppRoot());
+    char path[MAX_PATH];
+    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
+    if (!length) {
+        return "";
+    }
 
-    //    info->appCodePath.instructPath += _CS("dist\\");
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.instructPath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.instructPath));
-    //    }
-
-    //    info->appCodePath.instructPath += info->name;
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.instructPath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.instructPath));
-    //    }
-
-    //    info->appCodePath.instructPath += _CS("\\instruction_cache.bin");
-    //}
-
-    //return GET_STR(info->appCodePath.instructPath);
-    return "";
+    PathRemoveFileSpecA(path);
+    if (!sInstructPath.GetLength()) {
+        sInstructPath = _CS(path);
+        sInstructPath += _CS("\\instruction_cache.bin");
+    }
+    return GET_STR(sInstructPath);
 }
 
 const char* PlatformBridge::getStringTableCachePath()
 {
-    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
-    //if (!info->appCodePath.stringTablePath.GetLength()) {
-    //    info->appCodePath.stringTablePath = _CS(getAppRoot());
-    //    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
-
-    //    info->appCodePath.stringTablePath += _CS("dist\\");
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.stringTablePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.stringTablePath));
-    //    }
-
-    //    info->appCodePath.stringTablePath += info->name;
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.stringTablePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.stringTablePath));
-    //    }
-
-    //    info->appCodePath.stringTablePath += _CS("\\stringtable_cache.bin");
-    //}
-
-    //return GET_STR(info->appCodePath.stringTablePath);
-    return "";
+    char path[MAX_PATH];
+    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
+    if (!length) {
+        return "";
+    }
+    
+    PathRemoveFileSpecA(path);
+    if (!sStringTablePath.GetLength()) {
+        sStringTablePath = _CS(path);
+        sStringTablePath += _CS("\\stringtable_cache.bin");
+    }
+    return GET_STR(sStringTablePath);
 }
 
 const char* PlatformBridge::getInstructionEntryPath()
 {
-    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
-    //if (!info->appCodePath.entryCodePath.GetLength()) {
-    //    info->appCodePath.entryCodePath = _CS(getAppRoot());
-    //    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
+    char path[MAX_PATH];
+    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
+    if (!length) {
+        return "";
+    }
 
-    //    info->appCodePath.entryCodePath += _CS("dist\\");
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.entryCodePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.entryCodePath));
-    //    }
-    //    info->appCodePath.entryCodePath += info->name;
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.entryCodePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.entryCodePath));
-    //    }
-
-    //    info->appCodePath.entryCodePath += _CS("\\instruction_entry.bin");
-    //}
-
-    //return GET_STR(info->appCodePath.entryCodePath);
-    return "";
+    PathRemoveFileSpecA(path);
+    if (!sEntryCodePath.GetLength()) {
+        sEntryCodePath = _CS(path);
+        sEntryCodePath += _CS("\\instruction_entry.bin");
+    }
+    return GET_STR(sEntryCodePath);
 }
 
 const char* PlatformBridge::getSymbolTablePath()
 {
-    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
-    //if (!info->appCodePath.symbolTablePath.GetLength()) {
-    //    info->appCodePath.symbolTablePath = _CS(getAppRoot());
-    //    //const AppInfo* info = AppManager::instance()->currentApp()->appInfo();
+    char path[MAX_PATH];
+    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
+    if (!length) {
+        return "";
+    }
 
-    //    info->appCodePath.symbolTablePath += _CS("dist\\");
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.symbolTablePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.symbolTablePath));
-    //    }
-    //    info->appCodePath.symbolTablePath += info->name;
-    //    if (!FileUtil::isExist(GET_STR(info->appCodePath.symbolTablePath))) {
-    //        FileUtil::createDir(GET_STR(info->appCodePath.symbolTablePath));
-    //    }
+    PathRemoveFileSpecA(path);
 
-    //    info->appCodePath.symbolTablePath += _CS("\\symbol_table.bin");
-    //}
-
-    //return GET_STR(info->appCodePath.symbolTablePath);
-    return "";
+    if (!sSymbolTablePath.GetLength()) {
+        sSymbolTablePath = _CS(path);
+        sSymbolTablePath += _CS("\\symbol_table.bin");
+    }
+    return GET_STR(sSymbolTablePath);
 }
 
 const LReal PlatformBridge::getDisplayDensity()

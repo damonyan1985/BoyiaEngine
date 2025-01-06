@@ -126,51 +126,51 @@ LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 LVoid BoyiaRuntime::initNativeFunction()
 {
     appendNative(GEN_ID("new"), CreateObject);
-    //appendNative(GEN_ID("BY_Content"), getFileContent);
-    //// Array Api Begin
-    //appendNative(GEN_ID("BY_GetFromArray"), getElementFromVector);
-    //appendNative(GEN_ID("BY_AddInArray"), addElementToVector);
-    //appendNative(GEN_ID("BY_GetArraySize"), getVectorSize);
-    //appendNative(GEN_ID("BY_ClearArray"), clearVector);
-    //appendNative(GEN_ID("BY_RemoveWidthIndex"), removeElementWidthIndex);
-    //appendNative(GEN_ID("BY_RemoveFromArray"), removeElementFromVector);
-    //// Array Api End
-    //appendNative(GEN_ID("BY_Log"), logPrint);
-    //appendNative(GEN_ID("BY_Json"), jsonParseWithCJSON);
-    //appendNative(GEN_ID("BY_toJson"), toJsonString);
-    //appendNative(GEN_ID("BY_CreateDocument"), createBoyiaDocument);
-    //appendNative(GEN_ID("BY_AppendView"), appendView);
-    //appendNative(GEN_ID("BY_RemoveView"), removeView);
-    //appendNative(GEN_ID("BY_GetRootDocument"), getRootDocument);
-    //appendNative(GEN_ID("BY_SetDocument"), setDocument);
-    //appendNative(GEN_ID("BY_RemoveDocument"), removeDocument);
-    //appendNative(GEN_ID("BY_SetXpos"), setViewXpos);
-    //appendNative(GEN_ID("BY_SetYpos"), setViewYpos);
-    //appendNative(GEN_ID("BY_DrawView"), drawView);
-    //appendNative(GEN_ID("BY_GetViewXpos"), getViewXpos);
-    //appendNative(GEN_ID("BY_GetViewYpos"), getViewYpos);
-    //appendNative(GEN_ID("BY_GetViewWidth"), getViewWidth);
-    //appendNative(GEN_ID("BY_GetViewHeight"), getViewHeight);
-    //appendNative(GEN_ID("BY_SetViewStyle"), setViewStyle);
-    //appendNative(GEN_ID("BY_LoadData"), loadDataFromNative);
-    //appendNative(GEN_ID("BY_StartScale"), startScale);
-    //appendNative(GEN_ID("BY_StartOpacity"), startOpacity);
-    //appendNative(GEN_ID("BY_CallStaticMethod"), callStaticMethod);
-    //appendNative(GEN_ID("BY_StartTranslate"), startTranslate);
-    //appendNative(GEN_ID("BY_GetHtmlItem"), getHtmlItem);
-    //appendNative(GEN_ID("BY_LoadImage"), loadImageByUrl);
-    //appendNative(GEN_ID("BY_SetViewText"), setViewGroupText);
-    //appendNative(GEN_ID("BY_SetInputViewText"), setInputViewText);
-    //appendNative(GEN_ID("BY_AddEventListener"), addEventListener);
-    //appendNative(GEN_ID("BY_SetToNativeView"), setToNativeView);
-    //appendNative(GEN_ID("BY_InstanceOfClass"), instanceOfClass);
-    //appendNative(GEN_ID("BY_CreateViewGroup"), createViewGroup);
-    //appendNative(GEN_ID("BY_SetImageUrl"), setImageUrl);
-    //appendNative(GEN_ID("BY_ViewCommit"), viewCommit);
-    //appendNative(GEN_ID("BY_SetViewVisible"), setViewVisible);
-    //appendNative(GEN_ID("BY_GetPlatformType"), getPlatformType);
-    //appendNative(GEN_ID("BY_CreateSocket"), createSocket);
-    //appendNative(GEN_ID("BY_SendSocketMsg"), sendSocketMsg);
+    appendNative(GEN_ID("BY_Content"), getFileContent);
+    // Array Api Begin
+    appendNative(GEN_ID("BY_GetFromArray"), getElementFromVector);
+    appendNative(GEN_ID("BY_AddInArray"), addElementToVector);
+    appendNative(GEN_ID("BY_GetArraySize"), getVectorSize);
+    appendNative(GEN_ID("BY_ClearArray"), clearVector);
+    appendNative(GEN_ID("BY_RemoveWidthIndex"), removeElementWidthIndex);
+    appendNative(GEN_ID("BY_RemoveFromArray"), removeElementFromVector);
+    // Array Api End
+    appendNative(GEN_ID("BY_Log"), logPrint);
+    appendNative(GEN_ID("BY_Json"), jsonParseWithCJSON);
+    appendNative(GEN_ID("BY_toJson"), toJsonString);
+    appendNative(GEN_ID("BY_CreateDocument"), createBoyiaDocument);
+    appendNative(GEN_ID("BY_AppendView"), appendView);
+    appendNative(GEN_ID("BY_RemoveView"), removeView);
+    appendNative(GEN_ID("BY_GetRootDocument"), getRootDocument);
+    appendNative(GEN_ID("BY_SetDocument"), setDocument);
+    appendNative(GEN_ID("BY_RemoveDocument"), removeDocument);
+    appendNative(GEN_ID("BY_SetXpos"), setViewXpos);
+    appendNative(GEN_ID("BY_SetYpos"), setViewYpos);
+    appendNative(GEN_ID("BY_DrawView"), drawView);
+    appendNative(GEN_ID("BY_GetViewXpos"), getViewXpos);
+    appendNative(GEN_ID("BY_GetViewYpos"), getViewYpos);
+    appendNative(GEN_ID("BY_GetViewWidth"), getViewWidth);
+    appendNative(GEN_ID("BY_GetViewHeight"), getViewHeight);
+    appendNative(GEN_ID("BY_SetViewStyle"), setViewStyle);
+    appendNative(GEN_ID("BY_LoadData"), loadDataFromNative);
+    appendNative(GEN_ID("BY_StartScale"), startScale);
+    appendNative(GEN_ID("BY_StartOpacity"), startOpacity);
+    appendNative(GEN_ID("BY_CallStaticMethod"), callStaticMethod);
+    appendNative(GEN_ID("BY_StartTranslate"), startTranslate);
+    appendNative(GEN_ID("BY_GetHtmlItem"), getHtmlItem);
+    appendNative(GEN_ID("BY_LoadImage"), loadImageByUrl);
+    appendNative(GEN_ID("BY_SetViewText"), setViewGroupText);
+    appendNative(GEN_ID("BY_SetInputViewText"), setInputViewText);
+    appendNative(GEN_ID("BY_AddEventListener"), addEventListener);
+    appendNative(GEN_ID("BY_SetToNativeView"), setToNativeView);
+    appendNative(GEN_ID("BY_InstanceOfClass"), instanceOfClass);
+    appendNative(GEN_ID("BY_CreateViewGroup"), createViewGroup);
+    appendNative(GEN_ID("BY_SetImageUrl"), setImageUrl);
+    appendNative(GEN_ID("BY_ViewCommit"), viewCommit);
+    appendNative(GEN_ID("BY_SetViewVisible"), setViewVisible);
+    appendNative(GEN_ID("BY_GetPlatformType"), getPlatformType);
+    appendNative(GEN_ID("BY_CreateSocket"), createSocket);
+    appendNative(GEN_ID("BY_SendSocketMsg"), sendSocketMsg);
     // End
     appendNative(0, kBoyiaNull);
 }
