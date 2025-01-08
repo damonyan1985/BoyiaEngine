@@ -261,16 +261,28 @@ typedef struct {
 
 struct ExecState;
 typedef struct MicroTask {
-    BoyiaValue mValue; // 微任务执行完后回调
+    BoyiaValue mResult; // 微任务执行完后回调
+    BoyiaValue mObjRef; // 微任务对象引用
     ExecState* mAsyncEs; // 保存当前状态
     MicroTask* mNext;
+    struct {
+        MicroTask* mLinkNext;
+        MicroTask* mLinkPrev;
+    } mAllocLink;
 } MicroTask;
 
 typedef struct {
+    // 微任务队列，微任务获取到结果后，执行resolve会加入到这个队列
     struct {
         MicroTask* mHead;
         MicroTask* mEnd;
     } mUsedTasks;
+    // 管理分配的微任务，方便gc时进行遍历
+    struct {
+        MicroTask* mHead;
+        MicroTask* mEnd;
+    } mAllocTasks;
+
     LVoid* mTaskCache;
 } MicroTaskQueue;
 
@@ -579,17 +591,46 @@ static VMCpu* CreateVMCpu() {
 static MicroTask* AllocMicroTask(BoyiaVM* vm) {
     MicroTaskQueue* queue = vm->mTaskQueue;
     MicroTask* task = ALLOC_CHUNK(MicroTask, queue->mTaskCache);
-    if (task) {
-        task->mValue.mValueType = BY_ARG;
-        task->mNext = kBoyiaNull;
+    if (!task) {
+        return kBoyiaNull;
     }
+
+    task->mResult.mValueType = BY_ARG;
+    task->mObjRef.mValueType = BY_ARG;
+    task->mNext = kBoyiaNull;
+    task->mAllocLink.mLinkNext = kBoyiaNull;
+
+    if (queue->mAllocTasks.mHead) {
+        task->mAllocLink.mLinkPrev = queue->mAllocTasks.mEnd;
+    } else {
+        queue->mAllocTasks.mHead = task;
+        task->mAllocLink.mLinkPrev = kBoyiaNull;
+        
+    }
+
+    queue->mAllocTasks.mEnd = task;
 
     return task;
 }
 
 static LVoid FreeMicroTask(MicroTask* task, BoyiaVM* vm) {
     MicroTaskQueue* queue = vm->mTaskQueue;
-    task->mValue.mValueType = BY_ARG;
+    task->mResult.mValueType = BY_ARG;
+
+    MicroTask* prev = task->mAllocLink.mLinkPrev;
+    MicroTask* next = task->mAllocLink.mLinkNext;
+
+    if (next) {
+        next->mAllocLink.mLinkPrev = prev;
+    } else {
+        queue->mAllocTasks.mEnd = prev;
+    }
+
+    if (prev) {
+        prev->mAllocLink.mLinkNext = next;
+    } else {
+        queue->mAllocTasks.mHead = next;
+    }
     
     FREE_CHUNK(task, queue->mTaskCache);
 }
@@ -599,12 +640,16 @@ static MicroTaskQueue* CreateTaskQueue() {
     queue->mUsedTasks.mHead = kBoyiaNull;
     queue->mUsedTasks.mEnd = kBoyiaNull;
 
+    queue->mAllocTasks.mHead = kBoyiaNull;
+    queue->mAllocTasks.mEnd = kBoyiaNull;
+
     queue->mTaskCache = CREATE_MEMCACHE(MicroTask, MICRO_TASK_CAPACITY);
     return queue;
 }
 
-LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr) {
-    *value = kBoyiaNull;
+LVoid* IterateMicroTask(BoyiaValue** obj, BoyiaValue** result, LVoid* vmPtr, LVoid* ptr) {
+    *result = kBoyiaNull;
+    *obj = kBoyiaNull;
     if (!ptr) {
         return ptr;
     }
@@ -612,7 +657,7 @@ LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr) {
     MicroTask* task = kBoyiaNull;
     if (vmPtr == ptr) {
         BoyiaVM* vm = (BoyiaVM*)vmPtr;
-        task = vm->mTaskQueue->mUsedTasks.mHead;
+        task = vm->mTaskQueue->mAllocTasks.mHead;
     } else {
         task = (MicroTask*)ptr;
     }
@@ -621,8 +666,9 @@ LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr) {
         return task;
     }
 
-    *value = &task->mValue;
-    return task->mNext;
+    *result = &task->mResult;
+    *obj = &task->mObjRef;
+    return task->mAllocLink.mLinkNext;
 }
 
 static LVoid AddMicroTask(MicroTask* task, BoyiaVM* vm) {
@@ -3137,9 +3183,10 @@ LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm) {
 }
 
 // 执行异步任务完成后，需要将使用接过来创建一个微任务
-LVoid* CreateMicroTask(LVoid* vmPtr) {
+LVoid* CreateMicroTask(LVoid* vmPtr, BoyiaValue* value) {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = AllocMicroTask(vm);
+    ValueCopyNoName(&task->mObjRef, value);
     task->mAsyncEs = kBoyiaNull;
     return task;
 }
@@ -3147,7 +3194,7 @@ LVoid* CreateMicroTask(LVoid* vmPtr) {
 LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr) {
     BoyiaVM* vm = (BoyiaVM*)vmPtr;
     MicroTask* task = (MicroTask*)taskPtr;
-    ValueCopyNoName(&task->mValue, value);
+    ValueCopyNoName(&task->mResult, value);
     AddMicroTask(task, vm);
 }
 
@@ -3157,7 +3204,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
     MicroTaskQueue* queue = vm->mTaskQueue;
     MicroTask* task = queue->mUsedTasks.mHead;
     while (task) {
-        BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
+        BoyiaStr* keyStr = GetStringBuffer(&task->mResult);
 
         ExecState* aes = task->mAsyncEs;
         if (aes && aes->mStackFrame.mPC) {
@@ -3168,9 +3215,9 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
             aes->mWait = LFalse;
             aes->mStackFrame.mPC = NextInstruction(aes->mStackFrame.mPC, vm);
 
-            BoyiaStr* keyStr = GetStringBuffer(&task->mValue);
+            BoyiaStr* keyStr = GetStringBuffer(&task->mResult);
             // await执行完成后，将结果赋值给R0虚拟寄存器
-            ValueCopy(&vm->mCpu->mReg0, &task->mValue);
+            ValueCopy(&vm->mCpu->mReg0, &task->mResult);
             // 这个过程中可能会销毁处于最外层且没有被await的ExecState
             ExecInstruction(vm);
                 
@@ -3180,7 +3227,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
             if (!aes->mStackFrame.mContext) {
                 // aes销毁时mTopTask会置为空
                 if (aes->mTopTask) {
-                    ValueCopy(&aes->mTopTask->mValue, &vm->mCpu->mReg0);
+                    ValueCopy(&aes->mTopTask->mResult, &vm->mCpu->mReg0);
                     AddMicroTask(aes->mTopTask, vm);
                 }
                 // TODO 销毁ExecState

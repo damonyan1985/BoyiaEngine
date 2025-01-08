@@ -73,7 +73,7 @@ LVoid ExecuteGlobalCode(LVoid* vm);
 LVoid* CreateGlobalClass(LUintPtr key, LVoid* vm);
 
 // 添加一个微任务
-LVoid* CreateMicroTask(LVoid* vmPtr);
+LVoid* CreateMicroTask(LVoid* vmPtr, BoyiaValue* value);
 
 // 恢复微任务
 LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr);
@@ -81,6 +81,6 @@ LVoid ResumeMicroTask(LVoid* taskPtr, BoyiaValue* value, LVoid* vmPtr);
 // 消费微任务
 LVoid ConsumeMicroTask(LVoid* vmPtr);
 
-LVoid* IterateMicroTask(BoyiaValue** value, LVoid* vmPtr, LVoid* ptr);
+LVoid* IterateMicroTask(BoyiaValue** obj, BoyiaValue** result, LVoid* vmPtr, LVoid* ptr);
 
 #endif

@@ -1,4 +1,5 @@
-﻿// boyia.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// boyia.cpp : Boyia编译器入口
+// 编译提示 : boyia.exe test1.boyia test2.boyia test3.boyia
 //
 
 #include <iostream>

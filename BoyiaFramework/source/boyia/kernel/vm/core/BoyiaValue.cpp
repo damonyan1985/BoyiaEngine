@@ -831,7 +831,7 @@ LInt BoyiaMicroTaskInit(LVoid* vm)
     BoyiaValue* worker = (BoyiaValue*)GetLocalValue(1, vm);
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
 
-    LVoid* task = CreateMicroTask(vm);
+    LVoid* task = CreateMicroTask(vm, obj);
     fun->mParams[1].mValueType = BY_INT;
     fun->mParams[1].mValue.mIntVal = (LIntPtr)task;
 

@@ -37,8 +37,11 @@ public class PlatformViewController {
 
     // 创建VirtualDisplay
     private VirtualDisplay createVirtualDisplay(Context context, PlatformViewCreationRequest request) {
+        int physicalWidth = toPhysicalPixels(request.logicalWidth);
+        int physicalHeight = toPhysicalPixels(request.logicalHeight);
+
         mTexture = new BoyiaTexture(request.textureId);
-        mTexture.getSurfaceTexture().setDefaultBufferSize(request.logicalWidth, request.logicalHeight);
+        mTexture.getSurfaceTexture().setDefaultBufferSize(physicalWidth, physicalHeight);
         mTexture.setTextureUpdateNotifier(() -> {
             BoyiaCoreJNI.nativePlatformViewUpdate(request.viewId);
         });
@@ -46,8 +49,7 @@ public class PlatformViewController {
 
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
-        int physicalWidth = toPhysicalPixels(request.logicalWidth);
-        int physicalHeight = toPhysicalPixels(request.logicalHeight);
+        
         return displayManager.createVirtualDisplay(
                 "boyia-vd",
                 physicalWidth,
