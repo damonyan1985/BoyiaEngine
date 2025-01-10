@@ -39,12 +39,12 @@ private:
     BoyiaValue m_cb;
 };
 
-#define GEN_ID(key) m_idCreator->genIdentByStr(key, StringUtils::StringSize(key))
+#define GEN_ID(key) (m_idCreator->genIdentByStr(key, StringUtils::StringSize(key)))
 
 BoyiaRuntime::BoyiaRuntime()
     : m_memoryPool(InitMemoryPool(kMemoryPoolSize))
     , m_idCreator(new util::IDCreator())
-    , m_nativeFunTable(new NativeFunction[kNativeFunctionCapacity])
+    , m_nativeFunTable(0, kNativeFunctionCapacity)
     , m_nativeSize(0)
     , m_vm(InitVM(this))
     , m_gc(CreateGC(m_vm))
@@ -58,9 +58,6 @@ BoyiaRuntime::~BoyiaRuntime()
     DestroyGC(m_vm);
     DestroyVM(m_vm);
     FreeMemoryPool(m_memoryPool);
-    delete[] m_nativeFunTable;
-    delete m_idCreator;
-    delete m_eventManager;
 }
 
 LVoid* BoyiaRuntime::memoryPool() const

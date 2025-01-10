@@ -47,15 +47,15 @@ private:
 
     yanbo::Application* m_app;
     LVoid* m_memoryPool;
-    util::IDCreator* m_idCreator;
-    NativeFunction* m_nativeFunTable;
+    OwnerPtr<util::IDCreator> m_idCreator;
+    KVector<NativeFunction> m_nativeFunTable;
     // Last init vm
     LVoid* m_vm;
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
-    BoyiaDomMap* m_domMap;
-    BoyiaAsyncEventManager* m_eventManager;
+    OwnerPtr<BoyiaDomMap> m_domMap;
+    OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
 };
 }
 

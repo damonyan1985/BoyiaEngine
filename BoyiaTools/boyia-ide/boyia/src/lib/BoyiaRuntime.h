@@ -37,14 +37,14 @@ private:
     LVoid appendNative(LUintPtr id, NativePtr ptr);
 
     LVoid* m_memoryPool;
-    util::IDCreator* m_idCreator;
-    NativeFunction* m_nativeFunTable;
+    OwnerPtr<util::IDCreator> m_idCreator;
+    KVector<NativeFunction> m_nativeFunTable;
     // Last init vm
     LVoid* m_vm;
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
-    BoyiaAsyncEventManager* m_eventManager;
+    OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
 };
 }
 
