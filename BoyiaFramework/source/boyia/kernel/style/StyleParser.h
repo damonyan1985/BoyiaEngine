@@ -12,6 +12,7 @@
 //#include "kmap.h"
 #include "InputStream.h"
 #include "StyleRule.h"
+#include "OwnerPtr.h"
 
 namespace util {
 /**
@@ -36,7 +37,7 @@ private:
     void addProperty(StyleRule* rule, LInt property, PropertyValue& value);
 
 private:
-    StyleManager* m_styleManager;
+    OwnerPtr<StyleManager> m_styleManager;
 };
 }
 #endif /* StyleParser_H_ */

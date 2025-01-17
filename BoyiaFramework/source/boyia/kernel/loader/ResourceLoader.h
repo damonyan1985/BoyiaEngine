@@ -45,7 +45,7 @@ public:
     UIView* view() const;
 
 protected:
-    HtmlRenderer* m_render;
+    OwnerPtr<HtmlRenderer> m_render;
     UIView* m_view;
     LInt m_cssSize;
 };

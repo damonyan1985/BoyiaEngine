@@ -69,7 +69,6 @@ protected:
 
     LBool m_checked;
     LBool m_activated;
-    LFont* m_newFont;
     // inputview包含一个textview
     TextView* m_text;
 };

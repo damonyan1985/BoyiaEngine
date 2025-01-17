@@ -41,8 +41,8 @@ public:
 protected:
 
     String m_text;
-    KVector<TextLine*>* m_textLines;
-    LFont* m_newFont;
+    KVector<OwnerPtr<TextLine>> m_textLines;
+    OwnerPtr<LFont> m_newFont;
     LInt m_maxWidth;
 };
 }

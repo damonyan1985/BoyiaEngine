@@ -9,6 +9,7 @@
 #define Style_h
 
 #include "LGdi.h"
+#include "OwnerPtr.h"
 
 namespace util {
 
@@ -158,11 +159,11 @@ public:
 private:
     // TextView等元素不需要border，border-radius
     // 因此这些样式采取动态创建的方式进行，减少内存开销
-    mutable Border* m_border;
-    mutable BorderRadius* m_radius;
-    mutable Margin* m_margin;
-    mutable Padding* m_padding;
-    mutable Flex* m_flex;
+    mutable OwnerPtr<Border> m_border;
+    mutable OwnerPtr<BorderRadius> m_radius;
+    mutable OwnerPtr<Margin> m_margin;
+    mutable OwnerPtr<Padding> m_padding;
+    mutable OwnerPtr<Flex> m_flex;
 };
 }
 #endif

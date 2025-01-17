@@ -240,7 +240,7 @@ Border& Style::border() const
     if (!m_border) {
         m_border = new Border();
     }
-    
+
     return *m_border;
 }
 
@@ -273,10 +273,10 @@ Padding& Style::padding() const
 
 LBool Style::hasRadius() const
 {
-    return radius().topLeftRadius
-        || radius().topRightRadius
-        || radius().bottomLeftRadius
-        || radius().bottomRightRadius;
+    return radius().topLeftRadius > 0
+        || radius().topRightRadius > 0
+        || radius().bottomLeftRadius > 0
+        || radius().bottomRightRadius > 0;
 }
 
 Flex& Style::flex() const

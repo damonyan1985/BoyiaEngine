@@ -12,6 +12,7 @@
 #include "KList.h"
 #include "Stack.h"
 #include "StyleRule.h"
+#include "OwnerPtr.h"
 
 namespace util {
 
@@ -35,7 +36,7 @@ public:
 
 protected:
     RuleList m_ruleList;
-    Doctree* m_doctree;
+    OwnerPtr<Doctree> m_doctree;
 };
 }
 #endif /* StyleManager_h */

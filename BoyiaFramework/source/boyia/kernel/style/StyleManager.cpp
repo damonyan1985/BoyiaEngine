@@ -31,8 +31,6 @@ StyleManager::~StyleManager()
     while (idx) {
         delete m_doctree->elementAt(--idx);
     }
-
-    delete m_doctree;
 }
 
 void StyleManager::addStyleRule(StyleRule* rule)

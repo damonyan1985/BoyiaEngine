@@ -15,6 +15,8 @@
 #include "PlatformBridge.h"
 
 namespace yanbo {
+const LInt kDefaultMaxLine = 10;
+
 class TextSelection {
 public:
     TextSelection()
@@ -75,7 +77,7 @@ public:
 TextView::TextView(const String& text)
     : InlineView(_CS(""), LFalse)
     , m_text(text)
-    , m_textLines(kBoyiaNull)
+    , m_textLines(0, kDefaultMaxLine)
     , m_newFont(kBoyiaNull)
     , m_maxWidth(0)
 {
@@ -83,40 +85,33 @@ TextView::TextView(const String& text)
 
 TextView::~TextView()
 {
-    if (m_newFont) {
-        delete m_newFont;
-    }
-
-    if (m_textLines) {
-        delete m_textLines;
-    }
 }
 
 ViewPainter* TextView::linePainter(LInt i) const
 {
-    return m_textLines->elementAt(i);
+    return m_textLines.elementAt(i);
 }
 
 LInt TextView::lineSize() const
 {
-    return m_textLines->size();
+    return m_textLines.size();
 }
 
 LInt TextView::lineWidth(LInt i) const
 {
-    if (!m_textLines || i >= m_textLines->size()) {
+    if (i >= m_textLines.size()) {
         return 0;
     }
-    return m_textLines->elementAt(i)->m_lineLength;
+    return m_textLines.elementAt(i)->m_lineLength;
 }
 
 LInt TextView::lineLength(LInt i) const
 {
-    if (!m_textLines || i >= m_textLines->size()) {
+    if (i >= m_textLines.size()) {
         return 0;
     }
     
-    return PlatformBridge::getTextSize(m_textLines->elementAt(i)->m_text);
+    return PlatformBridge::getTextSize(m_textLines.elementAt(i)->m_text);
 }
 
 LInt TextView::getIndexByOffset(LInt line, LInt x)
@@ -144,19 +139,11 @@ void TextView::layout(RenderContext& rc)
     m_width = 0;
     m_height = 0;
 
-    if (!m_textLines) {
-        m_textLines = new KVector<TextLine*>();
-    } else {
-        m_textLines->clear();
-    }
+    m_textLines.clear();
 
     m_maxWidth = rc.getMaxWidth() - m_x;
 
     KSTRFORMAT("TextView::layout m_text=%s", m_text);
-
-    if (m_newFont) {
-        delete m_newFont;
-    }
 
     m_newFont = LFont::create(m_style.font); // platform reference font
     m_newFont->setFontSize(m_style.font.getFontSize() * m_style.scale);
@@ -166,7 +153,7 @@ void TextView::layout(RenderContext& rc)
     
     BOYIA_LOG("text=%s and text width=%d", (const char*)m_text.GetBuffer(), m_width);
     //m_height = m_newFont->getFontHeight() * m_textLines->size() + m_style.margin().bottomMargin;
-    m_height = m_newFont->getFontHeight() * m_textLines->size();
+    m_height = m_newFont->getFontHeight() * m_textLines.size();
     
     KLOG("TextView::layout begin");
     KDESLOG(m_height);
@@ -206,7 +193,7 @@ LInt TextView::calcTextLine(const String& text, LInt maxWidth)
     for (LInt i = 0; i < len; ++i) {
         String text;
         m_newFont->getLineText(i, text);
-        m_textLines->addElement(new TextLine(
+        m_textLines.addElement(new TextLine(
             this,
             m_newFont->getLineWidth(i),
             text));
@@ -217,7 +204,7 @@ LInt TextView::calcTextLine(const String& text, LInt maxWidth)
 
 LBool TextView::isMultiLine()
 {
-    return m_textLines->size() > 1 ? LTrue : LFalse;
+    return m_textLines.size() > 1 ? LTrue : LFalse;
 }
 
 LVoid TextView::paint(LGraphicsContext& gc)
@@ -234,9 +221,9 @@ LVoid TextView::paint(LGraphicsContext& gc)
 
     if (m_newFont) {
         LInt textHeight = m_newFont->getFontHeight();
-        LInt len = m_textLines->size();
+        LInt len = m_textLines.size();
         for (LInt i = 0; i < len; ++i) {
-            TextLine* line = m_textLines->elementAt(i);
+            TextLine* line = m_textLines.elementAt(i);
 
             y = i > 0 ? y + textHeight : y;
             LayoutUnit left = x;

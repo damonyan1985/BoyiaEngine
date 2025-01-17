@@ -36,9 +36,6 @@ StyleParser::StyleParser()
 
 StyleParser::~StyleParser()
 {
-    if (m_styleManager) {
-        delete m_styleManager;
-    }
 }
 
 void StyleParser::parseCss(InputStream& is)

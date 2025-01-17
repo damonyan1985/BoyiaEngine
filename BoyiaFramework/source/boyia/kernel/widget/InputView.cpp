@@ -258,7 +258,7 @@ public:
         LInt maxWidth = rc.getMaxWidth();
         m_leftPadding = 5;
         m_width = getStyle()->width ? getStyle()->width : maxWidth / 3;
-        m_height = getStyle()->height ? getStyle()->height : m_newFont->getFontHeight();
+        m_height = getStyle()->height ? getStyle()->height : kDefaultInputButtonHeight;
         InputView::layoutEnd(rc);
         
         m_cursor = new TextInputCursor(m_height * 0.75, this);
