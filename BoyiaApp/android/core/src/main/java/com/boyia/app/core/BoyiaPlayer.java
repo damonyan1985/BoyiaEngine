@@ -3,6 +3,7 @@ package com.boyia.app.core;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.texture.BoyiaTexture;
+import com.boyia.app.core.texture.BoyiaTextureManager;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -88,7 +89,7 @@ public class BoyiaPlayer implements OnBufferingUpdateListener,
     }
 
     public BoyiaPlayer() {
-        mTexture = BoyiaTexture.createTexture();
+        mTexture = BoyiaTextureManager.getInstance().createTexture();
         mTexture.setTextureUpdateNotifier(this);
 
         mPlayerId = mTexture.getTextureId();

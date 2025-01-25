@@ -27,6 +27,7 @@ import android.view.Surface;
 import com.boyia.app.common.BaseApplication;
 import com.boyia.app.common.utils.BoyiaLog;
 import com.boyia.app.core.texture.BoyiaTexture;
+import com.boyia.app.core.texture.BoyiaTextureManager;
 import com.boyia.app.loader.job.IJob;
 
 import java.nio.ByteBuffer;
@@ -134,7 +135,7 @@ public class BoyiaCamera {
     };
 
     public BoyiaCamera() {
-        mTexture = BoyiaTexture.createTexture();
+        mTexture = BoyiaTextureManager.getInstance().createTexture();
     }
 
     public long getCamerId() {

@@ -1,5 +1,9 @@
 package com.boyia.app.core.api;
 
+import android.annotation.SuppressLint;
+
+import java.util.Locale;
+
 public class ApiConstants {
     public static final String API_METHOD_NAME = "api_method";
     public static final String API_METHOD_PARAMS = "api_params";
@@ -66,7 +70,7 @@ public class ApiConstants {
         /**
          * 回调返回的数据
          */
-        public static final String CALLBACK_DATA = "callback_data";
+        public static final String CALLBACK_ARGS = "callback_args";
     }
 
     public static class ApiRequestCode {

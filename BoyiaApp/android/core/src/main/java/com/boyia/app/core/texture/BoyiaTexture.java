@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
     private static final String TAG = "BoyiaTexture";
-    private static final AtomicLong nextTextureId = new AtomicLong(1L);
+
     private SurfaceTexture mTexture;
     /**
      * 自增id，非真实的纹理ID
@@ -30,12 +30,11 @@ public class BoyiaTexture implements SurfaceTexture.OnFrameAvailableListener {
      */
     private boolean mIsAttached = false;
 
-    public static BoyiaTexture createTexture() {
+    public static BoyiaTexture createTexture(long id) {
         BoyiaTexture texture = new BoyiaTexture(0);
         texture.mTexture.detachFromGLContext();
-        texture.mTextureId = nextTextureId.getAndIncrement();
+        texture.mTextureId = id;
         BoyiaLog.d(TAG, "createTexture tid=" +texture.mTextureId);
-        BoyiaTextureManager.getInstance().registerTexture(texture);
         return texture;
     }
 

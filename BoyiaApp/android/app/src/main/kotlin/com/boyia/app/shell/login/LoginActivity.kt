@@ -46,12 +46,11 @@ class LoginActivity: BoyiaShellActivity(), IModuleContext {
                 userData.data = BoyiaLoginInfo.instance().user;
                 userData.userToken = BoyiaLoginInfo.instance().token;
 
-                val json = BoyiaJson.toJson(userData)
-                val bundle = Bundle()
-                bundle.putString(ApiConstants.ApiNames.USER_LOGIN, json)
-                bundle.putLong(ApiConstants.ApiKeys.CALLBACK_ID, callbackId)
+                val args = Bundle()
+                args.putString(ApiConstants.ApiKeys.CALLBACK_ARGS, BoyiaJson.toJson(userData))
+                args.putLong(ApiConstants.ApiKeys.CALLBACK_ID, callbackId)
 
-                sender?.sendMessageAsync(BoyiaIpcData(ApiConstants.ApiNames.USER_LOGIN, bundle), object: IBoyiaIpcCallback {
+                sender?.sendMessageAsync(BoyiaIpcData(ApiConstants.ApiNames.USER_LOGIN, args), object: IBoyiaIpcCallback {
                     override fun callback(message: BoyiaIpcData?) {
                         BoyiaLog.d(TAG, "");
                     }

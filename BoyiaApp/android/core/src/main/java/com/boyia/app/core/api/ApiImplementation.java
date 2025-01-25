@@ -28,14 +28,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ApiImplementation {
     private static final String TAG = "ApiImplementation";
     private IBoyiaSender mSender;
     private WeakReference<Activity> mActivityRef;
     private Map<String, ApiCreator> mHandlerMap;
-    // 处理activityresult
+
+    /**
+     * 处理activityresult
+     */
     private List<ApiHandler> mResultHandlers;
+    /**
+     * 接受宿主处理api后的回到
+     */
     private ApiAsyncCallbackBinder mCallbackBinder;
 
     /**
@@ -45,6 +52,8 @@ public class ApiImplementation {
 
     // BoyiaApp信息
     private BoyiaAppInfo mAppInfo;
+
+    private final AtomicLong nextCallbackID = new AtomicLong(1L);
 
     public ApiImplementation(IBoyiaSender sender, Activity activity, BoyiaAppInfo info) {
         mSender = sender;
