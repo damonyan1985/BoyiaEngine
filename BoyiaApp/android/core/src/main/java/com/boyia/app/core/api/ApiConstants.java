@@ -31,6 +31,15 @@ public class ApiConstants {
          * 用户登录界面调用
          */
         public static final String USER_LOGIN = "user_login";
+
+        /**
+         * download，下载接口
+         */
+        public static final String DOWNLOAD = "download";
+        /**
+         *
+         */
+        public static final String BLUE_TOOTH = "bluetooth";
     }
 
     public static class ApiKeys {
@@ -44,6 +53,7 @@ public class ApiConstants {
         public static final String NOTIFICATION_APP_INFO = "notification_app_info";
         public static final String NOTIFICATION_MSG = "notification_msg";
         //public static final String NOTIFICATION_ICON = "notification_icon";
+        public static final String REQUEST_URL = "request_url";
 
         /**
          * 发送给宿主的binder是属于那个aid的
@@ -53,6 +63,10 @@ public class ApiConstants {
          * 跨端异步调用回调id
          */
         public static final String CALLBACK_ID = "callback_id";
+        /**
+         * 回调返回的数据
+         */
+        public static final String CALLBACK_DATA = "callback_data";
     }
 
     public static class ApiRequestCode {

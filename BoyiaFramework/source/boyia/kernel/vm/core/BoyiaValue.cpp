@@ -79,7 +79,7 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix)
     return total * sign;
 }
 
-static boyia::BoyiaRuntime* GetRuntime(LVoid* vm)
+extern boyia::BoyiaRuntime* GetRuntime(LVoid* vm)
 {
     return static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
 }

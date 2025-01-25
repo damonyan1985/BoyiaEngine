@@ -7,97 +7,60 @@ namespace boyia {
 class BoyiaAsyncMapTable {
 public:
     struct EventMapEntry {
-        EventMapEntry(LIntPtr ptr)
-            : objPtr(ptr)
-        {
-        }
-
         LBool contains(LInt uniqueId)
         {
-            return eventList.get(HashInt(uniqueId)) != kBoyiaNull;
+            return eventMap.contains(HashInt(uniqueId));
         }
 
         LVoid put(LInt uniqueId, BoyiaAsyncEvent* event)
         {
-            eventList.put(HashInt(uniqueId), event);
+            eventMap.put(HashInt(uniqueId), event);
         }
 
-        LIntPtr objPtr;
-        //BoyiaList<BoyiaAsyncEvent*> eventList;
-        HashMap<HashInt, BoyiaAsyncEvent*> eventList;
+        HashMap<HashInt, BoyiaAsyncEvent*> eventMap;
     };
 
     BoyiaAsyncMapTable()
-        : m_eventMap(0, 20)
     {
     }
 
     LVoid registerEvent(BoyiaAsyncEvent* event)
     {
         // 一个对象下可能会挂多个事件
-        EventMapEntry* entry = kBoyiaNull;
-        for (LInt i = 0; i < m_eventMap.size(); i++) {
-            if (event->m_obj.mValue.mObj.mPtr == m_eventMap[i]->objPtr) {
-                entry = m_eventMap[i].get();
-                break;
-            }
-        }
+        OwnerPtr<EventMapEntry>& entry = m_eventMap[HashPtr(event->m_obj.mValue.mObj.mPtr)];
 
         if (entry) {
             entry->put(event->m_uniqueId, event);
         } else {
-            EventMapEntry* entry = new EventMapEntry(
-                event->m_obj.mValue.mObj.mPtr);
+            entry = new EventMapEntry();
             entry->put(event->m_uniqueId, event);
-
-            m_eventMap.addElement(entry);
         }
     }
 
-    LBool hasObject(BoyiaValue* obj, LInt uniqueId)
+    bool hasObject(BoyiaValue* obj, LInt uniqueId)
     {
-        for (LInt i = 0; i < m_eventMap.size(); i++) {
-            if (obj->mValue.mObj.mPtr == m_eventMap[i]->objPtr
-                && m_eventMap[i]->contains(uniqueId)) {
-                return LTrue;
-            }
-        }
-
-        return LFalse;
+        OwnerPtr<EventMapEntry>& entry = m_eventMap[HashPtr(obj->mValue.mObj.mPtr)];
+        return entry && entry->contains(uniqueId);
     }
 
     LVoid removeAllEvent(LIntPtr ptr)
     {
-        for (LInt i = 0; i < m_eventMap.size(); i++) {
-            if (ptr == m_eventMap[i]->objPtr) {
-                m_eventMap.remove(i);
-                return;
-            }
-        }
+
+        m_eventMap.remove(HashPtr(ptr));
     }
 
     LVoid removeEvent(BoyiaAsyncEvent* event)
     {
-        LInt index = -1;
-        for (LInt i = 0; i < m_eventMap.size(); i++) {
-            if (event->m_obj.mValue.mObj.mPtr == m_eventMap[i]->objPtr) {
-                index = i;
-                break;
-            }
+        OwnerPtr<EventMapEntry>& entry = m_eventMap[HashPtr(event->m_obj.mValue.mObj.mPtr)];
+        if (entry) {
+            entry->eventMap.remove(event->m_uniqueId);
         }
-
-        if (index == -1) {
-            return;
-        }
-
-        m_eventMap[index]->eventList.remove(event->m_uniqueId);
     }
 
 private:
-    KVector<OwnerPtr<EventMapEntry>> m_eventMap;
+    HashMap<HashPtr, OwnerPtr<EventMapEntry>> m_eventMap;
 };
 
-//BoyiaAsyncMapTable BoyiaAsyncEvent::s_table;
 BoyiaAsyncEventManager::BoyiaAsyncEventManager()
     : m_uniqueId(0)
     , m_table(new BoyiaAsyncMapTable())

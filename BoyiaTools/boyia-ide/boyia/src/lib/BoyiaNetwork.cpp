@@ -80,7 +80,6 @@ LVoid BoyiaNetwork::onLoadError(LInt error)
 LVoid BoyiaNetwork::onLoadFinished()
 {
     m_data = m_builder.toString();
-    //yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);
 }
 
 LVoid BoyiaNetwork::callback()

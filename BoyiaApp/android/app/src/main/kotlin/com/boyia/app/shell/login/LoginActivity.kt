@@ -33,6 +33,9 @@ class LoginActivity: BoyiaShellActivity(), IModuleContext {
         val ipcModule = ModuleManager.instance().getModule(ModuleManager.IPC) as IPCModule
         val aid = intent.getIntExtra(ApiConstants.ApiKeys.BINDER_AID, 0)
         val callbackId = intent.getLongExtra(ApiConstants.ApiKeys.CALLBACK_ID, 0)
+        if (aid == 0) {
+            return
+        }
         val sender = ipcModule.appSender(aid)
 
         val loginModule = ModuleManager.instance().getModule(ModuleManager.LOGIN) as ILoginModule
@@ -48,7 +51,7 @@ class LoginActivity: BoyiaShellActivity(), IModuleContext {
                 bundle.putString(ApiConstants.ApiNames.USER_LOGIN, json)
                 bundle.putLong(ApiConstants.ApiKeys.CALLBACK_ID, callbackId)
 
-                sender?.sendMessageAsync(BoyiaIpcData(), object: IBoyiaIpcCallback {
+                sender?.sendMessageAsync(BoyiaIpcData(ApiConstants.ApiNames.USER_LOGIN, bundle), object: IBoyiaIpcCallback {
                     override fun callback(message: BoyiaIpcData?) {
                         BoyiaLog.d(TAG, "");
                     }

@@ -18,14 +18,8 @@ android {
     }
 
     externalNativeBuild {
-        if (use_cmake) {
-            cmake {
-                path gradle.library.framework_cmake
-            }
-        } else {
-            ndkBuild {
-                path gradle.library.framework_mk
-            }
+        cmake {
+            path gradle.library.framework_cmake
         }
     }
 

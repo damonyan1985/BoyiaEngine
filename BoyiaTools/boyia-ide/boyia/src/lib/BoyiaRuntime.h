@@ -4,6 +4,8 @@
 #include "IDCreator.h"
 #include "UtilString.h"
 #include "BoyiaLib.h"
+#include "HashMap.h"
+#include "HashUtil.h"
 
 namespace boyia {
 
@@ -15,6 +17,7 @@ public:
 
     LVoid init();
     LVoid compile(const String& script);
+    LVoid compileFile(const String& path);
     LVoid* vm() const;
     util::IDCreator* idCreator() const;
     LInt findNativeFunc(LUintPtr key) const;
@@ -45,6 +48,7 @@ private:
     LInt m_nativeSize;
     LBool m_isGcRuning;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
+    HashMap<HashString, LBool> m_programSet;
 };
 }
 

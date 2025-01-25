@@ -74,7 +74,7 @@ LVoid BoyiaNetwork::onRedirectUrl(const String& redirectUrl)
 
 LVoid BoyiaNetwork::onLoadError(LInt error)
 {
-    delete this;
+    yanbo::AppManager::instance()->uiThread()->sendUIEvent(this);
 }
 
 LVoid BoyiaNetwork::onLoadFinished()
@@ -84,7 +84,9 @@ LVoid BoyiaNetwork::onLoadFinished()
 }
 
 LVoid BoyiaNetwork::callback()
-{    
-    BoyiaAsyncEvent::callbackString(*m_data.get(), &m_callback, m_runtime);
+{
+    if (m_data) {
+        BoyiaAsyncEvent::callbackString(*m_data.get(), &m_callback, m_runtime);
+    }
 }
 }

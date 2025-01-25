@@ -14,14 +14,18 @@
 #endif
 #include "SalLog.h"
 #include "StringUtils.h"
+#include "FileUtil.h"
 #include "UIView.h"
 #include "cJSON.h"
 //#include <android/log.h>
 #include <stdio.h>
 
+#define TO_STR(str) String(_CS(str), LTrue, LStrlen(_CS(str)))
+
 //extern void BoyiaLog(const char* format, ...);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm);
+extern boyia::BoyiaRuntime* GetRuntime(LVoid* vm);
 
 char* convertMStr2Str(BoyiaStr* str)
 {
@@ -72,6 +76,24 @@ LInt getFileContent(LVoid* vm)
 
     SetStringResult(buf, len, vm);
     printf("getFileContent data=%s\n", buf);
+    return kOpResultSuccess;
+}
+
+LInt writeFileContent(LVoid* vm)
+{
+    BoyiaValue* fileValue = (BoyiaValue*)GetLocalValue(0, vm);
+    if (!fileValue) {
+        return kOpResultEnd;
+    }
+
+    BoyiaValue* contentValue = (BoyiaValue*)GetLocalValue(0, vm);
+    if (!contentValue) {
+        return kOpResultEnd;
+    }
+
+    char* fileName = convertMStr2Str(GetStringBuffer(fileValue));
+    char* content = convertMStr2Str(GetStringBuffer(contentValue));
+    FileUtil::writeFile(TO_STR(fileName), TO_STR(content));
     return kOpResultSuccess;
 }
 
@@ -308,7 +330,7 @@ LInt createBoyiaDocument(LVoid* vm)
     BoyiaStr* urlStr = GetStringBuffer(val);
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
-    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(GetRuntime(vm));
     doc->loadHTML(strUrl);
     return kOpResultSuccess;
 }
@@ -342,7 +364,7 @@ BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
 
 LInt getRootDocument(LVoid* vm)
 {
-    boyia::BoyiaRuntime* runtime = static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
+    boyia::BoyiaRuntime* runtime = GetRuntime(vm);
     boyia::BoyiaViewDoc* doc = new boyia::BoyiaViewDoc(runtime);
     doc->setDocument(runtime->view()->getDocument());
     return kOpResultSuccess;
@@ -512,15 +534,13 @@ LInt loadDataFromNative(LVoid* vm)
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
 
-
-    boyia::BoyiaRuntime* runtime = static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
     BoyiaFunction* fun = (BoyiaFunction*)callback->mValue.mObj.mSuper;
     BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
     
     PrintValueKey(klass, vm);
     boyia::BoyiaNetwork* network = new boyia::BoyiaNetwork(
         callback, obj,
-        runtime);
+        GetRuntime(vm));
     
     // 默认是get请求，如果参数包含params，按照params中包含的属性进行处理
     if (GetLocalSize(vm) > 3) {
@@ -674,7 +694,7 @@ LInt createViewGroup(LVoid* vm)
     String strUrl(_CS(idStr), LTrue, buffer->mLen);
 
     new boyia::BoyiaViewGroup(
-        static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)),
+        GetRuntime(vm),
         strUrl,
         selectVal->mValue.mIntVal);
 
@@ -851,7 +871,7 @@ LInt createSocket(LVoid* vm)
     char* url = convertMStr2Str(urlStr);
     String strUrl(_CS(url), LTrue, urlStr->mLen);
 
-    new boyia::BoyiaSocket(strUrl, msgCB, static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm)));
+    new boyia::BoyiaSocket(strUrl, msgCB, GetRuntime(vm));
     return kOpResultSuccess;
 }
 
@@ -887,6 +907,6 @@ LInt callPlatformApiHandler(LVoid* vm)
 
     String paramStr;
     boyiaStrToNativeStr(params, paramStr);
-    static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm))->callPlatformApi(paramStr, callback);
+    GetRuntime(vm)->callPlatformApi(paramStr, callback);
     return kOpResultSuccess;
 }

@@ -3,7 +3,7 @@
 
 
 buildscript {
-    ext.kotlin_version = '1.9.0'
+    ext.kotlin_version = '2.0.21'
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
     repositories {
         mavenCentral()
@@ -21,6 +21,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlin_version"
         // classpath ext.kotlin
         // 依赖bytrace插件
         classpath 'com.boyia.app.bytrace:bytrace:1.0.0'
@@ -33,6 +34,11 @@ allprojects {
         google()
         jcenter()
         maven { url uri("$rootDir/maven/BoyiaMaven") } // 优先读本地仓库
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "https://maven.aliyun.com/repository/central" }
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
         maven { url "https://repo1.maven.org/maven2/" }
         maven { url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/" }

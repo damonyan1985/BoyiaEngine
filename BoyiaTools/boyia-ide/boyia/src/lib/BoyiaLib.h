@@ -7,6 +7,8 @@ char* convertMStr2Str(BoyiaStr* str);
 
 LInt getFileContent(LVoid* vm);
 
+LInt writeFileContent(LVoid* vm);
+
 LInt addElementToVector(LVoid* vm);
 
 LInt getElementFromVector(LVoid* vm);
@@ -95,5 +97,7 @@ LInt sendSocketMsg(LVoid* vm);
 
 // 平台相关api调用
 LInt callPlatformApiHandler(LVoid* vm);
+
+LInt requireFile(LVoid* vm);
 
 #endif // !BoyiaLib_h

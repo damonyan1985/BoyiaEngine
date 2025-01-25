@@ -5,7 +5,8 @@
 #include "BoyiaAsyncEvent.h"
 #include "SystemUtil.h"
 #include "StringUtils.h"
-#include "BoyiaAsyncEvent.h"
+#include "FileUtil.h"
+
 
 const LInt kMemoryPoolSize = (6 * MB);
 const LInt kGcMemorySize = (8 * KB);
@@ -123,7 +124,8 @@ LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 LVoid BoyiaRuntime::initNativeFunction()
 {
     appendNative(GEN_ID("new"), CreateObject);
-    appendNative(GEN_ID("BY_Content"), getFileContent);
+    appendNative(GEN_ID("BY_ReadFile"), getFileContent);
+    appendNative(GEN_ID("BY_WriteFile"), writeFileContent);
     // Array Api Begin
     appendNative(GEN_ID("BY_GetFromArray"), getElementFromVector);
     appendNative(GEN_ID("BY_AddInArray"), addElementToVector);
@@ -168,6 +170,7 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(GEN_ID("BY_GetPlatformType"), getPlatformType);
     appendNative(GEN_ID("BY_CreateSocket"), createSocket);
     appendNative(GEN_ID("BY_SendSocketMsg"), sendSocketMsg);
+    appendNative(GEN_ID("BY_Require"), requireFile);
     // End
     appendNative(0, kBoyiaNull);
 }
@@ -175,6 +178,19 @@ LVoid BoyiaRuntime::initNativeFunction()
 LVoid BoyiaRuntime::compile(const String& script)
 {
     CompileCode((char*)script.GetBuffer(), m_vm);
+}
+
+LVoid BoyiaRuntime::compileFile(const String& path)
+{
+    if (m_programSet.get(path)) {
+        return;
+    }
+    String source;
+    FileUtil::readFile(path, source);
+    if (source.GetLength()) {
+        compile(source);
+        m_programSet.put(path, LTrue);
+    }
 }
 
 LInt BoyiaRuntime::findNativeFunc(LUintPtr key) const

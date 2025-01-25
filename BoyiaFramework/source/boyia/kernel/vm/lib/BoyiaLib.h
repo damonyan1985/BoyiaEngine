@@ -7,6 +7,8 @@ char* convertMStr2Str(BoyiaStr* str);
 
 LInt getFileContent(LVoid* vm);
 
+LInt writeFileContent(LVoid* vm);
+
 LInt addElementToVector(LVoid* vm);
 
 LInt getElementFromVector(LVoid* vm);

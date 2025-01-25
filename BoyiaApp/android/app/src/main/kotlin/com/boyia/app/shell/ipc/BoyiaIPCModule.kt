@@ -38,6 +38,7 @@ class BoyiaIPCModule : IPCModule {
         appSenderMap = ConcurrentHashMap<Int, IBoyiaSender>()
         register(ApiConstants.ApiNames.LOCAL_SHARE_SET, SetShareHandler::class.java)
         register(ApiConstants.ApiNames.LOCAL_SHARE_GET, GetShareHandler::class.java)
+        register(ApiConstants.ApiNames.DOWNLOAD, DownloadHandler::class.java)
         register(ApiConstants.ApiNames.NOTIFICATION_NAME, SendNotificationHandler::class.java, true)
         register(ApiConstants.ApiNames.USER_INFO, GetUserInfoHandler::class.java)
         register(ApiConstants.ApiNames.USER_LOGIN, LoginHandler::class.java, true)

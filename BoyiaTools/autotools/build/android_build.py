@@ -214,7 +214,7 @@ def main():
         return
 
     # 编译boyia rust库
-    install_and_build_rust()
+    # install_and_build_rust()
 
     # 切换编译目录编译Android工程
     os.chdir(boyia_app_android_path)

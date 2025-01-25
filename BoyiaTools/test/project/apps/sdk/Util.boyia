@@ -10,14 +10,17 @@ class Util {
         BY_Log(info);
     }
     
+    // Return op can be omited
     fun fromJson(info) {
         BY_Json(info);
     }
 
+    // Return op can be omited
     fun toJson(obj) {
         BY_toJson(obj);
     }
     
+    // Return op can be omited
     fun instanceof(obj, cls) {
         BY_InstanceOfClass(obj, cls);
     }

@@ -105,6 +105,20 @@ public:
         return V();
     }
 
+    V& operator[](const K& key) {
+        LUint hash = genHash(key);
+        HashMapEntryPtr entry = m_table[indexHash(hash)];
+        for (; entry; entry = entry->next) {
+            // 先判断hash值来节省时间
+            if (hash == entry->hash && entry->key == key) {
+                return entry->value;
+            }
+        }
+        
+        // 如果没找到，就添加一个空对象
+        return addEntry(hash, key, V());
+    }
+
     LInt size() const
     {
         return m_size;
@@ -241,7 +255,7 @@ private:
         }
     }
 
-    LVoid addEntry(LUint hash, const K& key, const V& value)
+    V& addEntry(LUint hash, const K& key, const V& value)
     {
         LInt index = indexHash(hash);
         if (m_table[index]) {
@@ -251,7 +265,7 @@ private:
             for (; entry; entry = entry->next) {
                 if (hash == entry->hash && entry->key == key) {
                     entry->value = value;
-                    return;
+                    return entry->value;
                 }
             }
         }
@@ -262,6 +276,7 @@ private:
         // entry插入hash碰撞链表头部
         entry->next = m_table[index];
         m_table[index] = entry;
+        return entry->value;
     }
 
     HashMapEntryPtr* m_table;

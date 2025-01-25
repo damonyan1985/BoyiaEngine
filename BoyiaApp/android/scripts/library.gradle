@@ -14,8 +14,6 @@ def initExtension() {
     if (!ext.maven_dir) {
         ext.maven_dir = "$rootDir/maven/BoyiaMaven"
     }
-
-    ext.use_cmake = true
 }
 
 initExtension()
@@ -39,7 +37,6 @@ gradle.ext.constants = [
 ]
 
 gradle.ext.library = [
-    framework_mk: "$rootDir/../../BoyiaFramework/Android.mk",
     framework_cmake: "$rootDir/../../BoyiaFramework/buildtool/CMakeLists.txt",
     boyia_core: "${gradle.constants.boyiaCoreLib}:core:1.0.0",
     boyia_common: "${gradle.constants.boyiaUtilLib}:util:1.0.0",

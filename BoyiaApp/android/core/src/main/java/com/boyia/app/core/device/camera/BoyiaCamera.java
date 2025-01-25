@@ -148,11 +148,7 @@ public class BoyiaCamera {
     boolean configCamera(CameraManager cameraManager, String cameraId) throws CameraAccessException {
         CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
         StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        if (map == null) {
-            return false;
-        }
-
-        return true;
+        return map != null;
     }
 
     private void stopCameraThread() {
@@ -168,12 +164,16 @@ public class BoyiaCamera {
 
     // 初始化线程
     @SuppressLint("DefaultLocale")
-    void initThread() {
+    private void initThread() {
         mCameraThread = new HandlerThread(String.format("boyia-camera-%d", mTexture.getTextureId()));
         mCameraHandler = new Handler(mCameraThread.getLooper());
     }
 
-    void openCamera() {
+    /**
+     * 打开摄像头
+     * Call by JNI
+     */
+    public void openCamera() {
         CameraManager cameraManager = (CameraManager) BaseApplication.getInstance().getSystemService(Context.CAMERA_SERVICE);
         try {
             if (configCamera(cameraManager, CAMERA_ID)) {
@@ -349,6 +349,7 @@ public class BoyiaCamera {
         }
     }
 
+    // 创建摄像头捕获session，这一步摄像头会开始运行，数据将会输出到surface中
     private void createCaptureSession(List<Surface> remainingSurfaces, int templateType, IJob job) throws CameraAccessException {
         // Close any existing capture session.
         mCaptureSession = null;
@@ -379,13 +380,9 @@ public class BoyiaCamera {
                     @Override
                     public void onConfigured(CameraCaptureSession session) {
                         BoyiaLog.i(TAG, "CameraCaptureSession onConfigured");
-                        mCaptureSession = session;
-
-
                         try {
                             mCaptureSession.setRepeatingRequest(
                                     mPreviewBuilder.build(), mCaptureCallback, mCameraHandler);
-
                             if (job != null) {
                                 job.exec();
                             }

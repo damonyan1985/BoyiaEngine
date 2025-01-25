@@ -7,7 +7,6 @@
 #include "BoyiaAsyncEvent.h"
 #include "SystemUtil.h"
 #include "StringUtils.h"
-#include "BoyiaAsyncEvent.h"
 
 const LInt kMemoryPoolSize = (6 * MB);
 const LInt kGcMemorySize = (8 * KB);
@@ -144,7 +143,8 @@ LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 LVoid BoyiaRuntime::initNativeFunction()
 {
     appendNative(GEN_ID("new"), CreateObject);
-    appendNative(GEN_ID("BY_Content"), getFileContent);
+    appendNative(GEN_ID("BY_ReadFile"), getFileContent);
+    appendNative(GEN_ID("BY_WriteFile"), writeFileContent);
     // Array Api Begin
     appendNative(GEN_ID("BY_GetFromArray"), getElementFromVector);
     appendNative(GEN_ID("BY_AddInArray"), addElementToVector);

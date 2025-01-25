@@ -6,6 +6,7 @@
 #include "BoyiaRuntime.h"
 #include "FileUtil.h"
 
+// Such as execute, boyia.exe E:\work\project\BoyiaEngine\BoyiaTools\test\project\apps\sdk\Util.boyia
 int main(int argc, char** argv)
 {
     boyia::BoyiaRuntime runtime;
@@ -20,11 +21,11 @@ int main(int argc, char** argv)
         //const char* filename = "E:\\work\\project\\BoyiaEngine\\BoyiaTools\\test\\project\\apps\\sdk\\Util.boyia";
         std::cout << filename << std::endl;
         
-        String content;
-        FileUtil::readFile(_CS(filename), content);
+        //String content;
+        //FileUtil::readFile(_CS(filename), content);
 
-        std::cout << content << std::endl;
-        runtime.compile(content);
+        //std::cout << content << std::endl;
+        runtime.compileFile(_CS(filename));
     }
 
     
