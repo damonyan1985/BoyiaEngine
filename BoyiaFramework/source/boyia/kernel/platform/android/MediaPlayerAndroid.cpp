@@ -16,7 +16,6 @@ struct JMediaPlayer {
     jmethodID m_stop;
     jmethodID m_seek;
     jmethodID m_setNativePtr;
-    jmethodID m_updateTexture;
     jmethodID m_getPlayerId;
     AutoJObject object(JNIEnv* env)
     {

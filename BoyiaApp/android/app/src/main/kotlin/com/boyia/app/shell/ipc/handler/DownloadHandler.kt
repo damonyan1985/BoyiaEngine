@@ -42,8 +42,8 @@ class DownloadHandler(private val ipcModule: IPCModule): IBoyiaIPCHandler, DownL
     override fun onProgress(current: Long, size: Long) {
         if (aid != 0 && callbackID != 0L) {
             val args = JSONObject()
-            args.put("current", current)
-            args.put("size", size)
+                .put("current", current)
+                .put("size", size)
             val bundle = Bundle()
             bundle.putLong(ApiKeys.CALLBACK_ID, callbackID)
             bundle.putString(ApiKeys.CALLBACK_ARGS, args.toString())
@@ -52,5 +52,12 @@ class DownloadHandler(private val ipcModule: IPCModule): IBoyiaIPCHandler, DownL
     }
 
     override fun onCompleted() {
+        if (aid != 0 && callbackID != 0L) {
+            val args = JSONObject().put("completed", true)
+            val bundle = Bundle()
+            bundle.putLong(ApiKeys.CALLBACK_ID, callbackID)
+            bundle.putString(ApiKeys.CALLBACK_ARGS, args.toString())
+            sender?.sendMessageSync(BoyiaIpcData(ApiNames.DOWNLOAD, bundle))
+        }
     }
 }

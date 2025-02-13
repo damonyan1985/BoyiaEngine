@@ -151,6 +151,26 @@ public class ApiImplementation {
         registerHandler(ApiConstants.ApiNames.USER_LOGIN,
                 () -> (params, callback) -> userLogin());
 
+        registerHandler(ApiConstants.ApiNames.DOWNLOAD, () -> new ApiHandler() {
+            @Override
+            public void handle(JSONObject params, ApiHandlerCallback callback) {
+                try {
+                    if (mCallbackBinder == null) {
+                        return;
+                    }
+
+                    long callbackID = nextCallbackID.getAndIncrement();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ApiConstants.ApiKeys.REQUEST_URL, params.getString(ApiConstants.ApiKeys.REQUEST_URL));
+                    bundle.putLong(ApiConstants.ApiKeys.CALLBACK_ID, callbackID);
+                    sendData(new BoyiaIpcData(ApiConstants.ApiNames.DOWNLOAD, bundle));
+                    mCallbackBinder.registerApiCallback(callbackID, callback);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         sendAsyncCallbackBinder();
     }
 

@@ -159,7 +159,7 @@ enum CmdType {
     kCmdCreateArray,
     kCmdAddArrayItem,
     kCmdAwait,
-    kCmdAsyncEnd
+    kCmdEnd
 };
 
 typedef struct {
@@ -509,8 +509,8 @@ static VMCode* CreateVMCode() {
 }
 
 static OPHandler* InitHandlers() {
-    OPHandler* handlers = FAST_NEW_ARRAY(OPHandler, 100);
-    LMemset(handlers, 0, sizeof(OPHandler) * 100);
+    OPHandler* handlers = FAST_NEW_ARRAY(OPHandler, kCmdEnd);
+    LMemset(handlers, 0, sizeof(OPHandler) * kCmdEnd);
     handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
     handlers[kCmdIfEnd] = HandleIfEnd;
     handlers[kCmdElse] = kBoyiaNull;

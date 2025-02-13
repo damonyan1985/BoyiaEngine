@@ -16,6 +16,13 @@ import java.util.Map;
  */
 public class ApiAsyncCallbackBinder extends IBoyiaIpcSender.BoyiaSenderStub {
     private final Map<Long, ApiHandlerCallback> mApiCallback = new HashMap<>();
+
+    /**
+     * 接受后直接返回给Boyia引擎处理
+     * @param message
+     * @return
+     * @throws RemoteException
+     */
     @Override
     public BoyiaIpcData sendMessageSync(BoyiaIpcData message) throws RemoteException {
         Bundle bundle = message.getParams();

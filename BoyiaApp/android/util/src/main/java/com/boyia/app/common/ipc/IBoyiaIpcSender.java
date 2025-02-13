@@ -111,7 +111,7 @@ public interface IBoyiaIpcSender extends IBoyiaSender, IInterface {
      * 由客户端调用
      */
     class BoyiaSenderProxy implements IBoyiaIpcSender {
-        private IBinder mRemote;
+        private final IBinder mRemote;
 
         public BoyiaSenderProxy(IBinder binder) {
             mRemote = binder;
