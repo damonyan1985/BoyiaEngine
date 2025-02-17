@@ -13,6 +13,7 @@
 #include "CharConvertor.h"
 #include <io.h>
 #include <windows.h>
+#include <shlwapi.h>
 #endif
 
 const String kSourcePrefix(_CS("boyia://"), LFalse, 8);
@@ -23,7 +24,7 @@ const String& FileUtil::fileSchema()
     return kSourcePrefix;
 }
 
-LVoid FileUtil::readFile(const String& fileName, String& content)
+LVoid FileUtil::readFile(In const String& fileName, Out String& content)
 {
     FILE* file = fopen(GET_STR(fileName), "rb");
     if (!file) {
@@ -32,9 +33,12 @@ LVoid FileUtil::readFile(const String& fileName, String& content)
     fseek(file, 0, SEEK_END);
     int len = ftell(file); //获取文件长度
     LInt8* buf = NEW_BUFFER(LInt8, len + 1);
+    if (!buf) {
+        return;
+    }
     LMemset(buf, 0, len + 1);
     rewind(file);
-    fread(buf, sizeof(char), len, file);
+    fread(buf, sizeof(LInt8), len, file);
     fclose(file);
 
     // shallow copy
@@ -292,6 +296,46 @@ LVoid FileUtil::listFiles(const String& path, KVector<String>& dirs, KVector<Str
 
     closedir(d);
 #elif ENABLE(BOYIA_WINDOWS)
+#endif
+}
+
+LVoid FileUtil::getCurrentAbsolutePath(In const String& relativePath, Out String& absolutePath)
+{
+#if ENABLE(BOYIA_WINDOWS)
+    char szFilePath[MAX_PATH];
+    GetCurrentDirectoryA(MAX_PATH, szFilePath);
+    //absolutePath = _CS(szPATH);
+    //absolutePath += _CS("\\");
+    //absolutePath += relativePath;
+    std::strcat(szFilePath, "\\");
+    std::strcat(szFilePath, GET_STR(relativePath));
+    char szAbsolutePath[MAX_PATH];
+    GetFullPathNameA(szFilePath, MAX_PATH, szAbsolutePath, NULL);
+    absolutePath = _CS(szAbsolutePath);
+#endif
+}
+
+LVoid FileUtil::getAbsoluteFilePath(In const String& absolutePath, In const String& relativeFilePath, Out String& absoluteFilePath)
+{
+#if ENABLE(BOYIA_WINDOWS)
+    char szFilePath[MAX_PATH];
+    memset(szFilePath, 0, MAX_PATH);
+    std::strcat(szFilePath, GET_STR(absolutePath));
+    PathRemoveFileSpecA(szFilePath);
+    std::strcat(szFilePath, "\\");
+    std::strcat(szFilePath, GET_STR(relativeFilePath));
+    char szAbsolutePath[MAX_PATH];
+    GetFullPathNameA(szFilePath, MAX_PATH, szAbsolutePath, NULL);
+    absoluteFilePath = _CS(szAbsolutePath);
+#endif
+}
+
+bool FileUtil::IsAbsolutePath(const String& path) 
+{
+#if ENABLE(BOYIA_WINDOWS)
+    return !PathIsRelativeA(GET_STR(path)) || PathIsUNCA(GET_STR(path));
+#else
+    return false;
 #endif
 }
 }

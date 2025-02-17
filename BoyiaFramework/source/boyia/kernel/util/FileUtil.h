@@ -19,7 +19,7 @@ namespace util {
 // android中的文件读写不能操作扩展卡中的内容，只能操作/data/data/com.boyia.app.shell下文件陆慕
 class FileUtil {
 public:
-    static LVoid readFile(const String& fileName, String& content);
+    static LVoid readFile(In const String& fileName, Out String& content);
     static LVoid writeFile(const String& fileName, const String& content);
     static bool isExist(const char* path);
     static bool isDir(const char* path);
@@ -32,6 +32,9 @@ public:
     static LVoid syncLoadUrl(const String& url, String& content);
     static const String& fileSchema();
     static LVoid listFiles(const String& path, KVector<String>& dirs, KVector<String>& files);
+    static LVoid getCurrentAbsolutePath(In const String& relativePath, Out String& absolutePath);
+    static LVoid getAbsoluteFilePath(In const String& absolutePath, In const String& relativeFilePath, Out String& absoluteFilePath);
+    static bool IsAbsolutePath(const String& path);
 };
 }
 

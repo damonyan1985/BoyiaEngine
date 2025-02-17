@@ -18,9 +18,15 @@
 //#include "UIView.h"
 #include "cJSON.h"
 //#include <android/log.h>
+#if ENABLE(BOYIA_WINDOWS)
+
+#endif
+
+
 #include <stdio.h>
 
 #define TO_STR(str) String(_CS(str), LTrue, LStrlen(_CS(str)))
+#define TO_STR_VAR(str, name) String name(_CS(str), LTrue, LStrlen(_CS(str)))
 
 //extern void BoyiaLog(const char* format, ...);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
@@ -36,7 +42,7 @@ char* convertMStr2Str(BoyiaStr* str)
     return newStr;
 }
 
-LVoid boyiaStrToNativeStr(BoyiaValue* strVal, String& str)
+inline LVoid boyiaStrToNativeStr(BoyiaValue* strVal, String& str)
 {
     BoyiaStr* bstr = GetStringBuffer(strVal);
     str.Copy(_CS(convertMStr2Str(bstr)), LTrue, bstr->mLen);
@@ -915,8 +921,64 @@ LInt callPlatformApiHandler(LVoid* vm)
 
 LInt requireFile(LVoid* vm)
 {
+    if (GetLocalSize(vm) < 1) {
+        BOYIA_LOG("requireFile argments count < %d", 1);
+        return kOpResultEnd;
+    }
+
     BoyiaValue* scriptSrcValue = (BoyiaValue*)GetLocalValue(0, vm);
     char* scriptSrc = convertMStr2Str(GetStringBuffer(scriptSrcValue));
-    GetRuntime(vm)->compileFile(TO_STR(scriptSrc));
+    TO_STR_VAR(scriptSrc, requireScriptSrc);
+
+    const String& currentScriptPath = GetRuntime(vm)->getCurrentScript();
+    if (!FileUtil::IsAbsolutePath(requireScriptSrc)) {
+        FileUtil::getAbsoluteFilePath(currentScriptPath, requireScriptSrc, requireScriptSrc);
+    }
+    GetRuntime(vm)->compileFile(requireScriptSrc);
+    return kOpResultSuccess;
+}
+
+LInt getCurrentAbsolutePath(LVoid* vm)
+{
+    if (GetLocalSize(vm) < 1) {
+        BOYIA_LOG("getCurrentAbsolutePath argments count < %d", 1);
+        return kOpResultEnd;
+    }
+
+    BoyiaValue* relativePath = (BoyiaValue*)GetLocalValue(0, vm);
+    String relativePathStr;
+    boyiaStrToNativeStr(relativePath, relativePathStr);
+    String absolutePathStr;
+    FileUtil::getCurrentAbsolutePath(relativePathStr, absolutePathStr);
+
+    BoyiaValue val;
+    CreateNativeString(&val, (LInt8*)absolutePathStr.GetBuffer(), absolutePathStr.GetLength(), vm);
+    absolutePathStr.ReleaseBuffer();
+    
+    SetNativeResult(&val, vm);
+    return kOpResultSuccess;
+}
+
+LInt getAbsoluteFilePath(LVoid* vm)
+{
+    if (GetLocalSize(vm) < 2) {
+        BOYIA_LOG("getAbsoluteFilePath argments count < %d", 2);
+        return kOpResultEnd;
+    }
+
+    BoyiaValue* absolutePath = (BoyiaValue*)GetLocalValue(0, vm);
+    String absolutePathStr;
+    boyiaStrToNativeStr(absolutePath, absolutePathStr);
+
+    BoyiaValue* relativePath = (BoyiaValue*)GetLocalValue(1, vm);
+    String relativePathStr;
+    boyiaStrToNativeStr(relativePath, relativePathStr);
+
+
+    FileUtil::getAbsoluteFilePath(absolutePathStr, relativePathStr, absolutePathStr);
+    BoyiaValue val;
+    CreateNativeString(&val, (LInt8*)absolutePathStr.GetBuffer(), absolutePathStr.GetLength(), vm);
+    absolutePathStr.ReleaseBuffer();
+
     return kOpResultSuccess;
 }

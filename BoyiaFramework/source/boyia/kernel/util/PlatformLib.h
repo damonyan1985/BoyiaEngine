@@ -125,6 +125,11 @@ typedef LByte LBYTE;
 #define UALLOCN(c, n) new c[n]
 #define UFREE(p) delete p
 
+// Function in argument, Only for remark
+#define In
+// Function out argument, Only for remark
+#define Out
+
 //
 LInt LStrlen(const LUint8* aStr);
 

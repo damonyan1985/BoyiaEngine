@@ -40,6 +40,39 @@ private:
     BoyiaValue m_cb;
 };
 
+class BoyiaCompileInfo {
+public:
+    BoyiaCompileInfo(BoyiaRuntime* runtime) : m_runtime(runtime) {}
+    LVoid compileFile(const String& path)
+    {
+        m_currentScriptPath = path;
+        if (m_programSet.get(path)) {
+            return;
+        }
+        String source;
+        FileUtil::readFile(path, source);
+        if (source.GetLength()) {
+            compile(source);
+            m_programSet.put(path, LTrue);
+        }
+
+        m_currentScriptPath = _CS("");
+    }
+
+    LVoid compile(const String& script)
+    {
+        CompileCode((char*)script.GetBuffer(), m_runtime->vm());
+    }
+
+    const String& getCurrentScript() const {
+        return m_currentScriptPath;
+    }
+private:
+    HashMap<HashString, LBool> m_programSet;
+    String m_currentScriptPath;
+    BoyiaRuntime* m_runtime;
+};
+
 #define GEN_ID(key) (m_idCreator->genIdentByStr(key, StringUtils::StringSize(key)))
 
 BoyiaRuntime::BoyiaRuntime()
@@ -51,6 +84,7 @@ BoyiaRuntime::BoyiaRuntime()
     , m_gc(CreateGC(m_vm))
     , m_isGcRuning(LFalse)
     , m_eventManager(new BoyiaAsyncEventManager())
+    , m_compileInfo(new BoyiaCompileInfo(this))
 {
 }
 
@@ -177,20 +211,16 @@ LVoid BoyiaRuntime::initNativeFunction()
 
 LVoid BoyiaRuntime::compile(const String& script)
 {
-    CompileCode((char*)script.GetBuffer(), m_vm);
+    m_compileInfo->compile(script);
 }
 
 LVoid BoyiaRuntime::compileFile(const String& path)
 {
-    if (m_programSet.get(path)) {
-        return;
-    }
-    String source;
-    FileUtil::readFile(path, source);
-    if (source.GetLength()) {
-        compile(source);
-        m_programSet.put(path, LTrue);
-    }
+    m_compileInfo->compileFile(path);
+}
+
+const String& BoyiaRuntime::getCurrentScript() const {
+    return m_compileInfo->getCurrentScript();
 }
 
 LInt BoyiaRuntime::findNativeFunc(LUintPtr key) const

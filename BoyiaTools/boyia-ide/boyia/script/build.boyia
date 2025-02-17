@@ -1,3 +1,7 @@
 fun require(path) {
     BY_Require(path);
 }
+
+require("src/Util.boyia");
+
+Util.log("platform is " + Util.getOS());

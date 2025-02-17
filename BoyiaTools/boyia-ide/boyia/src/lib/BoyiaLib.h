@@ -100,4 +100,8 @@ LInt callPlatformApiHandler(LVoid* vm);
 
 LInt requireFile(LVoid* vm);
 
+LInt getCurrentAbsolutePath(LVoid* vm);
+
+LInt getAbsoluteFilePath(LVoid* vm);
+
 #endif // !BoyiaLib_h

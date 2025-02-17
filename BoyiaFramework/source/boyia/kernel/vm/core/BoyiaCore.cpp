@@ -347,6 +347,7 @@ typedef struct {
     LInt mLineNum; // Current Line num of source code
     BoyiaToken mToken;
     BoyiaVM* mVm;
+    CommandTable* mCmds;
 } CompileState;
 
 /* Global value define end */
@@ -803,7 +804,7 @@ static Instruction* PutInstruction(
     newIns->mOPCode = op;
     newIns->mNext = kInvalidInstruction;
     newIns->mCache = kBoyiaNull;
-    CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
+    CommandTable* cmds = cs->mCmds;
     Instruction* ins = cmds->mEnd;
     if (!ins) {
         cmds->mBegin = newIns;
@@ -1616,7 +1617,7 @@ static LInt HandleCreateExecutor(LVoid* ins, BoyiaVM* vm) {
 
 // 解析函数体或者类体中的内容
 static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
-    CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
+    CommandTable* cmds = cs->mCmds;
 
     CommandTable tmpTable;
     tmpTable.mBegin = kBoyiaNull;
@@ -1627,7 +1628,7 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
         // 类成员的创建在主体上下中进行
         OpCommand cmd = { OP_CONST_NUMBER, -1 };
         funInst = PutInstruction(&cmd, &cmd, kCmdExecCreate, cs);
-        cs->mVm->mEState->mStackFrame.mContext = &tmpTable;
+        cs->mCmds = &tmpTable;
     }
 
     BlockStatement(cs);
@@ -1639,7 +1640,7 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
         funInst->mOPRight.mType = OP_CONST_NUMBER;
         funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - cs->mVm->mVMCode->mCode);
     }
-    cs->mVm->mEState->mStackFrame.mContext = cmds;
+    cs->mCmds = cmds;
 }
 
 static LInt HandleCreateClass(LVoid* ins, BoyiaVM* vm) {
@@ -1763,13 +1764,14 @@ static LVoid GlobalStatement(CompileState* cs) {
     }
 }
 
-static LVoid AppendEntry(BoyiaVM* vm) {
-    CommandTable* table = vm->mEState->mStackFrame.mContext;
+static LVoid AppendEntry(CompileState* cs) {
+    CommandTable* table = cs->mCmds;
     // Entry的begin为空，证明没有指令
     if (!table || !table->mBegin) {
         return;
     }
 
+    BoyiaVM* vm = cs->mVm;
     // Entry起始位置获取在VMCode中的索引
     vm->mEntry->mTable[vm->mEntry->mSize++] = table->mBegin - vm->mVMCode->mCode;
 }
@@ -1777,7 +1779,7 @@ static LVoid AppendEntry(BoyiaVM* vm) {
 // 该函数记录全局变量以及函数接口
 static LVoid ParseStatement(CompileState* cs) {
     LInt brace = 0; // ‘{’的个数
-    cs->mVm->mEState->mStackFrame.mContext = CreateExecutor(cs);
+    cs->mCmds = CreateExecutor(cs);
     do {
         while (brace) {
             NextToken(cs);
@@ -1809,9 +1811,19 @@ static LVoid ParseStatement(CompileState* cs) {
         }
     } while (cs->mToken.mTokenValue != BY_END);
 
-    AppendEntry(cs->mVm);
+    AppendEntry(cs);
+    
+    // 多文件嵌套编译时，需要保存执行环境
+    Instruction* pc = cs->mVm->mEState->mStackFrame.mPC;
+    CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
+
     // 执行全局声明和定义
+    cs->mVm->mEState->mStackFrame.mContext = cs->mCmds;
     ExecuteCode(cs->mVm);
+
+    // 恢复执行环境
+    cs->mVm->mEState->mStackFrame.mPC = pc;
+    cs->mVm->mEState->mStackFrame.mContext = cmds;
 }
 
 static LInt HandleDeclLocal(LVoid* ins, BoyiaVM* vm) {
@@ -3030,13 +3042,11 @@ LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm) {
 /*  output function */
 LVoid CompileCode(LInt8* code, LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    ResetScene(vmPtr->mEState);
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
     cs.mVm = vmPtr;
     ParseStatement(&cs); // 该函数记录全局变量以及函数接口
-    ResetScene(vmPtr->mEState);
 }
 
 LVoid* GetLocalValue(LInt idx, LVoid* vm) {
@@ -3061,11 +3071,12 @@ LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm) {
     cs.mProg = fun;
     cs.mLineNum = 1;
     cs.mVm = vmPtr;
-    CommandTable* cmds = CreateExecutor(&cs);
-    vmPtr->mEState->mStackFrame.mContext = cmds;
+    cs.mCmds = CreateExecutor(&cs);
+    
 
     EvalExpression(&cs); // 解析例如func(a,b,c);
-    ExecuteCode(cs.mVm);
+    vmPtr->mEState->mStackFrame.mContext = cs.mCmds;
+    ExecuteCode(vmPtr);
 
     if (ret) {
         BoyiaValue* value = (BoyiaValue*)ret;

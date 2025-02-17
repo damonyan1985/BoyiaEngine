@@ -9,6 +9,7 @@
 
 namespace boyia {
 
+class BoyiaCompileInfo;
 class BoyiaAsyncEventManager;
 class BoyiaRuntime {
 public:
@@ -34,6 +35,7 @@ public:
     // 调用平台相关API
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
     LVoid consumeMicroTask();
+    const String& getCurrentScript() const;
 
 private:
     LVoid initNativeFunction();
@@ -48,7 +50,8 @@ private:
     LInt m_nativeSize;
     LBool m_isGcRuning;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
-    HashMap<HashString, LBool> m_programSet;
+    OwnerPtr<BoyiaCompileInfo> m_compileInfo;
+    
 };
 }
 
