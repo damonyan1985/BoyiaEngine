@@ -393,7 +393,7 @@ LVoid LoadVMCode(LVoid* vm)
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getStringTableCachePath()), content);
     OwnerPtr<KVector<String>> stringTable = StringUtils::split(content, kStringTableSplitFlag);
 
-    BoyiaStr* strTable = new BoyiaStr[stringTable->size()];
+    OwnerPtr<BoyiaStr> strTable = new BoyiaStr[stringTable->size()];
     for (LInt i = 0; i < stringTable->size(); i++) {
         strTable[i].mPtr = FAST_NEW_ARRAY(LInt8, stringTable->elementAt(i).GetLength());
         strTable[i].mLen = stringTable->elementAt(i).GetLength();
@@ -401,7 +401,6 @@ LVoid LoadVMCode(LVoid* vm)
     }
 
     LoadStringTable(strTable, stringTable->size(), vm);
-    delete[] strTable;
 
     LoadSymbolTable(vm);
 

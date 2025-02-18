@@ -36,6 +36,7 @@ public:
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
     LVoid consumeMicroTask();
     const String& getCurrentScript() const;
+    LBool isLoadExeFile() const;
 
 private:
     LVoid initNativeFunction();
@@ -49,6 +50,7 @@ private:
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
+    LBool m_isLoadExeFile;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
     OwnerPtr<BoyiaCompileInfo> m_compileInfo;
     

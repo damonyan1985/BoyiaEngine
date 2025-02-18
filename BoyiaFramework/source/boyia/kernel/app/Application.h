@@ -9,7 +9,7 @@ namespace yanbo {
 class Application {
 public:
     Application(AppInfo* info);
-    ~Application();
+    virtual ~Application();
 
     UIView* view() const;
     boyia::BoyiaRuntime* runtime() const;
@@ -17,8 +17,8 @@ public:
     const AppInfo* appInfo() const;
 
 private:
-    UIView* m_view;
-    boyia::BoyiaRuntime* m_runtime;
+    OwnerPtr<UIView> m_view;
+    OwnerPtr<boyia::BoyiaRuntime> m_runtime;
     AppInfo* m_info;
 };
 }

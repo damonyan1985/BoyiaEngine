@@ -40,6 +40,7 @@ public:
     // 调用平台相关API
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
     LVoid consumeMicroTask();
+    LBool isLoadExeFile() const;
 
 private:
     LVoid initNativeFunction();
@@ -54,6 +55,7 @@ private:
     LVoid* m_gc;
     LInt m_nativeSize;
     LBool m_isGcRuning;
+    LBool m_isLoadExeFile;
     OwnerPtr<BoyiaDomMap> m_domMap;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
 };

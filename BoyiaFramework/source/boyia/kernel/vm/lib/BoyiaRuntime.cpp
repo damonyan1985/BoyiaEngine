@@ -7,6 +7,8 @@
 #include "BoyiaAsyncEvent.h"
 #include "SystemUtil.h"
 #include "StringUtils.h"
+#include "FileUtil.h"
+#include "PlatformBridge.h"
 
 const LInt kMemoryPoolSize = (6 * MB);
 const LInt kGcMemorySize = (8 * KB);
@@ -69,6 +71,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_isGcRuning(LFalse)
     , m_eventManager(new BoyiaAsyncEventManager())
     , m_domMap(new BoyiaDomMap())
+    , m_isLoadExeFile(LFalse)
 {
 }
 
@@ -118,6 +121,11 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
 
 LVoid BoyiaRuntime::init()
 {
+    // if code entry cache exist, use cache to load program
+    if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
+        LoadVMCode(vm());
+        m_isLoadExeFile = LTrue;
+    }
     // begin builtins id
     GEN_ID("this");
     GEN_ID("super");
@@ -133,6 +141,11 @@ LVoid BoyiaRuntime::init()
     BuiltinStringClass(m_vm);
     BuiltinMapClass(m_vm);
     BuiltinMicroTaskClass(m_vm);
+}
+
+LBool BoyiaRuntime::isLoadExeFile() const
+{
+    return m_isLoadExeFile;
 }
 
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)

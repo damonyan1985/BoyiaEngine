@@ -921,6 +921,10 @@ LInt callPlatformApiHandler(LVoid* vm)
 
 LInt requireFile(LVoid* vm)
 {
+    if (GetRuntime(vm)->isLoadExeFile()) {
+        return kOpResultSuccess;
+    }
+
     if (GetLocalSize(vm) < 1) {
         BOYIA_LOG("requireFile argments count < %d", 1);
         return kOpResultEnd;

@@ -85,6 +85,7 @@ BoyiaRuntime::BoyiaRuntime()
     , m_isGcRuning(LFalse)
     , m_eventManager(new BoyiaAsyncEventManager())
     , m_compileInfo(new BoyiaCompileInfo(this))
+    , m_isLoadExeFile(LFalse)
 {
 }
 
@@ -133,6 +134,11 @@ LVoid BoyiaRuntime::prepareDelete(LVoid* ptr)
 
 LVoid BoyiaRuntime::init()
 {
+    // if code entry cache exist, use cache to load program
+    if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
+        //LoadVMCode(vm());
+        //m_isLoadExeFile = LTrue;
+    }
     // begin builtins id
     GEN_ID("this");
     GEN_ID("super");
@@ -207,6 +213,11 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(GEN_ID("BY_Require"), requireFile);
     // End
     appendNative(0, kBoyiaNull);
+}
+
+LBool BoyiaRuntime::isLoadExeFile() const
+{
+    return m_isLoadExeFile;
 }
 
 LVoid BoyiaRuntime::compile(const String& script)

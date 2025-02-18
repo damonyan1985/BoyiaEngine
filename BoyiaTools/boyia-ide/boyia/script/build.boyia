@@ -3,5 +3,6 @@ fun require(path) {
 }
 
 require("src/Util.boyia");
+require("src/File.boyia");
 
 Util.log("platform is " + Util.getOS());

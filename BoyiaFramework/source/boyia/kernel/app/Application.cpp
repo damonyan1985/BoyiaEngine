@@ -1,22 +1,15 @@
 #include "Application.h"
-#include "PlatformBridge.h"
-#include "FileUtil.h"
 
 namespace yanbo {
 Application::Application(AppInfo* info)
     : m_info(info)
+    , m_view(new UIView(this))
+    , m_runtime(new boyia::BoyiaRuntime(this))
 {
-    m_view = new UIView(this);
-    m_runtime = new boyia::BoyiaRuntime(this);
 }
 
 LVoid Application::init(const String& entryPage)
 {
-    // if code entry cache exist, use cache to load program
-    if (FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
-        LoadVMCode(m_runtime->vm());
-    }
-
     // init native function and special identify
     m_runtime->init();
     m_view->loadPage(entryPage);
@@ -24,8 +17,6 @@ LVoid Application::init(const String& entryPage)
 
 Application::~Application()
 {
-    delete m_runtime;
-    delete m_view;
 }
 
 UIView* Application::view() const

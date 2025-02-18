@@ -1,0 +1,11 @@
+// File operation
+
+class File {
+    fun readFile(path) {
+        BY_ReadFile(path);
+    }
+
+    fun writeFile(path, content) {
+        BY_WriteFile(path, content);
+    }
+}
