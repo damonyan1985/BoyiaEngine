@@ -1814,16 +1814,21 @@ static LVoid ParseStatement(CompileState* cs) {
     AppendEntry(cs);
     
     // 多文件嵌套编译时，需要保存执行环境
-    Instruction* pc = cs->mVm->mEState->mStackFrame.mPC;
-    CommandTable* cmds = cs->mVm->mEState->mStackFrame.mContext;
+    ExecState* es = cs->mVm->mEState;
+    if (cs->mVm->mEState->mStackFrame.mContext) {
+        ExecState* state = CreateExecState(cs->mVm);
+        SwitchExecState(state, cs->mVm);
+    }
 
     // 执行全局声明和定义
     cs->mVm->mEState->mStackFrame.mContext = cs->mCmds;
     ExecuteCode(cs->mVm);
 
     // 恢复执行环境
-    cs->mVm->mEState->mStackFrame.mPC = pc;
-    cs->mVm->mEState->mStackFrame.mContext = cmds;
+    if (cs->mVm->mEState != es) {
+        DestroyExecState(cs->mVm->mEState, cs->mVm);
+        SwitchExecState(es, cs->mVm);
+    }
 }
 
 static LInt HandleDeclLocal(LVoid* ins, BoyiaVM* vm) {
@@ -3133,7 +3138,6 @@ LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm) {
 LVoid ExecuteGlobalCode(LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
 
-    vmPtr->mEState->mStackFrame.mLoopSize = 0;
     ResetScene(vmPtr->mEState);
     CommandTable cmds;
     for (LInt i = 0; i < vmPtr->mEntry->mSize; i++) {

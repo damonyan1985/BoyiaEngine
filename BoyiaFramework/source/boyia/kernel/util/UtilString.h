@@ -82,6 +82,7 @@ public:
     LString(const T* lpsz, LInt nLength);
     LVoid AllocBuffer(LInt nLen);
     LVoid Copy(const T* lpsz, Bool owner = LTrue, LInt size = -1);
+    LVoid DeepAssign(LString<T>& src);
 
 protected:
     LVoid StrAssignment(const T* lpsz);
@@ -206,9 +207,9 @@ LString<T>::LString(const LString<T>& stringSrc, Bool owner)
         LMemcpy(m_pchData, stringSrc.GetBuffer(), nLen * sizeof(T));
         m_size = nLen;
     } else {
-        m_pchData = stringSrc.GetBuffer();
-        m_pchDataLen = stringSrc.GetLength();
-        m_size = stringSrc.GetLength();
+        m_pchData = stringSrc.m_pchData;
+        m_pchDataLen = stringSrc.m_pchDataLen;
+        m_size = stringSrc.m_size;
     }
 
     m_owner = owner;
@@ -254,6 +255,16 @@ LVoid LString<T>::Copy(const T* lpsz, Bool owner, LInt size)
     }
 
     m_owner = owner;
+}
+
+template <class T>
+LVoid LString<T>::DeepAssign(LString<T>& src)
+{
+    m_pchData = src.m_pchData;
+    m_owner = src.m_owner;
+    m_pchDataLen = src.m_pchDataLen;
+    m_size = src.m_size;
+    src.ReleaseBuffer();
 }
 
 template <class T>

@@ -148,6 +148,11 @@ LBool BoyiaRuntime::isLoadExeFile() const
     return m_isLoadExeFile;
 }
 
+LVoid BoyiaRuntime::runExeFile()
+{
+    ExecuteGlobalCode(vm());
+}
+
 LVoid BoyiaRuntime::appendNative(LUintPtr id, NativePtr ptr)
 {
     m_nativeFunTable[m_nativeSize++] = { id, ptr };

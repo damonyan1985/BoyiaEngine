@@ -42,9 +42,14 @@ private:
 
 class BoyiaCompileInfo {
 public:
-    BoyiaCompileInfo(BoyiaRuntime* runtime) : m_runtime(runtime) {}
+    BoyiaCompileInfo(BoyiaRuntime* runtime)
+        : m_runtime(runtime) {}
+
     LVoid compileFile(const String& path)
     {
+        String currentScriptPath;
+        currentScriptPath.DeepAssign(m_currentScriptPath);
+
         m_currentScriptPath = path;
         if (m_programSet.get(path)) {
             return;
@@ -56,7 +61,7 @@ public:
             m_programSet.put(path, LTrue);
         }
 
-        m_currentScriptPath = _CS("");
+        m_currentScriptPath.DeepAssign(currentScriptPath);
     }
 
     LVoid compile(const String& script)
@@ -136,8 +141,8 @@ LVoid BoyiaRuntime::init()
 {
     // if code entry cache exist, use cache to load program
     if (FileUtil::isExist(yanbo::PlatformBridge::getInstructionEntryPath())) {
-        //LoadVMCode(vm());
-        //m_isLoadExeFile = LTrue;
+        LoadVMCode(vm());
+        m_isLoadExeFile = LTrue;
     }
     // begin builtins id
     GEN_ID("this");
@@ -218,6 +223,11 @@ LVoid BoyiaRuntime::initNativeFunction()
 LBool BoyiaRuntime::isLoadExeFile() const
 {
     return m_isLoadExeFile;
+}
+
+LVoid BoyiaRuntime::runExeFile()
+{
+    ExecuteGlobalCode(vm());
 }
 
 LVoid BoyiaRuntime::compile(const String& script)

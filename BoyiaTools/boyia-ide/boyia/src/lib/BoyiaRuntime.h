@@ -37,6 +37,7 @@ public:
     LVoid consumeMicroTask();
     const String& getCurrentScript() const;
     LBool isLoadExeFile() const;
+    LVoid runExeFile();
 
 private:
     LVoid initNativeFunction();

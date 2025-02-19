@@ -41,6 +41,7 @@ public:
     LVoid callPlatformApi(const String& params, BoyiaValue* propCB);
     LVoid consumeMicroTask();
     LBool isLoadExeFile() const;
+    LVoid runExeFile();
 
 private:
     LVoid initNativeFunction();

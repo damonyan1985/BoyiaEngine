@@ -11,6 +11,11 @@ int main(int argc, char** argv)
 {
     boyia::BoyiaRuntime runtime;
     runtime.init();
+
+    if (runtime.isLoadExeFile()) {
+        runtime.runExeFile();
+        return 0;
+    }
     if (argc <= 1) {
         std::cout << "No args in command!\n" << argc;
         return 0;

@@ -45,6 +45,7 @@ public:
     const T& operator[](LInt position) const;
     void remove(LInt position);
     const T* getBuffer() const;
+    T* getBuffer();
     KVector<T>& operator=(const KVector<T>& kv);
     LBool contains(const T& kv);
     void removeAllElements();
@@ -116,6 +117,12 @@ KVector<T>::KVector(const KVector<T>& kv, Bool deep)
 
 template <class T>
 const T* KVector<T>::getBuffer() const
+{
+    return m_buffer;
+}
+
+template <class T>
+T* KVector<T>::getBuffer()
 {
     return m_buffer;
 }

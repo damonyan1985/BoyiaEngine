@@ -147,8 +147,8 @@ LVoid ResourceLoader::startupPage()
     m_render->layout();
     m_render->paint(kBoyiaNull);
 
-    if (FileUtil::isExist(PlatformBridge::getInstructionEntryPath())) {
-        ExecuteGlobalCode(m_view->application()->runtime()->vm());
+    if (m_view->application()->runtime()->isLoadExeFile()) {
+        m_view->application()->runtime()->runExeFile();
     }
 }
 
