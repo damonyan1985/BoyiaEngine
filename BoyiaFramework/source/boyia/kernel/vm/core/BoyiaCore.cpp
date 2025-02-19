@@ -1811,7 +1811,7 @@ static LVoid ParseStatement(CompileState* cs) {
         }
     } while (cs->mToken.mTokenValue != BY_END);
 
-    AppendEntry(cs);
+    //AppendEntry(cs);
     
     // 多文件嵌套编译时，需要保存执行环境
     ExecState* es = cs->mVm->mEState;
@@ -1829,6 +1829,8 @@ static LVoid ParseStatement(CompileState* cs) {
         DestroyExecState(cs->mVm->mEState, cs->mVm);
         SwitchExecState(es, cs->mVm);
     }
+
+    AppendEntry(cs);
 }
 
 static LInt HandleDeclLocal(LVoid* ins, BoyiaVM* vm) {
