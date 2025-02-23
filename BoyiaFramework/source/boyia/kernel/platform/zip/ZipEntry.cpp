@@ -183,10 +183,10 @@ bool ZipEntry::zip(const String& src, const String& dest, const String& password
             return false;
         }
 
-        char buffer[4096];
+        KVector<char> buffer(0, 4096);
         size_t readSize;
-        while ((readSize = fread(buffer, 1, sizeof(buffer), file)) > 0) {
-            err = zipWriteInFileInZip(zf, buffer, static_cast<unsigned int>(readSize));
+        while ((readSize = fread(buffer.getBuffer(), 1, buffer.capacity(), file)) > 0) {
+            err = zipWriteInFileInZip(zf, buffer.getBuffer(), static_cast<unsigned int>(readSize));
             if (err < 0) {
                 fclose(file);
                 zipCloseFileInZip(zf);
