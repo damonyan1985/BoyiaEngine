@@ -245,10 +245,10 @@ LInt StyleParser::getCssColor(const String& colorValue)
         String colorStr(colorBuffer, LTrue, 7);
 
         return LColorUtil::parseRgbString(colorStr);
-    } else {
-        BOYIA_LOG("getCssColor = %s", GET_STR(colorValue));
-        return LColorUtil::parseRgbString(colorValue);
     }
+
+    BOYIA_LOG("getCssColor = %s", GET_STR(colorValue));
+    return LColorUtil::parseRgbString(colorValue);
 }
 
 void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value)

@@ -46,6 +46,12 @@
     <Filter Include="third_party\cjson">
       <UniqueIdentifier>{2f2ee4ca-a072-4f9f-b980-e9bb16ec0628}</UniqueIdentifier>
     </Filter>
+    <Filter Include="third_party\zip">
+      <UniqueIdentifier>{454eed90-c7e4-466e-b87c-6d6e27d0a7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\zip\minizip">
+      <UniqueIdentifier>{e1083418-4012-423f-afcc-e59e62d2ea06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="boyia.cpp">
@@ -164,6 +170,60 @@
     </ClCompile>
     <ClCompile Include="..\..\src\lib\BoyiaLib.cpp">
       <Filter>src\vm\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\adler32.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\compress.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\gzclose.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\gzlib.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\gzread.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\gzwrite.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\infback.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inffast.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inflate.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inftrees.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\trees.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\uncompr.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\zutil.c">
+      <Filter>third_party\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\ioapi.c">
+      <Filter>third_party\zip\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\unzip.c">
+      <Filter>third_party\zip\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.c">
+      <Filter>third_party\zip\minizip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +376,51 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lib\BoyiaLib.h">
       <Filter>src\vm\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\crc32.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\deflate.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\gzguts.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inffast.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inffixed.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inflate.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\inftrees.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\trees.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\zconf.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\zlib.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\zutil.h">
+      <Filter>third_party\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\crypt.h">
+      <Filter>third_party\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\ioapi.h">
+      <Filter>third_party\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\unzip.h">
+      <Filter>third_party\zip\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\thirdparty\zip\minizip\zip.h">
+      <Filter>third_party\zip\minizip</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
