@@ -1,5 +1,6 @@
 #include "ZipEntry.h"
 #include "FileUtil.h"
+#include "KVector.h"
 //#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -110,6 +111,95 @@ bool ZipEntry::writeFile(unzFile& zipfile, char* name)
 
     fclose(out);
     out = kBoyiaNull;
+    return true;
+}
+
+static int getFileCrc(const char* filename, uLong* result) {
+    uLong crc = 0;
+    int err = ZIP_OK;
+    FILE* file = fopen(filename, "rb");
+    if (file == NULL) {
+        return ZIP_ERRNO;
+    }
+
+    uLong readSize = 0;
+    KVector<char> buffer(0, 1024);
+    if (err == ZIP_OK) {
+        do {
+            err = ZIP_OK;
+            readSize = fread(buffer.getBuffer(), 1, buffer.capacity(), file);
+            if (readSize < buffer.capacity()) {
+                if (feof(file) == 0) {
+                    err = ZIP_ERRNO;
+                }
+            }
+        
+            if (readSize > 0) {
+                crc = crc32_z(crc, (const Bytef*)buffer.getBuffer(), readSize);
+            }
+        } while (err == ZIP_OK && readSize > 0);
+
+        if (file) {
+            fclose(file);
+        }
+
+        *result = crc;
+        return err;
+    }
+}
+
+// src such as "e:\example example.zip 123"
+bool ZipEntry::zip(const String& src, const String& dest, const String& password)
+{
+    zipFile zf = zipOpen(GET_STR(dest), APPEND_STATUS_CREATE);
+    if (zf == NULL) {
+        return false;
+    }
+
+    KVector<String> files;
+    FileUtil::listAllFiles(_CS(src), files);
+    LInt size = files.size();
+    for (LInt i = 0; i < size; i++) {
+        zip_fileinfo fileInfo = {};
+        String relativePath = files[i].Mid(src.GetLength() + 1);
+        uLong crc;
+        getFileCrc(GET_STR(files[i]), &crc);
+        LInt err = zipOpenNewFileInZip3(
+            zf,
+            GET_STR(relativePath),
+            &fileInfo,
+            NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_BEST_COMPRESSION, 0,
+            -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY, GET_STR(password), crc);
+
+        if (err != ZIP_OK) {
+            zipClose(zf, NULL);
+            return false;
+        }
+
+        FILE* file = fopen(GET_STR(files[i]), "rb");
+        if (file == NULL) {
+            zipCloseFileInZip(zf);
+            zipClose(zf, NULL);
+            return false;
+        }
+
+        char buffer[4096];
+        size_t readSize;
+        while ((readSize = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+            err = zipWriteInFileInZip(zf, buffer, static_cast<unsigned int>(readSize));
+            if (err < 0) {
+                fclose(file);
+                zipCloseFileInZip(zf);
+                zipClose(zf, NULL);
+                return false;
+            }
+        }
+
+        fclose(file);
+        zipCloseFileInZip(zf);
+    }
+
+    zipClose(zf, NULL);
     return true;
 }
 }

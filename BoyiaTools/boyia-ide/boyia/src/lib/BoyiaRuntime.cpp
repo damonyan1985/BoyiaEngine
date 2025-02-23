@@ -216,6 +216,7 @@ LVoid BoyiaRuntime::initNativeFunction()
     appendNative(GEN_ID("BY_CreateSocket"), createSocket);
     appendNative(GEN_ID("BY_SendSocketMsg"), sendSocketMsg);
     appendNative(GEN_ID("BY_Require"), requireFile);
+    appendNative(GEN_ID("BY_ZipFile"), zipFileFunction);
     // End
     appendNative(0, kBoyiaNull);
 }

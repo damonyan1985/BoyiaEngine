@@ -9,6 +9,7 @@
 //#include "BoyiaViewGroup.h"
 #include "PlatformBridge.h"
 #include "BoyiaError.h"
+#include "ZipEntry.h"
 #if ENABLE(BOYIA_ANDROID)
 #include "JNIUtil.h"
 #endif
@@ -984,5 +985,31 @@ LInt getAbsoluteFilePath(LVoid* vm)
     CreateNativeString(&val, (LInt8*)absolutePathStr.GetBuffer(), absolutePathStr.GetLength(), vm);
     absolutePathStr.ReleaseBuffer();
 
+    return kOpResultSuccess;
+}
+
+LInt zipFileFunction(LVoid* vm)
+{
+    LInt localSize = GetLocalSize(vm);
+    if (localSize < 2) {
+        BOYIA_LOG("zipFile argments count < %d", 2);
+        return kOpResultEnd;
+    }
+
+    BoyiaValue* absolutePathSrc = (BoyiaValue*)GetLocalValue(0, vm);
+    String absolutePathSrcStr;
+    boyiaStrToNativeStr(absolutePathSrc, absolutePathSrcStr);
+
+    BoyiaValue* absolutePathDest = (BoyiaValue*)GetLocalValue(1, vm);
+    String absolutePathDestStr;
+    boyiaStrToNativeStr(absolutePathDest, absolutePathDestStr);
+
+    String password;
+    if (localSize == 3) {
+        BoyiaValue* passwordValue = (BoyiaValue*)GetLocalValue(2, vm);
+        boyiaStrToNativeStr(passwordValue, password);
+    }
+
+    yanbo::ZipEntry::zip(absolutePathSrcStr, absolutePathDestStr, password);
     return kOpResultSuccess;
 }

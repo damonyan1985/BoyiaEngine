@@ -32,6 +32,7 @@ public:
     static LVoid syncLoadUrl(const String& url, String& content);
     static const String& fileSchema();
     static LVoid listFiles(const String& path, KVector<String>& dirs, KVector<String>& files);
+    static LVoid listAllFiles(const String& path, KVector<String>& files);
     static LVoid getCurrentAbsolutePath(In const String& relativePath, Out String& absolutePath);
     static LVoid getAbsoluteFilePath(In const String& absolutePath, In const String& relativeFilePath, Out String& absoluteFilePath);
     static bool IsAbsolutePath(const String& path);

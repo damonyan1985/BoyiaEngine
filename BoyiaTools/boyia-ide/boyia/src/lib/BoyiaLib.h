@@ -104,4 +104,6 @@ LInt getCurrentAbsolutePath(LVoid* vm);
 
 LInt getAbsoluteFilePath(LVoid* vm);
 
+LInt zipFileFunction(LVoid* vm);
+
 #endif // !BoyiaLib_h

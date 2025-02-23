@@ -66,4 +66,8 @@ class Util {
         task.init(worker);
         return task;
     }
+
+    fun zip(src, dest, password) {
+        BY_ZipFile(src, dest, password);
+    }
 }

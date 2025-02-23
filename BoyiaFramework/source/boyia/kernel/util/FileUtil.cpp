@@ -260,6 +260,51 @@ LVoid FileUtil::printAllFiles(const char* path)
 #endif
 }
 
+#if ENABLE(BOYIA_WINDOWS)
+static LVoid listFilesWin(const String& path, KVector<String>& dirs, KVector<String>& files) {
+    
+    WIN32_FIND_DATAA findData;
+    String allPath = path + _CS("/*.*");
+    HANDLE hFind = FindFirstFileA(GET_STR(allPath), &findData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        return;
+    }
+
+    do {
+        const char* fileName = findData.cFileName;
+        if (FileUtil::isSpecialDir(fileName)) {
+            continue;
+        }
+
+        CString filePath = GET_STR(path);
+        LInt len = filePath.GetLength();
+        if ('/' != filePath[len - 1]) {
+            filePath += '/';
+        }
+
+        filePath += fileName;
+        const char* subPath = GET_STR(filePath);
+        if (FileUtil::isDir(subPath)) {
+            dirs.addElement(_CS(subPath));
+        } else {
+            BOYIA_LOG("FileUtil::printAllFiles final filePath=%s", subPath);
+            files.addElement(_CS(subPath));
+        }
+    } while (FindNextFileA(hFind, &findData));
+}
+
+#endif
+
+LVoid FileUtil::listAllFiles(const String& path, KVector<String>& files) {
+    KVector<String> dirs;
+    FileUtil::listFiles(path, dirs, files);
+    if (dirs.size() > 0) {
+        for (LInt i = 0; i < dirs.size(); i++) {
+            FileUtil::listAllFiles(dirs[i], files);
+        }
+    }
+}
+
 LVoid FileUtil::listFiles(const String& path, KVector<String>& dirs, KVector<String>& files)
 {
     BOYIA_LOG("FileUtil::listFiles filePath=%s", GET_STR(path));
@@ -296,6 +341,7 @@ LVoid FileUtil::listFiles(const String& path, KVector<String>& dirs, KVector<Str
 
     closedir(d);
 #elif ENABLE(BOYIA_WINDOWS)
+    listFilesWin(path, dirs, files);
 #endif
 }
 
