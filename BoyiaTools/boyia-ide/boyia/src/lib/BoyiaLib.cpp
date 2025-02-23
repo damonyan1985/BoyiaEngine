@@ -1013,3 +1013,29 @@ LInt zipFileFunction(LVoid* vm)
     yanbo::ZipEntry::zip(absolutePathSrcStr, absolutePathDestStr, password);
     return kOpResultSuccess;
 }
+
+LInt unzipFileFunction(LVoid* vm)
+{
+    LInt localSize = GetLocalSize(vm);
+    if (localSize < 2) {
+        BOYIA_LOG("zipFile argments count < %d", 2);
+        return kOpResultEnd;
+    }
+
+    BoyiaValue* absolutePathSrc = (BoyiaValue*)GetLocalValue(0, vm);
+    String absolutePathSrcStr;
+    boyiaStrToNativeStr(absolutePathSrc, absolutePathSrcStr);
+
+    BoyiaValue* absolutePathDest = (BoyiaValue*)GetLocalValue(1, vm);
+    String absolutePathDestStr;
+    boyiaStrToNativeStr(absolutePathDest, absolutePathDestStr);
+
+    String password;
+    if (localSize == 3) {
+        BoyiaValue* passwordValue = (BoyiaValue*)GetLocalValue(2, vm);
+        boyiaStrToNativeStr(passwordValue, password);
+    }
+
+    yanbo::ZipEntry::unzip(GET_STR(absolutePathSrcStr), GET_STR(absolutePathDestStr), GET_STR(password));
+    return kOpResultSuccess;
+}

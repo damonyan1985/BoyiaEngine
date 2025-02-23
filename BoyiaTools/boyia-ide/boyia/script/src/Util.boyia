@@ -70,4 +70,8 @@ class Util {
     fun zip(src, dest, password) {
         BY_ZipFile(src, dest, password);
     }
+
+    fun unzip(src, dest, password) {
+        BY_UnZipFile(src, dest, password);
+    }
 }

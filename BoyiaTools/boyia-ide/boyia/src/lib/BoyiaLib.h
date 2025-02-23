@@ -106,4 +106,6 @@ LInt getAbsoluteFilePath(LVoid* vm);
 
 LInt zipFileFunction(LVoid* vm);
 
+LInt unzipFileFunction(LVoid* vm);
+
 #endif // !BoyiaLib_h

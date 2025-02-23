@@ -7,4 +7,6 @@ require("src/File.boyia");
 
 Util.log("platform is " + Util.getOS());
 
-Util.zip("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "123456")
+Util.zip("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "123456");
+
+Util.unzip("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test1", "123456");
