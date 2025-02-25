@@ -38,6 +38,7 @@ public:
     const String& getCurrentScript() const;
     LBool isLoadExeFile() const;
     LVoid runExeFile();
+    LVoid cacheCode();
 
 private:
     LVoid initNativeFunction();

@@ -35,7 +35,7 @@ int main(int argc, char** argv)
         runtime.compileFile(path);
     }
 
-    CacheVMCode(runtime.vm());
+    runtime.cacheCode();
 
     std::cout << "Build Complete!\n" << argc;
     return 0;

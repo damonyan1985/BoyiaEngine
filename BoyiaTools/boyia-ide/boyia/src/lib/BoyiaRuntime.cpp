@@ -296,4 +296,9 @@ LVoid BoyiaRuntime::consumeMicroTask()
 {
     ConsumeMicroTask(m_vm);
 }
+
+LVoid BoyiaRuntime::cacheCode()
+{
+    CacheVMCode(vm());
+}
 }

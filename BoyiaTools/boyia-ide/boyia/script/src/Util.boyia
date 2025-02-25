@@ -67,10 +67,12 @@ class Util {
         return task;
     }
 
+    // compress folder to zip
     fun zip(src, dest, password) {
         BY_ZipFile(src, dest, password);
     }
 
+    // uncompress zip to folder
     fun unzip(src, dest, password) {
         BY_UnZipFile(src, dest, password);
     }

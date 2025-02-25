@@ -19,7 +19,7 @@ BoyiaNetwork::~BoyiaNetwork()
 
 LVoid BoyiaNetwork::load(const String& url)
 {
-    //yanbo::AppManager::instance()->network()->loadUrl(url, this, LFalse);
+    m_loader->loadUrl(url, this, LFalse);
 }
 
 LVoid BoyiaNetwork::load(const String& url, const String& params)

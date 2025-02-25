@@ -128,7 +128,7 @@ static LVoid deleteFileWin(const wstring& path)
         }
 
         fullPath += data.cFileName;
-        if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
+        if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
             deleteFileWin(fullPath);
         } else {
             ::DeleteFile(fullPath.c_str());
@@ -191,8 +191,9 @@ LInt FileUtil::createDir(const char* path)
 #if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     return mkdir(path, S_IRWXU);
 #elif ENABLE(BOYIA_WINDOWS)
-    wstring wpath = yanbo::CharConvertor::CharToWchar(path);
-    return CreateDirectory(wpath.c_str(), kBoyiaNull);
+    // wstring wpath = yanbo::CharConvertor::CharToWchar(path);
+    // return CreateDirectory(wpath.c_str(), kBoyiaNull);
+    return ::CreateDirectoryA(path, NULL);
 #endif
 }
 
