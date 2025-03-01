@@ -2,8 +2,9 @@ fun require(path) {
     BY_Require(path);
 }
 
-require("src/Util.boyia");
-require("src/File.boyia");
+require("src/sdk/Util.boyia");
+require("src/sdk/File.boyia");
+require("src/sdk/Network.boyia");
 
 Util.log("platform is " + Util.getOS());
 

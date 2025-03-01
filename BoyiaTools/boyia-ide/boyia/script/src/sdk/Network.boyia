@@ -1,0 +1,46 @@
+class NetParams {
+    prop method;
+    prop headers;
+    prop body;
+}
+
+class Network {
+    // url, 请求的链接
+    // callback, 回调函数
+    // obj, callback所绑定的对象
+    // params, NetParams对象, 此参数可选
+    fun load(url, callback, obj, params) {
+        var paramStr = null;
+        // 如果params不是NetParams类型的则不选择使用
+        if (!Util.instanceof(params, NetParams)) {
+            params = null;
+            Util.log("params is not the object of NetParams params=" + params);
+        }
+        
+        if (params != null) {
+            paramStr = Util.toJson(params);
+        }
+        BY_LoadData(url, callback, obj, paramStr);
+    }
+}
+
+class BoyiaSocket {
+    prop socket = null;
+    
+    fun create(wsUrl, msgCB) {
+        var ws = new(BoyiaSocket);
+        ws.init(wsUrl, msgCB);
+        return ws;
+    }
+    
+    fun init(wsUrl, msgCB) {
+        this.socket = BY_CreateSocket(wsUrl, msgCB);
+    }
+    
+    fun sendMsg(msg) {
+        BY_SendSocketMsg(this.socket, msg);
+    }
+    
+    fun close() {
+    }
+}

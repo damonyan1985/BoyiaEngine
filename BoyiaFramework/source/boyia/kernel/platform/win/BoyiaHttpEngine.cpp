@@ -2,6 +2,7 @@
 #include "SalLog.h"
 #include "CharConvertor.h"
 #include "UrlParser.h"
+#include "KVector.h"
 #include <windows.h>
 #include <WinInet.h>
 
@@ -193,12 +194,14 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
     // Get HTTP Response Header
     DWORD dwInfoLevel = HTTP_QUERY_RAW_HEADERS_CRLF;
-    DWORD dwInfoBufferLength = 2048;
+    DWORD dwInfoBufferLength = 2 * KB;
     BYTE* pInfoBuffer = (BYTE*)malloc(dwInfoBufferLength + 2);
     while (!HttpQueryInfo(request, dwInfoLevel, pInfoBuffer, &dwInfoBufferLength, NULL)) {
         DWORD dwError = GetLastError();
+        //  如果缓冲区容量不够，清除缓冲区，同时申请2倍大小的容量
         if (dwError == ERROR_INSUFFICIENT_BUFFER) {
             free(pInfoBuffer);
+            dwInfoBufferLength *= 2;
             pInfoBuffer = (BYTE*)malloc(dwInfoBufferLength + 2);
         } else {
             fprintf(stderr, "HttpQueryInfo failed, error: %d (0x%x)/n",
@@ -206,13 +209,15 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
             break;
         }
     }
-    pInfoBuffer[dwInfoBufferLength] = 0;
-    pInfoBuffer[dwInfoBufferLength + 1] = 0;
-    printf("%s", pInfoBuffer);
-    free(pInfoBuffer);
+
+    if (pInfoBuffer) {
+        pInfoBuffer[dwInfoBufferLength] = 0;
+        pInfoBuffer[dwInfoBufferLength + 1] = 0;
+        printf("%s", pInfoBuffer);
+        free(pInfoBuffer);
+    }
 	// Get Response Body
-    DWORD bufferSize = 1 * KB;
-    LByte* buffer = new LByte[bufferSize];
+    KVector<LByte> buffer(0, 1 * KB);
     /*
 	while (InternetQueryDataAvailable(request, &dwBytesAvailable, 0, 0)) {
 		DWORD dwBytesRead;
@@ -233,7 +238,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
     while (true) {
         DWORD readSize;
-        if (!InternetReadFile(request, buffer, bufferSize, &readSize)) {
+        if (!InternetReadFile(request, buffer.getBuffer(), buffer.capacity(), &readSize)) {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);
             CloseHandles(request, connect, internet);
             return;
@@ -243,10 +248,9 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
             break;
         }
 
-        m_callback->onDataReceived(buffer, readSize);
+        m_callback->onDataReceived(buffer.getBuffer(), readSize);
     }
 
-    delete[] buffer;
     m_callback->onLoadFinished();
 
     // Close Http resource

@@ -11,10 +11,6 @@
 #ifndef PlatformLib_h
 #define PlatformLib_h
 
-// Setting byte alignment with one byte
-// BoyiaMemory allocator data must byte alignment
-//#pragma pack(4)
-
 namespace util {
 #define LConst const
 #define LFinal final
@@ -130,7 +126,6 @@ typedef LByte LBYTE;
 // Function out argument, Only for remark
 #define Out
 
-//
 LInt LStrlen(const LUint8* aStr);
 
 LInt LStrcmp(const LCharA* src, const LCharA* cmpStr);
@@ -141,24 +136,21 @@ LInt LStrincmp(const LCharA* src, const LCharA* cmpStr, LInt maxlen);
 
 LInt8* LStrcpy(LInt8* aDest, const LInt8* aSrc);
 
-//
+// Memory Operation
 LVoid* LMemcpy(LVoid* aDest, const LVoid* aSrc, LInt aLength);
 LVoid* LMemmove(LVoid* dest, const LVoid* source, LInt count);
 LInt LMemcmp(const LVoid* buffer1, const LVoid* buffer2, LInt count);
 LVoid* LMemset(LVoid* aDest, LInt aValue, LInt aLength);
 
-//
 LVoid LStrA2U(const LUint8* aStrA, LUint16* aStrW);
 LVoid LStrU2A(LUint8* aStrA, const LUint16* aStrW);
 
-//
 LUint8* LInt2Str(LInt value, LUint8* str, LInt radix);
 LUint8* LInt2StrWithLength(LInt value, LUint8* str, LInt radix, LInt* lenPtr);
 LInt LStr2Int(const LUint8* str, LInt radix);
 
 LChar* LStrchr(const LChar* s, LChar c);
 
-//
 LBool LIsSpace(LInt ch);
 const LChar* LSkipSpace(const LChar* str);
 LChar* LSkipString(LChar* src, const LChar* skip);

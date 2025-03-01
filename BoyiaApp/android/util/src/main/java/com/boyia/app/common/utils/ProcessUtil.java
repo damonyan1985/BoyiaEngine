@@ -2,7 +2,9 @@ package com.boyia.app.common.utils;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.os.Process;
 
 import com.boyia.app.common.BaseApplication;
@@ -41,7 +43,10 @@ public class ProcessUtil {
         return mainProgressName.equals(currentProcessName);
     }
 
-    // 是否是boyia app进程
+    /**
+     * 是否是boyia app进程
+     * @return boolean
+     */
     public static boolean isBoyiaAppProcess() {
         String prefix = BaseApplication.getInstance().getApplicationInfo().packageName + ":boyia_app_";
         String currentProcessName = getCurrentProcessName();
@@ -52,8 +57,15 @@ public class ProcessUtil {
         return currentProcessName.startsWith(prefix);
     }
 
-    // 获取当前进程名
+    /**
+     * 获取当前进程
+     * @return String
+     */
     public static String getCurrentProcessName() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return Application.getProcessName();
+        }
+
         int currentPid = Process.myPid();
         List<ProcessInfo> infoList = getProcessList();
         for (ProcessInfo info : infoList) {

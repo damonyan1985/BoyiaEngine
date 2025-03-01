@@ -16,14 +16,18 @@ public class ZipOperation {
         File zipArchive = new File(dest);
         try {
             ZipFile zipFile = new ZipFile(zipArchive);
-            zipFile.setFileNameCharset("GBK"); //设置编码格式（支持中文）
+            // 设置编码格式（支持中文）
+            zipFile.setFileNameCharset("GBK");
 
             ZipParameters zipParameters = new ZipParameters();
-            zipParameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE); //压缩方式
-            zipParameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL); // 压缩级别
+            // 设置压缩方式
+            zipParameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            // 设置压缩级别
+            zipParameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 
             zipParameters.setEncryptFiles(true);
-            zipParameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_STANDARD); // 加密方式
+            // 设置加密方式
+            zipParameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_STANDARD);
             zipParameters.setPassword(ZIP_PASSWORD.toCharArray());
 
             if (sourceFile.isDirectory()) {
@@ -53,8 +57,10 @@ public class ZipOperation {
 
         try {
             ZipFile zipFile = new ZipFile(zipArchive);
-            zipFile.setFileNameCharset("GBK");  //设置编码格式（支持中文）
-            if (!zipFile.isValidZipFile()) {     //检查输入的zip文件是否是有效的zip文件
+            // 设置编码格式（支持中文）
+            zipFile.setFileNameCharset("GBK");
+            // 检查输入的zip文件是否是有效的zip文件
+            if (!zipFile.isValidZipFile()) {
                 BoyiaLog.d(TAG, "ZipOperation Zip File is invalid");
                 return false;
             }
@@ -65,7 +71,9 @@ public class ZipOperation {
                 BoyiaLog.d(TAG, "ZipOperation unZipFile Zip File has password");
                 zipFile.setPassword(ZIP_PASSWORD.toCharArray());
             }
-            zipFile.extractAll(decompressDir); //解压
+
+            // 解压zip包
+            zipFile.extractAll(decompressDir);
             BoyiaLog.d(TAG, "ZipOperation unZipFile Succeed!");
             return true;
         } catch (ZipException e) {
