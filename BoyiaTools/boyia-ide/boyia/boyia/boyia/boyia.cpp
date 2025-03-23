@@ -12,7 +12,10 @@ int main(int argc, char** argv)
     boyia::BoyiaRuntime runtime;
     runtime.init();
 
+    // 判断是否已经加载了可执行文件
+    // 这些可执行文件并非传统的机器码，而是只有Boyia解释器才能运行的执行代码
     if (runtime.isLoadExeFile()) {
+        // 运行可执行文件
         runtime.runExeFile();
         return 0;
     }
@@ -35,6 +38,7 @@ int main(int argc, char** argv)
         runtime.compileFile(path);
     }
 
+    // 缓存可执行代码
     runtime.cacheCode();
 
     std::cout << "Build Complete!\n" << argc;

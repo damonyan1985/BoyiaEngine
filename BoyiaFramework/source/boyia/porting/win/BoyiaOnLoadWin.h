@@ -12,10 +12,12 @@
 class BOYIA_PORTING_API BoyiaOnLoadWin
 {
 public:
+    static void initEngine();
+    static void destroyEngine();
+
 	static void setContextWin(HWND hwnd, int width, int height);
     static void repaint();
-    static void networkInit();
-    static void networkDestroy();
+ 
     static void connectServer();
     static void handleTouchEvent(int type, int x, int y);
     static void cacheCode();

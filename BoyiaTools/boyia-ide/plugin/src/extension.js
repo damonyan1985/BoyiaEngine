@@ -11,7 +11,7 @@ function activate(context) {
 	CodeLogImpl.init();
 	CodeAssist.reigister();
 }
-exports.activate = activate;
+//exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() { }

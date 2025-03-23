@@ -24,7 +24,6 @@ typedef struct {
 
 // 编译Boyia代码
 LVoid CompileCode(LInt8* code, LVoid* vm);
-LVoid CallFunction(LInt8* funcCall, LVoid* ret, LVoid* vm);
 
 // 获取当前Scope中的调用栈大小
 LInt GetLocalSize(LVoid* vm);

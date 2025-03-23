@@ -13,8 +13,8 @@
 using namespace yanbo;
 
 // Exception handle for windows native program
-static void InstallUnexceptedExceptionHandler();
-//BoyiaHttpEngine* engine = new BoyiaHttpEngine(NULL);
+static void InstallExceptionHandler();
+
 extern BoyiaApp* tfxGetApp();
 int BoyiaWinApi BoyiaWinMain(
     HINSTANCE hInstance,
@@ -23,17 +23,13 @@ int BoyiaWinApi BoyiaWinMain(
     int nCmdShow)
 {
     BoyiaConsole console;
-    BoyiaOnLoadWin::networkInit();
-    //HINSTANCE hInstLibrary = LoadLibrary(L"LibBoyia.dll");
-    InstallUnexceptedExceptionHandler();
-    //BoyiaOnLoadWin::foo();
-    //char test[100];
-    //util::LMemset(test, 0, 100);
-    //engine->request("https://damonyan1985.github.io/app/boyia.json", NetworkBase::GET);
+    BoyiaOnLoadWin::initEngine();
+    InstallExceptionHandler();
+
     BoyiaApp* ptApp = tfxGetApp();
     ptApp->InitInstance(hInstance, nCmdShow);
     ptApp->run();
-    BoyiaOnLoadWin::networkDestroy();
+    BoyiaOnLoadWin::destroyEngine();
     return 0;
 }
 
@@ -93,7 +89,7 @@ static void BoyiaUnexpectedHandler()
 }
 
 
-static void InstallUnexceptedExceptionHandler()
+static void InstallExceptionHandler()
 {
     // Crash handler Win32 API
     ::SetUnhandledExceptionFilter(BoyiaUnhandledExceptionFilter);

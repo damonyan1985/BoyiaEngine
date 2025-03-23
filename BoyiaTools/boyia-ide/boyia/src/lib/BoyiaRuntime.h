@@ -6,6 +6,7 @@
 #include "BoyiaLib.h"
 #include "HashMap.h"
 #include "HashUtil.h"
+#include "BoyiaDebugger.h"
 
 namespace boyia {
 
@@ -39,6 +40,7 @@ public:
     LBool isLoadExeFile() const;
     LVoid runExeFile();
     LVoid cacheCode();
+    BoyiaDebugger* debugger() const;
 
 private:
     LVoid initNativeFunction();
@@ -55,6 +57,7 @@ private:
     LBool m_isLoadExeFile;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
     OwnerPtr<BoyiaCompileInfo> m_compileInfo;
+    OwnerPtr<BoyiaDebugger> m_debugger;
     
 };
 }

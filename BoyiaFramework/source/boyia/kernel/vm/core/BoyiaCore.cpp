@@ -345,6 +345,7 @@ typedef struct BoyiaVM {
 typedef struct {
     LInt8* mProg;
     LInt mLineNum; // Current Line num of source code
+    LInt mColumnNum; // Current Column num of source code
     BoyiaToken mToken;
     BoyiaVM* mVm;
     CommandTable* mCmds;
@@ -883,8 +884,19 @@ static LVoid ExecInstruction(BoyiaVM* vm) {
     }
 }
 
+static LVoid NewLine(CompileState* cs) {
+    ++cs->mLineNum;
+    cs->mColumnNum = 0;
+}
+
+static LVoid AddColumn(CompileState* cs, LInt number) {
+    cs->mProg += number;
+    cs->mLineNum += number;
+}
+
 static LVoid Putback(CompileState* cs) {
-    cs->mProg -= cs->mToken.mTokenName.mLen;
+    //cs->mProg -= cs->mToken.mTokenName.mLen;
+    AddColumn(cs, -cs->mToken.mTokenName.mLen);
 }
 
 static LUint8 LookUp(BoyiaStr* name) {
@@ -1326,26 +1338,27 @@ static LVoid BlockStatement(CompileState* cs) {
 static LVoid SkipComment(CompileState* cs) {
     if (*cs->mProg == '/') {
         if (*(cs->mProg + 1) == '*') { // 多行注释
-            cs->mProg += 2;
+            //cs->mProg += 2;
+            AddColumn(cs, 2);
             do {
                 while (*cs->mProg != '*') {
                     if (*cs->mProg == '\n') {
-                        ++cs->mLineNum;
+                        NewLine(cs);
                     }
-                    ++cs->mProg;
+                    AddColumn(cs, 1);
                 }
-                ++cs->mProg;
+                AddColumn(cs, 1);
             } while (*cs->mProg != '/');
-            ++cs->mProg;
+            AddColumn(cs, 1);
             SkipComment(cs);
         } else if (*(cs->mProg + 1) == '/') { //单行注释
             while (*cs->mProg && *cs->mProg != '\n') {
-                ++cs->mProg;
+                AddColumn(cs, 1);
             }
 
             if (*cs->mProg == '\n') {
-                ++cs->mLineNum;
-                ++cs->mProg;
+                NewLine(cs);
+                AddColumn(cs, 1);
             }
 
             SkipComment(cs);
@@ -1361,54 +1374,55 @@ static LInt GetLogicValue(CompileState* cs) {
         switch (*cs->mProg) {
         case '=':
             if (*(cs->mProg + 1) == '=') {
-                cs->mProg += 2;
+                //cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = EQ;
             }
             break;
         case '!':
             if (*(cs->mProg + 1) == '=') {
-                cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = NE;
             } else {
-                ++cs->mProg;
+                AddColumn(cs, 1);
                 len = 1;
                 cs->mToken.mTokenValue = NOT;
             }
             break;
         case '<':
             if (*(cs->mProg + 1) == '=') {
-                cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = LE;
             } else {
-                ++cs->mProg;
+                AddColumn(cs, 1);
                 len = 1;
                 cs->mToken.mTokenValue = LT;
             }
             break;
         case '>':
             if (*(cs->mProg + 1) == '=') {
-                cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = GE;
             } else {
-                cs->mProg++;
+                AddColumn(cs, 1);
                 len = 1;
                 cs->mToken.mTokenValue = GT;
             }
             break;
         case '&':
             if (*(cs->mProg + 1) == '&') {
-                cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = AND;
             }
             break;
         case '|':
             if (*(cs->mProg + 1) == '|') {
-                cs->mProg += 2;
+                AddColumn(cs, 2);
                 len += 2;
                 cs->mToken.mTokenValue = OR;
             }
@@ -1433,7 +1447,7 @@ static LInt GetDelimiter(CompileState* cs) {
             cs->mToken.mTokenValue = op;
             cs->mToken.mTokenName.mPtr = cs->mProg;
             cs->mToken.mTokenName.mLen = 1;
-            ++cs->mProg;
+            AddColumn(cs, 1);
             return (cs->mToken.mTokenType = DELIMITER);
         }
         ++op;
@@ -1449,7 +1463,7 @@ static LInt GetIdentifer(CompileState* cs) {
         cs->mToken.mTokenName.mPtr = cs->mProg;
         while (*cs->mProg == '_' || LIsAlpha(*cs->mProg) || LIsDigit(*cs->mProg)) {
             ++len;
-            ++cs->mProg;
+            AddColumn(cs, 1);
         }
 
         cs->mToken.mTokenName.mLen = len;
@@ -1473,19 +1487,19 @@ static LInt GetStringValue(CompileState* cs) {
     // string
     LInt len = 0;
     if (*cs->mProg == '"') {
-        ++cs->mProg;
+        AddColumn(cs, 1);
         cs->mToken.mTokenName.mPtr = cs->mProg;
 
         while (*cs->mProg != '"' && *cs->mProg != '\r') {
             ++len;
-            ++cs->mProg;
+            AddColumn(cs, 1);
         }
 
         if (*cs->mProg == '\r') {
             SntxErrorBuild(SYNTAX, cs);
         }
 
-        ++cs->mProg;
+        AddColumn(cs, 1);
         // +2 for putback just in case
         cs->mToken.mTokenName.mLen = len + 2;
         return (cs->mToken.mTokenType = STRING_VALUE);
@@ -1501,7 +1515,7 @@ static LInt GetNumberValue(CompileState* cs) {
 
         while (LIsDigit(*cs->mProg)) {
             ++len;
-            ++cs->mProg;
+            AddColumn(cs, 1);
         }
 
         cs->mToken.mTokenName.mLen = len;
@@ -1517,9 +1531,9 @@ static LInt NextToken(CompileState* cs) {
     InitStr(&cs->mToken.mTokenName, kBoyiaNull);
     while (LIsSpace(*cs->mProg) && *cs->mProg) {
         if (*cs->mProg == '\n') {
-            ++cs->mLineNum;
+            NewLine(cs);
         }
-        ++cs->mProg;
+        AddColumn(cs, 1);
     }
 
     if (*cs->mProg == '\0') {
@@ -3052,6 +3066,7 @@ LVoid CompileCode(LInt8* code, LVoid* vm) {
     CompileState cs;
     cs.mProg = code;
     cs.mLineNum = 1;
+    cs.mColumnNum = 0;
     cs.mVm = vmPtr;
     ParseStatement(&cs); // 该函数记录全局变量以及函数接口
 }
@@ -3069,26 +3084,6 @@ LVoid* GetLocalValue(LInt idx, LVoid* vm) {
 LInt GetLocalSize(LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     return vmPtr->mEState->mStackFrame.mLValSize - vmPtr->mExecStack[vmPtr->mEState->mFrameIndex - 1].mLValSize;
-}
-
-LVoid CallFunction(LInt8* fun, LVoid* ret, LVoid* vm) {
-    BOYIA_LOG("callFunction=>%d \n", 1);
-    BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    CompileState cs;
-    cs.mProg = fun;
-    cs.mLineNum = 1;
-    cs.mVm = vmPtr;
-    cs.mCmds = CreateExecutor(&cs);
-    
-
-    EvalExpression(&cs); // 解析例如func(a,b,c);
-    vmPtr->mEState->mStackFrame.mContext = cs.mCmds;
-    ExecuteCode(vmPtr);
-
-    if (ret) {
-        BoyiaValue* value = (BoyiaValue*)ret;
-        ValueCopy(value, &vmPtr->mCpu->mReg0);
-    }
 }
 
 LVoid SaveLocalSize(LVoid* vm) {
@@ -3242,7 +3237,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
                     ValueCopy(&aes->mTopTask->mResult, &vm->mCpu->mReg0);
                     AddMicroTask(aes->mTopTask, vm);
                 }
-                // TODO 销毁ExecState
+                // 销毁ExecState
                 if (aes->mPrevious && aes->mPrevious->mWait) {
                     DestroyExecState(aes, vm);
                 }

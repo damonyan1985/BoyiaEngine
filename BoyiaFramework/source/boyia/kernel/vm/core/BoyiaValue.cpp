@@ -758,8 +758,6 @@ LInt BoyiaMapMap(LVoid* vm)
         }
     }
     
-    //fun->mParamSize = 0;
-
     return kOpResultSuccess;
 }
 

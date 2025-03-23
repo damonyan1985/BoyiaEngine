@@ -11,6 +11,7 @@
 #include "RenderThread.h"
 #include "RenderEngineWin.h"
 #include <stdio.h>
+#include <mfapi.h>
 //#include <WinSock2.h>
 #pragma comment(lib, "ws2_32")
 
@@ -68,15 +69,19 @@ void BoyiaOnLoadWin::connectServer()
     BOYIA_LOG("get map value=%s", GET_STR(map.get(HashString(_CS("key7")))));
 }
 
-void BoyiaOnLoadWin::networkInit()
+void BoyiaOnLoadWin::initEngine()
 {
     WSADATA wsaData;
     ::WSAStartup(MAKEWORD(2, 2), &wsaData);
+    // 媒体库初始化
+    ::MFStartup(MF_VERSION, MFSTARTUP_FULL);
 }
 
-void BoyiaOnLoadWin::networkDestroy()
+void BoyiaOnLoadWin::destroyEngine()
 {
     ::WSACleanup();
+    // 媒体库资源释放
+    ::MFShutdown();
 }
 
 void BoyiaOnLoadWin::handleTouchEvent(int type, int x, int y)

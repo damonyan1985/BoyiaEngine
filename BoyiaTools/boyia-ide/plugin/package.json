@@ -56,19 +56,22 @@
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.6",
 		"@types/node": "^10.12.21",
-		"@types/vscode": "^1.36.0",
+		"@types/vscode": "^1.66.0",
+		"@vscode/debugadapter": "1.56.0",
 		"eslint": "^5.13.0",
 		"glob": "^7.1.4",
 		"mocha": "^6.1.4",
 		"typescript": "^3.3.1",
-		"vscode-test": "^1.0.2",
-		"webpack-cli": "^3.3.6",
 		"vscode": "^1.1.36",
-		"webpack": "^4.39.1"
+		"vscode-test": "^1.0.2",
+		"webpack": "^4.39.1",
+		"webpack-cli": "^3.3.6"
 	},
 	"dependencies": {
 		"babel-core": "^6.26.3",
 		"babel-loader": "^7.1.5",
-		"fs-extra": "^8.1.0"
+		"events": "^3.3.0",
+		"fs-extra": "^8.1.0",
+		"ws": "^8.18.1"
 	}
 }
