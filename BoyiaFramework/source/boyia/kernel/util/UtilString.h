@@ -79,10 +79,10 @@ public:
     LString(const LString<T>& stringSrc, Bool owner = LTrue);
     LString(const T* lpsz, Bool owner = LTrue, LInt size = -1);
     LString(T ch, LInt nRepeat = 1);
-    LString(const T* lpsz, LInt nLength);
+    LString(const T* lpsz, LInt nLength, Bool tmp = LFalse);
     LVoid AllocBuffer(LInt nLen);
     LVoid Copy(const T* lpsz, Bool owner = LTrue, LInt size = -1);
-    LVoid DeepAssign(LString<T>& src);
+    LVoid Move(LString<T>& src);
 
 protected:
     LVoid StrAssignment(const T* lpsz);
@@ -149,10 +149,10 @@ public:
     LVoid ClearBuffer();
 
 protected:
-    // heap alloc size, m_pchDataLen is not the size of the string
-    LInt m_pchDataLen;
+    // heap alloc size, m_capacity is not the size of the string
+    LInt m_capacity;
     LInt m_size;
-    T* m_pchData;
+    T* m_buffer;
     Bool m_owner;
 };
 
@@ -178,8 +178,8 @@ typedef StringA String;
 
 template <class T>
 LString<T>::LString()
-    : m_pchData(kBoyiaNull)
-    , m_pchDataLen(0)
+    : m_buffer(kBoyiaNull)
+    , m_capacity(0)
     , m_size(0)
     , m_owner(LTrue)
 {
@@ -193,7 +193,7 @@ LString<T>::~LString()
 
 template <class T>
 LString<T>::LString(const T* lpsz, Bool owner, LInt size)
-    : m_pchData(kBoyiaNull)
+    : m_buffer(kBoyiaNull)
 {
     LString<T>::Copy(lpsz, owner, size);
 }
@@ -204,11 +204,11 @@ LString<T>::LString(const LString<T>& stringSrc, Bool owner)
     if (owner) {
         int nLen = stringSrc.GetLength();
         AllocBuffer(nLen);
-        LMemcpy(m_pchData, stringSrc.GetBuffer(), nLen * sizeof(T));
+        LMemcpy(m_buffer, stringSrc.GetBuffer(), nLen * sizeof(T));
         m_size = nLen;
     } else {
-        m_pchData = stringSrc.m_pchData;
-        m_pchDataLen = stringSrc.m_pchDataLen;
+        m_buffer = stringSrc.m_buffer;
+        m_capacity = stringSrc.m_capacity;
         m_size = stringSrc.m_size;
     }
 
@@ -216,20 +216,26 @@ LString<T>::LString(const LString<T>& stringSrc, Bool owner)
 }
 
 template <class T>
-LString<T>::LString(const T* lpsz, LInt nLength)
+LString<T>::LString(const T* lpsz, LInt nLen, Bool tmp)
 {
-    int nLen = nLength;
-    AllocBuffer(nLen);
-    LMemcpy(m_pchData, lpsz, (nLen) * sizeof(T));
+    if (tmp) {
+        m_buffer = (T*)lpsz;
+        m_capacity = nLen + 1;
+        m_owner = LFalse;
+    } else {
+        AllocBuffer(nLen);
+        LMemcpy(m_buffer, lpsz, (nLen) * sizeof(T));
+        m_owner = LTrue;
+    }
     m_size = nLen;
-    m_owner = LTrue;
+    
 }
 
 template <class T>
 LString<T>::LString(T ch, LInt nRepeat)
 {
     AllocBuffer(nRepeat);
-    LMemset(m_pchData, ch, nRepeat * sizeof(T));
+    LMemset(m_buffer, ch, nRepeat * sizeof(T));
     m_size = ch == 0 ? 0 : nRepeat;
     m_owner = LTrue;
 }
@@ -245,24 +251,24 @@ LVoid LString<T>::Copy(const T* lpsz, Bool owner, LInt size)
     if (size == -1) {
         LInt nLen = CountString(lpsz);
         AllocBuffer(nLen);
-        LMemcpy(m_pchData, lpsz, nLen * sizeof(T));
+        LMemcpy(m_buffer, lpsz, nLen * sizeof(T));
         m_size = nLen;
     } else {
         //KFORMATLOG("String not deep STR=%s and size=%d", (const char*)lpsz, size);
         m_size = size;
-        m_pchDataLen = m_size + 1;
-        m_pchData = (T*)lpsz;
+        m_capacity = m_size + 1;
+        m_buffer = (T*)lpsz;
     }
 
     m_owner = owner;
 }
 
 template <class T>
-LVoid LString<T>::DeepAssign(LString<T>& src)
+LVoid LString<T>::Move(LString<T>& src)
 {
-    m_pchData = src.m_pchData;
+    m_buffer = src.m_buffer;
     m_owner = src.m_owner;
-    m_pchDataLen = src.m_pchDataLen;
+    m_capacity = src.m_capacity;
     m_size = src.m_size;
     src.ReleaseBuffer();
 }
@@ -270,20 +276,20 @@ LVoid LString<T>::DeepAssign(LString<T>& src)
 template <class T>
 LVoid LString<T>::ResetBuffer()
 {
-    if (m_pchData && m_owner) {
-        //delete[] m_pchData;
-        FREE_BUFFER(m_pchData);
+    if (m_buffer && m_owner) {
+        //delete[] m_buffer;
+        FREE_BUFFER(m_buffer);
     }
 
-    m_pchData = kBoyiaNull;
-    m_pchDataLen = 0;
+    m_buffer = kBoyiaNull;
+    m_capacity = 0;
     m_size = 0;
 }
 
 template <class T>
 const LString<T>& LString<T>::operator=(const LString<T>& stringSrc)
 {
-    if (stringSrc.GetBuffer() == m_pchData) {
+    if (stringSrc.GetBuffer() == m_buffer) {
         return *this;
     }
 
@@ -342,19 +348,19 @@ const LString<T>& LString<T>::operator+=(const T ch)
 template <class T>
 T& LString<T>::operator[](LInt nIndex)
 {
-    return m_pchData[nIndex];
+    return m_buffer[nIndex];
 }
 
 template <class T>
 const T& LString<T>::operator[](LInt nIndex) const
 {
-    return m_pchData[nIndex];
+    return m_buffer[nIndex];
 }
 
 template <class T>
 T* LString<T>::GetBuffer() const
 {
-    return m_pchData;
+    return m_buffer;
 }
 
 template <class T>
@@ -366,22 +372,22 @@ LInt LString<T>::GetLength() const
 template <class T>
 LVoid LString<T>::AllocBuffer(LInt nLen)
 {
-    m_pchDataLen = nLen + 1;
-    m_pchData = NEW_BUFFER(T, m_pchDataLen);//new T[nLen + 1];
-    LMemset(m_pchData, 0, m_pchDataLen * sizeof(T));
+    m_capacity = nLen + 1;
+    m_buffer = NEW_BUFFER(T, m_capacity);//new T[nLen + 1];
+    LMemset(m_buffer, 0, m_capacity * sizeof(T));
 }
 
 template <class T>
 LVoid LString<T>::StrAssignment(const T* lpsz, LInt nLen)
 {
-    if (m_pchDataLen <= nLen) {
+    if (m_capacity <= nLen) {
         ResetBuffer();
         AllocBuffer(nLen);
     } else {
-        LMemset(m_pchData, 0, m_pchDataLen * sizeof(T));
+        LMemset(m_buffer, 0, m_capacity * sizeof(T));
     }
 
-    LMemcpy(m_pchData, lpsz, nLen * sizeof(T));
+    LMemcpy(m_buffer, lpsz, nLen * sizeof(T));
     m_size = nLen;
 }
 
@@ -397,21 +403,21 @@ LVoid LString<T>::StrPlus(const T* lpsz, LInt len)
 {
     int plusSize = len > 0 ? len : CountString(lpsz);
     LInt nLen = GetLength() + plusSize;
-    if (m_pchDataLen <= nLen) {
-        if (m_pchData) {
-            T* pOldData = m_pchData;
+    if (m_capacity <= nLen) {
+        if (m_buffer) {
+            T* pOldData = m_buffer;
             LInt nOldDataLen = m_size;
             AllocBuffer(nLen);
-            LMemcpy(m_pchData, pOldData, nOldDataLen * sizeof(T));
-            LMemcpy(m_pchData + nOldDataLen, lpsz, plusSize * sizeof(T));
+            LMemcpy(m_buffer, pOldData, nOldDataLen * sizeof(T));
+            LMemcpy(m_buffer + nOldDataLen, lpsz, plusSize * sizeof(T));
             //delete[] pOldData;
             FREE_BUFFER(pOldData);
         } else {
             AllocBuffer(nLen);
-            LMemcpy(m_pchData, lpsz, plusSize * sizeof(T));
+            LMemcpy(m_buffer, lpsz, plusSize * sizeof(T));
         }
     } else {
-        LMemcpy(m_pchData + GetLength(), lpsz, plusSize * sizeof(T));
+        LMemcpy(m_buffer + GetLength(), lpsz, plusSize * sizeof(T));
     }
 
     m_size = nLen;
@@ -447,7 +453,7 @@ LBool LString<T>::CompareCase(const LString<T>& str) const
 
     LInt ipos = 0;
     for (; ipos < nLen; ++ipos) {
-        if (m_pchData[ipos] != str[ipos]) {
+        if (m_buffer[ipos] != str[ipos]) {
             return LFalse;
         }
     }
@@ -493,10 +499,10 @@ LBool LString<T>::operator<(const LString<T>& str) const
 
     LInt ipos = 0;
     for (; ipos < nLowerLen; ++ipos) {
-        if (m_pchData[ipos] < str[ipos]) {
+        if (m_buffer[ipos] < str[ipos]) {
             return LTrue;
         }
-        if (m_pchData[ipos] > str[ipos]) {
+        if (m_buffer[ipos] > str[ipos]) {
             return LFalse;
         }
     }
@@ -544,7 +550,7 @@ LInt LString<T>::CountString(const T* lpsz) const
 template <class T>
 LString<T>::operator const T*() const
 {
-    return (const T*)m_pchData;
+    return (const T*)m_buffer;
 }
 
 template <class T>
@@ -560,7 +566,7 @@ LString<T> LString<T>::Mid(LInt nPos, LInt nLength) const
         nLength = GetLength() - nPos;
     }
 
-    return LString<T>(m_pchData + nPos, nLength);
+    return LString<T>(m_buffer + nPos, nLength, LTrue);
 }
 
 template <class T>
@@ -580,8 +586,8 @@ LString<T>& LString<T>::ToLower()
 {
     LInt nLen = GetLength();
     for (LInt i = 0; i < nLen; ++i) {
-        if (m_pchData[i] >= T('A') && m_pchData[i] <= T('Z')) {
-            m_pchData[i] += T('a') - T('A');
+        if (m_buffer[i] >= T('A') && m_buffer[i] <= T('Z')) {
+            m_buffer[i] += T('a') - T('A');
         }
     }
 
@@ -593,8 +599,8 @@ LString<T>& LString<T>::ToUpper()
 {
     LInt nLen = GetLength();
     for (LInt i = 0; i < nLen; ++i) {
-        if (m_pchData[i] >= T('a') && m_pchData[i] <= T('z')) {
-            m_pchData[i] += T('A') - T('a');
+        if (m_buffer[i] >= T('a') && m_buffer[i] <= T('z')) {
+            m_buffer[i] += T('A') - T('a');
         }
     }
 
@@ -606,12 +612,12 @@ LInt LString<T>::Find(const LString<T>& str, LInt nPos) const
 {
     LInt nLen = str.GetLength();
     if (GetLength() >= nLen && nLen) {
-        T* str_beg = m_pchData + nPos;
-        T* str_end = m_pchData + GetLength() - nLen;
+        T* str_beg = m_buffer + nPos;
+        T* str_end = m_buffer + GetLength() - nLen;
         for (; str_beg <= str_end; ++str_beg) {
             LString<T> strCmp(str_beg, LFalse, nLen);
             if (strCmp == str) {
-                return LInt(str_beg - m_pchData);
+                return LInt(str_beg - m_buffer);
             }
         }
     }
@@ -624,13 +630,13 @@ LInt LString<T>::FindNoCase(const LString<T>& str, LInt nPos) const
 {
     LInt nLen = str.GetLength();
     if (GetLength() >= nLen && nLen) {
-        T* str_beg = m_pchData + nPos;
+        T* str_beg = m_buffer + nPos;
         // 当begin = end的时候，正好等于过滤字符串的长度
-        T* str_end = m_pchData + GetLength() - nLen;
+        T* str_end = m_buffer + GetLength() - nLen;
         for (; str_beg <= str_end; ++str_beg) {
             LString<T> strCmp(str_beg, LFalse, nLen);
             if (strCmp.CompareNoCase(str)) {
-                return LInt(str_beg - m_pchData);
+                return LInt(str_beg - m_buffer);
             }
         }
     }
@@ -642,14 +648,14 @@ template <class T>
 LInt LString<T>::ReverseFind(const LString<T>& str) const
 {
     LInt nLen = str.GetLength();
-    if (m_pchDataLen > nLen && nLen) {
+    if (m_capacity > nLen && nLen) {
 
-        T* str_beg = m_pchData + m_pchDataLen - nLen;
-        T* str_end = m_pchData;
+        T* str_beg = m_buffer + m_capacity - nLen;
+        T* str_end = m_buffer;
         for (; str_beg >= str_end; --str_beg) {
             LString<T> strCmp(str_beg, LFalse, nLen);
             if (strCmp == str) {
-                return LInt(str_beg - m_pchData);
+                return LInt(str_beg - m_buffer);
             }
         }
     }
@@ -661,14 +667,14 @@ template <class T>
 LInt LString<T>::ReverseFindNoCase(const LString<T>& str) const
 {
     LInt nLen = str.GetLength();
-    if (m_pchDataLen > nLen && nLen) {
+    if (m_capacity > nLen && nLen) {
 
-        T* str_beg = m_pchData + m_pchDataLen - nLen;
-        T* str_end = m_pchData;
+        T* str_beg = m_buffer + m_capacity - nLen;
+        T* str_end = m_buffer;
         for (; str_beg >= str_end; --str_beg) {
             LString<T> strCmp(str_beg, LFalse, nLen);
             if (strCmp.CompareNoCase(str)) {
-                return LInt(str_beg - m_pchData);
+                return LInt(str_beg - m_buffer);
             }
         }
     }
@@ -686,7 +692,7 @@ LInt LString<T>::QuickFind(const LString<T>& pattern, LInt nPos) const
         T* srcBuffer = GetBuffer() + nPos;
         T* patternBuffer = pattern.GetBuffer();
         // next数组表示pattern匹配失败后需要移动的距离
-        // 暂定next数组长度不超过32，本工程暂时没有超出32长度的模式串
+        // 暂定next数组长度不超过32
         LInt next[32];
         {
             LInt i = 1;
@@ -738,7 +744,7 @@ LBool LString<T>::EndWith(const LString<T>& sEnd) const
 
     LBool isEqual = LTrue;
     for (LInt i = 0; i < sLen; ++i) {
-        if (m_pchData[mLen - i] != sEnd[sLen - i]) {
+        if (m_buffer[mLen - i] != sEnd[sLen - i]) {
             isEqual = LFalse;
             break;
         }
@@ -770,7 +776,7 @@ LBool LString<T>::StartWith(const LString<T>& sStart) const
 
     LBool isEqual = LTrue;
     for (LInt i = 0; i < sLen; ++i) {
-        if (m_pchData[i] != sStart[i]) {
+        if (m_buffer[i] != sStart[i]) {
             isEqual = LFalse;
             break;
         }
@@ -793,8 +799,8 @@ LBool LString<T>::StartWithNoCase(const LString<T>& sStart) const
 template <class T>
 T LString<T>::CharAt(LInt nIndex) const
 {
-    if (nIndex < m_pchDataLen) {
-        return *(m_pchData + nIndex);
+    if (nIndex < m_capacity) {
+        return *(m_buffer + nIndex);
     }
 
     return (T)0;
@@ -809,10 +815,10 @@ LVoid LString<T>::DeleteCharAt(LInt nIndex)
     }
 
     for (LInt i = nIndex; i < len - 1; ++i) {
-        *(m_pchData + i) = *(m_pchData + i + 1);
+        *(m_buffer + i) = *(m_buffer + i + 1);
     }
 
-    *(m_pchData + len - 1) = (T)0;
+    *(m_buffer + len - 1) = (T)0;
     m_size = len - 1;
 }
 
@@ -859,9 +865,9 @@ void LString<T>::ReplaceNoCase(const LString<T>& strSrc, const LString<T>& strRe
 template <class T>
 LVoid LString<T>::ReleaseBuffer()
 {
-    m_pchDataLen = 0;
+    m_capacity = 0;
     m_size = 0;
-    m_pchData = kBoyiaNull;
+    m_buffer = kBoyiaNull;
     m_owner = LTrue;
 }
 
@@ -869,7 +875,7 @@ template <class T>
 LVoid LString<T>::ClearBuffer()
 {
     m_size = 0;
-    LMemset(m_pchData, 0, m_size * sizeof(T));
+    LMemset(m_buffer, 0, m_size * sizeof(T));
 }
 
 template <class T>

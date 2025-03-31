@@ -13,6 +13,9 @@ const kServerPort = 6666;
 const kThreadID = 1;
 
 // 接受远程调试
+// 作为一个server，控制debug前端和后端的交互
+// debug后端是boyia编译器，boyia的debugger内置了websocket connection，会连接该服务
+// debug前端是vscode ui程序
 class BoyiaDebugServer {
     constructor() {
         this.server = new WebSocket.Server(
@@ -28,14 +31,20 @@ class BoyiaDebugServer {
       
         // 接受调试客户端连接
         this.server.on('connection', (socket, req) => {
-          console.log('Test WebSocket connection url=' + req.url);
-          socket.send('hello world');
-      
+          console.log('Test WebSocket connection url=' + req.url);      
           // 接受客户端发来的消息
           socket.on('message', event => {
             console.log('Test WebSocket message data=' + event.toString());
           });
+
+          this.connection = socket;
         });  
+    }
+
+    send(msg) {
+      if (this.connection) {
+        this.connection.send(msg);
+      }
     }
 
     getPort() {
@@ -132,6 +141,7 @@ class BoyiaDebugSession extends LoggingDebugSession {
 class BoyiaRuntime extends EventEmitter {
   constructor() {
     super();
+    this.server = new BoyiaDebugServer();
   }
 
   // 单步

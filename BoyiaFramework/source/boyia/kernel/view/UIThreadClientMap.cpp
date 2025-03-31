@@ -2,7 +2,7 @@
 #include "StringBuilder.h"
 
 namespace yanbo {
-
+const LInt kUIThreadItemSize = 128;
 class UIThreadItem {
 public:
     UIThreadItem()
@@ -46,7 +46,7 @@ LInt UIThreadClientMap::createClienId()
 
 // create a size and capactiy vector
 UIThreadClientMap::UIThreadClientMap()
-    : m_map(kEnlargeCapacity * 4)
+    : m_map(kUIThreadItemSize)
     , m_threadClienId(0)
 {
     // Init all pointer to NULL

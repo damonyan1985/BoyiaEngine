@@ -17,8 +17,7 @@
 #include "PlatformLib.h"
 
 namespace util {
-
-#define kEnlargeCapacity 16
+const LInt kVectorEnlargeCapacity = 32;
 
 template <class T>
 class KVector : public BoyiaRef {
@@ -30,16 +29,17 @@ public:
     virtual ~KVector();
 
 public:
+    LVoid move(KVector<T>& kv);
     LVoid insertElement(const T& kv, LInt index);
     LVoid addElement(const T& kv); // kvalue
     const T& elementAt(LInt position) const;
     const T& lastElement() const;
     T& elementAt(LInt position);
     T& lastElement();
+    T& appendElement();
     
     LInt size() const { return m_size; }
     LInt capacity() const { return m_capacity; }
-    LInt increment() const { return m_increment; }
     
     T& operator[](LInt position);
     const T& operator[](LInt position) const;
@@ -53,13 +53,12 @@ public:
 
 private:
     LVoid copyElements(const KVector<T>& kv, LBool deep = LTrue);
-    LVoid copyElements(const T* buffer, LInt size, LInt capacity, LInt increment, LBool deep);
+    LVoid copyElements(const T* buffer, LInt size, LInt capacity, LBool deep);
 
 private:
     LInt m_size;
     T* m_buffer;
     LInt m_capacity;
-    LInt m_increment;
     LBool m_deep;
 };
 
@@ -69,7 +68,6 @@ KVector<T>::KVector()
     , m_buffer(kBoyiaNull)
     , m_capacity(0)
     , m_deep(LTrue)
-    , m_increment(kEnlargeCapacity)
 {
 }
 
@@ -78,7 +76,6 @@ KVector<T>::KVector(LInt capacity)
     : m_size(capacity)
     , m_capacity(capacity)
     , m_deep(LTrue)
-    , m_increment(kEnlargeCapacity)
 {
     m_buffer = new T[capacity];
 }
@@ -88,7 +85,6 @@ KVector<T>::KVector(LInt size, LInt capacity)
     : m_size(size)
     , m_capacity(capacity)
     , m_deep(LTrue)
-    , m_increment(kEnlargeCapacity)
 {
     m_buffer = new T[capacity];
 }
@@ -111,7 +107,6 @@ KVector<T>::KVector(const KVector<T>& kv, Bool deep)
         m_buffer = const_cast<T*>(kv.getBuffer());
         m_size = kv.size();
         m_capacity = kv.capacity();
-        m_increment = kv.increment();
     }
 }
 
@@ -128,28 +123,40 @@ T* KVector<T>::getBuffer()
 }
 
 template <class T>
+LVoid KVector<T>::move(KVector<T>& kv)
+{
+    m_buffer = const_cast<T*>(kv.getBuffer());
+    m_size = kv.size();
+    m_capacity = kv.capacity();
+    m_deep = kv.m_deep;
+
+    kv.m_buffer = kBoyiaNull;
+    kv.m_size = 0;
+    kv.m_capacity = 0;
+    kv.m_deep = LTrue;
+}
+
+template <class T>
 LVoid KVector<T>::copyElements(const KVector<T>& kv, LBool deep)
 {
     if (deep) {
-        copyElements(kv.getBuffer(), kv.size(), kv.capacity(), kv.increment(), deep);
+        copyElements(kv.getBuffer(), kv.size(), kv.capacity(), deep);
     } else {
         m_buffer = const_cast<T*>(kv.getBuffer());
         m_size = kv.size();
         m_capacity = kv.capacity();
         m_deep = deep;
-        m_increment = kv.increment();
     }
 }
 
 template <class T>
-LVoid KVector<T>::copyElements(const T* buffer, LInt size, LInt capacity, LInt increment, LBool deep)
+LVoid KVector<T>::copyElements(const T* buffer, LInt size, LInt capacity, LBool deep)
 {
     T* tmp = m_buffer;
 
     m_buffer = new T[capacity];
     m_capacity = capacity;
     m_size = size;
-    m_increment = increment;
     m_deep = deep;
 
     for (LInt i = 0; i < size; i++) {
@@ -198,7 +205,7 @@ LVoid KVector<T>::insertElement(const T& kv, LInt index)
         m_size += 1;
     } else {
         T* buffer = m_buffer;
-        m_capacity += m_increment;
+        m_capacity += kVectorEnlargeCapacity;
 
         m_buffer = new T[m_capacity];
         m_size += 1;
@@ -218,13 +225,29 @@ LVoid KVector<T>::insertElement(const T& kv, LInt index)
 }
 
 template <class T>
+T& KVector<T>::appendElement()
+{
+    T* elem = kBoyiaNull;
+    if (m_size < m_capacity) {
+        elem = (m_buffer + m_size);
+    } else {
+        LInt size = m_size;
+        copyElements(m_buffer, size, m_capacity + kVectorEnlargeCapacity, m_deep);
+        elem = (m_buffer + size);
+    }
+
+    m_size++;
+    return *elem;
+}
+
+template <class T>
 LVoid KVector<T>::addElement(const T& kv)
 {
     if (m_size < m_capacity) {
         *(m_buffer + m_size) = kv;
     } else {
         LInt size = m_size;
-        copyElements(m_buffer, m_size, m_capacity + m_increment, m_increment, m_deep);
+        copyElements(m_buffer, m_size, m_capacity + kVectorEnlargeCapacity, m_deep);
         *(m_buffer + size) = kv;
     }
     

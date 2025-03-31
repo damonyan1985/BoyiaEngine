@@ -48,7 +48,7 @@ public:
     LVoid compileFile(const String& path)
     {
         String currentScriptPath;
-        currentScriptPath.DeepAssign(m_currentScriptPath);
+        currentScriptPath.Move(m_currentScriptPath);
 
         m_currentScriptPath = path;
         if (m_programSet.get(path)) {
@@ -61,7 +61,7 @@ public:
             m_programSet.put(path, LTrue);
         }
 
-        m_currentScriptPath.DeepAssign(currentScriptPath);
+        m_currentScriptPath.Move(currentScriptPath);
     }
 
     LVoid compile(const String& script)

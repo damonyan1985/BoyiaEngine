@@ -30,6 +30,7 @@ private:
     BoyiaRuntime* m_runtime;
     OwnerPtr<BoyiaDebugConnection> m_connection;
     KVector<BoyiaCodePosition> m_positions;
+    KVector<Breakpoint> m_breakpoints;
 };
 }
 #endif

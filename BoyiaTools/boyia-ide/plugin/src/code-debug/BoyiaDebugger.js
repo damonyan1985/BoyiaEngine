@@ -13,20 +13,20 @@ class BoyiaDebugAdapterServerDescriptorFactory {
    */
   createDebugAdapterDescriptor(session, executable) {
     if (!this.server) {
-			// start listening on a random port
-			this.server = Net.createServer(socket => {
-				const session = new BoyiaDebugSession();
-				session.setRunAsServer(true);
-				session.start(socket, socket);
-			}).listen(kDebugSessionPort);
-		}
-		// Create a VS Code connect to debug server
-		return new vscode.DebugAdapterServer(kDebugSessionPort);
-	}
+      // start listening on a random port
+      this.server = Net.createServer(socket => {
+        const session = new BoyiaDebugSession();
+        session.setRunAsServer(true);
+        session.start(socket, socket);
+      }).listen(kDebugSessionPort);
+    }
+    // Create a VS Code connect to debug server
+    return new vscode.DebugAdapterServer(kDebugSessionPort);
+  }
 
-	dispose() {
+  dispose() {
     if (this.server) {
       this.server.close();
     }
-	}   
+  }   
 }

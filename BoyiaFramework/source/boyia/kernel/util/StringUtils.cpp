@@ -48,7 +48,7 @@ String StringUtils::skipBlank(const String& src)
 
 LInt StringUtils::stringToInt(const String& src, LInt radix)
 {
-    return LStr2Int(src.GetBuffer(), radix);
+    return LStr2IntWithLength(src.GetBuffer(), src.GetLength(), radix);
 }
 
 KVector<String>* StringUtils::split(const String& src, const String& splitSrc)

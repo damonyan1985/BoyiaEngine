@@ -11,6 +11,10 @@ public:
         m_socket = yanbo::WebSocket::create(kDebugWsUrl);
     }
 
+    ~BoyiaDebugConnection() {
+        delete m_socket;
+    }
+
 private:
     yanbo::WebSocket* m_socket;
 };
@@ -21,7 +25,7 @@ BoyiaDebugger::BoyiaDebugger(BoyiaRuntime* runtime)
     , m_positions(0, kCodePositionCapacity) {}
     
 LVoid BoyiaDebugger::setBreakPoint(KVector<Breakpoint>& breakpoints) {
-
+    m_breakpoints.move(breakpoints);
 }
 
 LVoid BoyiaDebugger::stepOver() {}

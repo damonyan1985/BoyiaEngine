@@ -361,7 +361,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
-            String oneValue = values->elementAt(i);
+            String& oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BACKGROUND_COLOR, getCssColor(oneValue));
             }
@@ -430,7 +430,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; ++i) {
-            String oneValue = values->elementAt(i);
+            String& oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_BOTTOM_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
@@ -445,7 +445,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
-            String oneValue = values->elementAt(i);
+            String& oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_TOP_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
@@ -460,7 +460,7 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         OwnerPtr<KVector<String>> values = StringUtils::split(value, _CS(" "));
         LInt size = values->size();
         for (LInt i = 0; i < size; i++) {
-            String oneValue = values->elementAt(i);
+            String& oneValue = values->elementAt(i);
             if (oneValue.StartWith(_CS("#"))) {
                 rule->addProperty(StyleTags::BORDER_COLOR, getCssColor(oneValue));
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {

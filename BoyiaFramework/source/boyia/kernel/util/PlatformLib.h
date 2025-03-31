@@ -148,6 +148,7 @@ LVoid LStrU2A(LUint8* aStrA, const LUint16* aStrW);
 LUint8* LInt2Str(LInt value, LUint8* str, LInt radix);
 LUint8* LInt2StrWithLength(LInt value, LUint8* str, LInt radix, LInt* lenPtr);
 LInt LStr2Int(const LUint8* str, LInt radix);
+LInt LStr2IntWithLength(const LUint8* str, LInt length, LInt radix);
 
 LChar* LStrchr(const LChar* s, LChar c);
 

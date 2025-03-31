@@ -49,8 +49,9 @@ static LUint8* LItoa(LInt value, LUint8* str, LInt radix, LInt* len)
         }
     }
     pStr[nCount + 1] = '\0';
-    if (len)
+    if (len) {
         *len = nCount + 1;
+    }
     return str;
 }
 
@@ -250,9 +251,43 @@ LBool LIsMinChar(LInt ch)
 
 LInt LStr2Int(const LUint8* str, LInt radix)
 {
-    LInt total = 0;
-    LInt sign = 1;
+    // LInt total = 0;
+    // LInt sign = 1;
 
+    // if (*str == '-') {
+    //     sign = -1;
+    //     ++str;
+    // } else if (*str == '+') {
+    //     ++str;
+    // }
+
+    // while (*str) {
+    //     LInt ch = 0;
+    //     if (LIsDigit(*str)) {
+    //         ch = *str - '0';
+    //     } else if (LIsBigChar(*str)) {
+    //         ch = *str - 'A' + 10;
+    //     } else if (LIsMinChar(*str)) {
+    //         ch = *str - 'a' + 10;
+    //     }
+
+    //     total = total * radix + ch;
+    //     ++str;
+    // }
+
+    // return total * sign;
+    return LStr2IntWithLength(str, -1, radix);
+}
+
+LInt LStr2IntWithLength(const LUint8* str, LInt length, LInt radix) {
+    LInt total = 0;
+    LBool withLength = length != -1;
+    if (withLength && length < 1) {
+        return total;
+    }
+
+    LInt sign = 1;
+    const LUint8* start = str;
     if (*str == '-') {
         sign = -1;
         ++str;
@@ -272,6 +307,9 @@ LInt LStr2Int(const LUint8* str, LInt radix)
 
         total = total * radix + ch;
         ++str;
+        if (withLength && str - start >= length) {
+            break;
+        }
     }
 
     return total * sign;
