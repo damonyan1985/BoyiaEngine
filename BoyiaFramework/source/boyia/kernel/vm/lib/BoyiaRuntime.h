@@ -6,6 +6,7 @@
 #include "UIView.h"
 #include "UtilString.h"
 #include "DOMBuilder.h"
+#include "BoyiaDebugger.h"
 
 namespace yanbo {
 class Application;
@@ -42,6 +43,7 @@ public:
     LVoid consumeMicroTask();
     LBool isLoadExeFile() const;
     LVoid runExeFile();
+    BoyiaDebugger* debugger() const;
 
 private:
     LVoid initNativeFunction();
@@ -59,6 +61,7 @@ private:
     LBool m_isLoadExeFile;
     OwnerPtr<BoyiaDomMap> m_domMap;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
+    OwnerPtr<BoyiaDebugger> m_debugger;
 };
 }
 

@@ -72,6 +72,7 @@ BoyiaRuntime::BoyiaRuntime(yanbo::Application* app)
     , m_eventManager(new BoyiaAsyncEventManager())
     , m_domMap(new BoyiaDomMap())
     , m_isLoadExeFile(LFalse)
+    , m_debugger(new BoyiaDebugger(this))
 {
 }
 
@@ -281,5 +282,10 @@ LVoid BoyiaRuntime::callPlatformApi(const String& params, BoyiaValue* propCB)
 LVoid BoyiaRuntime::consumeMicroTask()
 {
     ConsumeMicroTask(m_vm);
+}
+
+BoyiaDebugger* BoyiaRuntime::debugger() const
+{
+    return m_debugger.get();
 }
 }

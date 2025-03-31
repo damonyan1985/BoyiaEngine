@@ -58,7 +58,6 @@ private:
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
     OwnerPtr<BoyiaCompileInfo> m_compileInfo;
     OwnerPtr<BoyiaDebugger> m_debugger;
-    
 };
 }
 

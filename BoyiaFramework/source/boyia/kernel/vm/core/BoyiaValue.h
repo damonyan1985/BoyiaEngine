@@ -102,6 +102,12 @@ typedef struct {
     LInt mSize;
 } InlineCache;
 
+typedef struct {
+    LInt mColumn;
+    LInt mRow;
+    LInt mCodeIndex;
+} BoyiaCodePosition;
+
 #define NEW(type, vm) (type*)BoyiaAlloc(sizeof(type), vm)
 #define NEW_ARRAY(type, n, vm) (type*)BoyiaAlloc((n) * sizeof(type), vm)
 #define VM_DELETE(ptr, vm) BoyiaDelete(ptr, vm)
@@ -181,5 +187,10 @@ LVoid SystemGC(LVoid* vm);
 
 // 创建微任务
 BoyiaFunction* CreateMicroTaskObject(LVoid* vm);
+
+// 设置代码位置
+LVoid SetCodePosition(LInt codeIndex, LInt row, LInt column, LVoid* vm);
+
+BoyiaCodePosition* GetCodePosition(LInt codeIndex, LVoid* vm);
 
 #endif

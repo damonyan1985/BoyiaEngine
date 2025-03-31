@@ -19,7 +19,7 @@
 #endif
 
 #define kInvalidInstruction (-1)
-#define RuntimeError(key, error, vm) PrintErrorKey(key, error, vm->mEState->mStackFrame.mPC->mCodeLine, vm)
+#define RuntimeError(key, error, vm) PrintErrorKey(key, error, GetCodeRow(vm), vm)
 
 /* Type Define Begin */
 #define NUM_FUNC ((LInt)1024)
@@ -177,7 +177,6 @@ enum OpInstType {
 
 typedef struct Instruction {
     LUint8 mOPCode;
-    LInt mCodeLine;
     OpCommand mOPLeft;
     OpCommand mOPRight;
     InlineCache* mCache;
@@ -481,6 +480,12 @@ static LVoid AssignStateClass(ExecState* state, BoyiaValue* value) {
     }
     
     state->mStackFrame.mClass.mValueType = BY_CLASS;
+}
+
+static LInt GetCodeRow(BoyiaVM* vmPtr) {
+    LInt codeIndex = (LInt)(vmPtr->mEState->mStackFrame.mPC - vmPtr->mVMCode->mCode);
+    BoyiaCodePosition* position = GetCodePosition(codeIndex, vmPtr);
+    return position->mRow;
 }
 
 // Reset scene of global execute state
@@ -800,8 +805,7 @@ static Instruction* PutInstruction(
         newIns->mOPRight.mType = right->mType;
         newIns->mOPRight.mValue = right->mValue;
     }
-
-    newIns->mCodeLine = cs->mLineNum;
+    
     newIns->mOPCode = op;
     newIns->mNext = kInvalidInstruction;
     newIns->mCache = kBoyiaNull;
@@ -814,6 +818,11 @@ static Instruction* PutInstruction(
     }
 
     cmds->mEnd = newIns;
+    SetCodePosition(
+        cs->mVm->mVMCode->mSize - 1, 
+        cs->mLineNum, 
+        cs->mColumnNum, 
+        cs->mVm);
     return newIns;
 }
 
@@ -877,7 +886,7 @@ static LVoid ExecInstruction(BoyiaVM* vm) {
         }
 
         if (vm->mEState->mStackFrame.mPC) {
-            vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); //es->mPC->mNext;
+            vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm);
         }
 
         ExecPopFunction(vm);
@@ -1049,7 +1058,7 @@ static LVoid PropStatement(CompileState* cs) {
 LVoid LocalPush(BoyiaValue* value, LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     if (vmPtr->mEState->mStackFrame.mLValSize > NUM_LOCAL_VARS) {
-        SntxError(TOO_MANY_LVARS, vmPtr->mEState->mStackFrame.mPC->mCodeLine);
+        SntxError(TOO_MANY_LVARS, GetCodeRow(vmPtr));
     }
 
     ValueCopy(vmPtr->mLocals + (vmPtr->mEState->mStackFrame.mLValSize++), value);
@@ -1146,7 +1155,7 @@ static LInt HandleTempLocalSize(LVoid* ins, BoyiaVM* vm) {
 
 static LInt HandlePushScene(LVoid* ins, BoyiaVM* vm) {
     if (vm->mEState->mFrameIndex >= FUNC_CALLS) {
-        SntxError(NEST_FUNC, vm->mEState->mStackFrame.mPC->mCodeLine);
+        SntxError(NEST_FUNC, GetCodeRow(vm));
         return kOpResultEnd;
     }
 

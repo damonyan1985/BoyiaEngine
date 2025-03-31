@@ -423,6 +423,16 @@ LInt CallNativeFunction(LInt idx, LVoid* vm)
     return GetRuntime(vm)->callNativeFunction(idx);
 }
 
+LVoid SetCodePosition(LInt codeIndex, LInt row, LInt column, LVoid* vm)
+{
+    GetRuntime(vm)->debugger()->setCodePosition(codeIndex, row, column);
+}
+
+BoyiaCodePosition* GetCodePosition(LInt codeIndex, LVoid* vm)
+{
+    return GetRuntime(vm)->debugger()->getCodePosition(codeIndex);
+}
+
 // Boyia builtins
 // 创建Builtin类的方法
 LVoid GenBuiltinClassFunction(LUintPtr key, NativePtr func, BoyiaFunction* classBody, LVoid* vm)

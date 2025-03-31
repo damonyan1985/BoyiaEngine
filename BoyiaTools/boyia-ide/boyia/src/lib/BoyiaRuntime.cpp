@@ -91,6 +91,7 @@ BoyiaRuntime::BoyiaRuntime()
     , m_eventManager(new BoyiaAsyncEventManager())
     , m_compileInfo(new BoyiaCompileInfo(this))
     , m_isLoadExeFile(LFalse)
+    , m_debugger(new BoyiaDebugger(this))
 {
 }
 
@@ -300,5 +301,10 @@ LVoid BoyiaRuntime::consumeMicroTask()
 LVoid BoyiaRuntime::cacheCode()
 {
     CacheVMCode(vm());
+}
+
+BoyiaDebugger* BoyiaRuntime::debugger() const
+{
+    return m_debugger.get();
 }
 }

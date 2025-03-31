@@ -28,6 +28,7 @@ file(
     "${BOYIA_KERNEL_PATH}/vm/core/*.cpp"
     "${BOYIA_KERNEL_PATH}/vm/jit/*.cpp"
     "${BOYIA_KERNEL_PATH}/vm/lib/*.cpp"
+    "${BOYIA_KERNEL_PATH}/vm/dbg/*.cpp"
     "${BOYIA_KERNEL_PATH}/vm/json/*.c"
     "${BOYIA_KERNEL_PATH}/vm/json/*.cpp"
     "${BOYIA_KERNEL_PATH}/dom/*.cpp"
@@ -88,6 +89,7 @@ target_include_directories(
     ${BOYIA_KERNEL_PATH}/vm/jit
     ${BOYIA_KERNEL_PATH}/vm/json
     ${BOYIA_KERNEL_PATH}/vm/lib
+    ${BOYIA_KERNEL_PATH}/vm/dbg
     ${BOYIA_KERNEL_PATH}/app
     ${BOYIA_KERNEL_PATH}/dom
     ${BOYIA_KERNEL_PATH}/gui

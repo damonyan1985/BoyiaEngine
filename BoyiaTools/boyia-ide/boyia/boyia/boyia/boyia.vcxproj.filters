@@ -56,7 +56,7 @@
       <UniqueIdentifier>{d1a38a9e-8336-4a6d-b693-76bff2ba8592}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\vm\dbg">
-      <UniqueIdentifier>{1f1c6bb9-e3ad-4bb4-b888-767824bf2b60}</UniqueIdentifier>
+      <UniqueIdentifier>{3f7e9502-eb52-4d40-bc59-6cd4469a6b2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -234,7 +234,7 @@
     <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.cpp">
       <Filter>src\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\dbg\BoyiaDebugger.cpp">
+    <ClCompile Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\dbg\BoyiaDebugger.cpp">
       <Filter>src\vm\dbg</Filter>
     </ClCompile>
   </ItemGroup>
@@ -437,7 +437,7 @@
     <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\platform\zip\ZipEntry.h">
       <Filter>src\zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\dbg\BoyiaDebugger.h">
+    <ClInclude Include="..\..\..\..\..\BoyiaFramework\source\boyia\kernel\vm\dbg\BoyiaDebugger.h">
       <Filter>src\vm\dbg</Filter>
     </ClInclude>
   </ItemGroup>
