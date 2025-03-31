@@ -26,6 +26,7 @@ set(ZLIB_SRCS
 
 set(ZIP_SRC
     ${ZIP_PROJECT_PATH}/minizip/unzip.c
+    ${ZIP_PROJECT_PATH}/minizip/zip.c
     ${ZIP_PROJECT_PATH}/minizip/ioapi.c
 )
 
