@@ -19,6 +19,7 @@
 #include "BoyiaRef.h"
 #include "PlatformLib.h"
 #include "SalLog.h"
+#include <wchar.h>
 
 namespace util {
 template <class T>
@@ -64,7 +65,7 @@ public:
     
     static inline LInt CountString(const wchar_t* str)
     {
-        return -1;
+        return wcslen(str);
     }
 };
 
