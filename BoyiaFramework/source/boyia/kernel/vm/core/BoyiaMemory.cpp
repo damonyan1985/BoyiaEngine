@@ -246,12 +246,13 @@ LVoid* CreateMemoryCache(LInt typeSize, LInt capacity) {
 
 LVoid* AllocMemoryChunk(LVoid* cachePtr) {
     MemoryCache* cache = (MemoryCache*)cachePtr;
-
+    // 分配从mFreeChunks链表中进行分配
     MemoryChunk* chunk = cache->mFreeChunks;
     if (chunk && chunk->mNext) {
         cache->mFreeChunks = chunk->mNext;
     } else {
         if (cache->mUseIndex >= cache->mCapacity - 1) {
+            // mUseIndex表示从0开始到capacity按顺序分配完了
             cache->mFreeChunks = kBoyiaNull;
             if (!chunk) {
                 // (TODO) Out of Memory
@@ -280,8 +281,7 @@ LVoid FreeMemoryChunk(LVoid* addr, LVoid* cachePtr) {
     LMemset(addr, 0, cache->mUnitSize);
 
     MemoryChunk* chunk = &cache->mChunkCache[index];
-
-    chunk->mNext = cache->mFreeChunks->mNext;
+    chunk->mNext = cache->mFreeChunks;
     cache->mFreeChunks = chunk;
     --cache->mCount;
 }
