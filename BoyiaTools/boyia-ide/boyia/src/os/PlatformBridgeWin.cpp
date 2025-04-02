@@ -19,6 +19,7 @@ static String sBoyiaJsonPath((LUint8)0, MAX_PATH_SIZE);
 static String sSdkPath((LUint8)0, MAX_PATH_SIZE);
 static String sAppRootPath((LUint8)0, MAX_PATH_SIZE);
 
+static String sAppDistPath((LUint8)0, MAX_PATH_SIZE);
 static String sInstructPath((LUint8)0, MAX_PATH_SIZE);
 static String sStringTablePath((LUint8)0, MAX_PATH_SIZE);
 static String sEntryCodePath((LUint8)0, MAX_PATH_SIZE);
@@ -102,15 +103,23 @@ const LInt PlatformBridge::getTextSize(const String& text)
 
 const char* PlatformBridge::getCachePath(String& cachePath, const String& binName)
 {
-    char path[MAX_PATH];
-    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
-    if (!length) {
-        return "";
-    }
+    if (!sAppDistPath.GetLength()) {
+        char path[MAX_PATH_SIZE];
+        DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH_SIZE);
+        if (!length) {
+            return "";
+        }
 
-    PathRemoveFileSpecA(path);
+        PathRemoveFileSpecA(path);
+        sAppDistPath = _CS(path);
+        sAppDistPath += _CS("\\dist");
+
+        if (!FileUtil::isExist(GET_STR(sAppDistPath))) {
+            FileUtil::createDir(GET_STR(sAppDistPath));
+        }
+    }
     if (!cachePath.GetLength()) {
-        cachePath = _CS(path);
+        cachePath = _CS(sAppDistPath);
         cachePath += binName;
     }
     return GET_STR(cachePath);
