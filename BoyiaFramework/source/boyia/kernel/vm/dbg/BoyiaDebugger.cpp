@@ -42,4 +42,12 @@ LVoid BoyiaDebugger::setCodePosition(LInt codeIndex, LInt row, LInt column) {
 BoyiaCodePosition* BoyiaDebugger::getCodePosition(LInt codeIndex) {
     return &m_positions[codeIndex];
 }
+
+const KVector<BoyiaCodePosition>& BoyiaDebugger::getCodePositions() const {
+    return m_positions;
+}
+
+LVoid BoyiaDebugger::loadCodePositions(KVector<BoyiaCodePosition>& positions) {
+    m_positions.move(positions);
+}
 }

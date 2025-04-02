@@ -845,6 +845,9 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\dbg\BoyiaDebugger.cpp">
       <Filter>boyia\kernel\vm\dbg</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.cpp">
+      <Filter>boyia\kernel\platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="libboyia.def">

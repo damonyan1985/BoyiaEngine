@@ -306,6 +306,7 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\arm\ArmFunction.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\graphics\Animation.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PixelRatio.cpp" />
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BaseThreadWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\BoyiaHttpEngine.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\CharConvertor.cpp" />

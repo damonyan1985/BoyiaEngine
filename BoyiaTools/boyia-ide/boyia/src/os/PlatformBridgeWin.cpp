@@ -10,20 +10,20 @@
 #include <Shlwapi.h>
 
 #define CSIDL_LOCAL_APPDATA 0x001c
-#define MAX_PATH 260
 
 namespace yanbo {
 #define BOYIA_WIN_DEBUG
 
-static String sAppPath((LUint8)0, MAX_PATH);
-static String sBoyiaJsonPath((LUint8)0, MAX_PATH);
-static String sSdkPath((LUint8)0, MAX_PATH);
-static String sAppRootPath((LUint8)0, MAX_PATH);
+static String sAppPath((LUint8)0, MAX_PATH_SIZE);
+static String sBoyiaJsonPath((LUint8)0, MAX_PATH_SIZE);
+static String sSdkPath((LUint8)0, MAX_PATH_SIZE);
+static String sAppRootPath((LUint8)0, MAX_PATH_SIZE);
 
-static String sInstructPath((LUint8)0, MAX_PATH);
-static String sStringTablePath((LUint8)0, MAX_PATH);
-static String sEntryCodePath((LUint8)0, MAX_PATH);
-static String sSymbolTablePath((LUint8)0, MAX_PATH);
+static String sInstructPath((LUint8)0, MAX_PATH_SIZE);
+static String sStringTablePath((LUint8)0, MAX_PATH_SIZE);
+static String sEntryCodePath((LUint8)0, MAX_PATH_SIZE);
+static String sSymbolTablePath((LUint8)0, MAX_PATH_SIZE);
+static String sDebugInfoPath((LUint8)0, MAX_PATH_SIZE);
 
 const char* kZipPassword = "123456";
 
@@ -100,7 +100,7 @@ const LInt PlatformBridge::getTextSize(const String& text)
     return wtext.length();
 }
 
-const char* PlatformBridge::getInstructionCachePath()
+const char* PlatformBridge::getCachePath(String& cachePath, const String& binName)
 {
     char path[MAX_PATH];
     DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
@@ -109,60 +109,36 @@ const char* PlatformBridge::getInstructionCachePath()
     }
 
     PathRemoveFileSpecA(path);
-    if (!sInstructPath.GetLength()) {
-        sInstructPath = _CS(path);
-        sInstructPath += _CS("\\instruction_cache.bin");
+    if (!cachePath.GetLength()) {
+        cachePath = _CS(path);
+        cachePath += binName;
     }
-    return GET_STR(sInstructPath);
+    return GET_STR(cachePath);
+}
+
+const char* PlatformBridge::getInstructionCachePath()
+{
+    return getCachePath(sInstructPath, _CS("\\instruction_cache.bin"));
 }
 
 const char* PlatformBridge::getStringTableCachePath()
 {
-    char path[MAX_PATH];
-    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
-    if (!length) {
-        return "";
-    }
-    
-    PathRemoveFileSpecA(path);
-    if (!sStringTablePath.GetLength()) {
-        sStringTablePath = _CS(path);
-        sStringTablePath += _CS("\\stringtable_cache.bin");
-    }
-    return GET_STR(sStringTablePath);
+    return getCachePath(sStringTablePath, _CS("\\stringtable_cache.bin"));
 }
 
 const char* PlatformBridge::getInstructionEntryPath()
 {
-    char path[MAX_PATH];
-    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
-    if (!length) {
-        return "";
-    }
-
-    PathRemoveFileSpecA(path);
-    if (!sEntryCodePath.GetLength()) {
-        sEntryCodePath = _CS(path);
-        sEntryCodePath += _CS("\\instruction_entry.bin");
-    }
-    return GET_STR(sEntryCodePath);
+    return getCachePath(sEntryCodePath, _CS("\\instruction_entry.bin"));
 }
 
 const char* PlatformBridge::getSymbolTablePath()
 {
-    char path[MAX_PATH];
-    DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH);
-    if (!length) {
-        return "";
-    }
+    return getCachePath(sSymbolTablePath, _CS("\\symbol_table.bin"));
+}
 
-    PathRemoveFileSpecA(path);
-
-    if (!sSymbolTablePath.GetLength()) {
-        sSymbolTablePath = _CS(path);
-        sSymbolTablePath += _CS("\\symbol_table.bin");
-    }
-    return GET_STR(sSymbolTablePath);
+const char* PlatformBridge::getDebugInfoPath() 
+{
+    return getCachePath(sDebugInfoPath, _CS("\\debug_info.bin"));
 }
 
 const LReal PlatformBridge::getDisplayDensity()

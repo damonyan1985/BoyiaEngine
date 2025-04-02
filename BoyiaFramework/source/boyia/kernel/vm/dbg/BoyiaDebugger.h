@@ -25,6 +25,8 @@ public:
     LVoid resume();
     LVoid setCodePosition(LInt codeIndex, LInt row, LInt column);
     BoyiaCodePosition* getCodePosition(LInt codeIndex);
+    const KVector<BoyiaCodePosition>& getCodePositions() const;
+    LVoid loadCodePositions(KVector<BoyiaCodePosition>& positions);
 
 private:
     BoyiaRuntime* m_runtime;

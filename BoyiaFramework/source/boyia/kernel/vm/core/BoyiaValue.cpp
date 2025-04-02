@@ -372,6 +372,14 @@ LVoid CacheSymbolTable(LVoid* vm)
         *ownerString.get());
 }
 
+LVoid CacheDebugInfo(LVoid* vm) 
+{
+    const KVector<BoyiaCodePosition>& positions = GetRuntime(vm)->debugger()->getCodePositions();
+    FileUtil::writeFile(
+        _CS(yanbo::PlatformBridge::getDebugInfoPath()),
+        String(_CS(positions.getBuffer()), LFalse, positions.size() * sizeof(BoyiaCodePosition)));
+}
+
 static LVoid LoadSymbolTable(LVoid* vm)
 {
     // Load SymbolTable
@@ -384,6 +392,18 @@ static LVoid LoadSymbolTable(LVoid* vm)
         LUint id = StringUtils::stringToInt(ids->elementAt(1));
         GetRuntime(vm)->idCreator()->appendIdentify(ids->elementAt(0), id);
     }
+
+    String debugInfo;
+    FileUtil::readFile(_CS(yanbo::PlatformBridge::getDebugInfoPath()), debugInfo);
+    if (!debugInfo.GetLength()) {
+        return;
+    }
+    BoyiaCodePosition* buffer = reinterpret_cast<BoyiaCodePosition*>(debugInfo.GetBuffer());
+    LInt bufferSize = debugInfo.GetLength() / sizeof(BoyiaCodePosition);
+    debugInfo.ReleaseBuffer();
+
+    KVector<BoyiaCodePosition> positions(buffer, bufferSize);
+    GetRuntime(vm)->debugger()->loadCodePositions(positions);
 }
 
 LVoid LoadVMCode(LVoid* vm)

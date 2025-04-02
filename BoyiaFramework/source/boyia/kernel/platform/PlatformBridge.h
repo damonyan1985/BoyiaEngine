@@ -14,6 +14,7 @@ public:
     };
     
     static bool unzip(const String& zipFile, const String& dir);
+    static const char* getCachePath(String& cachePath, const String& binName);
     static const char* getAppRoot();
     static const char* getAppPath();
     static const char* getBoyiaJsonPath();
@@ -24,6 +25,7 @@ public:
     static const char* getStringTableCachePath();
     static const char* getInstructionEntryPath();
     static const char* getSymbolTablePath();
+    static const char* getDebugInfoPath();
     static const LReal getDisplayDensity();
     static void handleApi(const String& params, LIntPtr callback);
     

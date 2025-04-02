@@ -12,6 +12,7 @@ public:
     mutable String entryCodePath;
     mutable String stringTablePath;
     mutable String symbolTablePath;
+    mutable String debugInfoPath;
 };
 
 class AppInfo {

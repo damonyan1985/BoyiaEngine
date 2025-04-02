@@ -258,6 +258,7 @@ LVoid* AllocMemoryChunk(LVoid* cachePtr) {
                 // (TODO) Out of Memory
                 return kBoyiaNull;
             }
+            ++cache->mCount;
             return chunk->mMemoryAddr;
         }
         cache->mFreeChunks = &cache->mChunkCache[++cache->mUseIndex];

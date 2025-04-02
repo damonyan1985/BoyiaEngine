@@ -26,6 +26,7 @@ public:
     KVector(LInt);
     KVector(LInt, LInt);
     KVector(const KVector<T>& kv, Bool deep = LTrue); // kvector
+    KVector(T*, LInt);
     virtual ~KVector();
 
 public:
@@ -87,6 +88,15 @@ KVector<T>::KVector(LInt size, LInt capacity)
     , m_deep(LTrue)
 {
     m_buffer = new T[capacity];
+}
+
+template <class T>
+KVector<T>::KVector(T* buffer, LInt size)
+    : m_buffer(buffer)
+    , m_size(size)
+    , m_capacity(size)
+    , m_deep(LTrue)
+{
 }
 
 template <class T>

@@ -8,10 +8,11 @@
 
 namespace yanbo {
 AppCodePath::AppCodePath()
-    : instructPath((LUint8)0, 256)
-    , entryCodePath((LUint8)0, 256)
-    , stringTablePath((LUint8)0, 256)
-    , symbolTablePath((LUint8)0, 256)
+    : instructPath((LUint8)0, MAX_PATH_SIZE)
+    , entryCodePath((LUint8)0, MAX_PATH_SIZE)
+    , stringTablePath((LUint8)0, MAX_PATH_SIZE)
+    , symbolTablePath((LUint8)0, MAX_PATH_SIZE)
+    , debugInfoPath((LUint8)0, MAX_PATH_SIZE)
 {
 }
 

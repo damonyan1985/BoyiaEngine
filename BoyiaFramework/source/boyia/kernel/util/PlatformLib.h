@@ -121,6 +121,8 @@ typedef LByte LBYTE;
 #define UALLOCN(c, n) new c[n]
 #define UFREE(p) delete p
 
+#define MAX_PATH_SIZE 256
+
 // Function in argument, Only for remark
 #define In
 // Function out argument, Only for remark

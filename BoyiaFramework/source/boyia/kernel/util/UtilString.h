@@ -229,14 +229,15 @@ LString<T>::LString(const T* lpsz, LInt nLen, Bool tmp)
         m_owner = LTrue;
     }
     m_size = nLen;
-    
 }
 
 template <class T>
 LString<T>::LString(T ch, LInt nRepeat)
 {
     AllocBuffer(nRepeat);
-    LMemset(m_buffer, ch, nRepeat * sizeof(T));
+    if (ch != 0) {
+        LMemset(m_buffer, ch, nRepeat * sizeof(T));
+    }
     m_size = ch == 0 ? 0 : nRepeat;
     m_owner = LTrue;
 }
@@ -374,7 +375,7 @@ template <class T>
 LVoid LString<T>::AllocBuffer(LInt nLen)
 {
     m_capacity = nLen + 1;
-    m_buffer = NEW_BUFFER(T, m_capacity);//new T[nLen + 1];
+    m_buffer = NEW_BUFFER(T, m_capacity);
     LMemset(m_buffer, 0, m_capacity * sizeof(T));
 }
 
