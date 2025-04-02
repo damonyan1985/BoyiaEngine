@@ -43,6 +43,7 @@ public:
     LVoid consumeMicroTask();
     LBool isLoadExeFile() const;
     LVoid runExeFile();
+    LVoid cacheCode();
     BoyiaDebugger* debugger() const;
 
 private:

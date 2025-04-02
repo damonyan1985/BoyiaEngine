@@ -214,7 +214,7 @@ static void nativeCacheCode(JNIEnv* env, jobject obj)
         return;
     }
 
-    CacheVMCode(yanbo::AppManager::instance()->currentApp()->runtime()->vm());
+    yanbo::AppManager::instance()->currentApp()->runtime()->cacheCode();
 }
 
 static void nativePlatformViewUpdate(JNIEnv* env, jobject obj, jstring id)
