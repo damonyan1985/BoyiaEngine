@@ -103,6 +103,10 @@ const LInt PlatformBridge::getTextSize(const String& text)
 
 const char* PlatformBridge::getCachePath(String& cachePath, const String& binName)
 {
+    if (cachePath.GetLength()) {
+        return GET_STR(cachePath);
+    }
+
     if (!sAppDistPath.GetLength()) {
         char path[MAX_PATH_SIZE];
         DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH_SIZE);
@@ -118,8 +122,9 @@ const char* PlatformBridge::getCachePath(String& cachePath, const String& binNam
             FileUtil::createDir(GET_STR(sAppDistPath));
         }
     }
-    if (!cachePath.GetLength()) {
-        cachePath = _CS(sAppDistPath);
+
+    cachePath = _CS(sAppDistPath);
+    if (binName.GetLength()) {
         cachePath += binName;
     }
     return GET_STR(cachePath);

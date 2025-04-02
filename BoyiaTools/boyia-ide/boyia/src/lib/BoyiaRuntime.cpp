@@ -6,6 +6,7 @@
 #include "SystemUtil.h"
 #include "StringUtils.h"
 #include "FileUtil.h"
+#include "ZipEntry.h"
 
 
 const LInt kMemoryPoolSize = (6 * MB);
@@ -301,6 +302,11 @@ LVoid BoyiaRuntime::consumeMicroTask()
 LVoid BoyiaRuntime::cacheCode()
 {
     CacheVMCode(vm());
+
+    String distDir((LUint8)0, MAX_PATH_SIZE);
+    yanbo::PlatformBridge::getCachePath(distDir, _CS(""));
+    String distZip = distDir + _CS(".zip");
+    yanbo::ZipEntry::zip(distDir, distZip, _CS("123456"));
 }
 
 BoyiaDebugger* BoyiaRuntime::debugger() const
