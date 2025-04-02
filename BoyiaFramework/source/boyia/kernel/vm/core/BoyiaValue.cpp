@@ -375,6 +375,9 @@ LVoid CacheSymbolTable(LVoid* vm)
 LVoid CacheDebugInfo(LVoid* vm) 
 {
     const KVector<BoyiaCodePosition>& positions = GetRuntime(vm)->debugger()->getCodePositions();
+    if (positions.size() == 0) {
+        return;
+    }
     FileUtil::writeFile(
         _CS(yanbo::PlatformBridge::getDebugInfoPath()),
         String(_CS(positions.getBuffer()), LFalse, positions.size() * sizeof(BoyiaCodePosition)));
@@ -393,6 +396,7 @@ static LVoid LoadSymbolTable(LVoid* vm)
         GetRuntime(vm)->idCreator()->appendIdentify(ids->elementAt(0), id);
     }
 
+    // 加载调试信息
     String debugInfo;
     FileUtil::readFile(_CS(yanbo::PlatformBridge::getDebugInfoPath()), debugInfo);
     if (!debugInfo.GetLength()) {

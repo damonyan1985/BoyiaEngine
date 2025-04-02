@@ -40,6 +40,9 @@ LVoid BoyiaDebugger::setCodePosition(LInt codeIndex, LInt row, LInt column) {
 }
 
 BoyiaCodePosition* BoyiaDebugger::getCodePosition(LInt codeIndex) {
+    if (codeIndex >= m_positions.size()) {
+        return kBoyiaNull;
+    }
     return &m_positions[codeIndex];
 }
 

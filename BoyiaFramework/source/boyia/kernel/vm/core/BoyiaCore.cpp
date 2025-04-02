@@ -485,7 +485,11 @@ static LVoid AssignStateClass(ExecState* state, BoyiaValue* value) {
 static LInt GetCodeRow(BoyiaVM* vmPtr) {
     LInt codeIndex = (LInt)(vmPtr->mEState->mStackFrame.mPC - vmPtr->mVMCode->mCode);
     BoyiaCodePosition* position = GetCodePosition(codeIndex, vmPtr);
-    return position->mRow;
+    if (position) {
+        return position->mRow;
+    }
+
+    return -1;
 }
 
 // Reset scene of global execute state
@@ -3168,6 +3172,7 @@ LVoid CacheVMCode(LVoid* vm) {
         }
     }
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);
+    CacheDebugInfo(vm);
 }
 
 LVoid LoadStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm) {
