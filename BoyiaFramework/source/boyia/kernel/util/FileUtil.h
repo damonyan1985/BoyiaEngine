@@ -16,7 +16,8 @@
 #include "KVector.h"
 
 namespace util {
-// android中的文件读写不能操作扩展卡中的内容，只能操作/data/data/com.boyia.app.shell下文件陆慕
+// android中的文件读写不能操作扩展卡中的内容，只能操作/data/data/com.boyia.app.shell下文件目录
+typedef LVoid* FileHandle;
 class FileUtil {
 public:
     static LVoid readFile(In const String& fileName, Out String& content);
@@ -36,6 +37,8 @@ public:
     static LVoid getCurrentAbsolutePath(In const String& relativePath, Out String& absolutePath);
     static LVoid getAbsoluteFilePath(In const String& absolutePath, In const String& relativeFilePath, Out String& absoluteFilePath);
     static bool IsAbsolutePath(const String& path);
+    static LVoid* mmap(FileHandle handle, LSizeT size, LOffset offset, FileHandle* extra);
+    static LBool munmap(LVoid* data, LSizeT size, FileHandle* extra);
 };
 }
 

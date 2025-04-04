@@ -46,15 +46,12 @@ namespace util {
 #define KB (1024)
 #define MB (KB * KB)
 #define GB (MB * KB)
-
-//
-//using LInt8 = char;
+    
 typedef char LInt8;
 typedef short int LInt16;
 typedef int LInt32;
 typedef long long LInt64;
 
-//
 typedef unsigned char LUint8;
 typedef unsigned short int LUint16;
 typedef unsigned int LUint32;
@@ -64,14 +61,14 @@ typedef unsigned short LWORD;
 
 #if defined(__LP64__)
 typedef int LInt;
-typedef long long LIntPtr;
-typedef unsigned long long LUintPtr;
+typedef long long LIntPtr, LOffset;
+typedef unsigned long long LUintPtr, LSizeT;
 typedef unsigned int LUint;
 #else
 typedef int LInt;
-typedef int LIntPtr;
+typedef int LIntPtr, LOffset;
 typedef unsigned int LUint;
-typedef unsigned int LUintPtr;
+typedef unsigned int LUintPtr, LSizeT;
 #endif
 
 typedef void LVoid;
@@ -207,6 +204,8 @@ using util::LUint64;
 using util::LUint8;
 using util::LUintPtr;
 using util::LVoid;
+using util::LOffset;
+using util::LSizeT;
 
 #endif // PLATFORMLIB_H
 

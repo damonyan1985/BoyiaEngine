@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #elif ENABLE(BOYIA_WINDOWS)
 #include "CharConvertor.h"
 #include <io.h>
@@ -383,6 +384,50 @@ bool FileUtil::IsAbsolutePath(const String& path)
     return !PathIsRelativeA(GET_STR(path)) || PathIsUNCA(GET_STR(path));
 #else
     return false;
+#endif
+}
+
+LVoid* FileUtil::mmap(FileHandle handle, LSizeT size, LOffset offset, FileHandle* extra)
+{
+#if ENABLE(BOYIA_WINDOWS)
+    {
+        *extra = CreateFileMappingA(
+            handle, NULL, PAGE_READONLY,
+            (DWORD)((LUint64)size >> 32),
+            (DWORD)(size & 0xffffffff), NULL);
+        if (!*extra) {
+            return kBoyiaNull;
+        }
+
+        LVoid* data = MapViewOfFile(
+            *extra, FILE_MAP_READ,
+            (DWORD)((LUint64)offset >> 32),
+            (DWORD)(offset & 0xffffffff), size);
+
+        if (!data) {
+            CloseHandle(*extra);
+        }
+
+        return data;
+    }
+#else
+    {
+        LVoid* data = mmap(NULL, size, PROT_READ, MAP_SHARED, handle, offset);
+        return data == MAP_FAILED ? kBoyiaNull : data;
+    }
+#endif
+}
+
+LBool FileUtil::munmap(LVoid* data, LSizeT size, FileHandle* extra)
+{
+#if ENABLE(BOYIA_WINDOWS)
+    {
+        return UnmapViewOfFile(data) & CloseHandle(*extra);
+    }
+#else
+    {
+        return munmap(data, size) == 0;
+    }
 #endif
 }
 }

@@ -43,6 +43,7 @@ public:
     BoyiaDebugger* debugger() const;
 
 private:
+    LVoid packageCache();
     LVoid initNativeFunction();
     LVoid appendNative(LUintPtr id, NativePtr ptr);
 

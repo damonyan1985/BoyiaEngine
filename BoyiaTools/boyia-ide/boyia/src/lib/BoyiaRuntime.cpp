@@ -13,6 +13,7 @@ const LInt kMemoryPoolSize = (6 * MB);
 const LInt kGcMemorySize = (8 * KB);
 //const LInt kGcMemorySize = (2 * MB);
 const LInt kNativeFunctionCapacity = 100;
+const char kPackageCodeCachePassword[] = "123456";
 
 extern LVoid* CreateGC(LVoid* vm);
 extern LVoid DestroyGC(LVoid* vm);
@@ -302,11 +303,14 @@ LVoid BoyiaRuntime::consumeMicroTask()
 LVoid BoyiaRuntime::cacheCode()
 {
     CacheVMCode(vm());
+    packageCache();
+}
 
+LVoid BoyiaRuntime::packageCache() {
     String distDir((LUint8)0, MAX_PATH_SIZE);
     yanbo::PlatformBridge::getCachePath(distDir, _CS(""));
     String distZip = distDir + _CS(".zip");
-    yanbo::ZipEntry::zip(distDir, distZip, _CS("123456"));
+    yanbo::ZipEntry::zip(distDir, distZip, _CS(kPackageCodeCachePassword));
 }
 
 BoyiaDebugger* BoyiaRuntime::debugger() const
