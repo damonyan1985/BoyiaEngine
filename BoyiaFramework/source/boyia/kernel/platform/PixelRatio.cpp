@@ -7,15 +7,17 @@ float PixelRatio::s_height = 0;
 float PixelRatio::s_logicWidth = 0;
 float PixelRatio::s_logicHeight = 0;
 
-PixelRatio::PixelDirection PixelRatio::s_direction = PixelRatio::kPixelHorizontal;
+// 纵向默认以宽为基准
+PixelRatio::PixelDirection PixelRatio::s_direction = PixelRatio::kPixelVertical;
 
-// 内核使用逻辑高度
+// 外部传入的物理宽高
 void PixelRatio::setWindowSize(LReal width, LReal height)
 {
     s_width = width;
     s_height = height;
 }
 
+// 内核使用逻辑高度
 void PixelRatio::setLogicWindowSize(LReal width, LReal height)
 {
     s_logicWidth = width;
@@ -35,9 +37,9 @@ float PixelRatio::vhRatio()
 float PixelRatio::ratio()
 {
     switch (s_direction) {
-    case PixelRatio::kPixelHorizontal:
-        return s_width / s_logicWidth;
     case PixelRatio::kPixelVertical:
+        return s_width / s_logicWidth;
+    case PixelRatio::kPixelHorizontal:
         return s_height / s_logicHeight;
     default:
         return 1;
@@ -46,20 +48,11 @@ float PixelRatio::ratio()
 
 int PixelRatio::viewX(int x)
 {
-    // switch (s_direction) {
-    // case PixelRatio::kPixelHorizontal:
-    //     return x * s_logicWidth / s_width;
-    // case PixelRatio::kPixelVertical:
-    //     return x * s_logicHeight / s_height;
-    // default:
-    //     return x;
-    // }
     return x / ratio();
 }
 
 int PixelRatio::viewY(int y)
 {
-    //return viewX(y);
     return y / ratio();
 }
 

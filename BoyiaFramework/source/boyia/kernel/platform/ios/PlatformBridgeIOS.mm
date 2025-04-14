@@ -145,6 +145,11 @@ void PlatformBridge::handleApi(const String& params, LIntPtr callback)
     [BoyiaBridge handleApi:STR_TO_OCSTR(params)
                   callback:[[BoyiaHandlerCallbackImpl alloc]initWithCallbackId:callback]];
 }
+
+bool PlatformBridge::isAbsolutePath(const String& path)
+{
+    return [STR_TO_OCSTR(params) isAbsolutePath];
+}
 }
 
 #endif

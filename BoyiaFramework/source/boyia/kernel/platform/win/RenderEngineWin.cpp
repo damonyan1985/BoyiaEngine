@@ -174,15 +174,16 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
 {
     RenderTextCommand* resource = static_cast<RenderTextCommand*>(cmd);
     wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(resource->text));
-    Gdiplus::Font font(L"Arial", resource->font.getFontSize() * yanbo::PixelRatio::ratio(),
+    LInt fontSize = resource->font.getFontSize() * yanbo::PixelRatio::ratio();
+    Gdiplus::Font font(L"Arial", fontSize,
         Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
     Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
     Gdiplus::RectF rect(
-        resource->rect.iTopLeft.iX * yanbo::PixelRatio::ratio(),
-        resource->rect.iTopLeft.iY * yanbo::PixelRatio::ratio(),
-        resource->rect.GetWidth(),
-        resource->rect.GetHeight()
+        yanbo::PixelRatio::rawX(resource->rect.iTopLeft.iX),
+        yanbo::PixelRatio::rawY(resource->rect.iTopLeft.iY),
+        yanbo::PixelRatio::rawX(resource->rect.GetWidth()),
+        yanbo::PixelRatio::rawY(resource->rect.GetHeight())
     );
 
     Gdiplus::SolidBrush brush(Gdiplus::Color(
@@ -194,6 +195,9 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
 
     gc.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
     gc.DrawString(wtext.c_str(), wtext.length(), &font, rect, &format, &brush);
+
+    Gdiplus::SolidBrush brush1(Gdiplus::Color(0x33, 0xFF, 0x00, 0xFF));
+    gc.FillRectangle(&brush1, rect);
 }
 
 LVoid RenderEngineWin::renderImage(RenderCommand* cmd, Gdiplus::Graphics& gc)

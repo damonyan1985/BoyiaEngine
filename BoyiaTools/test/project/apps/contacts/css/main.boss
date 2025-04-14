@@ -125,6 +125,7 @@ body {
 .new_text {
 	width: 480px;
 	height: 150px;
+	background-color: #FFFF00FF;
 }
 .items {
     background-color:#FFFFFFFF;

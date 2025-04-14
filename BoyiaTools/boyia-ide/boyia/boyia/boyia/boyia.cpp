@@ -28,7 +28,7 @@ int main(int argc, char** argv)
         const char* filename = argv[i];
         String path;
         // 判断是否是绝对地址，如果是相对地址，则需要拼接
-        if (!FileUtil::IsAbsolutePath(_CS(filename))) {
+        if (!FileUtil::isAbsolutePath(_CS(filename))) {
             FileUtil::getCurrentAbsolutePath(_CS(filename), path);
         } else {
             path = _CS(filename);

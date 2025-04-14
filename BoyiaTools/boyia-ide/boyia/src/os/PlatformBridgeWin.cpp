@@ -163,6 +163,11 @@ PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 void PlatformBridge::handleApi(const String& params, LIntPtr callback)
 {    
 }
+
+bool PlatformBridge::isAbsolutePath(const String& path)
+{
+    return !PathIsRelativeA(GET_STR(path)) || PathIsUNCA(GET_STR(path));
+}
 }
 
 #endif

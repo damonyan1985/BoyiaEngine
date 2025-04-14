@@ -936,7 +936,7 @@ LInt requireFile(LVoid* vm)
     TO_STR_VAR(scriptSrc, requireScriptSrc);
 
     const String& currentScriptPath = GetRuntime(vm)->getCurrentScript();
-    if (!FileUtil::IsAbsolutePath(requireScriptSrc)) {
+    if (!FileUtil::isAbsolutePath(requireScriptSrc)) {
         FileUtil::getAbsoluteFilePath(currentScriptPath, requireScriptSrc, requireScriptSrc);
     }
     GetRuntime(vm)->compileFile(requireScriptSrc);

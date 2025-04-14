@@ -25,4 +25,13 @@ LVoid CharConvertor::WcharToChar(const wchar_t* wp, String& text, size_t encode)
     //delete m_char;
     text.Copy(_CS(chs), LTrue, len);
 }
+
+LVoid CharConvertor::WcharToChar(const WString& wp, String& text, size_t encode)
+{
+    int len = WideCharToMultiByte(encode, 0, wp.GetBuffer(), wp.GetLength(), NULL, 0, NULL, NULL);
+    char* chs = NEW_BUFFER(char, len + 1);
+    WideCharToMultiByte(encode, 0, wp, wcslen(wp), chs, len, NULL, NULL);
+    chs[len] = '\0';
+    text.Copy(_CS(chs), LTrue, len);
+}
 }

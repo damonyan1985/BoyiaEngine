@@ -6,7 +6,6 @@
 #include <GdiPlus.h>
 
 using namespace Gdiplus;
-typedef util::LString<wchar_t> WString;
 
 namespace util {
 class LineText {
@@ -51,18 +50,6 @@ FontWin::~FontWin()
 
 LInt FontWin::getFontHeight() const
 {
-    /*
-    GraphicsPath path;
-    FontFamily family;
-    Font font(L"Arial", m_size);
-    font.GetFamily(&family);
-    StringFormat format(Gdiplus::StringAlignmentNear);
-    path.AddString(L"F", 1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
-    
-    Gdiplus::Rect rect;
-    path.GetBounds(&rect);
-    return rect.Height;
-    */
     return m_height;
 }
 
@@ -97,6 +84,10 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     Font font(L"Arial", m_size, 
         FontStyleRegular, UnitPixel);
     font.GetFamily(&family);
+
+    LInt fontSize = font.GetSize() * yanbo::PixelRatio::ratio();
+    maxWidth = yanbo::PixelRatio::rawX(maxWidth);
+
     StringFormat format(Gdiplus::StringAlignmentNear);
     Gdiplus::Rect rect;
 
@@ -104,27 +95,32 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     LInt maxLineWidth = 0;
 
     wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(text));
-    WString wstr((wchar_t)0, 100);
-    for (LInt i = 0; i < wtext.length(); ++i) {
-        wchar_t ch = wtext.at(i);
-        GraphicsPath path;
-        path.AddString(&ch, 1, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
+    const wchar_t* buffer = wtext.c_str();
+    LInt count = 1;
+    LInt height = 0;
+    while (*(buffer + count - 1)) {
+        Gdiplus::GraphicsPath path;
+        path.AddString(buffer, count, &family, FontStyleRegular, fontSize, Gdiplus::Point(0, 0), &format);
         path.GetBounds(&rect);
-        
-        if (currentLineWidth + rect.Width <= maxWidth) {
-            wstr += ch;
-            currentLineWidth += rect.Width;
+
+        if (rect.Width <= maxWidth) {
+            currentLineWidth = rect.Width;
+            count++;
         } else {
             maxLineWidth = maxLineWidth < currentLineWidth ?
                 currentLineWidth : maxLineWidth;
+            count -= 1;
+            WString wstr(buffer, count, LTrue);
             OwnerPtr<String> lineText = new String();
-            yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
-            m_lines.addElement(new LineText(lineText, currentLineWidth));
+            yanbo::CharConvertor::WcharToChar(wstr, *lineText.get());
+            m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth + 8)));
             currentLineWidth = 0;
-            wstr.ClearBuffer();
+
+            buffer += count;
+            count = 1;
         }
 
-        m_height = m_height < rect.Height ? rect.Height : m_height;
+        height = height < rect.Height ? rect.Height : height;
     }
 
     if (currentLineWidth > 0) {
@@ -132,11 +128,16 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
             currentLineWidth : maxLineWidth;
 
         OwnerPtr<String> lineText = new String();
-        yanbo::CharConvertor::WcharToChar(wstr.GetBuffer(), *lineText.get());
-        m_lines.addElement(new LineText(lineText, currentLineWidth));
+        WString wstr(buffer, count, LTrue);
+        yanbo::CharConvertor::WcharToChar(wstr, *lineText.get());
+        m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth + 8)));
     }
 
-    return maxLineWidth;
+    if (height) {
+        m_height = yanbo::PixelRatio::viewY(height + 4);
+    }
+
+    return yanbo::PixelRatio::viewX(maxLineWidth);
 }
 
 LFont* LFont::create(const LFont& font)

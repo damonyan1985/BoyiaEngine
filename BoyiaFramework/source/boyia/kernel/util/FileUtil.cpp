@@ -378,13 +378,10 @@ LVoid FileUtil::getAbsoluteFilePath(In const String& absolutePath, In const Stri
 #endif
 }
 
-bool FileUtil::IsAbsolutePath(const String& path) 
+// 判断是否是绝对路径
+bool FileUtil::isAbsolutePath(const String& path) 
 {
-#if ENABLE(BOYIA_WINDOWS)
-    return !PathIsRelativeA(GET_STR(path)) || PathIsUNCA(GET_STR(path));
-#else
-    return false;
-#endif
+    return yanbo::PlatformBridge::isAbsolutePath(path);
 }
 
 LVoid* FileUtil::mmap(FileHandle handle, LSizeT size, LOffset offset, FileHandle* extra)

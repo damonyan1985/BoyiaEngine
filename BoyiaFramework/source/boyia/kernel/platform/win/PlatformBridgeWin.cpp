@@ -8,6 +8,7 @@
 #include <ShlObj.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <shlwapi.h>
 
 #define CSIDL_LOCAL_APPDATA 0x001c
 
@@ -105,6 +106,11 @@ PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 
 void PlatformBridge::handleApi(const String& params, LIntPtr callback)
 {    
+}
+
+bool PlatformBridge::isAbsolutePath(const String& path)
+{
+    return !PathIsRelativeA(GET_STR(path)) || PathIsUNCA(GET_STR(path));
 }
 }
 

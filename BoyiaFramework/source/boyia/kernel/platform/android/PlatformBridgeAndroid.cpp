@@ -135,6 +135,11 @@ PlatformBridge::PlatformType PlatformBridge::getPlatformType()
 void PlatformBridge::handleApi(const String& params, LIntPtr callback)
 {    
 }
+
+bool PlatformBridge::isAbsolutePath(const String& path)
+{
+    return path.GetLength() > 0 && path.StartWith(_CS("/"));
+}
 }
 
 #endif

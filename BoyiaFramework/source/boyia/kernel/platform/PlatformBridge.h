@@ -28,7 +28,7 @@ public:
     static const char* getDebugInfoPath();
     static const LReal getDisplayDensity();
     static void handleApi(const String& params, LIntPtr callback);
-    
+    static bool isAbsolutePath(const String& path); 
     static PlatformType getPlatformType();
 };
 }

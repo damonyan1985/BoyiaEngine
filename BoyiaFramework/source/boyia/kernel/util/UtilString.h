@@ -876,8 +876,8 @@ LVoid LString<T>::ReleaseBuffer()
 template <class T>
 LVoid LString<T>::ClearBuffer()
 {
-    m_size = 0;
     LMemset(m_buffer, 0, m_size * sizeof(T));
+    m_size = 0;
 }
 
 template <class T>
