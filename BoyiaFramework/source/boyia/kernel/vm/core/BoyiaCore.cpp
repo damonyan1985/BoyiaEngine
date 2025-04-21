@@ -476,6 +476,13 @@ static LVoid EvalAwait(CompileState* cs);
 
 static LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src);
 
+static LBool IsObjectPropFunc(LUint8 type) {
+    return type == BY_PROP_FUNC 
+        || type == BY_ASYNC_PROP
+        || type == BY_NAV_PROP
+        || type == BY_ANONYM_FUNC;
+}
+
 static LVoid AssignStateClass(ExecState* state, BoyiaValue* value) {
     if (value) {
         ValueCopyNoName(&state->mStackFrame.mClass, value);
@@ -951,9 +958,7 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm) 
             
             BoyiaValue* prop = newFunc->mParams + newFunc->mParamSize++;
             ValueCopy(prop, func->mParams + idx);
-            if (type == BY_PROP_FUNC 
-                || type == BY_ASYNC_PROP
-                || type == BY_NAV_PROP) {
+            if (IsObjectPropFunc(type)) {
                 prop->mValue.mObj.mSuper = (LIntPtr)newFunc;
             }
         }
@@ -1718,14 +1723,14 @@ static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
 
     if (vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr) {
         LIntPtr funType = inst->mOPRight.mValue;
-        LBool isProp = BY_PROP_FUNC || BY_ASYNC_PROP || BY_ANONYM_FUNC;
         
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
         func->mParams[func->mParamSize].mValueType = funType;
+        // 指针指向函数地址
         func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mFunSize];
         // 属性函数的mSuper指针指向对象实例
-        func->mParams[func->mParamSize++].mValue.mObj.mSuper = isProp ? (LIntPtr)func : kBoyiaNull;
+        func->mParams[func->mParamSize++].mValue.mObj.mSuper = IsObjectPropFunc(funType) ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mFunSize], vm);
     } else {
@@ -1743,7 +1748,6 @@ static LVoid FunStatement(CompileState* cs, LInt funType) {
         OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
         OpCommand propCmd = { OP_CONST_NUMBER, funType };
         PutInstruction(&cmd, &propCmd, kCmdCreateFunction, cs);
-        //EngineStrLog("FunctionName=%s", cs->mToken.mTokenName);
         // 第二步，初始化函数参数
         NextToken(cs); //   '(', 即LPTR
     } else {
@@ -1751,8 +1755,8 @@ static LVoid FunStatement(CompileState* cs, LInt funType) {
         PutInstruction(kBoyiaNull, &propCmd, kCmdCreateFunction, cs);
     }
     
-    
-    InitParams(cs); //  初始化参数
+    //  初始化参数
+    InitParams(cs); 
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
 }
@@ -2054,11 +2058,6 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
             ValueCopyNoName(left, val);
             left->mNameKey = (LUintPtr)val;
         }
-
-        /*
-        ValueCopyNoName(left, val);
-        left->mNameKey = (LUintPtr)val;
-        */
     } break;
     case OP_REG0: {
         ValueCopyNoName(left, &vm->mCpu->mReg0);
