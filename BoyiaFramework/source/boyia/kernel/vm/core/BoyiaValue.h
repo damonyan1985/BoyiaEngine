@@ -11,12 +11,15 @@ enum KeyWord {
     BY_CHAR,
     BY_INT,
     BY_STRING,
+    // 函数定义Begin
     BY_FUNC,
     BY_PROP_FUNC,
     BY_ASYNC,
     BY_ASYNC_PROP,
     BY_NAV_FUNC,
     BY_NAV_PROP,
+    BY_ANONYM_FUNC,
+    // 函数定义End
     BY_AWAIT,
     BY_NAVCLASS,
     BY_CLASS,
