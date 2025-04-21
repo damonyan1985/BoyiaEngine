@@ -61,6 +61,9 @@ typedef unsigned short LWORD;
 
 #if defined(__LP64__)
 typedef int LInt;
+// Windows上不管是64位还是32位long都是4个字节，
+// 而在Android 64位平台long是8个字节
+// 所以64位系统，指针统一用long long
 typedef long long LIntPtr, LOffset;
 typedef unsigned long long LUintPtr, LSizeT;
 typedef unsigned int LUint;

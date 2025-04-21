@@ -144,8 +144,9 @@ static int getFileCrc(const char* filename, uLong* result) {
         }
 
         *result = crc;
-        return err;
     }
+
+    return err;
 }
 
 // src such as "e:\example example.zip 123"

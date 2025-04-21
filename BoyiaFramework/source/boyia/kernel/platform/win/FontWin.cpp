@@ -80,12 +80,13 @@ LVoid FontWin::getLineText(LInt index, String& text)
 
 LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
 {
+    LInt fontSize = getFontSize() * yanbo::PixelRatio::ratio();
+
     FontFamily family;
-    Font font(L"Arial", m_size, 
+    Font font(L"Arial", fontSize,
         FontStyleRegular, UnitPixel);
     font.GetFamily(&family);
 
-    LInt fontSize = font.GetSize() * yanbo::PixelRatio::ratio();
     maxWidth = yanbo::PixelRatio::rawX(maxWidth);
 
     StringFormat format(Gdiplus::StringAlignmentNear);
@@ -100,7 +101,7 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     LInt height = 0;
     while (*(buffer + count - 1)) {
         Gdiplus::GraphicsPath path;
-        path.AddString(buffer, count, &family, FontStyleRegular, fontSize, Gdiplus::Point(0, 0), &format);
+        path.AddString(buffer, count, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
         path.GetBounds(&rect);
 
         if (rect.Width <= maxWidth) {

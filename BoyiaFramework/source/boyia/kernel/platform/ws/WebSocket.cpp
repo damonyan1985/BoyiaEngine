@@ -257,9 +257,6 @@ class DummyWebSocket : public WebSocket {
 public:
     void poll(int timeout) {}
     void send(const String& message) {}
-    void sendBinary(const std::string& message) {}
-    void sendBinary(const std::vector<uint8_t>& message) {}
-    void sendPing() {}
     void close() {}
     ReadyState getReadyState() const { return kClosed; }
     void dispatch() {}

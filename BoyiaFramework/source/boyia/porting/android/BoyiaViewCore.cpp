@@ -116,7 +116,7 @@ static void nativeDistroyUIView(JNIEnv* env, jobject obj)
     yanbo::AppManager::instance()->uiThread()->destroy();
 }
 
-// loader callback begin
+// loader callback begin, android jlong is int64_t type
 static void nativeOnDataSize(JNIEnv* env, jobject obj, jlong size, jlong callback)
 {
     reinterpret_cast<yanbo::NetworkClient*>(callback)->onFileLen(size);
@@ -124,13 +124,14 @@ static void nativeOnDataSize(JNIEnv* env, jobject obj, jlong size, jlong callbac
 
 static void nativeOnDataReceive(JNIEnv* env, jobject obj, jbyteArray byteArray, jint len, jlong callback)
 {
-    LByte* buffer = kBoyiaNull;
-    if (byteArray) {
-        jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
-        buffer = new LByte[len];
-        LMemcpy(buffer, bytes, len);
-        env->ReleaseByteArrayElements(byteArray, bytes, 0);
+    if (!byteArray) {
+        return;
     }
+    
+    jbyte* bytes = env->GetByteArrayElements(byteArray, 0);
+    LByte* buffer = new LByte[len];
+    LMemcpy(buffer, bytes, len);
+    env->ReleaseByteArrayElements(byteArray, bytes, 0);
     reinterpret_cast<yanbo::NetworkClient*>(callback)->onDataReceived(buffer, len);
 }
 

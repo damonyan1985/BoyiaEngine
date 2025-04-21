@@ -44,13 +44,13 @@ public:
     
     T& operator[](LInt position);
     const T& operator[](LInt position) const;
-    void remove(LInt position);
+    LVoid remove(LInt position);
     const T* getBuffer() const;
     T* getBuffer();
     KVector<T>& operator=(const KVector<T>& kv);
     LBool contains(const T& kv);
-    void removeAllElements();
-    void clear();
+    LVoid removeAllElements();
+    LVoid clear();
 
 private:
     LVoid copyElements(const KVector<T>& kv, LBool deep = LTrue);
@@ -284,7 +284,7 @@ KVector<T>& KVector<T>::operator=(const KVector<T>& kv)
 }
 
 template <class T>
-void KVector<T>::remove(LInt position)
+LVoid KVector<T>::remove(LInt position)
 {
     if (position < 0 || position >= m_size) {
         return;
@@ -310,7 +310,7 @@ LBool KVector<T>::contains(const T& kv)
 }
 
 template <class T>
-void KVector<T>::removeAllElements()
+LVoid KVector<T>::removeAllElements()
 {
     if (m_buffer) {
         delete[] m_buffer;
@@ -322,7 +322,7 @@ void KVector<T>::removeAllElements()
 }
 
 template <class T>
-void KVector<T>::clear()
+LVoid KVector<T>::clear()
 {
     m_size = 0;
 }

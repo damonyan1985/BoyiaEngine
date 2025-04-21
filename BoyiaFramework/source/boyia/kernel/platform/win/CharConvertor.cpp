@@ -8,9 +8,9 @@ std::wstring CharConvertor::CharToWchar(const char* c, size_t encode)
     int len = MultiByteToWideChar(encode, 0, c, strlen(c), NULL, 0);
     wchar_t* wstr = new wchar_t[len + 1];
     MultiByteToWideChar(encode, 0, c, strlen(c), wstr, len);
-    wstr[len] = '\0';
+    wstr[len] = L'\0';
     str = wstr;
-    delete wstr;
+    delete[] wstr;
     return str;
 }
 

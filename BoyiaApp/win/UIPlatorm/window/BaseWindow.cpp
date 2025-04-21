@@ -180,7 +180,7 @@ BOOL BaseWindow::ScreenToClient(LPRECT lpRect)
 {
     BOOL reVal = TRUE;
     POINT* ptLT = (POINT*)lpRect;
-    POINT* ptRB = (POINT*)(lpRect + sizeof(POINT));
+    POINT* ptRB = (POINT*)lpRect + 1;
     reVal &= ::ScreenToClient(m_hWnd, ptLT);
     reVal &= ::ScreenToClient(m_hWnd, ptRB);
     return reVal;
@@ -190,7 +190,7 @@ BOOL BaseWindow::ClientToScreen(LPRECT lpRect)
 {
     BOOL reVal = TRUE;
     POINT* ptLT = (POINT*)lpRect;
-    POINT* ptRB = (POINT*)(lpRect + sizeof(POINT));
+    POINT* ptRB = (POINT*)lpRect + 1;
     reVal &= ::ClientToScreen(m_hWnd, ptLT);
     reVal &= ::ClientToScreen(m_hWnd, ptRB);
     return reVal;

@@ -39,8 +39,6 @@ public:
 
 private:
     yanbo::HtmlView* m_image;
-    //LVoid* m_pixels;
-    //LInt m_dataLen;
     OwnerPtr<String> m_data;
     Gdiplus::Image* m_winImage;
 };
