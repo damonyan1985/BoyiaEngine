@@ -129,7 +129,7 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
             currentLineWidth : maxLineWidth;
 
         OwnerPtr<String> lineText = new String();
-        WString wstr(buffer, count, LTrue);
+        WString wstr(buffer, count-1, LTrue);
         yanbo::CharConvertor::WcharToChar(wstr, *lineText.get());
         m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth + 8)));
     }
