@@ -1008,6 +1008,7 @@ LVoid ValueCopyNoName(BoyiaValue* dest, BoyiaValue* src) {
     case BY_PROP_FUNC:
     case BY_ASYNC_PROP:
     case BY_NAV_PROP:
+    case BY_ANONYM_FUNC:
     case BY_CLASS: {
         dest->mValue.mObj.mPtr = src->mValue.mObj.mPtr;
         dest->mValue.mObj.mSuper = src->mValue.mObj.mSuper;
@@ -1924,15 +1925,17 @@ static LInt HandleCallFunction(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue* value = &vm->mLocals[start];
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
     ValueCopy(&vm->mEState->mFun, value);
+    
+    LUint8 valueType = value->mValueType;
     // 内置类产生的对象，调用其方法
-    if (value->mValueType == BY_NAV_FUNC || value->mValueType == BY_NAV_PROP) {
+    if (valueType == BY_NAV_FUNC || valueType == BY_NAV_PROP) {
         // 将对象作为最后一个参数传入
         LocalPush(&vm->mEState->mStackFrame.mClass, vm);
         NativePtr navFun = (NativePtr)func->mFuncBody;
         // native函数没有instruction，所以pc置为null
         vm->mEState->mStackFrame.mPC = kBoyiaNull;
         return navFun(vm);
-    } else if (value->mValueType == BY_PROP_FUNC) {
+    } else if (valueType == BY_PROP_FUNC || valueType == BY_ANONYM_FUNC) {
         BoyiaValue val;
         val.mValueType = BY_CLASS;
         BoyiaFunction* objBody = (BoyiaFunction*)value->mValue.mObj.mSuper;
@@ -1941,8 +1944,8 @@ static LInt HandleCallFunction(Instruction* inst, BoyiaVM* vm) {
         val.mValue.mObj.mSuper = objBody->mFuncBody;
         AssignStateClass(vm->mEState, &val);
     }
-    else if (value->mValueType == BY_ASYNC_PROP) { HandleCallAsyncFunction(vm); }
-    else if (value->mValueType == BY_ASYNC) {}
+    else if (valueType == BY_ASYNC_PROP) { HandleCallAsyncFunction(vm); }
+    else if (valueType == BY_ASYNC) {}
     
     CommandTable* cmds = (CommandTable*)func->mFuncBody;
     vm->mEState->mStackFrame.mContext = cmds;
@@ -2397,7 +2400,9 @@ static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
 static LInt HandleSetAnonym(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue result;
     result.mValueType = BY_ANONYM_FUNC;
-    result.mValue.mIntVal = inst->mOPLeft.mValue;
+    result.mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[inst->mOPLeft.mValue];
+    // 匿名函数指向当前对象
+    result.mValue.mObj.mSuper = (LIntPtr)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
     SetNativeResult(&result, vm);
     
     return kOpResultSuccess;
@@ -2750,6 +2755,10 @@ static LBool EvalAnonymFunc(CompileState* cs) {
 
 // 执行子表达式
 static LVoid EvalSubexpr(CompileState* cs) {
+    if (EvalAnonymFunc(cs)) {
+        return;
+    }
+
     if (cs->mToken.mTokenValue == LPTR) {
         EvalExpression(cs);
         if (cs->mToken.mTokenValue != RPTR) {
