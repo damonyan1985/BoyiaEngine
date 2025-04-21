@@ -93,7 +93,7 @@ enum TokenBracketValue {
 struct BoyiaVM;
 struct Instruction;
 // 操作指令处理器
-typedef LInt (*OPHandler)(Instruction* insttruction, BoyiaVM* vm);
+typedef LInt (*OPHandler)(Instruction* instruction, BoyiaVM* vm);
 
 // 操作类型
 enum OpType {
@@ -378,7 +378,7 @@ static LVoid Atom(CompileState* cs);
 
 static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm);
 
-static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* instt, BoyiaVM* vm);
+static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* inst, BoyiaVM* vm);
 
 // Handler Declarations Begin
 static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm);
@@ -578,6 +578,7 @@ static OPHandler* InitHandlers() {
     handlers[kCmdCreateArray] = HandleCreateArray;
     handlers[kCmdAddArrayItem] = HandleAddArrayItem;
     handlers[kCmdAwait] = HandleAwait;
+    handlers[kCmdSetAnonym] = HandleSetAnonym;
 
     return handlers;
 }
@@ -787,8 +788,7 @@ LVoid DestroyVM(LVoid* vm) {
     FAST_DELETE(vm);
 }
 
-static Instruction* AllocateInstruction(BoyiaVM* vm)
-{
+static Instruction* AllocateInstruction(BoyiaVM* vm) {
     BOYIA_LOG("AllocateInstruction size=%d", vm->mVMCode->mSize);
     return vm->mVMCode->mCode + vm->mVMCode->mSize++;
 }
@@ -1033,7 +1033,6 @@ static LVoid BreakStatement(CompileState* cs) {
 }
 
 static LInt HandleCreateProp(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
     func->mParams[func->mParamSize].mNameKey = (LUintPtr)inst->mOPLeft.mValue;
     func->mParams[func->mParamSize].mValue.mIntVal = 0;
@@ -1668,7 +1667,6 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
 }
 
 static LInt HandleCreateClass(Instruction* inst, BoyiaVM* vm) {
-    
     if (inst->mOPLeft.mType == OP_NONE) {
         AssignStateClass(vm->mEState, kBoyiaNull);
         return kOpResultSuccess;
@@ -1679,7 +1677,6 @@ static LInt HandleCreateClass(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleExtend(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* classVal = FindGlobal((LUintPtr)inst->mOPLeft.mValue, vm);
     BoyiaValue* extendVal = FindGlobal((LUintPtr)inst->mOPRight.mValue, vm);
 
@@ -1716,7 +1713,6 @@ static LVoid ClassStatement(CompileState* cs) {
 }
 
 static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
-    
     // 如果hashKey是OP_NONE，表示是一个匿名函数
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
@@ -1770,7 +1766,6 @@ static LVoid ExecuteCode(BoyiaVM* vm) {
 }
 
 static LInt HandleDeclGlobal(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue val;
     val.mValueType = inst->mOPLeft.mValue;
     val.mNameKey = (LUintPtr)inst->mOPRight.mValue;
@@ -1840,10 +1835,7 @@ static LVoid ParseStatement(CompileState* cs) {
         } else if (cs->mToken.mTokenValue == BLOCK_START) {
             ++brace;
         }
-    } while (cs->mToken.mTokenValue != BY_END);
-
-    //AppendEntry(cs);
-    
+    } while (cs->mToken.mTokenValue != BY_END);    
     // 多文件嵌套编译时，需要保存执行环境
     ExecState* es = cs->mVm->mEState;
     if (cs->mVm->mEState->mStackFrame.mContext) {
@@ -1865,7 +1857,6 @@ static LVoid ParseStatement(CompileState* cs) {
 }
 
 static LInt HandleDeclLocal(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue local;
     local.mValueType = inst->mOPLeft.mValue;
     local.mNameKey = (LUintPtr)inst->mOPRight.mValue;
@@ -1908,20 +1899,9 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm) {
     LInt idx = start;
     LInt end = idx + func->mParamSize;
     for (; idx < end; ++idx) {
-        //LUintPtr vKey = func->mParams[idx - start - 1].mNameKey;
-        //vm->mLocals[idx].mNameKey = vKey;
         ValueCopy(&state->mLocals[idx - start], &current->mLocals[idx]);
     }
     state->mStackFrame.mLValSize = func->mParamSize + 1;
-
-        
-    // 异步函数的返回值，始终都是MicroTask
-    //MicroTask* topTask = AllocMicroTask(vm);
-    //topTask->mAsyncEs = kBoyiaNull;
-
-    //ExecState* execState = vm->mEState;
-    // 保存异步函数顶层MicroTask
-    // execState->mTopTask = topTask;
 
     BoyiaValue val;
     val.mValueType = BY_CLASS;
@@ -1994,7 +1974,6 @@ static LInt HandlePushParams(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandlePop(Instruction* inst, BoyiaVM* vm) {
-    
     if (inst->mOPLeft.mType != OP_REG0 && inst->mOPLeft.mType != OP_REG1) {
         --vm->mEState->mStackFrame.mResultNum;
         return kOpResultSuccess;
@@ -2050,7 +2029,6 @@ static LVoid PushArgStatement(CompileState* cs) {
 
 /* Assign a value to a Register 0 or 1. */
 static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     if (!left)
         return kOpResultEnd;
@@ -2093,26 +2071,25 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
     return kOpResultSuccess;
 }
 
-// 执行到ifend证明整个if elseif, else执行完毕，
-// 无需检索是否还有elseif，或者else的逻辑判断和内部block
+// 执行到ifend证明整个if elif, else执行完毕，
+// 无需检索是否还有elif，或者else的逻辑判断和内部block
 static LInt HandleIfEnd(Instruction* inst, BoyiaVM* vm) {
-    Instruction* instt = vm->mEState->mStackFrame.mPC;
-    Instruction* tmpInst = NextInstruction(inst, vm); //inst->mNext;
+    Instruction* pc = vm->mEState->mStackFrame.mPC;
+    Instruction* tmpInst = NextInstruction(pc, vm); //inst->mNext;
     // 查看下一个是否是elseif
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == kCmdElif || tmpInst->mOPCode == kCmdElse)) {
-        inst = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
-        tmpInst = NextInstruction(inst, vm); //inst->mNext;
+        pc = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
+        tmpInst = NextInstruction(pc, vm); //inst->mNext;
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
-    if (inst) {
-        vm->mEState->mStackFrame.mPC = inst;
+    if (pc) {
+        vm->mEState->mStackFrame.mPC = pc;
     }
     return kOpResultSuccess;
 }
 
 static LInt HandleJumpToIfTrue(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* value = &vm->mCpu->mReg0;
     if (!value->mValue.mIntVal) {
         vm->mEState->mStackFrame.mPC = inst + inst->mOPRight.mValue;
@@ -2136,16 +2113,13 @@ static LVoid IfStatement(CompileState* cs) {
 }
 
 static LInt HandleLoopBegin(Instruction* inst, BoyiaVM* vm) {
-    
     // push left => loop stack
     vm->mLoopStack[vm->mEState->mStackFrame.mLoopSize++] = (LIntPtr)(inst + inst->mOPLeft.mValue);
     return kOpResultSuccess;
 }
 
 static LInt HandleLoopIfTrue(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* value = &vm->mCpu->mReg0;
-    //EngineLog("HandleLoopIfTrue value=%d", value->mValue.mIntVal);
     if (!value->mValue.mIntVal) {
         vm->mEState->mStackFrame.mPC = inst + inst->mOPRight.mValue;
         vm->mEState->mStackFrame.mLoopSize--;
@@ -2160,7 +2134,6 @@ static LInt HandleLoopIfTrue(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleJumpTo(Instruction* inst, BoyiaVM* vm) {
-    
     if (inst->mOPLeft.mType == OP_CONST_NUMBER) {
         vm->mEState->mStackFrame.mPC = inst - inst->mOPLeft.mValue;
     }
@@ -2220,7 +2193,6 @@ static LVoid DoStatement(CompileState* cs) {
 }
 
 static LInt HandleAdd(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
@@ -2247,7 +2219,6 @@ static LInt HandleAdd(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleSub(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
     if (!left || !right) {
@@ -2263,7 +2234,6 @@ static LInt HandleSub(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleMul(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
@@ -2282,7 +2252,6 @@ static LInt HandleMul(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
@@ -2301,7 +2270,6 @@ static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleMod(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
@@ -2320,7 +2288,6 @@ static LInt HandleMod(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleRelational(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
@@ -2362,7 +2329,6 @@ static LInt HandleRelational(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleLogic(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
 
@@ -2386,7 +2352,6 @@ static LInt HandleLogic(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
 
     // 获取对象
@@ -2431,12 +2396,12 @@ static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleSetAnonym(Instruction* inst, BoyiaVM* vm) {
-    
-
     BoyiaValue result;
-    result.mValueType = BY_INT;
+    result.mValueType = BY_ANONYM_FUNC;
     result.mValue.mIntVal = inst->mOPLeft.mValue;
     SetNativeResult(&result, vm);
+    
+    return kOpResultSuccess;
 }
 
 // 执行到await，当前调用栈将被中断
@@ -2473,14 +2438,12 @@ static LVoid EvalExpression(CompileState* cs) {
 }
 
 static LInt HandlePush(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     ValueCopy(vm->mOpStack + (vm->mEState->mStackFrame.mResultNum++), value);
     return kOpResultSuccess;
 }
 
 static LInt HandleAssignVar(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* result = GetOpValue(inst, OpRight, vm);
     if (!left || !result) {
@@ -2578,7 +2541,6 @@ static LVoid ValueCopyWithKey(BoyiaValue* dest, BoyiaValue* src) {
 }
 
 static LInt HandleGetProp(Instruction* inst, BoyiaVM* vm) {
-    
     // r0 -> lVal
     BoyiaValue* lVal = GetOpValue(inst, OpLeft, vm);
     if (!lVal) {
@@ -2605,7 +2567,6 @@ static LInt HandleGetProp(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleCreateMap(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaFunction* fun = CreatMapObject(vm);
     
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
@@ -2617,7 +2578,6 @@ static LInt HandleCreateMap(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleSetMapKey(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
 
     BoyiaFunction* function = (BoyiaFunction*)value->mValue.mObj.mPtr;
@@ -2628,8 +2588,6 @@ static LInt HandleSetMapKey(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleSetMapValue(Instruction* inst, BoyiaVM* vm) {
-    
-    
     BoyiaValue* obj = inst->mOPRight.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
 
@@ -2643,11 +2601,9 @@ static LInt HandleSetMapValue(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleCreateArray(Instruction* inst, BoyiaVM* vm) {
-    
     BoyiaFunction* fun = CreateArrayObject(vm);
     
     BoyiaValue* value = inst->mOPLeft.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
-    
     value->mValueType = BY_CLASS;
     value->mValue.mObj.mPtr = (LIntPtr)fun;
     value->mValue.mObj.mSuper = kBoyiaNull;
@@ -2656,7 +2612,6 @@ static LInt HandleCreateArray(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleAddArrayItem(Instruction* inst, BoyiaVM* vm) {
-    
     // right是数组对象
     BoyiaValue* obj = inst->mOPRight.mType == OP_REG0 ? &vm->mCpu->mReg0 : &vm->mCpu->mReg1;
     // left是需要添加的数组的值
@@ -2787,7 +2742,7 @@ static LBool EvalAnonymFunc(CompileState* cs) {
         LInt anonymIndex = cs->mVm->mFunSize;
         FunStatement(cs, BY_ANONYM_FUNC);
         OpCommand cmd = { OP_CONST_NUMBER, anonymIndex };
-        PutInstruction(kBoyiaNull, kBoyiaNull, kCmdSetAnonym, cs);
+        PutInstruction(&cmd, kBoyiaNull, kCmdSetAnonym, cs);
         return LTrue;
     }
 
