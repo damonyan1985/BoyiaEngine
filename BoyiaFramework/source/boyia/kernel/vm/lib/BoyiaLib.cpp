@@ -22,7 +22,6 @@
 
 #define TO_STR(str) String(_CS(str), LTrue, LStrlen(_CS(str)))
 
-//extern void BoyiaLog(const char* format, ...);
 extern LVoid GCAppendRef(LVoid* address, LUint8 type, LVoid* vm);
 extern LVoid GetIdentName(LUintPtr key, BoyiaStr* str, LVoid* vm);
 extern boyia::BoyiaRuntime* GetRuntime(LVoid* vm);
@@ -42,16 +41,6 @@ LVoid boyiaStrToNativeStr(BoyiaValue* strVal, String& str)
     str.Copy(_CS(convertMStr2Str(bstr)), LTrue, bstr->mLen);
 }
 
-// 处理布尔类型返回
-static LInt resultInt(LInt result, LVoid* vm)
-{
-    BoyiaValue value;
-    value.mValueType = BY_INT;
-    value.mValue.mIntVal = result;
-    SetNativeResult(&value, vm);
-    return kOpResultSuccess;
-}
-
 LInt getFileContent(LVoid* vm)
 {
     // 0 索引第一个参数
@@ -60,7 +49,6 @@ LInt getFileContent(LVoid* vm)
         return kOpResultEnd;
     }
 
-    //char* fileName = convertMStr2Str(&value->mValue.mStrVal);
     char* fileName = convertMStr2Str(GetStringBuffer(value));
     FILE* file = fopen(fileName, "r");
     FREE_BUFFER(fileName);
@@ -113,7 +101,6 @@ LInt addElementToVector(LVoid* vm)
         VM_DELETE(value, vm);
     }
     BOYIA_LOG("addElementToVector %d", 2);
-    //fun->mParams[fun->mParamSize++] = *element;
     ValueCopy(fun->mParams + fun->mParamSize++, element);
 
     return kOpResultSuccess;
@@ -123,7 +110,6 @@ LInt getElementFromVector(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     BoyiaValue* index = (BoyiaValue*)GetLocalValue(1, vm);
-    //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(2);
 
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
     BoyiaValue* result = &fun->mParams[index->mValue.mIntVal];
@@ -172,11 +158,9 @@ LInt removeElementWidthIndex(LVoid* vm)
 LInt removeElementFromVector(LVoid* vm)
 {
     BoyiaValue* array = (BoyiaValue*)GetLocalValue(0, vm);
-    //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(1, vm);
 
     BoyiaFunction* fun = (BoyiaFunction*)array->mValue.mObj.mPtr;
-    //LInt size = fun->mParamSize - deltaIndex->mValue.mIntVal;
     LInt idx = fun->mParamSize - 1;
     while (idx >= 0) {
         BoyiaValue* elem = fun->mParams + idx;
@@ -198,15 +182,9 @@ LInt removeElementFromVector(LVoid* vm)
 LInt getVectorSize(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
-    //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
 
-    BoyiaValue value;
-    value.mValueType = BY_INT;
-    value.mValue.mIntVal = fun->mParamSize;
-
-    SetNativeResult(&value, vm);
-
+    SetIntResult(fun->mParamSize, vm);
     return kOpResultSuccess;
 }
 
@@ -226,7 +204,6 @@ LInt logPrint(LVoid* vm)
     if (val->mValueType == BY_INT) {
         BOYIA_LOG("Boyia [info]: %lld", val->mValue.mIntVal);
     } else if (val->mValueType == BY_CLASS && GetBoyiaClassId(val) == kBoyiaString) {
-        //char* log = convertMStr2Str(&val->mValue.mStrVal);
         char* log = convertMStr2Str(GetStringBuffer(val));
         BOYIA_LOG("Boyia [info]: %s", (const char*)log);
         FREE_BUFFER(log);
@@ -421,12 +398,8 @@ LInt getViewXpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaView* jsDoc = (boyia::BoyiaView*)doc->mValue.mIntVal;
-//    BoyiaValue val;
-//    val.mValueType = BY_INT;
-//    val.mValue.mIntVal = jsDoc->left();
-//    SetNativeResult(&val, vm);
     
-    resultInt(jsDoc->left(), vm);
+    SetIntResult(jsDoc->left(), vm);
     return kOpResultSuccess;
 }
 
@@ -434,12 +407,8 @@ LInt getViewYpos(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-//    BoyiaValue val;
-//    val.mValueType = BY_INT;
-//    val.mValue.mIntVal = jsDoc->top();
-//    SetNativeResult(&val, vm);
     
-    resultInt(jsDoc->top(), vm);
+    SetIntResult(jsDoc->top(), vm);
     return kOpResultSuccess;
 }
 
@@ -447,12 +416,8 @@ LInt getViewWidth(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-//    BoyiaValue val;
-//    val.mValueType = BY_INT;
-//    val.mValue.mIntVal = jsDoc->width();
-//    SetNativeResult(&val, vm);
 
-    resultInt(jsDoc->width(), vm);
+    SetIntResult(jsDoc->width(), vm);
     return kOpResultSuccess;
 }
 
@@ -460,12 +425,8 @@ LInt getViewHeight(LVoid* vm)
 {
     BoyiaValue* doc = (BoyiaValue*)GetLocalValue(0, vm);
     boyia::BoyiaViewDoc* jsDoc = (boyia::BoyiaViewDoc*)doc->mValue.mIntVal;
-//    BoyiaValue val;
-//    val.mValueType = BY_INT;
-//    val.mValue.mIntVal = jsDoc->height();
-//    SetNativeResult(&val, vm);
     
-    resultInt(jsDoc->height(), vm);
+    SetIntResult(jsDoc->height(), vm);
     return kOpResultSuccess;
 }
 
@@ -710,7 +671,7 @@ LInt instanceOfClass(LVoid* vm)
     LInt result = 0;
     
     if (obj->mValueType != BY_CLASS || !fun) {
-        return resultInt(result, vm);
+        return SetIntResult(result, vm);
     }
     
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
@@ -727,7 +688,7 @@ LInt instanceOfClass(LVoid* vm)
         baseCls = (BoyiaValue*)baseCls->mValue.mObj.mSuper;
     }
     
-    return resultInt(result, vm);
+    return SetIntResult(result, vm);
 }
 
 LInt setImageUrl(LVoid* vm)
@@ -849,13 +810,6 @@ LInt toJsonString(LVoid* vm)
     cJSON_Delete(json);
     BOYIA_LOG("Boyia [info]: toJsonString %s, and length=%d", out, len);
 
-    //BoyiaValue val;
-    //val.mValueType = BY_STRING;
-    //val.mValue.mStrVal.mPtr = out;
-    //val.mValue.mStrVal.mLen = len;
-
-    //SetNativeResult(&val, vm);
-    //SetStringResult(out, len, vm);
     BoyiaValue val;
     CreateNativeString(&val, out, len, vm);
     SetNativeResult(&val, vm);
@@ -891,7 +845,7 @@ LInt sendSocketMsg(LVoid* vm)
 
 LInt getPlatformType(LVoid* vm)
 {
-    return resultInt((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
+    return SetIntResult((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
 }
 
 LInt callPlatformApiHandler(LVoid* vm)

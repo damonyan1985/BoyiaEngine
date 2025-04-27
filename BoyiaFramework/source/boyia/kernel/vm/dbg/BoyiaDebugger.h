@@ -20,6 +20,9 @@ public:
 class BoyiaDebugger {
 public:
     BoyiaDebugger(BoyiaRuntime* runtime);
+    ~BoyiaDebugger();
+
+    LVoid connectDebugServer();
     LVoid setBreakPoint(KVector<Breakpoint>& breakpoints);
     LVoid stepOver();
     LVoid resume();

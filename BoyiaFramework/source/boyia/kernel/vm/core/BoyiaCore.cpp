@@ -1719,11 +1719,15 @@ static LVoid ClassStatement(CompileState* cs) {
 }
 
 static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
-    // 如果hashKey是OP_NONE，表示是一个匿名函数
+    // 匿名函数hashKey初始值位0，首次计算完后hashKey变成funTable索引
     LUintPtr hashKey = (LUintPtr)inst->mOPLeft.mValue;
 
     if (vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr) {
         LIntPtr funType = inst->mOPRight.mValue;
+        // 如果funType是BY_ANONYM_FUNC，表示是一个匿名函数
+        if (funType == BY_ANONYM_FUNC && hashKey != 0) {
+            return SetIntResult(hashKey, vm);
+        }
         
         BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
         func->mParams[func->mParamSize].mNameKey = hashKey;
@@ -1734,32 +1738,53 @@ static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
         func->mParams[func->mParamSize++].mValue.mObj.mSuper = IsObjectPropFunc(funType) ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mFunSize], vm);
+        if (funType == BY_ANONYM_FUNC && hashKey == 0) {
+            inst->mOPLeft = { OP_CONST_NUMBER, vm->mFunSize - 1 };
+            return SetIntResult(vm->mFunSize - 1, vm);
+        }
     } else {
         CreateFunVal(hashKey, BY_FUNC, vm);
     }
-
+    
     return kOpResultSuccess;
 }
 
 // funType可以是function，prop function, prop async
 static LVoid FunStatement(CompileState* cs, LInt funType) {
     NextToken(cs);
-    if (cs->mToken.mTokenValue != LPTR) {
-        // 第一步，Function变量
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
-        OpCommand propCmd = { OP_CONST_NUMBER, funType };
-        PutInstruction(&cmd, &propCmd, kCmdCreateFunction, cs);
-        // 第二步，初始化函数参数
-        NextToken(cs); //   '(', 即LPTR
-    } else {
-        OpCommand propCmd = { OP_CONST_NUMBER, funType };
-        PutInstruction(kBoyiaNull, &propCmd, kCmdCreateFunction, cs);
-    }
+    // 第一步，Function变量
+    OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
+    OpCommand propCmd = { OP_CONST_NUMBER, funType };
+    PutInstruction(&cmd, &propCmd, kCmdCreateFunction, cs);
+    // 第二步，初始化函数参数
+    NextToken(cs); //   '(', 即LPTR
     
     //  初始化参数
     InitParams(cs); 
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
+}
+
+static LVoid AnonymFunStatement(CompileState* cs) {
+    NextToken(cs);
+
+    // 如果是匿名函数
+    OpCommand propCmd = { OP_CONST_NUMBER, BY_ANONYM_FUNC };
+    PutInstruction(kBoyiaNull, &propCmd, kCmdCreateFunction, cs);
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, cs);
+
+    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTrue, cs);
+    //  初始化参数
+    InitParams(cs); 
+    // 第三步，函数体内部编译
+    BodyStatement(cs, LTrue);
+
+    Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdIfEnd, cs);
+    logicInst->mOPRight.mType = OP_CONST_NUMBER;
+    logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst); // Compute offset
+
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPop, cs);
+    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdSetAnonym, cs);
 }
 
 // 执行全局的调用
@@ -1963,7 +1988,8 @@ static LInt HandlePushParams(Instruction* inst, BoyiaVM* vm) {
 
     if (value->mValueType == BY_FUNC 
         || value->mValueType == BY_PROP_FUNC
-        || value->mValueType == BY_ASYNC_PROP) { // BY_NAV_FUNC不需要对参数名进行赋值
+        || value->mValueType == BY_ASYNC_PROP
+        || value->mValueType == BY_ANONYM_FUNC) { // BY_NAV_FUNC不需要对参数名进行赋值
         BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
         if (func->mParamSize <= 0) {
             return kOpResultSuccess;
@@ -2082,7 +2108,7 @@ static LInt HandleIfEnd(Instruction* inst, BoyiaVM* vm) {
     BOYIA_LOG("HandleIfEnd R0=>%d \n", 1);
     while (tmpInst && (tmpInst->mOPCode == kCmdElif || tmpInst->mOPCode == kCmdElse)) {
         pc = (Instruction*)(tmpInst + tmpInst->mOPRight.mValue); // 跳转到elif对应的IFEND
-        tmpInst = NextInstruction(pc, vm); //inst->mNext;
+        tmpInst = NextInstruction(pc, vm);
     }
     BOYIA_LOG("HandleIfEnd END R0=>%d \n", 1);
     if (pc) {
@@ -2092,9 +2118,13 @@ static LInt HandleIfEnd(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleJumpToIfTrue(Instruction* inst, BoyiaVM* vm) {
-    BoyiaValue* value = &vm->mCpu->mReg0;
-    if (!value->mValue.mIntVal) {
+    BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
+    // 如果为false，则跳过执行
+    if (value && !value->mValue.mIntVal) {
         vm->mEState->mStackFrame.mPC = inst + inst->mOPRight.mValue;
+    } else {
+        inst->mOPLeft.mType = OP_REG0;
+        inst->mOPLeft.mValue = 0;
     }
 
     return kOpResultSuccess;
@@ -2398,9 +2428,11 @@ static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
 }
 
 static LInt HandleSetAnonym(Instruction* inst, BoyiaVM* vm) {
+    BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
+    BoyiaFunction* func = &vm->mFunTable[value->mValue.mIntVal];
     BoyiaValue result;
     result.mValueType = BY_ANONYM_FUNC;
-    result.mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[inst->mOPLeft.mValue];
+    result.mValue.mObj.mPtr = (LIntPtr)func;
     // 匿名函数指向当前对象
     result.mValue.mObj.mSuper = (LIntPtr)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
     SetNativeResult(&result, vm);
@@ -2417,6 +2449,17 @@ static LVoid EvalAwait(CompileState* cs) {
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdAwait, cs);
 }
 
+// 处理匿名函数
+static LBool EvalAnonymFunc(CompileState* cs) {
+    if (cs->mToken.mTokenType == KEYWORD
+        && cs->mToken.mTokenValue == BY_FUNC) {        
+        AnonymFunStatement(cs);
+        NextToken(cs);
+        return LTrue;
+    }
+
+    return LFalse;
+}
 
 /* parser lib define */
 // 不能直接使用await方法来做运算，例如await function() * 32
@@ -2426,6 +2469,11 @@ static LVoid EvalExpression(CompileState* cs) {
     NextToken(cs); // var or await
     if (cs->mToken.mTokenValue == BY_AWAIT) {
         EvalAwait(cs);
+        return;
+    }
+
+    // 如果是匿名函数
+    if (EvalAnonymFunc(cs)) {
         return;
     }
 
@@ -2739,26 +2787,8 @@ static LVoid Atom(CompileState* cs) {
     }
 }
 
-// 处理匿名函数
-static LBool EvalAnonymFunc(CompileState* cs) {
-    if (cs->mToken.mTokenType == KEYWORD
-        && cs->mToken.mTokenValue == BY_FUNC) {
-        LInt anonymIndex = cs->mVm->mFunSize;
-        FunStatement(cs, BY_ANONYM_FUNC);
-        OpCommand cmd = { OP_CONST_NUMBER, anonymIndex };
-        PutInstruction(&cmd, kBoyiaNull, kCmdSetAnonym, cs);
-        return LTrue;
-    }
-
-    return LFalse;
-}
-
 // 执行子表达式
 static LVoid EvalSubexpr(CompileState* cs) {
-    if (EvalAnonymFunc(cs)) {
-        return;
-    }
-
     if (cs->mToken.mTokenValue == LPTR) {
         EvalExpression(cs);
         if (cs->mToken.mTokenValue != RPTR) {
@@ -3015,6 +3045,15 @@ static LVoid EvalAssignment(CompileState* cs) {
     PutInstruction(&COMMAND_R1, &COMMAND_R0, kCmdAssignVar, cs);
 }
 
+LInt SetIntResult(LInt result, LVoid* vm)
+{
+    BoyiaValue value;
+    value.mValueType = BY_INT;
+    value.mValue.mIntVal = result;
+    SetNativeResult(&value, vm);
+    return kOpResultSuccess;
+}
+
 LVoid SetNativeResult(LVoid* result, LVoid* vm) {
     BoyiaValue* value = (BoyiaValue*)result;
     ValueCopy(&((BoyiaVM*)vm)->mCpu->mReg0, value);
@@ -3152,10 +3191,16 @@ LVoid CacheVMCode(LVoid* vm) {
 
     // clear inline cache
     for (LInt i = 0; i < vmPtr->mVMCode->mSize; i++) {
-        InlineCache* cache = vmPtr->mVMCode->mCode[i].mCache;
-        if (cache) {
-            vmPtr->mVMCode->mCode[i].mCache = kBoyiaNull;
-            FAST_DELETE(cache);
+        //InlineCache* cache = vmPtr->mVMCode->mCode[i].mCache;
+        Instruction* inst = &vmPtr->mVMCode->mCode[i];
+        if (inst->mCache) {
+            inst->mCache = kBoyiaNull;
+            FAST_DELETE(inst->mCache);
+        }
+
+        if (inst->mOPCode == kCmdCreateFunction
+            && inst->mOPRight.mValue == BY_ANONYM_FUNC) {
+            inst->mOPLeft = { OP_NONE, 0 };
         }
     }
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);

@@ -11,3 +11,25 @@ Util.log("platform is " + Util.getOS());
 Util.zip("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "123456");
 
 Util.unzip("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test1", "123456");
+
+class ProjectBuild {
+    prop buildFlag;
+    fun build() {
+        var arg = 1;
+        
+        buildMain(fun(a, b, c) {
+            var result = a + b + c;
+            Util.log("anony result is " + result);
+            return result;
+        }, arg);
+    }
+
+    fun buildMain(callback, arg) {
+        var result = arg + callback(100, 99, 3);
+        Util.log("buildMain result is " + result);
+    }
+}
+
+var pb = new(ProjectBuild);
+pb.build();
+pb.build();

@@ -49,16 +49,6 @@ inline LVoid boyiaStrToNativeStr(BoyiaValue* strVal, String& str)
     str.Copy(_CS(convertMStr2Str(bstr)), LTrue, bstr->mLen);
 }
 
-// 处理布尔类型返回
-static LInt resultInt(LInt result, LVoid* vm)
-{
-    BoyiaValue value;
-    value.mValueType = BY_INT;
-    value.mValue.mIntVal = result;
-    SetNativeResult(&value, vm);
-    return kOpResultSuccess;
-}
-
 LInt getFileContent(LVoid* vm)
 {
     // 0 索引第一个参数
@@ -205,14 +195,9 @@ LInt removeElementFromVector(LVoid* vm)
 LInt getVectorSize(LVoid* vm)
 {
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
-    //BoyiaValue* deltaIndex = (BoyiaValue*)GetLocalValue(1);
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
 
-    BoyiaValue value;
-    value.mValueType = BY_INT;
-    value.mValue.mIntVal = fun->mParamSize;
-
-    SetNativeResult(&value, vm);
+    SetIntResult(fun->mParamSize, vm);
 
     return kOpResultSuccess;
 }
@@ -433,7 +418,7 @@ LInt getViewXpos(LVoid* vm)
 ////    val.mValue.mIntVal = jsDoc->left();
 ////    SetNativeResult(&val, vm);
 //    
-//    resultInt(jsDoc->left(), vm);
+//    SetIntResult(jsDoc->left(), vm);
     return kOpResultSuccess;
 }
 
@@ -446,7 +431,7 @@ LInt getViewYpos(LVoid* vm)
 ////    val.mValue.mIntVal = jsDoc->top();
 ////    SetNativeResult(&val, vm);
 //    
-//    resultInt(jsDoc->top(), vm);
+//    SetIntResult(jsDoc->top(), vm);
     return kOpResultSuccess;
 }
 
@@ -459,7 +444,7 @@ LInt getViewWidth(LVoid* vm)
 ////    val.mValue.mIntVal = jsDoc->width();
 ////    SetNativeResult(&val, vm);
 //
-//    resultInt(jsDoc->width(), vm);
+//    SetIntResult(jsDoc->width(), vm);
     return kOpResultSuccess;
 }
 
@@ -472,7 +457,7 @@ LInt getViewHeight(LVoid* vm)
 ////    val.mValue.mIntVal = jsDoc->height();
 ////    SetNativeResult(&val, vm);
 //    
-//    resultInt(jsDoc->height(), vm);
+//    SetIntResult(jsDoc->height(), vm);
     return kOpResultSuccess;
 }
 
@@ -719,7 +704,7 @@ LInt instanceOfClass(LVoid* vm)
     LInt result = 0;
     
     if (obj->mValueType != BY_CLASS || !fun) {
-        return resultInt(result, vm);
+        return SetIntResult(result, vm);
     }
     
     BoyiaValue* baseCls = (BoyiaValue*)fun->mFuncBody;
@@ -736,7 +721,7 @@ LInt instanceOfClass(LVoid* vm)
         baseCls = (BoyiaValue*)baseCls->mValue.mObj.mSuper;
     }
     
-    return resultInt(result, vm);
+    return SetIntResult(result, vm);
 }
 
 LInt setImageUrl(LVoid* vm)
@@ -900,7 +885,7 @@ LInt sendSocketMsg(LVoid* vm)
 
 LInt getPlatformType(LVoid* vm)
 {
-    return resultInt((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
+    return SetIntResult((LInt)yanbo::PlatformBridge::getPlatformType(), vm);
 }
 
 LInt callPlatformApiHandler(LVoid* vm)

@@ -97,4 +97,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr);
 // 遍历微任务
 LVoid* IterateMicroTask(BoyiaValue** obj, BoyiaValue** result, LVoid* vmPtr, LVoid* ptr);
 
+// 设置整型结果
+LInt SetIntResult(LInt result, LVoid* vm);
+
 #endif

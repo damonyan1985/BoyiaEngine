@@ -106,8 +106,8 @@ typedef struct {
 } InlineCache;
 
 typedef struct {
-    LInt mColumn;
     LInt mRow;
+    LInt mColumn;
     LInt mCodeIndex;
 } BoyiaCodePosition;
 
