@@ -191,7 +191,7 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
     BoyiaValue* kclass = (BoyiaValue*)objBody->mFuncBody;
     LUintPtr classId = kclass ? kclass->mNameKey : kBoyiaNull;
     if (classId == kBoyiaString) {
-        //BoyiaStr* buffer = &objBody->mParams[1].mValue.mStrVal;
+        // 获取字符串buffer
         BoyiaStr* buffer = GetStringBufferFromBody(objBody);
         // 删除字符串对象中的缓冲数据
         if (IS_NATIVE_STRING(objBody)) {
@@ -201,7 +201,6 @@ static LVoid DeleteObject(BoyiaRef* ref, LVoid* vm)
         } // 常量字符串不做任何处理
     }
 
-    //if (classId != kBoyiaMicroTask) 
     {
         VM_DELETE(ref->mAddress, vm);
     }
@@ -353,17 +352,19 @@ static LVoid CompactMemory(BoyiaGc* gc)
     LIntPtr tableAddr;
     LInt size = 0;
 
+    LIntPtr opStackAddr;
+    LInt opSize = 0;
+
     // 获取全局对象引用
     GetGlobalTable(&tableAddr, &size, gc->mBoyiaVM);
-    BoyiaValue* global = (BoyiaValue*)tableAddr;
-    MigrateValueTable(global, size, &migrateIndex, toPool, gc);
+    MigrateValueTable((BoyiaValue*)tableAddr, size, &migrateIndex, toPool, gc);
 
     // 标记栈
     LVoid* ptr = gc->mBoyiaVM;
     do {
-        ptr = GetLocalStack(&tableAddr, &size, gc->mBoyiaVM, ptr);
-        BoyiaValue* stack = (BoyiaValue*)tableAddr;
-        MigrateValueTable(global, size, &migrateIndex, toPool, gc);
+        ptr = GetLocalStack(&tableAddr, &size, &opStackAddr, &opSize, gc->mBoyiaVM, ptr);
+        MigrateValueTable((BoyiaValue*)tableAddr, size, &migrateIndex, toPool, gc);
+        MigrateValueTable((BoyiaValue*)opStackAddr, opSize, &migrateIndex, toPool, gc);
     } while (ptr);
     
     UpdateRuntimeMemory(toPool, gc->mBoyiaVM);
@@ -422,17 +423,20 @@ extern LVoid GCollectGarbage(LVoid* vm)
 
     // 标记全局区
     GetGlobalTable(&stackAddr, &size, vm);
-    BoyiaValue* stack = (BoyiaValue*)stackAddr;
-    MarkValueTable(stack, size);
-
+    MarkValueTable((BoyiaValue*)stackAddr, size);
 
     // 标记栈
     LVoid* ptr = vm;
     
     do {
-        ptr = GetLocalStack(&stackAddr, &size, vm, ptr);
-        stack = (BoyiaValue*)stackAddr;
-        MarkValueTable(stack, size);
+        LIntPtr opStackAddr;
+        LInt opSize = 0;
+
+        ptr = GetLocalStack(&stackAddr, &size, 
+            &opStackAddr, &opSize, vm, ptr);
+
+        MarkValueTable((BoyiaValue*)stackAddr, size);
+        MarkValueTable((BoyiaValue*)opStackAddr, size);
     } while (ptr);
 
     // 标记微任务

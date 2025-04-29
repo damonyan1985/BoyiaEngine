@@ -35,7 +35,10 @@ LVoid* GetLocalValue(LInt idx, LVoid* vm);
 LVoid SetNativeResult(LVoid* result, LVoid* vm);
 
 // 获取整个栈地址，及其大小
-LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr);
+LVoid* GetLocalStack(
+    LIntPtr* stack, LInt* size, 
+    LIntPtr* opStack, LInt* opSize,
+    LVoid* vm, LVoid* ptr);
 
 // 获取结果虚拟寄存器地址
 LVoid* GetNativeResult(LVoid* vm);

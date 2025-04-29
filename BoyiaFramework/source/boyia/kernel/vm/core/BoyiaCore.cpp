@@ -234,9 +234,9 @@ typedef struct {
     LInt mLValSize;  // 局部变量个数
     LInt mTmpLValSize; // 函数调用前, 保存当前栈帧局部变量个数, 保存执行现场后，使用tmp设置上一个栈帧的变量个数
     LInt mLoopSize; // loop层次
+    LInt mResultNum; // OpStack中的BoyiaValue个数
     CommandTable* mContext; // 函数指令集
     BoyiaValue mClass; // 函数所属对象
-    LInt mResultNum;
 } StackFrame;
 
 // 虚拟寄存器模型，其中每个寄存器可以表示为4个32寄存器
@@ -2799,7 +2799,6 @@ static LVoid Atom(CompileState* cs) {
         BoyiaStr* constStr = &cs->mVm->mStrTable->mTable[cs->mVm->mStrTable->mSize];
         CopyStringFromToken(cs, constStr);
         OpCommand lCmd = { OP_CONST_NUMBER, cs->mVm->mStrTable->mSize++ };
-        //OpCommand rCmd = { OP_CONST_NUMBER, constStr.mLen };
         PutInstruction(&lCmd, kBoyiaNull, kCmdConstStr, cs);
         NextToken(cs);
     }
@@ -3100,7 +3099,10 @@ LVoid* GetNativeHelperResult(LVoid* vm) {
     return &((BoyiaVM*)vm)->mCpu->mReg1;
 }
 
-LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr) {
+LVoid* GetLocalStack(
+    LIntPtr* stack, LInt* size, 
+    LIntPtr* opStack, LInt* opSize,
+    LVoid* vm, LVoid* ptr) {
     if (!ptr) {
         *size = 0;
         return ptr;
@@ -3116,6 +3118,9 @@ LVoid* GetLocalStack(LIntPtr* stack, LInt* size, LVoid* vm, LVoid* ptr) {
 
     *stack = (LIntPtr)state->mLocals;
     *size = state->mStackFrame.mLValSize;
+
+    *opStack = (LIntPtr)state->mOpStack;
+    *opSize = state->mStackFrame.mResultNum;
 
     return (LVoid*)state->mPrev;
 }
