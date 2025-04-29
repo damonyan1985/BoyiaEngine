@@ -162,6 +162,7 @@ enum CmdType {
     kCmdAddArrayItem,
     kCmdAwait,
     kCmdSetAnonym,
+    kCmdOnceJmpTrue,
     kCmdEnd
 };
 
@@ -468,6 +469,8 @@ static LInt HandleAddArrayItem(Instruction* inst, BoyiaVM* vm);
 static LInt HandleAwait(Instruction* inst, BoyiaVM* vm);
 
 static LInt HandleSetAnonym(Instruction* inst, BoyiaVM* vm);
+
+static LInt HandleOnceJmpTrue(Instruction* inst, BoyiaVM* vm);
 // Handler Declarations End
 
 // Eval Begin
@@ -586,6 +589,7 @@ static OPHandler* InitHandlers() {
     handlers[kCmdAddArrayItem] = HandleAddArrayItem;
     handlers[kCmdAwait] = HandleAwait;
     handlers[kCmdSetAnonym] = HandleSetAnonym;
+    handlers[kCmdOnceJmpTrue] = HandleOnceJmpTrue;
 
     return handlers;
 }
@@ -1500,7 +1504,7 @@ static LInt GetIdentifer(CompileState* cs) {
 }
 
 static LInt GetStringValue(CompileState* cs) {
-    // string
+    // const string parse
     LInt len = 0;
     if (*cs->mProg == '"') {
         AddColumn(cs, 1);
@@ -1739,6 +1743,7 @@ static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mFunSize], vm);
         if (funType == BY_ANONYM_FUNC && hashKey == 0) {
+            // 将函数索引存起来，第二次遇到函数构建则直接返回
             inst->mOPLeft = { OP_CONST_NUMBER, vm->mFunSize - 1 };
             return SetIntResult(vm->mFunSize - 1, vm);
         }
@@ -1767,13 +1772,19 @@ static LVoid FunStatement(CompileState* cs, LInt funType) {
 
 static LVoid AnonymFunStatement(CompileState* cs) {
     NextToken(cs);
+    if (cs->mToken.mTokenValue != LPTR) {
+        SntxErrorBuild(PAREN_EXPECTED, cs);
+        return;
+    }
 
     // 如果是匿名函数
     OpCommand propCmd = { OP_CONST_NUMBER, BY_ANONYM_FUNC };
     PutInstruction(kBoyiaNull, &propCmd, kCmdCreateFunction, cs);
+    // 函数指针放在R0，将R0 push到栈中
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, cs);
 
-    Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTrue, cs);
+    OpCommand jmpCmd = { OP_CONST_NUMBER, LTrue };
+    Instruction* logicInst = PutInstruction(&jmpCmd, kBoyiaNull, kCmdOnceJmpTrue, cs);
     //  初始化参数
     InitParams(cs); 
     // 第三步，函数体内部编译
@@ -1868,6 +1879,8 @@ static LVoid ParseStatement(CompileState* cs) {
     } while (cs->mToken.mTokenValue != BY_END);    
     // 多文件嵌套编译时，需要保存执行环境
     ExecState* es = cs->mVm->mEState;
+    // 如果cs->mVm->mEState->mStackFrame.mContext不为空，则表示嵌套编译
+    // 既执行全局代码时，编译另外的boyia代码文件
     if (cs->mVm->mEState->mStackFrame.mContext) {
         ExecState* state = CreateExecState(cs->mVm);
         SwitchExecState(state, cs->mVm);
@@ -2122,9 +2135,23 @@ static LInt HandleJumpToIfTrue(Instruction* inst, BoyiaVM* vm) {
     // 如果为false，则跳过执行
     if (value && !value->mValue.mIntVal) {
         vm->mEState->mStackFrame.mPC = inst + inst->mOPRight.mValue;
+    }
+
+    return kOpResultSuccess;
+}
+
+// 该指令表示ifend之前的代码，只执行一遍
+static LInt HandleOnceJmpTrue(Instruction* inst, BoyiaVM* vm) {
+    // 必须是数字，否则执行失败，结束执行
+    if (inst->mOPLeft.mType != OP_CONST_NUMBER) {
+        return kOpResultEnd;
+    }
+    // 第一次默认执行，第二次执行该指令进行跳转
+    if (!inst->mOPLeft.mValue) {
+        vm->mEState->mStackFrame.mPC = inst + inst->mOPRight.mValue;
     } else {
-        inst->mOPLeft.mType = OP_REG0;
-        inst->mOPLeft.mValue = 0;
+        // 设置为False，第二次执行，则跳过
+        inst->mOPLeft.mValue = LFalse;
     }
 
     return kOpResultSuccess;
@@ -3191,7 +3218,6 @@ LVoid CacheVMCode(LVoid* vm) {
 
     // clear inline cache
     for (LInt i = 0; i < vmPtr->mVMCode->mSize; i++) {
-        //InlineCache* cache = vmPtr->mVMCode->mCode[i].mCache;
         Instruction* inst = &vmPtr->mVMCode->mCode[i];
         if (inst->mCache) {
             inst->mCache = kBoyiaNull;
@@ -3201,6 +3227,10 @@ LVoid CacheVMCode(LVoid* vm) {
         if (inst->mOPCode == kCmdCreateFunction
             && inst->mOPRight.mValue == BY_ANONYM_FUNC) {
             inst->mOPLeft = { OP_NONE, 0 };
+        }
+
+        if (inst->mOPCode == kCmdOnceJmpTrue) {
+            inst->mOPLeft = { OP_CONST_NUMBER, LTrue };
         }
     }
     CacheInstuctions(vmPtr->mVMCode->mCode, sizeof(Instruction) * vmPtr->mVMCode->mSize);

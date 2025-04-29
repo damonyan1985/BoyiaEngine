@@ -326,7 +326,7 @@ LVoid CacheInstuctions(LVoid* instructionBuffer, LInt size)
         String(_CS(instructionBuffer), LFalse, size));
 }
 
-const LUint8* kStringTableSplitFlag = _CS("@boyia@stringtable@");
+const LUint8* kStringTableSplitFlag = _CS("\r\n@boyia@stringtable@\r\n");
 
 LVoid CacheStringTable(BoyiaStr* stringTable, LInt size, LVoid* vm)
 {

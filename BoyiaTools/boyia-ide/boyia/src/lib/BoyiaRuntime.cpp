@@ -45,17 +45,22 @@ private:
 class BoyiaCompileInfo {
 public:
     BoyiaCompileInfo(BoyiaRuntime* runtime)
-        : m_runtime(runtime) {}
+        : m_runtime(runtime)
+        , m_currentScriptId(0) {}
 
     LVoid compileFile(const String& path)
     {
-        String currentScriptPath;
-        currentScriptPath.Move(m_currentScriptPath);
-
-        m_currentScriptPath = path;
         if (m_programSet.get(path)) {
             return;
         }
+
+        String currentScriptPath;
+        currentScriptPath.Move(m_currentScriptPath);
+        LUint currentScriptId = m_currentScriptId;
+
+        m_currentScriptPath = path;
+        m_currentScriptId = m_runtime->idCreator()->genIdentify(path);
+
         String source;
         FileUtil::readFile(path, source);
         if (source.GetLength()) {
@@ -64,6 +69,7 @@ public:
         }
 
         m_currentScriptPath.Move(currentScriptPath);
+        m_currentScriptId = currentScriptId;
     }
 
     LVoid compile(const String& script)
@@ -71,11 +77,17 @@ public:
         CompileCode((char*)script.GetBuffer(), m_runtime->vm());
     }
 
-    const String& getCurrentScript() const {
+    const String& getCurrentScriptPath() const {
         return m_currentScriptPath;
     }
+
+    LUint getCurrentScritId() const {
+        return m_currentScriptId;
+    }
+
 private:
     HashMap<HashString, LBool> m_programSet;
+    LUint m_currentScriptId;
     String m_currentScriptPath;
     BoyiaRuntime* m_runtime;
 };
@@ -116,6 +128,7 @@ LVoid* BoyiaRuntime::garbageCollect() const
 
 LVoid BoyiaRuntime::collectGarbage()
 {
+    GCollectGarbage(vm());
 }
 
 LVoid BoyiaRuntime::setGcRuning(LBool isRuning)
@@ -123,13 +136,8 @@ LVoid BoyiaRuntime::setGcRuning(LBool isRuning)
     m_isGcRuning = isRuning;
 }
 
-// TODO GC目前还有点问题，暂不执行gc
 LBool BoyiaRuntime::needCollect() const
 {
-    // return GetUsedMemory(m_memoryPool) >= kGcMemorySize && !m_isGcRuning;
-    //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
-    //return LTrue;
-
     return LTrue;
 }
 
@@ -246,7 +254,7 @@ LVoid BoyiaRuntime::compileFile(const String& path)
 }
 
 const String& BoyiaRuntime::getCurrentScript() const {
-    return m_compileInfo->getCurrentScript();
+    return m_compileInfo->getCurrentScriptPath();
 }
 
 LInt BoyiaRuntime::findNativeFunc(LUintPtr key) const

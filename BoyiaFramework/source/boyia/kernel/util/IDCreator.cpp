@@ -134,14 +134,14 @@ OwnerPtr<String> IDCreator::idsToString()
 //    buffer.ReleaseBuffer();
 //    return ownerString;
     
-    String buffer((LUint8)0, 1024);
+    String buffer((LUint8)0, KB);
     for (LInt index = 0; index < m_strIds.size(); index++) {
         LInt id = index + 1;
         
         BoyiaStr* idStr = m_strIds.elementAt(index);
         buffer += String(_CS(idStr->mPtr), LFalse, idStr->mLen);
         buffer += _CS(":");
-        LUint8 str[256];
+        LUint8 str[MAX_PATH_SIZE];
         LInt2Str(id, str, 10);
         buffer += str;
         if (index != m_strIds.size() - 1) {
