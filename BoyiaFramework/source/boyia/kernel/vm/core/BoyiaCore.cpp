@@ -1651,16 +1651,15 @@ static LInt HandleCreateExecutor(Instruction* inst, BoyiaVM* vm) {
 // 解析函数体或者类体中的内容
 static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
     CommandTable* cmds = cs->mCmds;
-
-    CommandTable tmpTable;
-    tmpTable.mBegin = kBoyiaNull;
-    tmpTable.mEnd = kBoyiaNull;
+    CommandTable tmpTable = { kBoyiaNull, kBoyiaNull };
 
     Instruction* funInst = kBoyiaNull;
     if (isFunction) {
         // 类成员的创建在主体上下中进行
         OpCommand cmd = { OP_CONST_NUMBER, -1 };
         funInst = PutInstruction(&cmd, &cmd, kCmdExecCreate, cs);
+        // 如果是函数，设置一个临时CommandTable，切换成一个新的执行链
+        // 这样kCmdExecCreate指令的下一个指令将不会是函数的执行链
         cs->mCmds = &tmpTable;
     }
 
@@ -1785,7 +1784,7 @@ static LVoid AnonymFunStatement(CompileState* cs) {
 
     OpCommand jmpCmd = { OP_CONST_NUMBER, LTrue };
     Instruction* logicInst = PutInstruction(&jmpCmd, kBoyiaNull, kCmdOnceJmpTrue, cs);
-    //  初始化参数
+    // 初始化参数
     InitParams(cs); 
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);

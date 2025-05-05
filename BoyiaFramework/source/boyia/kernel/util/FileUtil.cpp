@@ -17,12 +17,24 @@
 #include <shlwapi.h>
 #endif
 
-const String kSourcePrefix(_CS("boyia://"), LFalse, 8);
-
 namespace util {
+#if ENABLE(BOYIA_WINDOWS)
+const char kFileSeparatorStr[] = "\\";
+#else
+const char kFileSeparatorStr[] = "/";
+#endif
+const char kFileSeparator = kFileSeparatorStr[0];
+
+const String kSourcePrefix(_CS("boyia://"), LFalse, 8);
+const String kFileSeparatorString(_CS(kFileSeparatorStr), LFalse, 1);
 const String& FileUtil::fileSchema()
 {
     return kSourcePrefix;
+}
+
+const String& FileUtil::separator() 
+{
+    return kFileSeparatorString;
 }
 
 LVoid FileUtil::readFile(In const String& fileName, Out String& content)
@@ -165,10 +177,10 @@ LVoid FileUtil::deleteFile(const char* path)
 
             String filePath = _CS(path);
             LInt len = filePath.GetLength();
-            if ('/' != filePath[len - 1]) {
-                filePath += '/';
+            if (kFileSeparator != filePath[len - 1]) {
+                filePath += kFileSeparator;
             }
-            filePath += _CS("/");
+            filePath += kFileSeparator;
             filePath += _CS(dirInfo->d_name);
             deleteFile(GET_STR(filePath));
             rmdir(GET_STR(filePath));
@@ -203,19 +215,19 @@ LInt FileUtil::createDirs(const char* path)
 #if ENABLE(BOYIA_ANDROID) || ENABLE(BOYIA_IOS)
     CString dirName = path;
     LInt len = dirName.GetLength();
-    if ('/' != dirName[len - 1]) {
-        dirName += '/';
+    if (kFileSeparator != dirName[len - 1]) {
+        dirName += kFileSeparator;
         ++len;
     }
 
     for (LInt i = 1; i < len; ++i) {
-        if ('/' == dirName[i]) {
+        if (kFileSeparator == dirName[i]) {
             dirName[i] = '\0';
             if (access(dirName.GetBuffer(), F_OK) != 0 && mkdir(dirName.GetBuffer(), 0777) == -1) {
                 return -1;
             }
 
-            dirName[i] = '/';
+            dirName[i] = kFileSeparator;
         }
     }
 
@@ -244,8 +256,8 @@ LVoid FileUtil::printAllFiles(const char* path)
         //strcpy(filename[len++], file->d_name);
         CString filePath = path;
         LInt len = filePath.GetLength();
-        if ('/' != filePath[len - 1]) {
-            filePath += '/';
+        if (kFileSeparator != filePath[len - 1]) {
+            filePath += kFileSeparator;
         }
 
         filePath += file->d_name;
@@ -280,8 +292,8 @@ static LVoid listFilesWin(const String& path, KVector<String>& dirs, KVector<Str
 
         CString filePath = GET_STR(path);
         LInt len = filePath.GetLength();
-        if ('/' != filePath[len - 1]) {
-            filePath += '/';
+        if (kFileSeparator != filePath[len - 1]) {
+            filePath += kFileSeparator;
         }
 
         filePath += fileName;
@@ -327,8 +339,8 @@ LVoid FileUtil::listFiles(const String& path, KVector<String>& dirs, KVector<Str
         //strcpy(filename[len++], file->d_name);
         CString filePath = GET_STR(path);
         LInt len = filePath.GetLength();
-        if ('/' != filePath[len - 1]) {
-            filePath += '/';
+        if (kFileSeparator != filePath[len - 1]) {
+            filePath += kFileSeparator;
         }
 
         filePath += file->d_name;
@@ -355,7 +367,7 @@ LVoid FileUtil::getCurrentAbsolutePath(In const String& relativePath, Out String
     //absolutePath = _CS(szPATH);
     //absolutePath += _CS("\\");
     //absolutePath += relativePath;
-    std::strcat(szFilePath, "\\");
+    std::strcat(szFilePath, kFileSeparatorStr);
     std::strcat(szFilePath, GET_STR(relativePath));
     char szAbsolutePath[MAX_PATH];
     GetFullPathNameA(szFilePath, MAX_PATH, szAbsolutePath, NULL);
@@ -370,7 +382,7 @@ LVoid FileUtil::getAbsoluteFilePath(In const String& absolutePath, In const Stri
     memset(szFilePath, 0, MAX_PATH);
     std::strcat(szFilePath, GET_STR(absolutePath));
     PathRemoveFileSpecA(szFilePath);
-    std::strcat(szFilePath, "\\");
+    std::strcat(szFilePath, kFileSeparatorStr);
     std::strcat(szFilePath, GET_STR(relativeFilePath));
     char szAbsolutePath[MAX_PATH];
     GetFullPathNameA(szFilePath, MAX_PATH, szAbsolutePath, NULL);

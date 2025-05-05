@@ -9,6 +9,7 @@
 // Such as execute E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\boyia\x64\Debug>boyia.exe ..\..\..\script\build.boyia
 int main(int argc, char** argv)
 {
+    String str(_CS("\\"));
     boyia::BoyiaRuntime runtime;
     runtime.init();
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
     }
 
     // 缓存可执行代码
-    runtime.cacheCode();
+    //runtime.cacheCode();
 
     std::cout << "Build Complete!\n" << argc;
     return 0;

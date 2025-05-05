@@ -32,7 +32,7 @@ bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
             sizeof(filename), kBoyiaNull, 0, kBoyiaNull, 0);
 
         const size_t filename_length = strlen(filename);
-        char name[256] = { 0 };
+        char name[MAX_PATH_SIZE] = { 0 };
         if (filename[filename_length - 1] == dir_delimter) {
             sprintf(name, "%s/%s", dest, filename);
             createDir(name);
@@ -69,7 +69,7 @@ bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
 
 bool ZipEntry::createDir(const char* path)
 {
-    char dirName[256] = { 0 };
+    char dirName[MAX_PATH_SIZE] = { 0 };
     strcpy(dirName, path);
     int len = strlen(dirName);
     for (int i = 1; i < len; i++) {
@@ -123,7 +123,7 @@ static int getFileCrc(const char* filename, uLong* result) {
     }
 
     uLong readSize = 0;
-    KVector<char> buffer(0, 1024);
+    KVector<char> buffer(0, KB);
     if (err == ZIP_OK) {
         do {
             err = ZIP_OK;
@@ -184,7 +184,7 @@ bool ZipEntry::zip(const String& src, const String& dest, const String& password
             return false;
         }
 
-        KVector<char> buffer(0, 4096);
+        KVector<char> buffer(0, 4*KB);
         size_t readSize;
         while ((readSize = fread(buffer.getBuffer(), 1, buffer.capacity(), file)) > 0) {
             err = zipWriteInFileInZip(zf, buffer.getBuffer(), static_cast<unsigned int>(readSize));

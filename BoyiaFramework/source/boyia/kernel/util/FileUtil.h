@@ -39,6 +39,7 @@ public:
     static bool isAbsolutePath(const String& path);
     static LVoid* mmap(FileHandle handle, LSizeT size, LOffset offset, FileHandle* extra);
     static LBool munmap(LVoid* data, LSizeT size, FileHandle* extra);
+    static const String& separator();
 };
 }
 
