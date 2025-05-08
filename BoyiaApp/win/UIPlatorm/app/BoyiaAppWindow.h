@@ -32,9 +32,27 @@ protected:
 
 class BoyiaAppImpl : public BoyiaApp {
 public:
-    virtual BOOL InitInstance(HINSTANCE hIns, int nCmdShow);
+    BOOL InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow) override;
+    VOID InitCrashHandler();
     BoyiaAppImpl();
     ~BoyiaAppImpl();
+
+private:
+    static LONG BoyiaUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
+    static VOID BoyiaPureCallHandler();
+    static int BoyiaNewHandler(size_t size);
+    static void BoyiaInvalidParameterHandler(wchar_t const* expression,
+        wchar_t const* function,
+        wchar_t const* file,
+        unsigned int line,
+        uintptr_t pReserved);
+
+    static void BoyiaSigabrtHandler(int signal);
+    static void BoyiaSigintHandler(int signal);
+    static void BoyiaSigtermHandler(int signal);
+    static void BoyiaSigillHandler(int signal);
+    static void BoyiaTerminateHandler();
+    static void BoyiaUnexpectedHandler();
 };
 
 }

@@ -41,10 +41,10 @@ LVoid* GetLocalStack(
     LVoid* vm, LVoid* ptr);
 
 // 获取结果虚拟寄存器地址
-LVoid* GetNativeResult(LVoid* vm);
+BoyiaValue* GetNativeResult(LVoid* vm);
 
 // 获取辅助虚拟寄存器地址
-LVoid* GetNativeHelperResult(LVoid* vm);
+BoyiaValue* GetNativeHelperResult(LVoid* vm);
 
 // 使用类的key来创建对象
 LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm);

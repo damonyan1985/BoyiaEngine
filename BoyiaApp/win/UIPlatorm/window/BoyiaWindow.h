@@ -2,6 +2,7 @@
 #define BoyiaWindow_h
 
 #include "BaseWindow.h"
+#include "BoyiaOnLoadWin.h"
 
 namespace yanbo {
 
@@ -17,20 +18,23 @@ protected:
     MESSAGE_MAP_TABLE()
 };
 
+using BoyiaUIEngine = BoyiaOnLoadWin;
 class BoyiaApp {
 public:
     BoyiaApp();
     ~BoyiaApp();
 
+    void FreeWndPtr();
+    virtual BOOL InitInstance(BoyiaUIEngine* engine, HINSTANCE inst, int nCmdShow);
+    virtual BOOL Run();
+
+    BoyiaUIEngine* GetEngine();
+    static BoyiaApp* GetCurrApp();
+
 protected:
     static BoyiaApp* m_pCurrApp;
-
-public:
     BoyiaWindow* m_window;
-    void FreeWndPtr();
-    virtual BOOL InitInstance(HINSTANCE inst, int nCmdShow);
-    virtual BOOL run();
-    static BoyiaApp* GetCurrApp();
+    BoyiaUIEngine* m_engine;
 };
 
 }

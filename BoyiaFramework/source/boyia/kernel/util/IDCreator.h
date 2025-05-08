@@ -29,8 +29,6 @@ public:
     OwnerPtr<String> idsToString();
 
 private:
-//    LUint m_idCount;
-//    IdLink* m_idLink;
     KVector<BoyiaStr*> m_strIds;
 };
 }

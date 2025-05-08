@@ -30,6 +30,14 @@ public:
     }
 };
 
+BoyiaOnLoadWin::BoyiaOnLoadWin() {
+    initEngine();
+}
+
+BoyiaOnLoadWin::~BoyiaOnLoadWin() {
+    destroyEngine();
+}
+
 void BoyiaOnLoadWin::setContextWin(HWND hwnd, int width, int height)
 {
     yanbo::PixelRatio::setWindowSize(width, height);

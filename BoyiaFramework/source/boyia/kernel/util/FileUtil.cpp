@@ -27,6 +27,7 @@ const char kFileSeparator = kFileSeparatorStr[0];
 
 const String kSourcePrefix(_CS("boyia://"), LFalse, 8);
 const String kFileSeparatorString(_CS(kFileSeparatorStr), LFalse, 1);
+
 const String& FileUtil::fileSchema()
 {
     return kSourcePrefix;

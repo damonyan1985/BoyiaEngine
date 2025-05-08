@@ -35,10 +35,11 @@ DWORD BoyiaWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 }
 
 //app
-BoyiaApp* BoyiaApp::m_pCurrApp = NULL;
+BoyiaApp* BoyiaApp::m_pCurrApp = nullptr;
 
 BoyiaApp::BoyiaApp()
 {
+    m_engine = nullptr;
     m_pCurrApp = (BoyiaApp*)this;
 }
 
@@ -47,10 +48,11 @@ BoyiaApp::~BoyiaApp()
     FreeWndPtr();
 }
 
-BOOL BoyiaApp::InitInstance(HINSTANCE hIns, int nCmdShow)
+BOOL BoyiaApp::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow)
 {
+    m_engine = engine;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-    m_window = new BoyiaWindow;
+    m_window = new BoyiaWindow();
     m_window->InitBaseWindow(hIns);
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL);
     m_window->ShowWindow(nCmdShow);
@@ -58,7 +60,12 @@ BOOL BoyiaApp::InitInstance(HINSTANCE hIns, int nCmdShow)
     return TRUE;
 }
 
-BOOL BoyiaApp::run()
+BoyiaUIEngine* BoyiaApp::GetEngine()
+{
+    return m_engine;
+}
+
+BOOL BoyiaApp::Run()
 {
     m_window->MessageLoop();
     return TRUE;
@@ -73,13 +80,13 @@ void BoyiaApp::FreeWndPtr()
 {
     if (m_window) {
         delete m_window;
-        m_window = NULL;
+        m_window = nullptr;
     }
 }
 
 }
 
-extern yanbo::BoyiaApp* tfxGetApp()
+extern yanbo::BoyiaApp* GetBoyiaApp()
 {
     return yanbo::BoyiaApp::GetCurrApp();
 }

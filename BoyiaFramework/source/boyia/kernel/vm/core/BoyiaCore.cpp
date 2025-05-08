@@ -3090,11 +3090,11 @@ LVoid* CopyObject(LUintPtr hashKey, LInt size, LVoid* vm) {
     return objBody;
 }
 
-LVoid* GetNativeResult(LVoid* vm) {
+BoyiaValue* GetNativeResult(LVoid* vm) {
     return &((BoyiaVM*)vm)->mCpu->mReg0;
 }
 
-LVoid* GetNativeHelperResult(LVoid* vm) {
+BoyiaValue* GetNativeHelperResult(LVoid* vm) {
     return &((BoyiaVM*)vm)->mCpu->mReg1;
 }
 

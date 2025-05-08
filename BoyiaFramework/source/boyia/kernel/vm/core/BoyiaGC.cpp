@@ -455,12 +455,12 @@ extern LVoid GCollectGarbage(LVoid* vm)
     } while (ptr);
 
     {
-        BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
+        BoyiaValue* value = GetNativeResult(vm);
         MarkValue(value);
     }
 
     {
-        BoyiaValue* value = (BoyiaValue*)GetNativeHelperResult(vm);
+        BoyiaValue* value = GetNativeHelperResult(vm);
         MarkValue(value);
     }
     

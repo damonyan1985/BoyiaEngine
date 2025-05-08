@@ -1,6 +1,11 @@
 #include "BoyiaAppWindow.h"
 #include "BoyiaOnLoadWin.h"
 
+#include <dbghelp.h>
+#include <stdlib.h>
+#include <new.h>
+#include <signal.h>
+
 namespace yanbo {
 
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
@@ -16,6 +21,12 @@ WM_CLOSE_ITEM()
 // msg mapping item end
 END_MAP_TABLE()
 
+
+BoyiaUIEngine* GetEngine()
+{
+    return BoyiaApp::GetCurrApp()->GetEngine();
+}
+
 BoyiaAppWindow::BoyiaAppWindow()
 {
     m_hCursor = ::LoadCursor(NULL, IDC_ARROW);
@@ -29,10 +40,13 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
     RECT rect;
     GetClientRect(&rect);
-    BoyiaOnLoadWin::setContextWin(m_hWnd,
-        rect.right - rect.left,
-        rect.bottom - rect.top);
-    BoyiaOnLoadWin::connectServer();
+    if (GetEngine())
+    {
+        GetEngine()->setContextWin(m_hWnd,
+            rect.right - rect.left,
+            rect.bottom - rect.top);
+        GetEngine()->connectServer();
+    }
     /*
     HWND hWnd = m_hWnd;
     HINSTANCE hins = (HINSTANCE)::GetWindowLong(hWnd, GWL_HINSTANCE);
@@ -51,7 +65,10 @@ DWORD BoyiaAppWindow::OnLButtonDown(WPARAM wParam, LPARAM lParam)
     int mouseX = (int)LOWORD(lParam);
     int mouseY = (int)HIWORD(lParam);
 
-    BoyiaOnLoadWin::handleTouchEvent(0, mouseX, mouseY);
+    if (GetEngine())
+    {
+        GetEngine()->handleTouchEvent(0, mouseX, mouseY);
+    }
     return 0;
 }
 
@@ -60,7 +77,11 @@ DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
     int mouseX = (int)LOWORD(lParam);
     int mouseY = (int)HIWORD(lParam);
 
-    BoyiaOnLoadWin::handleTouchEvent(1, mouseX, mouseY);
+    if (GetEngine())
+    {
+        GetEngine()->handleTouchEvent(1, mouseX, mouseY);
+    }
+    
     return 0;
 }
 
@@ -70,7 +91,11 @@ DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
     OnPrepareDC(&dc);
     OnDraw(&dc);
 
-    BoyiaOnLoadWin::repaint();
+    if (GetEngine())
+    {
+        GetEngine()->repaint();
+    }
+    
     return 0;
 }
 
@@ -113,12 +138,16 @@ DWORD BoyiaAppWindow::OnRButtonDown(WPARAM wParam, LPARAM lParam)
 
 DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
 {
-    BoyiaOnLoadWin::cacheCode();
+    if (GetEngine())
+    {
+        GetEngine()->cacheCode();
+    }
     return BoyiaWindow::OnClose(wParam, lParam);
 }
 
 BoyiaAppImpl::BoyiaAppImpl()
 {
+    InitCrashHandler();
 }
 
 BoyiaAppImpl theApp;
@@ -127,15 +156,91 @@ BoyiaAppImpl::~BoyiaAppImpl()
 {
 }
 
-BOOL BoyiaAppImpl::InitInstance(HINSTANCE hIns, int nCmdShow)
+BOOL BoyiaAppImpl::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow)
 {
+    m_engine = engine;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-    m_window = new BoyiaAppWindow;
+    m_window = new BoyiaAppWindow();
     m_window->InitBaseWindow(hIns);
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaApp Simulator", dwStyle, 0, 0, 360, 640, NULL);
     m_window->ShowWindow(nCmdShow);
     m_window->UpdateWindow();
     return TRUE;
+}
+
+// Exception handle for windows native program
+VOID BoyiaAppImpl::InitCrashHandler()
+{
+    // Crash handler Win32 API
+    ::SetUnhandledExceptionFilter(BoyiaUnhandledExceptionFilter);
+    // (CRT) Exception
+    _set_purecall_handler(BoyiaPureCallHandler);
+    _set_new_handler(BoyiaNewHandler);
+    _set_invalid_parameter_handler(BoyiaInvalidParameterHandler);
+    _set_abort_behavior(_CALL_REPORTFAULT, _CALL_REPORTFAULT);
+    
+    signal(SIGABRT, BoyiaSigabrtHandler);
+    signal(SIGINT, BoyiaSigintHandler);
+    signal(SIGTERM, BoyiaSigtermHandler);
+    signal(SIGILL, BoyiaSigillHandler);
+    // C++ Exception
+    set_terminate(BoyiaTerminateHandler);
+    set_unexpected(BoyiaUnexpectedHandler);
+}
+
+LONG BoyiaAppImpl::BoyiaUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
+{
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+VOID BoyiaAppImpl::BoyiaPureCallHandler()
+{
+
+}
+
+int BoyiaAppImpl::BoyiaNewHandler(size_t size)
+{
+    return 0;
+}
+
+void BoyiaAppImpl::BoyiaInvalidParameterHandler(wchar_t const* expression,
+    wchar_t const* function,
+    wchar_t const* file,
+    unsigned int line,
+    uintptr_t pReserved)
+{
+
+}
+
+void BoyiaAppImpl::BoyiaSigabrtHandler(int signal)
+{
+
+}
+
+void BoyiaAppImpl::BoyiaSigintHandler(int signal)
+{
+
+}
+
+void BoyiaAppImpl::BoyiaSigtermHandler(int signal)
+{
+
+}
+
+
+void BoyiaAppImpl::BoyiaSigillHandler(int signal)
+{
+
+}
+
+void BoyiaAppImpl::BoyiaTerminateHandler()
+{
+
+}
+
+void BoyiaAppImpl::BoyiaUnexpectedHandler()
+{
+
 }
 
 }

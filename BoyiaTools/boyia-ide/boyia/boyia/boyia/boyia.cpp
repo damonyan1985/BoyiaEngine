@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     }
 
     // 缓存可执行代码
-    //runtime.cacheCode();
+    runtime.cacheCode();
 
     std::cout << "Build Complete!\n" << argc;
     return 0;

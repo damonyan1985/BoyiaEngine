@@ -286,7 +286,6 @@ LInt jsonParseWithCJSON(LVoid* vm)
     cJSON* json = cJSON_Parse(content);
     FREE_BUFFER(content);
 
-    //BoyiaValue* value = (BoyiaValue*)GetNativeResult(vm);
     BoyiaValue value;
     jsonParse(json, &value, vm);
     // 设置给r0
