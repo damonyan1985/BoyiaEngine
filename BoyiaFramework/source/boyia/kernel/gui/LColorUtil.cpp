@@ -19,7 +19,6 @@ LUint LColorUtil::rgb(LInt red, LInt green, LInt blue, LInt alpha)
     LUint value = ((alpha << 24) | (red << 16) | (green << 8) | blue);
     BOYIA_LOG("rgb value=%x", value);
     return value;
-    //return (red << 16) | (green << 8) | blue;
 }
 
 LColor LColorUtil::parseRgbInt(LUint rgbValue)

@@ -14,7 +14,6 @@
 #include "StringUtils.h"
 #include "UIThread.h"
 #include "UIView.h"
-//#include <android/log.h>
 
 namespace yanbo {
 
@@ -45,7 +44,6 @@ public:
 
     virtual LVoid onLoadError(LInt error) LOverride
     {
-        //m_loader->onLoadError(error);
         m_result = error;
         UIThread::instance()->sendUIEvent(this);
     }

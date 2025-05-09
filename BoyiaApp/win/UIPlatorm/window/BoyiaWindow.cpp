@@ -38,14 +38,16 @@ DWORD BoyiaWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 BoyiaApp* BoyiaApp::m_pCurrApp = nullptr;
 
 BoyiaApp::BoyiaApp()
+    : m_engine(nullptr)
 {
-    m_engine = nullptr;
     m_pCurrApp = (BoyiaApp*)this;
 }
 
 BoyiaApp::~BoyiaApp()
 {
     FreeWndPtr();
+    m_engine = nullptr;
+    m_pCurrApp = nullptr;
 }
 
 BOOL BoyiaApp::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow)
@@ -84,9 +86,4 @@ void BoyiaApp::FreeWndPtr()
     }
 }
 
-}
-
-extern yanbo::BoyiaApp* GetBoyiaApp()
-{
-    return yanbo::BoyiaApp::GetCurrApp();
 }

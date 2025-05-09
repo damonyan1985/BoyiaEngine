@@ -1,18 +1,12 @@
-#define _WINDLL
 #include "BoyiaConsole.h"
 #include "window/BoyiaWindow.h"
-//#include "http/BoyiaHttpEngine.h"
-//#include "PlatformLib.h"
+
 #include "BoyiaOnLoadWin.h"
-#include <dbghelp.h>
-#include <stdlib.h>
-#include <new.h>
-#include <signal.h>
+#include "BoyiaAppWindow.h"
 //#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:windows")
 
 using namespace yanbo;
 
-extern BoyiaApp* GetBoyiaApp();
 int BoyiaWinApi BoyiaWinMain(
     HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
@@ -22,8 +16,8 @@ int BoyiaWinApi BoyiaWinMain(
     BoyiaConsole console;
     BoyiaUIEngine uiEngine;
 
-    BoyiaApp* ptApp = GetBoyiaApp();
-    ptApp->InitInstance(&uiEngine, hInstance, nCmdShow);
-    ptApp->Run();
+    BoyiaAppImpl app;
+    app.InitInstance(&uiEngine, hInstance, nCmdShow);
+    app.Run();
     return 0;
 }

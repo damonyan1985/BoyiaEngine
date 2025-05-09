@@ -1,9 +1,7 @@
 #include "BaseWindow.h"
 
 namespace yanbo {
-BaseWindow* BaseWindow::m_currWinPtr = NULL;
-HINSTANCE BaseWindow::m_hInst = NULL;
-
+BaseWindow* BaseWindow::s_currWinPtr = NULL;
 const int kSuperClassMessageMapIndex = 0;
 
 const CommandMessageItem BaseWindow::messageEntries[] = {
@@ -14,6 +12,7 @@ const CommandMessageItem BaseWindow::messageEntries[] = {
 
 BaseWindow::BaseWindow()
     : m_hWnd(0)
+    , m_hInst(NULL)
     , m_prevWinPtr(nullptr)
 {
 }
@@ -31,7 +30,7 @@ void BaseWindow::InitBaseWindow(HINSTANCE _thInstance)
     wndClass.cbClsExtra = 0;
     wndClass.cbWndExtra = 0;
     wndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-    wndClass.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
+    wndClass.hIcon = GetWindowIcon();
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wndClass.hInstance = _thInstance;
     wndClass.lpfnWndProc = BaseWindow::BaseWndProc;
@@ -42,9 +41,14 @@ void BaseWindow::InitBaseWindow(HINSTANCE _thInstance)
     RegisterBaseWindow(wndClass);
 }
 
+HICON BaseWindow::GetWindowIcon() 
+{
+    return ::LoadIcon(NULL, IDI_APPLICATION);
+}
+
 BOOL BaseWindow::CreateBaseWindow(LPCWSTR className, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent)
 {
-    m_currWinPtr = (BaseWindow*)this;
+    s_currWinPtr = (BaseWindow*)this;
     m_hWnd = ::CreateWindow(className, name, style, x, y, w, h, nullptr, nullptr, m_hInst, nullptr);
     if (NULL == m_hWnd)
         return FALSE;
@@ -94,9 +98,9 @@ BaseWindow::~BaseWindow()
 LRESULT CALLBACK BaseWindow::BaseWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (WM_CREATE == message || WM_INITDIALOG == message) {
-        m_currWinPtr->m_hWnd = hWnd;
+        s_currWinPtr->m_hWnd = hWnd;
     }
-    BaseWindow* window = m_currWinPtr;
+    BaseWindow* window = s_currWinPtr;
 
     if (window) {
         const CommandMessageItem* msgItem = window->GetMessageEntries();

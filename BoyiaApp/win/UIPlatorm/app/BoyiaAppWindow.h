@@ -10,15 +10,17 @@ class BoyiaAppWindow : public BoyiaWindow {
 public:
     BoyiaAppWindow();
     virtual ~BoyiaAppWindow();
-
-public:
-    HICON m_hIcon;
-    HCURSOR m_hCursor;
+    
     virtual void OnPrepareDC(BoyiaDC* pDC);
     virtual void OnDraw(BoyiaDC* pDC);
 
+    HICON GetWindowIcon() override;
+
 protected:
     HMENU m_hMenu;
+    HICON m_hIcon;
+    HCURSOR m_hCursor;
+    
     BoyiaMsg DWORD OnCreate(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnPaint(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnLButtonDown(WPARAM wParam, LPARAM lParam);

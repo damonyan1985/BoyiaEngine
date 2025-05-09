@@ -1,0 +1,4 @@
+#include <windows.h>
+#include "res.h"
+
+IDI_BOYIA_APP_MAIN_ICON ICON "app.ico"

@@ -58,7 +58,6 @@ LVoid DOMBuilder::build(const String& buffer)
 
 void DOMBuilder::createRenderTree(XMLNode* elem, XMLNode* parentElem, HtmlView* parent)
 {
-    //KLOG("createRenderTree");
     HtmlView* item = createHtmlView(elem, parentElem, parent);
     for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
         createRenderTree(child, elem, item);
@@ -80,8 +79,6 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
         String tagName = _CS(elem->Attribute("name"));
         String tagClass = _CS(elem->Attribute("class"));
 
-        //KLOG("type");
-        //KSTRLOG8(tagType);
         int type = htmlTags->symbolAsInt(tagType);
 
         switch (type) {
@@ -126,11 +123,9 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
             item = new BlockView(tagId, LFalse);
         } break;
         case HtmlTags::IMG: {
-            //String imageSrc = _CS(elem->Attribute("src"));
             item = new ImageView(tagId, LFalse, _CS(elem->Attribute("src")));
         } break;
         case HtmlTags::A: {
-            //String tagUrl = _CS(elem->Attribute("href"));
             item = new LinkView(tagId, _CS(elem->Attribute("href")));
         } break;
         case HtmlTags::INPUT: {
@@ -173,7 +168,6 @@ HtmlView* DOMBuilder::createHtmlView(XMLNode* node, XMLNode* parentElem, HtmlVie
         XMLText* elem = node->ToText();
         if (parentElem) {
             String tagType = _CS(parentElem->Value());
-            //int type = htmlTags->symbolAsInt(tagType);
             String text = _CS(elem->Value());
             switch (htmlTags->symbolAsInt(tagType)) {
             case HtmlTags::STYLE: {

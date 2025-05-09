@@ -15,7 +15,7 @@ public:
     BoyiaOnLoadWin();
     ~BoyiaOnLoadWin();
 
-	void setContextWin(HWND hwnd, int width, int height);
+    void setContextWin(HWND hwnd, int width, int height);
     void repaint();
  
     void connectServer();

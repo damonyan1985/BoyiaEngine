@@ -156,9 +156,11 @@
   <ItemGroup>
     <ClInclude Include="..\app\BoyiaAppWindow.h" />
     <ClInclude Include="..\gdi\BoyiaDC.h" />
+    <ClInclude Include="..\res\res.h" />
     <ClInclude Include="..\util\BoyiaConsole.h" />
     <ClInclude Include="..\window\BaseWindow.h" />
     <ClInclude Include="..\window\BoyiaWindow.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\app\BoyiaApp.cpp" />
@@ -167,6 +169,12 @@
     <ClCompile Include="..\util\BoyiaConsole.cpp" />
     <ClCompile Include="..\window\BaseWindow.cpp" />
     <ClCompile Include="..\window\BoyiaWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\app.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\res\boyia.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

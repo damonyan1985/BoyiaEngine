@@ -1,5 +1,6 @@
 #include "BoyiaAppWindow.h"
 #include "BoyiaOnLoadWin.h"
+#include "res/res.h"
 
 #include <dbghelp.h>
 #include <stdlib.h>
@@ -24,10 +25,15 @@ END_MAP_TABLE()
 
 BoyiaUIEngine* GetEngine()
 {
+    if (!BoyiaApp::GetCurrApp()) {
+        return nullptr;
+    }
     return BoyiaApp::GetCurrApp()->GetEngine();
 }
 
 BoyiaAppWindow::BoyiaAppWindow()
+    : m_hIcon(NULL)
+    , m_hMenu(NULL)
 {
     m_hCursor = ::LoadCursor(NULL, IDC_ARROW);
 }
@@ -55,6 +61,10 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
     m_hIcon = ::LoadIcon(hins, MAKEINTRESOURCE(IDI_APP));
     ::SetClassLong(m_hWnd, GCL_HICON, (LONG)m_hIcon);
     */
+    // 设置窗口左上角图标和任务栏图标
+    HICON hIcon = GetWindowIcon();
+    ::SendMessage(m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+    ::SendMessage(m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
     //to do any other logic
 
     return 0;
@@ -145,12 +155,19 @@ DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
     return BoyiaWindow::OnClose(wParam, lParam);
 }
 
+HICON BoyiaAppWindow::GetWindowIcon()
+{
+    if (!m_hIcon) {
+        m_hIcon = ::LoadIcon(m_hInst, MAKEINTRESOURCE(IDI_BOYIA_APP_MAIN_ICON));
+    }
+
+    return m_hIcon;
+}
+
 BoyiaAppImpl::BoyiaAppImpl()
 {
     InitCrashHandler();
 }
-
-BoyiaAppImpl theApp;
 
 BoyiaAppImpl::~BoyiaAppImpl()
 {
@@ -165,6 +182,7 @@ BOOL BoyiaAppImpl::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdS
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaApp Simulator", dwStyle, 0, 0, 360, 640, NULL);
     m_window->ShowWindow(nCmdShow);
     m_window->UpdateWindow();
+
     return TRUE;
 }
 

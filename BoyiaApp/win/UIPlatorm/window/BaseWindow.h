@@ -60,25 +60,20 @@ public:                                                                         
 #define WM_RBUTTONDOWN_ITEM() { WM_RBUTTONDOWN, 0, (BaseMsgFunc)&OnRButtonDown },
 
 class BaseWindow {
-protected:
-    HWND m_hWnd;
-    static HINSTANCE m_hInst;
-    list<BaseWindow*> m_childList;
-
-protected:
-    static LRESULT CALLBACK BaseWndProc(HWND HWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 public:
+    BaseWindow();
+    virtual ~BaseWindow();
+
     int MessageBox(LPCTSTR lpText, LPCTSTR lpCaption = TEXT("Boyia"), UINT uType = MB_OK);
     void MessageLoop();
     BOOL ShowWindow(int showCmd);
     BOOL UpdateWindow();
-    BaseWindow();
-    virtual ~BaseWindow();
+    
     void RemoveAllChild();
     void AddChild(BaseWindow* childtw);
     BaseWindow* CreateChild(LPCWSTR classname, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent, DWORD id, HINSTANCE _thinstance);
     void InitBaseWindow(HINSTANCE _thInstance);
+
     void RegisterBaseWindow(WNDCLASS& wndClass);
     BOOL CreateBaseWindow(LPCWSTR className, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent);
     HWND GetWndHandle();
@@ -88,9 +83,17 @@ public:
     BOOL ClientToScreen(LPRECT lpRect);
     BOOL Invalidate(CONST RECT* lpRect = NULL, BOOL bErase = TRUE);
 
+    virtual HICON GetWindowIcon();
+
 protected:
-    static BaseWindow* m_currWinPtr;
+    HWND m_hWnd;
+    list<BaseWindow*> m_childList;
     BaseWindow* m_prevWinPtr;
+    HINSTANCE m_hInst;
+
+    static BaseWindow* s_currWinPtr;
+    static LRESULT CALLBACK BaseWndProc(HWND HWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    
     // 消息响应函数BEGIRN
     BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
     BoyiaMsg DWORD OnDestroy(WPARAM, LPARAM);

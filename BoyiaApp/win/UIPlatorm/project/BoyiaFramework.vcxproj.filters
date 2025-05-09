@@ -17,6 +17,9 @@
     <Filter Include="gdi">
       <UniqueIdentifier>{fcf3021d-6777-4613-8396-4f00251f552f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{ed17342e-c3e6-44f1-ac9c-c964dd6a2697}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\window\BaseWindow.h">
@@ -33,6 +36,10 @@
     </ClInclude>
     <ClInclude Include="..\gdi\BoyiaDC.h">
       <Filter>gdi</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\res\res.h">
+      <Filter>res</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -54,5 +61,15 @@
     <ClCompile Include="..\gdi\BoyiaDC.cpp">
       <Filter>gdi</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\app.ico">
+      <Filter>res</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\res\boyia.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

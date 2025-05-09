@@ -1,0 +1,3 @@
+#ifndef BOYIA_APP_RESOURCE_H
+#define IDI_BOYIA_APP_MAIN_ICON 101
+#endif
