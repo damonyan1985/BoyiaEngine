@@ -34,7 +34,7 @@ protected:
 
 class BoyiaAppImpl : public BoyiaApp {
 public:
-    BOOL InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow) override;
+    BOOL InitInstance(BoyiaUIEngine* engine, int nCmdShow) override;
     VOID InitCrashHandler();
     BoyiaAppImpl();
     ~BoyiaAppImpl();

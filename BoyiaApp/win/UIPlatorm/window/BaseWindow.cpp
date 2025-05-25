@@ -22,9 +22,9 @@ void BaseWindow::RegisterBaseWindow(WNDCLASS& wndClass)
     RegisterClass(&wndClass);
 }
 
-void BaseWindow::InitBaseWindow(HINSTANCE _thInstance)
+void BaseWindow::InitBaseWindow()
 {
-    m_hInst = _thInstance;
+    m_hInst = GetModuleInstance();
 
     WNDCLASS wndClass;
     wndClass.cbClsExtra = 0;
@@ -32,13 +32,20 @@ void BaseWindow::InitBaseWindow(HINSTANCE _thInstance)
     wndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
     wndClass.hIcon = GetWindowIcon();
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-    wndClass.hInstance = _thInstance;
+    wndClass.hInstance = m_hInst;
     wndClass.lpfnWndProc = BaseWindow::BaseWndProc;
     wndClass.lpszClassName = L"Boyia";
     wndClass.lpszMenuName = NULL;
     wndClass.style = CS_VREDRAW | CS_HREDRAW;
 
     RegisterBaseWindow(wndClass);
+}
+
+HINSTANCE BaseWindow::GetModuleInstance() 
+{
+    // 如果是DLL中产生的, 必须从DLLMain中获取HINSTANCE
+    // DLL中的Window需要重写这个方法
+    return (HINSTANCE)::GetModuleHandle(nullptr);
 }
 
 HICON BaseWindow::GetWindowIcon() 

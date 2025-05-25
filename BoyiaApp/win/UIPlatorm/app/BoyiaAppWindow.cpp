@@ -173,12 +173,12 @@ BoyiaAppImpl::~BoyiaAppImpl()
 {
 }
 
-BOOL BoyiaAppImpl::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow)
+BOOL BoyiaAppImpl::InitInstance(BoyiaUIEngine* engine, int nCmdShow)
 {
     m_engine = engine;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
     m_window = new BoyiaAppWindow();
-    m_window->InitBaseWindow(hIns);
+    m_window->InitBaseWindow();
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaApp Simulator", dwStyle, 0, 0, 360, 640, NULL);
     m_window->ShowWindow(nCmdShow);
     m_window->UpdateWindow();

@@ -50,12 +50,12 @@ BoyiaApp::~BoyiaApp()
     m_pCurrApp = nullptr;
 }
 
-BOOL BoyiaApp::InitInstance(BoyiaUIEngine* engine, HINSTANCE hIns, int nCmdShow)
+BOOL BoyiaApp::InitInstance(BoyiaUIEngine* engine, int nCmdShow)
 {
     m_engine = engine;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
     m_window = new BoyiaWindow();
-    m_window->InitBaseWindow(hIns);
+    m_window->InitBaseWindow();
     m_window->CreateBaseWindow(L"Boyia", L"BoyiaWindow", dwStyle, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL);
     m_window->ShowWindow(nCmdShow);
     m_window->UpdateWindow();

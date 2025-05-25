@@ -17,7 +17,7 @@ int BoyiaWinApi BoyiaWinMain(
     BoyiaUIEngine uiEngine;
 
     BoyiaAppImpl app;
-    app.InitInstance(&uiEngine, hInstance, nCmdShow);
+    app.InitInstance(&uiEngine, nCmdShow);
     app.Run();
     return 0;
 }

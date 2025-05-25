@@ -25,7 +25,7 @@ public:
     ~BoyiaApp();
 
     void FreeWndPtr();
-    virtual BOOL InitInstance(BoyiaUIEngine* engine, HINSTANCE inst, int nCmdShow);
+    virtual BOOL InitInstance(BoyiaUIEngine* engine, int nCmdShow);
     virtual BOOL Run();
 
     BoyiaUIEngine* GetEngine();

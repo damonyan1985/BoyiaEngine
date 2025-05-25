@@ -72,7 +72,7 @@ public:
     void RemoveAllChild();
     void AddChild(BaseWindow* childtw);
     BaseWindow* CreateChild(LPCWSTR classname, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent, DWORD id, HINSTANCE _thinstance);
-    void InitBaseWindow(HINSTANCE _thInstance);
+    void InitBaseWindow();
 
     void RegisterBaseWindow(WNDCLASS& wndClass);
     BOOL CreateBaseWindow(LPCWSTR className, LPCWSTR name, DWORD style, int x, int y, int w, int h, HWND hWndParent);
@@ -84,6 +84,7 @@ public:
     BOOL Invalidate(CONST RECT* lpRect = NULL, BOOL bErase = TRUE);
 
     virtual HICON GetWindowIcon();
+    virtual HINSTANCE GetModuleInstance();
 
 protected:
     HWND m_hWnd;
