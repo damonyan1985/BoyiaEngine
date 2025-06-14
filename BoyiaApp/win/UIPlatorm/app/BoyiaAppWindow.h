@@ -15,6 +15,7 @@ public:
     virtual void OnDraw(BoyiaDC* pDC);
 
     HICON GetWindowIcon() override;
+    void CreateAppTray();
 
 protected:
     HMENU m_hMenu;
@@ -29,6 +30,7 @@ protected:
     BoyiaMsg DWORD OnKeyDown(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnRButtonDown(WPARAM wParam, LPARAM lParam);
     BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnTrayNotification(WPARAM, LPARAM);
     MESSAGE_MAP_TABLE()
 };
 
@@ -56,6 +58,9 @@ private:
     static void BoyiaTerminateHandler();
     static void BoyiaUnexpectedHandler();
 };
+
+#define WM_TRAY_NOTIFICATION (WM_USER + 1)
+#define WM_TRAY_NOTIFY_ITEM() { WM_TRAY_NOTIFICATION, 0, (BaseMsgFunc)&OnTrayNotification },
 
 }
 #endif

@@ -6,8 +6,11 @@
 #include <stdlib.h>
 #include <new.h>
 #include <signal.h>
+#include <tchar.h>
 
 namespace yanbo {
+
+const int kTrayIconId = 1;
 
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
 // msg mapping item begin
@@ -19,6 +22,7 @@ WM_SETCURSOR_ITEM()
 WM_KEYDOWN_ITEM()
 WM_RBUTTONDOWN_ITEM()
 WM_CLOSE_ITEM()
+WM_TRAY_NOTIFY_ITEM()
 // msg mapping item end
 END_MAP_TABLE()
 
@@ -67,6 +71,7 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
     ::SendMessage(m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
     //to do any other logic
 
+    CreateAppTray();
     return 0;
 }
 
@@ -155,6 +160,11 @@ DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
     return BoyiaWindow::OnClose(wParam, lParam);
 }
 
+DWORD BoyiaAppWindow::OnTrayNotification(WPARAM, LPARAM)
+{
+    return FALSE;
+}
+
 HICON BoyiaAppWindow::GetWindowIcon()
 {
     if (!m_hIcon) {
@@ -162,6 +172,21 @@ HICON BoyiaAppWindow::GetWindowIcon()
     }
 
     return m_hIcon;
+}
+
+void BoyiaAppWindow::CreateAppTray()
+{
+    NOTIFYICONDATA nid;
+    ZeroMemory(&nid, sizeof(nid));
+    nid.cbSize = sizeof(nid);
+    nid.hWnd = m_hWnd;
+    nid.uID = kTrayIconId;
+    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    nid.hIcon = GetWindowIcon();
+    nid.uCallbackMessage = WM_TRAY_NOTIFICATION;
+    _tcscpy_s(nid.szTip, _T("BoyiaApp"));
+
+    Shell_NotifyIcon(NIM_ADD, &nid);
 }
 
 BoyiaAppImpl::BoyiaAppImpl()
