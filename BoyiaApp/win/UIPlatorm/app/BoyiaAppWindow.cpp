@@ -19,7 +19,7 @@ enum BoyiaTrayMenuIds {
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
 // msg mapping item begin
 WM_CREATE_ITEN()
-WM_PAINT_ITEM()
+//WM_PAINT_ITEM()
 WM_LBUTTONDOWN_ITEM()
 WM_LBUTTONUP_ITEM()
 WM_SETCURSOR_ITEM()
@@ -106,32 +106,18 @@ DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
+void BoyiaAppWindow::OnDraw(BoyiaDC* pDC)
 {
-    BoyiaPaintDC dc(this);
-    OnPrepareDC(&dc);
-    OnDraw(&dc);
-
     if (GetEngine())
     {
         GetEngine()->repaint();
     }
-    
-    return FALSE;
-}
-
-void BoyiaAppWindow::OnDraw(BoyiaDC* pDC)
-{
 }
 
 DWORD BoyiaAppWindow::OnSetCursor(WPARAM wParam, LPARAM lParam)
 {
     SetCursor(m_hCursor);
     return FALSE;
-}
-
-void BoyiaAppWindow::OnPrepareDC(BoyiaDC* pDC)
-{
 }
 
 DWORD BoyiaAppWindow::OnKeyDown(WPARAM wParam, LPARAM lParam)

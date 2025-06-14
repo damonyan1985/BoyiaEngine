@@ -2,6 +2,7 @@
 #define BoyiaWindow_h
 
 #include "BaseWindow.h"
+#include "BoyiaDC.h"
 #include "BoyiaOnLoadWin.h"
 
 namespace yanbo {
@@ -11,10 +12,14 @@ public:
     BoyiaWindow();
     virtual ~BoyiaWindow();
 
+    virtual void OnPrepareDC(BoyiaDC* pDC);
+    virtual void OnDraw(BoyiaDC* pDC);
+
 protected:
     BoyiaMsg DWORD OnCreate(WPARAM, LPARAM);
     BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
     BoyiaMsg DWORD OnDestroy(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnPaint(WPARAM, LPARAM);
     MESSAGE_MAP_TABLE()
 };
 

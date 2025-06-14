@@ -89,7 +89,7 @@ HDC BoyiaDC::GetDCHandle()
     return m_hDC;
 }
 
-BoyiaClientDC::BoyiaClientDC(BoyiaWindow* ptwnd)
+BoyiaClientDC::BoyiaClientDC(BaseWindow* ptwnd)
 {
     m_ptWnd = ptwnd;
     m_hDC = ::GetDC(m_ptWnd->GetWndHandle());
@@ -100,7 +100,7 @@ BoyiaClientDC::~BoyiaClientDC()
     ::ReleaseDC(m_ptWnd->GetWndHandle(), m_hDC);
 }
 
-BoyiaPaintDC::BoyiaPaintDC(BoyiaWindow* ptwnd)
+BoyiaPaintDC::BoyiaPaintDC(BaseWindow* ptwnd)
 {
     m_ptWnd = ptwnd;
     m_hDC = ::BeginPaint(m_ptWnd->GetWndHandle(), &m_ps);
@@ -111,7 +111,7 @@ BoyiaPaintDC::~BoyiaPaintDC()
     ::EndPaint(m_ptWnd->GetWndHandle(), &m_ps);
 }
 
-BoyiaWindowDC::BoyiaWindowDC(BoyiaWindow* ptwnd)
+BoyiaWindowDC::BoyiaWindowDC(BaseWindow* ptwnd)
 {
     m_ptWnd = ptwnd;
     m_hDC = ::GetWindowDC(m_ptWnd->GetWndHandle());

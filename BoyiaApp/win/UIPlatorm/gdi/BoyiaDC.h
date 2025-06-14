@@ -1,7 +1,7 @@
 #ifndef BoyiaDC_h
 #define BoyiaDC_h
 
-#include "window/BoyiaWindow.h"
+#include "window/BaseWindow.h"
 
 namespace yanbo {
 
@@ -34,13 +34,13 @@ protected:
 
 class BoyiaClientDC : public BoyiaDC {
 public:
-    BoyiaClientDC(BoyiaWindow* ptwnd);
+    BoyiaClientDC(BaseWindow* ptwnd);
     virtual ~BoyiaClientDC();
 };
 
 class BoyiaPaintDC : public BoyiaDC {
 public:
-    BoyiaPaintDC(BoyiaWindow* ptwnd);
+    BoyiaPaintDC(BaseWindow* ptwnd);
     virtual ~BoyiaPaintDC();
 
 protected:
@@ -49,7 +49,7 @@ protected:
 
 class BoyiaWindowDC : public BoyiaDC {
 public:
-    BoyiaWindowDC(BoyiaWindow* ptwnd);
+    BoyiaWindowDC(BaseWindow* ptwnd);
     ~BoyiaWindowDC();
 };
 

@@ -6,6 +6,7 @@ namespace yanbo {
 BEGIN_MAP_TABLE(BoyiaWindow, BaseWindow)
 // msg mapping item begin
 WM_CREATE_ITEN()
+WM_PAINT_ITEM()
 WM_CLOSE_ITEM()
 WM_DESTROY_ITEM()
 // msg mapping item end
@@ -32,6 +33,23 @@ DWORD BoyiaWindow::OnDestroy(WPARAM wParam, LPARAM lParam)
 DWORD BoyiaWindow::OnCreate(WPARAM wParam, LPARAM lParam)
 {
     return 0;
+}
+
+void BoyiaWindow::OnPrepareDC(BoyiaDC* pDC)
+{
+}
+
+void BoyiaWindow::OnDraw(BoyiaDC* pDC)
+{
+}
+
+DWORD BoyiaWindow::OnPaint(WPARAM wParam, LPARAM lParam)
+{
+    BoyiaPaintDC dc(this);
+    OnPrepareDC(&dc);
+    OnDraw(&dc);
+
+    return FALSE;
 }
 
 //app

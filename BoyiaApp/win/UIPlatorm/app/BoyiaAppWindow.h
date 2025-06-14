@@ -11,8 +11,7 @@ public:
     BoyiaAppWindow();
     virtual ~BoyiaAppWindow();
     
-    virtual void OnPrepareDC(BoyiaDC* pDC);
-    virtual void OnDraw(BoyiaDC* pDC);
+    void OnDraw(BoyiaDC* pDC) override;
 
     HICON GetWindowIcon() override;
     void CreateAppTray();
@@ -24,7 +23,6 @@ protected:
     NOTIFYICONDATA m_nid;
     
     BoyiaMsg DWORD OnCreate(WPARAM, LPARAM);
-    BoyiaMsg DWORD OnPaint(WPARAM, LPARAM);
     BoyiaMsg DWORD OnLButtonDown(WPARAM, LPARAM);
     BoyiaMsg DWORD OnLButtonUp(WPARAM, LPARAM);
     BoyiaMsg DWORD OnSetCursor(WPARAM, LPARAM);
