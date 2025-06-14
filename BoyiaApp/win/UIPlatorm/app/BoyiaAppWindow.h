@@ -21,16 +21,18 @@ protected:
     HMENU m_hMenu;
     HICON m_hIcon;
     HCURSOR m_hCursor;
+    NOTIFYICONDATA m_nid;
     
-    BoyiaMsg DWORD OnCreate(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnPaint(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnLButtonDown(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnLButtonUp(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnSetCursor(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnKeyDown(WPARAM wParam, LPARAM lParam);
-    BoyiaMsg DWORD OnRButtonDown(WPARAM wParam, LPARAM lParam);
+    BoyiaMsg DWORD OnCreate(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnPaint(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnLButtonDown(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnLButtonUp(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnSetCursor(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnKeyDown(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnRButtonDown(WPARAM, LPARAM);
     BoyiaMsg DWORD OnClose(WPARAM, LPARAM);
     BoyiaMsg DWORD OnTrayNotification(WPARAM, LPARAM);
+    BoyiaMsg DWORD OnMenuItemExit(WPARAM, LPARAM);
     MESSAGE_MAP_TABLE()
 };
 

@@ -12,6 +12,10 @@ namespace yanbo {
 
 const int kTrayIconId = 1;
 
+enum BoyiaTrayMenuIds {
+    kBoyiaTrayMenuExit = 1
+};
+
 BEGIN_MAP_TABLE(BoyiaAppWindow, BoyiaWindow)
 // msg mapping item begin
 WM_CREATE_ITEN()
@@ -23,6 +27,7 @@ WM_KEYDOWN_ITEM()
 WM_RBUTTONDOWN_ITEM()
 WM_CLOSE_ITEM()
 WM_TRAY_NOTIFY_ITEM()
+WM_COMMAND_ITEM(kBoyiaTrayMenuExit, OnMenuItemExit)
 // msg mapping item end
 END_MAP_TABLE()
 
@@ -44,6 +49,7 @@ BoyiaAppWindow::BoyiaAppWindow()
 
 BoyiaAppWindow::~BoyiaAppWindow()
 {
+    Shell_NotifyIcon(NIM_DELETE, &m_nid);
 }
 
 DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
@@ -72,7 +78,7 @@ DWORD BoyiaAppWindow::OnCreate(WPARAM wParam, LPARAM lParam)
     //to do any other logic
 
     CreateAppTray();
-    return 0;
+    return FALSE;
 }
 
 DWORD BoyiaAppWindow::OnLButtonDown(WPARAM wParam, LPARAM lParam)
@@ -84,7 +90,7 @@ DWORD BoyiaAppWindow::OnLButtonDown(WPARAM wParam, LPARAM lParam)
     {
         GetEngine()->handleTouchEvent(0, mouseX, mouseY);
     }
-    return 0;
+    return FALSE;
 }
 
 DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
@@ -97,7 +103,7 @@ DWORD BoyiaAppWindow::OnLButtonUp(WPARAM wParam, LPARAM lParam)
         GetEngine()->handleTouchEvent(1, mouseX, mouseY);
     }
     
-    return 0;
+    return FALSE;
 }
 
 DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
@@ -111,7 +117,7 @@ DWORD BoyiaAppWindow::OnPaint(WPARAM wParam, LPARAM lParam)
         GetEngine()->repaint();
     }
     
-    return 0;
+    return FALSE;
 }
 
 void BoyiaAppWindow::OnDraw(BoyiaDC* pDC)
@@ -121,7 +127,7 @@ void BoyiaAppWindow::OnDraw(BoyiaDC* pDC)
 DWORD BoyiaAppWindow::OnSetCursor(WPARAM wParam, LPARAM lParam)
 {
     SetCursor(m_hCursor);
-    return 0;
+    return FALSE;
 }
 
 void BoyiaAppWindow::OnPrepareDC(BoyiaDC* pDC)
@@ -143,12 +149,12 @@ DWORD BoyiaAppWindow::OnKeyDown(WPARAM wParam, LPARAM lParam)
         break;
     }
 
-    return 0;
+    return FALSE;
 }
 
 DWORD BoyiaAppWindow::OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
-    return 0;
+    return FALSE;
 }
 
 DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
@@ -157,11 +163,34 @@ DWORD BoyiaAppWindow::OnClose(WPARAM wParam, LPARAM lParam)
     {
         GetEngine()->cacheCode();
     }
-    return BoyiaWindow::OnClose(wParam, lParam);
+    // return BoyiaWindow::OnClose(wParam, lParam);
+    ShowWindow(SW_HIDE);
+    UpdateWindow();
+    return FALSE;
 }
 
-DWORD BoyiaAppWindow::OnTrayNotification(WPARAM, LPARAM)
+DWORD BoyiaAppWindow::OnTrayNotification(WPARAM wParam, LPARAM lParam)
 {
+    if (lParam == WM_LBUTTONUP) {
+        ShowWindow(SW_NORMAL);
+    } else if (lParam == WM_RBUTTONUP) {
+        HMENU hMenu = ::CreatePopupMenu();
+        ::AppendMenu(hMenu, MF_STRING, kBoyiaTrayMenuExit, _T("Exit"));
+        
+        POINT pt;
+        ::GetCursorPos(&pt);
+
+        ::TrackPopupMenu(hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y, 0, m_hWnd, NULL);
+        ::DestroyMenu(hMenu);
+    }
+    return FALSE;
+}
+
+DWORD BoyiaAppWindow::OnMenuItemExit(WPARAM wParam, LPARAM lParam)
+{
+    if (wParam == kBoyiaTrayMenuExit) {
+        PostQuitMessage(0);
+    }
     return FALSE;
 }
 
@@ -176,17 +205,17 @@ HICON BoyiaAppWindow::GetWindowIcon()
 
 void BoyiaAppWindow::CreateAppTray()
 {
-    NOTIFYICONDATA nid;
-    ZeroMemory(&nid, sizeof(nid));
-    nid.cbSize = sizeof(nid);
-    nid.hWnd = m_hWnd;
-    nid.uID = kTrayIconId;
-    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-    nid.hIcon = GetWindowIcon();
-    nid.uCallbackMessage = WM_TRAY_NOTIFICATION;
-    _tcscpy_s(nid.szTip, _T("BoyiaApp"));
+    
+    ZeroMemory(&m_nid, sizeof(NOTIFYICONDATA));
+    m_nid.cbSize = sizeof(NOTIFYICONDATA);
+    m_nid.hWnd = m_hWnd;
+    m_nid.uID = kTrayIconId;
+    m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    m_nid.hIcon = GetWindowIcon();
+    m_nid.uCallbackMessage = WM_TRAY_NOTIFICATION;
+    _tcscpy_s(m_nid.szTip, _T("BoyiaApp"));
 
-    Shell_NotifyIcon(NIM_ADD, &nid);
+    Shell_NotifyIcon(NIM_ADD, &m_nid);
 }
 
 BoyiaAppImpl::BoyiaAppImpl()
