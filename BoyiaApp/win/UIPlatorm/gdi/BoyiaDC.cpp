@@ -122,4 +122,28 @@ BoyiaWindowDC::~BoyiaWindowDC()
     ::ReleaseDC(m_ptWnd->GetWndHandle(), m_hDC);
 }
 
+BoyiaPopMenu::BoyiaPopMenu(BaseWindow* ptwnd)
+    : m_hMenu(::CreatePopupMenu())
+    , m_window(ptwnd)
+{ 
+}
+
+BoyiaPopMenu::~BoyiaPopMenu()
+{
+    ::DestroyMenu(m_hMenu);
+}
+
+void BoyiaPopMenu::AppendMenu(UINT uFlags, UINT_PTR uIDNewItem, LPCWSTR lpNewItem)
+{
+    ::AppendMenu(m_hMenu, MF_STRING, uIDNewItem, lpNewItem);
+}
+
+void BoyiaPopMenu::Show()
+{
+    POINT pt;
+    ::GetCursorPos(&pt);
+
+    ::TrackPopupMenu(m_hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y, 0, m_window->GetWndHandle(), NULL);
+}
+
 }

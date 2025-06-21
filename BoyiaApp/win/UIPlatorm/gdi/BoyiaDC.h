@@ -53,6 +53,19 @@ public:
     ~BoyiaWindowDC();
 };
 
+class BoyiaPopMenu {
+public:
+    BoyiaPopMenu(BaseWindow* ptwnd);
+    ~BoyiaPopMenu();
+
+    void AppendMenu(UINT uFlags, UINT_PTR uIDNewItem, LPCWSTR lpNewItem);
+    void Show();
+
+private:
+    HMENU m_hMenu;
+    BaseWindow* m_window;
+};
+
 }
 
 #endif

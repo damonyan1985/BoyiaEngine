@@ -160,14 +160,10 @@ DWORD BoyiaAppWindow::OnTrayNotification(WPARAM wParam, LPARAM lParam)
     if (lParam == WM_LBUTTONUP) {
         ShowWindow(SW_NORMAL);
     } else if (lParam == WM_RBUTTONUP) {
-        HMENU hMenu = ::CreatePopupMenu();
-        ::AppendMenu(hMenu, MF_STRING, kBoyiaTrayMenuExit, _T("Exit"));
+        BoyiaPopMenu menu(this);
+        menu.AppendMenu(MF_STRING, kBoyiaTrayMenuExit, _T("Exit"));
         
-        POINT pt;
-        ::GetCursorPos(&pt);
-
-        ::TrackPopupMenu(hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y, 0, m_hWnd, NULL);
-        ::DestroyMenu(hMenu);
+        menu.Show();
     }
     return FALSE;
 }
