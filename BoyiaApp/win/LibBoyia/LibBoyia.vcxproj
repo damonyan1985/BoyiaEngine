@@ -100,7 +100,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>wininet.lib;gdiplus.lib;dwmapi.lib;d3d11.lib;shlwapi.lib;mf.lib;Mfplat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;gdiplus.lib;dwmapi.lib;d3d11.lib;shlwapi.lib;mf.lib;Mfplat.lib;DXGI.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>libboyia.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
