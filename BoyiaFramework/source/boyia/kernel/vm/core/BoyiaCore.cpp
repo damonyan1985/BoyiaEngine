@@ -1727,21 +1727,28 @@ static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm) {
 
     if (vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr) {
         LIntPtr funType = inst->mOPRight.mValue;
+        if (funType != BY_ANONYM_FUNC) {
+            BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
+            func->mParams[func->mParamSize].mNameKey = hashKey;
+            func->mParams[func->mParamSize].mValueType = funType;
+            // 指针指向函数地址
+            func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mFunSize];
+            // 属性函数的mSuper指针指向对象实例
+            func->mParams[func->mParamSize++].mValue.mObj.mSuper = IsObjectPropFunc(funType) ? (LIntPtr)func : kBoyiaNull;
+            // 初始化函数参数列表
+            InitFunction(&vm->mFunTable[vm->mFunSize], vm);
+
+            return kOpResultSuccess;
+        }
+
         // 如果funType是BY_ANONYM_FUNC，表示是一个匿名函数
-        if (funType == BY_ANONYM_FUNC && hashKey != 0) {
+        if (hashKey != 0) {
             return SetIntResult(hashKey, vm);
         }
         
-        BoyiaFunction* func = (BoyiaFunction*)vm->mEState->mStackFrame.mClass.mValue.mObj.mPtr;
-        func->mParams[func->mParamSize].mNameKey = hashKey;
-        func->mParams[func->mParamSize].mValueType = funType;
-        // 指针指向函数地址
-        func->mParams[func->mParamSize].mValue.mObj.mPtr = (LIntPtr)&vm->mFunTable[vm->mFunSize];
-        // 属性函数的mSuper指针指向对象实例
-        func->mParams[func->mParamSize++].mValue.mObj.mSuper = IsObjectPropFunc(funType) ? (LIntPtr)func : kBoyiaNull;
         // 初始化函数参数列表
         InitFunction(&vm->mFunTable[vm->mFunSize], vm);
-        if (funType == BY_ANONYM_FUNC && hashKey == 0) {
+        if (hashKey == 0) {
             // 将函数索引存起来，第二次遇到函数构建则直接返回
             inst->mOPLeft = { OP_CONST_NUMBER, vm->mFunSize - 1 };
             return SetIntResult(vm->mFunSize - 1, vm);
