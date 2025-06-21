@@ -16,10 +16,10 @@ class ProjectBuild {
     prop buildFlag;
     fun build() {
         var arg = 1;
-        
+        this.buildFlag = "test ProjectBuild";
         buildMain(fun(a, b, c) {
             var result = a + b + c;
-            Util.log("anony result is " + result);
+            Util.log("anony result is " + result + ", buildFlag = " + this.buildFlag);
             return result;
         }, arg);
     }
