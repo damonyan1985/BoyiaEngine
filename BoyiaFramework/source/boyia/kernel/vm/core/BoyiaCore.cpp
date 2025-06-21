@@ -2075,7 +2075,6 @@ static LVoid PushArgStatement(CompileState* cs) {
         EvalExpression(cs); // => R0
         // 将函数实参压栈
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
-        //NextToken();
     } while (cs->mToken.mTokenValue == COMMA);
 }
 
@@ -2173,7 +2172,7 @@ static LVoid IfStatement(CompileState* cs) {
     BlockStatement(cs); /* if true, interpret */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdIfEnd, cs);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    // 最后地址值
     logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst); // Compute offset
 }
 
@@ -2221,13 +2220,13 @@ static LVoid WhileStatement(CompileState* cs) {
     BlockStatement(cs); /* If true, execute block */
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, cs);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    //beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    // 最后地址值
     beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    // 最后地址值
     logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    //endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    // LOOP开始地址值
     endInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
 }
 
@@ -2247,13 +2246,13 @@ static LVoid DoStatement(CompileState* cs) {
     Instruction* logicInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdLoopTrue, cs);
     Instruction* endInst = PutInstruction(kBoyiaNull, kBoyiaNull, kCmdJmpTo, cs);
     beginInst->mOPLeft.mType = OP_CONST_NUMBER;
-    //beginInst->mOPLeft.mValue = (LIntPtr)endInst; // 最后地址值
+    // 最后地址值
     beginInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
     logicInst->mOPRight.mType = OP_CONST_NUMBER;
-    //logicInst->mOPRight.mValue = (LIntPtr)endInst; // 最后地址值
+    // 最后地址值
     logicInst->mOPRight.mValue = (LIntPtr)(endInst - logicInst);
     endInst->mOPLeft.mType = OP_CONST_NUMBER;
-    //endInst->mOPLeft.mValue = (LIntPtr)beginInst; // LOOP开始地址值
+    // LOOP开始地址值
     endInst->mOPLeft.mValue = (LIntPtr)(endInst - beginInst);
 }
 
@@ -2542,8 +2541,6 @@ static LInt HandleAssignVar(Instruction* inst, BoyiaVM* vm) {
     } else {
         value = (BoyiaValue*)left->mNameKey;
     }
-
-    //BoyiaValue* value = (BoyiaValue*)left->mNameKey;
 
     ValueCopyNoName(value, result);
     ValueCopy(&vm->mCpu->mReg0, value);
