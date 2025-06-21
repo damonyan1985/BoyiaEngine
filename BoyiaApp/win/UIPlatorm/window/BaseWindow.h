@@ -30,6 +30,10 @@ public:                                                                         
     const CommandMessageItem thisClass::messageEntries[] = { \
         { (INT_PTR)(baseClass::messageEntries), 0, 0 },
 
+#define BEGIN_ROOT_MAP_TABLE(thisClass)                \
+    const CommandMessageItem thisClass::messageEntries[] = { \
+        { (INT_PTR) nullptr, 0, 0 },
+
 #define END_MAP_TABLE() \
     {                   \
         0, 0, 0         \

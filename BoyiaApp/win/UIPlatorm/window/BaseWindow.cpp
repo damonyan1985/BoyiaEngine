@@ -4,11 +4,12 @@ namespace yanbo {
 BaseWindow* BaseWindow::s_currWinPtr = NULL;
 const int kSuperClassMessageMapIndex = 0;
 
-const CommandMessageItem BaseWindow::messageEntries[] = {
-    { (INT_PTR) nullptr, 0, 0 },
-    WM_CLOSE_ITEM()
-    WM_DESTROY_ITEM() { 0, 0, 0 }
-};
+BEGIN_ROOT_MAP_TABLE(BaseWindow)
+// msg mapping item begin
+WM_CLOSE_ITEM()
+WM_DESTROY_ITEM()
+// msg mapping item end
+END_MAP_TABLE()
 
 BaseWindow::BaseWindow()
     : m_hWnd(0)
