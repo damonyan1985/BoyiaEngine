@@ -5,9 +5,11 @@
 #include "MessageQueue.h"
 
 namespace yanbo {
-
+class MessageThread;
 class MessageLoop {
 public:
+    MessageLoop(MessageThread* thread);
+
     virtual ~MessageLoop() {};
     virtual LVoid loop() = 0;
     virtual LVoid postMessage(Message* msg) = 0;
@@ -15,6 +17,10 @@ public:
     virtual LVoid quit() = 0;
     virtual MessageQueue* queue() = 0;
     virtual LBool isAlive() = 0;
+
+protected:
+    LVoid handleMessage(Message* msg);
+    MessageThread* m_thread;
 };
 
 class MessageThread : public BaseThread {
@@ -22,18 +28,18 @@ public:
     MessageThread();
     virtual ~MessageThread();
 
-    virtual LVoid handleMessage(Message* msg) = 0;
     LVoid postMessage(Message* msg);
     Message* obtain();
     LVoid quit();
     virtual bool isAlive();
 
 protected:
+    virtual LVoid handleMessage(Message* msg) = 0;
     virtual LVoid run() LFinal;
     
-    //MessageQueue* m_queue;
-    //LBool m_continue;
     MessageLoop* m_loop;
+
+    friend class MessageLoop;
 };
 }
 

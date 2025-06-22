@@ -27,10 +27,11 @@ public:
         kTimeOut
     };
     Timer(LInt milliseconds, const closure& func, LBool loop);
-    virtual LVoid handleMessage(Message* msg);
-    LVoid postTask(const closure& func);
     
 private:
+    virtual LVoid handleMessage(Message* msg);
+    LVoid postTask(const closure& func);
+
     LBool m_loop;
 };
 

@@ -4,7 +4,7 @@ namespace yanbo {
 class CommonMessageLoop : public MessageLoop {
 public:
     CommonMessageLoop(MessageThread* thread)
-        : m_thread(thread)
+        : MessageLoop(thread)
         , m_continue(LTrue)
         , m_queue(new MessageQueue()){}
     
@@ -17,7 +17,7 @@ public:
 
             Message* msg = m_queue->poll();
             if (msg) {
-                m_thread->handleMessage(msg);
+                handleMessage(msg);
                 m_queue->freeMessage(msg);
             } else {
                 m_thread->waitOnNotify();
@@ -65,9 +65,16 @@ private:
     }
     
     MessageQueue* m_queue;
-    MessageThread* m_thread;
     volatile LBool m_continue;
 };
+
+MessageLoop::MessageLoop(MessageThread* thread)
+    : m_thread(thread) {
+}
+
+LVoid MessageLoop::handleMessage(Message* msg) {
+    m_thread->handleMessage(msg);
+}
 
 MessageThread::MessageThread()
     : m_loop(new CommonMessageLoop(this))

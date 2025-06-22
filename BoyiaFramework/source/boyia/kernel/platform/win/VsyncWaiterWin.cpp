@@ -102,7 +102,7 @@ LUID GetLuid(IDXGIAdapter* adapter) {
 }
 
 ComPtr<IDXGIAdapter> GetAdapter(IDXGIDevice* device) {  
-    Microsoft::WRL::ComPtr<IDXGIAdapter> adapter;
+    ComPtr<IDXGIAdapter> adapter;
     if (device->GetAdapter(&adapter) != S_OK) {
         return nullptr;
     }

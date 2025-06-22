@@ -50,7 +50,6 @@ extern LVoid BoyiaLog(const char* format, ...)
 
 extern LInt Str2Int(LInt8* p, LInt len, LInt radix)
 {
-    //LUint8 *p = (LUint8*) ptr;
     LInt total = 0;
     LInt sign = 1;
     LInt pos = 0;
@@ -105,7 +104,6 @@ LVoid SystemGC(LVoid* vm)
         GetRuntime(vm)->setGcRuning(LTrue);
         GetRuntime(vm)->collectGarbage();
     }
-    //GCollectGarbage(vm);
 }
 
 LVoid* BoyiaAlloc(LInt size, LVoid* vm)
@@ -564,18 +562,7 @@ LVoid BuiltinStringClass(LVoid* vm)
     
     // function length
     {
-        // put function implementation begin
-//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-//        function->mParams = kBoyiaNull;
-//        function->mParamSize = 0;
-//        // 实际调用的函数
-//        function->mFuncBody = (LIntPtr)BoyiaStringLength;
-//
-//        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
-//        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-//        lengthFuncVal->mNameKey = GEN_ID("length", vm);
-//        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
-        
+        // put function implementation begin        
         GenBuiltinClassFunction(GEN_ID("length", vm), BoyiaStringLength, classBody, vm);
         // put function implementation end
     }
@@ -583,16 +570,6 @@ LVoid BuiltinStringClass(LVoid* vm)
     // function equal
     {
         // put function implementation begin
-//        BoyiaFunction* function = NEW(BoyiaFunction, vm);
-//        function->mParams = kBoyiaNull;
-//        function->mParamSize = 0;
-//        // 实际调用的函数
-//        function->mFuncBody = (LIntPtr)BoyiaStringEqual;
-//
-//        BoyiaValue* lengthFuncVal = &classBody->mParams[classBody->mParamSize++];
-//        lengthFuncVal->mValueType = BY_NAV_FUNC; // 内置类的函数类型
-//        lengthFuncVal->mNameKey = GEN_ID("equal", vm);
-//        lengthFuncVal->mValue.mObj.mPtr = (LIntPtr)function;
         GenBuiltinClassFunction(GEN_ID("equal", vm), BoyiaStringEqual, classBody, vm);
         // put function implementation end
     }
