@@ -1,9 +1,15 @@
 #include "VsyncWaiterWin.h"
+#include "SystemUtil.h"
+#include "BaseThread.h"
 
 #include <dwmapi.h>
 #include <d3d11.h>
+#include <optional>
+#include <vector>
 
 namespace yanbo {
+constexpr long kMicrosecondsPerSecond = 1000 * 1000;
+
 // Check if a DXGI adapter is stale and needs to be replaced. This can happen
 // e.g. when detaching/reattaching remote desktop sessions and causes subsequent
 // WaitForVSyncs on the stale adapter/output to return instantly.
@@ -109,6 +115,56 @@ ComPtr<IDXGIAdapter> GetAdapter(IDXGIDevice* device) {
     return adapter;
 }
 
+std::vector<DISPLAYCONFIG_PATH_INFO> GetDisplayConfigPathInfos() {
+    for (LONG result = ERROR_INSUFFICIENT_BUFFER;
+        result == ERROR_INSUFFICIENT_BUFFER;) {
+        uint32_t path_elements, mode_elements;
+        if (::GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &path_elements,
+            &mode_elements) != ERROR_SUCCESS) {
+            return {};
+        }
+        std::vector<DISPLAYCONFIG_PATH_INFO> path_infos(path_elements);
+        std::vector<DISPLAYCONFIG_MODE_INFO> mode_infos(mode_elements);
+        result = ::QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &path_elements,
+            path_infos.data(), &mode_elements,
+            mode_infos.data(), nullptr);
+        if (result == ERROR_SUCCESS) {
+            path_infos.resize(path_elements);
+            return path_infos;
+        }
+    }
+    return {};
+}
+
+std::optional<DISPLAYCONFIG_PATH_INFO> GetDisplayConfigPathInfo(
+    MONITORINFOEX monitor_info) {
+    // Look for a path info with a matching name.
+    for (const auto& info : GetDisplayConfigPathInfos()) {
+        DISPLAYCONFIG_SOURCE_DEVICE_NAME device_name = {};
+        device_name.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
+        device_name.header.size = sizeof(device_name);
+        device_name.header.adapterId = info.sourceInfo.adapterId;
+        device_name.header.id = info.sourceInfo.id;
+        if ((::DisplayConfigGetDeviceInfo(&device_name.header) == ERROR_SUCCESS) &&
+            (wcscmp(monitor_info.szDevice, device_name.viewGdiDeviceName) == 0)) {
+            return info;
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<DISPLAYCONFIG_PATH_INFO> GetDisplayConfigPathInfo(
+    HMONITOR monitor) {
+    // Get the monitor name.
+    MONITORINFOEX monitor_info = {};
+    monitor_info.cbSize = sizeof(monitor_info);
+    if (!::GetMonitorInfo(monitor, &monitor_info)) {
+        return std::nullopt;
+    }
+
+    return GetDisplayConfigPathInfo(monitor_info);
+}
+
 VsyncWaiterWin::VsyncWaiterWin(ComPtr<IDXGIDevice> dxgiDevice)
     : m_hwnd(nullptr)
     , m_primaryMonitor(nullptr)
@@ -122,42 +178,100 @@ LVoid VsyncWaiterWin::setWindow(HWND hwnd)
     m_hwnd = hwnd;
 }
 
-LBool VsyncWaiterWin::getVSyncParametersIfAvailable()
-{
+LInt64 VsyncWaiterWin::tryGetVsyncIntervalFromDisplayConfig() {
+    LInt64 interval = 0;
+
+    HMONITOR monitor = m_hwnd 
+        ? ::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST)
+        : ::MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
+
+    if (auto path_info = GetDisplayConfigPathInfo(monitor);
+        path_info) {
+        auto& refresh_rate = path_info->targetInfo.refreshRate;
+        if (refresh_rate.Denominator != 0 && refresh_rate.Numerator != 0) {
+            double micro_seconds = (kMicrosecondsPerSecond *
+                static_cast<double>(refresh_rate.Denominator)) /
+                static_cast<double>(refresh_rate.Numerator);
+            interval = util::LRound(micro_seconds);
+        }
+    }
+    return interval;
+}
+
+LInt64 VsyncWaiterWin::tryGetVSyncParamsFromDwmCompInfo() {
+    LInt64 interval = 0;
+
     DWM_TIMING_INFO timing_info;
     timing_info.cbSize = sizeof(timing_info);
     HRESULT result = DwmGetCompositionTimingInfo(NULL, &timing_info);
-    if (result == S_OK) {
+    if (result == S_OK && timing_info.qpcVBlank <= LLONG_MAX &&
+        timing_info.qpcRefreshPeriod <= LLONG_MAX) {
         // Calculate an interval value using the rateRefresh numerator and
         // denominator.
+        long rate_interval = 0;
         if (timing_info.rateRefresh.uiDenominator > 0 && timing_info.rateRefresh.uiNumerator > 0) {
+            rate_interval = timing_info.rateRefresh.uiDenominator *
+                kMicrosecondsPerSecond /
+                timing_info.rateRefresh.uiNumerator;
         }
-    } else {
-        // When DWM compositing is active all displays are normalized to the
-        // refresh rate of the primary display, and won't composite any faster.
-        // If DWM compositing is disabled, though, we can use the refresh rates
-        // reported by each display, which will help systems that have mis-matched
-        // displays that run at different frequencies.
-        HMONITOR monitor = MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST);
-        MONITORINFOEX monitor_info;
-        monitor_info.cbSize = sizeof(MONITORINFOEX);
-        BOOL result = GetMonitorInfo(monitor, &monitor_info);
-        if (result) {
-            DEVMODE display_info;
-            display_info.dmSize = sizeof(DEVMODE);
-            display_info.dmDriverExtra = 0;
-            result = EnumDisplaySettings(monitor_info.szDevice, ENUM_CURRENT_SETTINGS,
-                &display_info);
-            if (result && display_info.dmDisplayFrequency > 1) {
-            }
+
+        interval = rate_interval;
+    }
+
+    return interval;
+}
+
+LInt64 VsyncWaiterWin::tryGetVSyncIntervalFromDisplaySettings() {
+    LInt64 interval = 0;
+    // When DWM compositing is active all displays are normalized to the
+    // refresh rate of the primary display, and won't composite any faster.
+    // If DWM compositing is disabled, though, we can use the refresh rates
+    // reported by each display, which will help systems that have mis-matched
+    // displays that run at different frequencies.
+
+    // NOTE: The EnumDisplaySettings API does not support fractional display
+    // frequencies, e.g. a display operating at 29.97hz will report a
+    // frequency of 29hz.
+    HMONITOR monitor = ::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFOEX monitor_info;
+    monitor_info.cbSize = sizeof(MONITORINFOEX);
+    if (::GetMonitorInfo(monitor, &monitor_info)) {
+        DEVMODE display_info;
+        display_info.dmSize = sizeof(DEVMODE);
+        display_info.dmDriverExtra = 0;
+        if (::EnumDisplaySettings(monitor_info.szDevice, ENUM_CURRENT_SETTINGS,
+            &display_info) &&
+            display_info.dmDisplayFrequency > 1) {
+            interval = (1.0 / ((double)display_info.dmDisplayFrequency)) *
+                kMicrosecondsPerSecond;
         }
     }
 
-    return LTrue;
+    return interval;
+}
+
+LInt64 VsyncWaiterWin::getVSyncIntervalIfAvailable()
+{
+    // Prefer getting vsync parameters from QueryDisplayConfig in order to
+    // align with window_'s or Primary monitor's vblanks.
+    LInt64 interval = tryGetVsyncIntervalFromDisplayConfig();
+
+    // If QueryDisplayConfig wasn't available then prefer DwmCompositionInfo
+    // as it supports fractional refresh rates.
+    if (!interval) {
+        interval = tryGetVSyncParamsFromDwmCompInfo();
+    }
+
+    if (!interval) {
+        interval = tryGetVSyncIntervalFromDisplaySettings();
+    }
+
+    return interval;
 }
 
 LVoid VsyncWaiterWin::awaitVSync()
 {
+    LInt64 vsync_interval = getVSyncIntervalIfAvailable();
     if (!m_dxgiAdapter || !DXGIFactoryIsCurrent(m_dxgiAdapter.Get())) {
         m_dxgiAdapter = FindDXGIAdapterOnNewFactory(m_originalAdapterLuid);
         m_primaryOutput.Reset();
@@ -175,8 +289,18 @@ LVoid VsyncWaiterWin::awaitVSync()
         m_primaryOutput = DXGIOutputFromMonitor(monitor, m_dxgiAdapter.Get());
     }
 
+    const long wait_for_vblank_start_time = SystemUtil::getSystemTime();
     const bool wait_for_vblank_succeeded =
         m_primaryOutput && SUCCEEDED(m_primaryOutput->WaitForVBlank());
+
+    const long wait_for_vblank_elapsed_time =
+        SystemUtil::getSystemTime() - wait_for_vblank_start_time;
+    if (!wait_for_vblank_succeeded ||
+        wait_for_vblank_elapsed_time < 1) {
+        BaseThread::sleepMS(vsync_interval/1000);
+    }
+
+    fireCallback();
 }
 
 VsyncWaiter* VsyncWaiter::createVsyncWaiter()

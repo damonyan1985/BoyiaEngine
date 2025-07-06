@@ -19,7 +19,7 @@ public:
     virtual LBool isAlive() = 0;
 
 protected:
-    LVoid handleMessage(Message* msg);
+    inline LVoid handleMessage(Message* msg);
     MessageThread* m_thread;
 };
 

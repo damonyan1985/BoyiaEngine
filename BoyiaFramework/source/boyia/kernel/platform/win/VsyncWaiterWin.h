@@ -16,7 +16,11 @@ public:
     virtual LVoid awaitVSync();
 
 private:
-    LBool getVSyncParametersIfAvailable();
+    LInt64 tryGetVsyncIntervalFromDisplayConfig();
+    LInt64 tryGetVSyncParamsFromDwmCompInfo();
+    LInt64 tryGetVSyncIntervalFromDisplaySettings();
+
+    LInt64 getVSyncIntervalIfAvailable();
     const ComPtr<ID3D11Device> m_dxgiDevice;
     ComPtr<IDXGIOutput> m_primaryOutput;
     HMONITOR m_primaryMonitor;

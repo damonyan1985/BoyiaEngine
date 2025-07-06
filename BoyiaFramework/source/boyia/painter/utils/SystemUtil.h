@@ -6,7 +6,9 @@
 namespace yanbo {
 class SystemUtil {
 public:
+    // 返回毫秒
     static long getSystemTime();
+    // 返回微秒
     static long getSystemMicroTime();
     static int intCeil(int dividend, int divid);
     static bool timeIsBetween(LUint32 later, LUint32 middle, LUint32 earlier);
