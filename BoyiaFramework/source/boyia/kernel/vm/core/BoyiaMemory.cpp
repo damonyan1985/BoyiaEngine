@@ -19,7 +19,6 @@ typedef struct BoyiaMemoryPool {
     LInt mSize;
     LInt mUsed;
     LByte* mAddress;
-    BoyiaMemoryPool* mNext;
     MemoryBlockHeader* mFirstBlock;
 } BoyiaMemoryPool;
 
@@ -61,7 +60,6 @@ LVoid* InitMemoryPool(LInt size)
     BoyiaMemoryPool* pool = FAST_NEW(BoyiaMemoryPool);
     pool->mAddress = FAST_NEW_ARRAY(LByte, size);
     pool->mSize = size;
-    pool->mNext = kBoyiaNull;
     pool->mUsed = 0;
     pool->mFirstBlock = kBoyiaNull;
     return pool;
@@ -70,12 +68,8 @@ LVoid* InitMemoryPool(LInt size)
 LVoid FreeMemoryPool(LVoid* mempool)
 {
     BoyiaMemoryPool* pool = (BoyiaMemoryPool*)mempool;
-    while (pool) {
-        BoyiaMemoryPool* poolNext = pool->mNext;
-        FAST_DELETE(pool->mAddress);
-        FAST_DELETE(pool);
-        pool = poolNext;
-    }
+    FAST_DELETE(pool->mAddress);
+    FAST_DELETE(pool);
 }
 
 LVoid* NewData(LInt size, LVoid* mempool)
@@ -97,60 +91,70 @@ LVoid* NewData(LInt size, LVoid* mempool)
         pHeader->mPrevious = kBoyiaNull;
         pHeader->mFlag = kMemoryBlockHeaderFlag;
         pool->mFirstBlock = pHeader;
-    } else {
-        MemoryBlockHeader* current = pool->mFirstBlock;
-        // 如果第一个内存单元与内存池首地址之间存在一块空白区域
-        // 该空白区域大小大于mallocSize，则尝试利用该区域进行分配
-        LUintPtr newAddr = ADDR_ALIGN(pool->mAddress);
-        if (ADDR_DELTA(current, newAddr) >= mallocSize) {
-            pHeader = (MemoryBlockHeader*)newAddr;
-            pHeader->mSize = size;
-            pHeader->mNext = current;
-            current->mPrevious = pHeader;
-            pHeader->mPrevious = kBoyiaNull;
-            pHeader->mFlag = kMemoryBlockHeaderFlag;
+        pool->mUsed = mallocSize;
 
-            pool->mFirstBlock = pHeader;
-            pool->mUsed += mallocSize;
-            return (LByte*)(newAddr + kMemoryHeaderLen);
-        }
+        return (LByte*)pHeader + kMemoryHeaderLen;
+    }
 
-        while (current) {
-            // 如果当前单元没有下一个元素
-            // 则直接利用剩余的空白空间
-            newAddr = ADDR_ALIGN(DATA_TAIL(current));
-            //BOYIA_LOG("CURRENT PTR %llx %lld, curr.size=%d size=%d", (LUintPtr)current, (LIntPtr)current, (current->mSize), size);
-            if (!current->mNext) {
-                if (ADDR_DELTA((pool->mAddress + pool->mSize), newAddr) >= mallocSize) {
-                    pHeader = (MemoryBlockHeader*)newAddr;
-                    pHeader->mSize = size;
-                    pHeader->mPrevious = current;
-                    pHeader->mNext = kBoyiaNull;
-                    pHeader->mFlag = kMemoryBlockHeaderFlag;
-                    current->mNext = pHeader;
-                    break;
-                }
-                BOYIA_LOG("%s: Boyia VM Out of Memory ", "NewData");
-                // Out Of Memory
-                return kBoyiaNull;
-            }
 
-            // 如果当前单元存在下一个元素
-            // 则尝试利用当前与下一个元素之间的空白区域进行分配
-            if (ADDR_DELTA((current->mNext), newAddr) >= mallocSize) {
+    MemoryBlockHeader* current = pool->mFirstBlock;
+    // 如果第一个内存单元与内存池首地址之间存在一块空白区域
+    // 该空白区域大小大于mallocSize，则尝试利用该区域进行分配
+    LByte* maxAddress = pool->mAddress + pool->mSize;
+    // 获取内存块末尾对齐地址
+    LUintPtr newAddr = ADDR_ALIGN(DATA_TAIL(current));
+    // 最大内存地址减去first内存末尾地址
+    if (ADDR_DELTA(maxAddress, newAddr) >= mallocSize) {
+        pHeader = (MemoryBlockHeader*)newAddr;
+        pHeader->mSize = size;
+        pHeader->mNext = current;
+        current->mPrevious = pHeader;
+        pHeader->mPrevious = kBoyiaNull;
+        pHeader->mFlag = kMemoryBlockHeaderFlag;
+
+        // 将新分配的地址作为内存链表头部
+        pool->mFirstBlock = pHeader;
+        pool->mUsed += mallocSize;
+        return (LByte*)(newAddr + kMemoryHeaderLen);
+    }
+
+    while (current) {
+        // 如果当前单元没有下一个元素
+        // 则直接利用剩余的空白空间
+        //BOYIA_LOG("CURRENT PTR %llx %lld, curr.size=%d size=%d", (LUintPtr)current, (LIntPtr)current, (current->mSize), size);
+        if (!current->mNext) {
+            LUintPtr newAddr = ADDR_ALIGN(pool->mAddress);
+            if (ADDR_DELTA(current, newAddr) >= mallocSize) {
                 pHeader = (MemoryBlockHeader*)newAddr;
                 pHeader->mSize = size;
                 pHeader->mPrevious = current;
-                pHeader->mNext = current->mNext;
+                pHeader->mNext = kBoyiaNull;
                 pHeader->mFlag = kMemoryBlockHeaderFlag;
-                current->mNext->mPrevious = pHeader;
                 current->mNext = pHeader;
                 break;
             }
-
-            current = current->mNext;
+            BOYIA_LOG("%s: Boyia VM Out of Memory ", "NewData");
+            // Out Of Memory
+            return kBoyiaNull;
         }
+
+        // 如果当前单元存在下一个元素
+        // 则尝试利用当前与下一个元素之间的空白区域进行分配
+        newAddr = ADDR_ALIGN(DATA_TAIL(current->mNext));
+        if (ADDR_DELTA(current, newAddr) >= mallocSize) {
+            pHeader = (MemoryBlockHeader*)newAddr;
+            pHeader->mSize = size;
+            pHeader->mPrevious = current;
+            pHeader->mNext = current->mNext;
+            pHeader->mFlag = kMemoryBlockHeaderFlag;
+            current->mNext->mPrevious = pHeader;
+            current->mNext = pHeader;
+            break;
+        }
+
+        current = current->mNext;
     }
+    
 
     pool->mUsed += pHeader ? mallocSize : 0;
     //return pHeader ? pHeader->mAddress : kBoyiaNull;
