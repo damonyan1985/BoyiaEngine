@@ -157,7 +157,6 @@ LVoid* NewData(LInt size, LVoid* mempool)
     
 
     pool->mUsed += pHeader ? mallocSize : 0;
-    //return pHeader ? pHeader->mAddress : kBoyiaNull;
     return pHeader ? ((LByte*)pHeader + kMemoryHeaderLen) : kBoyiaNull;
 }
 

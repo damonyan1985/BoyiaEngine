@@ -17,7 +17,7 @@ public:
     LVoid addChild(RenderLayer* layer);
     LVoid setCommand(RenderCommandBuffer* buffer);
 
-    static LVoid clearBuffer(KVector<LUintPtr>* buffers);
+    static LVoid clearBuffer(KVector<LUintPtr>* buffers, LBool needDelete = LTrue);
 
 public:
     LInt m_layerId;

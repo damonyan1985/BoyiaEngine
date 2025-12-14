@@ -11,6 +11,7 @@ public:
     enum MessageType {
         kRenderInit = 1,
         kRenderReset,
+        kRenderCollectCommands,
         kRenderLayerTree,
     };
     static RenderThread* instance();
@@ -21,6 +22,7 @@ public:
     LVoid renderInit();
     LVoid renderReset();
     LVoid renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector);
+    LVoid renderCollectCommands(RenderCommandBuffer* buffer);
 
     IRenderEngine* getRenderer() const;
 

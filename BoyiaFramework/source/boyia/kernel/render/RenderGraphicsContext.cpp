@@ -2,6 +2,7 @@
 #include "TextView.h"
 #include "UIView.h"
 #include "PixelRatio.h"
+#include "RenderThread.h"
 
 namespace yanbo {
 class ItemPainter : public BoyiaRef {
@@ -9,6 +10,11 @@ public:
     ItemPainter()
         : buffer(new RenderCommandBuffer(0, 20))
     {
+    }
+
+    ~ItemPainter() 
+    {
+        RenderThread::instance()->renderCollectCommands(buffer);
     }
 
     // 每次重绘创建RenderCommandBuffer，并将旧buffer放入回收器
@@ -290,7 +296,7 @@ LVoid RenderGraphicsContext::submit()
     } else {
         RenderThread::instance()->renderLayerTree(layer, buffer);
     }
-    //RenderThread::instance()->renderLayerTree(layer, m_collectBuffers);
+
     // 每次提交后重置回收器
     m_collectBuffers = new KVector<LUintPtr>(0, 20);
 }

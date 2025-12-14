@@ -3,7 +3,7 @@
 namespace yanbo {
 CollectBufferMap RenderLayer::s_collectBufferMap;
 
-LVoid RenderLayer::clearBuffer(KVector<LUintPtr>* buffers)
+LVoid RenderLayer::clearBuffer(KVector<LUintPtr>* buffers, LBool needDelete)
 {
     if (!buffers) {
         return;
@@ -13,7 +13,9 @@ LVoid RenderLayer::clearBuffer(KVector<LUintPtr>* buffers)
         s_collectBufferMap.remove(HashPtr(buffers->elementAt(i)));
     }
 
-    delete buffers;
+    if (needDelete) {
+        delete buffers;
+    }
 }
 
 RenderLayer::~RenderLayer()

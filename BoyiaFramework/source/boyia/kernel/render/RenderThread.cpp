@@ -23,6 +23,12 @@ LVoid RenderThread::handleMessage(Message* msg)
     case kRenderReset: {
         m_renderer->reset();
     } break;
+    case kRenderCollectCommands: {
+        KVector<LUintPtr> buffers(0, 1);
+        buffers.addElement(reinterpret_cast<LUintPtr>(msg->obj));
+
+        RenderLayer::clearBuffer(&buffers, LFalse);
+    } break;
     case kRenderLayerTree: {
         OwnerPtr<RenderLayer> layer = static_cast<RenderLayer*>(msg->obj);
         m_renderer->render(layer);
@@ -44,6 +50,15 @@ LVoid RenderThread::renderReset()
 {
     Message* msg = obtain();
     msg->type = kRenderReset;
+
+    postMessage(msg);
+}
+
+LVoid RenderThread::renderCollectCommands(RenderCommandBuffer* buffer)
+{
+    Message* msg = obtain();
+    msg->type = kRenderCollectCommands;
+    msg->obj = buffer;
 
     postMessage(msg);
 }

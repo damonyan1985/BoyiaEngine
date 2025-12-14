@@ -2,7 +2,6 @@
 #define RenderGraphicsContext_h
 
 #include "LGdi.h"
-#include "RenderThread.h"
 #include "RenderLayer.h"
 #include "VsyncWaiter.h"
 
