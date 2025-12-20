@@ -7,27 +7,27 @@
 namespace yanbo {
 class ItemPainter : public BoyiaRef {
 public:
-    ItemPainter()
+    ItemPainter(RenderGraphicsContext* ctx)
         : buffer(new RenderCommandBuffer(0, 20))
+        , m_ctx(ctx)
     {
     }
 
     ~ItemPainter() 
     {
-        RenderThread::instance()->renderCollectCommands(buffer);
+        m_ctx->m_collectBuffers->addElement((LUintPtr)buffer);
     }
 
     // 每次重绘创建RenderCommandBuffer，并将旧buffer放入回收器
     // 回收器交给渲染线程来进行管理
-    LVoid clear(KVector<LUintPtr>* collector)
+    LVoid clear()
     {
-        if (collector) {
-            collector->addElement((LUintPtr)buffer);
-        }
+        m_ctx->m_collectBuffers->addElement((LUintPtr)buffer);
         buffer = new RenderCommandBuffer(0, 20);
     }
 
     RenderCommandBuffer* buffer;
+    RenderGraphicsContext* m_ctx;
 };
 
 RenderGraphicsContext::RenderGraphicsContext()
@@ -47,7 +47,7 @@ ItemPainter* RenderGraphicsContext::currentPainter()
     ViewPainter* item = (ViewPainter*)m_item;
     ItemPainter* painter = (ItemPainter*)item->painter();
     if (!painter) {
-        painter = new ItemPainter();
+        painter = new ItemPainter(this);
         item->setPainter(painter);
     }
 
@@ -288,7 +288,7 @@ LVoid RenderGraphicsContext::submit()
     RenderLayer* layer = new RenderLayer();
     submit(yanbo::UIView::current()->getDocument()->getRenderTreeRoot(), layer);
     
-    KVector<LUintPtr>* buffer = m_collectBuffers;
+    KVector<LUintPtr>* buffer = m_collectBuffers->size() ? m_collectBuffers : kBoyiaNull;
     if (vsyncWaiter()) {
         vsyncWaiter()->awaitVsyncForCallback([layer, buffer] {
             RenderThread::instance()->renderLayerTree(layer, buffer);
@@ -298,14 +298,16 @@ LVoid RenderGraphicsContext::submit()
     }
 
     // 每次提交后重置回收器
-    m_collectBuffers = new KVector<LUintPtr>(0, 20);
+    if (buffer) {
+        m_collectBuffers = new KVector<LUintPtr>(0, 20);
+    }
 }
 
 // 设置setHtmlView表示需要重新绘制，因而需要清空buffer
 LVoid RenderGraphicsContext::setHtmlView(ViewPainter* item)
 {
     m_item = item;
-    currentPainter()->clear(m_collectBuffers);
+    currentPainter()->clear();
 }
 
 LVoid RenderGraphicsContext::save()

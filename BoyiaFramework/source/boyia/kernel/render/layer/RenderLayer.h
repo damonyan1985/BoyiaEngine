@@ -17,14 +17,10 @@ public:
     LVoid addChild(RenderLayer* layer);
     LVoid setCommand(RenderCommandBuffer* buffer);
 
-    static LVoid clearBuffer(KVector<LUintPtr>* buffers, LBool needDelete = LTrue);
-
 public:
     LInt m_layerId;
     KVector<OwnerPtr<RenderLayer>> m_children;
     RenderCommandBuffer* m_buffer;
-    // 使用hashmap回收command buffer
-    static CollectBufferMap s_collectBufferMap;
 };
 }
 

@@ -23,16 +23,13 @@ LVoid RenderThread::handleMessage(Message* msg)
     case kRenderReset: {
         m_renderer->reset();
     } break;
-    case kRenderCollectCommands: {
-        KVector<LUintPtr> buffers(0, 1);
-        buffers.addElement(reinterpret_cast<LUintPtr>(msg->obj));
-
-        RenderLayer::clearBuffer(&buffers, LFalse);
-    } break;
     case kRenderLayerTree: {
         OwnerPtr<RenderLayer> layer = static_cast<RenderLayer*>(msg->obj);
         m_renderer->render(layer);
-        RenderLayer::clearBuffer(reinterpret_cast<KVector<LUintPtr>*>(msg->arg0));
+
+        if (msg->arg0) {
+            clearCommandBuffer(reinterpret_cast<KVector<LUintPtr>*>(msg->arg0));
+        }
     } break;
     default: {
     } break;
@@ -54,23 +51,21 @@ LVoid RenderThread::renderReset()
     postMessage(msg);
 }
 
-LVoid RenderThread::renderCollectCommands(RenderCommandBuffer* buffer)
-{
-    Message* msg = obtain();
-    msg->type = kRenderCollectCommands;
-    msg->obj = buffer;
-
-    postMessage(msg);
-}
-
 LVoid RenderThread::renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector)
 {
     Message* msg = obtain();
     msg->type = kRenderLayerTree;
     msg->obj = rootLayer;
     msg->arg0 = (LIntPtr)collector;
-
     postMessage(msg);
+}
+
+LVoid RenderThread::clearCommandBuffer(KVector<LUintPtr>* buffer) {
+    for (LInt i = 0; i < buffer->size(); i++) {
+        delete reinterpret_cast<RenderCommandBuffer*>(buffer->elementAt(i));
+    }
+
+    delete buffer;
 }
 
 IRenderEngine* RenderThread::getRenderer() const

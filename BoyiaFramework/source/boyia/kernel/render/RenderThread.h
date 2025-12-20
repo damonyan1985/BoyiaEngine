@@ -22,11 +22,12 @@ public:
     LVoid renderInit();
     LVoid renderReset();
     LVoid renderLayerTree(RenderLayer* rootLayer, KVector<LUintPtr>* collector);
-    LVoid renderCollectCommands(RenderCommandBuffer* buffer);
 
     IRenderEngine* getRenderer() const;
 
 private:
+    LVoid clearCommandBuffer(KVector<LUintPtr>* buffer);
+
     IRenderEngine* m_renderer;
 };
 }

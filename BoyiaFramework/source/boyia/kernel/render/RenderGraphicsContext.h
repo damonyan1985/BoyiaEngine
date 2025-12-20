@@ -65,6 +65,8 @@ private:
     LColor m_penColor;
     KVector<LUintPtr>* m_collectBuffers;
     mutable VsyncWaiter* m_vsync;
+
+    friend class ItemPainter;
 };
 }
 
