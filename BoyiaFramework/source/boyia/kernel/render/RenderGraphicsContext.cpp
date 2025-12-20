@@ -5,10 +5,13 @@
 #include "RenderThread.h"
 
 namespace yanbo {
+const LInt kCommandBufferDefaultCapacity = 20;
+const LInt kCollectBufferefaultCapacity = 20;
+
 class ItemPainter : public BoyiaRef {
 public:
     ItemPainter(RenderGraphicsContext* ctx)
-        : buffer(new RenderCommandBuffer(0, 20))
+        : buffer(new RenderCommandBuffer(0, kCommandBufferDefaultCapacity))
         , m_ctx(ctx)
     {
     }
@@ -23,7 +26,7 @@ public:
     LVoid clear()
     {
         m_ctx->m_collectBuffers->addElement((LUintPtr)buffer);
-        buffer = new RenderCommandBuffer(0, 20);
+        buffer = new RenderCommandBuffer(0, kCommandBufferDefaultCapacity);
     }
 
     RenderCommandBuffer* buffer;
@@ -32,7 +35,7 @@ public:
 
 RenderGraphicsContext::RenderGraphicsContext()
     : m_clipRect(kBoyiaNull)
-    , m_collectBuffers(new KVector<LUintPtr>(0, 20))
+    , m_collectBuffers(new KVector<LUintPtr>(0, kCollectBufferefaultCapacity))
     , m_vsync(kBoyiaNull)
 {
     RenderThread::instance()->renderInit();
@@ -299,7 +302,7 @@ LVoid RenderGraphicsContext::submit()
 
     // 每次提交后重置回收器
     if (buffer) {
-        m_collectBuffers = new KVector<LUintPtr>(0, 20);
+        m_collectBuffers = new KVector<LUintPtr>(0, kCollectBufferefaultCapacity);
     }
 }
 
