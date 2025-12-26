@@ -300,9 +300,9 @@ typedef struct ExecState {
 
     MicroTask* mTopTask;
     // 保存上一个执行状态指针用于回溯
-    ExecState* mPrevious;
+    ExecState* mLast;
 
-    // mPrev与mNext单纯只是对创建的ExecState进行记录
+    // mPrev与mNext单纯只是对创建的ExecState进行记录,是一个双向链表
     // 用于GC时使用
     ExecState* mPrev;
     ExecState* mNext;
@@ -515,7 +515,7 @@ static LVoid ResetScene(ExecState* state) {
     state->mStackFrame.mTmpLValSize = 0;
     state->mStackFrame.mContext = kBoyiaNull;
     state->mStackFrame.mPC = kBoyiaNull;
-    state->mPrevious = kBoyiaNull;
+    state->mLast = kBoyiaNull;
     state->mTopTask = kBoyiaNull;
 
     state->mFrameIndex = 0; /* Initialize the call stack index */
@@ -744,7 +744,7 @@ static LVoid DestroyExecState(ExecState* state, BoyiaVM* vm) {
     }
 
     state->mTopTask = kBoyiaNull;
-    state->mPrevious = kBoyiaNull;
+    state->mLast = kBoyiaNull;
     FreeExecState(state, vm);
 }
 
@@ -863,10 +863,10 @@ static LVoid ExecPopFunction(BoyiaVM* vm) {
     // 从而取得调用之前的运行环境, 即之前指向的pc指令
     // 如果不为空，就获取下一条指令，递归调用本函数
     if (vm->mEState->mFrameIndex <= 0
-        && vm->mEState->mPrevious
-        && !vm->mEState->mPrevious->mWait) {
+        && vm->mEState->mLast
+        && !vm->mEState->mLast->mWait) {
         ExecState* currentState = vm->mEState;
-        SwitchExecState(currentState->mPrevious, vm);
+        SwitchExecState(currentState->mLast, vm);
         if (!currentState->mWait) {
             if (currentState->mTopTask) {
                 FreeMicroTask(currentState->mTopTask, vm);
@@ -881,7 +881,7 @@ static LVoid ExecPopFunction(BoyiaVM* vm) {
         if (vm->mEState->mStackFrame.mPC) {
             vm->mEState->mStackFrame.mPC = NextInstruction(vm->mEState->mStackFrame.mPC, vm); // vm->mEState->mPC->mNext;
             ExecPopFunction(vm);
-        } else if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
+        } else if (vm->mEState->mLast && !vm->mEState->mLast->mWait) {
             ExecPopFunction(vm);
         }
     }
@@ -1939,7 +1939,7 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm) {
     BOYIA_LOG("HandlePushParams functionName=%u \n", value->mValueType);
 
     ExecState* state = CreateExecState(vm);
-    state->mPrevious = current;
+    state->mLast = current;
     SwitchExecState(state, vm);
     HandlePushScene(kBoyiaNull, vm);
     
@@ -2418,7 +2418,7 @@ static LInt HandleLogic(Instruction* inst, BoyiaVM* vm) {
 static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
 
-    // 获取对象
+    // 获取对象，await的对象必须是微任务
     BoyiaFunction* fun = (BoyiaFunction*)left->mValue.mObj.mPtr;
     BoyiaValue* klass = (BoyiaValue*)fun->mFuncBody;
     PrintValueKey(klass, vm);
@@ -2428,31 +2428,37 @@ static LInt HandleAwait(Instruction* inst, BoyiaVM* vm) {
 
     vm->mEState->mWait = LTrue;
 
-    vm->mEState->mTopTask = AllocMicroTask(vm);
-    vm->mEState->mTopTask->mAsyncEs = kBoyiaNull;
-    
-    // 获取微任务
+    // 获取微任务，设置为当前的执行状态
     MicroTask* task = (MicroTask*)fun->mParams[1].mValue.mIntVal;
     task->mAsyncEs = vm->mEState;
 
-    // 设置顶层async与task之间的联系
-    BoyiaFunction* taskObj = CreateMicroTaskObject(vm);
-    MicroTask* topTask = vm->mEState->mTopTask;
-    taskObj->mParams[1].mValue.mIntVal = (LIntPtr)topTask;
+    // 如果异步函数首次函数内执行await时没有顶层微任务，则创建一个，作为异步函数的返回值
+    if (!vm->mEState->mTopTask) {
+        vm->mEState->mTopTask = AllocMicroTask(vm);
+        vm->mEState->mTopTask->mAsyncEs = kBoyiaNull;
 
-    BoyiaValue result;
-    result.mValueType = BY_CLASS;
-    result.mValue.mObj.mPtr = (LIntPtr)taskObj;
-    result.mValue.mObj.mSuper = kBoyiaNull;
-    SetNativeResult(&result, vm);
-    
-    if (vm->mEState->mPrevious && !vm->mEState->mPrevious->mWait) {
-        SwitchExecState(vm->mEState->mPrevious, vm);
+        // 设置顶层async与task之间的联系
+        BoyiaFunction* taskObj = CreateMicroTaskObject(vm);
+        MicroTask* topTask = vm->mEState->mTopTask;
+        taskObj->mParams[1].mValue.mIntVal = (LIntPtr)topTask;
+
+        // 当前异步函数首次await时，返回微任务
+        BoyiaValue result;
+        result.mValueType = BY_CLASS;
+        result.mValue.mObj.mPtr = (LIntPtr)taskObj;
+        result.mValue.mObj.mSuper = kBoyiaNull;
+        SetNativeResult(&result, vm);
+    }
+
+    if (vm->mEState->mLast && !vm->mEState->mLast->mWait) {
+        SwitchExecState(vm->mEState->mLast, vm);
         // 切换到之前的ExecState，但由于函数调用前便执行了PopScene，
         // 之前的ExecState的mFrameIndex是进行了+1，因而需要pc置为Null，
         // 这样才会在执行命令时执行PopScene，返回到先前的场景
         vm->mEState->mStackFrame.mPC = kBoyiaNull;
     } else {
+        // 进入这里表示已经进入其他宏任务，遇到异步await，
+        // 当前任务直接退出，等待异步任务执行完成
         return kOpResultEnd;
     }
 
@@ -2476,6 +2482,7 @@ static LInt HandleSetAnonym(Instruction* inst, BoyiaVM* vm) {
 static LVoid EvalAwait(CompileState* cs) {
     NextToken(cs);
     // 先执行异步函数，强制认为其后是一个函数
+    // 返回值必须是一个MicroTask对象
     Atom(cs);
     // Atom创建函数执行指令，执行函数后返回一个微任务，同时将这个微任务挂起，阻塞当前函数的执行
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdAwait, cs);
@@ -3322,7 +3329,7 @@ LVoid ConsumeMicroTask(LVoid* vmPtr) {
                     AddMicroTask(aes->mTopTask, vm);
                 }
                 // 销毁ExecState
-                if (aes->mPrevious && aes->mPrevious->mWait) {
+                if (aes->mLast && aes->mLast->mWait) {
                     DestroyExecState(aes, vm);
                 }
             }
