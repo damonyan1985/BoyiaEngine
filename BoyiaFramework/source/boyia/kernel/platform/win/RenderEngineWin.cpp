@@ -179,6 +179,11 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
         Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
     Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
+    Gdiplus::PointF point(
+        yanbo::PixelRatio::rawX(resource->rect.iTopLeft.iX),
+        yanbo::PixelRatio::rawY(resource->rect.iTopLeft.iY)
+    );
+
     Gdiplus::RectF rect(
         yanbo::PixelRatio::rawX(resource->rect.iTopLeft.iX),
         yanbo::PixelRatio::rawY(resource->rect.iTopLeft.iY),
@@ -194,7 +199,7 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
     ));
 
     gc.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
-    gc.DrawString(wtext.c_str(), wtext.length(), &font, rect, &format, &brush);
+    gc.DrawString(wtext.c_str(), wtext.length(), &font, point, &format, &brush);
 
     Gdiplus::SolidBrush brush1(Gdiplus::Color(0x33, 0xFF, 0x00, 0xFF));
     gc.FillRectangle(&brush1, rect);

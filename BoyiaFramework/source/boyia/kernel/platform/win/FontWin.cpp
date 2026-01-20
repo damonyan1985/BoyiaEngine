@@ -2,6 +2,8 @@
 #include "AppManager.h"
 #include "CharConvertor.h"
 #include "PixelRatio.h"
+#include "RenderThread.h"
+#include "RenderEngineWin.h"
 #include <Windows.h>
 #include <GdiPlus.h>
 
@@ -82,15 +84,15 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
 {
     LInt fontSize = getFontSize() * yanbo::PixelRatio::ratio();
 
-    FontFamily family;
-    Font font(L"Arial", fontSize,
+    FontFamily family(L"Arial");
+    Font font(&family, fontSize,
         FontStyleRegular, UnitPixel);
-    font.GetFamily(&family);
 
     maxWidth = yanbo::PixelRatio::rawX(maxWidth);
 
     StringFormat format(Gdiplus::StringAlignmentNear);
-    Gdiplus::Rect rect;
+    Gdiplus::RectF layout(0, 0, 0, 0);
+    Gdiplus::RectF bound;
 
     LInt currentLineWidth = 0;
     LInt maxLineWidth = 0;
@@ -102,10 +104,12 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     while (*(buffer + count - 1)) {
         Gdiplus::GraphicsPath path;
         path.AddString(buffer, count, &family, font.GetStyle(), font.GetSize(), Gdiplus::Point(0, 0), &format);
-        path.GetBounds(&rect);
+        path.GetBounds(&bound);
 
-        if (rect.Width <= maxWidth) {
-            currentLineWidth = rect.Width;
+        LInt stringWidth = 2*bound.X + bound.Width;
+
+        if (stringWidth <= maxWidth) {
+            currentLineWidth = stringWidth;
             count++;
         } else {
             maxLineWidth = maxLineWidth < currentLineWidth ?
@@ -114,14 +118,14 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
             WString wstr(buffer, count, LTrue);
             OwnerPtr<String> lineText = new String();
             yanbo::CharConvertor::WcharToChar(wstr, *lineText.get());
-            m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth + 8)));
+            m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth)));
             currentLineWidth = 0;
 
             buffer += count;
             count = 1;
         }
 
-        height = height < rect.Height ? rect.Height : height;
+        height = height < bound.Height ? bound.Height : height;
     }
 
     if (currentLineWidth > 0) {
@@ -131,11 +135,11 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
         OwnerPtr<String> lineText = new String();
         WString wstr(buffer, count-1, LTrue);
         yanbo::CharConvertor::WcharToChar(wstr, *lineText.get());
-        m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth + 8)));
+        m_lines.addElement(new LineText(lineText, yanbo::PixelRatio::viewX(currentLineWidth)));
     }
 
     if (height) {
-        m_height = yanbo::PixelRatio::viewY(height + 4);
+        m_height = yanbo::PixelRatio::viewY(height);
     }
 
     return yanbo::PixelRatio::viewX(maxLineWidth);

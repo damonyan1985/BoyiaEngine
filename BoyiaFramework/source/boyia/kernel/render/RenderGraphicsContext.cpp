@@ -18,14 +18,14 @@ public:
 
     ~ItemPainter() 
     {
-        m_ctx->m_collectBuffers->addElement((LUintPtr)buffer);
+        m_ctx->m_collectBuffers->addElement(reinterpret_cast<LUintPtr>(buffer));
     }
 
     // 每次重绘创建RenderCommandBuffer，并将旧buffer放入回收器
     // 回收器交给渲染线程来进行管理
     LVoid clear()
     {
-        m_ctx->m_collectBuffers->addElement((LUintPtr)buffer);
+        m_ctx->m_collectBuffers->addElement(reinterpret_cast<LUintPtr>(buffer));
         buffer = new RenderCommandBuffer(0, kCommandBufferDefaultCapacity);
     }
 
