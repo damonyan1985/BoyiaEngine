@@ -132,7 +132,6 @@ enum CmdType {
     kCmdPushScene,
     kCmdPopScene,
     kCmdPushArg,
-    kCmdTmpLocal,
     kCmdPushParams,
     kCmdCallFunction,
     kCmdCallNative,
@@ -232,7 +231,6 @@ typedef struct {
 typedef struct {
     Instruction* mPC; // pc, 指令计数器
     LInt mLValSize;  // 局部变量个数
-    LInt mTmpLValSize; // 函数调用前, 保存当前栈帧局部变量个数, 保存执行现场后，使用tmp设置上一个栈帧的变量个数
     LInt mLoopSize; // loop层次
     LInt mResultNum; // OpStack中的BoyiaValue个数
     CommandTable* mContext; // 函数指令集
@@ -359,7 +357,7 @@ static LVoid LocalStatement(CompileState* cs);
 
 static LVoid IfStatement(CompileState* cs);
 
-static LVoid PushArgStatement(CompileState* cs);
+static LVoid PushArgStatement(LBool needPushFunction, CompileState* cs);
 
 static LVoid WhileStatement(CompileState* cs);
 
@@ -413,8 +411,6 @@ static LInt HandlePushScene(Instruction* inst, BoyiaVM* vm);
 static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm);
 
 static LInt HandlePushArg(Instruction* inst, BoyiaVM* vm);
-
-static LInt HandleTempLocalSize(Instruction* inst, BoyiaVM* vm);
 
 static LInt HandlePushParams(Instruction* inst, BoyiaVM* vm);
 
@@ -512,7 +508,6 @@ static LVoid ResetScene(ExecState* state) {
     state->mStackFrame.mLValSize = 0; /* Initialize local variable stack index */
     state->mStackFrame.mLoopSize = 0;
     state->mStackFrame.mResultNum = 0;
-    state->mStackFrame.mTmpLValSize = 0;
     state->mStackFrame.mContext = kBoyiaNull;
     state->mStackFrame.mPC = kBoyiaNull;
     state->mLast = kBoyiaNull;
@@ -561,7 +556,6 @@ static OPHandler* InitHandlers() {
     handlers[kCmdPushScene] = HandlePushScene;
     handlers[kCmdPopScene] = HandlePopScene;
     handlers[kCmdPushArg] = HandlePushArg;
-    handlers[kCmdTmpLocal] = HandleTempLocalSize;
     handlers[kCmdPushParams] = HandlePushParams;
     handlers[kCmdCallFunction] = HandleCallFunction;
     handlers[kCmdCallNative] = HandleCallInternal;
@@ -1157,25 +1151,18 @@ static LInt HandleCallInternal(Instruction* inst, BoyiaVM* vm) {
     return CallNativeFunction(idx, vm);
 }
 
-static LVoid SaveTemplLocalSize(BoyiaVM* vm) {
-    // mTmpLValSize要存入栈帧中，因为如果存储在vm->mEState的变量中时，函数调用前的实参如果也是函数调用，其popscene时会将这个数据重写掉.
-    // 会导致执行该函数的pushscene时出现mLValSize错乱问题，因而当执行该函数时必须将mTmpLValSize也存入栈帧中，保证其调用时的正确性.
-    vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize = vm->mEState->mStackFrame.mTmpLValSize;
-    vm->mEState->mStackFrame.mTmpLValSize = vm->mEState->mStackFrame.mLValSize;
-}
-
-static LInt HandleTempLocalSize(Instruction* inst, BoyiaVM* vm) {
-    SaveTemplLocalSize(vm);
-    return kOpResultSuccess;
-}
-
 static LInt HandlePushScene(Instruction* inst, BoyiaVM* vm) {
     if (vm->mEState->mFrameIndex >= FUNC_CALLS) {
         SntxError(NEST_FUNC, GetCodeRow(vm));
         return kOpResultEnd;
     }
-    vm->mExecStack[vm->mEState->mFrameIndex].mLValSize = vm->mEState->mStackFrame.mTmpLValSize;
-    vm->mExecStack[vm->mEState->mFrameIndex].mPC = inst ? (Instruction*)(inst + inst->mOPLeft.mValue) : kBoyiaNull;
+    
+    vm->mExecStack[vm->mEState->mFrameIndex].mLValSize = inst 
+        ? vm->mEState->mStackFrame.mLValSize - vm->mCpu->mReg1.mValue.mIntVal
+        : 0;
+    vm->mExecStack[vm->mEState->mFrameIndex].mPC = inst 
+        ? (Instruction*)(inst + inst->mOPLeft.mValue) 
+        : kBoyiaNull;
     vm->mExecStack[vm->mEState->mFrameIndex].mContext = vm->mEState->mStackFrame.mContext;
     vm->mExecStack[vm->mEState->mFrameIndex].mResultNum = vm->mEState->mStackFrame.mResultNum;
     vm->mExecStack[vm->mEState->mFrameIndex++].mLoopSize = vm->mEState->mStackFrame.mLoopSize;
@@ -1189,7 +1176,6 @@ static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {
         vm->mEState->mStackFrame.mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
         vm->mEState->mStackFrame.mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
         vm->mEState->mStackFrame.mLoopSize = vm->mExecStack[vm->mEState->mFrameIndex].mLoopSize;
-        vm->mEState->mStackFrame.mTmpLValSize = vm->mExecStack[vm->mEState->mFrameIndex].mTmpLValSize;
         AssignStateClass(vm->mEState, &vm->mExecStack[vm->mEState->mFrameIndex].mClass);
     }
 
@@ -2040,9 +2026,9 @@ static void CallStatement(CompileState* cs, OpCommand* objCmd) {
     // 之所以要先用tmp保存当前局部变量个数，在于当前函数可能存在obj对象上下文
     // 如果直接pushscene，这个上下文就会消失，所以需要tmp先保存局部变量个数，
     // 在pushscene的时候恢复上一帧的局部变量个数
-    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
+    //PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
     // 设置参数
-    PushArgStatement(cs);
+    PushArgStatement(LTrue, cs);
     // POP CLASS context
     if (objCmd->mType == OP_VAR) {
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPop, cs);
@@ -2061,21 +2047,33 @@ static void CallStatement(CompileState* cs, OpCommand* objCmd) {
 }
 
 /* Push the arguments to a function onto the local variable stack. */
-static LVoid PushArgStatement(CompileState* cs) {
-    // push函数指针
-    PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
-    NextToken(cs); // if token == ')' exit
-    if (cs->mToken.mTokenValue == RPTR) {
-        return;
-    }
-    Putback(cs);
+static LVoid PushArgStatement(LBool needPushFunction, CompileState* cs) {
+    LInt argCount = 0;
 
+    if (needPushFunction) {
+        ++argCount;
+        // push函数指针
+        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
+        NextToken(cs); // if token == ')' exit
+        if (cs->mToken.mTokenValue == RPTR) {
+            // 如果函数没有参数，直接返回
+            OpCommand cmdR = { OP_CONST_NUMBER, argCount };
+            PutInstruction(&COMMAND_R1, &cmdR, kCmdAssign, cs);
+            return;
+        }
+        Putback(cs);
+    }
+    
     do {
         // 参数值在R0中
         EvalExpression(cs); // => R0
         // 将函数实参压栈
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
+        ++argCount;
     } while (cs->mToken.mTokenValue == COMMA);
+
+    OpCommand cmdR = { OP_CONST_NUMBER, argCount };
+    PutInstruction(&COMMAND_R1, &cmdR, kCmdAssign, cs);
 }
 
 /* Assign a value to a Register 0 or 1. */
@@ -2560,14 +2558,16 @@ static LVoid CallNativeStatement(CompileState* cs, LInt idx) {
     if (cs->mToken.mTokenValue != LPTR) // '('
         SntxErrorBuild(PAREN_EXPECTED, cs);
 
-    PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
-    do {
-        // 参数值在R0中
-        EvalExpression(cs); // => R0
-        // 将函数参数压栈
-        PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
-        // if token == ')' exit
-    } while (cs->mToken.mTokenValue == COMMA);
+    //PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
+    // 设置参数
+    PushArgStatement(LFalse, cs);
+    // do {
+    //     // 参数值在R0中
+    //     EvalExpression(cs); // => R0
+    //     // 将函数参数压栈
+    //     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
+    //     // if token == ')' exit
+    // } while (cs->mToken.mTokenValue == COMMA);
 
     // 保存obj现场是必不可少的一步
     OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
@@ -3165,10 +3165,6 @@ LVoid* GetLocalValue(LInt idx, LVoid* vm) {
 LInt GetLocalSize(LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
     return vmPtr->mEState->mStackFrame.mLValSize - vmPtr->mExecStack[vmPtr->mEState->mFrameIndex - 1].mLValSize;
-}
-
-LVoid SaveLocalSize(LVoid* vm) {
-    HandleTempLocalSize(kBoyiaNull, (BoyiaVM*)vm);
 }
 
 // 针对回调函数单独设计

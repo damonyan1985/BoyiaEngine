@@ -301,7 +301,6 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
     case StyleTags::PADDING_RIGHT:
     case StyleTags::PADDING_TOP: {
         if (value.EndWithNoCase(_CS("px"))) {
-            //LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
             rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;

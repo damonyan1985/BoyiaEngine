@@ -59,9 +59,6 @@ LInt NativeCallImpl(BoyiaValue* args, LInt argc, BoyiaValue* obj, LVoid* vm);
 // Push函数参数
 LVoid LocalPush(BoyiaValue* value, LVoid* vm);
 
-// 保存当前scope调用栈大小
-LVoid SaveLocalSize(LVoid* vm);
-
 // 初始化虚拟机
 LVoid* InitVM(LVoid* creator);
 LVoid DestroyVM(LVoid* vm);
