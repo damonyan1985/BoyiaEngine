@@ -91,23 +91,27 @@
 	width: 720px;
 }
 .main_view {
-    flex-direction: column;
+	flex-direction: column;
 }
 .image_poster {
-    background-color:#FFFFFFFF;
+	background-color:#FFFFFFFF;
 }
 body {
-    background-color:#FFFFFFFF;
+  background-color:#FFFFFFFF;
+  font-family: "Arial";
+}
+view {
+	font-family: "Arial";
 }
 .underline {
 	flex-direction: row;
 	focusable: true;
-    height: 152px;
+  height: 152px;
 }
 #hot {
 	width: 120px;
 	height: 120px;
-    border-radius: 24px;
+	border-radius: 24px;
 }
 #title {
 	font-size: 30px;

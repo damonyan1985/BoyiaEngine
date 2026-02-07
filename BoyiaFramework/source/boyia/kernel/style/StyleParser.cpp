@@ -284,7 +284,9 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
         }
     } break;
     case StyleTags::FONT_FAMILY: {
-        rule->addProperty(cssTag, value);
+        if (value.StartWith(_CS("\"")) && value.EndWith(_CS("\"")) && value.GetLength() > 2) {
+            rule->addProperty(cssTag, value.Mid(1, value.GetLength() - 2));
+        }
     } break;
     case StyleTags::WIDTH:
     case StyleTags::HEIGHT:
@@ -353,7 +355,6 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
     case StyleTags::BORDER_LEFT_WIDTH:
     case StyleTags::BORDER_RIGHT_WIDTH: {
         if (value.EndWithNoCase(_CS("px"))) {
-            //LInt intValue = StringUtils::stringToInt(value.Mid(0, value.GetLength() - 2));
             rule->addProperty(cssTag, GetPropertyPixel(value));
         }
     } break;
@@ -436,7 +437,6 @@ void StyleParser::addProperty(StyleRule* rule, LInt cssTag, PropertyValue& value
             } else if (oneValue.StartWithNoCase(_CS("solid"))) {
                 rule->addProperty(StyleTags::BORDER_BOTTOM_STYLE, LGraphicsContext::kSolidPen);
             } else if (oneValue.EndWithNoCase(_CS("px"))) {
-                //LInt intValue = StringUtils::stringToInt(oneValue.Mid(0, oneValue.GetLength() - 2));
                 rule->addProperty(StyleTags::BORDER_BOTTOM_WIDTH, GetPropertyPixel(oneValue));
             }
         }

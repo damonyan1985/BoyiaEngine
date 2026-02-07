@@ -175,7 +175,9 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
     RenderTextCommand* resource = static_cast<RenderTextCommand*>(cmd);
     wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(resource->text));
     LInt fontSize = resource->font.getFontSize() * yanbo::PixelRatio::ratio();
-    Gdiplus::Font font(L"Arial", fontSize,
+    wstring wFontFamliy = yanbo::CharConvertor::CharToWchar(GET_STR(resource->font.getFamily()));
+
+    Gdiplus::Font font(wFontFamliy.c_str(), fontSize,
         Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
     Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);

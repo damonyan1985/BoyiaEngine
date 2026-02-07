@@ -2,12 +2,12 @@
 #include <wchar.h>
 
 namespace yanbo {
-std::wstring CharConvertor::CharToWchar(const char* c, size_t encode)
+std::wstring CharConvertor::CharToWchar(const char* text, size_t encode)
 {
     std::wstring str;
-    int len = MultiByteToWideChar(encode, 0, c, strlen(c), NULL, 0);
+    int len = MultiByteToWideChar(encode, 0, text, strlen(text), NULL, 0);
     wchar_t* wstr = new wchar_t[len + 1];
-    MultiByteToWideChar(encode, 0, c, strlen(c), wstr, len);
+    MultiByteToWideChar(encode, 0, text, strlen(text), wstr, len);
     wstr[len] = L'\0';
     str = wstr;
     delete[] wstr;
