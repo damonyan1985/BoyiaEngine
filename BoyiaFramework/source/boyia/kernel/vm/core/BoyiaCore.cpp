@@ -918,7 +918,6 @@ static LVoid AddColumn(CompileState* cs, LInt number) {
 }
 
 static LVoid Putback(CompileState* cs) {
-    //cs->mProg -= cs->mToken.mTokenName.mLen;
     AddColumn(cs, -cs->mToken.mTokenName.mLen);
 }
 
@@ -1157,6 +1156,7 @@ static LInt HandlePushScene(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
     
+    // push局部变量size之前，要减去先前push到栈中的函数调用参数个数
     vm->mExecStack[vm->mEState->mFrameIndex].mLValSize = inst 
         ? vm->mEState->mStackFrame.mLValSize - vm->mCpu->mReg1.mValue.mIntVal
         : 0;
@@ -2023,13 +2023,10 @@ static LInt HandlePop(Instruction* inst, BoyiaVM* vm) {
 
 /* Call a function. */
 static void CallStatement(CompileState* cs, OpCommand* objCmd) {
-    // 之所以要先用tmp保存当前局部变量个数，在于当前函数可能存在obj对象上下文
-    // 如果直接pushscene，这个上下文就会消失，所以需要tmp先保存局部变量个数，
-    // 在pushscene的时候恢复上一帧的局部变量个数
-    //PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
     // 设置参数
     PushArgStatement(LTrue, cs);
     // POP CLASS context
+    // 当前函数可能存在obj对象上下文，如果存在，这个obj必然存储在R0中
     if (objCmd->mType == OP_VAR) {
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPop, cs);
     }
@@ -2048,6 +2045,7 @@ static void CallStatement(CompileState* cs, OpCommand* objCmd) {
 
 /* Push the arguments to a function onto the local variable stack. */
 static LVoid PushArgStatement(LBool needPushFunction, CompileState* cs) {
+    // 统计参数个数
     LInt argCount = 0;
 
     if (needPushFunction) {
@@ -2558,16 +2556,8 @@ static LVoid CallNativeStatement(CompileState* cs, LInt idx) {
     if (cs->mToken.mTokenValue != LPTR) // '('
         SntxErrorBuild(PAREN_EXPECTED, cs);
 
-    //PutInstruction(kBoyiaNull, kBoyiaNull, kCmdTmpLocal, cs);
     // 设置参数
     PushArgStatement(LFalse, cs);
-    // do {
-    //     // 参数值在R0中
-    //     EvalExpression(cs); // => R0
-    //     // 将函数参数压栈
-    //     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPushArg, cs);
-    //     // if token == ')' exit
-    // } while (cs->mToken.mTokenValue == COMMA);
 
     // 保存obj现场是必不可少的一步
     OpCommand cmdSet = { OP_CONST_NUMBER, 0 };
@@ -2950,7 +2940,6 @@ static LVoid EvalRelational(CompileState* cs) {
         }
 
         // 计算R0 OP R1, 结果存入R0中
-        //PutInstruction(&COMMAND_R1, &COMMAND_R0, op, HandleRelational);
         EvalRelationalImpl(op, cs);
     }
 }

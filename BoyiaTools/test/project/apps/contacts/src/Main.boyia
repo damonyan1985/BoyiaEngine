@@ -11,7 +11,7 @@ class MainViewController extends ViewController {
     prop viewId;
     prop socket;
     fun onCreate() {
-        this.helloAwait();
+        this.fetchData();
         initMain();
     }
 
@@ -35,7 +35,7 @@ class MainViewController extends ViewController {
 
         //Util.showToast("test boyia callstaticmethod");
         //this.fetch("https://damonyan1985.github.io/app/src/contacts/json/mock.json", this.loadCallback);
-        this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
+        //this.fetch("boyia://apps/contacts/json/mock.json", this.loadCallback, null);
         Util.log("test super begin");
         super.test();
 
@@ -87,8 +87,9 @@ class MainViewController extends ViewController {
         this.socket.sendMsg("hello world boyia");
     }
 
-    prop async helloAwait() {
+    prop async fetchData() {
         var result = (await this.testAwait());
+        this.loadCallback(result);
         Util.log("helloAwait result:" + result);
         return result;
     }
