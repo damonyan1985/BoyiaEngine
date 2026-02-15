@@ -14,6 +14,15 @@ std::wstring CharConvertor::CharToWchar(const char* text, size_t encode)
     return str;
 }
 
+LVoid CharConvertor::CharToWchar(const String& text, WString& wtext, size_t encode) {
+    int len = MultiByteToWideChar(encode, 0, GET_STR(text), text.GetLength(), NULL, 0);
+    wchar_t* wstr = new wchar_t[len + 1];
+    MultiByteToWideChar(encode, 0, GET_STR(text), text.GetLength(), wstr, len);
+    wstr[len] = L'\0';
+
+    wtext.Copy(wstr, LTrue, len);
+}
+
 LVoid CharConvertor::WcharToChar(const wchar_t* wp, String& text, size_t encode)
 {
     int len = WideCharToMultiByte(encode, 0, wp, wcslen(wp), NULL, 0, NULL, NULL);

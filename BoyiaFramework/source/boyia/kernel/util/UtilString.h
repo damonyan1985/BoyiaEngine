@@ -256,7 +256,6 @@ LVoid LString<T>::Copy(const T* lpsz, Bool owner, LInt size)
         LMemcpy(m_buffer, lpsz, nLen * sizeof(T));
         m_size = nLen;
     } else {
-        //KFORMATLOG("String not deep STR=%s and size=%d", (const char*)lpsz, size);
         m_size = size;
         m_capacity = m_size + 1;
         m_buffer = (T*)lpsz;

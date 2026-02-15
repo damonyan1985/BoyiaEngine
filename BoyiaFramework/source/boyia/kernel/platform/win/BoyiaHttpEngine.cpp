@@ -105,9 +105,8 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     }
 
     // 转换成宽字符串Url
-    wstring wurl = CharConvertor::CharToWchar(GET_STR(url));
-    //Uri uri;
-    //UrlParser::parse(wurl, uri);
+    WString wurl;
+    CharConvertor::CharToWchar(url, wurl);
 
     // 打开wininet
     HINTERNET internet = ::InternetOpen(L"WinInetGet/0.1", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
@@ -135,7 +134,7 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
     urlComponents.lpszScheme = schema;
     urlComponents.dwSchemeLength = INTERNET_MAX_SCHEME_LENGTH;
 
-    BOOL result = InternetCrackUrl(wurl.data(), 0, NULL, &urlComponents);
+    BOOL result = InternetCrackUrl(wurl.GetBuffer(), 0, NULL, &urlComponents);
     if (!result) {
         InternetCloseHandle(internet);
         m_callback->onLoadError(NetworkClient::kNetworkFileError);
@@ -174,8 +173,10 @@ LVoid BoyiaHttpEngine::request(const String& url, LInt method)
 
     // 初始化请求同
     if (m_header.GetLength() > 0) {
-        wstring header = CharConvertor::CharToWchar(GET_STR(m_header));
-        BOOL result = HttpAddRequestHeaders(request, header.c_str(), header.length(), HTTP_ADDREQ_FLAG_COALESCE);
+        WString header;
+        CharConvertor::CharToWchar(m_header, header);
+        
+        BOOL result = HttpAddRequestHeaders(request, header.GetBuffer(), header.GetLength(), HTTP_ADDREQ_FLAG_COALESCE);
         
         if (!result) {
             m_callback->onLoadError(NetworkClient::kNetworkFileError);

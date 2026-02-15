@@ -83,10 +83,12 @@ LVoid FontWin::getLineText(LInt index, String& text)
 LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
 {
     LInt fontSize = getFontSize() * yanbo::PixelRatio::ratio();
-    wstring wFontFamliy = yanbo::CharConvertor::CharToWchar(GET_STR(getFamily()));
+
+    WString wFontFamliy;
+    yanbo::CharConvertor::CharToWchar(getFamily(), wFontFamliy);
 
     FontFamily family;
-    Font font(wFontFamliy.c_str(), fontSize,
+    Font font(wFontFamliy.GetBuffer(), fontSize,
         FontStyleRegular, UnitPixel);
     font.GetFamily(&family);
 

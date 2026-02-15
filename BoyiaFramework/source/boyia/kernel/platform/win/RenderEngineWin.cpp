@@ -173,11 +173,14 @@ LVoid RenderEngineWin::renderRect(RenderCommand* cmd, Gdiplus::Graphics& gc)
 LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
 {
     RenderTextCommand* resource = static_cast<RenderTextCommand*>(cmd);
-    wstring wtext = yanbo::CharConvertor::CharToWchar(GET_STR(resource->text));
+    WString wtext;
+    yanbo::CharConvertor::CharToWchar(resource->text, wtext);
     LInt fontSize = resource->font.getFontSize() * yanbo::PixelRatio::ratio();
-    wstring wFontFamliy = yanbo::CharConvertor::CharToWchar(GET_STR(resource->font.getFamily()));
 
-    Gdiplus::Font font(wFontFamliy.c_str(), fontSize,
+    WString wFontFamliy;
+    yanbo::CharConvertor::CharToWchar(resource->font.getFamily(), wFontFamliy);
+
+    Gdiplus::Font font(wFontFamliy.GetBuffer(), fontSize,
         Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
 
     Gdiplus::StringFormat format(Gdiplus::StringAlignmentNear);
@@ -201,7 +204,7 @@ LVoid RenderEngineWin::renderText(RenderCommand* cmd, Gdiplus::Graphics& gc)
     ));
 
     gc.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
-    gc.DrawString(wtext.c_str(), wtext.length(), &font, point, &format, &brush);
+    gc.DrawString(wtext.GetBuffer(), wtext.GetLength(), &font, point, &format, &brush);
 
     Gdiplus::SolidBrush brush1(Gdiplus::Color(0x33, 0xFF, 0x00, 0xFF));
     gc.FillRectangle(&brush1, rect);

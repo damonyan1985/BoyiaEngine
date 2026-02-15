@@ -15,6 +15,8 @@ namespace yanbo {
 class CharConvertor {
 public:
     static wstring CharToWchar(const char* text, size_t encode = CP_UTF8);
+    static LVoid CharToWchar(const String& text, WString& wtext, size_t encode = CP_UTF8);
+
     static LVoid WcharToChar(const wchar_t* wp, String& text, size_t encode = CP_UTF8);
     static LVoid WcharToChar(const WString& wp, String& text, size_t encode = CP_UTF8);
 };
