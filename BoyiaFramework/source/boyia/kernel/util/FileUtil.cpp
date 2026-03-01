@@ -38,6 +38,11 @@ const String& FileUtil::separator()
     return kFileSeparatorString;
 }
 
+const char FileUtil::fileOperator()
+{
+    return kFileSeparator;
+}
+
 LVoid FileUtil::readFile(In const String& fileName, Out String& content)
 {
     FILE* file = fopen(GET_STR(fileName), "rb");

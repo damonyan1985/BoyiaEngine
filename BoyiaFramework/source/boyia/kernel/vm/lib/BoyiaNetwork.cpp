@@ -26,7 +26,6 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
 {
     JSONParser parser(params, JSONParser::kSourceJsonText);
     cJSON* header = parser.get("headers");
-    cJSON* body = parser.get("body");
     const char* method = parser.get("method")->valuestring;
     
     yanbo::NetworkBase* network = yanbo::AppManager::instance()->network();
@@ -44,6 +43,7 @@ LVoid BoyiaNetwork::load(const String& url, const String& params)
     if (strcmp(method, "get") == 0) {
         network->loadUrl(url, this, LFalse);
     } else if (strcmp(method, "post") == 0) {
+        cJSON* body = parser.get("body");
         // 只有存在body时才发送请求
         if (body && body->type == cJSON_String) {
             BOYIA_LOG("BoyiaNetwork::load post body=%s", body->valuestring);

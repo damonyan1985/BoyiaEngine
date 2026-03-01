@@ -7,9 +7,14 @@
 //#include <sys/stat.h>
 //#include <unistd.h>
 
-#define dir_delimter '/'
 #define MAX_FILENAME 512
 #define READ_SIZE 8192
+
+#if ENABLE(BOYIA_WINDOWS)
+const char kFormatFilePath[] = "%s\\%s";
+#else
+const char kFormatFilePath[] = "%s/%s";
+#endif
 
 namespace yanbo {
 bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
@@ -33,8 +38,8 @@ bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
 
         const size_t filename_length = strlen(filename);
         char name[MAX_PATH_SIZE] = { 0 };
-        if (filename[filename_length - 1] == dir_delimter) {
-            sprintf(name, "%s/%s", dest, filename);
+        if (filename[filename_length - 1] == FileUtil::fileOperator()) {
+            sprintf(name, kFormatFilePath, dest, filename);
             createDir(name);
         } else {
             if (password && unzOpenCurrentFilePassword(zipfile, password) != UNZ_OK) {
@@ -46,7 +51,7 @@ bool ZipEntry::unzip(const char* src, const char* dest, const char* password)
                 unzClose(zipfile);
                 return false;
             }
-            sprintf(name, "%s/%s", dest, filename);
+            sprintf(name, kFormatFilePath, dest, filename);
 
             if (writeFile(zipfile, name) < 0) {
                 unzCloseCurrentFile(zipfile);
@@ -73,14 +78,14 @@ bool ZipEntry::createDir(const char* path)
     strcpy(dirName, path);
     int len = strlen(dirName);
     for (int i = 1; i < len; i++) {
-        if (dirName[i] != '/') {
+        if (dirName[i] != FileUtil::fileOperator()) {
             continue;
         }
         dirName[i] = 0;
         if (!FileUtil::isExist(dirName) && FileUtil::createDir(dirName) == -1) {
             return false;
         }
-        dirName[i] = '/';
+        dirName[i] = FileUtil::fileOperator();
     }
 
     return true;
