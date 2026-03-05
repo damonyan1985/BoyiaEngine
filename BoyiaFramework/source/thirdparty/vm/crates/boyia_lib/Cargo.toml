@@ -1,0 +1,8 @@
+[package]
+name = "boyia_lib"
+version = "0.1.0"
+edition = "2021"
+description = "Boyia VM native lib: new (CreateObject), array APIs, BY_Log. Port of BoyiaRuntime::initNativeFunction subset and BoyiaLib.cpp."
+
+[dependencies]
+boyia_vm = { path = "../boyia_vm" }

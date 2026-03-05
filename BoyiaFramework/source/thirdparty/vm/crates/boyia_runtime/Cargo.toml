@@ -1,0 +1,10 @@
+[package]
+name = "boyia_runtime"
+version = "0.1.0"
+edition = "2021"
+description = "Boyia runtime: VM wrapper, native function table, init and execution (BoyiaRuntime.cpp)"
+
+[dependencies]
+boyia_vm = { path = "../boyia_vm" }
+boyia_builtins = { path = "../boyia_builtins" }
+boyia_lib = { path = "../boyia_lib" }

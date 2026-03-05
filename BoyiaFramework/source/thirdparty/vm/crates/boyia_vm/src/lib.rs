@@ -1,0 +1,56 @@
+//! Boyia VM Rust Implementation
+//! Pure Rust API; no C/FFI exports. All logic lives in `core`.
+
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+
+mod types;
+mod compile;
+mod core;
+mod execute;
+
+// Re-export types for crate users (includes Runtime trait).
+pub use types::*;
+
+// Re-export core VM API (Rust-only, no extern "C").
+pub use core::{
+    value_copy,
+    set_native_result,
+    get_native_result,
+    get_native_helper_result,
+    get_local_size,
+    get_local_value,
+    local_push,
+    get_local_stack,
+    get_global_table,
+    get_vm_creator,
+    set_int_result,
+    init_vm,
+    destroy_vm,
+    load_string_table,
+    load_instructions,
+    load_entry_table,
+    compile_code,
+    create_object,
+    cache_vm_code,
+    copy_object,
+    native_call_impl,
+    native_call_by_index,
+    find_native_func,
+    get_runtime_from_vm,
+    get_boyia_class_id,
+    gen_identifier_from_str,
+    create_global_class,
+    alloc_builtin_function,
+    get_string_buffer,
+    get_string_hash,
+    gen_hash_code,
+    create_string_object,
+    create_const_string,
+    create_native_string,
+    create_micro_task,
+    resume_micro_task,
+    consume_micro_task,
+    iterate_micro_task,
+};
+pub use execute::{exec_instruction, execute_code, execute_global_code};

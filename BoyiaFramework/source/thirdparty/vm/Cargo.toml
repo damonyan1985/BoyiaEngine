@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/boyia_vm",
+    "crates/boyia_builtins",
+    "crates/boyia_lib",
+    "crates/boyia_runtime",
+    "crates/boyia_example",
+]
