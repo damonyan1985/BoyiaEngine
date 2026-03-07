@@ -12,6 +12,28 @@ mod execute;
 // Re-export types for crate users (includes Runtime trait).
 pub use types::*;
 
+// Re-export memory API from boyia_memory for backward compatibility.
+pub use boyia_memory::{
+    alloc_memory_chunk,
+    contain_address,
+    create_memory_cache,
+    delete_data,
+    destroy_memory_cache,
+    fast_free,
+    fast_malloc,
+    free_memory_chunk,
+    free_memory_pool,
+    get_used_chunk_count,
+    get_used_memory,
+    init_memory_pool,
+    migrate_memory,
+    new_data,
+    print_pool_size,
+    BoyiaMemoryPool,
+    LByte,
+    MemoryBlockHeader,
+};
+
 // Re-export core VM API (Rust-only, no extern "C").
 pub use core::{
     value_copy,

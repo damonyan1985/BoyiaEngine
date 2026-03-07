@@ -1,0 +1,9 @@
+[package]
+name = "boyia_gc"
+version = "0.1.0"
+edition = "2021"
+description = "Garbage collector for Boyia VM (port of BoyiaGC.cpp)"
+
+[dependencies]
+boyia_memory = { path = "../boyia_memory" }
+boyia_vm = { path = "../boyia_vm" }

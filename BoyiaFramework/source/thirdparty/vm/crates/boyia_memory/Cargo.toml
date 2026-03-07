@@ -1,0 +1,11 @@
+[package]
+name = "boyia_memory"
+version = "0.1.0"
+edition = "2021"
+description = "Boyia memory: FastMalloc/FastFree, memory pool, memory cache. Port of BoyiaMemory.cpp."
+
+[lib]
+name = "boyia_memory"
+crate-type = ["rlib"]
+
+[dependencies]
