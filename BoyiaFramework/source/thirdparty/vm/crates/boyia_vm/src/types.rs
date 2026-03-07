@@ -400,9 +400,57 @@ pub struct InlineCache {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct OpCommand {
     pub mType: OpType,
     pub mValue: LIntPtr,
+}
+
+impl OpCommand {
+    /// No operand (OP_NONE, 0). Used when the instruction has no left/right operand.
+    #[inline]
+    pub const fn none() -> Self {
+        Self {
+            mType: OpType::OP_NONE,
+            mValue: 0,
+        }
+    }
+
+    /// Constant number operand (OP_CONST_NUMBER, value).
+    #[inline]
+    pub const fn const_number(value: LIntPtr) -> Self {
+        Self {
+            mType: OpType::OP_CONST_NUMBER,
+            mValue: value,
+        }
+    }
+
+    /// Register 0 operand (OP_REG0, 0).
+    #[inline]
+    pub const fn reg0() -> Self {
+        Self {
+            mType: OpType::OP_REG0,
+            mValue: 0,
+        }
+    }
+
+    /// Register 1 operand (OP_REG1, 0).
+    #[inline]
+    pub const fn reg1() -> Self {
+        Self {
+            mType: OpType::OP_REG1,
+            mValue: 0,
+        }
+    }
+
+    /// Variable by key (OP_VAR, key).
+    #[inline]
+    pub const fn op_var(key: LIntPtr) -> Self {
+        Self {
+            mType: OpType::OP_VAR,
+            mValue: key,
+        }
+    }
 }
 
 #[repr(C)]

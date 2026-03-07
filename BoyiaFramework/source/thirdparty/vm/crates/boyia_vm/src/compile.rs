@@ -159,36 +159,29 @@ unsafe fn set_code_position(_code_index: usize, _row: LInt, _column: LInt, _vm: 
     // C++: GetRuntime(vm)->debugger()->setCodePosition(...). Rust has no debugger; stub for API match.
 }
 
-/// PutInstruction(left, right, op, cs) per BoyiaCore.cpp: allocate, init operands (null => OP_NONE/0), set op, link chain, SetCodePosition.
-/// Left/right: (OpType, LIntPtr). OP_NONE means null (don't set operand). Returns new instruction index.
+/// PutInstruction(left, right, op, cs) per BoyiaCore.cpp: allocate, init operands from OpCommand, set op, link chain, SetCodePosition.
+/// Use OpCommand::none() for no operand; OpCommand::const_number(v), OpCommand::reg0(), etc. for operands. Returns new instruction index.
 unsafe fn put_instruction(
     cs: *mut CompileState,
-    left_type: OpType,
-    left_value: LIntPtr,
-    right_type: OpType,
-    right_value: LIntPtr,
+    left: OpCommand,
+    right: OpCommand,
     op: CmdType,
 ) -> Option<usize> {
     let vm = (*cs).mVm;
     let idx = allocate_instruction(vm)?;
     let new_ins = get_instruction_mut(vm, idx);
 
-    // Init member (match C++ newIns->mOPLeft.mType = OP_NONE; ... mOPRight.mValue = 0;)
+    // Init member (match C++ newIns->mOPLeft = *left; newIns->mOPRight = *right when not none)
     (*new_ins).mOPLeft.mType = OpType::OP_NONE;
     (*new_ins).mOPLeft.mValue = 0;
     (*new_ins).mOPRight.mType = OpType::OP_NONE;
     (*new_ins).mOPRight.mValue = 0;
 
-    // if (left) { newIns->mOPLeft = *left; }
-    if left_type != OpType::OP_NONE {
-        (*new_ins).mOPLeft.mType = left_type;
-        (*new_ins).mOPLeft.mValue = left_value;
+    if left.mType != OpType::OP_NONE {
+        (*new_ins).mOPLeft = left;
     }
-
-    // if (right) { newIns->mOPRight = *right; }
-    if right_type != OpType::OP_NONE {
-        (*new_ins).mOPRight.mType = right_type;
-        (*new_ins).mOPRight.mValue = right_value;
+    if right.mType != OpType::OP_NONE {
+        (*new_ins).mOPRight = right;
     }
 
     (*new_ins).mOPCode = op;
@@ -250,12 +243,6 @@ unsafe fn append_entry(cs: *mut CompileState) {
     entry.mTable[size] = idx as LInt;
     entry.mSize += 1;
 }
-
-// OpCommand helpers: REG0, REG1, CONST_NUMBER, OP_VAR
-const COMMAND_R0_TYPE: OpType = OpType::OP_REG0;
-const COMMAND_R0_VAL: LIntPtr = 0;
-const COMMAND_R1_TYPE: OpType = OpType::OP_REG1;
-const COMMAND_R1_VAL: LIntPtr = 0;
 
 /// Slice of current token name (mToken.mTokenName). Valid until next NextToken/Putback.
 unsafe fn token_name_slice(cs: *mut CompileState) -> &'static [u8] {
@@ -595,7 +582,7 @@ unsafe fn init_params(cs: *mut CompileState) {
             break;
         }
         let key = gen_identifier(cs) as LIntPtr;
-        let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, key, OpType::OP_NONE, 0, CmdType::kCmdParamCreate);
+        let _ = put_instruction(cs, OpCommand::const_number(key), OpCommand::none(), CmdType::kCmdParamCreate);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
@@ -614,10 +601,10 @@ unsafe fn push_arg_statement(cs: *mut CompileState, need_push_function: bool) {
     let mut arg_count: LIntPtr = 0;
     if need_push_function {
         arg_count += 1;
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPushArg);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPushArg);
         next_token(cs); // if token == ')' exit
         if (*cs).mToken.mTokenValue == TokenValue::RPTR {
-            let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_CONST_NUMBER, arg_count, CmdType::kCmdAssign);
+            let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::const_number(arg_count), CmdType::kCmdAssign);
             return;
         }
         putback(cs);
@@ -625,39 +612,39 @@ unsafe fn push_arg_statement(cs: *mut CompileState, need_push_function: bool) {
     // do { EvalExpression; PutInstruction PushArg; ++argCount; } while (COMMA). EvalExpression does NextToken at start so COMMA is consumed when looping.
     loop {
         eval_expression(cs);
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPushArg);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPushArg);
         arg_count += 1;
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
         }
     }
-    let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_CONST_NUMBER, arg_count, CmdType::kCmdAssign);
+    let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::const_number(arg_count), CmdType::kCmdAssign);
 }
 
 unsafe fn call_statement(cs: *mut CompileState, obj_type: OpType, obj_value: LIntPtr) {
     push_arg_statement(cs, true);
     if obj_type == OpType::OP_VAR {
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPop);
     }
-    let _ = put_instruction(cs, obj_type, obj_value, OpType::OP_NONE, 0, CmdType::kCmdPushObj);
-    let push_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdPushScene).unwrap_or(0);
-    let _ = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdPushParams);
-    let fun_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdCallFunction).unwrap_or(0);
+    let _ = put_instruction(cs, OpCommand { mType: obj_type, mValue: obj_value }, OpCommand::none(), CmdType::kCmdPushObj);
+    let push_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPushScene).unwrap_or(0);
+    let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPushParams);
+    let fun_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdCallFunction).unwrap_or(0);
     patch_offset((*cs).mVm, push_idx, false, (fun_idx as LIntPtr).wrapping_sub(push_idx as LIntPtr));
 }
 
 unsafe fn call_native_statement(cs: *mut CompileState, idx: LInt) {
     next_token(cs);
     push_arg_statement(cs, false);
-    let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, 0, OpType::OP_NONE, 0, CmdType::kCmdPushObj);
-    let push_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdPushScene).unwrap_or(0);
-    let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, idx as LIntPtr, OpType::OP_NONE, 0, CmdType::kCmdCallNative);
-    let pop_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdPopScene).unwrap_or(0);
+    let _ = put_instruction(cs, OpCommand::const_number(0), OpCommand::none(), CmdType::kCmdPushObj);
+    let push_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPushScene).unwrap_or(0);
+    let _ = put_instruction(cs, OpCommand::const_number(idx as LIntPtr), OpCommand::none(), CmdType::kCmdCallNative);
+    let pop_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPopScene).unwrap_or(0);
     patch_offset((*cs).mVm, push_idx, false, (pop_idx as LIntPtr).wrapping_sub(push_idx as LIntPtr));
 }
 
 unsafe fn eval_get_value(cs: *mut CompileState, obj_key: LUintPtr) {
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_VAR, obj_key as LIntPtr, CmdType::kCmdAssign);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::op_var(obj_key as LIntPtr), CmdType::kCmdAssign);
     if (*cs).mToken.mTokenValue == TokenValue::DOT {
         eval_get_prop(cs);
     }
@@ -670,9 +657,9 @@ unsafe fn eval_get_prop(cs: *mut CompileState) {
         return;
     }
     // Push class context for callstatement (same order as C++)
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
     let prop_key = gen_identifier(cs);
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_CONST_NUMBER, prop_key as LIntPtr, CmdType::kCmdGetProp);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::const_number(prop_key as LIntPtr), CmdType::kCmdGetProp);
     // Last must next
     next_token(cs);
     if (*cs).mToken.mTokenValue == TokenValue::LPTR {
@@ -682,10 +669,10 @@ unsafe fn eval_get_prop(cs: *mut CompileState) {
             eval_get_prop(cs);
         }
     } else if (*cs).mToken.mTokenValue == TokenValue::DOT {
-        let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, 0, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::const_number(0), OpCommand::none(), CmdType::kCmdPop);
         eval_get_prop(cs);
     } else {
-        let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, 0, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::const_number(0), OpCommand::none(), CmdType::kCmdPop);
     }
 }
 
@@ -700,7 +687,7 @@ unsafe fn atom(cs: *mut CompileState) {
             } else {
                 next_token(cs);
                 if (*cs).mToken.mTokenValue == TokenValue::LPTR {
-                    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_VAR, key as LIntPtr, CmdType::kCmdAssign);
+                    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::op_var(key as LIntPtr), CmdType::kCmdAssign);
                     call_statement(cs, OpType::OP_NONE, 0);
                     next_token(cs);
                     if (*cs).mToken.mTokenValue == TokenValue::DOT {
@@ -712,12 +699,12 @@ unsafe fn atom(cs: *mut CompileState) {
             }
         }
         TokenType::NUMBER => {
-            let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_CONST_NUMBER, parse_number_from_token(cs), CmdType::kCmdAssign);
+            let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::const_number(parse_number_from_token(cs)), CmdType::kCmdAssign);
             next_token(cs);
         }
         TokenType::STRING_VALUE => {
             if let Some(str_idx) = add_string_from_token(cs) {
-                let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, str_idx as LIntPtr, OpType::OP_NONE, 0, CmdType::kCmdConstStr);
+                let _ = put_instruction(cs, OpCommand::const_number(str_idx as LIntPtr), OpCommand::none(), CmdType::kCmdConstStr);
             }
             next_token(cs);
         }
@@ -745,8 +732,8 @@ unsafe fn eval_minus(cs: *mut CompileState) {
     }
     eval_subexpr(cs);
     if op == TokenValue::SUB {
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_CONST_NUMBER, -1, CmdType::kCmdAssign);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, CmdType::kCmdMul);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::const_number(-1), CmdType::kCmdAssign);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), CmdType::kCmdMul);
     }
 }
 
@@ -757,16 +744,16 @@ unsafe fn eval_arith(cs: *mut CompileState) {
         if op != TokenValue::MUL && op != TokenValue::DIV && op != TokenValue::MOD {
             break;
         }
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         next_token(cs);
         eval_minus(cs);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
         let cmd = match op {
             TokenValue::MUL => CmdType::kCmdMul,
             TokenValue::DIV => CmdType::kCmdDiv,
             _ => CmdType::kCmdMod,
         };
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, cmd);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), cmd);
     }
 }
 
@@ -777,12 +764,12 @@ unsafe fn eval_add_sub(cs: *mut CompileState) {
         if op != TokenValue::ADD && op != TokenValue::SUB {
             break;
         }
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         next_token(cs);
         eval_arith(cs);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
         let cmd = if op == TokenValue::ADD { CmdType::kCmdAdd } else { CmdType::kCmdSub };
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, cmd);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), cmd);
     }
 }
 
@@ -797,7 +784,7 @@ unsafe fn eval_relational_impl(op: TokenValue, cs: *mut CompileState) {
         TokenValue::NE => CmdType::kCmdNeRelation,
         _ => return,
     };
-    let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, cmd);
+    let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), cmd);
 }
 
 unsafe fn eval_relational(cs: *mut CompileState) {
@@ -818,12 +805,12 @@ unsafe fn eval_relational(cs: *mut CompileState) {
         return;
     }
     if op != TokenValue::NOT {
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
     }
     next_token(cs);
     eval_add_sub(cs);
     if op != TokenValue::NOT {
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
     }
     eval_relational_impl(op, cs);
 }
@@ -835,12 +822,12 @@ unsafe fn eval_logic(cs: *mut CompileState) {
         if op != TokenValue::AND && op != TokenValue::OR {
             break;
         }
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         next_token(cs);
         eval_relational(cs);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
         let cmd = if op == TokenValue::AND { CmdType::kCmdAndLogic } else { CmdType::kCmdOrLogic };
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, cmd);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), cmd);
     }
 }
 
@@ -849,7 +836,7 @@ unsafe fn eval_object(cs: *mut CompileState) {
         eval_logic(cs);
         return;
     }
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdCreateMap);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdCreateMap);
     loop {
         next_token(cs);
         if (*cs).mToken.mTokenValue == TokenValue::BLOCK_END {
@@ -860,15 +847,15 @@ unsafe fn eval_object(cs: *mut CompileState) {
             break;
         }
         let key = gen_identifier(cs);
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_CONST_NUMBER, key as LIntPtr, CmdType::kCmdSetMapKey);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::const_number(key as LIntPtr), CmdType::kCmdSetMapKey);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COLON && (*cs).mToken.mTokenValue != TokenValue::ASSIGN {
             break;
         }
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         eval_expression(cs);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, COMMAND_R1_TYPE, COMMAND_R1_VAL, CmdType::kCmdSetMapValue);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::reg1(), CmdType::kCmdSetMapValue);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             next_token(cs);
@@ -882,7 +869,7 @@ unsafe fn eval_array(cs: *mut CompileState) {
         eval_object(cs);
         return;
     }
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdCreateArray);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdCreateArray);
     next_token(cs);
     if (*cs).mToken.mTokenValue == TokenValue::ARRAY_END {
         next_token(cs);
@@ -890,10 +877,10 @@ unsafe fn eval_array(cs: *mut CompileState) {
     }
     putback(cs);
     loop {
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         eval_expression(cs);
-        let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
-        let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, COMMAND_R1_TYPE, COMMAND_R1_VAL, CmdType::kCmdAddArrayItem);
+        let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
+        let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::reg1(), CmdType::kCmdAddArrayItem);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
@@ -906,11 +893,11 @@ unsafe fn eval_assignment(cs: *mut CompileState) {
     if (*cs).mToken.mTokenValue != TokenValue::ASSIGN {
         return;
     }
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
     next_token(cs);
     eval_array(cs);
-    let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
-    let _ = put_instruction(cs, COMMAND_R1_TYPE, COMMAND_R1_VAL, COMMAND_R0_TYPE, COMMAND_R0_VAL, CmdType::kCmdAssignVar);
+    let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
+    let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), CmdType::kCmdAssignVar);
 }
 
 unsafe fn anonym_fun_statement(cs: *mut CompileState) {
@@ -918,15 +905,15 @@ unsafe fn anonym_fun_statement(cs: *mut CompileState) {
     if (*cs).mToken.mTokenValue != TokenValue::LPTR {
         return;
     }
-    let _ = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_CONST_NUMBER, TokenValue::BY_ANONYM_FUNC as LIntPtr, CmdType::kCmdCreateFunction);
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPush);
-    let logic_idx = put_instruction(cs, OpType::OP_CONST_NUMBER, LTrue as LIntPtr, OpType::OP_NONE, 0, CmdType::kCmdOnceJmpTrue).unwrap_or(0);
+    let _ = put_instruction(cs, OpCommand::none(), OpCommand::const_number(TokenValue::BY_ANONYM_FUNC as LIntPtr), CmdType::kCmdCreateFunction);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
+    let logic_idx = put_instruction(cs, OpCommand::const_number(LTrue as LIntPtr), OpCommand::none(), CmdType::kCmdOnceJmpTrue).unwrap_or(0);
     init_params(cs);
     body_statement(cs, true);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdIfEnd).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdIfEnd).unwrap_or(0);
     patch_offset((*cs).mVm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdPop);
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdSetAnonym);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPop);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdSetAnonym);
 }
 
 unsafe fn eval_anonym_func(cs: *mut CompileState) -> bool {
@@ -941,7 +928,7 @@ unsafe fn eval_anonym_func(cs: *mut CompileState) -> bool {
 unsafe fn eval_await(cs: *mut CompileState) {
     next_token(cs);
     atom(cs);
-    let _ = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdAwait);
+    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdAwait);
 }
 
 unsafe fn eval_expression(cs: *mut CompileState) {
@@ -967,10 +954,8 @@ unsafe fn global_statement(cs: *mut CompileState) {
         let name_key = gen_identifier(cs);
         let _ = put_instruction(
             cs,
-            OpType::OP_CONST_NUMBER,
-            type_val as LIntPtr,
-            OpType::OP_CONST_NUMBER,
-            name_key as LIntPtr,
+            OpCommand::const_number(type_val as LIntPtr),
+            OpCommand::const_number(name_key as LIntPtr),
             CmdType::kCmdDeclGlobal,
         );
         putback(cs);
@@ -994,10 +979,8 @@ unsafe fn local_statement(cs: *mut CompileState) {
         let name_key = gen_identifier(cs);
         let _ = put_instruction(
             cs,
-            OpType::OP_CONST_NUMBER,
-            type_val as LIntPtr,
-            OpType::OP_CONST_NUMBER,
-            name_key as LIntPtr,
+            OpCommand::const_number(type_val as LIntPtr),
+            OpCommand::const_number(name_key as LIntPtr),
             CmdType::kCmdDeclLocal,
         );
         putback(cs);
@@ -1015,37 +998,37 @@ unsafe fn return_statement(cs: *mut CompileState) {
         putback(cs);
         eval_expression(cs);
     }
-    let _ = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdReturn);
+    let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdReturn);
 }
 
 unsafe fn break_statement(cs: *mut CompileState) {
-    let _ = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdBreak);
+    let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdBreak);
     next_token(cs);
 }
 
 unsafe fn if_statement(cs: *mut CompileState) {
     next_token(cs);
     eval_expression(cs);
-    let logic_idx = put_instruction(cs, COMMAND_R0_TYPE, COMMAND_R0_VAL, OpType::OP_NONE, 0, CmdType::kCmdJmpTrue).unwrap_or(0);
+    let logic_idx = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdJmpTrue).unwrap_or(0);
     block_statement(cs);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdIfEnd).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdIfEnd).unwrap_or(0);
     patch_offset((*cs).mVm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
 }
 
 unsafe fn else_statement(cs: *mut CompileState) {
-    let logic_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdElse).unwrap_or(0);
+    let logic_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdElse).unwrap_or(0);
     block_statement(cs);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdElEnd).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdElEnd).unwrap_or(0);
     patch_offset((*cs).mVm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
 }
 
 unsafe fn while_statement(cs: *mut CompileState) {
-    let begin_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoop).unwrap_or(0);
+    let begin_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoop).unwrap_or(0);
     next_token(cs);
     eval_expression(cs);
-    let logic_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoopTrue).unwrap_or(0);
+    let logic_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoopTrue).unwrap_or(0);
     block_statement(cs);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdJmpTo).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdJmpTo).unwrap_or(0);
     let vm = (*cs).mVm;
     patch_offset(vm, begin_idx, false, (end_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));
     patch_offset(vm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
@@ -1053,12 +1036,12 @@ unsafe fn while_statement(cs: *mut CompileState) {
 }
 
 unsafe fn do_statement(cs: *mut CompileState) {
-    let begin_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoop).unwrap_or(0);
+    let begin_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoop).unwrap_or(0);
     block_statement(cs);
     next_token(cs);
     eval_expression(cs);
-    let logic_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoopTrue).unwrap_or(0);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdJmpTo).unwrap_or(0);
+    let logic_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoopTrue).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdJmpTo).unwrap_or(0);
     let vm = (*cs).mVm;
     patch_offset(vm, begin_idx, false, (end_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));
     patch_offset(vm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
@@ -1074,17 +1057,17 @@ unsafe fn for_statement(cs: *mut CompileState) {
         putback(cs);
         eval_expression(cs);
     }
-    let begin_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoop).unwrap_or(0);
+    let begin_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoop).unwrap_or(0);
     eval_expression(cs);
-    let logic_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdLoopTrue).unwrap_or(0);
+    let logic_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoopTrue).unwrap_or(0);
     next_token(cs);
     eval_expression(cs);
-    let last_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdJmpTo).unwrap_or(0);
+    let last_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdJmpTo).unwrap_or(0);
     let vm = (*cs).mVm;
     patch_offset(vm, last_idx, false, (last_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));
     patch_offset(vm, logic_idx, false, (last_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
     block_statement(cs);
-    let end_idx = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdJmpTo).unwrap_or(0);
+    let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdJmpTo).unwrap_or(0);
     patch_offset(vm, begin_idx, false, (end_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));
     patch_offset(vm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
     patch_offset(vm, end_idx, false, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
@@ -1161,10 +1144,8 @@ unsafe fn body_statement(cs: *mut CompileState, is_function: bool) {
         // if (isFunction) { funInst = PutInstruction(ExecCreate); cs->mCmds = &tmpTable; }
         let idx = put_instruction(
             cs,
-            OpType::OP_CONST_NUMBER,
-            -1,
-            OpType::OP_CONST_NUMBER,
-            -1,
+            OpCommand::const_number(-1),
+            OpCommand::const_number(-1),
             CmdType::kCmdExecCreate,
         );
         let exec_create_end = (*cs).mCmds.mEnd; // save ExecCreate as chain end before clearing
@@ -1198,10 +1179,8 @@ unsafe fn fun_statement(cs: *mut CompileState, fun_type: ValueType) {
     // Match C++ FunStatement: only emit instruction; runtime HandleFunCreate creates slot / global.
     let _ = put_instruction(
         cs,
-        OpType::OP_CONST_NUMBER,
-        name_key as LIntPtr,
-        OpType::OP_CONST_NUMBER,
-        fun_type as u8 as LIntPtr,
+        OpCommand::const_number(name_key as LIntPtr),
+        OpCommand::const_number(fun_type as u8 as LIntPtr),
         CmdType::kCmdCreateFunction,
     );
     next_token(cs);
@@ -1216,7 +1195,7 @@ unsafe fn prop_statement(cs: *mut CompileState) {
     }
     let name_key = gen_identifier(cs);
     let prop_cmd_val = name_key as LIntPtr;
-    let _ = put_instruction(cs, OpType::OP_CONST_NUMBER, name_key as LIntPtr, OpType::OP_CONST_NUMBER, prop_cmd_val, CmdType::kCmdPropCreate);
+    let _ = put_instruction(cs, OpCommand::const_number(name_key as LIntPtr), OpCommand::const_number(prop_cmd_val), CmdType::kCmdPropCreate);
     next_token(cs);
 }
 
@@ -1230,10 +1209,8 @@ unsafe fn class_statement(cs: *mut CompileState) {
     let class_key = gen_identifier(cs);
     let _ = put_instruction(
         cs,
-        OpType::OP_CONST_NUMBER,
-        class_key as LIntPtr,
-        OpType::OP_NONE,
-        0,
+        OpCommand::const_number(class_key as LIntPtr),
+        OpCommand::none(),
         CmdType::kCmdCreateClass,
     );
 
@@ -1251,15 +1228,13 @@ unsafe fn class_statement(cs: *mut CompileState) {
     if extend_key != 0 {
         let _ = put_instruction(
             cs,
-            OpType::OP_CONST_NUMBER,
-            class_key as LIntPtr,
-            OpType::OP_CONST_NUMBER,
-            extend_key as LIntPtr,
+            OpCommand::const_number(class_key as LIntPtr),
+            OpCommand::const_number(extend_key as LIntPtr),
             CmdType::kCmdClassExtend,
         );
     }
 
-    let _ = put_instruction(cs, OpType::OP_NONE, 0, OpType::OP_NONE, 0, CmdType::kCmdCreateClass);
+    let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdCreateClass);
 }
 
 unsafe fn parse_statement(cs: *mut CompileState) {
