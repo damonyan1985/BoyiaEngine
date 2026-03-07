@@ -220,6 +220,8 @@ pub unsafe extern "C" fn log_print(vm: *mut LVoid) -> LInt {
     if val.is_null() {
         return K_OP_RESULT_END;
     }
+
+    eprintln!("[log_print] called : {}", (*val).mValueType as i32);
     match (*val).mValueType {
         ValueType::BY_INT => {
             println!("Boyia [info]: {}", (*val).mValue.mIntVal);

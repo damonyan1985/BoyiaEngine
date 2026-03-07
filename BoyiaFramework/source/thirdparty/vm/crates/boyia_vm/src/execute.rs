@@ -747,6 +747,7 @@ unsafe fn handle_push_params(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     let start = (*e_state).mExecStack.as_ptr().add((*e_state).mFrameIndex as usize - 1).read().mLValSize;
     let value = (*e_state).mLocals.as_ptr().add(start as usize) as *mut BoyiaValue;
     let vt = (*value).mValueType;
+    // Match C++ HandlePushParams: only assign param name (mNameKey) to existing argument slots; do not overwrite value.
     if vt == ValueType::BY_FUNC
         || vt == ValueType::BY_PROP_FUNC
         || vt == ValueType::BY_ASYNC_PROP
@@ -760,11 +761,8 @@ unsafe fn handle_push_params(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
         let end = idx + (*func).mParamSize;
         while idx < end {
             let v_key = (*func).mParams.add((idx - start - 1) as usize).read().mNameKey;
-            (*e_state).mLocals.as_mut_ptr().add(idx as usize).write(BoyiaValue {
-                mNameKey: v_key,
-                mValueType: ValueType::BY_ARG,
-                mValue: RealValue { mIntVal: 0 },
-            });
+            let slot = (*e_state).mLocals.as_mut_ptr().add(idx as usize);
+            (*slot).mNameKey = v_key;
             idx += 1;
         }
     }
