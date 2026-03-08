@@ -39,7 +39,7 @@ pub type LBool = LInt;
 // Runtime trait (VM creator: native lookup and call)
 // ---------------------------------------------------------------------------
 
-/// Runtime interface: native function lookup and call. Stored in [BoyiaVM] as [BoyiaVM::mCreator].
+/// Runtime interface: VM creator, native lookup/call, and optional memory allocation. Stored in [BoyiaVM] as [BoyiaVM::mCreator].
 pub trait Runtime {
     /// Find native function index by name key; -1 if not found.
     fn find_native_func(&self, key: LUintPtr) -> LInt;
@@ -49,6 +49,12 @@ pub trait Runtime {
     fn gen_identifier(&mut self, key: &str) -> LUintPtr;
     /// Get or assign id for a string from [BoyiaStr] (e.g. Map key, builtins).
     fn gen_ident_by_str(&mut self, s: *const BoyiaStr) -> LUintPtr;
+
+    /// Allocate a block from the runtime memory pool. Implemented by [BoyiaRuntime]; other runtimes may return null.
+    fn new_data(&self, size: LInt) -> *mut LVoid;
+
+    /// Free a block previously returned by [Runtime::new_data]. Implemented by [BoyiaRuntime]; no-op for other runtimes.
+    fn delete_data(&self, data: *mut LVoid);
 }
 
 // ---------------------------------------------------------------------------

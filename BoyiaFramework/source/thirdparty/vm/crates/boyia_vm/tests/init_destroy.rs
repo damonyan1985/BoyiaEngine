@@ -1,12 +1,34 @@
 //! Test that init_vm and destroy_vm run without crashing.
 
-use boyia_vm::{destroy_vm, init_vm};
+use boyia_vm::{destroy_vm, init_vm, BoyiaStr, Runtime};
 use std::ptr;
 
+struct TestRuntime;
+
+impl Runtime for TestRuntime {
+    fn find_native_func(&self, _key: usize) -> i32 {
+        -1
+    }
+    fn call_native_function(&self, _idx: i32) -> i32 {
+        0
+    }
+    fn gen_identifier(&mut self, _key: &str) -> usize {
+        0
+    }
+    fn gen_ident_by_str(&mut self, _s: *const BoyiaStr) -> usize {
+        0
+    }
+    fn new_data(&self, _size: i32) -> *mut std::ffi::c_void {
+        ptr::null_mut()
+    }
+    fn delete_data(&self, _data: *mut std::ffi::c_void) {}
+}
+
 #[test]
-fn test_init_destroy_vm_null_creator() {
+fn test_init_destroy_vm_null_pool() {
     unsafe {
-        let vm = init_vm(ptr::null_mut());
+        let mut rt = TestRuntime;
+        let vm = init_vm(&mut rt as *mut dyn Runtime);
         assert!(!vm.is_null());
         destroy_vm(vm);
     }

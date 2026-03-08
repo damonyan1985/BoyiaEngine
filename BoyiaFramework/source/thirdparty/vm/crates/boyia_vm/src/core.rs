@@ -6,6 +6,7 @@
 #![allow(dead_code)]
 
 use crate::types::*;
+use crate::Runtime;
 use std::ptr;
 use std::alloc::{alloc, alloc_zeroed, dealloc, Layout};
 use std::mem;
@@ -228,10 +229,27 @@ pub unsafe fn set_int_result(result: LInt, vm: *mut LVoid) -> LInt {
 }
 
 // ---------------------------------------------------------------------------
+// Runtime allocation (new_data + zero)
+// ---------------------------------------------------------------------------
+
+/// Allocate from runtime with [Runtime::new_data] and zero the block. Returns null if creator is null or allocation fails.
+pub(crate) unsafe fn runtime_new_data_zeroed(creator: *mut dyn Runtime, size: LInt) -> *mut LVoid {
+    if creator.is_null() || size <= 0 {
+        return ptr::null_mut();
+    }
+    let p = (*creator).new_data(size);
+    if p.is_null() {
+        return ptr::null_mut();
+    }
+    ptr::write_bytes(p as *mut u8, 0, size as usize);
+    p
+}
+
+// ---------------------------------------------------------------------------
 // Init / Destroy VM
 // ---------------------------------------------------------------------------
 
-/// Initialize VM with runtime (creator). Returns VM pointer or null.
+/// Initialize VM with runtime (creator). Allocation is done via [Runtime::new_data]/[Runtime::delete_data].
 pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     eprintln!("[init_vm] 1 alloc BoyiaVM");
     let layout = Layout::new::<BoyiaVM>();
@@ -404,14 +422,7 @@ pub unsafe fn destroy_vm(vm: *mut LVoid) {
         dealloc((*vm_ptr).mGlobals as *mut u8, layout);
     }
     if !(*vm_ptr).mFunTable.is_null() {
-        let fun_size = (*vm_ptr).mFunSize as usize;
-        for i in 0..fun_size.min(NUM_FUNC) {
-            let fun = (*vm_ptr).mFunTable.add(i);
-            if !(*fun).mParams.is_null() {
-                let params_layout = Layout::array::<BoyiaValue>(NUM_FUNC_PARAMS).unwrap();
-                dealloc((*fun).mParams as *mut u8, params_layout);
-            }
-        }
+        // mParams of each function are from memory pool (freed above); only free the table array.
         let layout = Layout::array::<BoyiaFunction>(NUM_FUNC).unwrap();
         dealloc((*vm_ptr).mFunTable as *mut u8, layout);
     }
@@ -550,8 +561,13 @@ pub(crate) unsafe fn init_function(fun: *mut BoyiaFunction, vm: *mut BoyiaVM) {
         return;
     }
     (*fun).mParamSize = 0;
-    let params_layout = Layout::array::<BoyiaValue>(NUM_FUNC_PARAMS).unwrap();
-    (*fun).mParams = alloc_zeroed(params_layout) as *mut BoyiaValue;
+    let creator = (*vm).mCreator;
+    if creator.is_null() {
+        eprintln!("[init_function] ERROR mCreator null");
+        return;
+    }
+    let params_size = (NUM_FUNC_PARAMS as usize) * mem::size_of::<BoyiaValue>();
+    (*fun).mParams = runtime_new_data_zeroed(creator, params_size as LInt) as *mut BoyiaValue;
     eprintln!("[init_function] mParams={:?}", (*fun).mParams);
     if (*fun).mParams.is_null() {
         eprintln!("[init_function] ERROR mParams alloc null");
@@ -600,9 +616,20 @@ unsafe fn copy_function(
     if func.is_null() {
         return ptr::null_mut();
     }
-    let new_func = alloc_zeroed(Layout::new::<BoyiaFunction>()) as *mut BoyiaFunction;
-    let params_layout = Layout::array::<BoyiaValue>(count as usize).unwrap();
-    (*new_func).mParams = alloc_zeroed(params_layout) as *mut BoyiaValue;
+    let creator = (*vm).mCreator;
+    if creator.is_null() {
+        return ptr::null_mut();
+    }
+    let new_func = runtime_new_data_zeroed(creator, mem::size_of::<BoyiaFunction>() as LInt) as *mut BoyiaFunction;
+    if new_func.is_null() {
+        return ptr::null_mut();
+    }
+    let params_size = (count as usize) * mem::size_of::<BoyiaValue>();
+    (*new_func).mParams = runtime_new_data_zeroed(creator, params_size as LInt) as *mut BoyiaValue;
+    if (*new_func).mParams.is_null() {
+        (*creator).delete_data(new_func as *mut LVoid);
+        return ptr::null_mut();
+    }
     (*new_func).mParamSize = 0;
     (*new_func).mFuncBody = (*func).mFuncBody;
     (*new_func).mParamCount = count;

@@ -4,70 +4,27 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+mod id_creator;
+
+pub use id_creator::IdCreator;
+
 use boyia_builtins::{builtin_map_class, builtin_micro_task_class, builtin_string_class};
 use boyia_vm::{
-    cache_vm_code, compile_code, consume_micro_task, create_global_class, execute_global_code,
-    init_vm, BuiltinId,
+    cache_vm_code, compile_code, delete_data, consume_micro_task, execute_global_code,
+    free_memory_pool, init_memory_pool, init_vm, new_data,
     BoyiaStr, LUintPtr, LInt, LVoid, NativeFunction, NativePtr, OpHandleResult, Runtime,
 };
 
 const K_NATIVE_FUNCTION_CAPACITY: usize = 100;
+/// Memory pool size (6 MB). Match BoyiaRuntime.cpp kMemoryPoolSize.
+const K_MEMORY_POOL_SIZE: LInt = 6 * 1024 * 1024;
 
-/// Builtin name -> BuiltinId (BoyiaValue.h). Order must match BuiltinId enum.
-const BUILTIN_NAMES: [&str; 6] = ["this", "super", "String", "Array", "Map", "MicroTask"];
-
-/// String-to-id generator for builtin and native names (replaces util::IDCreator).
-/// Reserved ids 1..=6 for BuiltinId (this, super, String, Array, Map, MicroTask) per BoyiaValue.h.
-#[derive(Default)]
-pub struct IdCreator {
-    next_id: u64,
-    map: std::collections::HashMap<String, LUintPtr>,
-}
-
-impl IdCreator {
-    pub fn new() -> Self {
-        let mut map = std::collections::HashMap::new();
-        for (i, name) in BUILTIN_NAMES.iter().enumerate() {
-            map.insert((*name).to_owned(), (i + 1) as LUintPtr);
-        }
-        Self {
-            next_id: BUILTIN_NAMES.len() as u64,
-            map,
-        }
-    }
-
-    /// Get or assign id for a string key. Reserved names (this, super, String, Array, Map, MicroTask) return BuiltinId (1..6).
-    pub fn gen_ident_by_str(&mut self, key: &str) -> LUintPtr {
-        if let Some(&id) = self.map.get(key) {
-            return id;
-        }
-        self.next_id += 1;
-        let id = self.next_id as LUintPtr;
-        self.map.insert(key.to_owned(), id);
-        id
-    }
-
-    pub fn get_id(&self, key: &str) -> Option<LUintPtr> {
-        self.map.get(key).copied()
-    }
-
-    /// Get or assign id for a string from VM (BoyiaStr). Used by builtins (e.g. Map key).
-    pub fn gen_ident_by_boyia_str(&mut self, s: *const BoyiaStr) -> LUintPtr {
-        if s.is_null() {
-            return 0;
-        }
-        let s = unsafe { &*s };
-        let len = s.mLen.max(0) as usize;
-        let slice = unsafe { std::slice::from_raw_parts(s.mPtr as *const u8, len) };
-        let key = std::str::from_utf8(slice).unwrap_or("");
-        self.gen_ident_by_str(key)
-    }
-}
-
-/// Runtime state: VM + native table + id creator. Matches BoyiaRuntime.cpp responsibilities.
+/// Runtime state: VM + native table + id creator + memory pool (BoyiaMemory). Matches BoyiaRuntime.cpp.
 pub struct BoyiaRuntime {
     /// VM instance (creator set to self for native dispatch).
     vm: *mut LVoid,
+    /// Memory pool for object allocation (BoyiaRuntime::m_memoryPool). Created in init(), passed to VM; freed in Drop after destroy_vm.
+    memory_pool: *mut LVoid,
     /// Native function table: (name_key, ptr). Terminated by mAddr == null (we use 0 index as sentinel or check length).
     native_fun_table: Vec<NativeFunction>,
     id_creator: IdCreator,
@@ -81,15 +38,22 @@ impl BoyiaRuntime {
     pub fn new() -> Self {
         Self {
             vm: ptr::null_mut(),
+            memory_pool: ptr::null_mut(),
             native_fun_table: Vec::with_capacity(K_NATIVE_FUNCTION_CAPACITY),
             id_creator: IdCreator::new(),
             is_load_exe_file: false,
         }
     }
 
-    /// Initialize: create VM with `self` as creator (like C++ `InitVM(this)`), register builtin ids, native table, classes. Call after new().
+    /// Initialize: create memory pool (BoyiaMemory), then VM with `self` as creator (like C++ BoyiaRuntime ctor). Call after new().
     pub fn init(&mut self) {
-        eprintln!("[init] 1 init_vm");
+        eprintln!("[init] 1 memory pool");
+        self.memory_pool = unsafe { init_memory_pool(K_MEMORY_POOL_SIZE) };
+        if self.memory_pool.is_null() {
+            eprintln!("[init] ERROR init_memory_pool returned null");
+            return;
+        }
+        eprintln!("[init] 2 init_vm");
         self.vm = unsafe { init_vm(self as &mut dyn Runtime as *mut dyn Runtime) };
         if self.vm.is_null() {
             eprintln!("[init] ERROR init_vm returned null");
@@ -122,6 +86,10 @@ impl BoyiaRuntime {
     /// Minimal init for tests: VM + natives + dispatcher only (no builtin classes).
     #[doc(hidden)]
     pub fn init_minimal_for_test(&mut self) {
+        self.memory_pool = unsafe { init_memory_pool(K_MEMORY_POOL_SIZE) };
+        if self.memory_pool.is_null() {
+            return;
+        }
         self.vm = unsafe { init_vm(self as &mut dyn Runtime as *mut dyn Runtime) };
         if self.vm.is_null() {
             return;
@@ -245,6 +213,14 @@ impl Runtime for BoyiaRuntime {
     fn gen_ident_by_str(&mut self, s: *const BoyiaStr) -> LUintPtr {
         self.id_creator.gen_ident_by_boyia_str(s)
     }
+
+    fn new_data(&self, size: LInt) -> *mut LVoid {
+        unsafe { new_data(size, self.memory_pool) }
+    }
+
+    fn delete_data(&self, data: *mut LVoid) {
+        unsafe { delete_data(data, self.memory_pool) }
+    }
 }
 
 impl Default for BoyiaRuntime {
@@ -257,6 +233,10 @@ impl Drop for BoyiaRuntime {
     fn drop(&mut self) {
         unsafe {
             boyia_vm::destroy_vm(self.vm);
+            if !self.memory_pool.is_null() {
+                free_memory_pool(self.memory_pool);
+                self.memory_pool = ptr::null_mut();
+            }
         }
         self.vm = ptr::null_mut();
     }
