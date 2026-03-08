@@ -10,6 +10,9 @@ use crate::core::{
     micro_task_class_key, set_int_result, set_native_result, switch_exec_state, value_copy,
     value_copy_no_name,
 };
+use crate::inlinecache::{
+    add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
+};
 use crate::types::*;
 use std::alloc::{alloc, Layout};
 use std::ptr;
@@ -67,10 +70,11 @@ unsafe fn get_val(key: LUintPtr, vm: *mut BoyiaVM) -> *mut BoyiaValue {
         return val;
     }
 
-    /* fallback: FindObjProp on current class */
+    /* fallback: FindObjProp on current class (no instruction => no inline cache) */
     find_obj_prop(
         &(*e).mStackFrame.mClass as *const BoyiaValue,
         key,
+        ptr::null_mut(),
         vm,
     )
 }
@@ -639,55 +643,74 @@ unsafe fn handle_call_native(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     op_handle_result_from_i32(r)
 }
 
-/// Find object property by key; search instance params then class chain. Match FindObjProp (no inline cache).
-unsafe fn find_obj_prop(lval: *const BoyiaValue, rval: LUintPtr, _vm: *mut BoyiaVM) -> *mut BoyiaValue {
-    if lval.is_null() {
-        eprintln!("[find_obj_prop] lval is null");
+/// Find object property by key. Strictly matches FindObjProp in BoyiaCore.cpp:
+/// 1) find in instance params (obj.prop) -> AddPropInlineCache(cache, klass, idx); return fun->mParams+idx
+/// 2) find in class chain (obj.method) -> AddFunInlineCache(cache, klass, result); return result
+/// 3) not found -> return null.
+/// When inst is non-null, cache is created/filled on hit.
+unsafe fn find_obj_prop(
+    lval: *const BoyiaValue,
+    rval: LUintPtr,
+    inst: *mut crate::types::Instruction,
+    _vm: *mut BoyiaVM,
+) -> *mut BoyiaValue {
+    if lval.is_null() || (*lval).mValueType != ValueType::BY_CLASS {
         return ptr::null_mut();
     }
-    if (*lval).mValueType != ValueType::BY_CLASS {
-        eprintln!(
-            "[find_obj_prop] lval not BY_CLASS (type={}), rval={}",
-            (*lval).mValueType as u8, rval
-        );
-        return ptr::null_mut();
-    }
-    let fun = (*lval).mValue.mObj.mPtr as *mut BoyiaFunction;
-    if fun.is_null() {
-        eprintln!("[find_obj_prop] lval->mPtr (instance body) is null, rval={}", rval);
-        return ptr::null_mut();
-    }
-    let klass = (*fun).mFuncBody as *const BoyiaValue;
-    for i in 0..(*fun).mParamSize {
-        if (*fun).mParams.add(i as usize).read().mNameKey == rval {
-            return (*fun).mParams.add(i as usize);
+
+    let fun = (*lval).mValue.mObj.mPtr as *const BoyiaFunction;
+    let klass = (*fun).mFuncBody as *mut BoyiaValue;
+
+    // find props, such as obj.prop1.
+    let mut idx: LInt = 0;
+    while idx < (*fun).mParamSize {
+        if (*fun).mParams.add(idx as usize).read().mNameKey == rval {
+            if !inst.is_null() {
+                let cache = if (*inst).mCache.is_null() {
+                    let c = create_inline_cache();
+                    (*inst).mCache = c;
+                    c
+                } else {
+                    (*inst).mCache
+                };
+                add_prop_inline_cache(cache, klass, idx);
+            }
+            return (*fun).mParams.add(idx as usize);
         }
+        idx += 1;
     }
-    let mut cls = klass;
+
+    // find function, such as obj.func1
+    let mut cls = klass as *const BoyiaValue;
     while !cls.is_null() && (*cls).mValueType == ValueType::BY_CLASS {
         let cls_map = (*cls).mValue.mObj.mPtr as *const BoyiaFunction;
-        if cls_map.is_null() {
-            eprintln!(
-                "[find_obj_prop] class {:?} has null mPtr (no member table), rval={}",
-                cls, rval
-            );
-            break;
-        }
-        let class_key = (*cls).mNameKey;
-        let n = (*cls_map).mParamSize as usize;
-        for fi in 0..n {
-            if (*cls_map).mParams.add(fi).read().mNameKey == rval {
-                return (*cls_map).mParams.add(fi) as *mut BoyiaValue;
+        let param_size = if cls_map.is_null() {
+            0
+        } else {
+            (*cls_map).mParamSize
+        };
+        let mut fun_idx: LInt = 0;
+        while fun_idx < param_size {
+            if (*cls_map).mParams.add(fun_idx as usize).read().mNameKey == rval {
+                let result = (*cls_map).mParams.add(fun_idx as usize) as *mut BoyiaValue;
+                if !inst.is_null() {
+                    let cache = if (*inst).mCache.is_null() {
+                        let c = create_inline_cache();
+                        (*inst).mCache = c;
+                        c
+                    } else {
+                        (*inst).mCache
+                    };
+                    println!("[find_obj_prop] add inline cache");
+                    add_fun_inline_cache(cache, klass, result);
+                }
+                return result;
             }
+            fun_idx += 1;
         }
-        let keys: Vec<LUintPtr> = (0..n).map(|i| (*cls_map).mParams.add(i).read().mNameKey).collect();
-        eprintln!(
-            "[find_obj_prop] class key={} mParamSize={} methods={:?}, lookup rval={}",
-            class_key, n, keys, rval
-        );
         cls = (*cls).mValue.mObj.mSuper as *const BoyiaValue;
     }
-    eprintln!("[find_obj_prop] prop rval={} not found (instance+class chain)", rval);
+
     ptr::null_mut()
 }
 
@@ -830,14 +853,24 @@ unsafe fn handle_call_function(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
     OpHandleResult::kOpResultJumpFun
 }
 
+/// HandleGetProp: strictly matches BoyiaCore.cpp. GetOpValue(Left); GetInlineCache(inst->mCache, lVal); FindObjProp; ValueCopyWithKey.
 unsafe fn handle_get_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let lval = get_op_value(inst, OpSide::OpLeft, vm);
     if lval.is_null() {
-        eprintln!("[handle_get_prop] get_op_value(OpLeft) returned null");
         return OpHandleResult::kOpResultEnd;
     }
+
+    let result = get_inline_cache((*inst).mCache, lval);
+    if !result.is_null() {
+        println!("[handle_get_prop] get_inline_cache success");
+        value_copy(&mut (*(*vm).mCpu).mReg0, result);
+        (*(*vm).mCpu).mReg0.mNameKey = (*result).mNameKey;
+        return OpHandleResult::kOpResultSuccess;
+    }
+
+    println!("[handle_get_prop] get_inline_cache null");
     let rval = (*inst).mOPRight.mValue as LUintPtr;
-    let result = find_obj_prop(lval, rval, vm);
+    let result = find_obj_prop(lval, rval, inst as *mut Instruction, vm);
     if result.is_null() {
         eprintln!(
             "[handle_get_prop] find_obj_prop failed: lval type={}, rval(prop key)={}",

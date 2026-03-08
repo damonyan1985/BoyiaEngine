@@ -7,6 +7,7 @@
 mod types;
 mod compile;
 mod core;
+mod inlinecache;
 mod execute;
 
 // Re-export types for crate users (includes Runtime trait).

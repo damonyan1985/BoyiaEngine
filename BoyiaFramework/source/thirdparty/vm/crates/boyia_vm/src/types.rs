@@ -23,6 +23,8 @@ pub const CONST_CAPACITY: usize = 1024;
 pub const ENTRY_CAPACITY: usize = 1024;
 pub const MICRO_TASK_CAPACITY: usize = 1024;
 pub const EXEC_STATE_CAPACITY: usize = 64;
+/// Max inline cache entries per instruction (BoyiaValue.h MAX_INLINE_CACHE).
+pub const MAX_INLINE_CACHE: usize = 5;
 
 // Type definitions (PlatformLib.h) - needed for constants below
 pub type LInt8 = c_char;
@@ -386,6 +388,10 @@ pub struct BoyiaFunction {
     pub mParamCount: LInt,
 }
 
+/// Inline cache entry type (BoyiaValue.cpp InlineCacheType).
+pub const CACHE_PROP: LInt = 1;
+pub const CACHE_METHOD: LInt = 2;
+
 #[repr(C)]
 pub struct InlineCacheItem {
     pub mClass: *mut BoyiaValue,
@@ -395,7 +401,7 @@ pub struct InlineCacheItem {
 
 #[repr(C)]
 pub struct InlineCache {
-    pub mItems: [InlineCacheItem; 5], // MAX_INLINE_CACHE
+    pub mItems: [InlineCacheItem; MAX_INLINE_CACHE],
     pub mSize: LInt,
 }
 

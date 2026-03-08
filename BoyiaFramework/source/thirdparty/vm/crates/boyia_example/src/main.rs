@@ -24,7 +24,11 @@ fn main() {
     // Create instance with new(Printer); call p.say("hello") to print (method dispatch runs during compile/execute).
     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } };
 var p = new(Printer);
-p.say("hello");
+fun printlog(p, str) {
+    p.say(str);
+}
+printlog(p, "hello");    
+printlog(p, "world");
 BY_Log(123);
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
