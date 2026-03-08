@@ -97,9 +97,9 @@ unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM)
     }
 }
 
-/// Next instruction by mNext offset; null if kInvalidInstruction.
+/// Next instruction by mNext offset; null if kInvalidInstruction. Used by core::consume_micro_task.
 #[inline]
-unsafe fn next_instruction(inst: *const Instruction, vm: *mut BoyiaVM) -> *mut Instruction {
+pub(crate) unsafe fn next_instruction(inst: *const Instruction, vm: *mut BoyiaVM) -> *mut Instruction {
     if inst.is_null() || vm.is_null() || (*vm).mVMCode.is_null() || (*(*vm).mVMCode).mCode.is_null() {
         return ptr::null_mut();
     }

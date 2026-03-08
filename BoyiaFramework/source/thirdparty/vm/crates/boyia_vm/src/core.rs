@@ -1142,33 +1142,50 @@ pub(crate) unsafe fn destroy_exec_state(state: *mut ExecState, vm: *mut BoyiaVM)
     dealloc(state as *mut u8, layout);
 }
 
-/// Consume all micro tasks in used queue.
+/// Consume micro tasks. Strictly matches ConsumeMicroTask in BoyiaCore.cpp:
+/// for each task in mUsedTasks: if aes && aes->mStackFrame.mPC then switch to aes, advance PC,
+/// copy task->mResult to Reg0, ExecInstruction; if aes->mStackFrame.mContext is null then
+/// copy Reg0 to mTopTask->mResult and AddMicroTask(mTopTask), then DestroyExecState(aes) when mLast->mWait;
+/// switch back; unlink task and FreeMicroTask.
 pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
     if vm_ptr.is_null() {
         return;
     }
     let vm = vm_ptr as *mut BoyiaVM;
-    let queue = (*vm).mTaskQueue;
-    if queue.is_null() {
+    let queue_ptr = (*vm).mTaskQueue;
+    if queue_ptr.is_null() {
         return;
     }
-    let queue = &mut *queue;
-    while !(*queue).mUsedTasks.mHead.is_null() {
-        let task = (*queue).mUsedTasks.mHead;
-        (*queue).mUsedTasks.mHead = (*task).mNext;
-        if (*queue).mUsedTasks.mHead.is_null() {
-            (*queue).mUsedTasks.mEnd = ptr::null_mut();
-        }
-        (*task).mNext = ptr::null_mut();
+    let queue = &mut *queue_ptr;
+    let mut task = (*queue).mUsedTasks.mHead;
+    while !task.is_null() {
         let aes = (*task).mAsyncEs;
-        if !aes.is_null() {
-            (*vm).mESLink = aes;
+        if !aes.is_null() && !(*aes).mStackFrame.mPC.is_null() {
+            let current_state = (*vm).mEState;
+            switch_exec_state(aes, vm);
             (*aes).mWait = 0;
+            (*aes).mStackFrame.mPC = crate::execute::next_instruction((*aes).mStackFrame.mPC, vm);
             if !(*vm).mCpu.is_null() {
                 value_copy(&mut (*(*vm).mCpu).mReg0, &(*task).mResult);
             }
+            crate::execute::exec_instruction(vm);
+            if (*aes).mStackFrame.mContext.is_null() {
+                if !(*aes).mTopTask.is_null() {
+                    if !(*vm).mCpu.is_null() {
+                        value_copy(&mut (*(*aes).mTopTask).mResult, &(*(*vm).mCpu).mReg0);
+                    }
+                    add_micro_task((*aes).mTopTask, vm);
+                }
+                if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != 0 {
+                    destroy_exec_state(aes, vm);
+                }
+            }
+            switch_exec_state(current_state, vm);
         }
-        free_micro_task(task, vm);
+        let tmp = task;
+        task = (*tmp).mNext;
+        (*queue).mUsedTasks.mHead = task;
+        free_micro_task(tmp, vm);
     }
 }
 
