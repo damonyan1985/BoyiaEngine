@@ -7,20 +7,26 @@
 use crate::types::*;
 use std::mem;
 use std::ptr;
+use crate::core::alloc_object;
 
 /// CreateInlineCache: allocate cache, mSize = 0.
 pub(crate) unsafe fn create_inline_cache() -> *mut InlineCache {
-    let cache = crate::fast_malloc(mem::size_of::<InlineCache>() as LInt) as *mut InlineCache;
+    // let cache = crate::fast_malloc(mem::size_of::<InlineCache>() as LInt) as *mut InlineCache;
+    // if cache.is_null() {
+    //     return ptr::null_mut();
+    // }
+    // ptr::write(
+    //     cache,
+    //     InlineCache {
+    //         mItems: mem::zeroed(),
+    //         mSize: 0,
+    //     },
+    // );
+    // cache
+    let cache = alloc_object::<InlineCache>();
     if cache.is_null() {
         return ptr::null_mut();
     }
-    ptr::write(
-        cache,
-        InlineCache {
-            mItems: mem::zeroed(),
-            mSize: 0,
-        },
-    );
     cache
 }
 

@@ -1262,8 +1262,8 @@ unsafe fn handle_cmd_end(_inst: *const Instruction, _vm: *mut BoyiaVM) -> OpHand
 
 // ---------- Main loop ----------
 
-/// Execute instructions until PC is null or handler returns kOpResultEnd.
-pub unsafe fn exec_instruction(vm: *mut BoyiaVM) {
+/// Execute instructions until PC is null or handler returns kOpResultEnd. Internal only; use execute_code / execute_global_code.
+pub(crate) unsafe fn exec_instruction(vm: *mut BoyiaVM) {
     eprintln!("[exec_instruction] enter");
     if vm.is_null() || (*vm).mEState.is_null() {
         return;
@@ -1320,12 +1320,13 @@ pub unsafe fn execute_global_code(vm: *mut LVoid) {
         cmds.mBegin = code_base.offset(entry_offset as isize);
         cmds.mEnd = ptr::null_mut();
         (*(*vm).mEState).mStackFrame.mContext = &mut cmds;
-        execute_code(vm);
+        execute_code(vm as *mut LVoid);
     }
 }
 
 /// Execute code for current mStackFrame.mContext (set by caller). Resets scene after.
-pub unsafe fn execute_code(vm: *mut BoyiaVM) {
+pub unsafe fn execute_code(vm: *mut LVoid) {
+    let vm = vm as *mut BoyiaVM;
     eprintln!("[execute_code] enter");
     if vm.is_null() || (*vm).mEState.is_null() {
         return;

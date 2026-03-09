@@ -1279,7 +1279,7 @@ unsafe fn parse_statement(cs: *mut CompileState) {
     }
     if !(*vm).mEState.is_null() {
         (*(*vm).mEState).mStackFrame.mContext = &mut (*cs).mCmds as *mut CommandTable;
-        crate::execute::execute_code(vm);
+        crate::execute::execute_code(vm as *mut LVoid);
     }
     if (*vm).mEState != es && !es.is_null() {
         crate::core::destroy_exec_state((*vm).mEState, vm);

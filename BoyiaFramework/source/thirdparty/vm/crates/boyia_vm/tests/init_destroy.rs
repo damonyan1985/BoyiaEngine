@@ -1,6 +1,6 @@
 //! Test that init_vm and destroy_vm run without crashing.
 
-use boyia_vm::{destroy_vm, init_vm, BoyiaStr, Runtime};
+use boyia_vm::{destroy_vm, init_vm, BoyiaStr, Runtime, ValueType};
 use std::ptr;
 
 struct TestRuntime;
@@ -29,7 +29,7 @@ impl Runtime for TestRuntime {
         ptr::null_mut()
     }
     fn update_runtime_memory(&mut self, _to_pool: *mut std::ffi::c_void, _vm: *mut std::ffi::c_void) {}
-    fn gc_append_ref(&self, _address: *mut std::ffi::c_void, _type: u8) {}
+    fn gc_append_ref(&self, _address: *mut std::ffi::c_void, _type: ValueType) {}
     fn gc_ptr(&self) -> *mut std::ffi::c_void {
         ptr::null_mut()
     }

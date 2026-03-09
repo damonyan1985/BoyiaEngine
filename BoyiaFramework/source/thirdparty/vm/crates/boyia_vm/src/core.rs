@@ -755,6 +755,13 @@ pub unsafe fn copy_object(hash_key: LUintPtr, size: LInt, vm: *mut LVoid) -> *mu
     if obj_body.is_null() {
         return ptr::null_mut();
     }
+
+    let rt = get_runtime_from_vm(vm as *mut LVoid);
+    if rt.is_null() {
+        return ptr::null_mut();
+    }
+
+    (*rt).gc_append_ref(obj_body as *mut LVoid, ValueType::BY_CLASS);
     obj_body as *mut LVoid
 }
 

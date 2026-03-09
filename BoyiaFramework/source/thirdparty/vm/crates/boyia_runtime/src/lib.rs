@@ -203,7 +203,7 @@ impl Runtime for BoyiaRuntime {
         self.vm
     }
 
-    fn gc_append_ref(&self, address: *mut LVoid, type_: boyia_vm::LUint8) {
+    fn gc_append_ref(&self, address: *mut LVoid, type_: boyia_vm::ValueType) {
         boyia_gc::gc_append_ref(address, type_, self);
     }
 

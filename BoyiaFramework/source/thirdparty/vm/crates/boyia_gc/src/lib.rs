@@ -37,7 +37,7 @@ const K_BOYIA_STRING_BUFFER: LInt = 0;
 #[repr(C)]
 pub struct BoyiaRef {
     pub mAddress: *mut LVoid,
-    pub mType: LUint8,
+    pub mType: ValueType,
     pub mNext: *mut BoyiaRef,
 }
 
@@ -169,7 +169,7 @@ pub unsafe fn destroy_gc(gc: *mut BoyiaGc) {
 
 /// GCAppendRef: register a heap object with the GC (BY_CLASS or BY_NAVCLASS).
 /// GC and VM are obtained from the given [Runtime].
-pub fn gc_append_ref(address: *mut LVoid, type_: LUint8, runtime: &dyn Runtime) {
+pub fn gc_append_ref(address: *mut LVoid, type_: ValueType, runtime: &dyn Runtime) {
     let gc = runtime.gc_ptr() as *mut BoyiaGc;
     let _vm = runtime.vm_ptr();
     if gc.is_null() {
@@ -244,11 +244,11 @@ unsafe fn mark_value_table(table: *mut BoyiaValue, size: LInt, vm: *mut LVoid) {
 
 fn is_invalid_object(ref_ptr: *const BoyiaRef) -> bool {
     let ty = unsafe { (*ref_ptr).mType };
-    if ty == ValueType::BY_CLASS as u8 {
+    if ty == ValueType::BY_CLASS {
         let fun = unsafe { (*ref_ptr).mAddress as *const BoyiaFunction };
         return is_object_invalid(fun);
     }
-    if ty != ValueType::BY_NAVCLASS as u8 {
+    if ty != ValueType::BY_NAVCLASS {
         return false;
     }
     let flag = native_object_flag(unsafe { (*ref_ptr).mAddress });
@@ -260,11 +260,11 @@ fn is_invalid_object(ref_ptr: *const BoyiaRef) -> bool {
 
 unsafe fn delete_object(ref_ptr: *const BoyiaRef, vm: *mut LVoid) {
     let ty = (*ref_ptr).mType;
-    if ty == ValueType::BY_NAVCLASS as u8 {
+    if ty == ValueType::BY_NAVCLASS {
         native_delete((*ref_ptr).mAddress);
         return;
     }
-    if ty != ValueType::BY_CLASS as u8 {
+    if ty != ValueType::BY_CLASS {
         return;
     }
     let obj_body = (*ref_ptr).mAddress as *const BoyiaFunction;
@@ -313,9 +313,9 @@ unsafe fn reset_memory_color(gc: *mut BoyiaGc) {
     let mut ref_ptr = (*gc).mUsedRefs.mBegin;
     while !ref_ptr.is_null() {
         let ty = (*ref_ptr).mType;
-        if ty == ValueType::BY_NAVCLASS as u8 {
+        if ty == ValueType::BY_NAVCLASS {
             mark_native_object((*ref_ptr).mAddress as LIntPtr, K_BOYIA_GC_WHITE);
-        } else if ty == ValueType::BY_CLASS as u8 {
+        } else if ty == ValueType::BY_CLASS {
             reset_boyia_object((*ref_ptr).mAddress as *mut BoyiaFunction);
         }
         ref_ptr = (*ref_ptr).mNext;
@@ -558,7 +558,7 @@ fn reset_gc_ref(gc: *mut BoyiaGc) {
     }
     let mut ref_ptr = unsafe { (*gc).mUsedRefs.mBegin };
     while !ref_ptr.is_null() {
-        if unsafe { (*ref_ptr).mType } == ValueType::BY_CLASS as u8 {
+        if unsafe { (*ref_ptr).mType } == ValueType::BY_CLASS {
             let fun = unsafe { (*ref_ptr).mAddress as *const BoyiaFunction };
             if migrate_flag(fun) != 0 {
                 let index = migrate_flag(fun);

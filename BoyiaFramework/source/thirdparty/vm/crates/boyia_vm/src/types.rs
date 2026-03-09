@@ -39,7 +39,7 @@ pub type LBool = LInt;
 // Runtime trait (VM creator: native lookup and call)
 // ---------------------------------------------------------------------------
 
-/// Runtime interface: VM creator, native lookup/call, and optional memory allocation. Stored in [BoyiaVM] as [BoyiaVM::mCreator].
+/// Runtime interface: VM creator, native lookup/call, and optional memory allocation. Stored in the VM as mCreator.
 pub trait Runtime {
     /// Find native function index by name key; -1 if not found.
     fn find_native_func(&self, key: LUintPtr) -> LInt;
@@ -66,7 +66,7 @@ pub trait Runtime {
     fn update_runtime_memory(&mut self, _to_pool: *mut LVoid, _vm: *mut LVoid);
 
     /// Register a heap object with the GC (GCAppendRef). GC and VM are obtained from [Runtime::gc_ptr] / [Runtime::vm_ptr]. Implemented by [BoyiaRuntime]; no-op for other runtimes.
-    fn gc_append_ref(&self, _address: *mut LVoid, _type_: LUint8);
+    fn gc_append_ref(&self, _address: *mut LVoid, _type_: ValueType);
 
     /// GC state pointer (for [boyia_gc::gc_append_ref]).
     fn gc_ptr(&self) -> *mut LVoid;
@@ -142,7 +142,7 @@ impl BuiltinId {
 /// TokenType (BoyiaCore.cpp). NONE = 0 for clear/reset.
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum TokenType {
+pub(crate) enum TokenType {
     NONE = 0,
     DELIMITER = 1,
     IDENTIFIER,
@@ -156,7 +156,7 @@ pub enum TokenType {
 /// Token value: 0 = NONE (or KEYWORD BY_ARG in C), 1..25 = keywords, 26..52 = delimiter/logic/math/bracket. Same u8 layout as C.
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum TokenValue {
+pub(crate) enum TokenValue {
     /// 0: no value (IDENTIFIER/NUMBER) or KEYWORD BY_ARG in C
     NONE = 0,
     // KeyWord 1..=25 (same order as KeyWord, skip BY_ARG=0)
@@ -264,7 +264,7 @@ impl PartialEq<ValueType> for u8 {
 /// OpType (BoyiaCore.cpp)
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum OpType {
+pub(crate) enum OpType {
     OP_NONE = 0,
     OP_CONST_NUMBER,
     OP_CONST_STRING,
@@ -276,7 +276,7 @@ pub enum OpType {
 /// CmdType (BoyiaCore.cpp)
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum CmdType {
+pub(crate) enum CmdType {
     kCmdJmpTrue = 0,
     kCmdIfEnd,
     kCmdElif,
@@ -350,7 +350,7 @@ pub const LFalse: LInt = 0;
 pub const LTrue: LInt = 1;
 
 /// Handler return type: use OpHandleResult for dispatch.
-pub type OPHandler = unsafe extern "C" fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;
+pub(crate) type OPHandler = unsafe extern "C" fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;
 
 // BoyiaValue types matching BoyiaValue.h
 #[repr(C)]
@@ -363,7 +363,7 @@ pub struct BoyiaStr {
 /// Token: name (slice into source), type, value. Matches BoyiaCore.cpp BoyiaToken.
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct BoyiaToken {
+pub(crate) struct BoyiaToken {
     pub mTokenName: BoyiaStr,
     pub mTokenType: TokenType,
     pub mTokenValue: TokenValue,
@@ -371,7 +371,7 @@ pub struct BoyiaToken {
 
 /// Compile state: matches BoyiaCore.cpp CompileState.
 #[repr(C)]
-pub struct CompileState {
+pub(crate) struct CompileState {
     pub mProg: *mut LInt8,
     pub mLineNum: LInt,
     pub mColumnNum: LInt,
@@ -416,21 +416,21 @@ pub const CACHE_PROP: LInt = 1;
 pub const CACHE_METHOD: LInt = 2;
 
 #[repr(C)]
-pub struct InlineCacheItem {
+pub(crate) struct InlineCacheItem {
     pub mClass: *mut BoyiaValue,
     pub mIndex: LIntPtr,
     pub mType: LInt,
 }
 
 #[repr(C)]
-pub struct InlineCache {
+pub(crate) struct InlineCache {
     pub mItems: [InlineCacheItem; MAX_INLINE_CACHE],
     pub mSize: LInt,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct OpCommand {
+pub(crate) struct OpCommand {
     pub mType: OpType,
     pub mValue: LIntPtr,
 }
@@ -483,7 +483,7 @@ impl OpCommand {
 }
 
 #[repr(C)]
-pub struct Instruction {
+pub(crate) struct Instruction {
     pub mOPCode: CmdType,
     pub mOPLeft: OpCommand,
     pub mOPRight: OpCommand,
@@ -492,13 +492,13 @@ pub struct Instruction {
 }
 
 #[repr(C)]
-pub struct CommandTable {
+pub(crate) struct CommandTable {
     pub mBegin: *mut Instruction,
     pub mEnd: *mut Instruction,
 }
 
 #[repr(C)]
-pub struct StackFrame {
+pub(crate) struct StackFrame {
     pub mPC: *mut Instruction,
     pub mLValSize: LInt,
     pub mLoopSize: LInt,
@@ -508,31 +508,31 @@ pub struct StackFrame {
 }
 
 #[repr(C)]
-pub struct VMCpu {
+pub(crate) struct VMCpu {
     pub mReg0: BoyiaValue,
     pub mReg1: BoyiaValue,
 }
 
 #[repr(C)]
-pub struct VMCode {
+pub(crate) struct VMCode {
     pub mCode: *mut Instruction,
     pub mSize: LInt,
 }
 
 #[repr(C)]
-pub struct VMStrTable {
+pub(crate) struct VMStrTable {
     pub mTable: [BoyiaStr; CONST_CAPACITY],
     pub mSize: LInt,
 }
 
 #[repr(C)]
-pub struct VMEntryTable {
+pub(crate) struct VMEntryTable {
     pub mTable: [LInt; ENTRY_CAPACITY],
     pub mSize: LInt,
 }
 
 #[repr(C)]
-pub struct MicroTask {
+pub(crate) struct MicroTask {
     pub mResult: BoyiaValue,
     pub mObjRef: BoyiaValue,
     pub mAsyncEs: *mut ExecState,
@@ -541,26 +541,26 @@ pub struct MicroTask {
 }
 
 #[repr(C)]
-pub struct MicroTaskLink {
+pub(crate) struct MicroTaskLink {
     pub mLinkNext: *mut MicroTask,
     pub mLinkPrev: *mut MicroTask,
 }
 
 #[repr(C)]
-pub struct MicroTaskQueue {
+pub(crate) struct MicroTaskQueue {
     pub mUsedTasks: MicroTaskList,
     pub mAllocTasks: MicroTaskList,
     pub mTaskCache: *mut c_void, // MemoryCache pointer
 }
 
 #[repr(C)]
-pub struct MicroTaskList {
+pub(crate) struct MicroTaskList {
     pub mHead: *mut MicroTask,
     pub mEnd: *mut MicroTask,
 }
 
 #[repr(C)]
-pub struct ExecState {
+pub(crate) struct ExecState {
     pub mStackFrame: StackFrame,
     pub mFrameIndex: LInt,
     pub mLocals: [BoyiaValue; NUM_LOCAL_VARS],
@@ -575,9 +575,9 @@ pub struct ExecState {
     pub mWait: LBool,
 }
 
-// Main VM structure. mCreator is *mut dyn Runtime (fat pointer).
+// Main VM structure. mCreator is *mut dyn Runtime (fat pointer). Not exposed in public API.
 #[repr(C)]
-pub struct BoyiaVM {
+pub(crate) struct BoyiaVM {
     pub mFunTable: *mut BoyiaFunction,
     pub mGlobals: *mut BoyiaValue,
     pub mGValSize: LInt,
