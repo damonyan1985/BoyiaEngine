@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="源文件">
@@ -111,6 +111,9 @@
     </Filter>
     <Filter Include="boyia\kernel\vm\dbg">
       <UniqueIdentifier>{500de308-2674-449c-8467-00db580a1372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boyia\kernel\platform\win\d2d">
+      <UniqueIdentifier>{5392f37e-59ca-4041-b511-baf036137029}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +420,9 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageGDIPlus.h">
+      <Filter>boyia\kernel\platform\win</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
@@ -497,6 +503,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\dbg\BoyiaDebugger.h">
       <Filter>boyia\kernel\vm\dbg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\ImageD2D.h">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\RenderEngineDirect2D.h">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -767,6 +779,9 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageGDIPlus.cpp">
+      <Filter>boyia\kernel\platform\win</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
@@ -847,6 +862,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.cpp">
       <Filter>boyia\kernel\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\ImageD2D.cpp">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\RenderEngineDirect2D.cpp">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

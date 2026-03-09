@@ -1,28 +1,46 @@
 #include "ImageLoader.h"
 #include "AppManager.h"
 #include "ImageWin.h"
+#include "ImageGDIPlus.h"
+#include "ImageD2D.h"
 #include "StringBuilder.h"
 #include "UIThreadClientMap.h"
 #include "HashMap.h"
 #include "HashUtil.h"
 #include <windows.h>
 #include <GdiPlus.h>
+#include <wincodec.h>
 
 namespace yanbo {
-class HashImageCacheMap {
-public:
-    Gdiplus::Image* get(const String& url)
-    {
-        return m_map.get(HashString(url, LFalse));
+
+static LVoid setImageToClient(UIThreadClient* client, LVoid* image)
+{
+    if (!client) {
+        return;
     }
 
-    LVoid put(const String& url, Gdiplus::Image* image) 
+    util::ImageWin* winImage = static_cast<util::ImageWin*>(client);
+    if (winImage) {
+        winImage->setImage(image);
+        winImage->onClientCallback();
+        return;
+    }
+}
+
+class HashImageCacheMap {
+public:
+    LVoid* get(const String& url)
     {
-        m_map.put(url, image);
+        return m_cacheMap.get(HashString(url, LFalse));
+    }
+
+    LVoid put(const String& url, LVoid* image)
+    {
+        m_cacheMap.put(url, image);
     }
 
 private:
-    HashMap<HashString, Gdiplus::Image*> m_map;
+    HashMap<HashString, LVoid*> m_cacheMap;
 };
 
 class HashImageLoadingMap {
@@ -39,29 +57,35 @@ public:
         } else {
             KVector<LInt>* array = new KVector<LInt>(0, 50);
             array->addElement(clientId);
-            m_loadingMap.put(url, array);
+            m_loadingMap.put(HashString(url, LFalse), array);
         }
     }
 
-    Gdiplus::Image* flushImageLoading(const String& url, const OwnerPtr<String>& data)
-    {   
-        BoyiaPtr<KVector<LInt>> ptr = m_loadingMap.get(url);
+    LVoid* flushImageLoading(const String& url, const OwnerPtr<String>& data)
+    {
+        BoyiaPtr<KVector<LInt>> ptr = m_loadingMap.get(HashString(url, LFalse));
         if (!ptr) {
             return kBoyiaNull;
         }
 
-        Gdiplus::Image* winImage = util::ImageWin::createWinImage(data);
-        for (LInt i = 0; i < ptr->size(); i++) {
-            LInt clientId = ptr->elementAt(i);
-           
-            util::ImageWin* image = static_cast<util::ImageWin*>(UIThreadClientMap::instance()->findUIThreadClient(clientId));
-            if (image) {
-                image->setImage(winImage);
-                image->onClientCallback();
-            }
+        LVoid* image = kBoyiaNull;
+        if (util::ImageWin::isHardwareAccelerated()) {
+            image = util::ImageD2D::createD2DImage(data);
+        } else {
+            image = util::ImageGDIPlus::createWinImage(data);
         }
 
-        return winImage;
+        if (!image) {
+            return kBoyiaNull;
+        }
+
+        for (LInt i = 0; i < ptr->size(); i++) {
+            LInt clientId = ptr->elementAt(i);
+            UIThreadClient* client = UIThreadClientMap::instance()->findUIThreadClient(clientId);
+            setImageToClient(client, image);
+        }
+
+        return image;
     }
 
 private:
@@ -129,7 +153,7 @@ ImageLoader::ImageLoader()
 
 LVoid ImageLoader::flushImageLoading(const String& url, const OwnerPtr<String>& data)
 {
-    Gdiplus::Image* image = m_loadingMap->flushImageLoading(url, data);
+    LVoid* image = m_loadingMap->flushImageLoading(url, data);
     if (image) {
         m_imageCache->put(url, image);
     }
@@ -137,26 +161,19 @@ LVoid ImageLoader::flushImageLoading(const String& url, const OwnerPtr<String>& 
 
 LVoid ImageLoader::loadImage(const String& url, LInt clientId)
 {
-    Gdiplus::Image* image = m_imageCache->get(url);
-    // 若缓存中存在，则直接取出使用
+    LVoid* image = m_imageCache->get(url);
     if (image) {
-        util::ImageWin* imageWin = static_cast<util::ImageWin*>(UIThreadClientMap::instance()->findUIThreadClient(clientId));
-        if (imageWin) {
-            imageWin->setImage(image);
-            imageWin->onClientCallback();
-        }
+        UIThreadClient* client = UIThreadClientMap::instance()->findUIThreadClient(clientId);
+        setImageToClient(client, image);
         return;
     }
 
-    // 如果正在下载，加入到下载集合中
     if (m_loadingMap->hasLoading(url)) {
         m_loadingMap->appendLoading(url, clientId);
         return;
     }
 
-    // 否则加入到下载集合
     m_loadingMap->appendLoading(url, clientId);
-    // 开始下载图片
     AppManager::instance()->network()->loadUrl(url, new ImageLoaderClient(url), LFalse);
 }
 }
