@@ -589,8 +589,8 @@ pub(crate) struct BoyiaVM {
     pub mCreator: *mut dyn Runtime,
 }
 
-// Native function pointer type
-pub type NativePtr = unsafe extern "C" fn(*mut LVoid) -> LInt;
+// Native function pointer type (return OpHandleResult for VM dispatch).
+pub type NativePtr = unsafe extern "C" fn(*mut LVoid) -> OpHandleResult;
 
 #[repr(C)]
 pub struct NativeFunction {

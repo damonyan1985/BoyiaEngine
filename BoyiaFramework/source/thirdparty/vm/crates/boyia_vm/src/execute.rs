@@ -794,8 +794,7 @@ unsafe fn handle_call_function(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
         local_push(&mut (*e_state).mStackFrame.mClass, vm as *mut LVoid);
         let nav_fun = std::mem::transmute::<_, crate::types::NativePtr>((*func).mFuncBody);
         (*e_state).mStackFrame.mPC = ptr::null_mut();
-        let r = nav_fun(vm as *mut LVoid);
-        return op_handle_result_from_i32(r);
+        return nav_fun(vm as *mut LVoid);
     }
     if value_type == ValueType::BY_PROP_FUNC || value_type == ValueType::BY_ANONYM_FUNC {
         let obj_body = (*value).mValue.mObj.mSuper as *const BoyiaFunction;

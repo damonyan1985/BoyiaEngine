@@ -9,10 +9,6 @@ use boyia_vm::{
     value_copy, BoyiaValue, BoyiaFunction, ValueType, LInt, LVoid, OpHandleResult,
 };
 
-/// kOpResultSuccess / kOpResultEnd
-const K_OP_RESULT_SUCCESS: LInt = OpHandleResult::kOpResultSuccess as i32;
-const K_OP_RESULT_END: LInt = OpHandleResult::kOpResultEnd as i32;
-
 /// Capacity mask for GET_FUNCTION_COUNT (C++ mParamCount & 0x0000FFFF)
 fn get_function_count(fun: *const BoyiaFunction) -> LInt {
     if fun.is_null() {
@@ -23,127 +19,131 @@ fn get_function_count(fun: *const BoyiaFunction) -> LInt {
 
 /// new: create object from local 0 (class). Match CreateObject in BoyiaCore.cpp.
 #[no_mangle]
-pub unsafe extern "C" fn create_object(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn create_object(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
-    boyia_vm::create_object(vm)
+    if boyia_vm::create_object(vm) == 0 {
+        OpHandleResult::kOpResultEnd
+    } else {
+        OpHandleResult::kOpResultSuccess
+    }
 }
 
 /// BY_GetFromArray: local0 = array, local1 = index; result = array[index].
 #[no_mangle]
-pub unsafe extern "C" fn get_element_from_vector(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn get_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let val = get_local_value(0, vm) as *const BoyiaValue;
     let index_val = get_local_value(1, vm) as *const BoyiaValue;
     if val.is_null() || index_val.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let fun = (*val).mValue.mObj.mPtr as *const BoyiaFunction;
     if fun.is_null() || (*fun).mParams.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let idx = (*index_val).mValue.mIntVal;
     let size = (*fun).mParamSize as isize;
     if idx < 0 || idx >= size {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let result = (*fun).mParams.add(idx as usize);
     set_native_result(result as *mut BoyiaValue as *mut LVoid, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// BY_AddInArray: local0 = array, local1 = element. No grow (fixed capacity).
 #[no_mangle]
-pub unsafe extern "C" fn add_element_to_vector(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn add_element_to_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let val = get_local_value(0, vm) as *mut BoyiaValue;
     let element = get_local_value(1, vm) as *const BoyiaValue;
     if val.is_null() || element.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let fun = (*val).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() || (*fun).mParams.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let cap = get_function_count(fun);
     if (*fun).mParamSize >= cap {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let dst = (*fun).mParams.add((*fun).mParamSize as usize);
     value_copy(dst, element);
     (*fun).mParamSize += 1;
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// BY_GetArraySize: local0 = array; result = size (int).
 #[no_mangle]
-pub unsafe extern "C" fn get_vector_size(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn get_vector_size(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let val = get_local_value(0, vm) as *const BoyiaValue;
     if val.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let fun = (*val).mValue.mObj.mPtr as *const BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     set_int_result((*fun).mParamSize, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// BY_ClearArray: local0 = array, local1 = new size (deltaIndex); set mParamSize = new size.
 #[no_mangle]
-pub unsafe extern "C" fn clear_vector(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn clear_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let val = get_local_value(0, vm) as *const BoyiaValue;
     let delta_index = get_local_value(1, vm) as *const BoyiaValue;
     if val.is_null() || delta_index.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let fun = (*val).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let new_size = (*delta_index).mValue.mIntVal as LInt;
     (*fun).mParamSize = if new_size < 0 { 0 } else { new_size };
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// BY_RemoveWidthIndex: local0 = array, local1 = index; remove at index, shift down.
 #[no_mangle]
-pub unsafe extern "C" fn remove_element_width_index(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn remove_element_width_index(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let array = get_local_value(0, vm) as *const BoyiaValue;
     let idx_val = get_local_value(1, vm) as *const BoyiaValue;
     if array.is_null() || idx_val.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let idx = (*idx_val).mValue.mIntVal;
     let fun = (*array).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() || (*fun).mParams.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let size = (*fun).mParamSize as isize;
     if idx < 0 || idx >= size {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let params = (*fun).mParams;
     for i in idx..(size - 1) {
         value_copy(params.add(i as usize), params.add(i as usize + 1));
     }
     (*fun).mParamSize -= 1;
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
@@ -180,18 +180,18 @@ unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool
 
 /// BY_RemoveFromArray: local0 = array, local1 = value; remove first match from end.
 #[no_mangle]
-pub unsafe extern "C" fn remove_element_from_vector(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn remove_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let array = get_local_value(0, vm) as *const BoyiaValue;
     let val = get_local_value(1, vm) as *const BoyiaValue;
     if array.is_null() || val.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let fun = (*array).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() || (*fun).mParams.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let params = (*fun).mParams;
     let mut idx = (*fun).mParamSize - 1;
@@ -202,23 +202,23 @@ pub unsafe extern "C" fn remove_element_from_vector(vm: *mut LVoid) -> LInt {
                 value_copy(params.add(i as usize), params.add(i as usize + 1));
             }
             (*fun).mParamSize -= 1;
-            return K_OP_RESULT_SUCCESS;
+            return OpHandleResult::kOpResultSuccess;
         }
         idx -= 1;
     }
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// BY_Log: local0 = value; print int or string to stdout.
 #[no_mangle]
-pub unsafe extern "C" fn log_print(vm: *mut LVoid) -> LInt {
+pub unsafe extern "C" fn log_print(vm: *mut LVoid) -> OpHandleResult {
     eprintln!("[log_print] called");
     if vm.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
     let val = get_local_value(0, vm) as *const BoyiaValue;
     if val.is_null() {
-        return K_OP_RESULT_END;
+        return OpHandleResult::kOpResultEnd;
     }
 
     eprintln!("[log_print] called : {}", (*val).mValueType as i32);
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn log_print(vm: *mut LVoid) -> LInt {
         }
         _ => {}
     }
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// String class key for BY_Log (same hash as builtins "String").

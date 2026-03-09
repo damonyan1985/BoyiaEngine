@@ -243,7 +243,7 @@ impl Runtime for BoyiaRuntime {
         if nf.mAddr as *const () == sentinel_native as *const () {
             return OpHandleResult::kOpResultEnd as i32;
         }
-        unsafe { (nf.mAddr)(self.vm) }
+        unsafe { (nf.mAddr)(self.vm) as i32 }
     }
 
     fn gen_identifier(&mut self, key: &str) -> LUintPtr {
@@ -294,6 +294,6 @@ impl Drop for BoyiaRuntime {
 use std::ptr;
 
 /// Sentinel: end of native table (never called with valid idx).
-unsafe extern "C" fn sentinel_native(_vm: *mut LVoid) -> LInt {
-    OpHandleResult::kOpResultEnd as i32
+unsafe extern "C" fn sentinel_native(_vm: *mut LVoid) -> OpHandleResult {
+    OpHandleResult::kOpResultEnd
 }

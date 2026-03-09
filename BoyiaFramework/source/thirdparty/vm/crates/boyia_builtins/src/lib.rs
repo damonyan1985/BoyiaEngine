@@ -13,7 +13,6 @@ use boyia_vm::{
 };
 use std::ptr;
 
-const K_OP_RESULT_SUCCESS: LInt = OpHandleResult::kOpResultSuccess as i32;
 const K_BOYIA_NULL: LIntPtr = 0;
 
 // ---------------------------------------------------------------------------
@@ -91,7 +90,7 @@ fn str_eq(a: *const BoyiaStr, b: *const BoyiaStr) -> bool {
 // String builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn string_length_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn string_length_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let str_ref = get_string_buffer(obj);
@@ -106,10 +105,10 @@ unsafe extern "C" fn string_length_impl(vm: *mut LVoid) -> LInt {
         mValue: RealValue { mIntVal: len as LIntPtr },
     };
     set_native_result(&mut value as *mut BoyiaValue as *mut LVoid, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn string_equal_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn string_equal_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let cmp_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -126,7 +125,7 @@ unsafe extern "C" fn string_equal_impl(vm: *mut LVoid) -> LInt {
         },
     };
     set_native_result(&mut value as *mut BoyiaValue as *mut LVoid, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// Register String builtin class: buffer, hash props; length, equal methods.
@@ -182,7 +181,7 @@ where
 // Map builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn map_put_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -191,16 +190,16 @@ unsafe extern "C" fn map_put_impl(vm: *mut LVoid) -> LInt {
     let key_id = gen_identifier_from_str(vm, key_str);
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     let slot = (*fun).mParams.add((*fun).mParamSize as usize);
     value_copy(slot, value_val);
     (*slot).mNameKey = key_id;
     (*fun).mParamSize += 1;
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -214,12 +213,12 @@ unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> LInt {
             mValue: RealValue { mIntVal: K_BOYIA_NULL },
         };
         set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     for i in 0..(*fun).mParamSize {
         if (*fun).mParams.add(i as usize).read().mNameKey == key_id {
             set_native_result((*fun).mParams.add(i as usize) as *mut LVoid, vm);
-            return K_OP_RESULT_SUCCESS;
+            return OpHandleResult::kOpResultSuccess;
         }
     }
     let mut val = BoyiaValue {
@@ -228,10 +227,10 @@ unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> LInt {
         mValue: RealValue { mIntVal: K_BOYIA_NULL },
     };
     set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -239,7 +238,7 @@ unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> LInt {
     let key_id = gen_identifier_from_str(vm, key_str);
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     let mut idx = -1i32;
     for i in 0..(*fun).mParamSize {
@@ -249,7 +248,7 @@ unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> LInt {
         }
     }
     if idx < 0 {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     let i = idx as LInt;
     for j in i..(*fun).mParamSize - 1 {
@@ -259,26 +258,26 @@ unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> LInt {
         );
     }
     (*fun).mParamSize -= 1;
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_clear_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn map_clear_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if !fun.is_null() {
         (*fun).mParamSize = 0;
     }
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_map_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn map_map_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let cb = get_local_value(1, vm) as *const BoyiaValue;
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     if (*cb).mValueType == ValueType::BY_PROP_FUNC {
         for i in 0..(*fun).mParamSize {
@@ -301,7 +300,7 @@ unsafe extern "C" fn map_map_impl(vm: *mut LVoid) -> LInt {
             native_call_impl(args.as_mut_ptr(), 2, &mut cb_obj, vm);
         }
     }
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
 /// Register Map builtin class: put, get, remove, clear, map.
@@ -348,30 +347,30 @@ pub unsafe fn create_map_object(vm: *mut LVoid, map_class_key: LUintPtr) -> *mut
 // MicroTask builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn micro_task_resolve_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let result = get_local_value(1, vm) as *mut BoyiaValue;
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     let task_ptr = (*fun).mParams.add(1).read().mValue.mIntVal;
     resume_micro_task(task_ptr as *mut LVoid, result, vm);
-    K_OP_RESULT_SUCCESS
+    OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn micro_task_init_impl(vm: *mut LVoid) -> LInt {
+unsafe extern "C" fn micro_task_init_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let worker = get_local_value(1, vm) as *const BoyiaValue;
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     if fun.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     let task = create_micro_task(vm, obj);
     if task.is_null() {
-        return K_OP_RESULT_SUCCESS;
+        return OpHandleResult::kOpResultSuccess;
     }
     (*fun).mParams.add(1).write(BoyiaValue {
         mNameKey: 0,

@@ -813,9 +813,9 @@ pub unsafe fn native_call_impl(
     argc: LInt,
     obj: *mut BoyiaValue,
     vm: *mut LVoid,
-) -> LInt {
+) -> OpHandleResult {
     if vm.is_null() || args.is_null() {
-        return OpHandleResult::kOpResultSuccess as i32;
+        return OpHandleResult::kOpResultSuccess;
     }
     let vm_ptr = vm as *mut BoyiaVM;
     let current = (*vm_ptr).mEState;
@@ -824,7 +824,7 @@ pub unsafe fn native_call_impl(
     eprintln!("[native_call_impl] HandlePushParams functionName={}", (*value).mValueType as u8);
     let state = create_exec_state(vm_ptr);
     if state.is_null() {
-        return OpHandleResult::kOpResultEnd as i32;
+        return OpHandleResult::kOpResultEnd;
     }
     switch_exec_state(state, vm_ptr);
     crate::execute::push_scene_null(vm_ptr);
@@ -850,7 +850,7 @@ pub unsafe fn native_call_impl(
     }
     destroy_exec_state(state, vm_ptr);
     switch_exec_state(current, vm_ptr);
-    OpHandleResult::kOpResultSuccess as i32
+    OpHandleResult::kOpResultSuccess
 }
 
 /// Get runtime as `*mut dyn Runtime` from VM ([BoyiaVM::mCreator]).
