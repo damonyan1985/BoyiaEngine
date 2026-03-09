@@ -59,7 +59,6 @@ pub use core::{
     copy_object,
     native_call_impl,
     native_call_by_index,
-    find_native_func,
     get_runtime_from_vm,
     get_boyia_class_id,
     gen_identifier_from_str,

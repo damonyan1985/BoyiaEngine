@@ -99,15 +99,6 @@ pub enum ValueType {
     BY_EXTEND,
     BY_VAR,
     BY_PROP,
-    BY_IF,
-    BY_ELIF,
-    BY_ELSE,
-    BY_DO,
-    BY_WHILE,
-    BY_FOR,
-    BY_BREAK,
-    BY_RETURN,
-    BY_END,
 }
 
 /// OpHandleResult (BoyiaValue.h)

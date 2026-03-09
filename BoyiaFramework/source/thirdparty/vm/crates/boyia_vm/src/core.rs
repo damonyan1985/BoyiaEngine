@@ -858,8 +858,8 @@ pub unsafe fn get_runtime_from_vm(vm: *mut LVoid) -> *mut dyn Runtime {
     get_vm_creator(vm)
 }
 
-/// Find native function index by name key. Uses [get_runtime_from_vm] to get [Runtime] and calls [Runtime::find_native_func].
-pub unsafe fn find_native_func(vm: *mut LVoid, key: LUintPtr) -> LInt {
+/// Find native function index by name key. Uses [get_runtime_from_vm] to get [Runtime] and calls [Runtime::find_native_func]. Crate-internal only.
+pub(crate) unsafe fn find_native_func(vm: *mut LVoid, key: LUintPtr) -> LInt {
     let rt = get_runtime_from_vm(vm);
     if rt.is_null() {
         return -1;
