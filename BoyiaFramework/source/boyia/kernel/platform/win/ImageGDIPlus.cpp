@@ -36,13 +36,6 @@ ImageGDIPlus::~ImageGDIPlus()
 {
 }
 
-LImage* LImage::create(LVoid* item)
-{
-    ImageGDIPlus* image = new ImageGDIPlus();
-    image->setItem(static_cast<yanbo::HtmlView*>(item));
-    return image;
-}
-
 LVoid ImageGDIPlus::setData(const OwnerPtr<String>& data)
 {
     m_winImage = createWinImage(data);

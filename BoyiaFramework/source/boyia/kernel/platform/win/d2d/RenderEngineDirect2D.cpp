@@ -52,13 +52,13 @@ RenderEngineDirect2D::~RenderEngineDirect2D()
 
 LVoid RenderEngineDirect2D::init()
 {
-    m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineDirect2D::renderRect;
-    m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineDirect2D::renderText;
-    m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineDirect2D::renderImage;
-    m_functions[RenderCommand::kRenderRoundRect] = (RenderFunction)&RenderEngineDirect2D::renderRoundRect;
-    m_functions[RenderCommand::kRenderVideo] = (RenderFunction)&RenderEngineDirect2D::renderVideo;
-    m_functions[RenderCommand::kRenderRoundImage] = (RenderFunction)&RenderEngineDirect2D::renderRoundImage;
-    m_functions[RenderCommand::kRenderPlatform] = (RenderFunction)&RenderEngineDirect2D::renderVideo;
+    m_functions[RenderCommand::kRenderRect] = (RenderFunctionD2D)&RenderEngineDirect2D::renderRect;
+    m_functions[RenderCommand::kRenderText] = (RenderFunctionD2D)&RenderEngineDirect2D::renderText;
+    m_functions[RenderCommand::kRenderImage] = (RenderFunctionD2D)&RenderEngineDirect2D::renderImage;
+    m_functions[RenderCommand::kRenderRoundRect] = (RenderFunctionD2D)&RenderEngineDirect2D::renderRoundRect;
+    m_functions[RenderCommand::kRenderVideo] = (RenderFunctionD2D)&RenderEngineDirect2D::renderVideo;
+    m_functions[RenderCommand::kRenderRoundImage] = (RenderFunctionD2D)&RenderEngineDirect2D::renderRoundImage;
+    m_functions[RenderCommand::kRenderPlatform] = (RenderFunctionD2D)&RenderEngineDirect2D::renderVideo;
 }
 
 LVoid RenderEngineDirect2D::setContextWin(HWND hwnd)

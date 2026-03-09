@@ -256,8 +256,4 @@ LVoid RenderEngineWin::renderRoundImage(RenderCommand* cmd, Gdiplus::Graphics& g
     gc.ResetClip();
 }
 
-IRenderEngine* IRenderEngine::create()
-{
-    return new RenderEngineWin();
-}
 }

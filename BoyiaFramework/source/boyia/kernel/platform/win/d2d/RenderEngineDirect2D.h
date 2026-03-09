@@ -14,7 +14,7 @@
 namespace yanbo {
 
 class RenderEngineDirect2D;
-typedef LVoid (RenderEngineDirect2D::*RenderFunction)(RenderCommand* cmd, ID2D1RenderTarget* rt);
+typedef LVoid (RenderEngineDirect2D::*RenderFunctionD2D)(RenderCommand* cmd, ID2D1RenderTarget* rt);
 
 class RenderEngineDirect2D : public IRenderEngine {
 public:
@@ -45,7 +45,7 @@ private:
     ID2D1BitmapRenderTarget* m_bitmapTarget;
     ID2D1Bitmap* m_cacheBitmap;
     IDWriteFactory* m_dwriteFactory;
-    RenderFunction m_functions[7];
+    RenderFunctionD2D m_functions[7];
 };
 
 } // namespace yanbo

@@ -3,6 +3,11 @@
 #include "ImageLoader.h"
 #include "ImageView.h"
 #include "LGdi.h"
+#include "ImageGDIPlus.h"
+#include "ImageD2D.h"
+#include "IRenderEngine.h"
+#include "RenderEngineWin.h"
+#include "RenderEngineDirect2D.h"
 
 namespace util {
 LBool ImageWin::s_isHardwareAccelerated = LFalse;
@@ -71,4 +76,30 @@ LBool ImageWin::isHardwareAccelerated()
     return s_isHardwareAccelerated;
 }
 
+LImage* LImage::create(LVoid* item)
+{
+    ImageWin* image = kBoyiaNull;
+    if (ImageWin::isHardwareAccelerated()) {
+        image = new ImageD2D();
+    } else {
+        image = new ImageGDIPlus();
+    }
+
+    image->setItem(static_cast<yanbo::HtmlView*>(item));
+    
+    return image;
+}
+
 } // namespace util
+
+namespace yanbo {
+IRenderEngine* IRenderEngine::create()
+{
+    if (util::ImageWin::isHardwareAccelerated()) {
+        return new RenderEngineDirect2D();
+    } else {
+        return new RenderEngineWin();
+    }
+}
+
+}
