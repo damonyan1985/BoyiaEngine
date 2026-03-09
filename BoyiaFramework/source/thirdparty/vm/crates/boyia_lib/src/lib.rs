@@ -18,8 +18,7 @@ fn get_function_count(fun: *const BoyiaFunction) -> LInt {
 }
 
 /// new: create object from local 0 (class). Match CreateObject in BoyiaCore.cpp.
-#[no_mangle]
-pub unsafe extern "C" fn create_object(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn create_object(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -31,8 +30,7 @@ pub unsafe extern "C" fn create_object(vm: *mut LVoid) -> OpHandleResult {
 }
 
 /// BY_GetFromArray: local0 = array, local1 = index; result = array[index].
-#[no_mangle]
-pub unsafe extern "C" fn get_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn get_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -56,8 +54,7 @@ pub unsafe extern "C" fn get_element_from_vector(vm: *mut LVoid) -> OpHandleResu
 }
 
 /// BY_AddInArray: local0 = array, local1 = element. No grow (fixed capacity).
-#[no_mangle]
-pub unsafe extern "C" fn add_element_to_vector(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn add_element_to_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -81,8 +78,7 @@ pub unsafe extern "C" fn add_element_to_vector(vm: *mut LVoid) -> OpHandleResult
 }
 
 /// BY_GetArraySize: local0 = array; result = size (int).
-#[no_mangle]
-pub unsafe extern "C" fn get_vector_size(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn get_vector_size(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -99,8 +95,7 @@ pub unsafe extern "C" fn get_vector_size(vm: *mut LVoid) -> OpHandleResult {
 }
 
 /// BY_ClearArray: local0 = array, local1 = new size (deltaIndex); set mParamSize = new size.
-#[no_mangle]
-pub unsafe extern "C" fn clear_vector(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn clear_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -119,8 +114,7 @@ pub unsafe extern "C" fn clear_vector(vm: *mut LVoid) -> OpHandleResult {
 }
 
 /// BY_RemoveWidthIndex: local0 = array, local1 = index; remove at index, shift down.
-#[no_mangle]
-pub unsafe extern "C" fn remove_element_width_index(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn remove_element_width_index(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -179,8 +173,7 @@ unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool
 }
 
 /// BY_RemoveFromArray: local0 = array, local1 = value; remove first match from end.
-#[no_mangle]
-pub unsafe extern "C" fn remove_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn remove_element_from_vector(vm: *mut LVoid) -> OpHandleResult {
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -210,8 +203,7 @@ pub unsafe extern "C" fn remove_element_from_vector(vm: *mut LVoid) -> OpHandleR
 }
 
 /// BY_Log: local0 = value; print int or string to stdout.
-#[no_mangle]
-pub unsafe extern "C" fn log_print(vm: *mut LVoid) -> OpHandleResult {
+pub unsafe fn log_print(vm: *mut LVoid) -> OpHandleResult {
     eprintln!("[log_print] called");
     if vm.is_null() {
         return OpHandleResult::kOpResultEnd;

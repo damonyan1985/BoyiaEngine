@@ -341,7 +341,7 @@ pub const LFalse: LInt = 0;
 pub const LTrue: LInt = 1;
 
 /// Handler return type: use OpHandleResult for dispatch.
-pub(crate) type OPHandler = unsafe extern "C" fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;
+pub(crate) type OPHandler = unsafe fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;
 
 // BoyiaValue types matching BoyiaValue.h
 #[repr(C)]
@@ -590,7 +590,7 @@ pub(crate) struct BoyiaVM {
 }
 
 // Native function pointer type (return OpHandleResult for VM dispatch).
-pub type NativePtr = unsafe extern "C" fn(*mut LVoid) -> OpHandleResult;
+pub type NativePtr = unsafe fn(*mut LVoid) -> OpHandleResult;
 
 #[repr(C)]
 pub struct NativeFunction {

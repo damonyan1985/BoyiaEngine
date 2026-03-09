@@ -294,6 +294,6 @@ impl Drop for BoyiaRuntime {
 use std::ptr;
 
 /// Sentinel: end of native table (never called with valid idx).
-unsafe extern "C" fn sentinel_native(_vm: *mut LVoid) -> OpHandleResult {
+unsafe fn sentinel_native(_vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultEnd
 }

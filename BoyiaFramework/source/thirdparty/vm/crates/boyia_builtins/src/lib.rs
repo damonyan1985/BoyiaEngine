@@ -90,7 +90,7 @@ fn str_eq(a: *const BoyiaStr, b: *const BoyiaStr) -> bool {
 // String builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn string_length_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn string_length_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let str_ref = get_string_buffer(obj);
@@ -108,7 +108,7 @@ unsafe extern "C" fn string_length_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn string_equal_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn string_equal_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let cmp_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -181,7 +181,7 @@ where
 // Map builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -199,7 +199,7 @@ unsafe extern "C" fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -230,7 +230,7 @@ unsafe extern "C" fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn map_remove_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let key_val = get_local_value(1, vm) as *const BoyiaValue;
@@ -261,7 +261,7 @@ unsafe extern "C" fn map_remove_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_clear_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn map_clear_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
@@ -271,7 +271,7 @@ unsafe extern "C" fn map_clear_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn map_map_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn map_map_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let cb = get_local_value(1, vm) as *const BoyiaValue;
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
@@ -347,7 +347,7 @@ pub unsafe fn create_map_object(vm: *mut LVoid, map_class_key: LUintPtr) -> *mut
 // MicroTask builtin
 // ---------------------------------------------------------------------------
 
-unsafe extern "C" fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let result = get_local_value(1, vm) as *mut BoyiaValue;
@@ -360,7 +360,7 @@ unsafe extern "C" fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe extern "C" fn micro_task_init_impl(vm: *mut LVoid) -> OpHandleResult {
+unsafe fn micro_task_init_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *mut BoyiaValue;
     let worker = get_local_value(1, vm) as *const BoyiaValue;
