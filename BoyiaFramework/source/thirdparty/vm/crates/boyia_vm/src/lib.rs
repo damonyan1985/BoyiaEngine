@@ -66,6 +66,7 @@ pub use core::{
     create_global_class,
     alloc_builtin_function,
     get_string_buffer,
+    get_string_buffer_from_body,
     get_string_hash,
     gen_hash_code,
     create_string_object,

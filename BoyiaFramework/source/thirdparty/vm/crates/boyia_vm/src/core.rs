@@ -917,7 +917,19 @@ pub unsafe fn get_string_buffer(ref_: *const BoyiaValue) -> *const BoyiaStr {
     if obj.is_null() {
         return ptr::null();
     }
-    &(*obj).mParams.add(1).read().mValue.mStrVal
+    get_string_buffer_from_body(obj as *mut BoyiaFunction)
+}
+
+/// String buffer from function body (body->mParams[1].mValue.mStrVal). Match GetStringBufferFromBody in BoyiaValue.cpp.
+pub unsafe fn get_string_buffer_from_body(body: *mut BoyiaFunction) -> *mut BoyiaStr {
+    if body.is_null() {
+        return ptr::null_mut();
+    }
+    let p = (*body).mParams;
+    if p.is_null() {
+        return ptr::null_mut();
+    }
+    ptr::addr_of_mut!((*p.add(1)).mValue.mStrVal)
 }
 
 /// String hash from a BY_CLASS string value (object's mParams[0].mIntVal). Match GetStringHash.
@@ -1256,3 +1268,14 @@ pub unsafe fn iterate_micro_task(
     }
     (*task).mAllocLink.mLinkNext as *mut LVoid
 }
+
+pub(crate) unsafe fn alloc_object<T>() -> *mut T {
+    let size = std::mem::size_of::<T>();
+    let ptr = crate::fast_malloc(size as LInt) as *mut T;
+    if ptr.is_null() {
+        return ptr::null_mut();
+    }
+    ptr::write_bytes(ptr as *mut u8, 0, size);
+    ptr
+}
+ 

@@ -19,12 +19,14 @@ const K_NATIVE_FUNCTION_CAPACITY: usize = 100;
 /// Memory pool size (6 MB). Match BoyiaRuntime.cpp kMemoryPoolSize.
 const K_MEMORY_POOL_SIZE: LInt = 6 * 1024 * 1024;
 
-/// Runtime state: VM + native table + id creator + memory pool (BoyiaMemory). Matches BoyiaRuntime.cpp.
+/// Runtime state: VM + native table + id creator + memory pool + GC. Matches BoyiaRuntime.cpp.
 pub struct BoyiaRuntime {
     /// VM instance (creator set to self for native dispatch).
     vm: *mut LVoid,
-    /// Memory pool for object allocation (BoyiaRuntime::m_memoryPool). Created in init(), passed to VM; freed in Drop after destroy_vm.
+    /// Memory pool for object allocation (BoyiaRuntime::m_memoryPool). Created in init(); freed in Drop after destroy_vm.
     memory_pool: *mut LVoid,
+    /// GC state (BoyiaRuntime::m_gc). Created in init() after VM; destroyed in Drop before destroy_vm.
+    gc: *mut boyia_gc::BoyiaGc,
     /// Native function table: (name_key, ptr). Terminated by mAddr == null (we use 0 index as sentinel or check length).
     native_fun_table: Vec<NativeFunction>,
     id_creator: IdCreator,
@@ -39,6 +41,7 @@ impl BoyiaRuntime {
         Self {
             vm: ptr::null_mut(),
             memory_pool: ptr::null_mut(),
+            gc: ptr::null_mut(),
             native_fun_table: Vec::with_capacity(K_NATIVE_FUNCTION_CAPACITY),
             id_creator: IdCreator::new(),
             is_load_exe_file: false,
@@ -58,6 +61,11 @@ impl BoyiaRuntime {
         if self.vm.is_null() {
             eprintln!("[init] ERROR init_vm returned null");
             return;
+        }
+        eprintln!("[init] 2a create_gc");
+        self.gc = unsafe { boyia_gc::create_gc(self.vm) };
+        if self.gc.is_null() {
+            eprintln!("[init] WARN create_gc returned null");
         }
         eprintln!("[init] 2 builtin ids (BuiltinId 1..6 reserved)");
         // Ensure builtin names are registered so compile/lookup use same keys as CreateGlobalClass
@@ -94,6 +102,7 @@ impl BoyiaRuntime {
         if self.vm.is_null() {
             return;
         }
+        self.gc = unsafe { boyia_gc::create_gc(self.vm) };
         self.id_creator.gen_ident_by_str("this");
         self.id_creator.gen_ident_by_str("String");
         self.init_native_function();
@@ -183,6 +192,37 @@ impl BoyiaRuntime {
 }
 
 impl Runtime for BoyiaRuntime {
+    fn memory_pool(&self) -> *mut LVoid {
+        self.memory_pool
+    }
+
+    fn gc_ptr(&self) -> *mut LVoid {
+        self.gc as *mut LVoid
+    }
+    fn vm_ptr(&self) -> *mut LVoid {
+        self.vm
+    }
+
+    fn gc_append_ref(&self, address: *mut LVoid, type_: boyia_vm::LUint8) {
+        boyia_gc::gc_append_ref(address, type_, self);
+    }
+
+    fn create_runtime_to_memory(&self, _vm: *mut LVoid) -> *mut LVoid {
+        unsafe { boyia_vm::init_memory_pool(K_MEMORY_POOL_SIZE) }
+    }
+
+    fn update_runtime_memory(&mut self, to_pool: *mut LVoid, _vm: *mut LVoid) {
+        if to_pool.is_null() {
+            return;
+        }
+        unsafe {
+            if !self.memory_pool.is_null() {
+                boyia_vm::free_memory_pool(self.memory_pool);
+            }
+            self.memory_pool = to_pool;
+        }
+    }
+
     fn find_native_func(&self, key: LUintPtr) -> LInt {
         for (idx, nf) in self.native_fun_table.iter().enumerate() {
             if nf.mNameKey == 0 || nf.mAddr as *const () == sentinel_native as *const () {
@@ -232,6 +272,10 @@ impl Default for BoyiaRuntime {
 impl Drop for BoyiaRuntime {
     fn drop(&mut self) {
         unsafe {
+            if !self.gc.is_null() {
+                boyia_gc::destroy_gc(self.gc);
+                self.gc = ptr::null_mut();
+            }
             boyia_vm::destroy_vm(self.vm);
             if !self.memory_pool.is_null() {
                 free_memory_pool(self.memory_pool);

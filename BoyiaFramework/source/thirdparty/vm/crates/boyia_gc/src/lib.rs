@@ -1,15 +1,18 @@
-//! Boyia GC. Port of BoyiaGC.cpp.
-//! Mark-sweep garbage collector with optional compaction (migrate).
-//! VM integration is via [GcCallbacks]; uses [boyia_vm] types (BoyiaValue, BoyiaFunction, etc.).
+//! Boyia GC. Strict port of BoyiaGC.cpp.
+//! Mark-sweep with optional compaction. Uses boyia_vm and boyia_memory APIs directly (no GcCallbacks).
 
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
 use boyia_memory::{
     alloc_memory_chunk, create_memory_cache, destroy_memory_cache, fast_free, fast_malloc,
-    free_memory_chunk,
+    free_memory_chunk, migrate_memory,
 };
-use boyia_vm::{BoyiaFunction, BoyiaStr, BoyiaValue, BuiltinId, ValueType};
+use boyia_vm::{
+    get_global_table, get_local_stack, get_native_helper_result, get_native_result,
+    get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, BoyiaFunction, BoyiaValue,
+    BuiltinId, Runtime, ValueType,
+};
 use std::ptr;
 
 // Re-export types for ABI compatibility with C++ BoyiaGC
@@ -92,45 +95,20 @@ fn set_migrate_flag(fun: *mut BoyiaFunction) {
     }
 }
 
-/// Callbacks the VM must provide for mark/sweep and compaction.
-pub trait GcCallbacks {
-    /// Global table: (base pointer, element count).
-    fn get_global_table(&self, vm: *mut LVoid) -> (*mut BoyiaValue, LInt);
-    /// Local stack: (stack_ptr, size, op_stack_ptr, op_size). Returns next frame ptr or null.
-    fn get_local_stack(
-        &self,
-        vm: *mut LVoid,
-        frame_ptr: *mut LVoid,
-    ) -> Option<(*mut BoyiaValue, LInt, *mut BoyiaValue, LInt, *mut LVoid)>;
-    /// Micro task iteration: (result value ptr, obj value ptr). Returns next ptr or null.
-    fn iterate_micro_task(
-        &self,
-        vm: *mut LVoid,
-        prev: *mut LVoid,
-    ) -> Option<(*mut BoyiaValue, *mut BoyiaValue, *mut LVoid)>;
-    /// Native result value (single value to mark).
-    fn get_native_result(&self, vm: *mut LVoid) -> *mut BoyiaValue;
-    /// Native helper result value.
-    fn get_native_helper_result(&self, vm: *mut LVoid) -> *mut BoyiaValue;
-    /// Delete block from VM pool (BoyiaDelete).
-    fn delete_from_pool(&self, addr: *mut LVoid, vm: *mut LVoid);
-    /// Migrate block from current pool to to_pool; return new address.
-    fn migrate_memory(&self, src: *mut LVoid, to_pool: *mut LVoid, vm: *mut LVoid) -> *mut LVoid;
-    /// Create the "to" pool for compaction; return pool ptr.
-    fn create_runtime_to_memory(&self, vm: *mut LVoid) -> *mut LVoid;
-    /// After compaction, set runtime to use to_pool.
-    fn update_runtime_memory(&self, to_pool: *mut LVoid, vm: *mut LVoid);
-    /// Mark native object with color (bits 16..18).
-    fn mark_native_object(&self, address: LIntPtr, color: LInt);
-    /// Get native object's current GC flag.
-    fn native_object_flag(&self, address: *mut LVoid) -> LInt;
-    /// Delete native object (NativeDelete).
-    fn native_delete(&self, address: *mut LVoid);
-    /// String buffer from function body: &body->mParams[1].mValue.mStrVal.
-    fn get_string_buffer_from_body(&self, body: *mut BoyiaFunction) -> *mut BoyiaStr;
-    /// Free buffer (platform free for native string).
-    fn free_buffer(&self, ptr: *mut LVoid);
+// Native/platform hooks (extern in C++; stubs by default).
+#[inline]
+unsafe fn mark_native_object(_addr: LIntPtr, _color: LInt) {}
+
+#[inline]
+fn native_object_flag(_addr: *mut LVoid) -> LInt {
+    K_BOYIA_GC_WHITE
 }
+
+#[inline]
+unsafe fn native_delete(_addr: *mut LVoid) {}
+
+#[inline]
+unsafe fn free_buffer(_ptr: *mut LVoid) {}
 
 unsafe fn allocate_ref(gc: *mut BoyiaGc) -> *mut BoyiaRef {
     let cache = (*gc).mRefCache;
@@ -190,89 +168,81 @@ pub unsafe fn destroy_gc(gc: *mut BoyiaGc) {
 }
 
 /// GCAppendRef: register a heap object with the GC (BY_CLASS or BY_NAVCLASS).
-pub unsafe fn gc_append_ref(address: *mut LVoid, type_: LUint8, _vm: *mut LVoid, gc: *mut BoyiaGc) {
+/// GC and VM are obtained from the given [Runtime].
+pub fn gc_append_ref(address: *mut LVoid, type_: LUint8, runtime: &dyn Runtime) {
+    let gc = runtime.gc_ptr() as *mut BoyiaGc;
+    let _vm = runtime.vm_ptr();
     if gc.is_null() {
         return;
     }
-    let ref_ptr = allocate_ref(gc);
+    let ref_ptr = unsafe { allocate_ref(gc) };
     if ref_ptr.is_null() {
         return;
     }
-    (*ref_ptr).mAddress = address;
-    (*ref_ptr).mType = type_;
-    (*ref_ptr).mNext = ptr::null_mut();
+    unsafe {
+        (*ref_ptr).mAddress = address;
+        (*ref_ptr).mType = type_;
+        (*ref_ptr).mNext = ptr::null_mut();
 
-    let refs = &mut (*gc).mUsedRefs;
-    if !refs.mBegin.is_null() {
-        (*refs.mEnd).mNext = ref_ptr;
-    } else {
-        refs.mBegin = ref_ptr;
+        let refs = &mut (*gc).mUsedRefs;
+        if !refs.mBegin.is_null() {
+            (*refs.mEnd).mNext = ref_ptr;
+        } else {
+            refs.mBegin = ref_ptr;
+        }
+        refs.mEnd = ref_ptr;
     }
-    refs.mEnd = ref_ptr;
 }
 
-// --- Mark / sweep (use GcCallbacks) ---
+// --- Mark / sweep (match BoyiaGC.cpp: MarkValue, MarkObjectProps, etc.) ---
 
-fn mark_value<C: GcCallbacks>(value: *mut BoyiaValue, callbacks: &C, vm: *mut LVoid) {
+unsafe fn mark_value(value: *mut BoyiaValue, _vm: *mut LVoid) {
     if value.is_null() {
         return;
     }
-    let vt = unsafe { (*value).mValueType };
+    let vt = (*value).mValueType;
     if vt == ValueType::BY_NAVCLASS {
-        let addr = unsafe { (*value).mValue.mIntVal };
-        callbacks.mark_native_object(addr, K_BOYIA_GC_BLACK);
+        let addr = (*value).mValue.mIntVal;
+        mark_native_object(addr, K_BOYIA_GC_BLACK);
         return;
     }
     if vt != ValueType::BY_CLASS && vt != ValueType::BY_PROP_FUNC {
         return;
     }
-    mark_object_props(value, callbacks, vm);
+    mark_object_props(value, _vm);
 }
 
-fn mark_object_props<C: GcCallbacks>(
-    value: *const BoyiaValue,
-    callbacks: &C,
-    vm: *mut LVoid,
-) {
-    let fun_ptr = if unsafe { (*value).mValueType } == ValueType::BY_CLASS {
-        (unsafe { (*value).mValue.mObj.mPtr }) as *mut BoyiaFunction
+unsafe fn mark_object_props(value: *const BoyiaValue, vm: *mut LVoid) {
+    let fun_ptr = if (*value).mValueType == ValueType::BY_CLASS {
+        (*value).mValue.mObj.mPtr as *mut BoyiaFunction
     } else {
-        (unsafe { (*value).mValue.mObj.mSuper }) as *mut BoyiaFunction
+        (*value).mValue.mObj.mSuper as *mut BoyiaFunction
     };
     if fun_ptr.is_null() || !is_object_invalid(fun_ptr) {
         return;
     }
-    unsafe {
-        (*fun_ptr).mParamCount |= K_BOYIA_GC_GRAY << 16;
-    }
+    (*fun_ptr).mParamCount |= K_BOYIA_GC_GRAY << 16;
     let fun = fun_ptr as *const BoyiaFunction;
-    let size = unsafe { (*fun).mParamSize };
-    let params = unsafe { (*fun).mParams };
+    let size = (*fun).mParamSize;
+    let params = (*fun).mParams;
     for i in 0..size {
         if !params.is_null() {
-            mark_value(unsafe { params.add(i as usize) }, callbacks, vm);
+            mark_value(params.add(i as usize), vm);
         }
     }
-    unsafe {
-        (*fun_ptr).mParamCount |= K_BOYIA_GC_BLACK << 16;
-    }
+    (*fun_ptr).mParamCount |= K_BOYIA_GC_BLACK << 16;
 }
 
-fn mark_value_table<C: GcCallbacks>(
-    table: *mut BoyiaValue,
-    size: LInt,
-    callbacks: &C,
-    vm: *mut LVoid,
-) {
+unsafe fn mark_value_table(table: *mut BoyiaValue, size: LInt, vm: *mut LVoid) {
     if table.is_null() || size <= 0 {
         return;
     }
     for i in 0..(size as usize) {
-        mark_value(unsafe { table.add(i) }, callbacks, vm);
+        mark_value(table.add(i), vm);
     }
 }
 
-fn is_invalid_object<C: GcCallbacks>(ref_ptr: *const BoyiaRef, callbacks: &C) -> bool {
+fn is_invalid_object(ref_ptr: *const BoyiaRef) -> bool {
     let ty = unsafe { (*ref_ptr).mType };
     if ty == ValueType::BY_CLASS as u8 {
         let fun = unsafe { (*ref_ptr).mAddress as *const BoyiaFunction };
@@ -281,45 +251,47 @@ fn is_invalid_object<C: GcCallbacks>(ref_ptr: *const BoyiaRef, callbacks: &C) ->
     if ty != ValueType::BY_NAVCLASS as u8 {
         return false;
     }
-    let flag = callbacks.native_object_flag(unsafe { (*ref_ptr).mAddress });
+    let flag = native_object_flag(unsafe { (*ref_ptr).mAddress });
     if flag != K_BOYIA_GC_WHITE {
         return false;
     }
     true
 }
 
-fn delete_object<C: GcCallbacks>(
-    ref_ptr: *const BoyiaRef,
-    callbacks: &C,
-    vm: *mut LVoid,
-) {
-    let ty = unsafe { (*ref_ptr).mType };
+unsafe fn delete_object(ref_ptr: *const BoyiaRef, vm: *mut LVoid) {
+    let ty = (*ref_ptr).mType;
     if ty == ValueType::BY_NAVCLASS as u8 {
-        callbacks.native_delete(unsafe { (*ref_ptr).mAddress });
+        native_delete((*ref_ptr).mAddress);
         return;
     }
     if ty != ValueType::BY_CLASS as u8 {
         return;
     }
-    let obj_body = unsafe { (*ref_ptr).mAddress as *const BoyiaFunction };
-    let kclass = unsafe { (*obj_body).mFuncBody as *const BoyiaValue };
+    let obj_body = (*ref_ptr).mAddress as *const BoyiaFunction;
+    let kclass = (*obj_body).mFuncBody as *const BoyiaValue;
     let class_id = if kclass.is_null() {
         0
     } else {
-        unsafe { (*kclass).mNameKey }
+        (*kclass).mNameKey
     };
     if class_id == BuiltinId::kBoyiaString.as_key() {
-        let buffer = callbacks.get_string_buffer_from_body(obj_body as *mut BoyiaFunction);
+        let buffer = get_string_buffer_from_body(obj_body as *mut BoyiaFunction);
         if !buffer.is_null() {
-            let buf = unsafe { &*buffer };
+            let buf = &*buffer;
             if is_native_string(obj_body) {
-                callbacks.free_buffer(buf.mPtr as *mut LVoid);
+                free_buffer(buf.mPtr as *mut LVoid);
             } else if is_boyia_string(obj_body) {
-                callbacks.delete_from_pool(buf.mPtr as *mut LVoid, vm);
+                let rt = get_runtime_from_vm(vm);
+                if !rt.is_null() {
+                    (*rt).delete_data(buf.mPtr as *mut LVoid);
+                }
             }
         }
     }
-    callbacks.delete_from_pool(unsafe { (*ref_ptr).mAddress }, vm);
+    let rt = get_runtime_from_vm(vm);
+    if !rt.is_null() {
+        (*rt).delete_data((*ref_ptr).mAddress);
+    }
 }
 
 fn reset_boyia_object(fun: *mut BoyiaFunction) {
@@ -333,45 +305,48 @@ fn reset_boyia_object(fun: *mut BoyiaFunction) {
     }
 }
 
-fn reset_memory_color<C: GcCallbacks>(gc: *mut BoyiaGc, callbacks: &C) {
+unsafe fn reset_memory_color(gc: *mut BoyiaGc) {
     if gc.is_null() {
         return;
     }
-    let mut ref_ptr = unsafe { (*gc).mUsedRefs.mBegin };
+    let vm = (*gc).mBoyiaVM;
+    let mut ref_ptr = (*gc).mUsedRefs.mBegin;
     while !ref_ptr.is_null() {
-        let ty = unsafe { (*ref_ptr).mType };
+        let ty = (*ref_ptr).mType;
         if ty == ValueType::BY_NAVCLASS as u8 {
-            callbacks.mark_native_object(unsafe { (*ref_ptr).mAddress as LIntPtr }, K_BOYIA_GC_WHITE);
+            mark_native_object((*ref_ptr).mAddress as LIntPtr, K_BOYIA_GC_WHITE);
         } else if ty == ValueType::BY_CLASS as u8 {
-            reset_boyia_object(unsafe { (*ref_ptr).mAddress as *mut BoyiaFunction });
+            reset_boyia_object((*ref_ptr).mAddress as *mut BoyiaFunction);
         }
-        ref_ptr = unsafe { (*ref_ptr).mNext };
+        ref_ptr = (*ref_ptr).mNext;
     }
-    let (stack_addr, size) = callbacks.get_global_table(unsafe { (*gc).mBoyiaVM });
-    if stack_addr.is_null() || size <= 0 {
+    let mut table_addr: LIntPtr = 0;
+    let mut size: LInt = 0;
+    get_global_table(&mut table_addr, &mut size, vm);
+    if table_addr == 0 || size <= 0 {
         return;
     }
-    let stack = stack_addr as *const BoyiaValue;
+    let stack = table_addr as *const BoyiaValue;
     for i in 0..(size as usize) {
-        let val = unsafe { &*stack.add(i) };
+        let val = &*stack.add(i);
         if val.mValueType == ValueType::BY_CLASS {
-            let ptr = unsafe { val.mValue.mObj.mPtr } as *mut BoyiaFunction;
+            let ptr = val.mValue.mObj.mPtr as *mut BoyiaFunction;
             reset_boyia_object(ptr);
         }
     }
 }
 
-fn clear_all_garbage<C: GcCallbacks>(gc: *mut BoyiaGc, vm: *mut LVoid, callbacks: &C) {
+unsafe fn clear_all_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     if gc.is_null() {
         return;
     }
-    let refs = unsafe { &mut (*gc).mUsedRefs };
+    let refs = &mut (*gc).mUsedRefs;
     let mut prev = refs.mBegin;
     while !prev.is_null() {
-        if is_invalid_object(prev, callbacks) {
-            delete_object(prev, callbacks, vm);
-            refs.mBegin = unsafe { (*prev).mNext };
-            unsafe { free_ref(prev, gc) };
+        if is_invalid_object(prev) {
+            delete_object(prev, vm);
+            refs.mBegin = (*prev).mNext;
+            free_ref(prev, gc);
             prev = refs.mBegin;
         } else {
             break;
@@ -381,200 +356,199 @@ fn clear_all_garbage<C: GcCallbacks>(gc: *mut BoyiaGc, vm: *mut LVoid, callbacks
         refs.mEnd = ptr::null_mut();
         return;
     }
-    let mut current = unsafe { (*prev).mNext };
+    let mut current = (*prev).mNext;
     while !current.is_null() {
-        if is_invalid_object(current, callbacks) {
-            delete_object(current, callbacks, vm);
-            unsafe { (*prev).mNext = (*current).mNext };
-            unsafe { free_ref(current, gc) };
-            current = unsafe { (*prev).mNext };
+        if is_invalid_object(current) {
+            delete_object(current, vm);
+            (*prev).mNext = (*current).mNext;
+            free_ref(current, gc);
+            current = (*prev).mNext;
         } else {
             prev = current;
-            current = unsafe { (*current).mNext };
+            current = (*current).mNext;
         }
     }
     refs.mEnd = prev;
 }
 
-/// GCollectGarbage: mark from roots, then sweep. Call with VM and implementation of [GcCallbacks].
-pub fn g_collect_garbage<C: GcCallbacks>(gc: *mut BoyiaGc, vm: *mut LVoid, callbacks: &C) {
+/// GCollectGarbage: reset color, mark from roots (global, local stack, micro task, native result), then sweep. Match GCollectGarbage in BoyiaGC.cpp.
+pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     if gc.is_null() {
         return;
     }
-    reset_memory_color(gc, callbacks);
-    let (global_table, size) = callbacks.get_global_table(vm);
-    mark_value_table(global_table, size, callbacks, vm);
+    reset_memory_color(gc);
+    let mut table_addr: LIntPtr = 0;
+    let mut size: LInt = 0;
+    get_global_table(&mut table_addr, &mut size, vm);
+    mark_value_table(table_addr as *mut BoyiaValue, size, vm);
 
+    let mut stack_addr: LIntPtr = 0;
+    let mut op_stack_addr: LIntPtr = 0;
+    let mut op_size: LInt = 0;
     let mut ptr = vm;
     loop {
-        match callbacks.get_local_stack(vm, ptr) {
-            Some((stack_addr, size, op_stack_addr, op_size, next_ptr)) => {
-                mark_value_table(stack_addr, size, callbacks, vm);
-                mark_value_table(op_stack_addr, op_size, callbacks, vm);
-                ptr = next_ptr;
-            }
-            None => break,
+        let next = get_local_stack(
+            &mut stack_addr,
+            &mut size,
+            &mut op_stack_addr,
+            &mut op_size,
+            vm,
+            ptr,
+        );
+        mark_value_table(stack_addr as *mut BoyiaValue, size, vm);
+        mark_value_table(op_stack_addr as *mut BoyiaValue, op_size, vm);
+        if next.is_null() {
+            break;
         }
+        ptr = next;
     }
 
+    let mut result = ptr::null_mut::<BoyiaValue>();
+    let mut obj = ptr::null_mut::<BoyiaValue>();
     ptr = vm;
     loop {
-        match callbacks.iterate_micro_task(vm, ptr) {
-            Some((result, obj, next_ptr)) => {
-                if !result.is_null() {
-                    mark_value(result, callbacks, vm);
-                }
-                if !obj.is_null() {
-                    mark_value(obj, callbacks, vm);
-                }
-                ptr = next_ptr;
-            }
-            None => break,
+        ptr = iterate_micro_task(&mut obj, &mut result, vm, ptr);
+        if !result.is_null() {
+            mark_value(result, vm);
+        }
+        if !obj.is_null() {
+            mark_value(obj, vm);
+        }
+        if ptr.is_null() {
+            break;
         }
     }
 
-    let result = callbacks.get_native_result(vm);
-    if !result.is_null() {
-        mark_value(result, callbacks, vm);
+    let result_val = get_native_result(vm);
+    if !result_val.is_null() {
+        mark_value(result_val, vm);
     }
-    let helper = callbacks.get_native_helper_result(vm);
-    if !helper.is_null() {
-        mark_value(helper, callbacks, vm);
+    let helper_val = get_native_helper_result(vm);
+    if !helper_val.is_null() {
+        mark_value(helper_val, vm);
     }
 
-    clear_all_garbage(gc, vm, callbacks);
+    clear_all_garbage(gc, vm);
 }
 
 // --- Compaction (migrate) ---
 
-fn reset_migrate_address(
+unsafe fn reset_migrate_address(
     value: *mut BoyiaValue,
     _migrate_index: &LInt,
     to_pool: *mut LVoid,
     fun: *const BoyiaFunction,
     gc: *mut BoyiaGc,
-    callbacks: &dyn GcCallbacks,
     vm: *mut LVoid,
 ) {
     if value.is_null() || fun.is_null() || gc.is_null() {
         return;
     }
     let index = migrate_flag(fun);
-    let new_addr = unsafe { (*gc).mMigrates[index as usize] };
-    let vt = unsafe { (*value).mValueType };
+    let new_addr = (*gc).mMigrates[index as usize];
+    let vt = (*value).mValueType;
     if vt == ValueType::BY_CLASS {
-        unsafe {
-            (*value).mValue.mObj.mPtr = new_addr as LIntPtr;
-        }
-        let class_id = if !unsafe { (*fun).mParams }.is_null() {
-            unsafe { (*(*fun).mParams).mNameKey }
+        (*value).mValue.mObj.mPtr = new_addr as LIntPtr;
+        let class_id = if !(*fun).mParams.is_null() {
+            (*(*fun).mParams).mNameKey
         } else {
             0
         };
         if class_id == BuiltinId::kBoyiaString.as_key() && is_boyia_string(fun) {
-            let buffer = callbacks.get_string_buffer_from_body(fun as *mut BoyiaFunction);
+            let buffer = get_string_buffer_from_body(fun as *mut BoyiaFunction);
             if !buffer.is_null() {
-                let buf = unsafe { &mut *buffer };
-                let old_ptr = buf.mPtr as *mut LVoid;
-                let new_ptr = callbacks.migrate_memory(old_ptr, to_pool, vm);
+                let buf = &mut *buffer;
+                let from_pool = {
+                    let rt = get_runtime_from_vm(vm);
+                    if rt.is_null() {
+                        return;
+                    }
+                    (*rt).memory_pool()
+                };
+                let new_ptr = migrate_memory(buf.mPtr as *mut LVoid, from_pool, to_pool);
                 buf.mPtr = new_ptr as *mut boyia_vm::LInt8;
             }
         }
     } else {
-        unsafe {
-            (*value).mValue.mObj.mSuper = new_addr as LIntPtr;
-        }
+        (*value).mValue.mObj.mSuper = new_addr as LIntPtr;
     }
 }
 
-fn migrate_object(
+unsafe fn migrate_object(
     value: *mut BoyiaValue,
     migrate_index: &mut LInt,
     to_pool: *mut LVoid,
     gc: *mut BoyiaGc,
-    callbacks: &dyn GcCallbacks,
     vm: *mut LVoid,
 ) {
-    let vt = unsafe { (*value).mValueType };
+    let vt = (*value).mValueType;
     let fun_ptr = if vt == ValueType::BY_CLASS {
-        (unsafe { (*value).mValue.mObj.mPtr }) as *mut BoyiaFunction
+        (*value).mValue.mObj.mPtr as *mut BoyiaFunction
     } else {
-        (unsafe { (*value).mValue.mObj.mSuper }) as *mut BoyiaFunction
+        (*value).mValue.mObj.mSuper as *mut BoyiaFunction
     };
     if fun_ptr.is_null() {
         return;
     }
     if migrate_flag(fun_ptr) == 0 {
-        let new_addr = callbacks.migrate_memory(fun_ptr as *mut LVoid, to_pool, vm);
-        unsafe {
-            (*gc).mMigrates[*migrate_index as usize] = new_addr;
-        }
+        let rt = get_runtime_from_vm(vm);
+        let from_pool = if rt.is_null() {
+            ptr::null_mut()
+        } else {
+            (*rt).memory_pool()
+        };
+        let new_addr = migrate_memory(fun_ptr as *mut LVoid, from_pool, to_pool);
+        (*gc).mMigrates[*migrate_index as usize] = new_addr;
         set_migrate_flag(fun_ptr);
         *migrate_index += 1;
     }
-    reset_migrate_address(value, migrate_index, to_pool, fun_ptr, gc, callbacks, vm);
+    reset_migrate_address(value, migrate_index, to_pool, fun_ptr, gc, vm);
 }
 
-fn migrate_value(
+unsafe fn migrate_value(
     value: *mut BoyiaValue,
     migrate_index: &mut LInt,
     to_pool: *mut LVoid,
     gc: *mut BoyiaGc,
-    callbacks: &dyn GcCallbacks,
     vm: *mut LVoid,
 ) {
     if value.is_null() {
         return;
     }
-    let vt = unsafe { (*value).mValueType };
+    let vt = (*value).mValueType;
     let fun_ptr = if vt == ValueType::BY_CLASS {
-        (unsafe { (*value).mValue.mObj.mPtr }) as *mut BoyiaFunction
+        (*value).mValue.mObj.mPtr as *mut BoyiaFunction
     } else if vt == ValueType::BY_PROP_FUNC {
-        (unsafe { (*value).mValue.mObj.mSuper }) as *mut BoyiaFunction
+        (*value).mValue.mObj.mSuper as *mut BoyiaFunction
     } else {
         ptr::null_mut()
     };
     if !fun_ptr.is_null() && migrate_flag(fun_ptr) == 0 {
         let fun = fun_ptr as *const BoyiaFunction;
-        let size = unsafe { (*fun).mParamSize };
-        let params = unsafe { (*fun).mParams };
+        let size = (*fun).mParamSize;
+        let params = (*fun).mParams;
         for i in 0..size {
             if !params.is_null() {
-                migrate_value(
-                    unsafe { params.add(i as usize) },
-                    migrate_index,
-                    to_pool,
-                    gc,
-                    callbacks,
-                    vm,
-                );
+                migrate_value(params.add(i as usize), migrate_index, to_pool, gc, vm);
             }
         }
     }
-    migrate_object(value, migrate_index, to_pool, gc, callbacks, vm);
+    migrate_object(value, migrate_index, to_pool, gc, vm);
 }
 
-fn migrate_value_table(
+unsafe fn migrate_value_table(
     table: *mut BoyiaValue,
     size: LInt,
     migrate_index: &mut LInt,
     to_pool: *mut LVoid,
     gc: *mut BoyiaGc,
-    callbacks: &dyn GcCallbacks,
     vm: *mut LVoid,
 ) {
     if table.is_null() || size <= 0 {
         return;
     }
     for i in 0..(size as usize) {
-        migrate_value(
-            unsafe { table.add(i) },
-            migrate_index,
-            to_pool,
-            gc,
-            callbacks,
-            vm,
-        );
+        migrate_value(table.add(i), migrate_index, to_pool, gc, vm);
     }
 }
 
@@ -597,37 +571,67 @@ fn reset_gc_ref(gc: *mut BoyiaGc) {
     }
 }
 
-/// CompactMemory: migrate live objects to a new pool and switch. Call when allocation fails after a collect.
-pub fn compact_memory<C: GcCallbacks>(gc: *mut BoyiaGc, callbacks: &C) {
+/// CompactMemory: migrate live objects to a new pool and switch. Match CompactMemory in BoyiaGC.cpp.
+pub unsafe fn compact_memory(gc: *mut BoyiaGc) {
     if gc.is_null() {
         return;
     }
-    let vm = unsafe { (*gc).mBoyiaVM };
-    let mut migrate_index: LInt = 0;
-    unsafe {
-        ptr::write_bytes((*gc).mMigrates.as_mut_ptr(), 0, MIGRATE_SIZE);
+    let vm = (*gc).mBoyiaVM;
+    let rt = get_runtime_from_vm(vm);
+    if rt.is_null() {
+        return;
     }
-    let to_pool = callbacks.create_runtime_to_memory(vm);
+    let mut migrate_index: LInt = 0;
+    ptr::write_bytes((*gc).mMigrates.as_mut_ptr(), 0, MIGRATE_SIZE * std::mem::size_of::<*mut LVoid>());
+    let to_pool = (*rt).create_runtime_to_memory(vm);
     if to_pool.is_null() {
         return;
     }
-    let (table_addr, size) = callbacks.get_global_table(vm);
-    migrate_value_table(table_addr, size, &mut migrate_index, to_pool, gc, callbacks, vm);
+    let mut table_addr: LIntPtr = 0;
+    let mut size: LInt = 0;
+    get_global_table(&mut table_addr, &mut size, vm);
+    migrate_value_table(
+        table_addr as *mut BoyiaValue,
+        size,
+        &mut migrate_index,
+        to_pool,
+        gc,
+        vm,
+    );
+    let mut stack_addr: LIntPtr = 0;
+    let mut op_stack_addr: LIntPtr = 0;
+    let mut op_size: LInt = 0;
     let mut ptr = vm;
     loop {
-        match callbacks.get_local_stack(vm, ptr) {
-            Some((stack_addr, size, op_stack_addr, op_size, next_ptr)) => {
-                migrate_value_table(
-                    stack_addr, size, &mut migrate_index, to_pool, gc, callbacks, vm,
-                );
-                migrate_value_table(
-                    op_stack_addr, op_size, &mut migrate_index, to_pool, gc, callbacks, vm,
-                );
-                ptr = next_ptr;
-            }
-            None => break,
+        let next = get_local_stack(
+            &mut stack_addr,
+            &mut size,
+            &mut op_stack_addr,
+            &mut op_size,
+            vm,
+            ptr,
+        );
+        migrate_value_table(
+            stack_addr as *mut BoyiaValue,
+            size,
+            &mut migrate_index,
+            to_pool,
+            gc,
+            vm,
+        );
+        migrate_value_table(
+            op_stack_addr as *mut BoyiaValue,
+            op_size,
+            &mut migrate_index,
+            to_pool,
+            gc,
+            vm,
+        );
+        if next.is_null() {
+            break;
         }
+        ptr = next;
     }
-    callbacks.update_runtime_memory(to_pool, vm);
+    (*rt).update_runtime_memory(to_pool, vm);
     reset_gc_ref(gc);
 }

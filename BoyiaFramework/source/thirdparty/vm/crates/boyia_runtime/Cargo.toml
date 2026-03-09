@@ -7,4 +7,5 @@ description = "Boyia runtime: VM wrapper, native function table, init and execut
 [dependencies]
 boyia_vm = { path = "../boyia_vm" }
 boyia_builtins = { path = "../boyia_builtins" }
+boyia_gc = { path = "../boyia_gc" }
 boyia_lib = { path = "../boyia_lib" }

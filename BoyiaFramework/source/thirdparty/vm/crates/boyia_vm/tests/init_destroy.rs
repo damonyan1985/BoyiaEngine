@@ -22,6 +22,20 @@ impl Runtime for TestRuntime {
         ptr::null_mut()
     }
     fn delete_data(&self, _data: *mut std::ffi::c_void) {}
+    fn memory_pool(&self) -> *mut std::ffi::c_void {
+        ptr::null_mut()
+    }
+    fn create_runtime_to_memory(&self, _vm: *mut std::ffi::c_void) -> *mut std::ffi::c_void {
+        ptr::null_mut()
+    }
+    fn update_runtime_memory(&mut self, _to_pool: *mut std::ffi::c_void, _vm: *mut std::ffi::c_void) {}
+    fn gc_append_ref(&self, _address: *mut std::ffi::c_void, _type: u8) {}
+    fn gc_ptr(&self) -> *mut std::ffi::c_void {
+        ptr::null_mut()
+    }
+    fn vm_ptr(&self) -> *mut std::ffi::c_void {
+        ptr::null_mut()
+    }
 }
 
 #[test]

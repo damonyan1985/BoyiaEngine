@@ -55,6 +55,23 @@ pub trait Runtime {
 
     /// Free a block previously returned by [Runtime::new_data]. Implemented by [BoyiaRuntime]; no-op for other runtimes.
     fn delete_data(&self, data: *mut LVoid);
+
+    /// Current memory pool (for GC migrate). Same as BoyiaRuntime::m_memoryPool in C++.
+    fn memory_pool(&self) -> *mut LVoid;
+
+    /// Create a new pool for compaction (CreateRuntimeToMemory). Returns to_pool.
+    fn create_runtime_to_memory(&self, _vm: *mut LVoid) -> *mut LVoid;
+
+    /// Switch runtime to use to_pool after compaction (UpdateRuntimeMemory / changeMemoryPool).
+    fn update_runtime_memory(&mut self, _to_pool: *mut LVoid, _vm: *mut LVoid);
+
+    /// Register a heap object with the GC (GCAppendRef). GC and VM are obtained from [Runtime::gc_ptr] / [Runtime::vm_ptr]. Implemented by [BoyiaRuntime]; no-op for other runtimes.
+    fn gc_append_ref(&self, _address: *mut LVoid, _type_: LUint8);
+
+    /// GC state pointer (for [boyia_gc::gc_append_ref]).
+    fn gc_ptr(&self) -> *mut LVoid;
+    /// VM pointer (for GC / runtime).
+    fn vm_ptr(&self) -> *mut LVoid;
 }
 
 // ---------------------------------------------------------------------------
