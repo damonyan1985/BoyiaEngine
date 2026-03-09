@@ -255,7 +255,12 @@ impl Runtime for BoyiaRuntime {
     }
 
     fn new_data(&self, size: LInt) -> *mut LVoid {
-        unsafe { new_data(size, self.memory_pool) }
+        unsafe {
+            if !self.gc.is_null() {
+                boyia_gc::gc_collect_garbage(self.gc, self.vm);
+            }
+            new_data(size, self.memory_pool)
+        }
     }
 
     fn delete_data(&self, data: *mut LVoid) {

@@ -154,31 +154,6 @@ pub(crate) unsafe fn push_scene_null(vm: *mut BoyiaVM) {
     (*e_state).mFrameIndex += 1;
 }
 
-/// Run callback after args copied to current state's locals. Used by native_call_impl. Dispatches BY_NAV_PROP to native or sets context and runs script.
-pub(crate) unsafe fn run_callback_after_args(vm: *mut BoyiaVM, obj: *mut BoyiaValue) -> LInt {
-    let e_state = (*vm).mEState;
-    if e_state.is_null() || (*e_state).mFrameIndex <= 0 {
-        return OpHandleResult::kOpResultEnd as i32;
-    }
-    let start = (*e_state).mExecStack.as_ptr().add((*e_state).mFrameIndex as usize - 1).read().mLValSize;
-    let value = (*e_state).mLocals.as_mut_ptr().add(start as usize);
-    let func = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
-    value_copy(&mut (*e_state).mFun, value);
-    let value_type = (*value).mValueType;
-    if value_type == ValueType::BY_NAV_PROP {
-        local_push(obj, vm as *mut LVoid);
-        let nav_fun = std::mem::transmute::<_, crate::types::NativePtr>((*func).mFuncBody);
-        let r = nav_fun(vm as *mut LVoid);
-        return r;
-    }
-    assign_state_class(e_state, obj);
-    let cmds = (*func).mFuncBody as *const CommandTable;
-    (*e_state).mStackFrame.mContext = cmds as *mut CommandTable;
-    (*e_state).mStackFrame.mPC = (*cmds).mBegin;
-    exec_instruction(vm);
-    OpHandleResult::kOpResultSuccess as i32
-}
-
 /// When PC is null, pop frame or switch back to mLast (MicroTask/async). Match ExecPopFunction in BoyiaCore.cpp.
 unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
     if vm.is_null() || (*vm).mEState.is_null() {
@@ -489,7 +464,7 @@ unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
     OpHandleResult::kOpResultEnd
 }
 
-unsafe fn assign_state_class(state: *mut ExecState, value: *const BoyiaValue) {
+pub(crate) unsafe fn assign_state_class(state: *mut ExecState, value: *const BoyiaValue) {
     if state.is_null() {
         return;
     }

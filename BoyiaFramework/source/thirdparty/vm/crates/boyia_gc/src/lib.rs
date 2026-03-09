@@ -196,7 +196,7 @@ pub fn gc_append_ref(address: *mut LVoid, type_: ValueType, runtime: &dyn Runtim
 
 // --- Mark / sweep (match BoyiaGC.cpp: MarkValue, MarkObjectProps, etc.) ---
 
-unsafe fn mark_value(value: *mut BoyiaValue, _vm: *mut LVoid) {
+unsafe fn mark_value(value: *mut BoyiaValue) {
     if value.is_null() {
         return;
     }
@@ -209,10 +209,10 @@ unsafe fn mark_value(value: *mut BoyiaValue, _vm: *mut LVoid) {
     if vt != ValueType::BY_CLASS && vt != ValueType::BY_PROP_FUNC {
         return;
     }
-    mark_object_props(value, _vm);
+    mark_object_props(value);
 }
 
-unsafe fn mark_object_props(value: *const BoyiaValue, vm: *mut LVoid) {
+unsafe fn mark_object_props(value: *const BoyiaValue) {
     let fun_ptr = if (*value).mValueType == ValueType::BY_CLASS {
         (*value).mValue.mObj.mPtr as *mut BoyiaFunction
     } else {
@@ -227,18 +227,18 @@ unsafe fn mark_object_props(value: *const BoyiaValue, vm: *mut LVoid) {
     let params = (*fun).mParams;
     for i in 0..size {
         if !params.is_null() {
-            mark_value(params.add(i as usize), vm);
+            mark_value(params.add(i as usize));
         }
     }
     (*fun_ptr).mParamCount |= K_BOYIA_GC_BLACK << 16;
 }
 
-unsafe fn mark_value_table(table: *mut BoyiaValue, size: LInt, vm: *mut LVoid) {
+unsafe fn mark_value_table(table: *mut BoyiaValue, size: LInt) {
     if table.is_null() || size <= 0 {
         return;
     }
     for i in 0..(size as usize) {
-        mark_value(table.add(i), vm);
+        mark_value(table.add(i));
     }
 }
 
@@ -380,7 +380,7 @@ pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     let mut table_addr: LIntPtr = 0;
     let mut size: LInt = 0;
     get_global_table(&mut table_addr, &mut size, vm);
-    mark_value_table(table_addr as *mut BoyiaValue, size, vm);
+    mark_value_table(table_addr as *mut BoyiaValue, size);
 
     let mut stack_addr: LIntPtr = 0;
     let mut op_stack_addr: LIntPtr = 0;
@@ -395,8 +395,8 @@ pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
             vm,
             ptr,
         );
-        mark_value_table(stack_addr as *mut BoyiaValue, size, vm);
-        mark_value_table(op_stack_addr as *mut BoyiaValue, op_size, vm);
+        mark_value_table(stack_addr as *mut BoyiaValue, size);
+        mark_value_table(op_stack_addr as *mut BoyiaValue, op_size);
         if next.is_null() {
             break;
         }
@@ -409,10 +409,10 @@ pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     loop {
         ptr = iterate_micro_task(&mut obj, &mut result, vm, ptr);
         if !result.is_null() {
-            mark_value(result, vm);
+            mark_value(result);
         }
         if !obj.is_null() {
-            mark_value(obj, vm);
+            mark_value(obj);
         }
         if ptr.is_null() {
             break;
@@ -421,11 +421,11 @@ pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
 
     let result_val = get_native_result(vm);
     if !result_val.is_null() {
-        mark_value(result_val, vm);
+        mark_value(result_val);
     }
     let helper_val = get_native_helper_result(vm);
     if !helper_val.is_null() {
-        mark_value(helper_val, vm);
+        mark_value(helper_val);
     }
 
     clear_all_garbage(gc, vm);

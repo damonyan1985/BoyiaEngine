@@ -707,6 +707,12 @@ pub unsafe fn create_object(vm: *mut LVoid) -> LInt {
         "[create_object] -> kOpResultSuccess (instance ptr={:?}, class key={})",
         new_func, class_name_key
     );
+
+    let rt = get_runtime_from_vm(vm as *mut LVoid);
+    if rt.is_null() {
+        return OpHandleResult::kOpResultEnd as i32;
+    }
+    (*rt).gc_append_ref(new_func as *mut LVoid, ValueType::BY_CLASS);
     OpHandleResult::kOpResultSuccess as i32
 }
 
@@ -801,7 +807,7 @@ pub(crate) unsafe fn create_exec_state(vm: *mut BoyiaVM) -> *mut ExecState {
     state
 }
 
-/// Native call impl: create ExecState, switch, push scene, copy args, run function (native or script), destroy state, switch back. Match NativeCallImpl in BoyiaCore.cpp.
+/// Native call impl. Strict port of NativeCallImpl in BoyiaCore.cpp.
 pub unsafe fn native_call_impl(
     args: *mut BoyiaValue,
     argc: LInt,
@@ -813,6 +819,9 @@ pub unsafe fn native_call_impl(
     }
     let vm_ptr = vm as *mut BoyiaVM;
     let current = (*vm_ptr).mEState;
+    // 第一个参数为调用该函数的函数指针
+    let value = args.add(0);
+    eprintln!("[native_call_impl] HandlePushParams functionName={}", (*value).mValueType as u8);
     let state = create_exec_state(vm_ptr);
     if state.is_null() {
         return OpHandleResult::kOpResultEnd as i32;
@@ -820,17 +829,28 @@ pub unsafe fn native_call_impl(
     switch_exec_state(state, vm_ptr);
     crate::execute::push_scene_null(vm_ptr);
     let start = (*state).mExecStack.as_ptr().add((*state).mFrameIndex as usize - 1).read().mLValSize;
-    for i in 0..argc {
+    for idx in 0..argc {
         value_copy(
-            (*state).mLocals.as_mut_ptr().add((start + i) as usize),
-            args.add(i as usize),
+            (*state).mLocals.as_mut_ptr().add((start + idx) as usize),
+            args.add(idx as usize),
         );
     }
     (*state).mStackFrame.mLValSize = argc;
-    let result = crate::execute::run_callback_after_args(vm_ptr, obj);
+    let func = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
+    if (*value).mValueType == ValueType::BY_NAV_PROP {
+        local_push(obj, vm);
+        let nav_fun = std::mem::transmute::<_, NativePtr>((*func).mFuncBody);
+        nav_fun(vm);
+    } else {
+        crate::execute::assign_state_class((*vm_ptr).mEState, obj);
+        let cmds = (*func).mFuncBody as *const CommandTable;
+        (*(*vm_ptr).mEState).mStackFrame.mContext = cmds as *mut CommandTable;
+        (*(*vm_ptr).mEState).mStackFrame.mPC = (*cmds).mBegin;
+        crate::execute::exec_instruction(vm_ptr);
+    }
     destroy_exec_state(state, vm_ptr);
     switch_exec_state(current, vm_ptr);
-    result
+    OpHandleResult::kOpResultSuccess as i32
 }
 
 /// Get runtime as `*mut dyn Runtime` from VM ([BoyiaVM::mCreator]).
