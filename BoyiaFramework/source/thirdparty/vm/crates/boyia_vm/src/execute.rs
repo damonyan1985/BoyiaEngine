@@ -1093,12 +1093,10 @@ unsafe fn handle_set_map_value(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleCreateArray per BoyiaCore.cpp: CreateArrayObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = kBoyiaNull.
 unsafe fn handle_create_array(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let array_key = (*inst).mOPRight.mValue as LUintPtr;
-    if array_key == 0 {
-        return OpHandleResult::kOpResultEnd;
-    }
-    let fun = copy_object(array_key, 32, vm as *mut LVoid) as *mut BoyiaFunction;
+    // CreateArrayObject(vm) = CopyObject(kBoyiaArray, 32, vm) per BoyiaValue.cpp
+    let fun = copy_object(BuiltinId::kBoyiaArray.as_key(), 32, vm as *mut LVoid) as *mut BoyiaFunction;
     if fun.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -1109,7 +1107,7 @@ unsafe fn handle_create_array(inst: *const Instruction, vm: *mut BoyiaVM) -> OpH
     };
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = fun as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0;
+    (*value).mValue.mObj.mSuper = 0; // kBoyiaNull
     OpHandleResult::kOpResultSuccess
 }
 

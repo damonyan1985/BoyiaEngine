@@ -872,7 +872,6 @@ unsafe fn eval_array(cs: *mut CompileState) {
     let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdCreateArray);
     next_token(cs);
     if (*cs).mToken.mTokenValue == TokenValue::ARRAY_END {
-        next_token(cs);
         return;
     }
     putback(cs);
@@ -881,7 +880,6 @@ unsafe fn eval_array(cs: *mut CompileState) {
         eval_expression(cs);
         let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
         let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::reg1(), CmdType::kCmdAddArrayItem);
-        next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
         }

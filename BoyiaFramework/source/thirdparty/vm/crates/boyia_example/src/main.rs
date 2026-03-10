@@ -33,6 +33,9 @@ printlog(p, "world");
 
 var a = new(MyAdd);
 printlog(p, "result:" + a.add(100,202));
+
+var arr1 = ["789", "100"];
+printlog(p, arr1.get(0));
 BY_Log(123);
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
