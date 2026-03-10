@@ -432,9 +432,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.h">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\UrlParser.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
@@ -798,9 +795,6 @@
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MediaPlayerWin.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PlatformBridgeWin.cpp">

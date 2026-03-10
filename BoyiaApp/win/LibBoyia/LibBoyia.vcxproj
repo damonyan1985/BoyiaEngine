@@ -191,7 +191,6 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\ImageGDIPlus.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.h" />
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\ImageD2D.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\RenderEngineDirect2D.h" />
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\RenderEngineWin.h" />
@@ -323,7 +322,6 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LoaderWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\LockWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\MediaPlayerWin.cpp" />
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PaintCommandAllocator.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\PlatformBridgeWin.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\FontD2D.cpp" />
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\ImageD2D.cpp" />
