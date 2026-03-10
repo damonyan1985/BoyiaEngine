@@ -10,11 +10,7 @@
 
 namespace util {
 
-struct LineTextD2D {
-    OwnerPtr<String> text;
-    LInt width;
-};
-
+struct LineTextD2D;
 class FontD2D : public LFont {
 public:
     FontD2D(const LFont& font);

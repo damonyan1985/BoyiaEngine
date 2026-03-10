@@ -7,18 +7,7 @@
 
 namespace util {
 
-class LineText {
-public:
-    LineText(OwnerPtr<String> ptr, LInt tw)
-        : width(tw)
-        , text(ptr)
-    {
-    }
-
-    OwnerPtr<String> text;
-    LInt width;
-};
-
+class LineText;
 class FontWin : public LFont {
 public:
     FontWin(const LFont& font);

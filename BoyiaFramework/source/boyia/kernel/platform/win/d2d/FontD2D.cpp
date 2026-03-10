@@ -25,6 +25,11 @@ static DWRITE_FONT_STYLE toStyle(LFont::FontStyle style)
     return (style == LFont::FONT_STYLE_ITALIC) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
 }
 
+struct LineTextD2D {
+    OwnerPtr<String> text;
+    LInt width;
+};
+
 FontD2D::FontD2D(const LFont& font)
     : LFont(font)
     , m_height(0)

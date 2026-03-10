@@ -9,6 +9,18 @@
 using namespace Gdiplus;
 
 namespace util {
+class LineText {
+public:
+    LineText(OwnerPtr<String> ptr, LInt tw)
+        : width(tw)
+        , text(ptr)
+    {
+    }
+
+    OwnerPtr<String> text;
+    LInt width;
+};
+
 
 FontWin::FontWin(const LFont& font)
     : LFont(font)
