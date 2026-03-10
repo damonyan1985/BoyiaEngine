@@ -5,7 +5,7 @@
 #![allow(non_snake_case)]
 
 use crate::id_creator::IdCreator;
-use boyia_builtins::{builtin_map_class, builtin_micro_task_class, builtin_string_class};
+use boyia_builtins::{builtin_array_class, builtin_map_class, builtin_micro_task_class, builtin_string_class};
 use boyia_vm::{
     cache_vm_code, compile_code, delete_data, consume_micro_task, execute_global_code,
     free_memory_pool, init_memory_pool, init_vm, new_data,
@@ -85,6 +85,8 @@ impl BoyiaRuntime {
         builtin_map_class(self.vm, &mut gen_id);
         eprintln!("[init] 6 builtin_micro_task_class");
         builtin_micro_task_class(self.vm, &mut gen_id);
+        eprintln!("[init] 7 builtin_array_class");
+        builtin_array_class(self.vm, &mut gen_id);
 
         eprintln!("[init] 8 done");
     }

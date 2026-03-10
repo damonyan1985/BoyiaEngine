@@ -4,13 +4,13 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+mod array;
 mod map;
 mod microtask;
 mod string;
 
 use boyia_vm::{
-    alloc_builtin_function, copy_object, BoyiaFunction, NativePtr, ValueType, LIntPtr, LUintPtr,
-    LVoid,
+    alloc_builtin_function, BoyiaFunction, NativePtr, ValueType, LIntPtr, LUintPtr, LVoid,
 };
 
 pub(crate) const K_BOYIA_NULL: LIntPtr = 0;
@@ -81,10 +81,6 @@ pub use map::{builtin_map_class, create_map_object};
 pub use microtask::{builtin_micro_task_class, create_micro_task_object};
 
 // ---------------------------------------------------------------------------
-// Array builtin
+// Array builtin (array.rs)
 // ---------------------------------------------------------------------------
-
-/// Create an Array instance. Match CreateArrayObject.
-pub unsafe fn create_array_object(vm: *mut LVoid, array_class_key: LUintPtr) -> *mut LVoid {
-    copy_object(array_class_key, 32, vm)
-}
+pub use array::{builtin_array_class, create_array_object};
