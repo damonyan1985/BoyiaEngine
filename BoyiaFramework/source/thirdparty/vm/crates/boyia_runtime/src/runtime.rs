@@ -109,24 +109,12 @@ impl BoyiaRuntime {
     }
 
     fn init_native_function(&mut self) {
-        let keys: [LUintPtr; 8] = [
+        let keys: [LUintPtr; 2] = [
             self.id_creator.gen_ident_by_str("new"),
-            self.id_creator.gen_ident_by_str("BY_GetFromArray"),
-            self.id_creator.gen_ident_by_str("BY_AddInArray"),
-            self.id_creator.gen_ident_by_str("BY_GetArraySize"),
-            self.id_creator.gen_ident_by_str("BY_ClearArray"),
-            self.id_creator.gen_ident_by_str("BY_RemoveWidthIndex"),
-            self.id_creator.gen_ident_by_str("BY_RemoveFromArray"),
             self.id_creator.gen_ident_by_str("BY_Log"),
         ];
         self.append_native(keys[0], boyia_lib::create_object as NativePtr);
-        self.append_native(keys[1], boyia_lib::get_element_from_vector as NativePtr);
-        self.append_native(keys[2], boyia_lib::add_element_to_vector as NativePtr);
-        self.append_native(keys[3], boyia_lib::get_vector_size as NativePtr);
-        self.append_native(keys[4], boyia_lib::clear_vector as NativePtr);
-        self.append_native(keys[5], boyia_lib::remove_element_width_index as NativePtr);
-        self.append_native(keys[6], boyia_lib::remove_element_from_vector as NativePtr);
-        self.append_native(keys[7], boyia_lib::log_print as NativePtr);
+        self.append_native(keys[1], boyia_lib::log_print as NativePtr);
         self.append_native_sentinel();
     }
 
