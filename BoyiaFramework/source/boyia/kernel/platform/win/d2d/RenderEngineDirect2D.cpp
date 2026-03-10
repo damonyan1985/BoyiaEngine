@@ -381,13 +381,43 @@ LVoid RenderEngineDirect2D::renderRoundImage(RenderCommand* cmd, ID2D1RenderTarg
     rt->PopLayer();
 }
 
+static IWICImagingFactory* getWicFactory()
+{
+    static IWICImagingFactory* s_factory = NULL;
+    if (!s_factory) {
+        CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&s_factory));
+    }
+    return s_factory;
+}
+
 ID2D1Bitmap* RenderEngineDirect2D::createBitmapFromWicBitmap(ID2D1RenderTarget* rt, IWICBitmapSource* wicSource)
 {
     if (!rt || !wicSource) {
         return NULL;
     }
     ID2D1Bitmap* d2dBitmap = NULL;
-    HRESULT hr = rt->CreateBitmapFromWicBitmap(wicSource, NULL, &d2dBitmap);
+    IWICImagingFactory* wicFactory = getWicFactory();
+    if (!wicFactory) {
+        return NULL;
+    }
+    IWICFormatConverter* converter = NULL;
+    HRESULT hr = wicFactory->CreateFormatConverter(&converter);
+    if (FAILED(hr) || !converter) {
+        return NULL;
+    }
+    hr = converter->Initialize(
+        wicSource,
+        GUID_WICPixelFormat32bppPBGRA,
+        WICBitmapDitherTypeNone,
+        NULL,
+        0.0f,
+        WICBitmapPaletteTypeMedianCut);
+    if (FAILED(hr)) {
+        converter->Release();
+        return NULL;
+    }
+    hr = rt->CreateBitmapFromWicBitmap(converter, NULL, &d2dBitmap);
+    converter->Release();
     if (FAILED(hr) || !d2dBitmap) {
         return NULL;
     }

@@ -8,9 +8,11 @@
 #include "IRenderEngine.h"
 #include "RenderEngineWin.h"
 #include "RenderEngineDirect2D.h"
+#include "FontD2D.h"
+#include "FontWin.h"
 
 namespace util {
-LBool ImageWin::s_isHardwareAccelerated = LFalse;
+LBool ImageWin::s_isHardwareAccelerated = LTrue;
 
 ImageWin::ImageWin()
     : m_image(kBoyiaNull)
@@ -90,6 +92,15 @@ LImage* LImage::create(LVoid* item)
     return image;
 }
 
+LFont* LFont::create(const LFont& font)
+{
+    if (util::ImageWin::isHardwareAccelerated()) {
+        return new FontD2D(font);
+    }
+
+    return new FontWin(font);
+}
+
 } // namespace util
 
 namespace yanbo {
@@ -97,9 +108,9 @@ IRenderEngine* IRenderEngine::create()
 {
     if (util::ImageWin::isHardwareAccelerated()) {
         return new RenderEngineDirect2D();
-    } else {
-        return new RenderEngineWin();
     }
+
+    return new RenderEngineWin();
 }
 
 }

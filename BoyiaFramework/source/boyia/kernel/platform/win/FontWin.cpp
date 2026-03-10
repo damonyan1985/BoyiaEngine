@@ -1,4 +1,4 @@
-#include "LGdi.h"
+#include "FontWin.h"
 #include "AppManager.h"
 #include "CharConvertor.h"
 #include "PixelRatio.h"
@@ -10,35 +10,6 @@
 using namespace Gdiplus;
 
 namespace util {
-class LineText {
-public:
-    LineText(OwnerPtr<String> ptr, LInt tw)
-        : width(tw)
-        , text(ptr)
-    {
-    }
-
-    OwnerPtr<String> text;
-    LInt width;
-};
-
-class FontWin : public LFont {
-public:
-    FontWin(const LFont& font);
-    virtual ~FontWin();
-
-    virtual LInt getFontHeight() const;
-    virtual LInt getFontWidth(LUint8 ch) const;
-    virtual LInt getTextWidth(const String& text) const;
-    virtual LInt calcTextLine(const String& text, LInt maxWidth) const;
-    virtual LInt getLineSize() const;
-    virtual LInt getLineWidth(LInt index) const;
-    virtual LVoid getLineText(LInt index, String& text);
-
-private:
-    mutable KVector<OwnerPtr<LineText>> m_lines;
-    mutable LInt m_height;
-};
 
 FontWin::FontWin(const LFont& font)
     : LFont(font)
@@ -74,7 +45,6 @@ LInt FontWin::getLineWidth(LInt index) const
 {
     return m_lines.elementAt(index)->width;
 }
-
 LVoid FontWin::getLineText(LInt index, String& text)
 {
     text = *m_lines.elementAt(index)->text.get();
@@ -149,8 +119,4 @@ LInt FontWin::calcTextLine(const String& text, LInt maxWidth) const
     return yanbo::PixelRatio::viewX(maxLineWidth);
 }
 
-LFont* LFont::create(const LFont& font)
-{
-    return new FontWin(font);
-}
 }

@@ -510,6 +510,12 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\RenderEngineDirect2D.h">
       <Filter>boyia\kernel\platform\win\d2d</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\FontD2D.h">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.h">
+      <Filter>boyia\kernel\platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -862,6 +868,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\PlatformBridge.cpp">
       <Filter>boyia\kernel\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\FontD2D.cpp">
+      <Filter>boyia\kernel\platform\win\d2d</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\ImageD2D.cpp">
       <Filter>boyia\kernel\platform\win\d2d</Filter>
