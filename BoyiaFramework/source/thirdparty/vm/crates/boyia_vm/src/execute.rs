@@ -1032,12 +1032,10 @@ unsafe fn handle_create_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleCreateMap per BoyiaCore.cpp: CreatMapObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = kBoyiaNull.
 unsafe fn handle_create_map(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let map_key = (*inst).mOPRight.mValue as LUintPtr;
-    if map_key == 0 {
-        return OpHandleResult::kOpResultEnd;
-    }
-    let fun = copy_object(map_key, 32, vm as *mut LVoid) as *mut BoyiaFunction;
+    // CreatMapObject(vm) = CopyObject(kBoyiaMap, 32, vm) per BoyiaValue.cpp
+    let fun = copy_object(BuiltinId::kBoyiaMap.as_key(), 32, vm as *mut LVoid) as *mut BoyiaFunction;
     if fun.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
@@ -1048,10 +1046,11 @@ unsafe fn handle_create_map(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     };
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = fun as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0;
+    (*value).mValue.mObj.mSuper = 0; // kBoyiaNull
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleSetMapKey per BoyiaCore.cpp: value = mOPLeft ? mReg0 : mReg1; function = value->mObj.mPtr; param = &function->mParams[function->mParamSize++]; param->mNameKey = mOPRight.mValue.
 unsafe fn handle_set_map_key(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let value = if (*inst).mOPLeft.mType == OpType::OP_REG0 {
         &(*(*vm).mCpu).mReg0
@@ -1059,19 +1058,13 @@ unsafe fn handle_set_map_key(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
         &(*(*vm).mCpu).mReg1
     };
     let function = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
-    if function.is_null() {
-        return OpHandleResult::kOpResultEnd;
-    }
-    let idx = (*function).mParamSize as usize;
-    (*function).mParams.add(idx).write(BoyiaValue {
-        mNameKey: (*inst).mOPRight.mValue as LUintPtr,
-        mValueType: ValueType::BY_ARG,
-        mValue: RealValue { mIntVal: 0 },
-    });
+    let param = (*function).mParams.add((*function).mParamSize as usize);
     (*function).mParamSize += 1;
+    (*param).mNameKey = (*inst).mOPRight.mValue as LUintPtr;
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleSetMapValue per BoyiaCore.cpp: obj = mOPRight ? mReg0 : mReg1; value = mOPLeft ? mReg0 : mReg1; param = function->mParams[mParamSize-1]; ValueCopyNoName(param, value); SetNativeResult(obj, vm).
 unsafe fn handle_set_map_value(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let obj = if (*inst).mOPRight.mType == OpType::OP_REG0 {
         &(*(*vm).mCpu).mReg0
@@ -1084,9 +1077,6 @@ unsafe fn handle_set_map_value(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
         &(*(*vm).mCpu).mReg1
     };
     let function = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
-    if function.is_null() || (*function).mParamSize <= 0 {
-        return OpHandleResult::kOpResultEnd;
-    }
     let param = (*function).mParams.add((*function).mParamSize as usize - 1);
     value_copy_no_name(param, value);
     set_native_result(obj as *const BoyiaValue as *mut LVoid, vm as *mut LVoid);

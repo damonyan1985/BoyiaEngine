@@ -36,6 +36,14 @@ printlog(p, "result:" + a.add(100,202));
 
 var arr1 = ["789", "100"];
 printlog(p, arr1.get(0));
+
+var body = {
+    "Content-Type" : "application/x-www-form-urlencoded",
+    "User-Token" : "1234567890",
+    body : "name=test&pwd=test",
+    items : ["123", "456"]
+};
+printlog(p, body.get("body"));
 BY_Log(123);
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }

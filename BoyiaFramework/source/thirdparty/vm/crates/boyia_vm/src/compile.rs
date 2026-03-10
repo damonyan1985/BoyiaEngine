@@ -16,11 +16,18 @@ const MAX_IDENT_LEN: usize = 256;
 #[derive(Clone, Copy)]
 enum SntxError {
     SemiExpected,
+    CreateMapError,
+    MapKeyValueError,
 }
 
-unsafe fn sntx_error_build(_err: SntxError, cs: *const CompileState) {
+unsafe fn sntx_error_build(err: SntxError, cs: *const CompileState) {
     let line = if cs.is_null() { 0 } else { (*cs).mLineNum };
-    eprintln!("syntax error (line {}): semicolon expected", line);
+    let msg = match err {
+        SntxError::SemiExpected => "semicolon expected",
+        SntxError::CreateMapError => "create map error: identifier or string expected",
+        SntxError::MapKeyValueError => "map key-value error: colon or assign expected",
+    };
+    eprintln!("syntax error (line {}): {}", line, msg);
 }
 
 fn hash_ident(s: &[u8]) -> LUintPtr {
@@ -271,6 +278,31 @@ unsafe fn gen_identifier(cs: *mut CompileState) -> LUintPtr {
         return hash_ident(token_name_slice(cs));
     }
     let slice = token_name_slice(cs);
+    let s = std::str::from_utf8(slice).unwrap_or("");
+    (*rt).gen_identifier(s)
+}
+
+/// GenIdentifier for object literal key: STRING_VALUE uses content length (mLen - 2), else full token. Match EvalObject keyStr in BoyiaCore.cpp.
+unsafe fn gen_identifier_object_key(cs: *mut CompileState) -> LUintPtr {
+    let name = &(*cs).mToken.mTokenName;
+    let slice = if (*cs).mToken.mTokenType == TokenType::STRING_VALUE {
+        let len = (name.mLen - 2).max(0) as usize;
+        if name.mPtr.is_null() || len == 0 {
+            &[]
+        } else {
+            std::slice::from_raw_parts(name.mPtr as *const u8, len)
+        }
+    } else {
+        token_name_slice(cs)
+    };
+    let vm = (*cs).mVm;
+    if vm.is_null() {
+        return hash_ident(slice);
+    }
+    let rt = get_runtime_from_vm(vm as *mut LVoid);
+    if rt.is_null() {
+        return hash_ident(slice);
+    }
     let s = std::str::from_utf8(slice).unwrap_or("");
     (*rt).gen_identifier(s)
 }
@@ -831,6 +863,7 @@ unsafe fn eval_logic(cs: *mut CompileState) {
     }
 }
 
+/// EvalObject per BoyiaCore.cpp: if not BLOCK_START then EvalLogic; else CreateMap, do { NextToken; if } return; if not id/string SntxError(CREATE_MAP_ERROR); SetMapKey; NextToken; if not :/= SntxError(MAP_KEY_VALUE_ERROR); Push; EvalExpression; Pop; SetMapValue; } while (COMMA); NextToken.
 unsafe fn eval_object(cs: *mut CompileState) {
     if (*cs).mToken.mTokenValue != TokenValue::BLOCK_START {
         eval_logic(cs);
@@ -840,28 +873,28 @@ unsafe fn eval_object(cs: *mut CompileState) {
     loop {
         next_token(cs);
         if (*cs).mToken.mTokenValue == TokenValue::BLOCK_END {
-            next_token(cs);
             return;
         }
         if (*cs).mToken.mTokenType != TokenType::IDENTIFIER && (*cs).mToken.mTokenType != TokenType::STRING_VALUE {
-            break;
+            sntx_error_build(SntxError::CreateMapError, cs);
+            return;
         }
-        let key = gen_identifier(cs);
+        let key = gen_identifier_object_key(cs);
         let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::const_number(key as LIntPtr), CmdType::kCmdSetMapKey);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COLON && (*cs).mToken.mTokenValue != TokenValue::ASSIGN {
-            break;
+            sntx_error_build(SntxError::MapKeyValueError, cs);
+            return;
         }
         let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
         eval_expression(cs);
         let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::none(), CmdType::kCmdPop);
         let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::reg1(), CmdType::kCmdSetMapValue);
-        next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
-            next_token(cs);
-            return;
+            break;
         }
     }
+    next_token(cs);
 }
 
 unsafe fn eval_array(cs: *mut CompileState) {
