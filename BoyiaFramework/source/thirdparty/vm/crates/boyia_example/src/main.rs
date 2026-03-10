@@ -23,12 +23,16 @@ fn main() {
     // Boyia class with a method that prints a string: Printer.say(msg) calls BY_Log(msg).
     // Create instance with new(Printer); call p.say("hello") to print (method dispatch runs during compile/execute).
     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } };
+class MyAdd { fun add(a, b) { return a+b; } }    
 var p = new(Printer);
 fun printlog(p, str) {
     p.say(str);
 }
 printlog(p, "hello");    
 printlog(p, "world");
+
+var a = new(MyAdd);
+printlog(p, "result:" + a.add(100,202));
 BY_Log(123);
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }

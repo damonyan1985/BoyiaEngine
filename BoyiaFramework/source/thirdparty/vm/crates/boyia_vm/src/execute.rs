@@ -7,8 +7,8 @@
 use crate::core::{
     alloc_micro_task, copy_object, create_const_string, create_fun_val, create_micro_task_object,
     destroy_exec_state, find_global, free_micro_task, get_boyia_class_id, init_function, local_push,
-    micro_task_class_key, set_int_result, set_native_result, switch_exec_state, value_copy,
-    value_copy_no_name,
+    micro_task_class_key, set_int_result, set_native_result, string_add, switch_exec_state,
+    value_copy, value_copy_no_name,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -343,6 +343,14 @@ unsafe fn handle_add(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResu
     }
     if (*left).mValueType == ValueType::BY_INT && (*right).mValueType == ValueType::BY_INT {
         (*right).mValue.mIntVal += (*left).mValue.mIntVal;
+        return OpHandleResult::kOpResultSuccess;
+    }
+    if (*left).mValueType != ValueType::BY_CLASS && (*right).mValueType != ValueType::BY_CLASS {
+        return OpHandleResult::kOpResultEnd;
+    }
+    let string_key = BuiltinId::kBoyiaString.as_key();
+    if get_boyia_class_id(left) == string_key || get_boyia_class_id(right) == string_key {
+        string_add(left, right, vm);
         return OpHandleResult::kOpResultSuccess;
     }
     OpHandleResult::kOpResultEnd

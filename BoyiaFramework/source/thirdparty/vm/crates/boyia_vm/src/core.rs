@@ -990,6 +990,76 @@ const K_NATIVE_STRING_BUFFER: LInt = 0x1;
 const K_CONST_STRING_BUFFER: LInt = 0x2;
 const K_STRING_BUFFER_SHIFT: LInt = 18;
 
+/// Max length for int-to-string buffer (decimal digits for LInt). Match MAX_INT_LEN in BoyiaValue.cpp.
+const MAX_INT_STR_LEN: LInt = 24;
+
+/// Fetch string from a value: BY_INT -> decimal string (allocated); BY_CLASS (string) -> GetStringBuffer. Match FetchString in BoyiaValue.cpp.
+pub(crate) unsafe fn fetch_string(str_out: *mut BoyiaStr, value: *const BoyiaValue, vm: *mut BoyiaVM) {
+    if str_out.is_null() || value.is_null() {
+        return;
+    }
+    if (*value).mValueType == ValueType::BY_INT {
+        let creator = (*vm).mCreator;
+        let buf = runtime_new_data_zeroed(creator, MAX_INT_STR_LEN) as *mut LInt8;
+        if buf.is_null() {
+            (*str_out).mPtr = ptr::null_mut();
+            (*str_out).mLen = 0;
+            return;
+        }
+        let s = format!("{}", (*value).mValue.mIntVal);
+        let bytes = s.as_bytes();
+        let len = bytes.len().min(MAX_INT_STR_LEN as usize);
+        for (i, &b) in bytes.iter().take(len).enumerate() {
+            *buf.add(i) = b as LInt8;
+        }
+        (*str_out).mPtr = buf;
+        (*str_out).mLen = len as LInt;
+    } else {
+        let buf = get_string_buffer(value);
+        if buf.is_null() {
+            (*str_out).mPtr = ptr::null_mut();
+            (*str_out).mLen = 0;
+            return;
+        }
+        (*str_out).mPtr = (*buf).mPtr;
+        (*str_out).mLen = (*buf).mLen;
+    }
+}
+
+/// String concatenation: left + right, result stored in right (R0). Match StringAdd in BoyiaValue.cpp.
+pub(crate) unsafe fn string_add(left: *const BoyiaValue, right: *mut BoyiaValue, vm: *mut BoyiaVM) {
+    if left.is_null() || right.is_null() || vm.is_null() {
+        return;
+    }
+    let mut left_str = BoyiaStr { mPtr: ptr::null_mut(), mLen: 0 };
+    let mut right_str = BoyiaStr { mPtr: ptr::null_mut(), mLen: 0 };
+    fetch_string(&mut left_str, left, vm);
+    fetch_string(&mut right_str, right, vm);
+    let len = left_str.mLen + right_str.mLen;
+    if len <= 0 {
+        return;
+    }
+    let creator = (*vm).mCreator;
+    let concat = runtime_new_data_zeroed(creator, len as LInt) as *mut LInt8;
+    if concat.is_null() {
+        return;
+    }
+    ptr::copy_nonoverlapping(left_str.mPtr, concat, left_str.mLen as usize);
+    ptr::copy_nonoverlapping(
+        right_str.mPtr,
+        concat.add(left_str.mLen as usize),
+        right_str.mLen as usize,
+    );
+    let obj_body = create_string_object(concat, len, vm as *mut LVoid);
+    if obj_body.is_null() {
+        return;
+    }
+    (*right).mValueType = ValueType::BY_CLASS;
+    (*right).mNameKey = BuiltinId::kBoyiaString.as_key();
+    (*right).mValue.mObj.mPtr = obj_body as LIntPtr;
+    (*right).mValue.mObj.mSuper = 0;
+}
+
 /// CreateStringObject(LInt8* buffer, LInt len, LVoid* vm) per BoyiaValue.cpp.
 /// CopyObject(kBoyiaString, 32, vm), set mParams[1].mStrVal, mParams[0].mIntVal = GenHashCode.
 pub unsafe fn create_string_object(buffer: *mut LInt8, len: LInt, vm: *mut LVoid) -> *mut BoyiaFunction {
