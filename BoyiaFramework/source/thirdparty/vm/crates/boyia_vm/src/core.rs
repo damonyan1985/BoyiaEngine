@@ -12,6 +12,19 @@ use std::alloc::{alloc, alloc_zeroed, dealloc, Layout};
 use std::mem;
 
 // ---------------------------------------------------------------------------
+// Function/array capacity (GET_FUNCTION_COUNT)
+// ---------------------------------------------------------------------------
+
+/// Capacity from function/array body (mParamCount & 0x0000FFFF). Match GET_FUNCTION_COUNT in C++.
+#[inline]
+pub unsafe fn get_function_count(fun: *const BoyiaFunction) -> LInt {
+    if fun.is_null() {
+        return 0;
+    }
+    (*fun).mParamCount & 0x0000_FFFF
+}
+
+// ---------------------------------------------------------------------------
 // Value copy
 // ---------------------------------------------------------------------------
 

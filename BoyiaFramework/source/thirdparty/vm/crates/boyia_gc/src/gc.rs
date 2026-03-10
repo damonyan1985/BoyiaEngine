@@ -10,8 +10,8 @@ use boyia_memory::{
 };
 use boyia_vm::{
     get_global_table, get_local_stack, get_native_helper_result, get_native_result,
-    get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, BoyiaFunction, BoyiaValue,
-    BuiltinId, Runtime, ValueType,
+    get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, get_function_count, BoyiaFunction, 
+    BoyiaValue, BuiltinId, Runtime, ValueType,
 };
 use std::ptr;
 
@@ -297,7 +297,7 @@ fn reset_boyia_object(fun: *mut BoyiaFunction) {
     }
     unsafe {
         let high = (*fun).mParamCount >> 18;
-        let low = (*fun).mParamCount & 0x0000_FFFF;
+        let low = get_function_count(fun);
         (*fun).mParamCount = (high << 18) | low;
     }
 }

@@ -61,6 +61,7 @@ pub use core::{
     native_call_by_index,
     get_runtime_from_vm,
     get_boyia_class_id,
+    get_function_count,
     gen_identifier_from_str,
     create_global_class,
     alloc_builtin_function,

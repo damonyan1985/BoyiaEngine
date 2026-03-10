@@ -7,17 +7,9 @@
 use crate::{gen_builtin_class_function, K_BOYIA_NULL};
 use boyia_vm::{
     copy_object, create_global_class, get_local_size, get_local_value, get_string_buffer,
-    set_int_result, set_native_result, value_copy, BoyiaFunction, BoyiaValue, NativePtr,
+    set_int_result, set_native_result, value_copy, get_function_count, BoyiaFunction, BoyiaValue, NativePtr,
     ValueType, LInt, LUintPtr, LVoid, OpHandleResult,
 };
-
-/// Capacity from array body (mParamCount & 0x0000FFFF). Match GET_FUNCTION_COUNT in C++.
-fn array_capacity(fun: *const BoyiaFunction) -> LInt {
-    if fun.is_null() {
-        return 0;
-    }
-    unsafe { (*fun).mParamCount & 0x0000_FFFF }
-}
 
 /// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
 unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool {
@@ -85,7 +77,7 @@ unsafe fn array_add_impl(vm: *mut LVoid) -> OpHandleResult {
     if fun.is_null() || (*fun).mParams.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
-    let cap = array_capacity(fun);
+    let cap = get_function_count(fun);
     if (*fun).mParamSize >= cap {
         return OpHandleResult::kOpResultEnd;
     }

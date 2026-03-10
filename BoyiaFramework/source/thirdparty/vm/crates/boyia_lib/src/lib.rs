@@ -6,16 +6,8 @@
 
 use boyia_vm::{
     get_local_value, get_string_buffer, get_boyia_class_id, set_int_result, set_native_result,
-    value_copy, BoyiaValue, BoyiaFunction, ValueType, LInt, LVoid, OpHandleResult,
+    value_copy, BoyiaValue, ValueType, LVoid, OpHandleResult,
 };
-
-/// Capacity mask for GET_FUNCTION_COUNT (C++ mParamCount & 0x0000FFFF)
-fn get_function_count(fun: *const BoyiaFunction) -> LInt {
-    if fun.is_null() {
-        return 0;
-    }
-    unsafe { (*fun).mParamCount & 0x0000_FFFF }
-}
 
 /// new: create object from local 0 (class). Match CreateObject in BoyiaCore.cpp.
 pub unsafe fn create_object(vm: *mut LVoid) -> OpHandleResult {
