@@ -1,7 +1,7 @@
 #ifndef ImageGDIPlus_h
 #define ImageGDIPlus_h
 
-#include "ImageWin.h"
+#include "../ImageWin.h"
 #include <GdiPlus.h>
 
 namespace util {

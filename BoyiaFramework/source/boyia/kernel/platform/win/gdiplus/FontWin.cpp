@@ -1,5 +1,4 @@
 #include "FontWin.h"
-#include "AppManager.h"
 #include "CharConvertor.h"
 #include "PixelRatio.h"
 #include "RenderThread.h"

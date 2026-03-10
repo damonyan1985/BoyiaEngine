@@ -9,7 +9,7 @@
 #include "BoyiaCore.h"
 #include "FileUtil.h"
 #include "RenderThread.h"
-#include "RenderEngineWin.h"
+#include "gdiplus/RenderEngineWin.h"
 #include <stdio.h>
 #include <mfapi.h>
 //#include <WinSock2.h>

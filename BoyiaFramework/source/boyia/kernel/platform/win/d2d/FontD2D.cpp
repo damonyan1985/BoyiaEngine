@@ -1,7 +1,7 @@
 #include "FontD2D.h"
-#include "../CharConvertor.h"
-#include "../../PixelRatio.h"
-#include "../../../util/UtilString.h"
+#include "CharConvertor.h"
+#include "PixelRatio.h"
+#include "UtilString.h"
 #include <dwrite.h>
 
 namespace util {

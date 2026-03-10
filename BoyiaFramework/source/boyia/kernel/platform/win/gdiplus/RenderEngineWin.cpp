@@ -3,7 +3,7 @@
 #include "PixelRatio.h"
 
 namespace yanbo {
-static inline LInt RealLength(LInt length) 
+static inline LInt RealLength(LInt length)
 {
     return (LInt)(length * yanbo::PixelRatio::ratio());
 }
@@ -17,44 +17,38 @@ public:
         LInt y = RealLength(cmd->rect.iTopLeft.iY);
         LInt w = RealLength(cmd->rect.GetWidth());
         LInt h = RealLength(cmd->rect.GetHeight());
-        // the rect contain a whole circle with AddArc
-        // the rect length is twice of radius
-        // top left
-        AddArc(x, y, 
+        AddArc(x, y,
             RealLength(cmd->topLeftRadius) * 2,
-            RealLength(cmd->topLeftRadius) * 2, 
+            RealLength(cmd->topLeftRadius) * 2,
             180, 90);
         AddLine(x + RealLength(cmd->topLeftRadius),
             y, x + w - RealLength(cmd->topRightRadius), y);
 
-        // top right
         AddArc(x + w - RealLength(cmd->topRightRadius) * 2,
-            y, 
+            y,
             RealLength(cmd->topRightRadius) * 2,
             RealLength(cmd->topRightRadius) * 2,
             270, 90);
         AddLine(x + w,
-            y + RealLength(cmd->topRightRadius), 
-            x + w, 
+            y + RealLength(cmd->topRightRadius),
+            x + w,
             y + h - RealLength(cmd->bottomRightRadius));
 
-        // bottom right
-        AddArc(x + w - RealLength(cmd->topRightRadius) * 2, 
-            y + h - RealLength(cmd->bottomRightRadius) * 2, 
-            RealLength(cmd->bottomRightRadius) * 2, 
+        AddArc(x + w - RealLength(cmd->topRightRadius) * 2,
+            y + h - RealLength(cmd->bottomRightRadius) * 2,
+            RealLength(cmd->bottomRightRadius) * 2,
             RealLength(cmd->bottomRightRadius) * 2, 0, 90);
         AddLine(
             x + w - RealLength(cmd->bottomRightRadius),
-            y + h, 
+            y + h,
             x + RealLength(cmd->bottomLeftRadius), y + h);
 
-        // bottom left
-        AddArc(x, 
-            y + h - RealLength(cmd->bottomLeftRadius) * 2, 
-            RealLength(cmd->bottomLeftRadius) * 2, 
+        AddArc(x,
+            y + h - RealLength(cmd->bottomLeftRadius) * 2,
+            RealLength(cmd->bottomLeftRadius) * 2,
             RealLength(cmd->bottomLeftRadius) * 2, 90, 90);
         AddLine(x,
-            y + h - RealLength(cmd->bottomLeftRadius), 
+            y + h - RealLength(cmd->bottomLeftRadius),
             x,
             y + RealLength(cmd->topLeftRadius));
     }
@@ -63,7 +57,6 @@ public:
 RenderEngineWin::RenderEngineWin()
     : m_cacheBitmap(kBoyiaNull)
 {
-    // 初始化GDI+库
     Gdiplus::GdiplusStartupInput startupInput;
     GdiplusStartup(&m_gdiplusToken, &startupInput, NULL);
 
@@ -80,7 +73,6 @@ RenderEngineWin::~RenderEngineWin()
 
 LVoid RenderEngineWin::init()
 {
-    // 初始化渲染函数
     m_functions[RenderCommand::kRenderRect] = (RenderFunction)&RenderEngineWin::renderRect;
     m_functions[RenderCommand::kRenderText] = (RenderFunction)&RenderEngineWin::renderText;
     m_functions[RenderCommand::kRenderImage] = (RenderFunction)&RenderEngineWin::renderImage;
@@ -108,9 +100,7 @@ LVoid RenderEngineWin::render(RenderLayer* layer)
         m_cacheBitmap = new Gdiplus::Bitmap(int(rc.right), int(rc.bottom));
     }
 
-    // 创建缓冲绘图对象
     Gdiplus::Graphics cacheGc(m_cacheBitmap);
-    // 开始渲染layer
     renderImpl(layer, cacheGc);
     HDC dc = ::GetDC(m_hwnd);
 
@@ -131,7 +121,6 @@ LVoid RenderEngineWin::renderImpl(RenderLayer* layer, Gdiplus::Graphics& gc)
         return;
     }
 
-    // 先渲染当前layer
     if (layer->m_buffer) {
         LInt commandSize = layer->m_buffer->size();
         for (LInt i = 0; i < commandSize; i++) {
@@ -139,8 +128,7 @@ LVoid RenderEngineWin::renderImpl(RenderLayer* layer, Gdiplus::Graphics& gc)
             (this->*(m_functions[cmd->type()]))(cmd, gc);
         }
     }
-    
-    // 再渲染子layer
+
     for (LInt i = 0; i < layer->m_children.size(); i++) {
         renderImpl(layer->m_children[i], gc);
     }

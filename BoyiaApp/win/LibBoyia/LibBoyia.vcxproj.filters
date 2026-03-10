@@ -115,6 +115,9 @@
     <Filter Include="boyia\kernel\platform\win\d2d">
       <UniqueIdentifier>{5392f37e-59ca-4041-b511-baf036137029}</UniqueIdentifier>
     </Filter>
+    <Filter Include="boyia\kernel\platform\win\gdiplus">
+      <UniqueIdentifier>{a12ee965-66ff-4743-a5c7-03b818c4fefb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -420,8 +423,8 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.h">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageGDIPlus.h">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\ImageGDIPlus.h">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.h">
       <Filter>boyia\kernel\platform\win</Filter>
@@ -498,8 +501,8 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\IRenderEngine.h">
       <Filter>boyia\kernel\render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\RenderEngineWin.h">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\RenderEngineWin.h">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\vm\dbg\BoyiaDebugger.h">
       <Filter>boyia\kernel\vm\dbg</Filter>
@@ -513,8 +516,8 @@
     <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\d2d\FontD2D.h">
       <Filter>boyia\kernel\platform\win\d2d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.h">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClInclude Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\FontWin.h">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -779,14 +782,14 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\EditorWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\FontWin.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\FontWin.cpp">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageLoader.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageGDIPlus.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\ImageGDIPlus.cpp">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\ImageWin.cpp">
       <Filter>boyia\kernel\platform\win</Filter>
@@ -857,8 +860,8 @@
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\render\RenderGraphicsContext.cpp">
       <Filter>boyia\kernel\render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\RenderEngineWin.cpp">
-      <Filter>boyia\kernel\platform\win</Filter>
+    <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\platform\win\gdiplus\RenderEngineWin.cpp">
+      <Filter>boyia\kernel\platform\win\gdiplus</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\BoyiaFramework\source\boyia\kernel\widget\VideoView.cpp">
       <Filter>boyia\kernel\widget</Filter>
