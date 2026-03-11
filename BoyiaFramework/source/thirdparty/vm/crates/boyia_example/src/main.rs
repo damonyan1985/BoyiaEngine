@@ -44,6 +44,16 @@ var body = {
     items : ["123", "456"]
 };
 printlog(p, body.get("body"));
+
+class PrinterExt extends Printer {
+    prop fun multiply(a, b) {
+        return a*b;
+    }
+}
+
+var pe = new(PrinterExt);
+printlog(p, pe.multiply(30, 41));
+printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }

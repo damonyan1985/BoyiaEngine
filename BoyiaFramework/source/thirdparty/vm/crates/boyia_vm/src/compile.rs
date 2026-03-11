@@ -18,6 +18,7 @@ enum SntxError {
     SemiExpected,
     CreateMapError,
     MapKeyValueError,
+    Syntax,
 }
 
 unsafe fn sntx_error_build(err: SntxError, cs: *const CompileState) {
@@ -26,6 +27,7 @@ unsafe fn sntx_error_build(err: SntxError, cs: *const CompileState) {
         SntxError::SemiExpected => "semicolon expected",
         SntxError::CreateMapError => "create map error: identifier or string expected",
         SntxError::MapKeyValueError => "map key-value error: colon or assign expected",
+        SntxError::Syntax => "syntax error",
     };
     eprintln!("syntax error (line {}): {}", line, msg);
 }
@@ -1221,13 +1223,30 @@ unsafe fn fun_statement(cs: *mut CompileState, fun_type: ValueType) {
 
 unsafe fn prop_statement(cs: *mut CompileState) {
     next_token(cs);
-    if (*cs).mToken.mTokenType != TokenType::IDENTIFIER {
+    if (*cs).mToken.mTokenType == TokenType::IDENTIFIER {
+        let name_key = gen_identifier(cs);
+        let _ = put_instruction(
+            cs,
+            OpCommand::const_number(name_key as LIntPtr),
+            OpCommand::none(),
+            CmdType::kCmdPropCreate,
+        );
+        putback(cs);
+        eval_expression(cs);
+        if (*cs).mToken.mTokenValue != TokenValue::SEMI {
+            sntx_error_build(SntxError::SemiExpected, cs);
+        }
         return;
     }
-    let name_key = gen_identifier(cs);
-    let prop_cmd_val = name_key as LIntPtr;
-    let _ = put_instruction(cs, OpCommand::const_number(name_key as LIntPtr), OpCommand::const_number(prop_cmd_val), CmdType::kCmdPropCreate);
-    next_token(cs);
+    if (*cs).mToken.mTokenType == TokenType::KEYWORD {
+        if (*cs).mToken.mTokenValue == TokenValue::BY_FUNC {
+            fun_statement(cs, ValueType::BY_PROP_FUNC);
+        } else if (*cs).mToken.mTokenValue == TokenValue::BY_ASYNC {
+            fun_statement(cs, ValueType::BY_ASYNC_PROP);
+        }
+    } else {
+        sntx_error_build(SntxError::Syntax, cs);
+    }
 }
 
 /// ClassStatement(CompileState* cs) per BoyiaCore.cpp.

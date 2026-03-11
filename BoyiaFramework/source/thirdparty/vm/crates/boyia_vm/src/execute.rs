@@ -1014,20 +1014,10 @@ unsafe fn handle_create_param(inst: *const Instruction, vm: *mut BoyiaVM) -> OpH
 
 /// Add property slot to current class (mStackFrame.mClass). Match HandleCreateProp in BoyiaCore.cpp.
 unsafe fn handle_create_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let e_state = (*vm).mEState;
-    if e_state.is_null() {
-        return OpHandleResult::kOpResultEnd;
-    }
-    let func = (*e_state).mStackFrame.mClass.mValue.mObj.mPtr as *mut BoyiaFunction;
-    if func.is_null() {
-        return OpHandleResult::kOpResultEnd;
-    }
-    let idx = (*func).mParamSize as usize;
-    (*func).mParams.add(idx).write(BoyiaValue {
-        mNameKey: (*inst).mOPLeft.mValue as LUintPtr,
-        mValueType: ValueType::BY_ARG,
-        mValue: RealValue { mIntVal: 0 },
-    });
+    let func = (*(*vm).mEState).mStackFrame.mClass.mValue.mObj.mPtr as *mut BoyiaFunction;
+    let param = (*func).mParams.add((*func).mParamSize as usize);
+    (*param).mNameKey = (*inst).mOPLeft.mValue as LUintPtr;
+    (*param).mValue.mIntVal = 0;
     (*func).mParamSize += 1;
     OpHandleResult::kOpResultSuccess
 }
