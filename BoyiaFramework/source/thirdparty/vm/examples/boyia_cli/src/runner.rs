@@ -7,15 +7,10 @@
 use crate::run_loop::RunLoopError;
 use crate::task_thread::TaskThread;
 use boyia_runtime::BoyiaRuntime;
-use std::cell::RefCell;
 use std::sync::mpsc;
 
-thread_local! {
-    static TASK_THREAD_RUNTIME: RefCell<Option<Box<BoyiaRuntime>>> = const { RefCell::new(None) };
-}
-
 pub struct BoyiaRunner {
-    task_thread: Option<TaskThread>,
+    task_thread: Option<TaskThread<Box<BoyiaRuntime>>>,
     ready: bool,
 }
 
@@ -25,12 +20,10 @@ impl BoyiaRunner {
         let (ready_tx, ready_rx) = mpsc::channel();
 
         let task_thread = TaskThread::start_with_init(move |_| {
-            TASK_THREAD_RUNTIME.with(|runtime| {
-                let runtime_instance = BoyiaRuntime::create();
-                let ready = !runtime_instance.vm().is_null();
-                *runtime.borrow_mut() = Some(runtime_instance);
-                let _ = ready_tx.send(ready);
-            });
+            let runtime = BoyiaRuntime::create();
+            let ready = !runtime.vm().is_null();
+            let _ = ready_tx.send(ready);
+            runtime
         });
 
         let ready = ready_rx.recv().unwrap_or(false);
@@ -52,14 +45,7 @@ impl BoyiaRunner {
         self.task_thread
             .as_ref()
             .expect("task thread already taken")
-            .post_task(move || {
-                TASK_THREAD_RUNTIME.with(|runtime| {
-                    let mut runtime = runtime.borrow_mut();
-                    if let Some(runtime) = runtime.as_deref_mut() {
-                        task(runtime);
-                    }
-                });
-            })
+            .post_task(move |runtime| task(runtime.as_mut()))
     }
 
     pub fn compile(&self, script: &str) -> Result<(), RunLoopError> {
@@ -97,11 +83,6 @@ impl BoyiaRunner {
 impl Drop for BoyiaRunner {
     fn drop(&mut self) {
         if let Some(task_thread) = self.task_thread.take() {
-            let _ = task_thread.post_task(move || {
-                TASK_THREAD_RUNTIME.with(|runtime| {
-                    let _ = runtime.borrow_mut().take();
-                });
-            });
             let _ = task_thread.join();
         }
     }

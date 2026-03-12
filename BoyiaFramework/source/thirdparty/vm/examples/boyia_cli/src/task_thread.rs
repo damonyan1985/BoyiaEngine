@@ -6,31 +6,33 @@ use crate::run_loop::{RunLoop, RunLoopError, RunLoopHandle};
 use std::thread::{self, JoinHandle};
 
 /// Background task thread with an internal run loop.
-pub struct TaskThread {
-    handle: RunLoopHandle,
+pub struct TaskThread<T> {
+    handle: RunLoopHandle<T>,
     join_handle: Option<JoinHandle<()>>,
 }
 
-impl TaskThread {
+impl TaskThread<()> {
     /// Start a new task thread and run loop.
     pub fn start() -> Self {
-        Self::start_with_init(|_| {})
+        Self::start_with_init(|_| ())
     }
+}
 
-    /// Start a new task thread and execute custom setup code before `run_loop.run()`.
+impl<T: 'static> TaskThread<T> {
+    /// Start a new task thread and create its context before `run_loop.run()`.
     /// The callback runs on the task thread and receives a cloneable handle that can be
-    /// used to post follow-up work.
+    /// used to post follow-up work after the context is initialized.
     pub fn start_with_init<F>(before_run: F) -> Self
     where
-        F: FnOnce(RunLoopHandle) + Send + 'static,
+        F: FnOnce(RunLoopHandle<T>) -> T + Send + 'static,
     {
         let (run_loop, handle) = RunLoop::new();
         let init_handle = handle.clone();
         let join_handle = thread::Builder::new()
             .name("boyia-task-thread".to_string())
             .spawn(move || {
-                before_run(init_handle);
-                run_loop.run();
+                let context = before_run(init_handle);
+                run_loop.run(context);
             })
             .expect("failed to spawn task thread");
         Self {
@@ -40,14 +42,14 @@ impl TaskThread {
     }
 
     /// Get a cloneable run-loop handle for posting tasks.
-    pub fn handle(&self) -> RunLoopHandle {
+    pub fn handle(&self) -> RunLoopHandle<T> {
         self.handle.clone()
     }
 
-    /// Post a task into the task thread.
+    /// Post a task into the task thread with mutable access to its context.
     pub fn post_task<F>(&self, task: F) -> Result<(), RunLoopError>
     where
-        F: FnOnce() + Send + 'static,
+        F: FnOnce(&mut T) + Send + 'static,
     {
         self.handle.post_task(task)
     }

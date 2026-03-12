@@ -5,10 +5,10 @@
 
 use std::sync::mpsc::{self, Receiver, Sender};
 
-type Task = Box<dyn FnOnce() + Send + 'static>;
+type Task<T> = Box<dyn FnOnce(&mut T) + Send + 'static>;
 
-enum RunLoopMessage {
-    Task(Task),
+enum RunLoopMessage<T> {
+    Task(Task<T>),
     Stop,
 }
 
@@ -18,19 +18,26 @@ pub enum RunLoopError {
 }
 
 /// Single-consumer run loop that processes posted tasks one by one.
-pub struct RunLoop {
-    receiver: Receiver<RunLoopMessage>,
+pub struct RunLoop<T> {
+    receiver: Receiver<RunLoopMessage<T>>,
 }
 
 /// Handle used by other threads to post tasks into the run loop.
-#[derive(Clone)]
-pub struct RunLoopHandle {
-    sender: Sender<RunLoopMessage>,
+pub struct RunLoopHandle<T> {
+    sender: Sender<RunLoopMessage<T>>,
 }
 
-impl RunLoop {
+impl<T> Clone for RunLoopHandle<T> {
+    fn clone(&self) -> Self {
+        Self {
+            sender: self.sender.clone(),
+        }
+    }
+}
+
+impl<T> RunLoop<T> {
     /// Create a run loop and its posting handle.
-    pub fn new() -> (Self, RunLoopHandle) {
+    pub fn new() -> (Self, RunLoopHandle<T>) {
         let (sender, receiver) = mpsc::channel();
         (
             Self { receiver },
@@ -39,21 +46,21 @@ impl RunLoop {
     }
 
     /// Block the current thread and process tasks until `stop()` is posted.
-    pub fn run(self) {
+    pub fn run(self, mut context: T) {
         while let Ok(message) = self.receiver.recv() {
             match message {
-                RunLoopMessage::Task(task) => task(),
+                RunLoopMessage::Task(task) => task(&mut context),
                 RunLoopMessage::Stop => break,
             }
         }
     }
 }
 
-impl RunLoopHandle {
-    /// Post a task into the run loop.
+impl<T> RunLoopHandle<T> {
+    /// Post a task into the run loop with mutable access to the thread-owned context.
     pub fn post_task<F>(&self, task: F) -> Result<(), RunLoopError>
     where
-        F: FnOnce() + Send + 'static,
+        F: FnOnce(&mut T) + Send + 'static,
     {
         self.sender
             .send(RunLoopMessage::Task(Box::new(task)))

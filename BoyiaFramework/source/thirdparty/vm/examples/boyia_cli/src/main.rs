@@ -21,7 +21,7 @@ fn run_task_thread_demo() {
 
     let values_1 = Arc::clone(&values);
     handle
-        .post_task(move || {
+        .post_task(move |_| {
             println!("[TaskThread] Run task 1");
             values_1.lock().unwrap().push("task-1".to_string());
         })
@@ -29,7 +29,7 @@ fn run_task_thread_demo() {
 
     let values_2 = Arc::clone(&values);
     task_thread
-        .post_task(move || {
+        .post_task(move |_| {
             println!("[TaskThread] Run task 2");
             values_2.lock().unwrap().push("task-2".to_string());
         })
