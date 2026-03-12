@@ -5,16 +5,47 @@
 //! env BOYIA_INIT_MINIMAL=1 to skip builtin classes (faster init, fewer deps)
 //! and narrow down whether the crash is in init.
 
-use boyia_runtime::BoyiaRuntime;
+mod run_loop;
+mod runner;
+mod task_thread;
+
+use runner::BoyiaRunner;
+use std::sync::{Arc, Mutex};
+use task_thread::TaskThread;
+
+fn run_task_thread_demo() {
+    println!("[TaskThread] Starting task thread...");
+    let task_thread = TaskThread::start();
+    let handle = task_thread.handle();
+    let values = Arc::new(Mutex::new(Vec::new()));
+
+    let values_1 = Arc::clone(&values);
+    handle
+        .post_task(move || {
+            println!("[TaskThread] Run task 1");
+            values_1.lock().unwrap().push("task-1".to_string());
+        })
+        .expect("failed to post task 1");
+
+    let values_2 = Arc::clone(&values);
+    task_thread
+        .post_task(move || {
+            println!("[TaskThread] Run task 2");
+            values_2.lock().unwrap().push("task-2".to_string());
+        })
+        .expect("failed to post task 2");
+
+    task_thread.join().expect("failed to join task thread");
+    println!("[TaskThread] Completed tasks: {:?}", *values.lock().unwrap());
+}
 
 fn main() {
+    //run_task_thread_demo();
     println!("Boyia Example: compile and run script\n");
-
+    
     println!("[1] Creating runtime...");
-    let mut rt = BoyiaRuntime::new();
-    println!("[2] Initializing VM...");
-    rt.init();
-    if rt.vm().is_null() {
+    let runner = BoyiaRunner::create();
+    if !runner.is_ready() {
         eprintln!("Error: VM init returned null");
         return;
     }
@@ -60,13 +91,13 @@ BY_Log(123);
 // "#;
 
     println!("[4] Compiling script...");
-    rt.compile(script);
+    runner.compile(script).expect("failed to compile script on task thread");
     //println!("[5] Caching VM code...");
     //rt.cache_code();
     println!("[6] Running script...");
     //rt.run_exe_file();
     // println!("[6] Consuming micro tasks...");
     // rt.consume_micro_task();
-
+    run_task_thread_demo();
     println!("\nDone.");
 }

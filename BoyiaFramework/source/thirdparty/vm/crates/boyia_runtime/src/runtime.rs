@@ -35,7 +35,7 @@ pub struct BoyiaRuntime {
 impl BoyiaRuntime {
     /// Create runtime; VM is created in `init()` with `self` as creator. No global dispatchers.
     /// After `init()`, the runtime must not be moved (e.g. use `Box<BoyiaRuntime>`) so that the VM's mCreator stays valid.
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             vm: ptr::null_mut(),
             memory_pool: ptr::null_mut(),
@@ -47,7 +47,7 @@ impl BoyiaRuntime {
     }
 
     /// Initialize: create memory pool (BoyiaMemory), then VM with `self` as creator (like C++ BoyiaRuntime ctor). Call after new().
-    pub fn init(&mut self) {
+    fn init(&mut self) {
         eprintln!("[init] 1 memory pool");
         self.memory_pool = unsafe { init_memory_pool(K_MEMORY_POOL_SIZE) };
         if self.memory_pool.is_null() {
@@ -89,6 +89,22 @@ impl BoyiaRuntime {
         builtin_array_class(self.vm, &mut gen_id);
 
         eprintln!("[init] 8 done");
+    }
+
+    /// Create and initialize a runtime in one step on a stable heap address.
+    /// Equivalent to `Box::new(BoyiaRuntime::new())` + `init()`.
+    pub fn create() -> Box<Self> {
+        let mut runtime = Box::new(Self::new());
+        runtime.init();
+        runtime
+    }
+
+    /// Create a runtime with minimal initialization for tests.
+    #[doc(hidden)]
+    pub fn create_minimal_for_test() -> Box<Self> {
+        let mut runtime = Box::new(Self::new());
+        runtime.init_minimal_for_test();
+        runtime
     }
 
     /// Minimal init for tests: VM + natives + dispatcher only (no builtin classes).
