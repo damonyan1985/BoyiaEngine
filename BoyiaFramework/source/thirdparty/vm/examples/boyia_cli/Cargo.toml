@@ -1,0 +1,8 @@
+[package]
+name = "boyia_cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI: run Boyia script with BoyiaRuntime (compile, run, BY_Log)"
+
+[dependencies]
+boyia_runtime = { path = "../../crates/boyia_runtime" }

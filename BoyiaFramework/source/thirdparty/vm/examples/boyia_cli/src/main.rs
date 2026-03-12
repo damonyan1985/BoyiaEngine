@@ -41,8 +41,8 @@ fn run_task_thread_demo() {
 
 fn main() {
     //run_task_thread_demo();
-    println!("Boyia Example: compile and run script\n");
-    
+    println!("Boyia CLI: compile and run script\n");
+
     println!("[1] Creating runtime...");
     let runner = BoyiaRunner::create();
     if !runner.is_ready() {
@@ -91,7 +91,9 @@ BY_Log(123);
 // "#;
 
     println!("[4] Compiling script...");
-    runner.compile(script).expect("failed to compile script on task thread");
+    runner
+        .compile(script)
+        .expect("failed to compile script on task thread");
     //println!("[5] Caching VM code...");
     //rt.cache_code();
     println!("[6] Running script...");

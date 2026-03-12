@@ -1,8 +1,0 @@
-[package]
-name = "boyia_example"
-version = "0.1.0"
-edition = "2021"
-description = "Example: run Boyia script with BoyiaRuntime (compile, run, BY_Log)"
-
-[dependencies]
-boyia_runtime = { path = "../boyia_runtime" }
