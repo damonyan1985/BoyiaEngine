@@ -20,7 +20,7 @@ pub(crate) const K_BOYIA_NULL: LIntPtr = 0;
 // ---------------------------------------------------------------------------
 
 /// Add a builtin method to a class body (BY_NAV_FUNC). Match GenBuiltinClassFunction.
-pub(crate) unsafe fn gen_builtin_class_function(
+pub unsafe fn gen_builtin_class_function(
     key: LUintPtr,
     func: NativePtr,
     class_body: *mut BoyiaFunction,
@@ -44,7 +44,7 @@ pub(crate) unsafe fn gen_builtin_class_function(
 }
 
 /// Add a builtin property function to a class body (BY_NAV_PROP). Match GenBuiltinClassPropFunction.
-pub(crate) unsafe fn gen_builtin_class_prop_function(
+pub unsafe fn gen_builtin_class_prop_function(
     key: LUintPtr,
     func: NativePtr,
     class_body: *mut BoyiaFunction,

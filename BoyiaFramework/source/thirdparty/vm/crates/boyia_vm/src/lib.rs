@@ -4,6 +4,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
+mod global;
 mod types;
 mod compile;
 mod core;
@@ -12,6 +13,7 @@ mod execute;
 
 // Re-export types for crate users (includes Runtime trait).
 pub use types::*;
+pub use global::{Global, GlobalList};
 
 // Re-export memory API from boyia_memory for backward compatibility.
 pub use boyia_memory::{

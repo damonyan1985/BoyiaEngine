@@ -11,7 +11,7 @@ use boyia_memory::{
 use boyia_vm::{
     get_global_table, get_local_stack, get_native_helper_result, get_native_result,
     get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, get_function_count, BoyiaFunction, 
-    BoyiaValue, BuiltinId, Runtime, ValueType,
+    BoyiaValue, BuiltinId, Global, Runtime, ValueType,
 };
 use std::ptr;
 
@@ -368,7 +368,20 @@ unsafe fn clear_all_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     refs.mEnd = prev;
 }
 
-/// GCollectGarbage: reset color, mark from roots (global, local stack, micro task, native result), then sweep. Match GCollectGarbage in BoyiaGC.cpp.
+/// Mark all persistent [BoyiaValue]s in the runtime's [boyia_vm::GlobalList] via [mark_value]. Called from [gc_collect_garbage].
+unsafe fn mark_persistent(vm: *mut LVoid) {
+    let rt = get_runtime_from_vm(vm);
+    if rt.is_null() {
+        return;
+    }
+    (*rt).iterate_persistent(&mut |ptr: *mut Global| {
+        if !ptr.is_null() {
+            mark_value((*ptr).value_ptr());
+        }
+    });
+}
+
+/// GCollectGarbage: reset color, mark from roots (global, local stack, micro task, native result, persistent), then sweep. Match GCollectGarbage in BoyiaGC.cpp.
 pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     if gc.is_null() {
         return;
@@ -424,6 +437,8 @@ pub unsafe fn gc_collect_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     if !helper_val.is_null() {
         mark_value(helper_val);
     }
+
+    mark_persistent(vm);
 
     clear_all_garbage(gc, vm);
 }

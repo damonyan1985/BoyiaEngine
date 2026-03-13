@@ -9,7 +9,7 @@ use boyia_builtins::{builtin_array_class, builtin_map_class, builtin_micro_task_
 use boyia_vm::{
     cache_vm_code, compile_code, delete_data, consume_micro_task, execute_global_code,
     free_memory_pool, init_memory_pool, init_vm, new_data,
-    BoyiaStr, LUintPtr, LInt, LVoid, NativeFunction, NativePtr, OpHandleResult, Runtime,
+    BoyiaStr, BoyiaValue, Global, GlobalList, LUintPtr, LInt, LVoid, NativeFunction, NativePtr, OpHandleResult, Runtime,
 };
 use std::ptr;
 
@@ -30,6 +30,8 @@ pub struct BoyiaRuntime {
     id_creator: IdCreator,
     /// Whether VM code was loaded from file (we don't implement file load; always false).
     is_load_exe_file: bool,
+    /// Persistent BoyiaValue list; keeps references so objects are not collected.
+    persistent_objects: GlobalList,
 }
 
 impl BoyiaRuntime {
@@ -43,6 +45,7 @@ impl BoyiaRuntime {
             native_fun_table: Vec::with_capacity(K_NATIVE_FUNCTION_CAPACITY),
             id_creator: IdCreator::new(),
             is_load_exe_file: false,
+            persistent_objects: GlobalList::new(),
         }
     }
 
@@ -269,6 +272,25 @@ impl Runtime for BoyiaRuntime {
 
     fn delete_data(&self, data: *mut LVoid) {
         unsafe { delete_data(data, self.memory_pool) }
+    }
+
+    fn persistent_object(&mut self, value: *const BoyiaValue) -> *mut Global {
+        if value.is_null() {
+            return std::ptr::null_mut();
+        }
+        self.persistent_objects.push_back(unsafe { *value })
+    }
+
+    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut Global)) {
+        let mut ptr = self.persistent_objects.head();
+        while !ptr.is_null() {
+            f(ptr);
+            ptr = unsafe { (*ptr).next() };
+        }
+    }
+
+    fn remove_persistent(&mut self, ptr: *mut Global) {
+        self.persistent_objects.remove(ptr);
     }
 }
 

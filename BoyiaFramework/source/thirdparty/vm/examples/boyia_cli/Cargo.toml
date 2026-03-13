@@ -5,4 +5,8 @@ edition = "2021"
 description = "CLI: run Boyia script with BoyiaRuntime (compile, run, BY_Log)"
 
 [dependencies]
+boyia_builtins = { path = "../../crates/boyia_builtins" }
 boyia_runtime = { path = "../../crates/boyia_runtime" }
+boyia_vm = { path = "../../crates/boyia_vm" }
+reqwest = { version = "0.13.2", default-features = false, features = ["blocking", "rustls"] }
+serde_json = "1.0.149"

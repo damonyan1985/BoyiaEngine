@@ -72,6 +72,16 @@ pub trait Runtime {
     fn gc_ptr(&self) -> *mut LVoid;
     /// VM pointer (for GC / runtime).
     fn vm_ptr(&self) -> *mut LVoid;
+
+    /// Store a copy of the given [BoyiaValue] in the runtime's persistent object list and return a pointer to the list node ([Global]).
+    /// The runtime keeps the value until it is dropped. Used to prevent objects from being collected.
+    fn persistent_object(&mut self, value: *const BoyiaValue) -> *mut crate::Global;
+
+    /// Iterate over the persistent object list, calling `f` with each node pointer ([*mut Global]). [BoyiaRuntime] walks its [crate::GlobalList]; other runtimes may no-op.
+    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut crate::Global));
+
+    /// Remove the node at `ptr` from the runtime's persistent object list. [BoyiaRuntime] calls [crate::GlobalList::remove]; other runtimes may no-op.
+    fn remove_persistent(&mut self, ptr: *mut crate::Global);
 }
 
 // ---------------------------------------------------------------------------

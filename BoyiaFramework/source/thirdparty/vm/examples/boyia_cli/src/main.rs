@@ -5,9 +5,11 @@
 //! env BOYIA_INIT_MINIMAL=1 to skip builtin classes (faster init, fewer deps)
 //! and narrow down whether the crash is in init.
 
+mod https;
 mod run_loop;
 mod runner;
 mod task_thread;
+mod thread_pool;
 
 use runner::BoyiaRunner;
 use std::sync::{Arc, Mutex};

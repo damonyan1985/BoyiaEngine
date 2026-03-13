@@ -1,6 +1,6 @@
 //! Test that init_vm and destroy_vm run without crashing.
 
-use boyia_vm::{destroy_vm, init_vm, BoyiaStr, Runtime, ValueType};
+use boyia_vm::{destroy_vm, init_vm, BoyiaStr, BoyiaValue, Runtime, ValueType};
 use std::ptr;
 
 struct TestRuntime;
@@ -36,6 +36,11 @@ impl Runtime for TestRuntime {
     fn vm_ptr(&self) -> *mut std::ffi::c_void {
         ptr::null_mut()
     }
+    fn persistent_object(&mut self, _value: *const BoyiaValue) -> *mut boyia_vm::Global {
+        ptr::null_mut()
+    }
+    fn iterate_persistent(&self, _f: &mut dyn FnMut(*mut boyia_vm::Global)) {}
+    fn remove_persistent(&mut self, _ptr: *mut boyia_vm::Global) {}
 }
 
 #[test]
