@@ -5,10 +5,10 @@
 #![allow(dead_code)]
 
 use crate::core::{
-    alloc_micro_task, copy_object, create_const_string, create_fun_val, create_micro_task_object,
-    destroy_exec_state, find_global, free_micro_task, get_boyia_class_id, init_function, local_push,
-    micro_task_class_key, set_int_result, set_native_result, string_add, switch_exec_state,
-    value_copy, value_copy_no_name,
+    alloc_micro_task, copy_object, create_const_string, create_exec_state, create_fun_val,
+    create_micro_task_object, destroy_exec_state, find_global, free_micro_task, get_boyia_class_id,
+    init_function, local_push, micro_task_class_key, set_int_result, set_native_result, string_add,
+    switch_exec_state, value_copy, value_copy_no_name,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -133,28 +133,7 @@ pub(crate) unsafe fn reset_scene(state: *mut ExecState) {
     assign_state_class(state, ptr::null());
 }
 
-/// Push scene with null inst (mLValSize=0, mPC=null). Used by native_call_impl. Match HandlePushScene(kBoyiaNull).
-pub(crate) unsafe fn push_scene_null(vm: *mut BoyiaVM) {
-    let e_state = (*vm).mEState;
-    if e_state.is_null() {
-        return;
-    }
-    let frame_index = (*e_state).mFrameIndex as usize;
-    if frame_index >= FUNC_CALLS {
-        return;
-    }
-    let exec_stack = (*e_state).mExecStack.as_mut_ptr();
-    let frame = exec_stack.add(frame_index);
-    (*frame).mLValSize = 0;
-    (*frame).mPC = ptr::null_mut();
-    (*frame).mContext = (*e_state).mStackFrame.mContext;
-    (*frame).mResultNum = (*e_state).mStackFrame.mResultNum;
-    (*frame).mLoopSize = (*e_state).mStackFrame.mLoopSize;
-    (*frame).mClass = (*e_state).mStackFrame.mClass;
-    (*e_state).mFrameIndex += 1;
-}
-
-/// When PC is null, pop frame or switch back to mLast (MicroTask/async). Match ExecPopFunction in BoyiaCore.cpp.
+/// ExecPopFunction: strictly matches BoyiaCore.cpp. if mPC then return; if mFrameIndex<=0 && mLast && !mLast->mWait then SwitchExecState(mLast), maybe DestroyExecState; if mFrameIndex>0 then HandlePopScene(kBoyiaNull, vm), then if mPC then mPC=NextInstruction, ExecPopFunction else if mLast&&!mLast->mWait then ExecPopFunction.
 unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
     if vm.is_null() || (*vm).mEState.is_null() {
         return;
@@ -164,7 +143,7 @@ unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
         return;
     }
 
-    // At top of frame stack: optionally switch back to caller (mLast) and destroy current state (MicroTask/async).
+    // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
     if (*e_state).mFrameIndex <= 0 {
         let last = (*e_state).mLast;
         if !last.is_null() && (*last).mWait == 0 {
@@ -176,23 +155,19 @@ unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
                 }
                 destroy_exec_state(current_state, vm);
             }
-        } else {
-            return;
         }
     }
 
-    // Pop one frame if still in a nested call (SwitchExecState may have changed mEState).
+    // SwitchExecState后mFrameIndex可能不为0
     let e_state = (*vm).mEState;
     if e_state.is_null() || (*e_state).mFrameIndex <= 0 {
         return;
     }
-    (*e_state).mFrameIndex -= 1;
-    let idx = (*e_state).mFrameIndex as usize;
-    (*e_state).mStackFrame.mLValSize = (*e_state).mExecStack[idx].mLValSize;
-    (*e_state).mStackFrame.mPC = (*e_state).mExecStack[idx].mPC;
-    (*e_state).mStackFrame.mContext = (*e_state).mExecStack[idx].mContext;
-    (*e_state).mStackFrame.mLoopSize = (*e_state).mExecStack[idx].mLoopSize;
-    (*e_state).mStackFrame.mClass = (*e_state).mExecStack[idx].mClass;
+    let _ = handle_pop_scene(ptr::null(), vm);
+    let e_state = (*vm).mEState;
+    if e_state.is_null() {
+        return;
+    }
     if !(*e_state).mStackFrame.mPC.is_null() {
         let pc = (*e_state).mStackFrame.mPC;
         (*e_state).mStackFrame.mPC = next_instruction(pc, vm);
@@ -283,14 +258,14 @@ unsafe fn handle_decl_global(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleDeclLocal: strictly matches BoyiaCore.cpp. BoyiaValue local; local.mValueType = inst->mOPLeft.mValue; local.mNameKey = (LUintPtr)inst->mOPRight.mValue; LocalPush(&local, vm).
 unsafe fn handle_decl_local(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let type_val = (*inst).mOPLeft.mValue as u8;
-    let name_key = (*inst).mOPRight.mValue as LUintPtr;
     let mut local = BoyiaValue {
-        mNameKey: name_key,
-        mValueType: std::mem::transmute(type_val),
+        mNameKey: 0,
+        mValueType: std::mem::transmute((*inst).mOPLeft.mValue as u8),
         mValue: RealValue { mIntVal: 0 },
     };
+    local.mNameKey = (*inst).mOPRight.mValue as LUintPtr;
     local_push(&mut local, vm as *mut LVoid);
     OpHandleResult::kOpResultSuccess
 }
@@ -415,7 +390,8 @@ unsafe fn handle_mod(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResu
 }
 
 /// HandlePushScene per BoyiaCore.cpp: set mLValSize, mPC, mContext, mResultNum, mLoopSize on mExecStack[mFrameIndex]; mClass is set by HandlePushObj only.
-unsafe fn handle_push_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+/// When inst is null (HandlePushScene(kBoyiaNull, vm)), mLValSize=0 and mPC=null.
+pub(crate) unsafe fn handle_push_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let e_state = (*vm).mEState;
     if e_state.is_null() {
         return OpHandleResult::kOpResultEnd;
@@ -446,6 +422,7 @@ unsafe fn handle_push_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandlePopScene per BoyiaCore.cpp: if mFrameIndex > 0, --mFrameIndex then restore mLValSize, mPC, mContext, mLoopSize from mExecStack[mFrameIndex], AssignStateClass(mEState, &mExecStack[mFrameIndex].mClass).
 unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let _ = inst;
     let e_state = (*vm).mEState;
@@ -458,7 +435,7 @@ unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHand
     (*e_state).mStackFrame.mPC = (*e_state).mExecStack[idx].mPC;
     (*e_state).mStackFrame.mContext = (*e_state).mExecStack[idx].mContext;
     (*e_state).mStackFrame.mLoopSize = (*e_state).mExecStack[idx].mLoopSize;
-    (*e_state).mStackFrame.mClass = (*e_state).mExecStack[idx].mClass;
+    assign_state_class(e_state, &(*e_state).mExecStack[idx].mClass as *const BoyiaValue);
     OpHandleResult::kOpResultSuccess
 }
 
@@ -775,35 +752,94 @@ unsafe fn handle_push_params(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleCallAsyncFunction per BoyiaCore.cpp: create exec state, switch, push scene, copy params, AssignStateClass.
+unsafe fn handle_call_async_function(vm: *mut BoyiaVM) {
+    println!("call handle_call_async_function0");
+    let current = (*vm).mEState;
+    if current.is_null() || (*current).mFrameIndex <= 0 {
+        return;
+    }
+
+    println!("call handle_call_async_function1");
+    let start = (*current)
+        .mExecStack
+        .as_ptr()
+        .add((*current).mFrameIndex as usize - 1)
+        .read()
+        .mLValSize;
+    let start_usize = start as usize;
+    if start_usize >= crate::types::NUM_LOCAL_VARS {
+        return;
+    }
+    let value = (*current).mLocals.as_ptr().add(start_usize);
+    let state = create_exec_state(vm);
+    if state.is_null() {
+        return;
+    }
+
+    println!("call handle_call_async_function2");
+    (*state).mLast = current;
+    switch_exec_state(state, vm);
+    let _ = handle_push_scene(ptr::null(), vm);
+    let func = (*value).mValue.mObj.mPtr as *const BoyiaFunction;
+    let param_size = (*func).mParamSize as usize;
+    let end = start_usize + param_size;
+    for idx in start_usize..end {
+        value_copy(
+            (*state).mLocals.as_mut_ptr().add(idx - start_usize),
+            (*current).mLocals.as_ptr().add(idx),
+        );
+    }
+    (*state).mStackFrame.mLValSize = (*func).mParamSize + 1;
+    let obj_body = (*value).mValue.mObj.mSuper as *const BoyiaFunction;
+    let val = BoyiaValue {
+        mNameKey: 0,
+        mValueType: ValueType::BY_CLASS,
+        mValue: RealValue {
+            mObj: BoyiaClass {
+                mPtr: (*value).mValue.mObj.mSuper,
+                mSuper: (*obj_body).mFuncBody,
+            },
+        },
+    };
+
+    println!("call handle_call_async_function3");
+    assign_state_class((*vm).mEState, &val as *const BoyiaValue);
+}
+
+/// HandleCallFunction per BoyiaCore.cpp: localstack first value is function ptr; BY_NAV_FUNC/BY_NAV_PROP => LocalPush + navFun, return; BY_PROP_FUNC/BY_ANONYM_FUNC => AssignStateClass; BY_ASYNC_PROP => HandleCallAsyncFunction; BY_ASYNC => no-op; then set cmds/PC and return kOpResultJumpFun.
 unsafe fn handle_call_function(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    println!("call handle_call_function0");
     let _ = inst;
     let e_state = (*vm).mEState;
     if e_state.is_null() || (*e_state).mFrameIndex <= 0 {
-        eprintln!("[handle_call_function] e_state null or mFrameIndex<=0");
         return OpHandleResult::kOpResultEnd;
     }
-    let start = (*e_state).mExecStack.as_ptr().add((*e_state).mFrameIndex as usize - 1).read().mLValSize;
+    println!("call handle_call_function1");
+    let start = (*vm).mExecStack.add((*e_state).mFrameIndex as usize - 1).read().mLValSize;
     if start as usize >= crate::types::NUM_LOCAL_VARS {
-        eprintln!("[handle_call_function] start={} >= mLocals.len()", start);
         return OpHandleResult::kOpResultEnd;
     }
-    let value = (*e_state).mLocals.as_mut_ptr().add(start as usize);
+
+    println!("call handle_call_function2");
+    let value = (*vm).mLocals.add(start as usize);
     let func = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
     if func.is_null() {
-        eprintln!(
-            "[handle_call_function] func is null: value type={}, start={}",
-            (*value).mValueType as u8, start
-        );
         return OpHandleResult::kOpResultEnd;
     }
+
+    println!("call handle_call_function3");
     value_copy(&mut (*e_state).mFun, value);
     let value_type = (*value).mValueType;
+    // 内置类产生的对象，调用其方法
     if value_type == ValueType::BY_NAV_FUNC || value_type == ValueType::BY_NAV_PROP {
         local_push(&mut (*e_state).mStackFrame.mClass, vm as *mut LVoid);
         let nav_fun = std::mem::transmute::<_, crate::types::NativePtr>((*func).mFuncBody);
         (*e_state).mStackFrame.mPC = ptr::null_mut();
         return nav_fun(vm as *mut LVoid);
     }
+
+    println!("call handle_call_function4");
     if value_type == ValueType::BY_PROP_FUNC || value_type == ValueType::BY_ANONYM_FUNC {
         let obj_body = (*value).mValue.mObj.mSuper as *const BoyiaFunction;
         let val = BoyiaValue {
@@ -817,21 +853,23 @@ unsafe fn handle_call_function(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
             },
         };
         assign_state_class(e_state, &val as *const BoyiaValue);
+    } else if value_type == ValueType::BY_ASYNC_PROP {
+        println!("call handle_call_async_function");
+        handle_call_async_function(vm);
+    } else if value_type == ValueType::BY_ASYNC {
+        // no-op
     }
-    let cmds = (*func).mFuncBody as *const CommandTable;
+    let cmds = (*func).mFuncBody as *mut CommandTable;
     if cmds.is_null() {
-        eprintln!(
-            "[handle_call_function] mFuncBody is null (cmds): value_type={}",
-            value_type as u8
-        );
         return OpHandleResult::kOpResultEnd;
     }
     if (*cmds).mBegin.is_null() {
-        eprintln!("[handle_call_function] cmds->mBegin is null");
         return OpHandleResult::kOpResultEnd;
     }
-    (*e_state).mStackFrame.mContext = cmds as *mut CommandTable;
-    (*e_state).mStackFrame.mPC = (*cmds).mBegin;
+
+    let e_state_new = (*vm).mEState;
+    (*e_state_new).mStackFrame.mContext = cmds;
+    (*e_state_new).mStackFrame.mPC = (*cmds).mBegin;
     OpHandleResult::kOpResultJumpFun
 }
 
@@ -1152,6 +1190,7 @@ unsafe fn handle_await(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleRe
         return OpHandleResult::kOpResultEnd;
     }
     let task = (*fun).mParams.add(1).read().mValue.mIntVal as *mut MicroTask;
+    println!("call handle_await");
     (*task).mAsyncEs = e_state;
     if (*e_state).mTopTask.is_null() {
         let top_task = alloc_micro_task(vm);
@@ -1228,7 +1267,7 @@ pub(crate) unsafe fn exec_instruction(vm: *mut BoyiaVM) {
     if vm.is_null() || (*vm).mEState.is_null() {
         return;
     }
-    let e_state = (*vm).mEState;
+    let mut e_state = (*vm).mEState;
     eprintln!("[exec_instruction] pc={:?}", (*e_state).mStackFrame.mPC);
     if (*e_state).mStackFrame.mPC.is_null() {
         exec_pop_function(vm);
@@ -1238,6 +1277,7 @@ pub(crate) unsafe fn exec_instruction(vm: *mut BoyiaVM) {
     while !(*e_state).mStackFrame.mPC.is_null() {
         let pc = (*e_state).mStackFrame.mPC;
         let result = dispatch_instruction(pc, vm);
+        e_state = (*vm).mEState;
         if result == OpHandleResult::kOpResultEnd {
             break;
         }
@@ -1250,6 +1290,7 @@ pub(crate) unsafe fn exec_instruction(vm: *mut BoyiaVM) {
             (*e_state).mStackFrame.mPC = next_instruction((*e_state).mStackFrame.mPC, vm);
         }
         exec_pop_function(vm);
+        e_state = (*vm).mEState;
     }
 }
 

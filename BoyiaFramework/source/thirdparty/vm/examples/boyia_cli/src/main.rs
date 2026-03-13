@@ -80,8 +80,11 @@ printlog(p, body.get("body"));
 
 class Util {
     fun newMicrotask(worker) {
+        BY_Log("call newMicrotask");
         var task = new(MicroTask);
+        BY_Log("call MicroTask create");
         task.init(worker);
+        BY_Log("call MicroTask init");
         return task;
     }
 }
@@ -104,7 +107,9 @@ class PrinterExt extends Printer {
     }
 
     prop async loadPromise() {
+        BY_Log("run loadPromise");
         Util.newMicrotask(fun(resolve) {
+            BY_Log("run newMicrotask");
             Https.load("https://httpbin.org/get", resolve);
         });
     }
@@ -114,9 +119,9 @@ var pe = new(PrinterExt);
 printlog(p, pe.multiply(30, 41));
 printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
-pe.load();
+//pe.load();
 
-//pe.loadAsync();
+pe.loadAsync();
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
 // "#;
@@ -125,12 +130,9 @@ pe.load();
     runner
         .compile(script)
         .expect("failed to compile script on task thread");
-    //println!("[5] Caching VM code...");
-    //rt.cache_code();
     println!("[6] Running script...");
-    //rt.run_exe_file();
-    // println!("[6] Consuming micro tasks...");
-    // rt.consume_micro_task();
-    run_task_thread_demo();
+
+    // run_task_thread_demo();
     println!("\nDone.");
+    // When main returns, runner is dropped -> Drop stops task thread and joins it -> "BoyiaRunner exit!!!"
 }

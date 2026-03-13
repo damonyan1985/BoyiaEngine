@@ -59,9 +59,8 @@ impl<T: 'static> TaskThread<T> {
         self.handle.stop()
     }
 
-    /// Stop the task thread and wait for it to finish.
+    /// Wait for the task thread to finish (does not send stop; blocks until the thread exits on its own).
     pub fn join(mut self) -> std::thread::Result<()> {
-        let _ = self.handle.stop();
         if let Some(join_handle) = self.join_handle.take() {
             join_handle.join()
         } else {

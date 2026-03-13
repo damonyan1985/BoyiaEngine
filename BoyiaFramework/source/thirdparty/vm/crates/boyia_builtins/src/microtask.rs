@@ -11,6 +11,7 @@ use boyia_vm::{
 };
 
 unsafe fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {
+    println!("call micro_task_resolve_impl");
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
     let result = get_local_value(1, vm) as *mut BoyiaValue;

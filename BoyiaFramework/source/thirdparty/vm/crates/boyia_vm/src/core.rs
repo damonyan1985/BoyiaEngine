@@ -840,7 +840,7 @@ pub unsafe fn native_call_impl(
         return OpHandleResult::kOpResultEnd;
     }
     switch_exec_state(state, vm_ptr);
-    crate::execute::push_scene_null(vm_ptr);
+    let _ = crate::execute::handle_push_scene(ptr::null(), vm_ptr);
     let start = (*state).mExecStack.as_ptr().add((*state).mFrameIndex as usize - 1).read().mLValSize;
     for idx in 0..argc {
         value_copy(
@@ -1252,6 +1252,8 @@ pub unsafe fn resume_micro_task(
     if !value.is_null() {
         value_copy_no_name(&mut (*task).mResult, value);
     }
+
+    println!("call resume_micro_task");
     add_micro_task(task, vm_ptr as *mut BoyiaVM);
 }
 
@@ -1297,32 +1299,42 @@ pub(crate) unsafe fn destroy_exec_state(state: *mut ExecState, vm: *mut BoyiaVM)
 /// copy Reg0 to mTopTask->mResult and AddMicroTask(mTopTask), then DestroyExecState(aes) when mLast->mWait;
 /// switch back; unlink task and FreeMicroTask.
 pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
+    println!("call consume_micro_task1");
     if vm_ptr.is_null() {
         return;
     }
     let vm = vm_ptr as *mut BoyiaVM;
     let queue_ptr = (*vm).mTaskQueue;
+    println!("call consume_micro_task2");
     if queue_ptr.is_null() {
         return;
     }
+    println!("call consume_micro_task3");
     let queue = &mut *queue_ptr;
     let mut task = (*queue).mUsedTasks.mHead;
     while !task.is_null() {
+        println!("call consume_micro_task4");
         let aes = (*task).mAsyncEs;
         if !aes.is_null() && !(*aes).mStackFrame.mPC.is_null() {
+            println!("call consume_micro_task5");
             let current_state = (*vm).mEState;
             switch_exec_state(aes, vm);
             (*aes).mWait = 0;
             (*aes).mStackFrame.mPC = crate::execute::next_instruction((*aes).mStackFrame.mPC, vm);
             if !(*vm).mCpu.is_null() {
+                println!("call consume_micro_task6");
                 value_copy(&mut (*(*vm).mCpu).mReg0, &(*task).mResult);
             }
+
             crate::execute::exec_instruction(vm);
+            println!("call consume_micro_task7");
             if (*aes).mStackFrame.mContext.is_null() {
                 if !(*aes).mTopTask.is_null() {
                     if !(*vm).mCpu.is_null() {
                         value_copy(&mut (*(*aes).mTopTask).mResult, &(*(*vm).mCpu).mReg0);
                     }
+
+                    println!("call consume_micro_task8");
                     add_micro_task((*aes).mTopTask, vm);
                 }
                 if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != 0 {
