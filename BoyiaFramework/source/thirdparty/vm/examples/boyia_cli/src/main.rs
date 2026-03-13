@@ -78,9 +78,35 @@ var body = {
 };
 printlog(p, body.get("body"));
 
+class Util {
+    fun newMicrotask(worker) {
+        var task = new(MicroTask);
+        task.init(worker);
+        return task;
+    }
+}
+
 class PrinterExt extends Printer {
     prop fun multiply(a, b) {
         return a*b;
+    }
+
+    prop fun load() {
+        Https.load("https://httpbin.org/get", fun(body) {
+            BY_Log("Https.load result: " + body);
+        });
+    }
+
+    prop async loadAsync() {
+        var result = (await this.loadPromise());
+        BY_Log("loadAsync result: " + result);
+        return result;
+    }
+
+    prop async loadPromise() {
+        Util.newMicrotask(fun(resolve) {
+            Https.load("https://httpbin.org/get", resolve);
+        });
     }
 }
 
@@ -88,6 +114,9 @@ var pe = new(PrinterExt);
 printlog(p, pe.multiply(30, 41));
 printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
+pe.load();
+
+//pe.loadAsync();
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
 // "#;
