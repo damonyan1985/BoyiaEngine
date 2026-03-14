@@ -14,7 +14,7 @@ use std::sync::{mpsc, Arc};
 const DEFAULT_HTTPS_THREAD_COUNT: usize = 4;
 
 pub struct BoyiaRunner {
-    task_thread: Option<TaskThread<Box<BoyiaRuntime>>>,
+    boyia_thread: Option<TaskThread<Box<BoyiaRuntime>>>,
     thread_pool: Option<Arc<ThreadPool>>,
     ready: bool,
 }
@@ -36,7 +36,7 @@ impl BoyiaRunner {
         let thread_pool = Arc::new(ThreadPool::new(DEFAULT_HTTPS_THREAD_COUNT));
 
         let runner = Self {
-            task_thread: Some(task_thread),
+            boyia_thread: Some(task_thread),
             thread_pool: Some(thread_pool),
             ready,
         };
@@ -45,7 +45,7 @@ impl BoyiaRunner {
 
         let (init_tx, init_rx) = mpsc::channel();
         let _ = runner_box
-            .task_thread
+            .boyia_thread
             .as_ref()
             .unwrap()
             .post_task(move |runtime| {
@@ -73,7 +73,7 @@ impl BoyiaRunner {
     fn handle_and_pool(
         &self,
     ) -> Option<(RunLoopHandle<Box<BoyiaRuntime>>, std::sync::Weak<ThreadPool>)> {
-        let handle = self.task_thread.as_ref()?.handle();
+        let handle = self.boyia_thread.as_ref()?.handle();
         let pool = Arc::downgrade(self.thread_pool.as_ref()?);
         Some((handle, pool))
     }
@@ -86,7 +86,7 @@ impl BoyiaRunner {
     where
         F: FnOnce(&mut BoyiaRuntime) + Send + 'static,
     {
-        self.task_thread
+        self.boyia_thread
             .as_ref()
             .expect("task thread already taken")
             .post_task(move |runtime| task(runtime.as_mut()))
@@ -135,11 +135,11 @@ impl Drop for BoyiaRunner {
         }
 
         // 等待主线程任务执行完，再退出主线程
-        if let Some(ref task_thread) = self.task_thread {
-            let _ = task_thread.stop();
+        if let Some(ref boyia_thread) = self.boyia_thread {
+            let _ = boyia_thread.stop();
         }
-        if let Some(task_thread) = self.task_thread.take() {
-            let _ = task_thread.join();
+        if let Some(boyia_thread) = self.boyia_thread.take() {
+            let _ = boyia_thread.join();
         }
         
 
