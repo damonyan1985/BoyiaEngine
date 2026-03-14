@@ -147,10 +147,10 @@ unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
     // 指令为空，则判断是否处于函数范围中，是则pop，从而取得调用之前的运行环境
     if (*e_state).mFrameIndex <= 0 {
         let last = (*e_state).mLast;
-        if !last.is_null() && (*last).mWait == 0 {
+        if !last.is_null() && (*last).mWait == LFalse {
             let current_state = e_state;
             switch_exec_state(last, vm);
-            if (*current_state).mWait == 0 {
+            if (*current_state).mWait == LFalse {
                 if !(*current_state).mTopTask.is_null() {
                     free_micro_task((*current_state).mTopTask, vm);
                 }
@@ -173,7 +173,7 @@ unsafe fn exec_pop_function(vm: *mut BoyiaVM) {
         let pc = (*e_state).mStackFrame.mPC;
         (*e_state).mStackFrame.mPC = next_instruction(pc, vm);
         exec_pop_function(vm);
-    } else if !(*e_state).mLast.is_null() && (*(*e_state).mLast).mWait == 0 {
+    } else if !(*e_state).mLast.is_null() && (*(*e_state).mLast).mWait == LFalse {
         exec_pop_function(vm);
     }
 }
@@ -1185,7 +1185,7 @@ unsafe fn handle_await(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleRe
     if class_id != micro_task_class_key(vm as *mut LVoid) {
         return handle_return(inst, vm);
     }
-    (*e_state).mWait = 1;
+    (*e_state).mWait = LTrue;
     let fun = (*left).mValue.mObj.mPtr as *const BoyiaFunction;
     if fun.is_null() {
         return OpHandleResult::kOpResultEnd;
@@ -1222,7 +1222,7 @@ unsafe fn handle_await(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleRe
         }
     }
     let last = (*e_state).mLast;
-    if !last.is_null() && (*last).mWait == 0 {
+    if !last.is_null() && (*last).mWait == LFalse {
         switch_exec_state(last, vm);
         (*(*vm).mEState).mStackFrame.mPC = ptr::null_mut();
         return OpHandleResult::kOpResultSuccess;

@@ -401,7 +401,7 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     e_state.mNext = ptr::null_mut();
     e_state.mLast = ptr::null_mut();
     e_state.mTopTask = ptr::null_mut();
-    e_state.mWait = 0;
+    e_state.mWait = LFalse;
     vm.mESLink = vm.mEState;
     vm.mLocals = e_state.mLocals.as_mut_ptr();
     vm.mOpStack = e_state.mOpStack.as_mut_ptr();
@@ -1319,7 +1319,7 @@ pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
             println!("call consume_micro_task5");
             let current_state = (*vm).mEState;
             switch_exec_state(aes, vm);
-            (*aes).mWait = 0;
+            (*aes).mWait = LFalse;
             (*aes).mStackFrame.mPC = crate::execute::next_instruction((*aes).mStackFrame.mPC, vm);
             if !(*vm).mCpu.is_null() {
                 println!("call consume_micro_task6");
@@ -1337,7 +1337,7 @@ pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
                     println!("call consume_micro_task8");
                     add_micro_task((*aes).mTopTask, vm);
                 }
-                if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != 0 {
+                if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != LFalse {
                     destroy_exec_state(aes, vm);
                 }
             }

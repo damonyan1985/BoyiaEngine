@@ -33,7 +33,14 @@ pub type LUint8 = u8;
 pub type LUintPtr = usize;
 pub type LIntPtr = isize;
 pub type LVoid = c_void;
-pub type LBool = LInt;
+
+/// Boolean type for VM; LFalse = 0, LTrue = 1. repr(i32) to match LInt/c_int in repr(C) structs.
+#[repr(i32)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum LBool {
+    LFalse = 0,
+    LTrue = 1,
+}
 
 // ---------------------------------------------------------------------------
 // Runtime trait (VM creator: native lookup and call)
@@ -347,8 +354,10 @@ pub enum OpInstType {
 // Use enums directly: ValueType::BY_VAR, CmdType::kCmdAdd, etc.
 
 pub const kInvalidInstruction: LIntPtr = -1;
-pub const LFalse: LInt = 0;
-pub const LTrue: LInt = 1;
+
+/// Constants for convenience; same as [LBool::LFalse] / [LBool::LTrue].
+pub const LFalse: LBool = LBool::LFalse;
+pub const LTrue: LBool = LBool::LTrue;
 
 /// Handler return type: use OpHandleResult for dispatch.
 pub(crate) type OPHandler = unsafe fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;

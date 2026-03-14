@@ -54,8 +54,11 @@ impl<T: 'static> TaskThread<T> {
         self.handle.post_task(task)
     }
 
-    /// Request the task thread to stop.
+    /// Request the task thread to stop. Waits until the task queue is empty (all posted tasks executed), then sends Stop.
     pub fn stop(&self) -> Result<(), RunLoopError> {
+        while self.handle.has_pending_tasks() {
+            std::thread::yield_now();
+        }
         self.handle.stop()
     }
 
