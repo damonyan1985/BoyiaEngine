@@ -96,13 +96,15 @@ class PrinterExt extends Printer {
 
     prop fun load() {
         Https.load("https://httpbin.org/get", fun(body) {
+            var result = body;
             BY_Log("Https.load result: " + body);
         });
     }
 
     prop async loadAsync() {
         var result = (await this.loadPromise());
-        BY_Log("loadAsync result: " + result);
+        var test = "hello : " + result;
+        BY_Log("loadAsync result: " + test);
         return result;
     }
 

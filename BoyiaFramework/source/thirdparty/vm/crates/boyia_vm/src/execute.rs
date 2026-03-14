@@ -58,6 +58,7 @@ unsafe fn get_val(key: LUintPtr, vm: *mut BoyiaVM) -> *mut BoyiaValue {
         let mut idx = (*e).mStackFrame.mLValSize - 1;
         while idx > start {
             if (*e).mLocals.as_ptr().add(idx as usize).read().mNameKey == key {
+                println!("get local value success");
                 return (*e).mLocals.as_mut_ptr().add(idx as usize);
             }
             idx -= 1;

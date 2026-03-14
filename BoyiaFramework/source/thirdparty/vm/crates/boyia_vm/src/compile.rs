@@ -1002,6 +1002,7 @@ unsafe fn global_statement(cs: *mut CompileState) {
     }
 }
 
+/// LocalStatement: strictly matches BoyiaCore.cpp. type = cs->mToken.mTokenValue; do { NextToken; PutInstruction(DeclLocal, type, GenIdentifier); Putback; EvalExpression; } while (mToken.mTokenValue == COMMA); if (mToken.mTokenValue != SEMI) SntxErrorBuild(SEMI_EXPECTED).
 unsafe fn local_statement(cs: *mut CompileState) {
     let type_val = (*cs).mToken.mTokenValue;
     loop {
@@ -1018,10 +1019,12 @@ unsafe fn local_statement(cs: *mut CompileState) {
         );
         putback(cs);
         eval_expression(cs);
-        next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
         }
+    }
+    if (*cs).mToken.mTokenValue != TokenValue::SEMI {
+        sntx_error_build(SntxError::SemiExpected, cs);
     }
 }
 
