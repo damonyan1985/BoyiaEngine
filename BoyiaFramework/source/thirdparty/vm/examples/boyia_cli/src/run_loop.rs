@@ -23,12 +23,14 @@ pub enum RunLoopError {
 pub struct RunLoop<T> {
     receiver: Receiver<RunLoopMessage<T>>,
     pending_count: Arc<AtomicUsize>,
+    running_count: Arc<AtomicUsize>,
 }
 
 /// Handle used by other threads to post tasks into the run loop.
 pub struct RunLoopHandle<T> {
     sender: Sender<RunLoopMessage<T>>,
     pending_count: Arc<AtomicUsize>,
+    running_count: Arc<AtomicUsize>,
 }
 
 impl<T> Clone for RunLoopHandle<T> {
@@ -36,6 +38,7 @@ impl<T> Clone for RunLoopHandle<T> {
         Self {
             sender: self.sender.clone(),
             pending_count: Arc::clone(&self.pending_count),
+            running_count: Arc::clone(&self.running_count),
         }
     }
 }
@@ -45,14 +48,17 @@ impl<T> RunLoop<T> {
     pub fn new() -> (Self, RunLoopHandle<T>) {
         let (sender, receiver) = mpsc::channel();
         let pending_count = Arc::new(AtomicUsize::new(0));
+        let running_count = Arc::new(AtomicUsize::new(0));
         (
             Self {
                 receiver,
                 pending_count: Arc::clone(&pending_count),
+                running_count: Arc::clone(&running_count),
             },
             RunLoopHandle {
                 sender,
                 pending_count,
+                running_count,
             },
         )
     }
@@ -63,7 +69,9 @@ impl<T> RunLoop<T> {
             match message {
                 RunLoopMessage::Task(task) => {
                     self.pending_count.fetch_sub(1, Ordering::Relaxed);
+                    self.running_count.fetch_add(1, Ordering::Relaxed);
                     task(&mut context);
+                    self.running_count.fetch_sub(1, Ordering::Relaxed);
                 }
                 RunLoopMessage::Stop => break,
             }
@@ -72,9 +80,14 @@ impl<T> RunLoop<T> {
 }
 
 impl<T> RunLoopHandle<T> {
+    /// Number of tasks not yet completed (queued or currently running).
+    pub fn load(&self) -> usize {
+        self.pending_count.load(Ordering::Relaxed) + self.running_count.load(Ordering::Relaxed)
+    }
+
     /// Returns true if there are tasks not yet processed by the run loop.
     pub fn has_pending_tasks(&self) -> bool {
-        self.pending_count.load(Ordering::Relaxed) != 0
+        self.load() != 0
     }
 
     /// Post a task into the run loop with mutable access to the thread-owned context.

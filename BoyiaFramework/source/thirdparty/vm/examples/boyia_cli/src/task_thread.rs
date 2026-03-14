@@ -46,6 +46,11 @@ impl<T: 'static> TaskThread<T> {
         self.handle.clone()
     }
 
+    /// Number of tasks not yet completed (queued or currently running) on this thread.
+    pub fn load(&self) -> usize {
+        self.handle.load()
+    }
+
     /// Post a task into the task thread with mutable access to its context.
     pub fn post_task<F>(&self, task: F) -> Result<(), RunLoopError>
     where

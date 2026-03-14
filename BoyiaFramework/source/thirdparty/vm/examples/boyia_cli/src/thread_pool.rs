@@ -4,67 +4,13 @@
 
 use crate::run_loop::RunLoopError;
 use crate::task_thread::TaskThread;
-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
-
-struct Worker {
-    task_thread: TaskThread<()>,
-    load: Arc<AtomicUsize>,
-}
-
-impl Worker {
-    fn new() -> Self {
-        Self {
-            task_thread: TaskThread::start(),
-            load: Arc::new(AtomicUsize::new(0)),
-        }
-    }
-
-    fn load(&self) -> usize {
-        self.load.load(Ordering::Acquire)
-    }
-
-    fn post_task<F>(&self, task: F) -> Result<(), RunLoopError>
-    where
-        F: FnOnce() + Send + 'static,
-    {
-        self.load.fetch_add(1, Ordering::AcqRel);
-        let load = Arc::clone(&self.load);
-        let result = self.task_thread.post_task(move |_| {
-            struct TaskGuard {
-                load: Arc<AtomicUsize>,
-            }
-
-            impl Drop for TaskGuard {
-                fn drop(&mut self) {
-                    self.load.fetch_sub(1, Ordering::AcqRel);
-                }
-            }
-
-            let _guard = TaskGuard { load };
-            task();
-        });
-
-        if result.is_err() {
-            self.load.fetch_sub(1, Ordering::AcqRel);
-        }
-
-        result
-    }
-
-    fn stop(&self) -> Result<(), RunLoopError> {
-        self.task_thread.stop()
-    }
-
-    fn join(self) -> std::thread::Result<()> {
-        self.task_thread.join()
-    }
-}
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Mutex;
 
 /// Thread pool that lazily creates `TaskThread<()>` workers up to a configured maximum.
 pub struct ThreadPool {
     max_thread_count: usize,
-    workers: Mutex<Vec<Worker>>,
+    workers: Mutex<Vec<TaskThread<()>>>,
     stopped: AtomicBool,
 }
 
@@ -114,11 +60,11 @@ impl ThreadPool {
         }
 
         let worker_index = if let Some((index, _)) =
-            workers.iter().enumerate().find(|(_, worker)| worker.load() == 0)
+            workers.iter().enumerate().find(|(_, w)| w.load() == 0)
         {
             index
         } else if workers.len() < self.max_thread_count {
-            workers.push(Worker::new());
+            workers.push(TaskThread::start());
             workers.len() - 1
         } else {
             // 在“所有线程都忙、并且已经达到最大线程数，不能再新建线程”时，
@@ -126,12 +72,12 @@ impl ThreadPool {
             workers
                 .iter()
                 .enumerate()
-                .min_by_key(|(_, worker)| worker.load())
+                .min_by_key(|(_, w)| w.load())
                 .map(|(index, _)| index)
                 .expect("thread pool must have at least one worker")
         };
 
-        workers[worker_index].post_task(task)
+        workers[worker_index].post_task(move |_| task())
     }
 
     /// Request all worker threads to stop after previously queued tasks finish.
@@ -141,8 +87,8 @@ impl ThreadPool {
             .workers
             .lock()
             .unwrap_or_else(|poisoned| poisoned.into_inner());
-        for worker in workers.iter() {
-            worker.stop()?;
+        for w in workers.iter() {
+            w.stop()?;
         }
         Ok(())
     }
@@ -153,8 +99,8 @@ impl ThreadPool {
             .workers
             .into_inner()
             .unwrap_or_else(|poisoned| poisoned.into_inner());
-        for worker in workers {
-            worker.join()?;
+        for w in workers {
+            w.join()?;
         }
         Ok(())
     }
