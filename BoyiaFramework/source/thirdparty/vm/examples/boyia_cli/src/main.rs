@@ -103,6 +103,9 @@ class PrinterExt extends Printer {
 
     prop async loadAsync() {
         for (var i = 0; i < 10; i=i+1) {
+            if (i == 6) {
+                break;
+            }
             BY_Log("loadAsync loop: " + i);
         }
     

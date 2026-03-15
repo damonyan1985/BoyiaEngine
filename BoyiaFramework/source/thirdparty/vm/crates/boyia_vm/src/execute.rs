@@ -606,9 +606,13 @@ unsafe fn handle_return(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleR
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe fn handle_break(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let offset = (*inst).mOPLeft.mValue as isize;
-    (*(*vm).mEState).mStackFrame.mPC = inst.offset(offset) as *mut Instruction;
+/// HandleBreak per BoyiaCore.cpp: mPC = (Instruction*)mLoopStack[--mStackFrame.mLoopSize]; return kOpResultSuccess.
+unsafe fn handle_break(_inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    let e_state = (*vm).mEState;
+    (*e_state).mStackFrame.mLoopSize -= 1;
+    let idx = (*e_state).mStackFrame.mLoopSize as usize;
+    let target = (*vm).mLoopStack.add(idx).read() as *mut Instruction;
+    (*e_state).mStackFrame.mPC = target;
     OpHandleResult::kOpResultSuccess
 }
 

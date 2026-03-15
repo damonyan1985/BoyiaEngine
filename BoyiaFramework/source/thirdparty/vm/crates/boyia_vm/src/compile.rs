@@ -1041,9 +1041,9 @@ unsafe fn return_statement(cs: *mut CompileState) {
     let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdReturn);
 }
 
+/// BreakStatement per BoyiaCore.cpp: PutInstruction(kBoyiaNull, kBoyiaNull, kCmdBreak, cs); no NextToken.
 unsafe fn break_statement(cs: *mut CompileState) {
     let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdBreak);
-    next_token(cs);
 }
 
 unsafe fn if_statement(cs: *mut CompileState) {
