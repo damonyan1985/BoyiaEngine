@@ -19,6 +19,8 @@ enum SntxError {
     CreateMapError,
     MapKeyValueError,
     Syntax,
+    LptrExpected,
+    RptrExpected,
 }
 
 unsafe fn sntx_error_build(err: SntxError, cs: *const CompileState) {
@@ -28,6 +30,8 @@ unsafe fn sntx_error_build(err: SntxError, cs: *const CompileState) {
         SntxError::CreateMapError => "create map error: identifier or string expected",
         SntxError::MapKeyValueError => "map key-value error: colon or assign expected",
         SntxError::Syntax => "syntax error",
+        SntxError::LptrExpected => "'(' expected",
+        SntxError::RptrExpected => "')' expected",
     };
     eprintln!("syntax error (line {}): {}", line, msg);
 }
@@ -1084,9 +1088,19 @@ unsafe fn do_statement(cs: *mut CompileState) {
     patch_offset(vm, end_idx, false, (end_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));
 }
 
+/// ForStatement(cs) per BoyiaCore.cpp: NextToken('('); require LPTR; NextToken;
+/// first: BY_VAR->LocalStatement else Putback+EvalExpression;
+/// beginInst=kCmdLoop; EvalExpression; logicInst=kCmdLoopTrue; EvalExpression; require RPTR;
+/// lastInst=kCmdJmpTo, lastInst->mOPLeft=(lastInst-beginInst); logicInst->mOPLeft=(lastInst-logicInst);
+/// BlockStatement; endInst=kCmdJmpTo; beginInst->mOPLeft=(endInst-beginInst);
+/// logicInst->mOPRight=(endInst-logicInst); endInst->mOPLeft=(endInst-logicInst).
 unsafe fn for_statement(cs: *mut CompileState) {
+    next_token(cs); // '('
+    if (*cs).mToken.mTokenValue != TokenValue::LPTR {
+        sntx_error_build(SntxError::LptrExpected, cs);
+    }
     next_token(cs);
-    next_token(cs);
+    // First expression
     if (*cs).mToken.mTokenValue == TokenValue::BY_VAR {
         local_statement(cs);
     } else {
@@ -1094,10 +1108,14 @@ unsafe fn for_statement(cs: *mut CompileState) {
         eval_expression(cs);
     }
     let begin_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoop).unwrap_or(0);
+    // Second expression (condition)
     eval_expression(cs);
     let logic_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdLoopTrue).unwrap_or(0);
-    next_token(cs);
+    // Third expression (e.g. i++)
     eval_expression(cs);
+    if (*cs).mToken.mTokenValue != TokenValue::RPTR {
+        sntx_error_build(SntxError::RptrExpected, cs);
+    }
     let last_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdJmpTo).unwrap_or(0);
     let vm = (*cs).mVm;
     patch_offset(vm, last_idx, false, (last_idx as LIntPtr).wrapping_sub(begin_idx as LIntPtr));

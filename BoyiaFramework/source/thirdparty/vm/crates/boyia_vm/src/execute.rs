@@ -555,24 +555,38 @@ unsafe fn handle_if_end(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleR
     OpHandleResult::kOpResultSuccess
 }
 
+/// HandleJumpTo per BoyiaCore.cpp: if (inst->mOPLeft.mType == OP_CONST_NUMBER)
+/// mPC = inst - inst->mOPLeft.mValue; return kOpResultSuccess.
 unsafe fn handle_jump_to(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let offset = (*inst).mOPLeft.mValue as isize;
-    (*(*vm).mEState).mStackFrame.mPC = inst.offset(offset) as *mut Instruction;
-    OpHandleResult::kOpResultSuccess
-}
-
-unsafe fn handle_loop_begin(_inst: *const Instruction, _vm: *mut BoyiaVM) -> OpHandleResult {
-    OpHandleResult::kOpResultSuccess
-}
-
-unsafe fn handle_loop_if_true(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let value = get_op_value(inst, OpSide::OpLeft, vm);
-    if value.is_null() {
-        return OpHandleResult::kOpResultEnd;
+    if (*inst).mOPLeft.mType == OpType::OP_CONST_NUMBER {
+        let offset = (*inst).mOPLeft.mValue as isize;
+        (*(*vm).mEState).mStackFrame.mPC = inst.offset(-offset) as *mut Instruction;
     }
-    if (*value).mValue.mIntVal == 0 {
-        let offset = (*inst).mOPRight.mValue as isize;
-        (*(*vm).mEState).mStackFrame.mPC = inst.offset(offset) as *mut Instruction;
+    OpHandleResult::kOpResultSuccess
+}
+
+/// HandleLoopBegin per BoyiaCore.cpp: push left => loop stack;
+/// mLoopStack[mLoopSize++] = (LIntPtr)(inst + inst->mOPLeft.mValue).
+unsafe fn handle_loop_begin(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    let e_state = (*vm).mEState;
+    let loop_size = (*e_state).mStackFrame.mLoopSize as usize;
+    let target = inst.offset((*inst).mOPLeft.mValue as isize);
+    (*vm).mLoopStack.add(loop_size).write(target as LIntPtr);
+    (*e_state).mStackFrame.mLoopSize += 1;
+    OpHandleResult::kOpResultSuccess
+}
+
+/// HandleLoopIfTrue per BoyiaCore.cpp: value = &mCpu->mReg0; if !value->mValue.mIntVal then
+/// PC = inst + mOPRight.mValue, mLoopSize--, return; if (inst->mOPLeft.mValue) PC = inst + mOPLeft.mValue; return.
+unsafe fn handle_loop_if_true(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    let value = &(*(*vm).mCpu).mReg0;
+    if value.mValue.mIntVal == 0 {
+        (*(*vm).mEState).mStackFrame.mPC = inst.offset((*inst).mOPRight.mValue as isize) as *mut Instruction;
+        (*(*vm).mEState).mStackFrame.mLoopSize -= 1;
+        return OpHandleResult::kOpResultSuccess;
+    }
+    if (*inst).mOPLeft.mValue != 0 {
+        (*(*vm).mEState).mStackFrame.mPC = inst.offset((*inst).mOPLeft.mValue as isize) as *mut Instruction;
     }
     OpHandleResult::kOpResultSuccess
 }

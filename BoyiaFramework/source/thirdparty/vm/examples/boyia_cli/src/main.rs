@@ -102,6 +102,10 @@ class PrinterExt extends Printer {
     }
 
     prop async loadAsync() {
+        for (var i = 0; i < 10; i=i+1) {
+            BY_Log("loadAsync loop: " + i);
+        }
+    
         var result = (await this.loadPromise());
         var test = "hello : " + result;
         BY_Log("loadAsync result: " + test);
