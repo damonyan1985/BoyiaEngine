@@ -122,6 +122,19 @@ class PrinterExt extends Printer {
             Https.load("https://httpbin.org/get", resolve);
         });
     }
+
+    prop fun testLocal() {
+        var test = "hello";
+        for (var i = 0; i < 10; i=i+1) {
+            var test = "world";
+            if (i == 6) {
+                break;
+            }
+            BY_Log("testLocal loop: " + i + test);
+        }
+
+        BY_Log("testLocal result: " + test);
+    }
 }
 
 var pe = new(PrinterExt);
@@ -131,6 +144,8 @@ BY_Log(123);
 //pe.load();
 
 pe.loadAsync();
+
+pe.testLocal();
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
 // "#;

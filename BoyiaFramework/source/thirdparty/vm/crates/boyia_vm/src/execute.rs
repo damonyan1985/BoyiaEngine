@@ -80,7 +80,27 @@ unsafe fn get_val(key: LUintPtr, vm: *mut BoyiaVM) -> *mut BoyiaValue {
     )
 }
 
-/// Get pointer to BoyiaValue for REG0, REG1, or VAR operand. Returns null for constant operands.
+/// `mLocals[start + frame_offset]` for current frame; `start` is previous frame's mLValSize. Offset 0 is callee function slot (not used for OP_LOCAL loads). Params start at offset 1.
+#[inline]
+unsafe fn get_local_ptr_by_frame_offset(vm: *mut BoyiaVM, frame_offset: LIntPtr) -> *mut BoyiaValue {
+    let e = (*vm).mEState;
+    if e.is_null() || (*e).mFrameIndex <= 0 {
+        return ptr::null_mut();
+    }
+    let fi = (*e).mFrameIndex as usize - 1;
+    let start = (*e).mExecStack[fi].mLValSize as isize;
+    let idx = start + frame_offset as isize;
+    if idx < 0 {
+        return ptr::null_mut();
+    }
+    let idx = idx as usize;
+    if idx >= (*e).mStackFrame.mLValSize as usize || idx >= NUM_LOCAL_VARS {
+        return ptr::null_mut();
+    }
+    (*e).mLocals.as_mut_ptr().add(idx)
+}
+
+/// Get pointer to BoyiaValue for REG0, REG1, VAR, or LOCAL operand. Returns null for constant operands.
 #[inline]
 unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM) -> *mut BoyiaValue {
     if inst.is_null() || vm.is_null() || (*vm).mCpu.is_null() {
@@ -94,6 +114,7 @@ unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM)
         OpType::OP_REG0 => &mut (*(*vm).mCpu).mReg0 as *mut BoyiaValue,
         OpType::OP_REG1 => &mut (*(*vm).mCpu).mReg1 as *mut BoyiaValue,
         OpType::OP_VAR => get_val(op.mValue as LUintPtr, vm),
+        OpType::OP_LOCAL => get_local_ptr_by_frame_offset(vm, op.mValue),
         _ => ptr::null_mut(),
     }
 }
@@ -512,6 +533,18 @@ unsafe fn handle_assignment(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
                 value_copy_no_name(left, val);
 
                 println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
+                (*left).mNameKey = val as LUintPtr;
+            }
+        }
+        OpType::OP_LOCAL => {
+            let val = get_local_ptr_by_frame_offset(vm, (*inst).mOPRight.mValue);
+            if val.is_null() {
+                return OpHandleResult::kOpResultEnd;
+            }
+            if (*val).mValueType == ValueType::BY_VAR {
+                value_copy(left, val);
+            } else {
+                value_copy_no_name(left, val);
                 (*left).mNameKey = val as LUintPtr;
             }
         }

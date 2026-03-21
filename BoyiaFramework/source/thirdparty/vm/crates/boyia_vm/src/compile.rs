@@ -611,6 +611,7 @@ unsafe fn declare_global_var(vm: *mut BoyiaVM, name_key: LUintPtr) {
 }
 
 unsafe fn init_params(cs: *mut CompileState) {
+    (*cs).mFunctionScopes.push(FunctionScope::new());
     loop {
         next_token(cs);
         if (*cs).mToken.mTokenValue == TokenValue::RPTR {
@@ -619,13 +620,28 @@ unsafe fn init_params(cs: *mut CompileState) {
         if (*cs).mToken.mTokenType != TokenType::IDENTIFIER {
             break;
         }
-        let key = gen_identifier(cs) as LIntPtr;
+        let name_key = gen_identifier(cs);
+        if let Some(fs) = (*cs).mFunctionScopes.last_mut() {
+            fs.add_param(name_key);
+        }
+        let key = name_key as LIntPtr;
         let _ = put_instruction(cs, OpCommand::const_number(key), OpCommand::none(), CmdType::kCmdParamCreate);
         next_token(cs);
         if (*cs).mToken.mTokenValue != TokenValue::COMMA {
             break;
         }
     }
+    // Local scopes are pushed on `{` in [block_statement] and popped on `}`.
+}
+
+/// Emit OP_LOCAL when `key` is in the innermost [FunctionScope], else OP_VAR (globals / outer / unknown).
+unsafe fn compile_var_operand(cs: *mut CompileState, key: LUintPtr) -> OpCommand {
+    if let Some(fs) = (*cs).mFunctionScopes.last() {
+        if let Some(off) = fs.resolve_local_frame_offset(key) {
+            return OpCommand::op_local(off);
+        }
+    }
+    OpCommand::op_var(key as LIntPtr)
 }
 
 // Expression chain (must be before statements that call eval_expression)
@@ -682,7 +698,8 @@ unsafe fn call_native_statement(cs: *mut CompileState, idx: LInt) {
 }
 
 unsafe fn eval_get_value(cs: *mut CompileState, obj_key: LUintPtr) {
-    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::op_var(obj_key as LIntPtr), CmdType::kCmdAssign);
+    let src = compile_var_operand(cs, obj_key);
+    let _ = put_instruction(cs, OpCommand::reg0(), src, CmdType::kCmdAssign);
     if (*cs).mToken.mTokenValue == TokenValue::DOT {
         eval_get_prop(cs);
     }
@@ -725,7 +742,8 @@ unsafe fn atom(cs: *mut CompileState) {
             } else {
                 next_token(cs);
                 if (*cs).mToken.mTokenValue == TokenValue::LPTR {
-                    let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::op_var(key as LIntPtr), CmdType::kCmdAssign);
+                    let src = compile_var_operand(cs, key);
+                    let _ = put_instruction(cs, OpCommand::reg0(), src, CmdType::kCmdAssign);
                     call_statement(cs, OpType::OP_NONE, 0);
                     next_token(cs);
                     if (*cs).mToken.mTokenValue == TokenValue::DOT {
@@ -1015,6 +1033,9 @@ unsafe fn local_statement(cs: *mut CompileState) {
             break;
         }
         let name_key = gen_identifier(cs);
+        if let Some(fs) = (*cs).mFunctionScopes.last_mut() {
+            fs.add_local(name_key);
+        }
         let _ = put_instruction(
             cs,
             OpCommand::const_number(type_val as LIntPtr),
@@ -1130,6 +1151,9 @@ unsafe fn for_statement(cs: *mut CompileState) {
 /// BlockStatement: parse block {} contents. Matches C++ BlockStatement exactly.
 /// do { NextToken; if IDENTIFIER -> Putback, EvalExpression, require SEMI; BLOCK_START -> block=true;
 ///      BLOCK_END -> block=false, return; KEYWORD -> switch; } while (token != BY_END && block);
+///
+/// When compiling inside a [FunctionScope], each `{` pushes a [LocalScope] and each matching `}` pops it
+/// (nested blocks stack). Class / file-level [body_statement] with no active function skips push/pop.
 unsafe fn block_statement(cs: *mut CompileState) {
     let mut block = false;
     loop {
@@ -1142,7 +1166,13 @@ unsafe fn block_statement(cs: *mut CompileState) {
             }
         } else if (*cs).mToken.mTokenValue == TokenValue::BLOCK_START {
             block = true;
+            if let Some(fs) = (*cs).mFunctionScopes.last_mut() {
+                fs.push_local_scope();
+            }
         } else if (*cs).mToken.mTokenValue == TokenValue::BLOCK_END {
+            if let Some(fs) = (*cs).mFunctionScopes.last_mut() {
+                let _ = fs.pop_local_scope();
+            }
             return; // C++ sets block = LFalse then return; we skip the dead assign
         } else if (*cs).mToken.mTokenType == TokenType::KEYWORD {
             let v = (*cs).mToken.mTokenValue;
@@ -1224,6 +1254,7 @@ unsafe fn body_statement(cs: *mut CompileState, is_function: bool) {
     if is_function {
         (*cs).mCmds.mBegin = saved_begin;
         (*cs).mCmds.mEnd = exec_create_end; // restore end to ExecCreate, not saved_end (ParamCreate)
+        let _ = (*cs).mFunctionScopes.pop();
     }
 }
 
@@ -1407,6 +1438,7 @@ pub(crate) unsafe fn parse_and_register(code: *mut LInt8, vm: *mut BoyiaVM) {
             mBegin: ptr::null_mut(),
             mEnd: ptr::null_mut(),
         },
+        mFunctionScopes: Vec::new(),
     };
     parse_statement(&mut cs);
     if std::env::var("BOYIA_DEBUG_COMPILE").is_ok() {

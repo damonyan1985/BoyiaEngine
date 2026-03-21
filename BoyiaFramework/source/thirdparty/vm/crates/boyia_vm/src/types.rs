@@ -279,6 +279,9 @@ pub(crate) enum OpType {
     OP_REG0,
     OP_REG1,
     OP_VAR,
+    /// Frame slot offset from [ExecState::mExecStack][frame-1].mLValSize: 1..=param_count are params, then locals.
+    /// Rust VM only; not in C++ BoyiaCore opcode set.
+    OP_LOCAL,
 }
 
 /// CmdType (BoyiaCore.cpp)
@@ -379,8 +382,79 @@ pub(crate) struct BoyiaToken {
     pub mTokenValue: TokenValue,
 }
 
-/// Compile state: matches BoyiaCore.cpp CompileState.
-#[repr(C)]
+/// One block’s local variable names (compile-time only), for [OpType::OP_LOCAL] resolution.
+#[derive(Default)]
+pub(crate) struct LocalScope {
+    pub(crate) mLocals: Vec<LUintPtr>,
+}
+
+impl LocalScope {
+    pub(crate) fn add_local(&mut self, key: LUintPtr) {
+        self.mLocals.push(key);
+    }
+}
+
+/// One function being compiled: formal parameters + a stack of [LocalScope] (outer blocks first, innermost last).
+/// `push_local_scope` / `pop_local_scope` are driven by `{` / `}` in `compile::block_statement` while a function is active.
+/// Runtime VM `mLocals[start+1..]` = [mParams] in order, then locals from each [LocalScope] in stack order.
+pub(crate) struct FunctionScope {
+    pub(crate) mParams: Vec<LUintPtr>,
+    pub(crate) mLocalScopes: Vec<LocalScope>,
+}
+
+impl FunctionScope {
+    pub(crate) fn new() -> Self {
+        Self {
+            mParams: Vec::new(),
+            mLocalScopes: Vec::new(),
+        }
+    }
+
+    pub(crate) fn add_param(&mut self, key: LUintPtr) {
+        self.mParams.push(key);
+    }
+
+    pub(crate) fn push_local_scope(&mut self) {
+        self.mLocalScopes.push(LocalScope::default());
+    }
+
+    pub(crate) fn pop_local_scope(&mut self) -> Option<LocalScope> {
+        self.mLocalScopes.pop()
+    }
+
+    pub(crate) fn add_local(&mut self, key: LUintPtr) {
+        if let Some(top) = self.mLocalScopes.last_mut() {
+            top.add_local(key);
+        }
+    }
+
+    /// Frame offset for `mLocals[start + offset]`; offset 0 = callee; first param = 1.
+    /// Locals: concatenation of each [LocalScope] in order; shadowing resolves inner scope first.
+    pub(crate) fn resolve_local_frame_offset(&self, key: LUintPtr) -> Option<LIntPtr> {
+        let pc = self.mParams.len();
+        for si in (0..self.mLocalScopes.len()).rev() {
+            if let Some(j) = self.mLocalScopes[si].mLocals.iter().rposition(|&k| k == key) {
+                let mut prefix = 0usize;
+                for s in 0..si {
+                    prefix += self.mLocalScopes[s].mLocals.len();
+                }
+                return Some((1 + pc + prefix + j) as LIntPtr);
+            }
+        }
+        if let Some(i) = self.mParams.iter().rposition(|&k| k == key) {
+            return Some((1 + i) as LIntPtr);
+        }
+        None
+    }
+}
+
+impl Default for FunctionScope {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Compile state: matches BoyiaCore.cpp CompileState (plus Rust-only [FunctionScope] stack for nested functions / [OpType::OP_LOCAL]).
 pub(crate) struct CompileState {
     pub mProg: *mut LInt8,
     pub mLineNum: LInt,
@@ -388,6 +462,8 @@ pub(crate) struct CompileState {
     pub mToken: BoyiaToken,
     pub mVm: *mut BoyiaVM,
     pub mCmds: CommandTable,
+    /// Innermost = currently compiling function (same role as former `m_scope_stack`).
+    pub mFunctionScopes: Vec<FunctionScope>,
 }
 
 #[repr(C)]
@@ -488,6 +564,15 @@ impl OpCommand {
         Self {
             mType: OpType::OP_VAR,
             mValue: key,
+        }
+    }
+
+    /// Local/param by frame offset (OP_LOCAL, offset from frame start slot in mLocals).
+    #[inline]
+    pub const fn op_local(frame_offset: LIntPtr) -> Self {
+        Self {
+            mType: OpType::OP_LOCAL,
+            mValue: frame_offset,
         }
     }
 }
