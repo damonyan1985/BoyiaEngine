@@ -30,6 +30,9 @@
 #define FUNC_CALLS ((LInt)32)
 #define NUM_PARAMS ((LInt)32)
 #define LOOP_NEST ((LInt)32)
+/* Compile-time scope (mirrors Rust boyia_vm FunctionScope / LocalScope). */
+#define COMPILE_LOCAL_SCOPE_STACK ((LInt)32)
+#define COMPILE_LOCAL_KEYS_PER_SCOPE ((LInt)128)
 #define CODE_CAPACITY ((LInt)1024 * 32) // Instruction Capacity
 #define CONST_CAPACITY ((LInt)1024)
 #define ENTRY_CAPACITY ((LInt)1024)
@@ -103,6 +106,8 @@ enum OpType {
     OP_REG0,
     OP_REG1,
     OP_VAR,
+    /* Frame slot offset from ExecState::mExecStack[frame-1].mLValSize; params/locals; Rust VM parity. */
+    OP_LOCAL,
 };
 
 // 指令类型
@@ -162,6 +167,7 @@ enum CmdType {
     kCmdAwait,
     kCmdSetAnonym,
     kCmdOnceJmpTrue,
+    kCmdPopLocals,
     kCmdEnd
 };
 
@@ -343,6 +349,18 @@ typedef struct BoyiaVM {
     LVoid* mCreator; // 此处传入创建vm的外部对象
 } BoyiaVM;
 
+typedef struct LocalScope {
+    LUintPtr mLocals[COMPILE_LOCAL_KEYS_PER_SCOPE];
+    LInt mLocalCount;
+} LocalScope;
+
+typedef struct FunctionScope {
+    LUintPtr mParams[NUM_FUNC_PARAMS];
+    LInt mParamCount;
+    LocalScope mLocalScopes[COMPILE_LOCAL_SCOPE_STACK];
+    LInt mLocalScopeCount;
+} FunctionScope;
+
 typedef struct {
     LInt8* mProg;
     LInt mLineNum; // Current Line num of source code
@@ -350,6 +368,8 @@ typedef struct {
     BoyiaToken mToken;
     BoyiaVM* mVm;
     CommandTable* mCmds;
+    FunctionScope mFunctionScopes[FUNC_CALLS];
+    LInt mFunctionScopeCount;
 } CompileState;
 
 /* Global value define end */
@@ -439,6 +459,8 @@ static LInt HandleExtend(Instruction* inst, BoyiaVM* vm);
 static LInt HandleDeclGlobal(Instruction* inst, BoyiaVM* vm);
 
 static LInt HandleDeclLocal(Instruction* inst, BoyiaVM* vm);
+
+static LInt HandlePopLocals(Instruction* inst, BoyiaVM* vm);
 
 static LInt HandleFunCreate(Instruction* inst, BoyiaVM* vm);
 
@@ -584,6 +606,7 @@ static OPHandler* InitHandlers() {
     handlers[kCmdAwait] = HandleAwait;
     handlers[kCmdSetAnonym] = HandleSetAnonym;
     handlers[kCmdOnceJmpTrue] = HandleOnceJmpTrue;
+    handlers[kCmdPopLocals] = HandlePopLocals;
 
     return handlers;
 }
@@ -1124,6 +1147,22 @@ static BoyiaValue* FindVal(LUintPtr key, BoyiaVM* vm) {
     return value;
 }
 
+/* mLocals[start + frameOffset]; start = previous frame mLValSize; offset 0 = callee slot. */
+static BoyiaValue* GetLocalPtrByFrameOffset(BoyiaVM* vm, LIntPtr frameOffset) {
+    ExecState* e = vm->mEState;
+    LInt start;
+    LInt idx;
+    if (!e || e->mFrameIndex <= 0) {
+        return kBoyiaNull;
+    }
+    start = e->mExecStack[e->mFrameIndex - 1].mLValSize;
+    idx = start + (LInt)frameOffset;
+    if (idx < 0 || idx >= e->mStackFrame.mLValSize || idx >= NUM_LOCAL_VARS) {
+        return kBoyiaNull;
+    }
+    return &e->mLocals[idx];
+}
+
 static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
     BoyiaValue* val = kBoyiaNull;
     OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
@@ -1136,6 +1175,9 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
         break;
     case OP_VAR:
         val = FindVal((LUintPtr)op->mValue, vm);
+        break;
+    case OP_LOCAL:
+        val = GetLocalPtrByFrameOffset(vm, op->mValue);
         break;
     }
 
@@ -1199,6 +1241,8 @@ static LInt HandlePushObj(Instruction* inst, BoyiaVM* vm) {
         if (objKey != kBoyiaSuper) {
             AssignStateClass(vm->mEState, &vm->mCpu->mReg0);
         }
+    } else if (inst->mOPLeft.mType == OP_LOCAL) {
+        AssignStateClass(vm->mEState, &vm->mCpu->mReg0);
     } else {
         AssignStateClass(vm->mEState, kBoyiaNull);
     }
@@ -1276,6 +1320,27 @@ static LVoid ForStatement(CompileState* cs) {
     endInst->mOPLeft.mValue = (LIntPtr)(endInst - logicInst);
 }
 
+static FunctionScope* CurrentFunctionScope(CompileState* cs) {
+    if (!cs || cs->mFunctionScopeCount <= 0) {
+        return kBoyiaNull;
+    }
+    return &cs->mFunctionScopes[cs->mFunctionScopeCount - 1];
+}
+
+static LVoid FunctionScopePushLocalScope(FunctionScope* fs) {
+    if (!fs || fs->mLocalScopeCount >= COMPILE_LOCAL_SCOPE_STACK) {
+        return;
+    }
+    LocalScope* ls = &fs->mLocalScopes[fs->mLocalScopeCount++];
+    ls->mLocalCount = 0;
+}
+
+static LVoid FunctionScopePopLocalScope(FunctionScope* fs) {
+    if (fs && fs->mLocalScopeCount > 0) {
+        --fs->mLocalScopeCount;
+    }
+}
+
 // 解析块{}中的内容
 static LVoid BlockStatement(CompileState* cs) {
     LBool block = LFalse;
@@ -1293,7 +1358,25 @@ static LVoid BlockStatement(CompileState* cs) {
             }
         } else if (cs->mToken.mTokenValue == BLOCK_START) {
             block = LTrue;
+            {
+                FunctionScope* fs = CurrentFunctionScope(cs);
+                if (fs) {
+                    FunctionScopePushLocalScope(fs);
+                }
+            }
         } else if (cs->mToken.mTokenValue == BLOCK_END) {
+            {
+                FunctionScope* fs = CurrentFunctionScope(cs);
+                if (fs && fs->mLocalScopeCount > 0) {
+                    LocalScope* top = &fs->mLocalScopes[fs->mLocalScopeCount - 1];
+                    LInt n = top->mLocalCount;
+                    if (n > 0) {
+                        OpCommand cmdL = { OP_CONST_NUMBER, (LIntPtr)n };
+                        PutInstruction(&cmdL, kBoyiaNull, kCmdPopLocals, cs);
+                    }
+                    FunctionScopePopLocalScope(fs);
+                }
+            }
             block = LFalse;
             return; /* is a }, so return */
         } else if (cs->mToken.mTokenType == KEYWORD) { /* is keyword */
@@ -1570,7 +1653,92 @@ static LInt HandleCreateParam(Instruction* inst, BoyiaVM* vm) {
     return kOpResultSuccess;
 }
 
+static LVoid PushCompileFunctionScope(CompileState* cs) {
+    if (!cs || cs->mFunctionScopeCount >= FUNC_CALLS) {
+        return;
+    }
+    FunctionScope* fs = &cs->mFunctionScopes[cs->mFunctionScopeCount++];
+    fs->mParamCount = 0;
+    fs->mLocalScopeCount = 0;
+}
+
+static LVoid PopCompileFunctionScope(CompileState* cs) {
+    if (cs && cs->mFunctionScopeCount > 0) {
+        --cs->mFunctionScopeCount;
+    }
+}
+
+static LVoid FunctionScopeAddParam(FunctionScope* fs, LUintPtr key) {
+    if (!fs || fs->mParamCount >= NUM_FUNC_PARAMS) {
+        return;
+    }
+    fs->mParams[fs->mParamCount++] = key;
+}
+
+static LVoid FunctionScopeAddLocal(FunctionScope* fs, LUintPtr key) {
+    if (!fs || fs->mLocalScopeCount <= 0) {
+        return;
+    }
+    LocalScope* top = &fs->mLocalScopes[fs->mLocalScopeCount - 1];
+    if (top->mLocalCount >= COMPILE_LOCAL_KEYS_PER_SCOPE) {
+        return;
+    }
+    top->mLocals[top->mLocalCount++] = key;
+}
+
+/* Returns -1 if not in current function scope (use OP_VAR). */
+static LInt FunctionScopeResolveLocalFrameOffset(FunctionScope* fs, LUintPtr key) {
+    LInt pc;
+    LInt si;
+    LInt j;
+    LInt s;
+    LInt prefix;
+
+    if (!fs) {
+        return -1;
+    }
+
+    pc = fs->mParamCount;
+    for (si = fs->mLocalScopeCount - 1; si >= 0; --si) {
+        LocalScope* ls = &fs->mLocalScopes[si];
+        for (j = ls->mLocalCount - 1; j >= 0; --j) {
+            if (ls->mLocals[j] == key) {
+                prefix = 0;
+                for (s = 0; s < si; ++s) {
+                    prefix += fs->mLocalScopes[s].mLocalCount;
+                }
+                return 1 + pc + prefix + j;
+            }
+        }
+    }
+
+    for (j = fs->mParamCount - 1; j >= 0; --j) {
+        if (fs->mParams[j] == key) {
+            return 1 + j;
+        }
+    }
+
+    return -1;
+}
+
+static OpCommand CompileVarOperand(CompileState* cs, LUintPtr key) {
+    FunctionScope* fs = CurrentFunctionScope(cs);
+    LInt off;
+    if (fs) {
+        off = FunctionScopeResolveLocalFrameOffset(fs, key);
+        if (off >= 0) {
+            OpCommand c = { OP_LOCAL, (LIntPtr)off };
+            return c;
+        }
+    }
+    {
+        OpCommand c = { OP_VAR, (LIntPtr)key };
+        return c;
+    }
+}
+
 static LVoid InitParams(CompileState* cs) {
+    PushCompileFunctionScope(cs);
     do {
         NextToken(cs); // 得到属性名
         // 如果是右括号，则跳出循环
@@ -1578,10 +1746,17 @@ static LVoid InitParams(CompileState* cs) {
             break;
         }
 
-        OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
-        PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, cs);
+        {
+            LUintPtr nameKey = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
+            FunctionScope* fs = CurrentFunctionScope(cs);
+            if (fs) {
+                FunctionScopeAddParam(fs, nameKey);
+            }
+            OpCommand cmd = { OP_CONST_NUMBER, (LIntPtr)nameKey };
+            PutInstruction(&cmd, kBoyiaNull, kCmdParamCreate, cs);
+        }
         // 获取逗号分隔符',', 最后一个是), 则跳出循环
-        NextToken(cs); 
+        NextToken(cs);
     } while (cs->mToken.mTokenValue == COMMA);
     if (cs->mToken.mTokenValue != RPTR) {
         SntxErrorBuild(PAREN_EXPECTED, cs);
@@ -1659,6 +1834,9 @@ static LVoid BodyStatement(CompileState* cs, LBool isFunction) {
         funInst->mOPRight.mValue = (LIntPtr)(tmpTable.mEnd - cs->mVm->mVMCode->mCode);
     }
     cs->mCmds = cmds;
+    if (isFunction) {
+        PopCompileFunctionScope(cs);
+    }
 }
 
 static LInt HandleCreateClass(Instruction* inst, BoyiaVM* vm) {
@@ -1899,15 +2077,44 @@ static LInt HandleDeclLocal(Instruction* inst, BoyiaVM* vm) {
     return kOpResultSuccess;
 }
 
+/* Pop N slots from current frame local stack (block exit); matches compile-time LocalScope. */
+static LInt HandlePopLocals(Instruction* inst, BoyiaVM* vm) {
+    ExecState* e = vm->mEState;
+    LInt start;
+    LInt n;
+    LInt newSize;
+    if (!e || e->mFrameIndex <= 0) {
+        return kOpResultEnd;
+    }
+    n = (LInt)inst->mOPLeft.mValue;
+    if (n <= 0) {
+        return kOpResultSuccess;
+    }
+    start = e->mExecStack[e->mFrameIndex - 1].mLValSize;
+    newSize = e->mStackFrame.mLValSize - n;
+    /* Keep callee at index start: need mLValSize >= start + 1 */
+    if (newSize < start + 1) {
+        return kOpResultEnd;
+    }
+    e->mStackFrame.mLValSize = newSize;
+    return kOpResultSuccess;
+}
+
 /* Declare a local variable. */
 static LVoid LocalStatement(CompileState* cs) {
     LInt type = cs->mToken.mTokenValue;
     do {
         NextToken(cs); /* get ident */
         OpCommand cmdLeft = { OP_CONST_NUMBER, type };
-        OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)GenIdentifier(&cs->mToken.mTokenName, cs->mVm) };
-        //EngineStrLog("value Name=%s", cs->mToken.mTokenName);
-        PutInstruction(&cmdLeft, &cmdRight, kCmdDeclLocal, cs);
+        {
+            LUintPtr lk = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
+            FunctionScope* fs = CurrentFunctionScope(cs);
+            if (fs) {
+                FunctionScopeAddLocal(fs, lk);
+            }
+            OpCommand cmdRight = { OP_CONST_NUMBER, (LIntPtr)lk };
+            PutInstruction(&cmdLeft, &cmdRight, kCmdDeclLocal, cs);
+        }
         Putback(cs);
         EvalExpression(cs);
     } while (cs->mToken.mTokenValue == COMMA);
@@ -2027,7 +2234,7 @@ static void CallStatement(CompileState* cs, OpCommand* objCmd) {
     PushArgStatement(LTrue, cs);
     // POP CLASS context
     // 当前函数可能存在obj对象上下文，如果存在，这个obj必然存储在R0中
-    if (objCmd->mType == OP_VAR) {
+    if (objCmd->mType == OP_VAR || objCmd->mType == OP_LOCAL) {
         PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPop, cs);
     }
     // 保存对象环境
@@ -2095,6 +2302,18 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
             return kOpResultEnd;
         }
 
+        if (val->mValueType == BY_VAR) {
+            ValueCopy(left, val);
+        } else {
+            ValueCopyNoName(left, val);
+            left->mNameKey = (LUintPtr)val;
+        }
+    } break;
+    case OP_LOCAL: {
+        BoyiaValue* val = GetLocalPtrByFrameOffset(vm, inst->mOPRight.mValue);
+        if (!val) {
+            return kOpResultEnd;
+        }
         if (val->mValueType == BY_VAR) {
             ValueCopy(left, val);
         } else {
@@ -2739,7 +2958,7 @@ static LVoid EvalGetProp(CompileState* cs) {
 }
 
 static LVoid EvalGetValue(CompileState* cs, LUintPtr objKey) {
-    OpCommand cmdR = { OP_VAR, (LIntPtr)objKey };
+    OpCommand cmdR = CompileVarOperand(cs, objKey);
     PutInstruction(&COMMAND_R0, &cmdR, kCmdAssign, cs);
     if (cs->mToken.mTokenValue == DOT) {
         EvalGetProp(cs);
@@ -2771,7 +2990,7 @@ static LVoid Atom(CompileState* cs) {
         } else {
             NextToken(cs);
             if (cs->mToken.mTokenValue == LPTR) {
-                OpCommand cmd = { OP_VAR, (LIntPtr)key };
+                OpCommand cmd = CompileVarOperand(cs, key);
                 PutInstruction(&COMMAND_R0, &cmd, kCmdAssign, cs);
                 OpCommand objCmd = { OP_CONST_NUMBER, 0 };
                 CallStatement(cs, &objCmd);
@@ -3133,12 +3352,13 @@ LVoid GetGlobalTable(LIntPtr* table, LInt* size, LVoid* vm) {
 /*  output function */
 LVoid CompileCode(LInt8* code, LVoid* vm) {
     BoyiaVM* vmPtr = (BoyiaVM*)vm;
-    CompileState cs;
-    cs.mProg = code;
-    cs.mLineNum = 1;
-    cs.mColumnNum = 0;
-    cs.mVm = vmPtr;
-    ParseStatement(&cs); // 该函数记录全局变量以及函数接口
+    CompileState* cs = FAST_NEW(CompileState);
+    cs->mProg = code;
+    cs->mLineNum = 1;
+    cs->mColumnNum = 0;
+    cs->mVm = vmPtr;
+    cs->mFunctionScopeCount = 0;
+    ParseStatement(cs); // 该函数记录全局变量以及函数接口
 }
 
 LVoid* GetLocalValue(LInt idx, LVoid* vm) {

@@ -209,6 +209,7 @@ unsafe fn dispatch_instruction(inst: *mut Instruction, vm: *mut BoyiaVM) -> OpHa
     match opcode {
         CmdType::kCmdDeclGlobal => handle_decl_global(inst, vm),
         CmdType::kCmdDeclLocal => handle_decl_local(inst, vm),
+        CmdType::kCmdPopLocals => handle_pop_locals(inst, vm),
         CmdType::kCmdPush => handle_push(inst, vm),
         CmdType::kCmdPop => handle_pop(inst, vm),
         CmdType::kCmdAdd => handle_add(inst, vm),
@@ -289,6 +290,29 @@ unsafe fn handle_decl_local(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     };
     local.mNameKey = (*inst).mOPRight.mValue as LUintPtr;
     local_push(&mut local, vm as *mut LVoid);
+    OpHandleResult::kOpResultSuccess
+}
+
+/// Pop N persistent local slots (block exit); matches BoyiaCore.cpp HandlePopLocals / kCmdPopLocals.
+unsafe fn handle_pop_locals(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    if vm.is_null() || (*vm).mEState.is_null() {
+        return OpHandleResult::kOpResultEnd;
+    }
+    let e = (*vm).mEState;
+    if (*e).mFrameIndex <= 0 {
+        return OpHandleResult::kOpResultEnd;
+    }
+    let n = (*inst).mOPLeft.mValue;
+    if n <= 0 {
+        return OpHandleResult::kOpResultSuccess;
+    }
+    let fi = (*e).mFrameIndex as usize - 1;
+    let start = (*e).mExecStack[fi].mLValSize;
+    let new_size = (*e).mStackFrame.mLValSize - n as LInt;
+    if new_size < start + 1 {
+        return OpHandleResult::kOpResultEnd;
+    }
+    (*e).mStackFrame.mLValSize = new_size;
     OpHandleResult::kOpResultSuccess
 }
 

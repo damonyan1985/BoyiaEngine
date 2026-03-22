@@ -343,6 +343,7 @@ pub(crate) enum CmdType {
     kCmdAwait,
     kCmdSetAnonym,
     kCmdOnceJmpTrue,
+    kCmdPopLocals,
     kCmdEnd,
 }
 

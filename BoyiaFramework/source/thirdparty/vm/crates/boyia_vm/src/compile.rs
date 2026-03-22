@@ -1171,6 +1171,19 @@ unsafe fn block_statement(cs: *mut CompileState) {
             }
         } else if (*cs).mToken.mTokenValue == TokenValue::BLOCK_END {
             if let Some(fs) = (*cs).mFunctionScopes.last_mut() {
+                let n = fs
+                    .mLocalScopes
+                    .last()
+                    .map(|ls| ls.mLocals.len())
+                    .unwrap_or(0);
+                if n > 0 {
+                    let _ = put_instruction(
+                        cs,
+                        OpCommand::const_number(n as LIntPtr),
+                        OpCommand::none(),
+                        CmdType::kCmdPopLocals,
+                    );
+                }
                 let _ = fs.pop_local_scope();
             }
             return; // C++ sets block = LFalse then return; we skip the dead assign
