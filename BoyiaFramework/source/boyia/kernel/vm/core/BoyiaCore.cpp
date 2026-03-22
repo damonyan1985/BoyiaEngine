@@ -3359,6 +3359,8 @@ LVoid CompileCode(LInt8* code, LVoid* vm) {
     cs->mVm = vmPtr;
     cs->mFunctionScopeCount = 0;
     ParseStatement(cs); // 该函数记录全局变量以及函数接口
+
+    FAST_DELETE(cs);
 }
 
 LVoid* GetLocalValue(LInt idx, LVoid* vm) {
