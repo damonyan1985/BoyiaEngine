@@ -1119,15 +1119,15 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm) {
     }
 
     /* second, see if it's a local variable */
-    if (vm->mEState->mFrameIndex > 0) {
-        LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
-        LInt idx = vm->mEState->mStackFrame.mLValSize - 1;
-        // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
-        for (; idx > start; --idx) {
-            if (vm->mLocals[idx].mNameKey == key)
-                return &vm->mLocals[idx];
-        }
-    }
+    //if (vm->mEState->mFrameIndex > 0) {
+    //    LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
+    //    LInt idx = vm->mEState->mStackFrame.mLValSize - 1;
+    //    // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
+    //    for (; idx > start; --idx) {
+    //        if (vm->mLocals[idx].mNameKey == key)
+    //            return &vm->mLocals[idx];
+    //    }
+    //}
 
     /* otherwise, try global vars */
     BoyiaValue* val = FindGlobal(key, vm);
@@ -1173,12 +1173,12 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
     case OP_REG1:
         val = &vm->mCpu->mReg1;
         break;
-    case OP_VAR:
-        val = FindVal((LUintPtr)op->mValue, vm);
-        break;
-    case OP_LOCAL:
-        val = GetLocalPtrByFrameOffset(vm, op->mValue);
-        break;
+    //case OP_VAR:
+    //    val = FindVal((LUintPtr)op->mValue, vm);
+    //    break;
+    //case OP_LOCAL:
+    //    val = GetLocalPtrByFrameOffset(vm, op->mValue);
+    //    break;
     }
 
     return val;
@@ -2250,6 +2250,11 @@ static void CallStatement(CompileState* cs, OpCommand* objCmd) {
     pushInst->mOPLeft.mValue = (LIntPtr)(funInst - pushInst);
 }
 
+static LVoid ValueCopyWithKey(BoyiaValue* dest, BoyiaValue* src) {
+    dest->mNameKey = (LUintPtr)src;
+    ValueCopyNoName(dest, src);
+}
+
 /* Push the arguments to a function onto the local variable stack. */
 static LVoid PushArgStatement(LBool needPushFunction, CompileState* cs) {
     // 统计参数个数
@@ -2302,24 +2307,26 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
             return kOpResultEnd;
         }
 
-        if (val->mValueType == BY_VAR) {
-            ValueCopy(left, val);
-        } else {
-            ValueCopyNoName(left, val);
-            left->mNameKey = (LUintPtr)val;
-        }
+        // if (val->mValueType == BY_VAR) {
+        //     ValueCopy(left, val);
+        // } else {
+        //     ValueCopyNoName(left, val);
+        //     left->mNameKey = (LUintPtr)val;
+        // }
+        ValueCopyWithKey(left, val);
     } break;
     case OP_LOCAL: {
         BoyiaValue* val = GetLocalPtrByFrameOffset(vm, inst->mOPRight.mValue);
         if (!val) {
             return kOpResultEnd;
         }
-        if (val->mValueType == BY_VAR) {
-            ValueCopy(left, val);
-        } else {
-            ValueCopyNoName(left, val);
-            left->mNameKey = (LUintPtr)val;
-        }
+        // if (val->mValueType == BY_VAR) {
+        //     ValueCopy(left, val);
+        // } else {
+        //     ValueCopyNoName(left, val);
+        //     left->mNameKey = (LUintPtr)val;
+        // }
+        ValueCopyWithKey(left, val);
     } break;
     case OP_REG0: {
         ValueCopyNoName(left, &vm->mCpu->mReg0);
@@ -2757,13 +2764,14 @@ static LInt HandleAssignVar(Instruction* inst, BoyiaVM* vm) {
     }
 
     
-    BoyiaValue* value = kBoyiaNull;
-    if (left->mValueType == BY_VAR) {
-        value = FindVal(left->mNameKey, vm);
-    } else {
-        value = (BoyiaValue*)left->mNameKey;
-    }
+    // BoyiaValue* value = kBoyiaNull;
+    // if (left->mValueType == BY_VAR) {
+    //     value = FindVal(left->mNameKey, vm);
+    // } else {
+    //     value = (BoyiaValue*)left->mNameKey;
+    // }
 
+    BoyiaValue* value = (BoyiaValue*)left->mNameKey;
     ValueCopyNoName(value, result);
     ValueCopy(&vm->mCpu->mReg0, value);
     return kOpResultSuccess;
@@ -2831,11 +2839,6 @@ static BoyiaValue* FindObjProp(BoyiaValue* lVal, LUintPtr rVal, Instruction* ins
     }
 
     return kBoyiaNull;
-}
-
-static LVoid ValueCopyWithKey(BoyiaValue* dest, BoyiaValue* src) {
-    dest->mNameKey = (LUintPtr)src;
-    ValueCopyNoName(dest, src);
 }
 
 static LInt HandleGetProp(Instruction* inst, BoyiaVM* vm) {

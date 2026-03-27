@@ -53,17 +53,17 @@ unsafe fn get_val(key: LUintPtr, vm: *mut BoyiaVM) -> *mut BoyiaValue {
     }
 
     /* second, see if it's a local variable (idx > start: first element is the function itself) */
-    if (*e).mFrameIndex > 0 {
-        let start = (*e).mExecStack.as_ptr().add((*e).mFrameIndex as usize - 1).read().mLValSize;
-        let mut idx = (*e).mStackFrame.mLValSize - 1;
-        while idx > start {
-            if (*e).mLocals.as_ptr().add(idx as usize).read().mNameKey == key {
-                println!("get local value success");
-                return (*e).mLocals.as_mut_ptr().add(idx as usize);
-            }
-            idx -= 1;
-        }
-    }
+    // if (*e).mFrameIndex > 0 {
+    //     let start = (*e).mExecStack.as_ptr().add((*e).mFrameIndex as usize - 1).read().mLValSize;
+    //     let mut idx = (*e).mStackFrame.mLValSize - 1;
+    //     while idx > start {
+    //         if (*e).mLocals.as_ptr().add(idx as usize).read().mNameKey == key {
+    //             println!("get local value success");
+    //             return (*e).mLocals.as_mut_ptr().add(idx as usize);
+    //         }
+    //         idx -= 1;
+    //     }
+    // }
 
     /* otherwise, try global vars */
     let val = find_global(key, vm);
@@ -113,8 +113,8 @@ unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM)
     match op.mType {
         OpType::OP_REG0 => &mut (*(*vm).mCpu).mReg0 as *mut BoyiaValue,
         OpType::OP_REG1 => &mut (*(*vm).mCpu).mReg1 as *mut BoyiaValue,
-        OpType::OP_VAR => get_val(op.mValue as LUintPtr, vm),
-        OpType::OP_LOCAL => get_local_ptr_by_frame_offset(vm, op.mValue),
+        // OpType::OP_VAR => get_val(op.mValue as LUintPtr, vm),
+        // OpType::OP_LOCAL => get_local_ptr_by_frame_offset(vm, op.mValue),
         _ => ptr::null_mut(),
     }
 }
@@ -550,27 +550,35 @@ unsafe fn handle_assignment(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
             if val.is_null() {
                 return OpHandleResult::kOpResultEnd;
             }
-            if (*val).mValueType == ValueType::BY_VAR {
-                println!("[handle_assignment] BY_VAR val.mNameKey={}", (*val).mNameKey);
-                value_copy(left, val);
-            } else {
-                value_copy_no_name(left, val);
+            // if (*val).mValueType == ValueType::BY_VAR {
+            //     println!("[handle_assignment] BY_VAR val.mNameKey={}", (*val).mNameKey);
+            //     value_copy(left, val);
+            // } else {
+            //     value_copy_no_name(left, val);
 
-                println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
-                (*left).mNameKey = val as LUintPtr;
-            }
+            //     println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
+            //     (*left).mNameKey = val as LUintPtr;
+            // }
+
+            value_copy_no_name(left, val);
+
+            println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
+            (*left).mNameKey = val as LUintPtr;
         }
         OpType::OP_LOCAL => {
             let val = get_local_ptr_by_frame_offset(vm, (*inst).mOPRight.mValue);
             if val.is_null() {
                 return OpHandleResult::kOpResultEnd;
             }
-            if (*val).mValueType == ValueType::BY_VAR {
-                value_copy(left, val);
-            } else {
-                value_copy_no_name(left, val);
-                (*left).mNameKey = val as LUintPtr;
-            }
+            // if (*val).mValueType == ValueType::BY_VAR {
+            //     value_copy(left, val);
+            // } else {
+            //     value_copy_no_name(left, val);
+            //     (*left).mNameKey = val as LUintPtr;
+            // }
+
+            value_copy_no_name(left, val);
+            (*left).mNameKey = val as LUintPtr;
         }
         OpType::OP_REG0 => {
             value_copy_no_name(left, &(*(*vm).mCpu).mReg0);
@@ -988,13 +996,15 @@ unsafe fn handle_assign_var(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     if left.is_null() || result.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
-    let value: *mut BoyiaValue = if (*left).mValueType == ValueType::BY_VAR {
-        println!("[handle_assign_var] BY_BAR");
-        get_val((*left).mNameKey, vm)
-    } else {
-        println!("[handle_assign_var] not BY_BAR");
-        (*left).mNameKey as *mut BoyiaValue
-    };
+    // let value: *mut BoyiaValue = if (*left).mValueType == ValueType::BY_VAR {
+    //     println!("[handle_assign_var] BY_BAR");
+    //     get_val((*left).mNameKey, vm)
+    // } else {
+    //     println!("[handle_assign_var] not BY_BAR");
+    //     (*left).mNameKey as *mut BoyiaValue
+    // };
+
+    let value: *mut BoyiaValue = (*left).mNameKey as *mut BoyiaValue;
 
     println!("[handle_assign_var] value.mNameKey={}", (*value).mNameKey);
     if value.is_null() {
