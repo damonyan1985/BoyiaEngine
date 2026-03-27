@@ -8,7 +8,7 @@ use crate::core::{
     alloc_micro_task, copy_object, create_const_string, create_exec_state, create_fun_val,
     create_micro_task_object, destroy_exec_state, find_global, free_micro_task, get_boyia_class_id,
     init_function, local_push, micro_task_class_key, set_int_result, set_native_result, string_add,
-    switch_exec_state, value_copy, value_copy_no_name,
+    switch_exec_state, value_copy, value_copy_no_name, value_copy_with_key,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -550,35 +550,14 @@ unsafe fn handle_assignment(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
             if val.is_null() {
                 return OpHandleResult::kOpResultEnd;
             }
-            // if (*val).mValueType == ValueType::BY_VAR {
-            //     println!("[handle_assignment] BY_VAR val.mNameKey={}", (*val).mNameKey);
-            //     value_copy(left, val);
-            // } else {
-            //     value_copy_no_name(left, val);
-
-            //     println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
-            //     (*left).mNameKey = val as LUintPtr;
-            // }
-
-            value_copy_no_name(left, val);
-
-            println!("[handle_assignment] val.mNameKey={}", (*val).mNameKey);
-            (*left).mNameKey = val as LUintPtr;
+            value_copy_with_key(left, val);
         }
         OpType::OP_LOCAL => {
             let val = get_local_ptr_by_frame_offset(vm, (*inst).mOPRight.mValue);
             if val.is_null() {
                 return OpHandleResult::kOpResultEnd;
             }
-            // if (*val).mValueType == ValueType::BY_VAR {
-            //     value_copy(left, val);
-            // } else {
-            //     value_copy_no_name(left, val);
-            //     (*left).mNameKey = val as LUintPtr;
-            // }
-
-            value_copy_no_name(left, val);
-            (*left).mNameKey = val as LUintPtr;
+            value_copy_with_key(left, val);
         }
         OpType::OP_REG0 => {
             value_copy_no_name(left, &(*(*vm).mCpu).mReg0);
@@ -966,13 +945,10 @@ unsafe fn handle_get_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
 
     let result = get_inline_cache((*inst).mCache, lval);
     if !result.is_null() {
-        println!("[handle_get_prop] get_inline_cache success");
-        value_copy(&mut (*(*vm).mCpu).mReg0, result);
-        (*(*vm).mCpu).mReg0.mNameKey = (*result).mNameKey;
+        value_copy_with_key(&mut (*(*vm).mCpu).mReg0, result);
         return OpHandleResult::kOpResultSuccess;
     }
 
-    println!("[handle_get_prop] get_inline_cache null");
     let rval = (*inst).mOPRight.mValue as LUintPtr;
     let result = find_obj_prop(lval, rval, inst as *mut Instruction, vm);
     if result.is_null() {
@@ -982,8 +958,7 @@ unsafe fn handle_get_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
         );
         return OpHandleResult::kOpResultEnd;
     }
-    value_copy(&mut (*(*vm).mCpu).mReg0, result);
-    (*(*vm).mCpu).mReg0.mNameKey = (*result).mNameKey;
+    value_copy_with_key(&mut (*(*vm).mCpu).mReg0, result);
     OpHandleResult::kOpResultSuccess
 }
 

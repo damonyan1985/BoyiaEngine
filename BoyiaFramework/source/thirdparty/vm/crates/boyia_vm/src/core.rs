@@ -63,6 +63,17 @@ pub unsafe fn value_copy(dest: *mut BoyiaValue, src: *const BoyiaValue) {
     value_copy_no_name(dest, src);
 }
 
+/// Match `BoyiaCore.cpp` `ValueCopyWithKey`: `dest->mNameKey = (LUintPtr)src; ValueCopyNoName(dest, src)`.
+/// Stores the **address** of `src` in `dest.mNameKey` (for indirection / property slots), not `src.mNameKey`.
+#[inline]
+pub(crate) unsafe fn value_copy_with_key(dest: *mut BoyiaValue, src: *const BoyiaValue) {
+    if dest.is_null() || src.is_null() {
+        return;
+    }
+    (*dest).mNameKey = src as LUintPtr;
+    value_copy_no_name(dest, src);
+}
+
 // ---------------------------------------------------------------------------
 // Native result, locals, stack, global table
 // ---------------------------------------------------------------------------
