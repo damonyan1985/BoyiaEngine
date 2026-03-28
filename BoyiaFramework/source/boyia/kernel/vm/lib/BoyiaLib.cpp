@@ -94,9 +94,13 @@ LInt addElementToVector(LVoid* vm)
     BoyiaFunction* fun = (BoyiaFunction*)val->mValue.mObj.mPtr;
     if (fun->mParamSize >= GET_FUNCTION_COUNT(fun)) {
         BoyiaValue* value = fun->mParams;
+
+        LInt high = fun->mParamCount >> 16;
         LInt count = GET_FUNCTION_COUNT(fun);
-        fun->mParams = NEW_ARRAY(BoyiaValue, (count + 10), vm);
-        fun->mParamCount = count + 10;
+        
+        LInt newCap = (count + 10);
+        fun->mParams = NEW_ARRAY(BoyiaValue, newCap, vm);
+        fun->mParamCount = newCap | (high << 16);
         LMemcpy(fun->mParams, value, count * sizeof(BoyiaValue));
         VM_DELETE(value, vm);
     }
