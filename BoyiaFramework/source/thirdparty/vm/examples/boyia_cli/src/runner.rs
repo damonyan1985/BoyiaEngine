@@ -4,6 +4,7 @@
 
 #![allow(dead_code)]
 
+use crate::file::builtin_file_class;
 use crate::https::builtin_https_class;
 use crate::run_loop::{RunLoopError, RunLoopHandle};
 use crate::task_thread::TaskThread;
@@ -53,6 +54,7 @@ impl BoyiaRunner {
                 let mut gen_id = |s: &str| runtime.id_creator().gen_ident_by_str(s);
                 let runner_ptr = runner_ptr_usize as *mut BoyiaRunner;
                 builtin_https_class(vm, &mut gen_id, runner_ptr);
+                builtin_file_class(vm, &mut gen_id, runner_ptr);
                 let _ = init_tx.send(());
             });
         let _ = init_rx.recv();
@@ -60,7 +62,7 @@ impl BoyiaRunner {
         runner_box
     }
 
-    /// Get handle and thread pool from a runner pointer (for Https scheduling). Returns None if pointer is null or runner is not fully initialized.
+    /// Get handle and thread pool from a runner pointer (Https/File async builtins). Returns None if pointer is null or runner is not fully initialized.
     pub unsafe fn get_handle_and_pool_from_ptr(
         runner: *mut BoyiaRunner,
     ) -> Option<(RunLoopHandle<Box<BoyiaRuntime>>, std::sync::Weak<ThreadPool>)> {

@@ -5,6 +5,7 @@
 //! env BOYIA_INIT_MINIMAL=1 to skip builtin classes (faster init, fewer deps)
 //! and narrow down whether the crash is in init.
 
+mod file;
 mod https;
 mod run_loop;
 mod runner;
@@ -101,6 +102,21 @@ class PrinterExt extends Printer {
         });
     }
 
+    prop fun demoFile() {
+        File.write("boyia_cli_demo.txt", "hello from File.write", fun(err) {
+            if (err == "ok") {
+                BY_Log("File.write ok");
+            } else {
+                BY_Log("File.write: " + err);
+            }
+            
+        });
+
+        File.read("boyia_cli_demo.txt", fun(content) {
+            BY_Log("File.read: " + content);
+        });
+    }
+
     prop async loadAsync() {
         for (var i = 0; i < 10; i=i+1) {
             if (i == 6) {
@@ -144,13 +160,15 @@ BY_Log(123);
 //pe.load();
 
 pe.loadAsync();
-
+pe.demoFile();
 pe.testLocal();
 
 printlog(p, arr1.get(0));
 
 arr1.add("811");
+printlog(p, arr1.get(1));
 printlog(p, arr1.get(2));
+
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
 // "#;
