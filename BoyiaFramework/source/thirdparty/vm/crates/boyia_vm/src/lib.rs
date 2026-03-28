@@ -64,6 +64,7 @@ pub use core::{
     get_runtime_from_vm,
     get_boyia_class_id,
     get_function_count,
+    vector_params_grow_if_full,
     gen_identifier_from_str,
     create_global_class,
     alloc_builtin_function,

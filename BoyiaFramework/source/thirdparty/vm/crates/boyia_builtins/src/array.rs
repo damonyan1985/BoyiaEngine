@@ -6,9 +6,9 @@
 
 use crate::{gen_builtin_class_function, K_BOYIA_NULL};
 use boyia_vm::{
-    copy_object, create_global_class, get_local_size, get_local_value, get_string_buffer,
-    set_int_result, set_native_result, value_copy, get_function_count, BoyiaFunction, BoyiaValue, NativePtr,
-    ValueType, LInt, LUintPtr, LVoid, OpHandleResult,
+    copy_object, create_global_class, get_function_count, get_local_size, get_local_value,
+    get_string_buffer, set_int_result, set_native_result, value_copy, vector_params_grow_if_full,
+    BoyiaFunction, BoyiaValue, NativePtr, ValueType, LUintPtr, LVoid, OpHandleResult,
 };
 
 /// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
@@ -74,11 +74,16 @@ unsafe fn array_add_impl(vm: *mut LVoid) -> OpHandleResult {
         return OpHandleResult::kOpResultEnd;
     }
     let fun = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
-    if fun.is_null() || (*fun).mParams.is_null() {
+    if fun.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
     let cap = get_function_count(fun);
     if (*fun).mParamSize >= cap {
+        if !vector_params_grow_if_full(fun, vm) {
+            return OpHandleResult::kOpResultEnd;
+        }
+    }
+    if (*fun).mParams.is_null() {
         return OpHandleResult::kOpResultEnd;
     }
     let dst = (*fun).mParams.add((*fun).mParamSize as usize);

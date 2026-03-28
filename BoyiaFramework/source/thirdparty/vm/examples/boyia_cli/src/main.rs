@@ -146,6 +146,11 @@ BY_Log(123);
 pe.loadAsync();
 
 pe.testLocal();
+
+printlog(p, arr1.get(0));
+
+arr1.add("811");
+printlog(p, arr1.get(2));
 "#;
 //     let script = r#"class Printer { fun say(msg) { BY_Log(msg); } }
 // "#;

@@ -269,6 +269,57 @@ pub(crate) unsafe fn runtime_new_data_zeroed(creator: *mut dyn Runtime, size: LI
     p
 }
 
+/// Extra slots when an Array-style `mParams` buffer is full. Match `addElementToVector` in BoyiaLib.cpp.
+const BOYIA_VECTOR_GROW_DELTA: LInt = 10;
+
+/// Grow `fun->mParams` when `mParamSize >= GET_FUNCTION_COUNT(fun)`. Matches `addElementToVector` in BoyiaLib.cpp:
+/// allocate `count + 10` slots, copy `count * sizeof(BoyiaValue)` from the old buffer, `delete_data` old buffer,
+/// update `mParamCount` lower 16 bits to the new capacity (preserving high 16 bits).
+///
+/// Returns `false` if the VM/creator is invalid or allocation fails.
+pub unsafe fn vector_params_grow_if_full(fun: *mut BoyiaFunction, vm: *mut LVoid) -> bool {
+    if fun.is_null() || vm.is_null() {
+        return false;
+    }
+    let cap = get_function_count(fun);
+    if (*fun).mParamSize < cap {
+        return true;
+    }
+    let vm_ptr = vm as *mut BoyiaVM;
+    let creator = (*vm_ptr).mCreator;
+    if creator.is_null() {
+        return false;
+    }
+    let old_ptr = (*fun).mParams;
+    let count = cap;
+    if count > 0 && old_ptr.is_null() {
+        return false;
+    }
+    let new_cap = match count.checked_add(BOYIA_VECTOR_GROW_DELTA) {
+        Some(n) => n,
+        None => return false,
+    };
+    let new_bytes = match (new_cap as usize).checked_mul(mem::size_of::<BoyiaValue>()) {
+        Some(n) if n <= LInt::MAX as usize => n,
+        _ => return false,
+    };
+    let new_ptr = runtime_new_data_zeroed(creator, new_bytes as LInt) as *mut BoyiaValue;
+    if new_ptr.is_null() {
+        return false;
+    }
+    let copy_bytes = (count as usize).saturating_mul(mem::size_of::<BoyiaValue>());
+    if copy_bytes > 0 {
+        ptr::copy_nonoverlapping(old_ptr as *const u8, new_ptr as *mut u8, copy_bytes);
+    }
+    if !old_ptr.is_null() {
+        (*creator).delete_data(old_ptr as *mut LVoid);
+    }
+    (*fun).mParams = new_ptr;
+    let high = (*fun).mParamCount & !0x0000_FFFF;
+    (*fun).mParamCount = high | (new_cap & 0x0000_FFFF);
+    true
+}
+
 // ---------------------------------------------------------------------------
 // Init / Destroy VM
 // ---------------------------------------------------------------------------
