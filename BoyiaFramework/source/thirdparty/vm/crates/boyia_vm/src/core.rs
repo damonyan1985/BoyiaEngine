@@ -7,6 +7,9 @@
 
 use crate::types::*;
 use crate::Runtime;
+use boyia_memory::{
+    alloc_memory_chunk, create_memory_cache, destroy_memory_cache, free_memory_chunk,
+};
 use std::ptr;
 use std::alloc::{alloc, alloc_zeroed, dealloc, Layout};
 use std::mem;
@@ -269,6 +272,27 @@ pub(crate) unsafe fn runtime_new_data_zeroed(creator: *mut dyn Runtime, size: LI
     p
 }
 
+#[inline]
+unsafe fn create_exec_state_cache() -> *mut LVoid {
+    create_memory_cache(mem::size_of::<ExecState>() as LInt, EXEC_STATE_CAPACITY as LInt)
+}
+
+#[inline]
+unsafe fn alloc_exec_state(vm: *mut BoyiaVM) -> *mut ExecState {
+    if vm.is_null() || (*vm).mEStateCache.is_null() {
+        return ptr::null_mut();
+    }
+    alloc_memory_chunk((*vm).mEStateCache) as *mut ExecState
+}
+
+#[inline]
+unsafe fn free_exec_state(state: *mut ExecState, vm: *mut BoyiaVM) {
+    if state.is_null() || vm.is_null() || (*vm).mEStateCache.is_null() {
+        return;
+    }
+    free_memory_chunk(state as *mut LVoid, (*vm).mEStateCache);
+}
+
 /// Extra slots when an Array-style `mParams` buffer is full. Match `addElementToVector` in BoyiaLib.cpp.
 const BOYIA_VECTOR_GROW_DELTA: LInt = 10;
 
@@ -434,9 +458,8 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     (*vm.mEntry).mSize = 0;
 
     eprintln!("[init_vm] 8 alloc ExecState");
-    let exec_state_layout = Layout::new::<ExecState>();
-    vm.mEState = alloc_zeroed(exec_state_layout) as *mut ExecState;
-    if vm.mEState.is_null() {
+    vm.mEStateCache = create_exec_state_cache();
+    if vm.mEStateCache.is_null() {
         dealloc(vm.mEntry as *mut u8, entry_layout);
         dealloc(vm.mStrTable as *mut u8, str_table_layout);
         dealloc(vmcode.mCode as *mut u8, code_layout);
@@ -447,28 +470,21 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
         dealloc(vm_ptr as *mut u8, layout);
         return ptr::null_mut();
     }
-    let e_state = &mut *vm.mEState;
-    e_state.mFrameIndex = 0;
-    e_state.mStackFrame.mPC = ptr::null_mut();
-    e_state.mStackFrame.mLValSize = 0;
-    e_state.mStackFrame.mLoopSize = 0;
-    e_state.mStackFrame.mResultNum = 0;
-    e_state.mStackFrame.mContext = ptr::null_mut();
-    e_state.mStackFrame.mClass = BoyiaValue {
-        mNameKey: 0,
-        mValueType: ValueType::BY_ARG,
-        mValue: RealValue { mIntVal: 0 },
-    };
-    e_state.mPrev = ptr::null_mut();
-    e_state.mNext = ptr::null_mut();
-    e_state.mLast = ptr::null_mut();
-    e_state.mTopTask = ptr::null_mut();
-    e_state.mWait = LFalse;
-    vm.mESLink = vm.mEState;
-    vm.mLocals = e_state.mLocals.as_mut_ptr();
-    vm.mOpStack = e_state.mOpStack.as_mut_ptr();
-    vm.mLoopStack = e_state.mLoopStack.as_mut_ptr();
-    vm.mExecStack = e_state.mExecStack.as_mut_ptr();
+    vm.mEState = create_exec_state(vm_ptr);
+    if vm.mEState.is_null() {
+        destroy_memory_cache(vm.mEStateCache);
+        vm.mEStateCache = ptr::null_mut();
+        dealloc(vm.mEntry as *mut u8, entry_layout);
+        dealloc(vm.mStrTable as *mut u8, str_table_layout);
+        dealloc(vmcode.mCode as *mut u8, code_layout);
+        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
+        dealloc(vm.mCpu as *mut u8, cpu_layout);
+        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
+        dealloc(vm.mGlobals as *mut u8, globals_layout);
+        dealloc(vm_ptr as *mut u8, layout);
+        return ptr::null_mut();
+    }
+    switch_exec_state(vm.mEState, vm_ptr);
 
     eprintln!("[init_vm] 9 alloc Handlers");
     let handlers_layout = Layout::array::<OPHandler>(65).unwrap();
@@ -522,9 +538,9 @@ pub unsafe fn destroy_vm(vm: *mut LVoid) {
         let layout = Layout::new::<VMEntryTable>();
         dealloc((*vm_ptr).mEntry as *mut u8, layout);
     }
-    if !(*vm_ptr).mEState.is_null() {
-        let layout = Layout::new::<ExecState>();
-        dealloc((*vm_ptr).mEState as *mut u8, layout);
+    if !(*vm_ptr).mEStateCache.is_null() {
+        destroy_memory_cache((*vm_ptr).mEStateCache);
+        (*vm_ptr).mEStateCache = ptr::null_mut();
     }
     if !(*vm_ptr).mHandlers.is_null() {
         let layout = Layout::array::<OPHandler>(65).unwrap();
@@ -867,8 +883,7 @@ pub(crate) unsafe fn create_exec_state(vm: *mut BoyiaVM) -> *mut ExecState {
     if vm.is_null() {
         return ptr::null_mut();
     }
-    let layout = Layout::new::<ExecState>();
-    let state = alloc_zeroed(layout) as *mut ExecState;
+    let state = alloc_exec_state(vm);
     if state.is_null() {
         return ptr::null_mut();
     }
@@ -1351,8 +1366,7 @@ pub(crate) unsafe fn destroy_exec_state(state: *mut ExecState, vm: *mut BoyiaVM)
     }
     (*state).mTopTask = ptr::null_mut();
     (*state).mLast = ptr::null_mut();
-    let layout = Layout::new::<ExecState>();
-    dealloc(state as *mut u8, layout);
+    free_exec_state(state, vm);
 }
 
 /// Consume micro tasks. Strictly matches ConsumeMicroTask in BoyiaCore.cpp:
@@ -1391,7 +1405,9 @@ pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
             crate::execute::exec_instruction(vm);
             println!("call consume_micro_task7");
             if (*aes).mStackFrame.mContext.is_null() {
+                println!("call consume_micro_task11");
                 if !(*aes).mTopTask.is_null() {
+                    println!("call consume_micro_task12");
                     if !(*vm).mCpu.is_null() {
                         value_copy(&mut (*(*aes).mTopTask).mResult, &(*(*vm).mCpu).mReg0);
                     }
@@ -1399,10 +1415,14 @@ pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
                     println!("call consume_micro_task8");
                     add_micro_task((*aes).mTopTask, vm);
                 }
+                println!("call consume_micro_task13");
                 if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != LFalse {
                     destroy_exec_state(aes, vm);
                 }
+
+                println!("call consume_micro_task9");
             }
+            println!("call consume_micro_task10");
             switch_exec_state(current_state, vm);
         }
         let tmp = task;

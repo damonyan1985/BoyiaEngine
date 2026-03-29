@@ -117,6 +117,23 @@ class PrinterExt extends Printer {
         });
     }
 
+    prop async writeFile() {
+        var result = (await this.writeFilePromise());
+        if (result == "ok") {
+            BY_Log("writeFile ok");
+        } else {
+            BY_Log("writeFile: " + result);
+        }
+    }
+
+    prop async writeFilePromise() {
+        BY_Log("run writeFilePromise");
+        Util.newMicrotask(fun(resolve) {
+            BY_Log("run writeFilePromise");
+            File.write("boyia_cli_demo.txt", "hello from File.write", resolve);
+        });
+    }
+
     prop async loadAsync() {
         for (var i = 0; i < 10; i=i+1) {
             if (i == 6) {
@@ -159,9 +176,10 @@ printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
 //pe.load();
 
-pe.loadAsync();
-pe.demoFile();
-pe.testLocal();
+//pe.loadAsync();
+//pe.demoFile();
+//pe.testLocal();
+pe.writeFile();
 
 printlog(p, arr1.get(0));
 
