@@ -176,7 +176,7 @@ printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
 //pe.load();
 
-//pe.loadAsync();
+pe.loadAsync();
 //pe.demoFile();
 //pe.testLocal();
 pe.writeFile();

@@ -348,6 +348,76 @@ pub unsafe fn vector_params_grow_if_full(fun: *mut BoyiaFunction, vm: *mut LVoid
 // Init / Destroy VM
 // ---------------------------------------------------------------------------
 
+/// Last fully successful [`init_vm`] milestone. Variants are ordered for rollback: later stages imply earlier allocations exist.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum InitVmStage {
+    VmShell,
+    GlobalsOk,
+    FunTableOk,
+    CpuOk,
+    VmCodeStructOk,
+    CodeBufferOk,
+    StrTableOk,
+    EntryOk,
+    ExecStateCacheOk,
+}
+
+/// `completed` = last fully successful milestone. Frees in reverse order; always returns null.
+unsafe fn init_vm_abort(vm_ptr: *mut BoyiaVM, completed: InitVmStage) -> *mut LVoid {
+    if vm_ptr.is_null() {
+        return ptr::null_mut();
+    }
+    let vm = &mut *vm_ptr;
+    let globals_layout = Layout::array::<BoyiaValue>(NUM_GLOBAL_VARS).unwrap();
+    let fun_table_layout = Layout::array::<BoyiaFunction>(NUM_FUNC).unwrap();
+    let cpu_layout = Layout::new::<VMCpu>();
+    let vmcode_layout = Layout::new::<VMCode>();
+    let code_layout = Layout::array::<Instruction>(CODE_CAPACITY).unwrap();
+    let str_table_layout = Layout::new::<VMStrTable>();
+    let entry_layout = Layout::new::<VMEntryTable>();
+    let vm_layout = Layout::new::<BoyiaVM>();
+
+    if completed >= InitVmStage::ExecStateCacheOk && !vm.mEStateCache.is_null() {
+        destroy_memory_cache(vm.mEStateCache);
+        vm.mEStateCache = ptr::null_mut();
+    }
+    if completed >= InitVmStage::EntryOk && !vm.mEntry.is_null() {
+        dealloc(vm.mEntry as *mut u8, entry_layout);
+        vm.mEntry = ptr::null_mut();
+    }
+    if completed >= InitVmStage::StrTableOk && !vm.mStrTable.is_null() {
+        dealloc(vm.mStrTable as *mut u8, str_table_layout);
+        vm.mStrTable = ptr::null_mut();
+    }
+    if completed >= InitVmStage::CodeBufferOk && !vm.mVMCode.is_null() {
+        let vmcode = vm.mVMCode;
+        if !(*vmcode).mCode.is_null() {
+            dealloc((*vmcode).mCode as *mut u8, code_layout);
+            (*vmcode).mCode = ptr::null_mut();
+        }
+    }
+    if completed >= InitVmStage::VmCodeStructOk && !vm.mVMCode.is_null() {
+        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
+        vm.mVMCode = ptr::null_mut();
+    }
+    if completed >= InitVmStage::CpuOk && !vm.mCpu.is_null() {
+        dealloc(vm.mCpu as *mut u8, cpu_layout);
+        vm.mCpu = ptr::null_mut();
+    }
+    if completed >= InitVmStage::FunTableOk && !vm.mFunTable.is_null() {
+        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
+        vm.mFunTable = ptr::null_mut();
+    }
+    if completed >= InitVmStage::GlobalsOk && !vm.mGlobals.is_null() {
+        dealloc(vm.mGlobals as *mut u8, globals_layout);
+        vm.mGlobals = ptr::null_mut();
+    }
+    if completed >= InitVmStage::VmShell {
+        dealloc(vm_ptr as *mut u8, vm_layout);
+    }
+    ptr::null_mut()
+}
+
 /// Initialize VM with runtime (creator). Allocation is done via [Runtime::new_data]/[Runtime::delete_data].
 pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     eprintln!("[init_vm] 1 alloc BoyiaVM");
@@ -368,27 +438,21 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     vm.mGlobals = alloc_zeroed(globals_layout) as *mut BoyiaValue;
     if vm.mGlobals.is_null() {
         eprintln!("[init_vm] ERROR mGlobals alloc null");
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::VmShell);
     }
 
     eprintln!("[init_vm] 3 alloc FunTable");
     let fun_table_layout = Layout::array::<BoyiaFunction>(NUM_FUNC).unwrap();
     vm.mFunTable = alloc_zeroed(fun_table_layout) as *mut BoyiaFunction;
     if vm.mFunTable.is_null() {
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::GlobalsOk);
     }
 
     eprintln!("[init_vm] 4 alloc Cpu");
     let cpu_layout = Layout::new::<VMCpu>();
     vm.mCpu = alloc_zeroed(cpu_layout) as *mut VMCpu;
     if vm.mCpu.is_null() {
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::FunTableOk);
     }
     eprintln!("[init_vm] 4a cpu ptr ok");
     let cpu = &mut *vm.mCpu;
@@ -408,23 +472,14 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     let vmcode_layout = Layout::new::<VMCode>();
     vm.mVMCode = alloc_zeroed(vmcode_layout) as *mut VMCode;
     if vm.mVMCode.is_null() {
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::CpuOk);
     }
     let vmcode = &mut *vm.mVMCode;
     let code_layout = Layout::array::<Instruction>(CODE_CAPACITY).unwrap();
     eprintln!("[init_vm] 5b alloc Code size={}", code_layout.size());
     vmcode.mCode = alloc_zeroed(code_layout) as *mut Instruction;
     if vmcode.mCode.is_null() {
-        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::VmCodeStructOk);
     }
     vmcode.mSize = 0;
 
@@ -432,13 +487,7 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     let str_table_layout = Layout::new::<VMStrTable>();
     vm.mStrTable = alloc_zeroed(str_table_layout) as *mut VMStrTable;
     if vm.mStrTable.is_null() {
-        dealloc(vmcode.mCode as *mut u8, code_layout);
-        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::CodeBufferOk);
     }
     (*vm.mStrTable).mSize = 0;
 
@@ -446,43 +495,18 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     let entry_layout = Layout::new::<VMEntryTable>();
     vm.mEntry = alloc_zeroed(entry_layout) as *mut VMEntryTable;
     if vm.mEntry.is_null() {
-        dealloc(vm.mStrTable as *mut u8, str_table_layout);
-        dealloc(vmcode.mCode as *mut u8, code_layout);
-        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::StrTableOk);
     }
     (*vm.mEntry).mSize = 0;
 
     eprintln!("[init_vm] 8 alloc ExecState");
     vm.mEStateCache = create_exec_state_cache();
     if vm.mEStateCache.is_null() {
-        dealloc(vm.mEntry as *mut u8, entry_layout);
-        dealloc(vm.mStrTable as *mut u8, str_table_layout);
-        dealloc(vmcode.mCode as *mut u8, code_layout);
-        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::EntryOk);
     }
     vm.mEState = create_exec_state(vm_ptr);
     if vm.mEState.is_null() {
-        destroy_memory_cache(vm.mEStateCache);
-        vm.mEStateCache = ptr::null_mut();
-        dealloc(vm.mEntry as *mut u8, entry_layout);
-        dealloc(vm.mStrTable as *mut u8, str_table_layout);
-        dealloc(vmcode.mCode as *mut u8, code_layout);
-        dealloc(vm.mVMCode as *mut u8, vmcode_layout);
-        dealloc(vm.mCpu as *mut u8, cpu_layout);
-        dealloc(vm.mFunTable as *mut u8, fun_table_layout);
-        dealloc(vm.mGlobals as *mut u8, globals_layout);
-        dealloc(vm_ptr as *mut u8, layout);
-        return ptr::null_mut();
+        return init_vm_abort(vm_ptr, InitVmStage::ExecStateCacheOk);
     }
     switch_exec_state(vm.mEState, vm_ptr);
 
