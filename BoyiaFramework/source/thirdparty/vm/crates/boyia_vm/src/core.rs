@@ -11,7 +11,7 @@ use boyia_memory::{
     alloc_memory_chunk, create_memory_cache, destroy_memory_cache, free_memory_chunk,
 };
 use std::ptr;
-use std::alloc::{alloc, alloc_zeroed, dealloc, Layout};
+use std::alloc::{alloc_zeroed, dealloc, Layout};
 use std::mem;
 
 // ---------------------------------------------------------------------------
@@ -277,6 +277,12 @@ unsafe fn create_exec_state_cache() -> *mut LVoid {
     create_memory_cache(mem::size_of::<ExecState>() as LInt, EXEC_STATE_CAPACITY as LInt)
 }
 
+/// Match `CREATE_MEMCACHE(MicroTask, MICRO_TASK_CAPACITY)` in BoyiaCore.cpp `CreateTaskQueue`.
+#[inline]
+unsafe fn create_micro_task_cache() -> *mut LVoid {
+    create_memory_cache(mem::size_of::<MicroTask>() as LInt, MICRO_TASK_CAPACITY as LInt)
+}
+
 #[inline]
 unsafe fn alloc_exec_state(vm: *mut BoyiaVM) -> *mut ExecState {
     if vm.is_null() || (*vm).mEStateCache.is_null() {
@@ -360,6 +366,11 @@ enum InitVmStage {
     StrTableOk,
     EntryOk,
     ExecStateCacheOk,
+    /// `create_exec_state` + `switch_exec_state` done; handlers not allocated yet.
+    ExecStateActive,
+    HandlersOk,
+    /// `MicroTaskQueue` struct allocated (`mTaskCache` may be null if cache create failed).
+    TaskQueueShell,
 }
 
 /// `completed` = last fully successful milestone. Frees in reverse order; always returns null.
@@ -376,7 +387,22 @@ unsafe fn init_vm_abort(vm_ptr: *mut BoyiaVM, completed: InitVmStage) -> *mut LV
     let str_table_layout = Layout::new::<VMStrTable>();
     let entry_layout = Layout::new::<VMEntryTable>();
     let vm_layout = Layout::new::<BoyiaVM>();
+    let task_queue_layout = Layout::new::<MicroTaskQueue>();
+    let handlers_layout = Layout::array::<OPHandler>(65).unwrap();
 
+    if completed >= InitVmStage::TaskQueueShell && !vm.mTaskQueue.is_null() {
+        let q = vm.mTaskQueue;
+        if !(*q).mTaskCache.is_null() {
+            destroy_memory_cache((*q).mTaskCache);
+            (*q).mTaskCache = ptr::null_mut();
+        }
+        dealloc(q as *mut u8, task_queue_layout);
+        vm.mTaskQueue = ptr::null_mut();
+    }
+    if completed >= InitVmStage::HandlersOk && !vm.mHandlers.is_null() {
+        dealloc(vm.mHandlers as *mut u8, handlers_layout);
+        vm.mHandlers = ptr::null_mut();
+    }
     if completed >= InitVmStage::ExecStateCacheOk && !vm.mEStateCache.is_null() {
         destroy_memory_cache(vm.mEStateCache);
         vm.mEStateCache = ptr::null_mut();
@@ -513,14 +539,21 @@ pub unsafe fn init_vm(creator: *mut dyn Runtime) -> *mut LVoid {
     eprintln!("[init_vm] 9 alloc Handlers");
     let handlers_layout = Layout::array::<OPHandler>(65).unwrap();
     vm.mHandlers = alloc_zeroed(handlers_layout) as *mut OPHandler;
+    if vm.mHandlers.is_null() {
+        return init_vm_abort(vm_ptr, InitVmStage::ExecStateActive);
+    }
     let task_queue_layout = Layout::new::<MicroTaskQueue>();
     vm.mTaskQueue = alloc_zeroed(task_queue_layout) as *mut MicroTaskQueue;
-    if !vm.mTaskQueue.is_null() {
-        (*vm.mTaskQueue).mUsedTasks.mHead = ptr::null_mut();
-        (*vm.mTaskQueue).mUsedTasks.mEnd = ptr::null_mut();
-        (*vm.mTaskQueue).mAllocTasks.mHead = ptr::null_mut();
-        (*vm.mTaskQueue).mAllocTasks.mEnd = ptr::null_mut();
-        (*vm.mTaskQueue).mTaskCache = ptr::null_mut();
+    if vm.mTaskQueue.is_null() {
+        return init_vm_abort(vm_ptr, InitVmStage::HandlersOk);
+    }
+    (*vm.mTaskQueue).mUsedTasks.mHead = ptr::null_mut();
+    (*vm.mTaskQueue).mUsedTasks.mEnd = ptr::null_mut();
+    (*vm.mTaskQueue).mAllocTasks.mHead = ptr::null_mut();
+    (*vm.mTaskQueue).mAllocTasks.mEnd = ptr::null_mut();
+    (*vm.mTaskQueue).mTaskCache = create_micro_task_cache();
+    if (*vm.mTaskQueue).mTaskCache.is_null() {
+        return init_vm_abort(vm_ptr, InitVmStage::TaskQueueShell);
     }
     eprintln!("[init_vm] 10 done");
     vm_ptr as *mut LVoid
@@ -571,8 +604,14 @@ pub unsafe fn destroy_vm(vm: *mut LVoid) {
         dealloc((*vm_ptr).mHandlers as *mut u8, layout);
     }
     if !(*vm_ptr).mTaskQueue.is_null() {
+        let q = (*vm_ptr).mTaskQueue;
+        if !(*q).mTaskCache.is_null() {
+            destroy_memory_cache((*q).mTaskCache);
+            (*q).mTaskCache = ptr::null_mut();
+        }
         let layout = Layout::new::<MicroTaskQueue>();
-        dealloc((*vm_ptr).mTaskQueue as *mut u8, layout);
+        dealloc(q as *mut u8, layout);
+        (*vm_ptr).mTaskQueue = ptr::null_mut();
     }
     let layout = Layout::new::<BoyiaVM>();
     dealloc(vm_ptr as *mut u8, layout);
@@ -1297,17 +1336,19 @@ pub(crate) unsafe fn free_micro_task(task: *mut MicroTask, vm: *mut BoyiaVM) {
     } else {
         (*list).mHead = next;
     }
-    let layout = Layout::new::<MicroTask>();
-    dealloc(task as *mut u8, layout);
+    let cache = (*queue).mTaskCache;
+    if !cache.is_null() {
+        free_memory_chunk(task as *mut LVoid, cache);
+    }
 }
 
+/// Match `AllocMicroTask` in BoyiaCore.cpp (`ALLOC_CHUNK(MicroTask, queue->mTaskCache)`).
 pub(crate) unsafe fn alloc_micro_task(vm: *mut BoyiaVM) -> *mut MicroTask {
     let queue = (*vm).mTaskQueue;
-    if queue.is_null() {
+    if queue.is_null() || (*queue).mTaskCache.is_null() {
         return ptr::null_mut();
     }
-    let layout = Layout::new::<MicroTask>();
-    let task = alloc(layout) as *mut MicroTask;
+    let task = alloc_memory_chunk((*queue).mTaskCache) as *mut MicroTask;
     if task.is_null() {
         return ptr::null_mut();
     }
