@@ -13,8 +13,6 @@ use boyia_vm::{
     alloc_builtin_function, BoyiaFunction, NativePtr, ValueType, LIntPtr, LUintPtr, LVoid,
 };
 
-pub(crate) const K_BOYIA_NULL: LIntPtr = 0;
-
 // ---------------------------------------------------------------------------
 // Helpers: gen_builtin_class_function, gen_builtin_class_prop_function
 // ---------------------------------------------------------------------------

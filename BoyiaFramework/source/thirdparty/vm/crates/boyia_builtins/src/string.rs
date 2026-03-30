@@ -3,11 +3,11 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use crate::{gen_builtin_class_function, K_BOYIA_NULL};
+use crate::gen_builtin_class_function;
 use boyia_vm::{
     create_global_class, get_local_size, get_local_value, get_string_buffer, get_string_hash,
-    set_native_result, BoyiaFunction, BoyiaStr, BoyiaValue, NativePtr, RealValue, ValueType,
-    LIntPtr, LUintPtr, LVoid, OpHandleResult,
+    set_native_result, BoyiaFunction, BoyiaStr, BoyiaValue, K_BOYIA_NULL, NativePtr, RealValue,
+    ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
 use std::ptr;
 

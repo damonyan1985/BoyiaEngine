@@ -2,8 +2,8 @@
 //! Pure Rust API; no C/FFI exports. All logic lives in `core`.
 //!
 //! Platform types (`LInt`, `LIntPtr`, `LUintPtr`, `LVoid`, `LByte`, `LInt8`, `LUint8`, [`LBool`],
-//! [`LFalse`], [`LTrue`]) are exported from this crate (`pub use types::*`). They are defined in
-//! `boyia_types` so `boyia_memory` can share them without depending on `boyia_vm`.
+//! [`LFalse`], [`LTrue`], [`K_BOYIA_NULL`]) are exported from this crate (`pub use types::*`). They
+//! are defined in `boyia_types` so `boyia_memory` can share them without depending on `boyia_vm`.
 
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]

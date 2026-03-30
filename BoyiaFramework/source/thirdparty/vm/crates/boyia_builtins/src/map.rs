@@ -3,11 +3,12 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use crate::{gen_builtin_class_function, K_BOYIA_NULL};
+use crate::gen_builtin_class_function;
 use boyia_vm::{
     copy_object, create_global_class, gen_identifier_from_str, get_local_size, get_local_value,
     get_string_buffer, native_call_impl, set_native_result, value_copy, BoyiaClass, BoyiaFunction,
-    BoyiaValue, NativePtr, RealValue, ValueType, LInt, LUintPtr, LVoid, OpHandleResult,
+    BoyiaValue, K_BOYIA_NULL, NativePtr, RealValue, ValueType, LInt, LUintPtr, LVoid,
+    OpHandleResult,
 };
 
 unsafe fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {

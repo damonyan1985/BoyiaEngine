@@ -4,11 +4,11 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use crate::{gen_builtin_class_function, K_BOYIA_NULL};
+use crate::gen_builtin_class_function;
 use boyia_vm::{
     copy_object, create_global_class, get_function_count, get_local_size, get_local_value,
     get_string_buffer, set_int_result, set_native_result, value_copy, vector_params_grow_if_full,
-    BoyiaFunction, BoyiaValue, NativePtr, ValueType, LUintPtr, LVoid, OpHandleResult,
+    BoyiaFunction, BoyiaValue, K_BOYIA_NULL, NativePtr, ValueType, LUintPtr, LVoid, OpHandleResult,
 };
 
 /// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).

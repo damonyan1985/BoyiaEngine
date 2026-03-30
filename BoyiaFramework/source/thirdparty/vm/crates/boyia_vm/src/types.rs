@@ -6,7 +6,9 @@
 #![allow(non_upper_case_globals)]
 
 // Platform types: shared with `boyia_memory` via `boyia_types` (no circular deps). Prefer `boyia_vm::…` in app code.
-pub use boyia_types::{LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid};
+pub use boyia_types::{
+    K_BOYIA_NULL, LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid,
+};
 
 // ---------------------------------------------------------------------------
 // Numeric constants (BoyiaCore.cpp #define)

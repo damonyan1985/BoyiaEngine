@@ -15,6 +15,9 @@ pub type LIntPtr = isize;
 pub type LVoid = std::ffi::c_void;
 pub type LByte = u8;
 
+/// C++ `kBoyiaNull`: null stored in integer-backed fields (e.g. `mSuper`, `mIntVal` as handle). Prefer via `boyia_vm::K_BOYIA_NULL`.
+pub const K_BOYIA_NULL: LIntPtr = 0;
+
 /// Boolean type for VM / repr(C) structs; `LFalse` = 0, `LTrue` = 1. Matches `LInt` width (`repr(i32)`).
 #[repr(i32)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

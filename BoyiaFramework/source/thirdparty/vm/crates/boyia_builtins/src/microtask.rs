@@ -3,11 +3,11 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use crate::{gen_builtin_class_function, gen_builtin_class_prop_function, K_BOYIA_NULL};
+use crate::{gen_builtin_class_function, gen_builtin_class_prop_function};
 use boyia_vm::{
     copy_object, create_global_class, create_micro_task, get_local_size, get_local_value,
-    native_call_impl, resume_micro_task, BoyiaClass, BoyiaFunction, BoyiaValue, NativePtr,
-    RealValue, ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
+    native_call_impl, resume_micro_task, BoyiaClass, BoyiaFunction, BoyiaValue, K_BOYIA_NULL,
+    NativePtr, RealValue, ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
 
 unsafe fn micro_task_resolve_impl(vm: *mut LVoid) -> OpHandleResult {

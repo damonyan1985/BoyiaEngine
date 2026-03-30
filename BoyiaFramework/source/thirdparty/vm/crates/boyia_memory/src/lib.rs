@@ -9,7 +9,9 @@ mod chunk;
 mod memory;
 
 // Same types as `boyia_vm` (via `boyia_types`). Prefer `boyia_vm::…` in new code.
-pub use boyia_types::{LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid};
+pub use boyia_types::{
+    K_BOYIA_NULL, LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid,
+};
 
 // ---------------------------------------------------------------------------
 // Memory pool (memory.rs)

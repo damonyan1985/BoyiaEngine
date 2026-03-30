@@ -9,7 +9,8 @@ use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
     create_global_class, create_native_string, get_local_size, get_local_value, get_runtime_from_vm,
     get_string_buffer, native_call_impl, set_int_result, BoyiaClass, BoyiaFunction, BoyiaValue,
-    Global, NativePtr, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr, LVoid, OpHandleResult,
+    Global, K_BOYIA_NULL, NativePtr, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr, LVoid,
+    OpHandleResult,
 };
 use reqwest::blocking::Client;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
@@ -18,7 +19,6 @@ use std::str;
 use std::time::Duration;
 
 const DEFAULT_TIMEOUT_SECS: u64 = 30;
-const K_BOYIA_NULL: LIntPtr = 0;
 /// Slot index of the runner pointer (BY_INT) in the Https class params.
 const HTTPS_CLASS_RUNNER_PROP_INDEX: usize = 0;
 
