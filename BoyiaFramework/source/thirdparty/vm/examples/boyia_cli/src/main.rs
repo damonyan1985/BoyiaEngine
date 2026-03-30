@@ -124,6 +124,10 @@ class PrinterExt extends Printer {
         } else {
             BY_Log("writeFile: " + result);
         }
+
+        File.read("boyia_cli_demo.txt", fun(content) {
+            BY_Log("File.read: " + content);
+        });
     }
 
     prop async writeFilePromise() {

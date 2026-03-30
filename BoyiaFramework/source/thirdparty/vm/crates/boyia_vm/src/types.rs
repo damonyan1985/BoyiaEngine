@@ -5,8 +5,8 @@
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
-use std::ffi::c_void;
-use std::os::raw::{c_char, c_int};
+// Platform types: shared with `boyia_memory` via `boyia_types` (no circular deps). Prefer `boyia_vm::…` in app code.
+pub use boyia_types::{LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid};
 
 // ---------------------------------------------------------------------------
 // Numeric constants (BoyiaCore.cpp #define)
@@ -25,22 +25,6 @@ pub const MICRO_TASK_CAPACITY: usize = 1024;
 pub const EXEC_STATE_CAPACITY: usize = 64;
 /// Max inline cache entries per instruction (BoyiaValue.h MAX_INLINE_CACHE).
 pub const MAX_INLINE_CACHE: usize = 5;
-
-// Type definitions (PlatformLib.h) - needed for constants below
-pub type LInt8 = c_char;
-pub type LInt = c_int;
-pub type LUint8 = u8;
-pub type LUintPtr = usize;
-pub type LIntPtr = isize;
-pub type LVoid = c_void;
-
-/// Boolean type for VM; LFalse = 0, LTrue = 1. repr(i32) to match LInt/c_int in repr(C) structs.
-#[repr(i32)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum LBool {
-    LFalse = 0,
-    LTrue = 1,
-}
 
 // ---------------------------------------------------------------------------
 // Runtime trait (VM creator: native lookup and call)
@@ -359,10 +343,6 @@ pub enum OpInstType {
 
 pub const kInvalidInstruction: LIntPtr = -1;
 
-/// Constants for convenience; same as [LBool::LFalse] / [LBool::LTrue].
-pub const LFalse: LBool = LBool::LFalse;
-pub const LTrue: LBool = LBool::LTrue;
-
 /// Handler return type: use OpHandleResult for dispatch.
 pub(crate) type OPHandler = unsafe fn(*mut Instruction, *mut BoyiaVM) -> OpHandleResult;
 
@@ -646,7 +626,7 @@ pub(crate) struct MicroTaskLink {
 pub(crate) struct MicroTaskQueue {
     pub mUsedTasks: MicroTaskList,
     pub mAllocTasks: MicroTaskList,
-    pub mTaskCache: *mut c_void, // MemoryCache pointer
+    pub mTaskCache: *mut LVoid, // MemoryCache pointer
 }
 
 #[repr(C)]
@@ -684,7 +664,7 @@ pub(crate) struct BoyiaVM {
     pub mCpu: *mut VMCpu,
     pub mESLink: *mut ExecState,
     pub mEState: *mut ExecState,
-    pub mEStateCache: *mut c_void,
+    pub mEStateCache: *mut LVoid,
     pub mVMCode: *mut VMCode,
     pub mStrTable: *mut VMStrTable,
     pub mEntry: *mut VMEntryTable,

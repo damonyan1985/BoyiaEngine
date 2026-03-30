@@ -9,4 +9,5 @@ name = "boyia_memory"
 crate-type = ["rlib"]
 
 [dependencies]
+boyia_types = { path = "../boyia_types" }
 

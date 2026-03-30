@@ -3,7 +3,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-use crate::{LBool, LByte, LInt, LIntPtr, LUintPtr, LVoid};
+use crate::{LByte, LInt, LIntPtr, LUintPtr, LVoid};
 use std::alloc::{alloc, dealloc, Layout};
 use std::ptr;
 
@@ -103,7 +103,7 @@ pub unsafe fn fast_free(data: *mut LVoid) {
 }
 
 /// ContainAddress: return whether addr is within the pool's buffer.
-pub unsafe fn contain_address(addr: *mut LVoid, mempool: *mut LVoid) -> LBool {
+pub unsafe fn contain_address(addr: *mut LVoid, mempool: *mut LVoid) -> LInt {
     if mempool.is_null() || addr.is_null() {
         return 0;
     }

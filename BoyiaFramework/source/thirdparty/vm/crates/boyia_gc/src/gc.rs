@@ -6,12 +6,12 @@
 
 use boyia_memory::{
     alloc_memory_chunk, create_memory_cache, destroy_memory_cache, fast_free, fast_malloc,
-    free_memory_chunk, migrate_memory, LInt, LIntPtr, LVoid,
+    free_memory_chunk, migrate_memory,
 };
 use boyia_vm::{
-    get_global_table, get_local_stack, get_native_helper_result, get_native_result,
-    get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, get_function_count, BoyiaFunction, 
-    BoyiaValue, BuiltinId, Global, Runtime, ValueType,
+    get_function_count, get_global_table, get_local_stack, get_native_helper_result, get_native_result,
+    get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, BoyiaFunction, BoyiaValue,
+    BuiltinId, Global, LInt, LIntPtr, LVoid, Runtime, ValueType,
 };
 use std::ptr;
 

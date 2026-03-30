@@ -128,6 +128,8 @@ impl BoyiaRunner {
 
 impl Drop for BoyiaRunner {
     fn drop(&mut self) {
+        std::thread::sleep(std::time::Duration::from_secs(10));
+
         // 等待线程池中任务执行完，将异步任务投递到主线程
         if let Some(thread_pool) = self.thread_pool.take() {
             let _ = thread_pool.stop();
@@ -143,7 +145,6 @@ impl Drop for BoyiaRunner {
         if let Some(boyia_thread) = self.boyia_thread.take() {
             let _ = boyia_thread.join();
         }
-        
 
         println!("BoyiaRunner exit!!!");
     }

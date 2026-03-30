@@ -1,0 +1,10 @@
+[package]
+name = "boyia_types"
+version = "0.1.0"
+edition = "2021"
+description = "Shared Boyia platform type aliases (PlatformLib.h). Re-exported by boyia_vm."
+
+[lib]
+name = "boyia_types"
+
+[dependencies]

@@ -8,13 +8,8 @@
 mod chunk;
 mod memory;
 
-// Type aliases matching PlatformLib.h / boyia_vm for ABI compatibility
-pub type LInt = std::os::raw::c_int;
-pub type LIntPtr = isize;
-pub type LUintPtr = usize;
-pub type LVoid = std::ffi::c_void;
-pub type LByte = u8;
-pub type LBool = LInt;
+// Same types as `boyia_vm` (via `boyia_types`). Prefer `boyia_vm::…` in new code.
+pub use boyia_types::{LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid};
 
 // ---------------------------------------------------------------------------
 // Memory pool (memory.rs)
