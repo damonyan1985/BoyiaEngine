@@ -3366,6 +3366,10 @@ LVoid CompileCode(LInt8* code, LVoid* vm) {
     FAST_DELETE(cs);
 }
 
+// 当前栈所属函数是普通函数，匿名函数或者是异步函数时，idx=0时表示函数指针
+// 因为这些函数调用时会将函数指针压栈
+// 当前栈所属函数是Native函数时，idx=0时表示是Native函数的第一个参数
+// 因为Native函数调用时不会对函数指针压栈
 LVoid* GetLocalValue(LInt idx, LVoid* vm) {
     LInt size = GetLocalSize(vm);
     if (idx >= size) {
