@@ -5,8 +5,7 @@
 //! env BOYIA_INIT_MINIMAL=1 to skip builtin classes (faster init, fewer deps)
 //! and narrow down whether the crash is in init.
 
-mod file;
-mod https;
+mod builtins;
 mod run_loop;
 mod runner;
 mod task_thread;

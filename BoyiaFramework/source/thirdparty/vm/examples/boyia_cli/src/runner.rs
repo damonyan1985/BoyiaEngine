@@ -4,8 +4,8 @@
 
 #![allow(dead_code)]
 
-use crate::file::builtin_file_class;
-use crate::https::builtin_https_class;
+use crate::builtins::file::builtin_file_class;
+use crate::builtins::https::builtin_https_class;
 use crate::run_loop::{RunLoopError, RunLoopHandle};
 use crate::task_thread::TaskThread;
 use crate::thread_pool::ThreadPool;

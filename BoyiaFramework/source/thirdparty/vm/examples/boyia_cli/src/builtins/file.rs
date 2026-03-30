@@ -1,5 +1,5 @@
 //! File builtin for `boyia_cli`: async read/write on `ThreadPool`, callback on the runtime task thread.
-//! Mirrors `https.rs` (runner from last local after `LocalPush(mClass)`).
+//! Mirrors the Https builtin (runner from last local after `LocalPush(mClass)`).
 
 #![allow(dead_code)]
 

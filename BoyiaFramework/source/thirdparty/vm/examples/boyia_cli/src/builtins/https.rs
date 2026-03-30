@@ -173,7 +173,7 @@ fn execute_https_request(url: &str, params: Option<&str>) -> Result<String, Stri
 
 unsafe fn callback_string(result: String, callback: CallbackInfo, runtime: &mut BoyiaRuntime) {
     println!("https result: {}", result);
-    
+
     let cb_fun = callback.func_ptr as *mut BoyiaFunction;
     if cb_fun.is_null() {
         return;
