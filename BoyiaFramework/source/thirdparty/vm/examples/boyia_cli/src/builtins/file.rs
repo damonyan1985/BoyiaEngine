@@ -3,28 +3,16 @@
 
 #![allow(dead_code)]
 
+use super::r#async::{callback_string, make_callback_info, value_to_string, CallbackInfo};
 use crate::runner::BoyiaRunner;
 use boyia_builtins::gen_builtin_class_function;
-use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
-    create_global_class, create_native_string, get_local_size, get_local_value, get_runtime_from_vm,
-    get_string_buffer, native_call_impl, set_int_result, BoyiaClass, BoyiaFunction, BoyiaValue,
-    Global, K_BOYIA_NULL, NativePtr, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr, LVoid,
-    OpHandleResult,
+    create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
+    K_BOYIA_NULL, NativePtr, ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
 use std::fs;
-use std::str;
 
 const FILE_CLASS_RUNNER_PROP_INDEX: usize = 0;
-
-#[derive(Clone, Copy)]
-struct CallbackInfo {
-    name_key: LUintPtr,
-    value_type: ValueType,
-    func_ptr: LIntPtr,
-    object_global: *mut Global,
-}
-unsafe impl Send for CallbackInfo {}
 
 pub fn builtin_file_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut crate::runner::BoyiaRunner)
 where
@@ -56,20 +44,6 @@ where
         gen_builtin_class_function(gen_id("read"), file_read_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("write"), file_write_impl as NativePtr, class_body, vm);
     }
-}
-
-fn value_to_string(value: *const BoyiaValue) -> Option<String> {
-    if value.is_null() {
-        return None;
-    }
-    let str_ref = unsafe { get_string_buffer(value) };
-    if str_ref.is_null() {
-        return None;
-    }
-    let len = unsafe { (*str_ref).mLen.max(0) as usize };
-    let ptr = unsafe { (*str_ref).mPtr as *const u8 };
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    str::from_utf8(slice).ok().map(ToOwned::to_owned)
 }
 
 fn schedule_read(
@@ -128,97 +102,6 @@ fn schedule_write(
             });
         })
         .is_ok()
-}
-
-unsafe fn callback_string(result: String, callback: CallbackInfo, runtime: &mut BoyiaRuntime) {
-    let cb_fun = callback.func_ptr as *mut BoyiaFunction;
-    if cb_fun.is_null() {
-        return;
-    }
-
-    let obj_super = if callback.object_global.is_null() {
-        0
-    } else {
-        (*callback.object_global).value().mValue.mObj.mPtr
-    };
-
-    let callback_value = BoyiaValue {
-        mNameKey: callback.name_key,
-        mValueType: callback.value_type,
-        mValue: RealValue {
-            mObj: BoyiaClass {
-                mPtr: callback.func_ptr,
-                mSuper: obj_super,
-            },
-        },
-    };
-
-    let len = result.len() as LInt;
-    let buffer = leak_string_buffer(result);
-
-    let mut value = BoyiaValue {
-        mNameKey: 0,
-        mValueType: ValueType::BY_INT,
-        mValue: RealValue { mIntVal: 0 },
-    };
-    create_native_string(&mut value, buffer, len, runtime.vm());
-
-    let mut args = [callback_value, value];
-    if !(*cb_fun).mParams.is_null() {
-        args[1].mNameKey = (*(*cb_fun).mParams).mNameKey;
-    }
-
-    let mut obj = BoyiaValue {
-        mNameKey: 0,
-        mValueType: ValueType::BY_CLASS,
-        mValue: RealValue {
-            mObj: BoyiaClass {
-                mPtr: obj_super,
-                mSuper: 0,
-            },
-        },
-    };
-    native_call_impl(args.as_mut_ptr(), 2, &mut obj, runtime.vm());
-
-    if !callback.object_global.is_null() {
-        runtime.remove_persistent(callback.object_global);
-    }
-}
-
-unsafe fn leak_string_buffer(result: String) -> *mut i8 {
-    let boxed = result.into_bytes().into_boxed_slice();
-    Box::into_raw(boxed) as *mut u8 as *mut i8
-}
-
-unsafe fn make_callback_info(vm: *mut LVoid, callback_val: *const BoyiaValue) -> Option<CallbackInfo> {
-    if callback_val.is_null() {
-        return None;
-    }
-    let object_addr = (*callback_val).mValue.mObj.mSuper;
-    let object_value = BoyiaValue {
-        mNameKey: 0,
-        mValueType: ValueType::BY_CLASS,
-        mValue: RealValue {
-            mObj: BoyiaClass {
-                mPtr: object_addr,
-                mSuper: 0,
-            },
-        },
-    };
-    let object_global = {
-        let rt = get_runtime_from_vm(vm);
-        if rt.is_null() {
-            std::ptr::null_mut()
-        } else {
-            (*rt).persistent_object(&object_value as *const BoyiaValue)
-        }
-    };
-    Some(CallbackInfo {
-        name_key: (*callback_val).mNameKey,
-        value_type: (*callback_val).mValueType,
-        func_ptr: (*callback_val).mValue.mObj.mPtr,
-        object_global,
-    })
 }
 
 unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunner {
