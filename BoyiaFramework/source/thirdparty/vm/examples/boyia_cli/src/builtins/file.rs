@@ -3,7 +3,7 @@
 
 #![allow(dead_code)]
 
-use super::r#async::{callback_string, make_callback_info, value_to_string, CallbackInfo};
+use super::r#async::{make_callback_info, schedule_task, value_to_string, CallbackInfo};
 use crate::runner::BoyiaRunner;
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
@@ -51,28 +51,16 @@ fn schedule_read(
     path: String,
     callback: CallbackInfo,
 ) -> bool {
-    let Some((runtime_handle, thread_pool_weak)) =
-        (unsafe { BoyiaRunner::get_handle_and_pool_from_ptr(runner_ptr) })
-    else {
-        println!("call schedule_read {}", runner_ptr as LIntPtr);
-        return false;
-    };
-    let Some(thread_pool) = thread_pool_weak.upgrade() else {
-        return false;
-    };
-
-    thread_pool
-        .post_task(move || {
-            let body = match fs::read_to_string(&path) {
-                Ok(text) => text,
-                Err(err) => format!("File.read error: {err}"),
-            };
-            let _ = runtime_handle.post_task(move |runtime| unsafe {
-                callback_string(body, callback, runtime.as_mut());
-                runtime.consume_micro_task();
-            });
-        })
-        .is_ok()
+    schedule_task(
+        runner_ptr,
+        move || match fs::read_to_string(&path) {
+            Ok(text) => text,
+            Err(err) => format!("File.read error: {err}"),
+        },
+        callback,
+        |_| (),
+        || println!("call schedule_read {}", runner_ptr as LIntPtr),
+    )
 }
 
 fn schedule_write(
@@ -81,27 +69,16 @@ fn schedule_write(
     content: String,
     callback: CallbackInfo,
 ) -> bool {
-    let Some((runtime_handle, thread_pool_weak)) =
-        (unsafe { BoyiaRunner::get_handle_and_pool_from_ptr(runner_ptr) })
-    else {
-        return false;
-    };
-    let Some(thread_pool) = thread_pool_weak.upgrade() else {
-        return false;
-    };
-
-    thread_pool
-        .post_task(move || {
-            let body = match fs::write(&path, content.as_bytes()) {
-                Ok(()) => String::from("ok"),
-                Err(err) => format!("File.write error: {err}"),
-            };
-            let _ = runtime_handle.post_task(move |runtime| unsafe {
-                callback_string(body, callback, runtime.as_mut());
-                runtime.consume_micro_task();
-            });
-        })
-        .is_ok()
+    schedule_task(
+        runner_ptr,
+        move || match fs::write(&path, content.as_bytes()) {
+            Ok(()) => String::from("ok"),
+            Err(err) => format!("File.write error: {err}"),
+        },
+        callback,
+        |_| (),
+        || (),
+    )
 }
 
 unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunner {

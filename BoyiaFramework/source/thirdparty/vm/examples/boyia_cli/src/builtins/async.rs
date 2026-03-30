@@ -1,5 +1,6 @@
 //! Shared helpers for thread-pool → runtime async builtins (File, Https).
 
+use crate::runner::BoyiaRunner;
 use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
     create_native_string, get_runtime_from_vm, get_string_buffer, native_call_impl, BoyiaClass,
@@ -18,6 +19,47 @@ pub struct CallbackInfo {
 }
 
 unsafe impl Send for CallbackInfo {}
+
+/// Run `work` on the runner's thread pool; then post to the runtime thread: `before_callback_string`
+/// (e.g. logging), then [callback_string]. Returns whether the task was queued on the pool.
+///
+/// `on_missing_runner` runs only when the runner pointer cannot yield a runtime handle / pool
+/// (same moment `File.read` used to log a diagnostic).
+pub fn schedule_task<W, H, M>(
+    runner_ptr: *mut BoyiaRunner,
+    work: W,
+    callback: CallbackInfo,
+    before_callback_string: H,
+    on_missing_runner: M,
+) -> bool
+where
+    W: FnOnce() -> String + Send + 'static,
+    H: FnOnce(&str) + Send + 'static,
+    M: FnOnce(),
+{
+    let Some((runtime_handle, thread_pool_weak)) =
+        (unsafe { BoyiaRunner::get_handle_and_pool_from_ptr(runner_ptr) })
+    else {
+        on_missing_runner();
+        return false;
+    };
+    let Some(thread_pool) = thread_pool_weak.upgrade() else {
+        return false;
+    };
+
+    thread_pool
+        .post_task(move || {
+            let body = work();
+            let _ = runtime_handle.post_task(move |runtime| {
+                before_callback_string(&body);
+                unsafe {
+                    callback_string(body, callback, runtime.as_mut());
+                }
+                runtime.consume_micro_task();
+            });
+        })
+        .is_ok()
+}
 
 pub fn value_to_string(value: *const BoyiaValue) -> Option<String> {
     if value.is_null() {

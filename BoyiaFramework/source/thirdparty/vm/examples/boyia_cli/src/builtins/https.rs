@@ -3,8 +3,7 @@
 
 #![allow(dead_code)]
 
-use super::r#async::{callback_string, make_callback_info, value_to_string, CallbackInfo};
-use crate::runner::BoyiaRunner;
+use super::r#async::{make_callback_info, schedule_task, value_to_string, CallbackInfo};
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
     create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
@@ -58,34 +57,21 @@ where
 }
 
 fn schedule_request(
-    runner_ptr: *mut BoyiaRunner,
+    runner_ptr: *mut crate::runner::BoyiaRunner,
     url: String,
     params: Option<String>,
     callback: CallbackInfo,
 ) -> bool {
-    let Some((runtime_handle, thread_pool_weak)) =
-        (unsafe { BoyiaRunner::get_handle_and_pool_from_ptr(runner_ptr) })
-    else {
-        return false;
-    };
-
-    let Some(thread_pool) = thread_pool_weak.upgrade() else {
-        return false;
-    };
-
-    thread_pool
-        .post_task(move || {
-            let body = match execute_https_request(&url, params.as_deref()) {
-                Ok(text) => text,
-                Err(err) => format!("Https error: {err}"),
-            };
-            let _ = runtime_handle.post_task(move |runtime| unsafe {
-                println!("https result: {}", body);
-                callback_string(body, callback, runtime.as_mut());
-                runtime.consume_micro_task();
-            });
-        })
-        .is_ok()
+    schedule_task(
+        runner_ptr,
+        move || match execute_https_request(&url, params.as_deref()) {
+            Ok(text) => text,
+            Err(err) => format!("Https error: {err}"),
+        },
+        callback,
+        |body| println!("https result: {}", body),
+        || (),
+    )
 }
 
 fn execute_https_request(url: &str, params: Option<&str>) -> Result<String, String> {
@@ -156,7 +142,7 @@ unsafe fn https_load_impl(vm: *mut LVoid) -> OpHandleResult {
         .add(HTTPS_CLASS_RUNNER_PROP_INDEX)
         .read()
         .mValue
-        .mIntVal as *mut BoyiaRunner;
+        .mIntVal as *mut crate::runner::BoyiaRunner;
 
     let url_val = get_local_value(1, vm) as *const BoyiaValue;
     let callback_val = get_local_value(2, vm) as *const BoyiaValue;
@@ -186,7 +172,7 @@ unsafe fn https_request_impl(vm: *mut LVoid) -> OpHandleResult {
         .add(HTTPS_CLASS_RUNNER_PROP_INDEX)
         .read()
         .mValue
-        .mIntVal as *mut BoyiaRunner;
+        .mIntVal as *mut crate::runner::BoyiaRunner;
 
     let url_val = get_local_value(1, vm) as *const BoyiaValue;
     let params_val = get_local_value(2, vm) as *const BoyiaValue;
