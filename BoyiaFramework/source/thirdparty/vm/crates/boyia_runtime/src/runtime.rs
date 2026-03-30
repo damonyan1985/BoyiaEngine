@@ -281,10 +281,10 @@ impl Runtime for BoyiaRuntime {
         self.persistent_objects.push_back(unsafe { *value })
     }
 
-    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut Global)) {
+    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut BoyiaValue)) {
         let mut ptr = self.persistent_objects.head();
         while !ptr.is_null() {
-            f(ptr);
+            f(unsafe { (*ptr).value_ptr() });
             ptr = unsafe { (*ptr).next() };
         }
     }

@@ -39,7 +39,7 @@ impl Runtime for TestRuntime {
     fn persistent_object(&mut self, _value: *const BoyiaValue) -> *mut boyia_vm::Global {
         ptr::null_mut()
     }
-    fn iterate_persistent(&self, _f: &mut dyn FnMut(*mut boyia_vm::Global)) {}
+    fn iterate_persistent(&self, _f: &mut dyn FnMut(*mut BoyiaValue)) {}
     fn remove_persistent(&mut self, _ptr: *mut boyia_vm::Global) {}
 }
 

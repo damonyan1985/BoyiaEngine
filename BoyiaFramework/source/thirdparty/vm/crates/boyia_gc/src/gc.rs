@@ -11,7 +11,7 @@ use boyia_memory::{
 use boyia_vm::{
     get_function_count, get_global_table, get_local_stack, get_native_helper_result, get_native_result,
     get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, BoyiaFunction, BoyiaValue,
-    BuiltinId, Global, LInt, LIntPtr, LVoid, Runtime, ValueType,
+    BuiltinId, LInt, LIntPtr, LVoid, Runtime, ValueType,
 };
 use std::ptr;
 
@@ -374,9 +374,9 @@ unsafe fn mark_persistent(vm: *mut LVoid) {
     if rt.is_null() {
         return;
     }
-    (*rt).iterate_persistent(&mut |ptr: *mut Global| {
-        if !ptr.is_null() {
-            mark_value((*ptr).value_ptr());
+    (*rt).iterate_persistent(&mut |value: *mut BoyiaValue| {
+        if !value.is_null() {
+            mark_value(value);
         }
     });
 }
