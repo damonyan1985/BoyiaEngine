@@ -436,7 +436,7 @@ extern LVoid GCollectGarbage(LVoid* vm)
             &opStackAddr, &opSize, vm, ptr);
 
         MarkValueTable((BoyiaValue*)stackAddr, size);
-        MarkValueTable((BoyiaValue*)opStackAddr, size);
+        MarkValueTable((BoyiaValue*)opStackAddr, opSize);
     } while (ptr);
 
     // 标记微任务
