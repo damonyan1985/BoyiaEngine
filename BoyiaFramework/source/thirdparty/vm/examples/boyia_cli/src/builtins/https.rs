@@ -3,7 +3,9 @@
 
 #![allow(dead_code)]
 
-use super::r#async::{make_callback_info, schedule_task, value_to_string, CallbackInfo};
+use super::r#async::{
+    make_callback_info, runner_from_class, schedule_task, value_to_string, CallbackInfo,
+};
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
     create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
@@ -15,8 +17,6 @@ use serde_json::Value;
 use std::time::Duration;
 
 const DEFAULT_TIMEOUT_SECS: u64 = 30;
-/// Slot index of the runner pointer (BY_INT) in the Https class params.
-const HTTPS_CLASS_RUNNER_PROP_INDEX: usize = 0;
 
 /// Register the Https builtin class. Stores `runner_ptr` as a BY_INT prop on the class so load/request can get the runner and schedule callbacks.
 pub fn builtin_https_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut crate::runner::BoyiaRunner)
@@ -136,13 +136,7 @@ unsafe fn https_load_impl(vm: *mut LVoid) -> OpHandleResult {
     }
 
     let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
-    let class_body = (*class_val).mValue.mObj.mPtr as *mut BoyiaFunction;
-    let runner_ptr = (*class_body)
-        .mParams
-        .add(HTTPS_CLASS_RUNNER_PROP_INDEX)
-        .read()
-        .mValue
-        .mIntVal as *mut crate::runner::BoyiaRunner;
+    let runner_ptr = runner_from_class(class_val);
 
     let url_val = get_local_value(1, vm) as *const BoyiaValue;
     let callback_val = get_local_value(2, vm) as *const BoyiaValue;
@@ -166,13 +160,7 @@ unsafe fn https_request_impl(vm: *mut LVoid) -> OpHandleResult {
     }
 
     let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
-    let class_body = (*class_val).mValue.mObj.mPtr as *mut BoyiaFunction;
-    let runner_ptr = (*class_body)
-        .mParams
-        .add(HTTPS_CLASS_RUNNER_PROP_INDEX)
-        .read()
-        .mValue
-        .mIntVal as *mut crate::runner::BoyiaRunner;
+    let runner_ptr = runner_from_class(class_val);
 
     let url_val = get_local_value(1, vm) as *const BoyiaValue;
     let params_val = get_local_value(2, vm) as *const BoyiaValue;

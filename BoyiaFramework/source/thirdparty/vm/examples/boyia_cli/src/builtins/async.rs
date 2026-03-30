@@ -4,9 +4,24 @@ use crate::runner::BoyiaRunner;
 use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
     create_native_string, get_runtime_from_vm, get_string_buffer, native_call_impl, BoyiaClass,
-    BoyiaFunction, BoyiaValue, Global, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr, LVoid,
+    BoyiaFunction, BoyiaValue, Global, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr,
+    LVoid,
 };
 use std::str;
+
+/// Slot in [BoyiaFunction::mParams] where `File` / `Https` store `BoyiaRunner*` as `BY_INT`.
+pub const BUILTIN_CLASS_RUNNER_PROP_INDEX: usize = 0;
+
+/// Read the runner pointer from the builtin class value (`get_local_value(size - 1, vm)` in native methods).
+pub unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunner {
+    let class_body = (*class_val).mValue.mObj.mPtr as *mut BoyiaFunction;
+    (*class_body)
+        .mParams
+        .add(BUILTIN_CLASS_RUNNER_PROP_INDEX)
+        .read()
+        .mValue
+        .mIntVal as *mut BoyiaRunner
+}
 
 /// Persistent callback + object handle for posting a string result back onto the runtime thread.
 #[derive(Clone, Copy)]

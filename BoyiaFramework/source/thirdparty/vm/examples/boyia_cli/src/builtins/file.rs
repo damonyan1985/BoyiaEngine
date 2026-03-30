@@ -3,7 +3,7 @@
 
 #![allow(dead_code)]
 
-use super::r#async::{make_callback_info, schedule_task, value_to_string, CallbackInfo};
+use super::r#async::{make_callback_info, runner_from_class, schedule_task, value_to_string, CallbackInfo};
 use crate::runner::BoyiaRunner;
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
@@ -11,8 +11,6 @@ use boyia_vm::{
     K_BOYIA_NULL, NativePtr, ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
 use std::fs;
-
-const FILE_CLASS_RUNNER_PROP_INDEX: usize = 0;
 
 pub fn builtin_file_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut crate::runner::BoyiaRunner)
 where
@@ -79,16 +77,6 @@ fn schedule_write(
         |_| (),
         || (),
     )
-}
-
-unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunner {
-    let class_body = (*class_val).mValue.mObj.mPtr as *mut BoyiaFunction;
-    (*class_body)
-        .mParams
-        .add(FILE_CLASS_RUNNER_PROP_INDEX)
-        .read()
-        .mValue
-        .mIntVal as *mut BoyiaRunner
 }
 
 /// `File.read(path, callback)` — UTF-8 text or error string.
