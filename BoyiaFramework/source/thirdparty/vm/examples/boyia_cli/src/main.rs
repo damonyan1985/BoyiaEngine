@@ -131,9 +131,11 @@ class PrinterExt extends Printer {
 
     prop async writeFilePromise() {
         BY_Log("run writeFilePromise");
+        var content = "hello from File.write";
+        BY_Log(content);
         Util.newMicrotask(fun(resolve) {
             BY_Log("run writeFilePromise");
-            File.write("boyia_cli_demo.txt", "hello from File.write", resolve);
+            File.write("boyia_cli_demo.txt", content, resolve);
         });
     }
 

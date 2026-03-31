@@ -158,6 +158,56 @@ pub unsafe fn get_local_value(idx: LInt, vm: *mut LVoid) -> *mut LVoid {
     &mut (*e_state).mLocals[start as usize + idx as usize] as *mut BoyiaValue as *mut LVoid
 }
 
+/// Reads **local index 0** in the current frame (the callee slot: same layout as `native_call_impl`'s `args[0]`).
+///
+/// If that value is a function type, returns its [`BoyiaFunction`] pointer, the address of the first
+/// closure capture in [`BoyiaFunction::mParams`] (i.e. `mParams + mParamSize`), and [`BoyiaFunction::mCaptureCount`].
+/// If there are no captures, `captures` is null and `capture_count` is 0.
+pub unsafe fn get_callee_and_captures_from_locals(vm: *mut LVoid) -> CalleeCapturesInfo {
+    let mut out = CalleeCapturesInfo {
+        callee: ptr::null_mut(),
+        captures: ptr::null_mut(),
+        capture_count: 0,
+    };
+    if vm.is_null() {
+        return out;
+    }
+    let val = get_local_value(0, vm) as *mut BoyiaValue;
+    if val.is_null() {
+        return out;
+    }
+    let vt = (*val).mValueType;
+    let is_fn = matches!(
+        vt,
+        ValueType::BY_FUNC
+            | ValueType::BY_PROP_FUNC
+            | ValueType::BY_ASYNC_PROP
+            | ValueType::BY_NAV_FUNC
+            | ValueType::BY_NAV_PROP
+            | ValueType::BY_ANONYM_FUNC
+    );
+    if !is_fn {
+        return out;
+    }
+    let fun = (*val).mValue.mObj.mPtr as *mut BoyiaFunction;
+    if fun.is_null() {
+        return out;
+    }
+    out.callee = fun;
+    // Only anonymous functions can capture outer variables.
+    let n = if vt == ValueType::BY_ANONYM_FUNC {
+        (*fun).mCaptureCount
+    } else {
+        0
+    };
+    out.capture_count = n;
+    if n > 0 && !(*fun).mParams.is_null() {
+        let off = (*fun).mParamSize as usize;
+        out.captures = (*fun).mParams.add(off);
+    }
+    out
+}
+
 /// Push local value.
 pub unsafe fn local_push(value: *mut BoyiaValue, vm: *mut LVoid) {
     if value.is_null() || vm.is_null() {
@@ -715,6 +765,7 @@ pub(crate) unsafe fn init_function(fun: *mut BoyiaFunction, vm: *mut BoyiaVM) {
         return;
     }
     (*fun).mParamSize = 0;
+    (*fun).mCaptureCount = 0;
     let creator = (*vm).mCreator;
     if creator.is_null() {
         eprintln!("[init_function] ERROR mCreator null");

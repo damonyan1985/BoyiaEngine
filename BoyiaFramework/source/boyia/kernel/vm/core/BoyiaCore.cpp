@@ -1954,6 +1954,7 @@ static LVoid AnonymFunStatement(CompileState* cs) {
     PutInstruction(&COMMAND_R0, kBoyiaNull, kCmdPush, cs);
 
     OpCommand jmpCmd = { OP_CONST_NUMBER, LTrue };
+    // 加入kCmdOnceJmpTrue原因是，运行时匿名函数只动态生成一次，再次调用使用之前生成的匿名函数
     Instruction* logicInst = PutInstruction(&jmpCmd, kBoyiaNull, kCmdOnceJmpTrue, cs);
     // 初始化参数
     InitParams(cs); 

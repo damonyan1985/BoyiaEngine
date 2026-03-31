@@ -268,6 +268,8 @@ pub(crate) enum OpType {
     /// Frame slot offset from [ExecState::mExecStack][frame-1].mLValSize: 1..=param_count are params, then locals.
     /// Rust VM only; not in C++ BoyiaCore opcode set.
     OP_LOCAL,
+    /// Closure capture slot index in current callee's `BoyiaFunction::mParams` capture tail.
+    OP_CAPTURE,
 }
 
 /// CmdType (BoyiaCore.cpp)
@@ -381,14 +383,23 @@ impl LocalScope {
 /// `push_local_scope` / `pop_local_scope` are driven by `{` / `}` in `compile::block_statement` while a function is active.
 /// Runtime VM `mLocals[start+1..]` = [mParams] in order, then locals from each [LocalScope] in stack order.
 pub(crate) struct FunctionScope {
+    pub(crate) mIsAnonym: bool,
     pub(crate) mParams: Vec<LUintPtr>,
+    /// Captured outer variable name keys used by nested anonymous functions.
+    pub(crate) mCaptures: Vec<LUintPtr>,
     pub(crate) mLocalScopes: Vec<LocalScope>,
 }
 
 impl FunctionScope {
     pub(crate) fn new() -> Self {
+        Self::new_with_anonym(false)
+    }
+
+    pub(crate) fn new_with_anonym(is_anonym: bool) -> Self {
         Self {
+            mIsAnonym: is_anonym,
             mParams: Vec::new(),
+            mCaptures: Vec::new(),
             mLocalScopes: Vec::new(),
         }
     }
@@ -409,6 +420,10 @@ impl FunctionScope {
         if let Some(top) = self.mLocalScopes.last_mut() {
             top.add_local(key);
         }
+    }
+
+    pub(crate) fn add_capture(&mut self, key: LUintPtr) {
+        self.mCaptures.push(key);
     }
 
     /// Frame offset for `mLocals[start + offset]`; offset 0 = callee; first param = 1.
@@ -477,7 +492,18 @@ pub struct BoyiaFunction {
     pub mFuncBody: LIntPtr,
     pub mParams: *mut BoyiaValue,
     pub mParamSize: LInt,
+    pub mCaptureCount: LInt,
     pub mParamCount: LInt,
+}
+
+/// Filled by [crate::core::get_callee_and_captures_from_locals]: callee and closure capture region in `mParams`.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CalleeCapturesInfo {
+    pub callee: *mut BoyiaFunction,
+    /// First capture cell: `callee->mParams + callee->mParamSize` when `capture_count > 0`.
+    pub captures: *mut BoyiaValue,
+    pub capture_count: LInt,
 }
 
 /// Inline cache entry type (BoyiaValue.cpp InlineCacheType).
@@ -556,6 +582,15 @@ impl OpCommand {
         Self {
             mType: OpType::OP_LOCAL,
             mValue: frame_offset,
+        }
+    }
+
+    /// Closure capture by slot index (OP_CAPTURE, capture index).
+    #[inline]
+    pub const fn op_capture(capture_idx: LIntPtr) -> Self {
+        Self {
+            mType: OpType::OP_CAPTURE,
+            mValue: capture_idx,
         }
     }
 }

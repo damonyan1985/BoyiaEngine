@@ -48,6 +48,7 @@ pub use core::{
     get_native_helper_result,
     get_local_size,
     get_local_value,
+    get_callee_and_captures_from_locals,
     local_push,
     get_local_stack,
     get_global_table,

@@ -7,8 +7,9 @@
 use crate::core::{
     alloc_micro_task, copy_object, create_const_string, create_exec_state, create_fun_val,
     create_micro_task_object, destroy_exec_state, find_global, free_micro_task, get_boyia_class_id,
-    init_function, local_push, micro_task_class_key, set_int_result, set_native_result, string_add,
-    switch_exec_state, value_copy, value_copy_no_name, value_copy_with_key,
+    get_local_value, init_function, local_push, micro_task_class_key, set_int_result,
+    set_native_result, string_add, switch_exec_state, value_copy, value_copy_no_name,
+    value_copy_with_key, vector_params_grow_if_full,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -100,6 +101,53 @@ unsafe fn get_local_ptr_by_frame_offset(vm: *mut BoyiaVM, frame_offset: LIntPtr)
     (*e).mLocals.as_mut_ptr().add(idx)
 }
 
+#[inline]
+unsafe fn get_capture_ptr(vm: *mut BoyiaVM, capture_idx: LIntPtr) -> *mut BoyiaValue {
+    if vm.is_null() {
+        return ptr::null_mut();
+    }
+    let val = get_local_value(0, vm as *mut LVoid) as *mut BoyiaValue;
+    if val.is_null() {
+        return ptr::null_mut();
+    }
+    let fun = (*val).mValue.mObj.mPtr as *mut BoyiaFunction;
+    if fun.is_null() || (*fun).mParams.is_null() {
+        return ptr::null_mut();
+    }
+    let cc = (*fun).mCaptureCount as LIntPtr;
+    println!("get capture count: {}", cc);
+    if capture_idx < 0 || capture_idx >= cc {
+        return ptr::null_mut();
+    }
+    let base = (*fun).mParamSize as usize;
+    (*fun).mParams.add(base + capture_idx as usize)
+}
+
+unsafe fn find_local_by_name_key_in_current_frame(vm: *mut BoyiaVM, key: LUintPtr) -> *mut BoyiaValue {
+    if vm.is_null() || (*vm).mEState.is_null() {
+        return ptr::null_mut();
+    }
+    let e = (*vm).mEState;
+    if (*e).mFrameIndex <= 0 {
+        return ptr::null_mut();
+    }
+    let fi = (*e).mFrameIndex as usize - 1;
+    let start = (*e).mExecStack[fi].mLValSize as usize;
+    let end = (*e).mStackFrame.mLValSize as usize;
+    if end <= start {
+        return ptr::null_mut();
+    }
+    let mut idx = end;
+    while idx > start {
+        idx -= 1;
+        let slot = (*e).mLocals.as_mut_ptr().add(idx);
+        if (*slot).mNameKey == key {
+            return slot;
+        }
+    }
+    ptr::null_mut()
+}
+
 /// Get pointer to BoyiaValue for REG0, REG1, VAR, or LOCAL operand. Returns null for constant operands.
 #[inline]
 unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM) -> *mut BoyiaValue {
@@ -115,6 +163,7 @@ unsafe fn get_op_value(inst: *const Instruction, side: OpSide, vm: *mut BoyiaVM)
         OpType::OP_REG1 => &mut (*(*vm).mCpu).mReg1 as *mut BoyiaValue,
         // OpType::OP_VAR => get_val(op.mValue as LUintPtr, vm),
         // OpType::OP_LOCAL => get_local_ptr_by_frame_offset(vm, op.mValue),
+        OpType::OP_CAPTURE => get_capture_ptr(vm, op.mValue),
         _ => ptr::null_mut(),
     }
 }
@@ -485,14 +534,69 @@ unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHand
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let value = get_op_value(inst, OpSide::OpLeft, vm);
-    if !value.is_null() {
-        eprintln!("[handle_push_arg] value.mNameKey={}", (*value).mNameKey);
-        local_push(value, vm as *mut LVoid);
+/// Append copies of current-frame locals `mLocals[start+1 .. mLValSize)` into `fun`'s capture tail
+/// (`mParams[mParamSize + mCaptureCount]`), incrementing `mCaptureCount` only. Slot `start` is the callee pointer.
+unsafe fn capture_current_frame_locals_into_function(
+    vm: *mut BoyiaVM,
+    fun: *mut BoyiaFunction,
+) -> OpHandleResult {
+    if vm.is_null() || (*vm).mEState.is_null() {
+        return OpHandleResult::kOpResultEnd;
+    }
+    if fun.is_null() {
         return OpHandleResult::kOpResultSuccess;
     }
-    OpHandleResult::kOpResultEnd
+    if (*fun).mParams.is_null() {
+        return OpHandleResult::kOpResultEnd;
+    }
+    let e_state = (*vm).mEState;
+    if (*e_state).mFrameIndex <= 0 || (*vm).mExecStack.is_null() || (*vm).mLocals.is_null() {
+        return OpHandleResult::kOpResultSuccess;
+    }
+    let frame_idx = (*e_state).mFrameIndex as usize - 1;
+    let start = (*vm).mExecStack.add(frame_idx).read().mLValSize;
+    if start < 0 || start as usize >= NUM_LOCAL_VARS {
+        return OpHandleResult::kOpResultSuccess;
+    }
+    let frame_end = (*e_state).mStackFrame.mLValSize;
+    if frame_end <= start + 1 {
+        return OpHandleResult::kOpResultSuccess;
+    }
+    let mut idx = start + 1;
+    while idx < frame_end {
+        while (*fun).mParamSize + (*fun).mCaptureCount >= crate::core::get_function_count(fun) {
+            if !vector_params_grow_if_full(fun, vm as *mut LVoid) {
+                return OpHandleResult::kOpResultEnd;
+            }
+        }
+        let write_idx = (*fun).mParamSize + (*fun).mCaptureCount;
+        value_copy_no_name(
+            (*fun).mParams.add(write_idx as usize),
+            (*vm).mLocals.add(idx as usize),
+        );
+        (*fun).mCaptureCount += 1;
+        idx += 1;
+    }
+    OpHandleResult::kOpResultSuccess
+}
+
+unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    let value = get_op_value(inst, OpSide::OpLeft, vm);
+    if value.is_null() {
+        return OpHandleResult::kOpResultEnd;
+    }
+    if (*value).mValueType == ValueType::BY_ANONYM_FUNC {
+        let fun = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
+        if !fun.is_null() {
+            let r = capture_current_frame_locals_into_function(vm, fun);
+            if r != OpHandleResult::kOpResultSuccess {
+                return r;
+            }
+        }
+    }
+    eprintln!("[handle_push_arg] value.mNameKey={}", (*value).mNameKey);
+    local_push(value, vm as *mut LVoid);
+    OpHandleResult::kOpResultSuccess
 }
 
 pub(crate) unsafe fn assign_state_class(state: *mut ExecState, value: *const BoyiaValue) {
@@ -555,6 +659,15 @@ unsafe fn handle_assignment(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
         OpType::OP_LOCAL => {
             let val = get_local_ptr_by_frame_offset(vm, (*inst).mOPRight.mValue);
             if val.is_null() {
+                return OpHandleResult::kOpResultEnd;
+            }
+            value_copy_with_key(left, val);
+        }
+        OpType::OP_CAPTURE => {
+            println!("get op capture");
+            let val = get_capture_ptr(vm, (*inst).mOPRight.mValue);
+            if val.is_null() {
+                println!("get op capture1");
                 return OpHandleResult::kOpResultEnd;
             }
             value_copy_with_key(left, val);

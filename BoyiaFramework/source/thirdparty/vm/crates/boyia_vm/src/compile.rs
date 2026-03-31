@@ -610,8 +610,8 @@ unsafe fn declare_global_var(vm: *mut BoyiaVM, name_key: LUintPtr) {
     (*val).mValue.mIntVal = 0;
 }
 
-unsafe fn init_params(cs: *mut CompileState) {
-    (*cs).mFunctionScopes.push(FunctionScope::new());
+unsafe fn init_params_with_anonym(cs: *mut CompileState, is_anonym: bool) {
+    (*cs).mFunctionScopes.push(FunctionScope::new_with_anonym(is_anonym));
     loop {
         next_token(cs);
         if (*cs).mToken.mTokenValue == TokenValue::RPTR {
@@ -634,11 +634,21 @@ unsafe fn init_params(cs: *mut CompileState) {
     // Local scopes are pushed on `{` in [block_statement] and popped on `}`.
 }
 
+unsafe fn init_params(cs: *mut CompileState) {
+    init_params_with_anonym(cs, false);
+}
+
 /// Emit OP_LOCAL when `key` is in the innermost [FunctionScope], else OP_VAR (globals / outer / unknown).
 unsafe fn compile_var_operand(cs: *mut CompileState, key: LUintPtr) -> OpCommand {
     if let Some(fs) = (*cs).mFunctionScopes.last() {
         if let Some(off) = fs.resolve_local_frame_offset(key) {
             return OpCommand::op_local(off);
+        }
+        if fs.mIsAnonym {
+            if let Some(i) = fs.mCaptures.iter().position(|&k| k == key) {
+                println!("get capture idx: {}", i);
+                return OpCommand::op_capture(i as LIntPtr);
+            }
         }
     }
     OpCommand::op_var(key as LIntPtr)
@@ -955,6 +965,40 @@ unsafe fn eval_assignment(cs: *mut CompileState) {
     let _ = put_instruction(cs, OpCommand::reg1(), OpCommand::reg0(), CmdType::kCmdAssignVar);
 }
 
+/// Collect capture candidates for current anonymous function scope from the immediate parent scope:
+/// parent function params + all parent local scopes' locals.
+unsafe fn collect_parent_scope_captures_for_anonym(cs: *mut CompileState) {
+    let scope_len = (*cs).mFunctionScopes.len();
+    println!("call collect_parent_scope_captures_for_anonym scope_len={}", scope_len);
+    if scope_len < 2 {
+        return;
+    }
+
+    println!("call collect_parent_scope_captures_for_anonym");
+    let parent_idx = scope_len - 2;
+    let parent_params = (*cs).mFunctionScopes[parent_idx].mParams.clone();
+    for key in parent_params {
+        if let Some(current) = (*cs).mFunctionScopes.last_mut() {
+            if !current.mCaptures.iter().any(|&k| k == key) {
+                current.add_capture(key);
+            }
+        }
+    }
+    let parent_scopes_len = (*cs).mFunctionScopes[parent_idx].mLocalScopes.len();
+    for si in 0..parent_scopes_len {
+        let locals = (*cs).mFunctionScopes[parent_idx].mLocalScopes[si]
+            .mLocals
+            .clone();
+        for key in locals {
+            if let Some(current) = (*cs).mFunctionScopes.last_mut() {
+                if !current.mCaptures.iter().any(|&k| k == key) {
+                    current.add_capture(key);
+                }
+            }
+        }
+    }
+}
+
 unsafe fn anonym_fun_statement(cs: *mut CompileState) {
     next_token(cs);
     if (*cs).mToken.mTokenValue != TokenValue::LPTR {
@@ -963,7 +1007,8 @@ unsafe fn anonym_fun_statement(cs: *mut CompileState) {
     let _ = put_instruction(cs, OpCommand::none(), OpCommand::const_number(TokenValue::BY_ANONYM_FUNC as LIntPtr), CmdType::kCmdCreateFunction);
     let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPush);
     let logic_idx = put_instruction(cs, OpCommand::const_number(LTrue as LIntPtr), OpCommand::none(), CmdType::kCmdOnceJmpTrue).unwrap_or(0);
-    init_params(cs);
+    init_params_with_anonym(cs, true);
+    collect_parent_scope_captures_for_anonym(cs);
     body_statement(cs, true);
     let end_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdIfEnd).unwrap_or(0);
     patch_offset((*cs).mVm, logic_idx, true, (end_idx as LIntPtr).wrapping_sub(logic_idx as LIntPtr));
