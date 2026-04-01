@@ -1306,8 +1306,15 @@ static LInt HandlePushScene(Instruction* inst, BoyiaVM* vm) {
     return kOpResultSuccess;
 }
 
-static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {   
+static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {
     if (vm->mEState->mFrameIndex > 0) {
+        /* ExecPopFunction 以 inst 为空调用：无 kCmdPopScene 指令体，pop 前仅对匿名函数清捕获计数。 */
+        if (!inst) {
+            BoyiaValue* callee = (BoyiaValue*)GetLocalValue(0, vm);
+            if (callee && callee->mValueType == BY_ANONYM_FUNC && callee->mValue.mObj.mPtr) {
+                ((BoyiaFunction*)callee->mValue.mObj.mPtr)->mCaptureCount = 0;
+            }
+        }
         vm->mEState->mStackFrame.mLValSize = vm->mExecStack[--vm->mEState->mFrameIndex].mLValSize;
         vm->mEState->mStackFrame.mPC = vm->mExecStack[vm->mEState->mFrameIndex].mPC;
         vm->mEState->mStackFrame.mContext = vm->mExecStack[vm->mEState->mFrameIndex].mContext;
