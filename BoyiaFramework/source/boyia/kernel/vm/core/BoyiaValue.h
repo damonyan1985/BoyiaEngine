@@ -91,6 +91,7 @@ typedef struct {
     LIntPtr mFuncBody;
     BoyiaValue* mParams;
     LInt mParamSize;
+    LInt mCaptureCount;
     LInt mParamCount;
 } BoyiaFunction;
 

@@ -96,16 +96,18 @@ class MainViewController extends ViewController {
 
     prop async testAwait() {
         //var result = 1;
-        var result = (await this.load());
+        var url = "boyia://apps/contacts/json/mock.json";
+        var result = (await this.load(url));
 
         Util.log("testAwait result:" + result);
-        result = (await this.load());
+        result = (await this.load(url));
 
         Util.log("testAwait result1:" + result);
         return result;
     }
  
-    prop async load() {
+    prop async load(url) {
+        //url = "boyia://apps/contacts/json/mock.json";
         Util.newMicrotask(fun(resolve) {
             var params = new(NetParams);
             params.method = "post";
@@ -114,7 +116,7 @@ class MainViewController extends ViewController {
             params.headers.put("User-Token", "none");
             params.body = "name=test&pwd=test";
 
-            this.fetch("boyia://apps/contacts/json/mock.json", resolve, null);
+            this.fetch(url, resolve, null);
             //this.fetch("https://127.0.0.1:8443/user/v1/login", resolve, params);
         });
     }

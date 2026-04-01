@@ -108,6 +108,8 @@ enum OpType {
     OP_VAR,
     /* Frame slot offset from ExecState::mExecStack[frame-1].mLValSize; params/locals; Rust VM parity. */
     OP_LOCAL,
+    /* Closure capture slot index in callee BoyiaFunction::mParams tail (after formal params). */
+    OP_CAPTURE,
 };
 
 // 指令类型
@@ -359,6 +361,9 @@ typedef struct FunctionScope {
     LInt mParamCount;
     LocalScope mLocalScopes[COMPILE_LOCAL_SCOPE_STACK];
     LInt mLocalScopeCount;
+    LBool mIsAnonym;
+    LUintPtr mCaptureKeys[NUM_FUNC_PARAMS];
+    LInt mCaptureKeyCount;
 } FunctionScope;
 
 typedef struct {
@@ -963,6 +968,7 @@ static BoyiaFunction* CopyFunction(BoyiaValue* clsVal, LInt count, BoyiaVM* vm) 
     BOYIA_LOG("HandleCallInternal CreateObject %d", 6);
     newFunc->mParams = NEW_ARRAY(BoyiaValue, count, vm);
     newFunc->mParamSize = 0;
+    newFunc->mCaptureCount = 0;
     newFunc->mFuncBody = func->mFuncBody;
     newFunc->mParamCount = count;
 
@@ -1163,6 +1169,91 @@ static BoyiaValue* GetLocalPtrByFrameOffset(BoyiaVM* vm, LIntPtr frameOffset) {
     return &e->mLocals[idx];
 }
 
+/* Callee at local slot 0 must be BY_ANONYM_FUNC; capture cells at mParams[mParamSize + idx]. */
+static BoyiaValue* GetCapturePtr(BoyiaVM* vm, LIntPtr captureIdx) {
+    BoyiaValue* slot0;
+    BoyiaFunction* fun;
+    LInt cc;
+
+    if (!vm || !vm->mEState) {
+        return kBoyiaNull;
+    }
+    if (vm->mEState->mFrameIndex <= 0) {
+        return kBoyiaNull;
+    }
+    slot0 = (BoyiaValue*)GetLocalValue(0, vm);
+    if (!slot0 || slot0->mValueType != BY_ANONYM_FUNC) {
+        return kBoyiaNull;
+    }
+    fun = (BoyiaFunction*)slot0->mValue.mObj.mPtr;
+    if (!fun || !fun->mParams) {
+        return kBoyiaNull;
+    }
+    cc = fun->mCaptureCount;
+    if (captureIdx < 0 || captureIdx >= cc) {
+        return kBoyiaNull;
+    }
+    return fun->mParams + fun->mParamSize + (LInt)captureIdx;
+}
+
+static LBool BoyiaFunctionEnsureParamsCapacity(BoyiaFunction* fun, BoyiaVM* vm) {
+    LInt cap;
+    LInt high;
+    LInt newCap;
+    BoyiaValue* old;
+
+    if (!fun || !vm) {
+        return LFalse;
+    }
+    cap = GET_FUNCTION_COUNT(fun);
+    if (fun->mParamSize + fun->mCaptureCount < cap) {
+        return LTrue;
+    }
+    old = fun->mParams;
+    high = (LInt)(fun->mParamCount >> 16);
+    newCap = cap + 10;
+    fun->mParams = NEW_ARRAY(BoyiaValue, newCap, vm);
+    fun->mParamCount = newCap | (high << 16);
+    if (cap > 0 && old) {
+        LMemcpy(fun->mParams, old, cap * sizeof(BoyiaValue));
+        VM_DELETE(old, vm);
+    }
+    return LTrue;
+}
+
+/* Copy current-frame locals (except callee slot) into fun capture tail; only mCaptureCount grows. */
+static LInt CaptureCurrentFrameLocalsIntoFunction(BoyiaVM* vm, BoyiaFunction* fun) {
+    LInt frameIdx;
+    LInt start;
+    LInt frameEnd;
+    LInt idx;
+
+    if (!vm || !vm->mEState || !fun || !fun->mParams) {
+        return kOpResultEnd;
+    }
+    if (vm->mEState->mFrameIndex <= 0) {
+        return kOpResultSuccess;
+    }
+    frameIdx = vm->mEState->mFrameIndex - 1;
+    start = vm->mExecStack[frameIdx].mLValSize;
+    frameEnd = vm->mEState->mStackFrame.mLValSize;
+    if (frameEnd <= start + 1) {
+        return kOpResultSuccess;
+    }
+    for (idx = start + 1; idx < frameEnd; ++idx) {
+        while (fun->mParamSize + fun->mCaptureCount >= GET_FUNCTION_COUNT(fun)) {
+            if (!BoyiaFunctionEnsureParamsCapacity(fun, vm)) {
+                return kOpResultEnd;
+            }
+        }
+        ValueCopyNoName(
+            fun->mParams + fun->mParamSize + fun->mCaptureCount,
+            &vm->mLocals[idx]);
+        fun->mCaptureCount++;
+    }
+    return kOpResultSuccess;
+}
+
 static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
     BoyiaValue* val = kBoyiaNull;
     OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
@@ -1172,6 +1263,9 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
         break;
     case OP_REG1:
         val = &vm->mCpu->mReg1;
+        break;
+    case OP_CAPTURE:
+        val = GetCapturePtr(vm, op->mValue);
         break;
     //case OP_VAR:
     //    val = FindVal((LUintPtr)op->mValue, vm);
@@ -1226,12 +1320,19 @@ static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {
 
 static LInt HandlePushArg(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
-    if (value) {
-        LocalPush(value, vm);
-        return kOpResultSuccess;
-    }
+    BoyiaFunction* fun;
 
-    return kOpResultEnd;
+    if (!value) {
+        return kOpResultEnd;
+    }
+    if (value->mValueType == BY_ANONYM_FUNC) {
+        fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
+        if (fun && CaptureCurrentFrameLocalsIntoFunction(vm, fun) != kOpResultSuccess) {
+            return kOpResultEnd;
+        }
+    }
+    LocalPush(value, vm);
+    return kOpResultSuccess;
 }
 
 static LInt HandlePushObj(Instruction* inst, BoyiaVM* vm) {
@@ -1660,6 +1761,8 @@ static LVoid PushCompileFunctionScope(CompileState* cs) {
     FunctionScope* fs = &cs->mFunctionScopes[cs->mFunctionScopeCount++];
     fs->mParamCount = 0;
     fs->mLocalScopeCount = 0;
+    fs->mIsAnonym = LFalse;
+    fs->mCaptureKeyCount = 0;
 }
 
 static LVoid PopCompileFunctionScope(CompileState* cs) {
@@ -1721,14 +1824,72 @@ static LInt FunctionScopeResolveLocalFrameOffset(FunctionScope* fs, LUintPtr key
     return -1;
 }
 
+static LInt FunctionScopeCaptureIndexOfKey(FunctionScope* fs, LUintPtr key) {
+    LInt i;
+    if (!fs) {
+        return -1;
+    }
+    for (i = 0; i < fs->mCaptureKeyCount; ++i) {
+        if (fs->mCaptureKeys[i] == key) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static LVoid FunctionScopeAddCaptureKey(FunctionScope* fs, LUintPtr key) {
+    if (!fs || fs->mCaptureKeyCount >= NUM_FUNC_PARAMS) {
+        return;
+    }
+    if (FunctionScopeCaptureIndexOfKey(fs, key) >= 0) {
+        return;
+    }
+    fs->mCaptureKeys[fs->mCaptureKeyCount++] = key;
+}
+
+/* Parent params + parent block locals, deduped; for anonymous function body compile (Rust parity). */
+static LVoid CollectParentScopeCapturesForAnonym(CompileState* cs) {
+    FunctionScope* current;
+    FunctionScope* parent;
+    LInt pi;
+    LInt si;
+    LInt li;
+
+    if (!cs || cs->mFunctionScopeCount < 2) {
+        return;
+    }
+    current = CurrentFunctionScope(cs);
+    parent = &cs->mFunctionScopes[cs->mFunctionScopeCount - 2];
+    if (!current || !parent) {
+        return;
+    }
+    for (pi = 0; pi < parent->mParamCount; ++pi) {
+        FunctionScopeAddCaptureKey(current, parent->mParams[pi]);
+    }
+    for (si = 0; si < parent->mLocalScopeCount; ++si) {
+        LocalScope* ls = &parent->mLocalScopes[si];
+        for (li = 0; li < ls->mLocalCount; ++li) {
+            FunctionScopeAddCaptureKey(current, ls->mLocals[li]);
+        }
+    }
+}
+
 static OpCommand CompileVarOperand(CompileState* cs, LUintPtr key) {
     FunctionScope* fs = CurrentFunctionScope(cs);
     LInt off;
+    LInt cap;
     if (fs) {
         off = FunctionScopeResolveLocalFrameOffset(fs, key);
         if (off >= 0) {
             OpCommand c = { OP_LOCAL, (LIntPtr)off };
             return c;
+        }
+        if (fs->mIsAnonym) {
+            cap = FunctionScopeCaptureIndexOfKey(fs, key);
+            if (cap >= 0) {
+                OpCommand c = { OP_CAPTURE, (LIntPtr)cap };
+                return c;
+            }
         }
     }
     {
@@ -1737,8 +1898,15 @@ static OpCommand CompileVarOperand(CompileState* cs, LUintPtr key) {
     }
 }
 
-static LVoid InitParams(CompileState* cs) {
+static LVoid InitParamsWithAnonym(CompileState* cs, LBool isAnonym) {
+    FunctionScope* fs;
+
     PushCompileFunctionScope(cs);
+    fs = CurrentFunctionScope(cs);
+    if (fs) {
+        fs->mIsAnonym = isAnonym;
+        fs->mCaptureKeyCount = 0;
+    }
     do {
         NextToken(cs); // 得到属性名
         // 如果是右括号，则跳出循环
@@ -1748,7 +1916,7 @@ static LVoid InitParams(CompileState* cs) {
 
         {
             LUintPtr nameKey = GenIdentifier(&cs->mToken.mTokenName, cs->mVm);
-            FunctionScope* fs = CurrentFunctionScope(cs);
+            fs = CurrentFunctionScope(cs);
             if (fs) {
                 FunctionScopeAddParam(fs, nameKey);
             }
@@ -1761,6 +1929,13 @@ static LVoid InitParams(CompileState* cs) {
     if (cs->mToken.mTokenValue != RPTR) {
         SntxErrorBuild(PAREN_EXPECTED, cs);
     }
+    if (isAnonym) {
+        CollectParentScopeCapturesForAnonym(cs);
+    }
+}
+
+static LVoid InitParams(CompileState* cs) {
+    InitParamsWithAnonym(cs, LFalse);
 }
 
 static CommandTable* CreateExecutor(CompileState* cs) {
@@ -1773,6 +1948,7 @@ static CommandTable* CreateExecutor(CompileState* cs) {
 // 初始化函数
 static LVoid InitFunction(BoyiaFunction* fun, BoyiaVM* vm) {
     fun->mParamSize = 0;
+    fun->mCaptureCount = 0;
     fun->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS, vm);
     fun->mParamCount = NUM_FUNC_PARAMS;
     ++vm->mFunSize;
@@ -1956,8 +2132,8 @@ static LVoid AnonymFunStatement(CompileState* cs) {
     OpCommand jmpCmd = { OP_CONST_NUMBER, LTrue };
     // 加入kCmdOnceJmpTrue原因是，运行时匿名函数只动态生成一次，再次调用使用之前生成的匿名函数
     Instruction* logicInst = PutInstruction(&jmpCmd, kBoyiaNull, kCmdOnceJmpTrue, cs);
-    // 初始化参数
-    InitParams(cs); 
+    // 初始化参数（匿名函数：收集外层捕获名后编译函数体，与 Rust VM 一致）
+    InitParamsWithAnonym(cs, LTrue);
     // 第三步，函数体内部编译
     BodyStatement(cs, LTrue);
 
@@ -2137,10 +2313,11 @@ static LVoid HandleCallAsyncFunction(BoyiaVM* vm) {
     SwitchExecState(state, vm);
     HandlePushScene(kBoyiaNull, vm);
     
+    
     BoyiaFunction* func = (BoyiaFunction*)value->mValue.mObj.mPtr;
     // 从第二个参数开始，将形参key赋给实参
     LInt idx = start;
-    LInt end = idx + func->mParamSize;
+    LInt end = idx + func->mParamSize + 1;
     for (; idx < end; ++idx) {
         ValueCopy(&state->mLocals[idx - start], &current->mLocals[idx]);
     }
@@ -2327,6 +2504,13 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
         //     ValueCopyNoName(left, val);
         //     left->mNameKey = (LUintPtr)val;
         // }
+        ValueCopyWithKey(left, val);
+    } break;
+    case OP_CAPTURE: {
+        BoyiaValue* val = GetCapturePtr(vm, inst->mOPRight.mValue);
+        if (!val) {
+            return kOpResultEnd;
+        }
         ValueCopyWithKey(left, val);
     } break;
     case OP_REG0: {

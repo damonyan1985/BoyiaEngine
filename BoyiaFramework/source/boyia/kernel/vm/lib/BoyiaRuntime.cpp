@@ -110,7 +110,7 @@ LBool BoyiaRuntime::needCollect() const
     //return GetUsedMemory(m_memoryPool) >= kMemoryPoolSize / 2 && !m_isGcRuning;
     //return LTrue;
 
-    return LTrue;
+    return LFalse;
 }
 
 // Prepare delete the object

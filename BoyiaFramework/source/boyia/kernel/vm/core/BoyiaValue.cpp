@@ -462,6 +462,7 @@ LVoid GenBuiltinClassFunction(LUintPtr key, NativePtr func, BoyiaFunction* class
     BoyiaFunction* function = NEW(BoyiaFunction, vm);
     function->mParams = kBoyiaNull;
     function->mParamSize = 0;
+    function->mCaptureCount = 0;
     // 实际调用的函数
     function->mFuncBody = (LIntPtr)func;
     
@@ -476,6 +477,7 @@ LVoid GenBuiltinClassPropFunction(LUintPtr key, NativePtr func, BoyiaFunction* c
     BoyiaFunction* function = NEW(BoyiaFunction, vm);
     function->mParams = kBoyiaNull;
     function->mParamSize = 0;
+    function->mCaptureCount = 0;
     // 实际调用的函数
     function->mFuncBody = (LIntPtr)func;
 
@@ -735,6 +737,7 @@ LInt BoyiaMapClear(LVoid* vm)
     // Map对象地址
     BoyiaFunction* fun = (BoyiaFunction*)obj->mValue.mObj.mPtr;
     fun->mParamSize = 0;
+    fun->mCaptureCount = 0;
 
     return kOpResultSuccess;
 }

@@ -117,7 +117,7 @@ class PrinterExt extends Printer {
     }
 
     prop async writeFile() {
-        var result = (await this.writeFilePromise());
+        var result = (await this.writeFilePromise("hello from File.write"));
         if (result == "ok") {
             BY_Log("writeFile ok");
         } else {
@@ -129,9 +129,9 @@ class PrinterExt extends Printer {
         });
     }
 
-    prop async writeFilePromise() {
+    prop async writeFilePromise(content) {
         BY_Log("run writeFilePromise");
-        var content = "hello from File.write";
+        //var content = "hello from File.write";
         BY_Log(content);
         Util.newMicrotask(fun(resolve) {
             BY_Log("run writeFilePromise");

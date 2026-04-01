@@ -959,7 +959,8 @@ unsafe fn handle_call_async_function(vm: *mut BoyiaVM) {
     let _ = handle_push_scene(ptr::null(), vm);
     let func = (*value).mValue.mObj.mPtr as *const BoyiaFunction;
     let param_size = (*func).mParamSize as usize;
-    let end = start_usize + param_size;
+
+    let end = start_usize + param_size + 1;
     for idx in start_usize..end {
         value_copy(
             (*state).mLocals.as_mut_ptr().add(idx - start_usize),
