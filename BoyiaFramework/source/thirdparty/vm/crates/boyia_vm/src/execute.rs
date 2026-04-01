@@ -517,12 +517,23 @@ pub(crate) unsafe fn handle_push_scene(inst: *const Instruction, vm: *mut BoyiaV
     OpHandleResult::kOpResultSuccess
 }
 
-/// HandlePopScene per BoyiaCore.cpp: if mFrameIndex > 0, --mFrameIndex then restore mLValSize, mPC, mContext, mLoopSize from mExecStack[mFrameIndex], AssignStateClass(mEState, &mExecStack[mFrameIndex].mClass).
+/// HandlePopScene per BoyiaCore.cpp: if mFrameIndex > 0, when `inst` is null (ExecPopFunction path) reset
+/// `mCaptureCount` on callee at local slot 0 if `BY_ANONYM_FUNC`; then --mFrameIndex and restore
+/// mLValSize, mPC, mContext, mLoopSize from mExecStack[mFrameIndex], AssignStateClass.
 unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let _ = inst;
     let e_state = (*vm).mEState;
     if e_state.is_null() || (*e_state).mFrameIndex <= 0 {
         return OpHandleResult::kOpResultEnd;
+    }
+    if inst.is_null() {
+        let callee = get_local_value(0, vm as *mut LVoid) as *mut BoyiaValue;
+        if !callee.is_null()
+            && (*callee).mValueType == ValueType::BY_ANONYM_FUNC
+            && (*callee).mValue.mObj.mPtr != 0
+        {
+            let fun = (*callee).mValue.mObj.mPtr as *mut BoyiaFunction;
+            (*fun).mCaptureCount = 0;
+        }
     }
     (*e_state).mFrameIndex -= 1;
     let idx = (*e_state).mFrameIndex as usize;
