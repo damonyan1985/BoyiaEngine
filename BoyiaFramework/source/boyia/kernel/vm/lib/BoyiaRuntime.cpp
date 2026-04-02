@@ -10,7 +10,7 @@
 #include "FileUtil.h"
 #include "PlatformBridge.h"
 
-const LInt kMemoryPoolSize = (6 * MB);
+const LInt kMemoryPoolSize = (16 * MB);
 const LInt kGcMemorySize = (8 * KB);
 //const LInt kGcMemorySize = (2 * MB);
 const LInt kNativeFunctionCapacity = 100;

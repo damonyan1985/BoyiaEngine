@@ -1254,6 +1254,31 @@ static LInt CaptureCurrentFrameLocalsIntoFunction(BoyiaVM* vm, BoyiaFunction* fu
     return kOpResultSuccess;
 }
 
+/* 压参时为匿名函数克隆 BoyiaFunction：新分配 mParams 并复制形参区；捕获清零，由 CaptureCurrentFrameLocalsIntoFunction 写入本次调用。 */
+static BoyiaFunction* CloneAnonymBoyiaFunctionForPushArg(BoyiaFunction* src, BoyiaVM* vm) {
+    if (!src || !vm) {
+        return kBoyiaNull;
+    }
+
+    BoyiaFunction* dst = NEW(BoyiaFunction, vm);
+    dst->mParams = NEW_ARRAY(BoyiaValue, NUM_FUNC_PARAMS, vm);
+    if (!dst->mParams) {
+        return kBoyiaNull;
+    }
+
+    dst->mParamCount = src->mParamCount;
+    dst->mFuncBody = src->mFuncBody;
+    dst->mParamSize = src->mParamSize;
+    dst->mCaptureCount = 0;
+    if (src->mParams && src->mParamSize > 0) {
+        LInt i = 0;
+        for (; i < src->mParamSize; ++i) {
+            ValueCopy(dst->mParams + i, src->mParams + i);
+        }
+    }
+    return dst;
+}
+
 static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
     BoyiaValue* val = kBoyiaNull;
     OpCommand* op = type == OpLeft ? &inst->mOPLeft : &inst->mOPRight;
@@ -1312,7 +1337,11 @@ static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {
         if (!inst) {
             BoyiaValue* callee = (BoyiaValue*)GetLocalValue(0, vm);
             if (callee && callee->mValueType == BY_ANONYM_FUNC && callee->mValue.mObj.mPtr) {
-                ((BoyiaFunction*)callee->mValue.mObj.mPtr)->mCaptureCount = 0;
+                BoyiaFunction* fun = (BoyiaFunction*)callee->mValue.mObj.mPtr;
+                BoyiaValue* params = fun->mParams;
+                callee->mValue.mObj.mPtr = kBoyiaNull;
+                VM_DELETE(fun, vm);
+                VM_DELETE(params, vm);
             }
         }
         vm->mEState->mStackFrame.mLValSize = vm->mExecStack[--vm->mEState->mFrameIndex].mLValSize;
@@ -1327,13 +1356,19 @@ static LInt HandlePopScene(Instruction* inst, BoyiaVM* vm) {
 
 static LInt HandlePushArg(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue* value = GetOpValue(inst, OpLeft, vm);
-    BoyiaFunction* fun;
 
     if (!value) {
         return kOpResultEnd;
     }
-    if (value->mValueType == BY_ANONYM_FUNC) {
-        fun = (BoyiaFunction*)value->mValue.mObj.mPtr;
+
+    BoyiaFunction* srcFun = (BoyiaFunction*)value->mValue.mObj.mPtr;
+    
+    if (value->mValueType == BY_ANONYM_FUNC && srcFun->mCaptureCount == 0) {
+        // mCaptureCount == 0的情况是匿名函数模板，匿名函数每次调用都是基于模板
+        // 每次调用不能直接用匿名函数模板捕获变量，因为如果直接使用了模板来捕获，
+        // 碰到了异步函数时，可能会出现参数重写的问题
+        BoyiaFunction* fun = CloneAnonymBoyiaFunctionForPushArg(srcFun, vm);
+        value->mValue.mObj.mPtr = (LIntPtr)fun;
         if (fun && CaptureCurrentFrameLocalsIntoFunction(vm, fun) != kOpResultSuccess) {
             return kOpResultEnd;
         }

@@ -110,6 +110,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(BOYIA_UI_ROOT)\BoyiaApp\win\UIPlatorm;$(BOYIA_UI_ROOT)\BoyiaApp\win\UIPlatorm\util;$(BOYIA_UI_ROOT)\BoyiaApp\win\UIPlatorm\gdi;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\util;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\platform\win;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\porting\win;$(BOYIA_UI_ROOT)\BoyiaFramework\source\boyia\kernel\loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
