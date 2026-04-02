@@ -400,6 +400,41 @@ pub unsafe fn vector_params_grow_if_full(fun: *mut BoyiaFunction, vm: *mut LVoid
     true
 }
 
+/// Match `BoyiaCore.cpp` `CloneAnonymBoyiaFunctionForPushArg`: heap `BoyiaFunction` + `mParams` (`NUM_FUNC_PARAMS`),
+/// copy `mParamCount` / `mFuncBody` / `mParamSize`, `mCaptureCount = 0`, `ValueCopy` formal slots `[0..mParamSize)`.
+pub(crate) unsafe fn clone_anonym_boyia_function_for_push_arg(
+    src: *mut BoyiaFunction,
+    vm: *mut BoyiaVM,
+) -> *mut BoyiaFunction {
+    if src.is_null() || vm.is_null() {
+        return ptr::null_mut();
+    }
+    let creator = (*vm).mCreator;
+    if creator.is_null() {
+        return ptr::null_mut();
+    }
+    let dst = runtime_new_data_zeroed(creator, mem::size_of::<BoyiaFunction>() as LInt) as *mut BoyiaFunction;
+    if dst.is_null() {
+        return ptr::null_mut();
+    }
+    let params_bytes = (NUM_FUNC_PARAMS * mem::size_of::<BoyiaValue>()) as LInt;
+    (*dst).mParams = runtime_new_data_zeroed(creator, params_bytes) as *mut BoyiaValue;
+    if (*dst).mParams.is_null() {
+        (*creator).delete_data(dst as *mut LVoid);
+        return ptr::null_mut();
+    }
+    (*dst).mParamCount = (*src).mParamCount;
+    (*dst).mFuncBody = (*src).mFuncBody;
+    (*dst).mParamSize = (*src).mParamSize;
+    (*dst).mCaptureCount = 0;
+    if !(*src).mParams.is_null() && (*src).mParamSize > 0 {
+        for i in 0..(*src).mParamSize as usize {
+            value_copy((*dst).mParams.add(i), (*src).mParams.add(i));
+        }
+    }
+    dst
+}
+
 // ---------------------------------------------------------------------------
 // Init / Destroy VM
 // ---------------------------------------------------------------------------

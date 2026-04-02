@@ -5,11 +5,11 @@
 #![allow(dead_code)]
 
 use crate::core::{
-    alloc_micro_task, copy_object, create_const_string, create_exec_state, create_fun_val,
-    create_micro_task_object, destroy_exec_state, find_global, free_micro_task, get_boyia_class_id,
-    get_local_value, init_function, local_push, micro_task_class_key, set_int_result,
-    set_native_result, string_add, switch_exec_state, value_copy, value_copy_no_name,
-    value_copy_with_key, vector_params_grow_if_full,
+    alloc_micro_task, clone_anonym_boyia_function_for_push_arg, copy_object, create_const_string,
+    create_exec_state, create_fun_val, create_micro_task_object, destroy_exec_state, find_global,
+    free_micro_task, get_boyia_class_id, get_local_value, init_function, local_push,
+    micro_task_class_key, set_int_result, set_native_result, string_add, switch_exec_state,
+    value_copy, value_copy_no_name, value_copy_with_key, vector_params_grow_if_full,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -517,9 +517,9 @@ pub(crate) unsafe fn handle_push_scene(inst: *const Instruction, vm: *mut BoyiaV
     OpHandleResult::kOpResultSuccess
 }
 
-/// HandlePopScene per BoyiaCore.cpp: if mFrameIndex > 0, when `inst` is null (ExecPopFunction path) reset
-/// `mCaptureCount` on callee at local slot 0 if `BY_ANONYM_FUNC`; then --mFrameIndex and restore
-/// mLValSize, mPC, mContext, mLoopSize from mExecStack[mFrameIndex], AssignStateClass.
+/// HandlePopScene per BoyiaCore.cpp: if mFrameIndex > 0, when `inst` is null (ExecPopFunction path) and
+/// callee slot 0 is `BY_ANONYM_FUNC`, clear ptr and `delete_data` the PushArg-cloned `BoyiaFunction` + `mParams`;
+/// then --mFrameIndex and restore mLValSize, mPC, mContext, mLoopSize, AssignStateClass.
 unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     let e_state = (*vm).mEState;
     if e_state.is_null() || (*e_state).mFrameIndex <= 0 {
@@ -532,7 +532,15 @@ unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHand
             && (*callee).mValue.mObj.mPtr != 0
         {
             let fun = (*callee).mValue.mObj.mPtr as *mut BoyiaFunction;
-            (*fun).mCaptureCount = 0;
+            let params = (*fun).mParams;
+            (*callee).mValue.mObj.mPtr = 0;
+            let creator = (*vm).mCreator;
+            if !creator.is_null() {
+                (*creator).delete_data(fun as *mut LVoid);
+                if !params.is_null() {
+                    (*creator).delete_data(params as *mut LVoid);
+                }
+            }
         }
     }
     (*e_state).mFrameIndex -= 1;
@@ -597,8 +605,17 @@ unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
         return OpHandleResult::kOpResultEnd;
     }
     if (*value).mValueType == ValueType::BY_ANONYM_FUNC {
-        let fun = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
-        if !fun.is_null() {
+        let src_fun = (*value).mValue.mObj.mPtr as *mut BoyiaFunction;
+        if src_fun.is_null() {
+            return OpHandleResult::kOpResultEnd;
+        }
+        /* mCaptureCount == 0: template from mFunTable; clone then capture (BoyiaCore.cpp HandlePushArg). */
+        if (*src_fun).mCaptureCount == 0 {
+            let fun = clone_anonym_boyia_function_for_push_arg(src_fun, vm);
+            if fun.is_null() {
+                return OpHandleResult::kOpResultEnd;
+            }
+            (*value).mValue.mObj.mPtr = fun as LIntPtr;
             let r = capture_current_frame_locals_into_function(vm, fun);
             if r != OpHandleResult::kOpResultSuccess {
                 return r;
