@@ -70,8 +70,10 @@ pub trait Runtime {
     /// The runtime keeps the value until it is dropped. Used to prevent objects from being collected.
     fn persistent_object(&mut self, value: *const BoyiaValue) -> *mut crate::Global;
 
-    /// Iterate over the persistent object list, calling `f` with each stored value pointer ([*mut BoyiaValue]). [BoyiaRuntime] walks its [crate::GlobalList]; other runtimes may no-op.
-    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut BoyiaValue));
+    /// Iterate over the persistent object list, calling `f` with each stored value pointer ([*mut BoyiaValue]).
+    /// [BoyiaRuntime]: for `BY_ANONYM_FUNC`, if `mPtr == 0` removes the node; if `mPtr != 0` calls `f` only on each capture
+    /// in `BoyiaFunction::mParams[mParamSize .. mParamSize + mCaptureCount)` (not on the wrapper `BoyiaValue`); other types: `f(value_ptr)` only. Requires `&mut self` for removals.
+    fn iterate_persistent(&mut self, f: &mut dyn FnMut(*mut BoyiaValue));
 
     /// Remove the node at `ptr` from the runtime's persistent object list. [BoyiaRuntime] calls [crate::GlobalList::remove]; other runtimes may no-op.
     fn remove_persistent(&mut self, ptr: *mut crate::Global);

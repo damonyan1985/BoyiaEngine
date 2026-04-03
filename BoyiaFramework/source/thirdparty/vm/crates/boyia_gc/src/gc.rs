@@ -368,7 +368,7 @@ unsafe fn clear_all_garbage(gc: *mut BoyiaGc, vm: *mut LVoid) {
     refs.mEnd = prev;
 }
 
-/// Mark all persistent [BoyiaValue]s in the runtime's [boyia_vm::GlobalList] via [mark_value]. Called from [gc_collect_garbage].
+/// Mark persistent roots from the runtime [boyia_vm::GlobalList] via [mark_value]. Anonymous entries only mark capture cells, not the wrapper value. Called from [gc_collect_garbage].
 unsafe fn mark_persistent(vm: *mut LVoid) {
     let rt = get_runtime_from_vm(vm);
     if rt.is_null() {

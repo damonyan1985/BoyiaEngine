@@ -7,9 +7,10 @@
 use crate::core::{
     alloc_micro_task, clone_anonym_boyia_function_for_push_arg, copy_object, create_const_string,
     create_exec_state, create_fun_val, create_micro_task_object, destroy_exec_state, find_global,
-    free_micro_task, get_boyia_class_id, get_local_value, init_function, local_push,
-    micro_task_class_key, set_int_result, set_native_result, string_add, switch_exec_state,
-    value_copy, value_copy_no_name, value_copy_with_key, vector_params_grow_if_full,
+    free_micro_task, get_boyia_class_id, get_local_value, get_runtime_from_vm, init_function,
+    local_push, micro_task_class_key, set_int_result, set_native_result, string_add,
+    switch_exec_state, value_copy, value_copy_no_name, value_copy_with_key,
+    vector_params_grow_if_full,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -615,10 +616,15 @@ unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
             if fun.is_null() {
                 return OpHandleResult::kOpResultEnd;
             }
-            (*value).mValue.mObj.mPtr = fun as LIntPtr;
+            
             let r = capture_current_frame_locals_into_function(vm, fun);
             if r != OpHandleResult::kOpResultSuccess {
                 return r;
+            }
+            (*value).mValue.mObj.mPtr = fun as LIntPtr;
+            let rt = get_runtime_from_vm(vm as *mut LVoid);
+            if !rt.is_null() {
+                let _ = (*rt).persistent_object(value as *const BoyiaValue);
             }
         }
     }

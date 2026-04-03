@@ -1368,10 +1368,10 @@ static LInt HandlePushArg(Instruction* inst, BoyiaVM* vm) {
         // 每次调用不能直接用匿名函数模板捕获变量，因为如果直接使用了模板来捕获，
         // 碰到了异步函数时，可能会出现参数重写的问题
         BoyiaFunction* fun = CloneAnonymBoyiaFunctionForPushArg(srcFun, vm);
-        value->mValue.mObj.mPtr = (LIntPtr)fun;
         if (fun && CaptureCurrentFrameLocalsIntoFunction(vm, fun) != kOpResultSuccess) {
             return kOpResultEnd;
         }
+        value->mValue.mObj.mPtr = (LIntPtr)fun;
     }
     LocalPush(value, vm);
     return kOpResultSuccess;

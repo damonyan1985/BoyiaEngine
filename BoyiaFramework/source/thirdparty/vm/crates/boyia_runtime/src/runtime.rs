@@ -7,9 +7,10 @@
 use crate::id_creator::IdCreator;
 use boyia_builtins::{builtin_array_class, builtin_map_class, builtin_micro_task_class, builtin_string_class};
 use boyia_vm::{
-    cache_vm_code, compile_code, delete_data, consume_micro_task, execute_global_code,
+    cache_vm_code, compile_code, consume_micro_task, delete_data, execute_global_code,
     free_memory_pool, init_memory_pool, init_vm, new_data,
-    BoyiaStr, BoyiaValue, Global, GlobalList, LUintPtr, LInt, LVoid, NativeFunction, NativePtr, OpHandleResult, Runtime,
+    BoyiaFunction, BoyiaStr, BoyiaValue, Global, GlobalList, LInt, LUintPtr, LVoid, NativeFunction,
+    NativePtr, OpHandleResult, Runtime, ValueType,
 };
 use std::ptr;
 
@@ -263,9 +264,9 @@ impl Runtime for BoyiaRuntime {
 
     fn new_data(&self, size: LInt) -> *mut LVoid {
         unsafe {
-            // if !self.gc.is_null() {
-            //     boyia_gc::gc_collect_garbage(self.gc, self.vm);
-            // }
+            if !self.gc.is_null() {
+                boyia_gc::gc_collect_garbage(self.gc, self.vm);
+            }
             new_data(size, self.memory_pool)
         }
     }
@@ -281,11 +282,35 @@ impl Runtime for BoyiaRuntime {
         self.persistent_objects.push_back(unsafe { *value })
     }
 
-    fn iterate_persistent(&self, f: &mut dyn FnMut(*mut BoyiaValue)) {
+    fn iterate_persistent(&mut self, f: &mut dyn FnMut(*mut BoyiaValue)) {
         let mut ptr = self.persistent_objects.head();
         while !ptr.is_null() {
-            f(unsafe { (*ptr).value_ptr() });
-            ptr = unsafe { (*ptr).next() };
+            let next = unsafe { (*ptr).next() };
+            let vp = unsafe { (*ptr).value_ptr() };
+            unsafe {
+                if (*vp).mValueType == ValueType::BY_ANONYM_FUNC {
+                    let mptr = (*vp).mValue.mObj.mPtr;
+                    if mptr == 0 {
+                        self.persistent_objects.remove(ptr);
+                        ptr = next;
+                        continue;
+                    }
+                    let fun = mptr as *mut BoyiaFunction;
+                    if !fun.is_null()
+                        && !(*fun).mParams.is_null()
+                        && (*fun).mCaptureCount > 0
+                    {
+                        let base = (*fun).mParams.offset((*fun).mParamSize as isize);
+                        for i in 0..(*fun).mCaptureCount as isize {
+                            f(base.offset(i));
+                        }
+                    }
+                    ptr = next;
+                    continue;
+                }
+            }
+            f(vp);
+            ptr = next;
         }
     }
 
