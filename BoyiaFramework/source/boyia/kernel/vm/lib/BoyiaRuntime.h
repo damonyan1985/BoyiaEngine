@@ -3,6 +3,7 @@
 
 #include "BoyiaLib.h"
 #include "IDCreator.h"
+#include "KList.h"
 #include "UIView.h"
 #include "UtilString.h"
 #include "DOMBuilder.h"
@@ -46,6 +47,12 @@ public:
     LVoid cacheCode();
     BoyiaDebugger* debugger() const;
 
+    /// Copy `value` into the persistent list. On null `value`, returns [end]().
+    BoyiaList<BoyiaValue>::Iterator persistentObject(const BoyiaValue* value);
+    LVoid removePersistent(BoyiaList<BoyiaValue>::Iterator& it);
+    /// Same as Rust [iterate_persistent]: prune BY_ANONYM_FUNC template (mPtr==0); for closures only visit capture slots; else visit stored value. Calls `f` when non-null.
+    LVoid iteratePersistent(LVoid (*f)(BoyiaValue*));
+
 private:
     LVoid initNativeFunction();
     LVoid appendNative(LUintPtr id, NativePtr ptr);
@@ -63,6 +70,7 @@ private:
     OwnerPtr<BoyiaDomMap> m_domMap;
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
     OwnerPtr<BoyiaDebugger> m_debugger;
+    BoyiaList<BoyiaValue> m_persistentObjects;
 };
 }
 

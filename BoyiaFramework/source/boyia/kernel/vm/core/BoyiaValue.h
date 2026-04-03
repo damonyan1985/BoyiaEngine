@@ -198,4 +198,8 @@ LVoid SetCodePosition(LInt codeIndex, LInt row, LInt column, LVoid* vm);
 
 BoyiaCodePosition* GetCodePosition(LInt codeIndex, LVoid* vm);
 
+typedef LVoid (*BoyiaPersistentIterateFn)(BoyiaValue*);
+LVoid RegisterPersistentBoyiaValue(BoyiaValue* value, LVoid* vm);
+LVoid IteratePersistentBoyiaValues(LVoid* vm, BoyiaPersistentIterateFn f);
+
 #endif

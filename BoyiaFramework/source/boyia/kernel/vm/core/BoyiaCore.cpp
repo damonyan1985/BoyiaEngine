@@ -1372,6 +1372,7 @@ static LInt HandlePushArg(Instruction* inst, BoyiaVM* vm) {
             return kOpResultEnd;
         }
         value->mValue.mObj.mPtr = (LIntPtr)fun;
+        RegisterPersistentBoyiaValue(value, vm);
     }
     LocalPush(value, vm);
     return kOpResultSuccess;

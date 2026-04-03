@@ -83,6 +83,22 @@ extern boyia::BoyiaRuntime* GetRuntime(LVoid* vm)
     return static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
 }
 
+LVoid RegisterPersistentBoyiaValue(BoyiaValue* value, LVoid* vm)
+{
+    boyia::BoyiaRuntime* rt = GetRuntime(vm);
+    if (rt) {
+        (void)rt->persistentObject(value);
+    }
+}
+
+LVoid IteratePersistentBoyiaValues(LVoid* vm, BoyiaPersistentIterateFn f)
+{
+    boyia::BoyiaRuntime* rt = GetRuntime(vm);
+    if (rt) {
+        rt->iteratePersistent(f);
+    }
+}
+
 LVoid* GetGabargeCollect(LVoid* vm)
 {
     return GetRuntime(vm)->garbageCollect();
