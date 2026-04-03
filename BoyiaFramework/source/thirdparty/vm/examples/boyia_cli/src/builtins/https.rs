@@ -4,12 +4,13 @@
 #![allow(dead_code)]
 
 use super::r#async::{
-    make_callback_info, runner_from_class, schedule_task, value_to_string, CallbackInfo,
+    install_runner_param_slot, make_callback_info, runner_from_class, schedule_task, value_to_string,
+    CallbackInfo,
 };
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
     create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
-    K_BOYIA_NULL, NativePtr, ValueType, LIntPtr, LUintPtr, LVoid, OpHandleResult,
+    K_BOYIA_NULL, NativePtr, LUintPtr, LVoid, OpHandleResult,
 };
 use reqwest::blocking::Client;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
@@ -36,15 +37,9 @@ where
     unsafe {
         (*class_ref).mValue.mObj.mSuper = K_BOYIA_NULL;
         let class_body = (*class_ref).mValue.mObj.mPtr as *mut BoyiaFunction;
-        if class_body.is_null() || (*class_body).mParams.is_null() {
+        if !install_runner_param_slot(class_body, gen_id, runner_ptr) {
             return;
         }
-
-        let runner_slot = (*class_body).mParams.add((*class_body).mParamSize as usize);
-        (*runner_slot).mValueType = ValueType::BY_INT;
-        (*runner_slot).mNameKey = gen_id("runner");
-        (*runner_slot).mValue.mIntVal = runner_ptr as LIntPtr;
-        (*class_body).mParamSize += 1;
 
         gen_builtin_class_function(gen_id("load"), https_load_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(

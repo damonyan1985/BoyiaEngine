@@ -12,6 +12,27 @@ use std::str;
 /// Slot in [BoyiaFunction::mParams] where `File` / `Https` store `BoyiaRunner*` as `BY_INT`.
 pub const BUILTIN_CLASS_RUNNER_PROP_INDEX: usize = 0;
 
+/// Append a `runner` [ValueType::BY_INT] param on `class_body` at [BoyiaFunction::mParamSize] (stores `runner_ptr`).
+/// Returns false if `class_body` or [BoyiaFunction::mParams] is null.
+pub unsafe fn install_runner_param_slot<F>(
+    class_body: *mut BoyiaFunction,
+    gen_id: &mut F,
+    runner_ptr: *mut BoyiaRunner,
+) -> bool
+where
+    F: FnMut(&str) -> LUintPtr,
+{
+    if class_body.is_null() || (*class_body).mParams.is_null() {
+        return false;
+    }
+    let runner_slot = (*class_body).mParams.add((*class_body).mParamSize as usize);
+    (*runner_slot).mValueType = ValueType::BY_INT;
+    (*runner_slot).mNameKey = gen_id("runner");
+    (*runner_slot).mValue.mIntVal = runner_ptr as LIntPtr;
+    (*class_body).mParamSize += 1;
+    true
+}
+
 /// Read the runner pointer from the builtin class value (`get_local_value(size - 1, vm)` in native methods).
 pub unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunner {
     let class_body = (*class_val).mValue.mObj.mPtr as *mut BoyiaFunction;
