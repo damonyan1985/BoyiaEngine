@@ -342,7 +342,7 @@ LVoid BoyiaRuntime::removePersistent(BoyiaList<BoyiaValue>::Iterator& it)
     m_persistentObjects.erase(it);
 }
 
-LVoid BoyiaRuntime::iteratePersistent(LVoid (*f)(BoyiaValue*))
+LVoid BoyiaRuntime::iteratePersistent(BoyiaPersistentIterateFn f)
 {
     BoyiaList<BoyiaValue>::Iterator it = m_persistentObjects.begin();
     BoyiaList<BoyiaValue>::Iterator end = m_persistentObjects.end();

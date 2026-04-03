@@ -51,7 +51,7 @@ public:
     BoyiaList<BoyiaValue>::Iterator persistentObject(const BoyiaValue* value);
     LVoid removePersistent(BoyiaList<BoyiaValue>::Iterator& it);
     /// Same as Rust [iterate_persistent]: prune BY_ANONYM_FUNC template (mPtr==0); for closures only visit capture slots; else visit stored value. Calls `f` when non-null.
-    LVoid iteratePersistent(LVoid (*f)(BoyiaValue*));
+    LVoid iteratePersistent(BoyiaPersistentIterateFn f);
 
 private:
     LVoid initNativeFunction();

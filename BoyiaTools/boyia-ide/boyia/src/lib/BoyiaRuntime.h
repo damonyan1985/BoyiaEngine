@@ -45,7 +45,7 @@ public:
 
     BoyiaList<BoyiaValue>::Iterator persistentObject(const BoyiaValue* value);
     LVoid removePersistent(BoyiaList<BoyiaValue>::Iterator& it);
-    LVoid iteratePersistent(LVoid (*f)(BoyiaValue*));
+    LVoid iteratePersistent(BoyiaPersistentIterateFn f);
 
 private:
     LVoid packageCache();
