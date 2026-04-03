@@ -117,7 +117,7 @@ unsafe fn map_map_impl(vm: *mut LVoid) -> OpHandleResult {
                 mValue: RealValue {
                     mObj: BoyiaClass {
                         mPtr: (*cb).mValue.mObj.mSuper,
-                        mSuper: 0,
+                        mSuper: K_BOYIA_NULL,
                     },
                 },
             };

@@ -4,8 +4,8 @@ use crate::runner::BoyiaRunner;
 use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
     create_native_string, get_runtime_from_vm, get_string_buffer, native_call_impl, BoyiaClass,
-    BoyiaFunction, BoyiaValue, Global, RealValue, Runtime, ValueType, LInt, LIntPtr, LUintPtr,
-    LVoid,
+    BoyiaFunction, BoyiaValue, Global, K_BOYIA_NULL, RealValue, Runtime, ValueType, LInt, LIntPtr,
+    LUintPtr, LVoid,
 };
 use std::str;
 
@@ -122,7 +122,7 @@ pub unsafe fn make_callback_info(vm: *mut LVoid, callback_val: *const BoyiaValue
         mValue: RealValue {
             mObj: BoyiaClass {
                 mPtr: object_addr,
-                mSuper: 0,
+                mSuper: K_BOYIA_NULL,
             },
         },
     };
@@ -150,7 +150,7 @@ pub unsafe fn callback_string(result: String, callback: CallbackInfo, runtime: &
     }
 
     let obj_super = if callback.object_global.is_null() {
-        0
+        K_BOYIA_NULL
     } else {
         (*callback.object_global).value().mValue.mObj.mPtr
     };
@@ -187,7 +187,7 @@ pub unsafe fn callback_string(result: String, callback: CallbackInfo, runtime: &
         mValue: RealValue {
             mObj: BoyiaClass {
                 mPtr: obj_super,
-                mSuper: 0,
+                mSuper: K_BOYIA_NULL,
             },
         },
     };

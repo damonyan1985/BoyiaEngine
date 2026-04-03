@@ -51,7 +51,7 @@ unsafe fn micro_task_init_impl(vm: *mut LVoid) -> OpHandleResult {
         mValue: RealValue {
             mObj: BoyiaClass {
                 mPtr: (*worker).mValue.mObj.mSuper,
-                mSuper: 0,
+                mSuper: K_BOYIA_NULL,
             },
         },
     };

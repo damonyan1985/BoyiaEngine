@@ -835,7 +835,7 @@ pub(crate) unsafe fn create_fun_val(hash_key: LUintPtr, type_: ValueType, vm: *m
     (*val).mValueType = type_;
     (*val).mNameKey = hash_key;
     (*val).mValue.mObj.mPtr = fun as LIntPtr;
-    (*val).mValue.mObj.mSuper = 0;
+    (*val).mValue.mObj.mSuper = K_BOYIA_NULL;
     if type_ == ValueType::BY_CLASS {
         (*fun).mFuncBody = val as LIntPtr;
     }
@@ -1296,7 +1296,7 @@ pub(crate) unsafe fn string_add(left: *const BoyiaValue, right: *mut BoyiaValue,
     (*right).mValueType = ValueType::BY_CLASS;
     (*right).mNameKey = BuiltinId::kBoyiaString.as_key();
     (*right).mValue.mObj.mPtr = obj_body as LIntPtr;
-    (*right).mValue.mObj.mSuper = 0;
+    (*right).mValue.mObj.mSuper = K_BOYIA_NULL;
 }
 
 /// CreateStringObject(LInt8* buffer, LInt len, LVoid* vm) per BoyiaValue.cpp.
@@ -1328,7 +1328,7 @@ pub unsafe fn create_string_object(buffer: *mut LInt8, len: LInt, vm: *mut LVoid
 }
 
 /// CreateConstString(BoyiaValue* value, LInt8* buffer, LInt len, LVoid* vm) per BoyiaValue.cpp.
-/// CreateStringObject; fill value (BY_CLASS, mPtr, mSuper=0); mark objBody->mParamCount |= (kConstStringBuffer << 18).
+/// CreateStringObject; fill value (BY_CLASS, mPtr, mSuper=K_BOYIA_NULL); mark objBody->mParamCount |= (kConstStringBuffer << 18).
 /// Returns true on success (caller can return kOpResultEnd if false).
 pub unsafe fn create_const_string(value: *mut BoyiaValue, buffer: *mut LInt8, len: LInt, vm: *mut LVoid) -> bool {
     if value.is_null() || vm.is_null() {
@@ -1340,7 +1340,7 @@ pub unsafe fn create_const_string(value: *mut BoyiaValue, buffer: *mut LInt8, le
     }
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = obj_body as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0;
+    (*value).mValue.mObj.mSuper = K_BOYIA_NULL;
     (*obj_body).mParamCount = (*obj_body).mParamCount | (K_CONST_STRING_BUFFER << K_STRING_BUFFER_SHIFT);
     true
 }
@@ -1357,7 +1357,7 @@ pub unsafe fn create_native_string(value: *mut BoyiaValue, buffer: *mut LInt8, l
     }
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = obj_body as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0;
+    (*value).mValue.mObj.mSuper = K_BOYIA_NULL;
     (*obj_body).mParamCount = (*obj_body).mParamCount | (K_NATIVE_STRING_BUFFER << K_STRING_BUFFER_SHIFT);
 }
 

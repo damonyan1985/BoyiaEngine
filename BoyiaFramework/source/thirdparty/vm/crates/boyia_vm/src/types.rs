@@ -71,7 +71,7 @@ pub trait Runtime {
     fn persistent_object(&mut self, value: *const BoyiaValue) -> *mut crate::Global;
 
     /// Iterate over the persistent object list, calling `f` with each stored value pointer ([*mut BoyiaValue]).
-    /// [BoyiaRuntime]: for `BY_ANONYM_FUNC`, if `mPtr == 0` removes the node; if `mPtr != 0` calls `f` only on each capture
+    /// [BoyiaRuntime]: for `BY_ANONYM_FUNC`, if `mPtr == K_BOYIA_NULL` removes the node; if `mPtr != K_BOYIA_NULL` calls `f` only on each capture
     /// in `BoyiaFunction::mParams[mParamSize .. mParamSize + mCaptureCount)` (not on the wrapper `BoyiaValue`); other types: `f(value_ptr)` only. Requires `&mut self` for removals.
     fn iterate_persistent(&mut self, f: &mut dyn FnMut(*mut BoyiaValue));
 

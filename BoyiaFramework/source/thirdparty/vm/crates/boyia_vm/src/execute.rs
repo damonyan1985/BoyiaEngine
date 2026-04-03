@@ -197,8 +197,8 @@ pub(crate) unsafe fn reset_scene(state: *mut ExecState) {
 
     (*state).mFrameIndex = 0;
 
-    (*state).mFun.mValue.mObj.mPtr = 0;
-    (*state).mFun.mValue.mObj.mSuper = 0;
+    (*state).mFun.mValue.mObj.mPtr = K_BOYIA_NULL;
+    (*state).mFun.mValue.mObj.mSuper = K_BOYIA_NULL;
     (*state).mFun.mValueType = ValueType::BY_ARG;
     (*state).mWait = LFalse;
 
@@ -530,11 +530,11 @@ unsafe fn handle_pop_scene(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHand
         let callee = get_local_value(0, vm as *mut LVoid) as *mut BoyiaValue;
         if !callee.is_null()
             && (*callee).mValueType == ValueType::BY_ANONYM_FUNC
-            && (*callee).mValue.mObj.mPtr != 0
+            && (*callee).mValue.mObj.mPtr != K_BOYIA_NULL
         {
             let fun = (*callee).mValue.mObj.mPtr as *mut BoyiaFunction;
             let params = (*fun).mParams;
-            (*callee).mValue.mObj.mPtr = 0;
+            (*callee).mValue.mObj.mPtr = K_BOYIA_NULL;
             let creator = (*vm).mCreator;
             if !creator.is_null() {
                 (*creator).delete_data(fun as *mut LVoid);
@@ -638,8 +638,8 @@ pub(crate) unsafe fn assign_state_class(state: *mut ExecState, value: *const Boy
         return;
     }
     if value.is_null() {
-        (*state).mStackFrame.mClass.mValue.mObj.mPtr = 0;
-        (*state).mStackFrame.mClass.mValue.mObj.mSuper = 0;
+        (*state).mStackFrame.mClass.mValue.mObj.mPtr = K_BOYIA_NULL;
+        (*state).mStackFrame.mClass.mValue.mObj.mSuper = K_BOYIA_NULL;
     } else {
         value_copy_no_name(&mut (*state).mStackFrame.mClass, value);
     }
@@ -1171,7 +1171,7 @@ unsafe fn handle_fun_create(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     let fun_type = (*inst).mOPRight.mValue as u8;
     let e_state = (*vm).mEState;
 
-    if !e_state.is_null() && (*e_state).mStackFrame.mClass.mValue.mObj.mPtr != 0 {
+    if !e_state.is_null() && (*e_state).mStackFrame.mClass.mValue.mObj.mPtr != K_BOYIA_NULL {
         // Inside a class (or function with mClass set).
         if fun_type != ValueType::BY_ANONYM_FUNC as u8 {
             // Class method: add to class params, point to new slot, InitFunction (C++ lines 1716–1727).
@@ -1189,7 +1189,11 @@ unsafe fn handle_fun_create(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
                 mValue: RealValue {
                     mObj: crate::types::BoyiaClass {
                         mPtr: slot as LIntPtr,
-                        mSuper: if is_prop_func { func as LIntPtr } else { 0 },
+                        mSuper: if is_prop_func {
+                            func as LIntPtr
+                        } else {
+                            K_BOYIA_NULL
+                        },
                     },
                 },
             });
@@ -1269,7 +1273,7 @@ unsafe fn handle_create_prop(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHa
     OpHandleResult::kOpResultSuccess
 }
 
-/// HandleCreateMap per BoyiaCore.cpp: CreatMapObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = kBoyiaNull.
+/// HandleCreateMap per BoyiaCore.cpp: CreatMapObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = K_BOYIA_NULL.
 unsafe fn handle_create_map(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     // CreatMapObject(vm) = CopyObject(kBoyiaMap, 32, vm) per BoyiaValue.cpp
     let fun = copy_object(BuiltinId::kBoyiaMap.as_key(), 32, vm as *mut LVoid) as *mut BoyiaFunction;
@@ -1283,7 +1287,7 @@ unsafe fn handle_create_map(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
     };
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = fun as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0; // kBoyiaNull
+    (*value).mValue.mObj.mSuper = K_BOYIA_NULL;
     OpHandleResult::kOpResultSuccess
 }
 
@@ -1320,7 +1324,7 @@ unsafe fn handle_set_map_value(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
     OpHandleResult::kOpResultSuccess
 }
 
-/// HandleCreateArray per BoyiaCore.cpp: CreateArrayObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = kBoyiaNull.
+/// HandleCreateArray per BoyiaCore.cpp: CreateArrayObject(vm); value = mOPLeft ? mReg0 : mReg1; set BY_CLASS, mPtr, mSuper = K_BOYIA_NULL.
 unsafe fn handle_create_array(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
     // CreateArrayObject(vm) = CopyObject(kBoyiaArray, 32, vm) per BoyiaValue.cpp
     let fun = copy_object(BuiltinId::kBoyiaArray.as_key(), 32, vm as *mut LVoid) as *mut BoyiaFunction;
@@ -1334,7 +1338,7 @@ unsafe fn handle_create_array(inst: *const Instruction, vm: *mut BoyiaVM) -> OpH
     };
     (*value).mValueType = ValueType::BY_CLASS;
     (*value).mValue.mObj.mPtr = fun as LIntPtr;
-    (*value).mValue.mObj.mSuper = 0; // kBoyiaNull
+    (*value).mValue.mObj.mSuper = K_BOYIA_NULL;
     OpHandleResult::kOpResultSuccess
 }
 
@@ -1421,7 +1425,7 @@ unsafe fn handle_await(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleRe
                     mValue: RealValue {
                         mObj: BoyiaClass {
                             mPtr: task_obj as LIntPtr,
-                            mSuper: 0,
+                            mSuper: K_BOYIA_NULL,
                         },
                     },
                 };

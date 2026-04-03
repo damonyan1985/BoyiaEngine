@@ -9,8 +9,8 @@ use boyia_builtins::{builtin_array_class, builtin_map_class, builtin_micro_task_
 use boyia_vm::{
     cache_vm_code, compile_code, consume_micro_task, delete_data, execute_global_code,
     free_memory_pool, init_memory_pool, init_vm, new_data,
-    BoyiaFunction, BoyiaStr, BoyiaValue, Global, GlobalList, LInt, LUintPtr, LVoid, NativeFunction,
-    NativePtr, OpHandleResult, Runtime, ValueType,
+    BoyiaFunction, BoyiaStr, BoyiaValue, Global, GlobalList, K_BOYIA_NULL, LInt, LUintPtr, LVoid,
+    NativeFunction, NativePtr, OpHandleResult, Runtime, ValueType,
 };
 use std::ptr;
 
@@ -290,7 +290,7 @@ impl Runtime for BoyiaRuntime {
             unsafe {
                 if (*vp).mValueType == ValueType::BY_ANONYM_FUNC {
                     let mptr = (*vp).mValue.mObj.mPtr;
-                    if mptr == 0 {
+                    if mptr == K_BOYIA_NULL {
                         self.persistent_objects.remove(ptr);
                         ptr = next;
                         continue;
