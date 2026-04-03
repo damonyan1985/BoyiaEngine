@@ -111,6 +111,7 @@ BoyiaRuntime::BoyiaRuntime()
 
 BoyiaRuntime::~BoyiaRuntime()
 {
+    m_persistentObjects.clear();
     DestroyGC(m_vm);
     DestroyVM(m_vm);
     FreeMemoryPool(m_memoryPool);
@@ -324,5 +325,48 @@ LVoid BoyiaRuntime::packageCache() {
 BoyiaDebugger* BoyiaRuntime::debugger() const
 {
     return m_debugger.get();
+}
+
+BoyiaList<BoyiaValue>::Iterator BoyiaRuntime::persistentObject(const BoyiaValue* value)
+{
+    if (!value) {
+        return m_persistentObjects.end();
+    }
+    BoyiaValue copy;
+    ValueCopy(&copy, const_cast<BoyiaValue*>(value));
+    return m_persistentObjects.push(copy);
+}
+
+LVoid BoyiaRuntime::removePersistent(BoyiaList<BoyiaValue>::Iterator& it)
+{
+    m_persistentObjects.erase(it);
+}
+
+LVoid BoyiaRuntime::iteratePersistent(LVoid (*f)(BoyiaValue*))
+{
+    BoyiaList<BoyiaValue>::Iterator it = m_persistentObjects.begin();
+    BoyiaList<BoyiaValue>::Iterator end = m_persistentObjects.end();
+    while (it != end) {
+        BoyiaList<BoyiaValue>::Iterator cur = it;
+        ++it;
+        BoyiaValue* vp = &(*cur);
+        if (vp->mValueType == BY_ANONYM_FUNC) {
+            if (!vp->mValue.mObj.mPtr) {
+                m_persistentObjects.erase(cur);
+                continue;
+            }
+            BoyiaFunction* fun = reinterpret_cast<BoyiaFunction*>(vp->mValue.mObj.mPtr);
+            if (fun && fun->mParams && fun->mCaptureCount > 0 && f) {
+                BoyiaValue* base = fun->mParams + fun->mParamSize;
+                for (LInt i = 0; i < fun->mCaptureCount; ++i) {
+                    f(base + i);
+                }
+            }
+            continue;
+        }
+        if (f) {
+            f(vp);
+        }
+    }
 }
 }

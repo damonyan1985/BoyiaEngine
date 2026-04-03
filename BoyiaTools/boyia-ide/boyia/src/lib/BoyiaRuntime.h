@@ -4,6 +4,7 @@
 #include "IDCreator.h"
 #include "UtilString.h"
 #include "BoyiaLib.h"
+#include "KList.h"
 #include "HashMap.h"
 #include "HashUtil.h"
 #include "BoyiaDebugger.h"
@@ -42,6 +43,10 @@ public:
     LVoid cacheCode();
     BoyiaDebugger* debugger() const;
 
+    BoyiaList<BoyiaValue>::Iterator persistentObject(const BoyiaValue* value);
+    LVoid removePersistent(BoyiaList<BoyiaValue>::Iterator& it);
+    LVoid iteratePersistent(LVoid (*f)(BoyiaValue*));
+
 private:
     LVoid packageCache();
     LVoid initNativeFunction();
@@ -59,6 +64,7 @@ private:
     OwnerPtr<BoyiaAsyncEventManager> m_eventManager;
     OwnerPtr<BoyiaCompileInfo> m_compileInfo;
     OwnerPtr<BoyiaDebugger> m_debugger;
+    BoyiaList<BoyiaValue> m_persistentObjects;
 };
 }
 
