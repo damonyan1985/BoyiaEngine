@@ -11,7 +11,7 @@ use boyia_memory::{
 use boyia_vm::{
     get_function_count, get_global_table, get_local_stack, get_native_helper_result, get_native_result,
     get_runtime_from_vm, get_string_buffer_from_body, iterate_micro_task, BoyiaFunction, BoyiaValue,
-    BuiltinId, LInt, LIntPtr, LVoid, Runtime, ValueType,
+    BuiltinId, LInt, LIntPtr, LVoid, Runtime, ValueType, LUint8
 };
 use std::ptr;
 
@@ -105,7 +105,10 @@ fn native_object_flag(_addr: *mut LVoid) -> LInt {
 unsafe fn native_delete(_addr: *mut LVoid) {}
 
 #[inline]
-unsafe fn free_buffer(_ptr: *mut LVoid) {}
+unsafe fn free_buffer(_ptr: *mut LUint8, _size: LInt) {
+    let slice = ptr::slice_from_raw_parts_mut(_ptr, _size as usize);
+    let _ = Box::from_raw(slice);
+}
 
 unsafe fn allocate_ref(gc: *mut BoyiaGc) -> *mut BoyiaRef {
     let cache = (*gc).mRefCache;
@@ -276,7 +279,7 @@ unsafe fn delete_object(ref_ptr: *const BoyiaRef, vm: *mut LVoid) {
         if !buffer.is_null() {
             let buf = &*buffer;
             if is_native_string(obj_body) {
-                free_buffer(buf.mPtr as *mut LVoid);
+                free_buffer(buf.mPtr as *mut LUint8, buf.mLen);
             } else if is_boyia_string(obj_body) {
                 let rt = get_runtime_from_vm(vm);
                 if !rt.is_null() {

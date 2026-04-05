@@ -1,5 +1,13 @@
-class Printer { fun say(msg) { BY_Log(msg); } };
-class MyAdd { fun add(a, b) { return a+b; } }    
+class Printer {
+    fun say(msg) {
+        BY_Log(msg);
+    }
+};
+class MyAdd {
+    fun add(a, b) {
+        return a+b;
+    }
+}
 var p = new(Printer);
 fun printlog(p, str) {
     p.say(str);
@@ -59,8 +67,8 @@ class PrinterExt extends Printer {
         });
     }
 
-    prop async writeFile() {
-        var result = (await this.writeFilePromise("hello from File.write"));
+    prop async writeFile(content) {
+        var result = (await this.writeFilePromise(content));
         if (result == "ok") {
             BY_Log("writeFile ok");
         } else {
@@ -82,7 +90,7 @@ class PrinterExt extends Printer {
         });
     }
 
-    prop async loadAsync() {
+    prop async loadAsync(url) {
         for (var i = 0; i < 10; i=i+1) {
             if (i == 6) {
                 break;
@@ -90,17 +98,17 @@ class PrinterExt extends Printer {
             BY_Log("loadAsync loop: " + i);
         }
     
-        var result = (await this.loadPromise());
+        var result = (await this.loadPromise(url));
         var test = "hello : " + result;
         BY_Log("loadAsync result: " + test);
         return result;
     }
 
-    prop async loadPromise() {
+    prop async loadPromise(url) {
         BY_Log("run loadPromise");
         Util.newMicrotask(fun(resolve) {
             BY_Log("run newMicrotask");
-            Https.load("https://httpbin.org/get", resolve);
+            Https.load(url, resolve);
         });
     }
 
@@ -124,10 +132,10 @@ printlog(pe, pe.multiply(30, 42));
 BY_Log(123);
 //pe.load();
 
-pe.loadAsync();
+pe.loadAsync("https://httpbin.org/get");
 //pe.demoFile();
 //pe.testLocal();
-pe.writeFile();
+pe.writeFile("hello from File.write");
 
 printlog(p, arr1.get(0));
 
