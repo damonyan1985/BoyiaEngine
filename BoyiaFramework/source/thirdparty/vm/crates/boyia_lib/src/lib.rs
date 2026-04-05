@@ -21,38 +21,6 @@ pub unsafe fn create_object(vm: *mut LVoid) -> OpHandleResult {
     }
 }
 
-/// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
-unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool {
-    if src.is_null() || dest.is_null() {
-        return false;
-    }
-    if (*src).mValueType != (*dest).mValueType {
-        return false;
-    }
-    match (*src).mValueType {
-        ValueType::BY_CHAR | ValueType::BY_INT | ValueType::BY_NAVCLASS => {
-            (*src).mValue.mIntVal == (*dest).mValue.mIntVal
-        }
-        ValueType::BY_CLASS | ValueType::BY_FUNC => {
-            (*src).mValue.mObj.mPtr == (*dest).mValue.mObj.mPtr
-        }
-        ValueType::BY_STRING => {
-            let a = get_string_buffer(src);
-            let b = get_string_buffer(dest);
-            if a.is_null() || b.is_null() {
-                return a.is_null() && b.is_null();
-            }
-            if (*a).mLen != (*b).mLen {
-                return false;
-            }
-            let len = (*a).mLen.max(0) as usize;
-            std::slice::from_raw_parts((*a).mPtr as *const u8, len)
-                == std::slice::from_raw_parts((*b).mPtr as *const u8, len)
-        }
-        _ => false,
-    }
-}
-
 /// BY_Log: local0 = value; print int or string to stdout.
 pub unsafe fn log_print(vm: *mut LVoid) -> OpHandleResult {
     eprintln!("[log_print] called");

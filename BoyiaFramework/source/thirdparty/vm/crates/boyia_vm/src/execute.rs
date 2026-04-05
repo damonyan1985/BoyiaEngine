@@ -10,7 +10,7 @@ use crate::core::{
     free_micro_task, get_boyia_class_id, get_local_value, get_runtime_from_vm, init_function,
     local_push, micro_task_class_key, set_int_result, set_native_result, string_add,
     switch_exec_state, value_copy, value_copy_no_name, value_copy_with_key,
-    vector_params_grow_if_full,
+    vector_params_grow_if_full, compare_value,
 };
 use crate::inlinecache::{
     add_fun_inline_cache, add_prop_inline_cache, create_inline_cache, get_inline_cache,
@@ -612,6 +612,7 @@ unsafe fn handle_push_arg(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandl
         }
         /* mCaptureCount == 0: template from mFunTable; clone then capture (BoyiaCore.cpp HandlePushArg). */
         if (*src_fun).mCaptureCount == 0 {
+            println!("handle_push_arg mCaptureCount==0");
             let fun = clone_anonym_boyia_function_for_push_arg(src_fun, vm);
             if fun.is_null() {
                 return OpHandleResult::kOpResultEnd;
@@ -896,7 +897,7 @@ unsafe fn handle_relational(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
         CmdType::kCmdLeRelation => (*left).mValue.mIntVal <= (*right).mValue.mIntVal,
         CmdType::kCmdGtRelation => (*left).mValue.mIntVal > (*right).mValue.mIntVal,
         CmdType::kCmdGeRelation => (*left).mValue.mIntVal >= (*right).mValue.mIntVal,
-        CmdType::kCmdEqRelation => (*left).mValue.mIntVal == (*right).mValue.mIntVal,
+        CmdType::kCmdEqRelation => compare_value(left, right),
         CmdType::kCmdNeRelation => (*left).mValue.mIntVal != (*right).mValue.mIntVal,
         _ => return OpHandleResult::kOpResultEnd,
     };

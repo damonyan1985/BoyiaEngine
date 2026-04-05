@@ -75,6 +75,7 @@ pub use core::{
     get_string_buffer,
     get_string_buffer_from_body,
     get_string_hash,
+    compare_value,
     gen_hash_code,
     create_string_object,
     create_const_string,

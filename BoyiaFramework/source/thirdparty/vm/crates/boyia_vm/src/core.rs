@@ -1210,6 +1210,52 @@ pub unsafe fn get_string_hash(ref_: *const BoyiaValue) -> LIntPtr {
     (*obj).mParams.add(0).read().mValue.mIntVal
 }
 
+/// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
+pub unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool {
+    if src.is_null() || dest.is_null() {
+        return false;
+    }
+    if (*src).mValueType != (*dest).mValueType {
+        return false;
+    }
+    match (*src).mValueType {
+        ValueType::BY_CHAR | ValueType::BY_INT | ValueType::BY_NAVCLASS => {
+            (*src).mValue.mIntVal == (*dest).mValue.mIntVal
+        }
+        ValueType::BY_FUNC => {
+            (*src).mValue.mObj.mPtr == (*dest).mValue.mObj.mPtr
+        }
+        ValueType::BY_CLASS => {
+            if (*src).mValue.mObj.mPtr == (*dest).mValue.mObj.mPtr {
+                return true;
+            }
+
+            let string_key = BuiltinId::kBoyiaString.as_key();
+            if get_boyia_class_id(src) != string_key || get_boyia_class_id(dest) != string_key {
+                return false;
+            }
+
+            println!("call compare_value");
+            let a = get_string_buffer(src);
+            let b = get_string_buffer(dest);
+            if a.is_null() || b.is_null() {
+                return a.is_null() && b.is_null();
+            }
+            if (*a).mLen != (*b).mLen {
+                return false;
+            }
+
+            if (get_string_hash(src) != get_string_hash(dest)) {
+                return false;
+            }
+            let len = (*a).mLen.max(0) as usize;
+            std::slice::from_raw_parts((*a).mPtr as *const u8, len)
+                == std::slice::from_raw_parts((*b).mPtr as *const u8, len)
+        }
+        _ => false,
+    }
+}
+
 /// Simple hash for string buffer (match GenHashCode semantics).
 pub fn gen_hash_code(buffer: *const LInt8, len: LInt) -> LIntPtr {
     if buffer.is_null() || len <= 0 {
