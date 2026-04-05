@@ -251,6 +251,44 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
     KLOG("StringAdd End");
 }
 
+static LBool CompareObject(BoyiaValue* src, BoyiaValue* dest) {
+    if (src->mValue.mObj.mPtr == dest->mValue.mObj.mPtr) {
+        return LTrue;
+    }
+
+    if (GetBoyiaClassId(src) != kBoyiaString || GetBoyiaClassId(dest) != kBoyiaString) {
+        return LFalse;
+    }
+
+    if (GetStringHash(src) != GetStringHash(dest)) {
+        return LFalse;
+    }
+
+    return MStrcmp(&src->mValue.mStrVal, &dest->mValue.mStrVal);
+}
+
+extern LBool CompareValue(BoyiaValue* src, BoyiaValue* dest)
+{
+    if (src->mValueType != dest->mValueType) {
+        return LFalse;
+    }
+
+    switch (src->mValueType) {
+    case BY_CHAR:
+    case BY_INT:
+    case BY_NAVCLASS:
+        return src->mValue.mIntVal == dest->mValue.mIntVal ? LTrue : LFalse;
+    case BY_FUNC:
+        return src->mValue.mObj.mPtr == dest->mValue.mObj.mPtr ? LTrue : LFalse;
+    case BY_CLASS:
+        return CompareObject(src, dest);
+    default:
+        break;
+    }
+
+    return LFalse;
+}
+
 LUintPtr GenIdentByStr(const LInt8* str, LVoid* vm)
 {
     return GetRuntime(vm)->idCreator()->genIdentByStr(str, LStrlen(_CS(str)));

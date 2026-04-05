@@ -2830,7 +2830,7 @@ static LInt HandleRelational(Instruction* inst, BoyiaVM* vm) {
         result = left->mValue.mIntVal >= right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdEqRelation:
-        result = left->mValue.mIntVal == right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = CompareValue(left, right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdNeRelation:
         result = left->mValue.mIntVal != right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;

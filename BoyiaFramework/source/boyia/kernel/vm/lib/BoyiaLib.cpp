@@ -121,29 +121,6 @@ LInt getElementFromVector(LVoid* vm)
     return kOpResultSuccess;
 }
 
-static LBool compareValue(BoyiaValue* src, BoyiaValue* dest)
-{
-    if (src->mValueType != dest->mValueType) {
-        return LFalse;
-    }
-
-    switch (src->mValueType) {
-    case BY_CHAR:
-    case BY_INT:
-    case BY_NAVCLASS:
-        return src->mValue.mIntVal == dest->mValue.mIntVal ? LTrue : LFalse;
-    case BY_CLASS:
-    case BY_FUNC:
-        return src->mValue.mObj.mPtr == dest->mValue.mObj.mPtr ? LTrue : LFalse;
-    case BY_STRING:
-        return MStrcmp(&src->mValue.mStrVal, &dest->mValue.mStrVal);
-    default:
-        break;
-    }
-
-    return LFalse;
-}
-
 LInt removeElementWidthIndex(LVoid* vm)
 {
     BoyiaValue* array = (BoyiaValue*)GetLocalValue(0, vm);
@@ -168,7 +145,7 @@ LInt removeElementFromVector(LVoid* vm)
     LInt idx = fun->mParamSize - 1;
     while (idx >= 0) {
         BoyiaValue* elem = fun->mParams + idx;
-        if (compareValue(elem, val)) {
+        if (CompareValue(elem, val)) {
             for (LInt i = idx; i < fun->mParamSize - 1; ++i) {
                 ValueCopy(fun->mParams + i, fun->mParams + i + 1);
             }
