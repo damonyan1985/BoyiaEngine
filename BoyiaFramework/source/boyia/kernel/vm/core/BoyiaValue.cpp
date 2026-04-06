@@ -218,9 +218,12 @@ extern LVoid NativeDelete(LVoid* data)
 static LVoid FetchString(BoyiaStr* str, BoyiaValue* value, LVoid* vm)
 {
     if (value->mValueType == BY_INT) {
-        str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN, vm);
+        //str->mPtr = NEW_ARRAY(LInt8, MAX_INT_LEN, vm);
         LMemset(str->mPtr, 0, MAX_INT_LEN);
         LInt2StrWithLength(value->mValue.mIntVal, (LUint8*)str->mPtr, 10, &str->mLen);
+    } else if (value->mValueType == BY_REAL) {
+        LMemset(str->mPtr, 0, MAX_INT_LEN);
+        str->mLen = snprintf(str->mPtr, MAX_INT_LEN, "%g", value->mValue.mRealVal);
     } else {
         // String Object
         BoyiaStr* buffer = GetStringBuffer(value);
@@ -233,9 +236,10 @@ extern LVoid StringAdd(BoyiaValue* left, BoyiaValue* right, LVoid* vm)
 {
     KLOG("StringAdd Begin");
     BoyiaStr leftStr, rightStr;
-    LInt8 tmpArray[MAX_INT_LEN];
-    leftStr.mPtr = tmpArray;
-    rightStr.mPtr = tmpArray;
+    LInt8 leftBuffer[MAX_INT_LEN];
+    LInt8 rightBuffer[MAX_INT_LEN];
+    leftStr.mPtr = leftBuffer;
+    rightStr.mPtr = rightBuffer;
     FetchString(&leftStr, left, vm);
     FetchString(&rightStr, right, vm);
 

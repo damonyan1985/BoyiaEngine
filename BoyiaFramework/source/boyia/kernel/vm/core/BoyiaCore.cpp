@@ -2751,12 +2751,8 @@ static LInt HandleAdd(Instruction* inst, BoyiaVM* vm) {
             return kOpResultEnd;
         }
         
-        LReal leftVal = left->mValueType == BY_INT 
-            ? left->mValue.mIntVal
-            : left->mValue.mRealVal;
-        LReal rightVal = right->mValueType == BY_INT 
-            ? right->mValue.mIntVal
-            : right->mValue.mRealVal;
+        LReal leftVal = GetBoyiaNumber(left);
+        LReal rightVal = GetBoyiaNumber(right);
 
         right->mValue.mRealVal = leftVal + rightVal;
         right->mValueType = BY_REAL;
