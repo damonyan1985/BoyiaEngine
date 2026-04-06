@@ -106,7 +106,10 @@ class MainViewController extends ViewController {
         var a = 1.234;
         var b = 3;
         var c = a + b;
-        Util.log(c);
+        if (b > a) {
+            Util.log(c);
+        }
+        
 
 
         var str1 = "hello";

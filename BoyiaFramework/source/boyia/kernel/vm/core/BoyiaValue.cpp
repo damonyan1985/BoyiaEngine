@@ -272,15 +272,30 @@ static LBool CompareObject(BoyiaValue* src, BoyiaValue* dest) {
     return MStrcmp(&src->mValue.mStrVal, &dest->mValue.mStrVal);
 }
 
-extern LBool CompareValue(BoyiaValue* src, BoyiaValue* dest)
-{
+LBool IsBoyiaNumber(BoyiaValue* value) {
+    return value->mValueType == BY_INT 
+        || value->mValueType == BY_CHAR
+        || value->mValueType == BY_REAL;
+}
+
+LReal64 GetBoyiaNumber(BoyiaValue* value) {
+    return value->mValueType == BY_INT || value->mValueType == BY_CHAR
+        ? value->mValue.mIntVal
+        : value->mValue.mRealVal;
+}
+
+LBool CompareValue(BoyiaValue* src, BoyiaValue* dest) {
+    if (IsBoyiaNumber(src) 
+        && IsBoyiaNumber(dest)
+        && GetBoyiaNumber(src) == GetBoyiaNumber(dest)) {
+        return LTrue;
+    }
+
     if (src->mValueType != dest->mValueType) {
         return LFalse;
     }
 
     switch (src->mValueType) {
-    case BY_CHAR:
-    case BY_INT:
     case BY_NAVCLASS:
         return src->mValue.mIntVal == dest->mValue.mIntVal ? LTrue : LFalse;
     case BY_FUNC:

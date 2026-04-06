@@ -204,5 +204,7 @@ typedef LVoid (*BoyiaPersistentIterateFn)(BoyiaValue*);
 LVoid RegisterPersistentBoyiaValue(BoyiaValue* value, LVoid* vm);
 LVoid IteratePersistentBoyiaValues(LVoid* vm, BoyiaPersistentIterateFn f);
 LBool CompareValue(BoyiaValue* src, BoyiaValue* dest);
+LBool IsBoyiaNumber(BoyiaValue* value);
+LReal64 GetBoyiaNumber(BoyiaValue* value);
 
 #endif

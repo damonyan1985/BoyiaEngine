@@ -2920,22 +2920,22 @@ static LInt HandleRelational(Instruction* inst, BoyiaVM* vm) {
         result = right->mValue.mIntVal ? kOpResultEnd : kOpResultSuccess;
         break;
     case kCmdLtRelation:
-        result = left->mValue.mIntVal < right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = GetBoyiaNumber(left) < GetBoyiaNumber(right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdLeRelation:
-        result = left->mValue.mIntVal <= right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = GetBoyiaNumber(left) <= GetBoyiaNumber(right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdGtRelation:
-        result = left->mValue.mIntVal > right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = GetBoyiaNumber(left) > GetBoyiaNumber(right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdGeRelation:
-        result = left->mValue.mIntVal >= right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = GetBoyiaNumber(left) >= GetBoyiaNumber(right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdEqRelation:
         result = CompareValue(left, right) ? kOpResultSuccess : kOpResultEnd;
         break;
     case kCmdNeRelation:
-        result = left->mValue.mIntVal != right->mValue.mIntVal ? kOpResultSuccess : kOpResultEnd;
+        result = CompareValue(left, right) ? kOpResultEnd : kOpResultSuccess;
         break;
     }
 
