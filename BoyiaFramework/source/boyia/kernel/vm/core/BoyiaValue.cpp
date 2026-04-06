@@ -78,6 +78,11 @@ extern LInt Str2Int(LInt8* p, LInt len, LInt radix)
     return total * sign;
 }
 
+extern LReal64 Str2Real(BoyiaStr* str) 
+{
+    return util::Str2Real64(str->mPtr, str->mLen);
+}
+
 extern boyia::BoyiaRuntime* GetRuntime(LVoid* vm)
 {
     return static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));

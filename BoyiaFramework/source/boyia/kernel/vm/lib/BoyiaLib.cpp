@@ -184,6 +184,8 @@ LInt logPrint(LVoid* vm)
     BoyiaValue* val = (BoyiaValue*)GetLocalValue(0, vm);
     if (val->mValueType == BY_INT) {
         BOYIA_LOG("Boyia [info]: %lld", val->mValue.mIntVal);
+    } else if (val->mValueType == BY_REAL) {
+        BOYIA_LOG("Boyia [info]: %f", val->mValue.mRealVal);
     } else if (val->mValueType == BY_CLASS && GetBoyiaClassId(val) == kBoyiaString) {
         char* log = convertMStr2Str(GetStringBuffer(val));
         BOYIA_LOG("Boyia [info]: %s", (const char*)log);

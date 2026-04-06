@@ -10,6 +10,7 @@ enum KeyWord {
     BY_ARG = 0,
     BY_CHAR,
     BY_INT,
+    BY_REAL,
     BY_STRING,
     // 函数定义Begin
     BY_FUNC,
@@ -82,6 +83,7 @@ typedef struct {
     LUint8 mValueType;
     union RealValue {
         LIntPtr mIntVal;
+        LReal64 mRealVal;
         BoyiaClass mObj; // 类应该存储于方法区
         BoyiaStr mStrVal;
     } mValue;

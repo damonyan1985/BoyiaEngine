@@ -11,6 +11,9 @@
 // INCLUDE FILES
 // Class include
 #include "PlatformLib.h"
+#include <math.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #define USE_SYSTEM 1
 
@@ -456,6 +459,94 @@ LUint GenHashCode(const LInt8* key, LInt len)
         hash ^= (LUint)(*key);
     }
     return hash;
+}
+
+LReal64 Str2Real64(const LInt8* s, LInt len)
+{
+    if (!s || len == 0)
+        return 0.0;
+
+    LInt i = 0;
+
+    // 1. 跳过前导空白
+    while (i < len && isspace((unsigned char)s[i]))
+        i++;
+
+    if (i == len)
+        return 0.0;  // 全空白
+
+    // 2. 处理符号
+    LReal64 sign = 1.0;
+    if (s[i] == '+') {
+        i++;
+    }
+    else if (s[i] == '-') {
+        sign = -1.0;
+        i++;
+    }
+
+    // 3. 解析整数部分
+    LReal64 integer_part = 0.0;
+    LBool has_integer = LFalse;
+    while (i < len && isdigit((unsigned char)s[i])) {
+        integer_part = integer_part * 10.0 + (s[i] - '0');
+        has_integer = LTrue;
+        i++;
+    }
+
+    // 4. 解析小数部分
+    LReal64 fraction_part = 0.0;
+    LInt frac_digits = 0;
+    if (i < len && s[i] == '.') {
+        i++;
+        while (i < len && isdigit((unsigned char)s[i])) {
+            fraction_part = fraction_part * 10.0 + (s[i] - '0');
+            frac_digits++;
+            i++;
+        }
+    }
+
+    // 如果既没有整数部分也没有小数部分，非法
+    if (!has_integer && frac_digits == 0)
+        return 0.0;
+
+    // 合并整数与小数部分
+    LReal64 value = integer_part + fraction_part / pow(10.0, frac_digits);
+
+    // 5. 解析指数部分
+    if (i < len && (s[i] == 'e' || s[i] == 'E')) {
+        i++;
+        if (i == len) return sign * value;  // 只有 'e' 没有指数，忽略
+
+        LReal64 exp_sign = 1.0;
+        if (s[i] == '+') {
+            i++;
+        }
+        else if (s[i] == '-') {
+            exp_sign = -1.0;
+            i++;
+        }
+
+        LInt exponent = 0;
+        LBool has_exp_digit = LFalse;
+        while (i < len && isdigit((unsigned char)s[i])) {
+            exponent = exponent * 10 + (s[i] - '0');
+            has_exp_digit = LTrue;
+            i++;
+        }
+        if (!has_exp_digit) return sign * value;  // 指数无效，忽略
+
+        // 应用指数（注意防止过大导致溢出）
+        LReal64 exp_val = pow(10.0, exp_sign * exponent);
+        value *= exp_val;
+    }
+
+    // 可选：跳过尾随空白（通常不关心）
+    // while (i < len && isspace(s[i])) i++;
+    // 如果 i != len，说明字符串末尾有非数字字符，根据需求可视为非法
+    // 此处为了简单，直接返回已解析的值
+
+    return sign * value;
 }
 }
 

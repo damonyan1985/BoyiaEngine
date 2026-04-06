@@ -170,6 +170,7 @@ LBool LIsBigChar(LInt ch);
 LBool LIsMinChar(LInt ch);
 LBool LIsAlpha(LInt ch);
 LUint GenHashCode(const LInt8* ptr, LInt len);
+LReal64 Str2Real64(const LInt8* s, LInt len);
 }
 
 using util::GenHashCode;
@@ -195,6 +196,7 @@ using util::LMemcpy;
 using util::LMemset;
 using util::LReal;
 using util::LReal32;
+using util::LReal64;
 using util::LStr2Int;
 using util::LStrcpy;
 using util::LStrlen;
