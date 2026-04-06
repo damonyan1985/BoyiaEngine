@@ -2780,11 +2780,31 @@ static LInt HandleSub(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    if (left->mValueType != BY_INT || right->mValueType != BY_INT)
+    if (left->mValueType != BY_INT 
+        && left->mValueType != BY_REAL 
+        && right->mValueType != BY_INT
+        && right->mValueType != BY_REAL) {
         return kOpResultEnd;
+    }
 
-    right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
-    BOYIA_LOG("HandleSub R0=>%d", vm->mCpu->mReg0.mValue.mIntVal);
+    // if (left->mValueType != BY_INT || right->mValueType != BY_INT)
+    //     return kOpResultEnd;
+    if (left->mValueType == BY_INT && right->mValueType == BY_INT) {
+        right->mValue.mIntVal = left->mValue.mIntVal - right->mValue.mIntVal;
+        BOYIA_LOG("HandleSub R0=>%d", vm->mCpu->mReg0.mValue.mIntVal);
+        return kOpResultSuccess;
+    }
+
+    LReal leftVal = left->mValueType == BY_INT 
+            ? left->mValue.mIntVal
+            : left->mValue.mRealVal;
+    LReal rightVal = right->mValueType == BY_INT 
+        ? right->mValue.mIntVal
+        : right->mValue.mRealVal;
+
+    right->mValue.mRealVal = leftVal - rightVal;
+    right->mValueType = BY_REAL;
+    
     return kOpResultSuccess;
 }
 
@@ -2796,13 +2816,31 @@ static LInt HandleMul(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    BOYIA_LOG("HandleMul left=%d \n", left->mValue.mIntVal);
-    BOYIA_LOG("HandleMul right=%d \n", right->mValue.mIntVal);
-    if (left->mValueType != BY_INT || right->mValueType != BY_INT)
+    if (left->mValueType != BY_INT 
+        && left->mValueType != BY_REAL 
+        && right->mValueType != BY_INT
+        && right->mValueType != BY_REAL) {
         return kOpResultEnd;
+    }
 
-    right->mValue.mIntVal *= left->mValue.mIntVal;
-    BOYIA_LOG("HandleMul result=%d \n", right->mValue.mIntVal);
+    if (left->mValueType == BY_INT && right->mValueType == BY_INT) {
+        BOYIA_LOG("HandleMul left=%d \n", left->mValue.mIntVal);
+        BOYIA_LOG("HandleMul right=%d \n", right->mValue.mIntVal);
+        right->mValue.mIntVal *= left->mValue.mIntVal;
+        BOYIA_LOG("HandleMul result=%d \n", right->mValue.mIntVal);
+        return kOpResultSuccess;
+    }
+    
+    LReal leftVal = left->mValueType == BY_INT 
+            ? left->mValue.mIntVal
+            : left->mValue.mRealVal;
+    LReal rightVal = right->mValueType == BY_INT 
+        ? right->mValue.mIntVal
+        : right->mValue.mRealVal;
+
+    right->mValue.mRealVal = leftVal * rightVal;
+    right->mValueType = BY_REAL;
+    
     return kOpResultSuccess;
 }
 
@@ -2814,13 +2852,36 @@ static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    if (left->mValueType != BY_INT || right->mValueType != BY_INT)
+    if (left->mValueType != BY_INT 
+        && left->mValueType != BY_REAL 
+        && right->mValueType != BY_INT
+        && right->mValueType != BY_REAL) {
         return kOpResultEnd;
+    }
 
-    if (right->mValue.mIntVal == 0)
+    if ((right->mValueType == BY_INT && right->mValue.mIntVal == 0)
+        || (right->mValueType == BY_REAL && right->mValue.mRealVal == 0.0f)) {
         return kOpResultEnd;
+    }
 
-    right->mValue.mIntVal = left->mValue.mIntVal / right->mValue.mIntVal;
+    if (left->mValueType == BY_INT && right->mValueType == BY_INT) {
+        BOYIA_LOG("HandleDiv left=%d \n", left->mValue.mIntVal);
+        BOYIA_LOG("HandleDiv right=%d \n", right->mValue.mIntVal);
+        right->mValue.mIntVal = left->mValue.mIntVal / right->mValue.mIntVal;
+        BOYIA_LOG("HandleDiv result=%d \n", right->mValue.mIntVal);
+        return kOpResultSuccess;
+    }
+
+    LReal leftVal = left->mValueType == BY_INT 
+            ? left->mValue.mIntVal
+            : left->mValue.mRealVal;
+    LReal rightVal = right->mValueType == BY_INT 
+        ? right->mValue.mIntVal
+        : right->mValue.mRealVal;
+
+    right->mValue.mRealVal = leftVal / rightVal;
+    right->mValueType = BY_REAL;
+
     return kOpResultSuccess;
 }
 
