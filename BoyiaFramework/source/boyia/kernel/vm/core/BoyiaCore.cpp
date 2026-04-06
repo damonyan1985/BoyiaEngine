@@ -2744,10 +2744,7 @@ static LInt HandleAdd(Instruction* inst, BoyiaVM* vm) {
             return kOpResultSuccess;
         }
 
-        if (left->mValueType != BY_INT 
-            && left->mValueType != BY_REAL 
-            && right->mValueType != BY_INT
-            && right->mValueType != BY_REAL) {
+        if (!IsBoyiaNumber(left) || !IsBoyiaNumber(right)) {
             return kOpResultEnd;
         }
         
@@ -2776,10 +2773,7 @@ static LInt HandleSub(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    if (left->mValueType != BY_INT 
-        && left->mValueType != BY_REAL 
-        && right->mValueType != BY_INT
-        && right->mValueType != BY_REAL) {
+    if (!IsBoyiaNumber(left) || !IsBoyiaNumber(right)) {
         return kOpResultEnd;
     }
 
@@ -2791,12 +2785,8 @@ static LInt HandleSub(Instruction* inst, BoyiaVM* vm) {
         return kOpResultSuccess;
     }
 
-    LReal leftVal = left->mValueType == BY_INT 
-            ? left->mValue.mIntVal
-            : left->mValue.mRealVal;
-    LReal rightVal = right->mValueType == BY_INT 
-        ? right->mValue.mIntVal
-        : right->mValue.mRealVal;
+    LReal leftVal = GetBoyiaNumber(left);
+    LReal rightVal = GetBoyiaNumber(right);
 
     right->mValue.mRealVal = leftVal - rightVal;
     right->mValueType = BY_REAL;
@@ -2812,10 +2802,7 @@ static LInt HandleMul(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    if (left->mValueType != BY_INT 
-        && left->mValueType != BY_REAL 
-        && right->mValueType != BY_INT
-        && right->mValueType != BY_REAL) {
+    if (!IsBoyiaNumber(left) || !IsBoyiaNumber(right)) {
         return kOpResultEnd;
     }
 
@@ -2827,12 +2814,8 @@ static LInt HandleMul(Instruction* inst, BoyiaVM* vm) {
         return kOpResultSuccess;
     }
     
-    LReal leftVal = left->mValueType == BY_INT 
-            ? left->mValue.mIntVal
-            : left->mValue.mRealVal;
-    LReal rightVal = right->mValueType == BY_INT 
-        ? right->mValue.mIntVal
-        : right->mValue.mRealVal;
+    LReal leftVal = GetBoyiaNumber(left);
+    LReal rightVal = GetBoyiaNumber(right);
 
     right->mValue.mRealVal = leftVal * rightVal;
     right->mValueType = BY_REAL;
@@ -2848,10 +2831,7 @@ static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
         return kOpResultEnd;
     }
 
-    if (left->mValueType != BY_INT 
-        && left->mValueType != BY_REAL 
-        && right->mValueType != BY_INT
-        && right->mValueType != BY_REAL) {
+    if (!IsBoyiaNumber(left) || !IsBoyiaNumber(right)) {
         return kOpResultEnd;
     }
 
@@ -2868,12 +2848,8 @@ static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
         return kOpResultSuccess;
     }
 
-    LReal leftVal = left->mValueType == BY_INT 
-            ? left->mValue.mIntVal
-            : left->mValue.mRealVal;
-    LReal rightVal = right->mValueType == BY_INT 
-        ? right->mValue.mIntVal
-        : right->mValue.mRealVal;
+    LReal leftVal = GetBoyiaNumber(left);
+    LReal rightVal = GetBoyiaNumber(right);
 
     right->mValue.mRealVal = leftVal / rightVal;
     right->mValueType = BY_REAL;
@@ -2881,6 +2857,7 @@ static LInt HandleDiv(Instruction* inst, BoyiaVM* vm) {
     return kOpResultSuccess;
 }
 
+// 取余只能用于整型，不能用于double或者其他类型
 static LInt HandleMod(Instruction* inst, BoyiaVM* vm) {
     BoyiaValue* left = GetOpValue(inst, OpLeft, vm);
     BoyiaValue* right = GetOpValue(inst, OpRight, vm);
@@ -3088,14 +3065,6 @@ static LInt HandleAssignVar(Instruction* inst, BoyiaVM* vm) {
     if (!left || !result) {
         return kOpResultEnd;
     }
-
-    
-    // BoyiaValue* value = kBoyiaNull;
-    // if (left->mValueType == BY_VAR) {
-    //     value = FindVal(left->mNameKey, vm);
-    // } else {
-    //     value = (BoyiaValue*)left->mNameKey;
-    // }
 
     BoyiaValue* value = (BoyiaValue*)left->mNameKey;
     ValueCopyNoName(value, result);
