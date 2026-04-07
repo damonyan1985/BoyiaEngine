@@ -5,6 +5,7 @@
 #![allow(non_snake_case)]
 
 mod id_creator;
+mod info;
 mod runtime;
 
 pub use id_creator::IdCreator;

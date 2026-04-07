@@ -5,16 +5,14 @@
 #![allow(non_snake_case)]
 
 use crate::id_creator::IdCreator;
+use crate::info::BoyiaCompileInfo;
 use boyia_builtins::{builtin_array_class, builtin_map_class, builtin_micro_task_class, builtin_string_class};
 use boyia_vm::{
-    cache_vm_code, compile_code, consume_micro_task, delete_data, execute_global_code,
+    cache_vm_code, consume_micro_task, delete_data, execute_global_code,
     free_memory_pool, init_memory_pool, init_vm, new_data,
     BoyiaFunction, BoyiaStr, BoyiaValue, Global, GlobalList, K_BOYIA_NULL, LInt, LUintPtr, LVoid,
     NativeFunction, NativePtr, OpHandleResult, Runtime, ValueType,
 };
-use std::collections::HashSet;
-use std::ffi::CString;
-use std::path::Path;
 use std::ptr;
 
 const K_NATIVE_FUNCTION_CAPACITY: usize = 100;
@@ -32,14 +30,10 @@ pub struct BoyiaRuntime {
     /// Native function table: (name_key, ptr). Terminated by mAddr == null (we use 0 index as sentinel or check length).
     native_fun_table: Vec<NativeFunction>,
     id_creator: IdCreator,
+    /// C++ `m_compileInfo` (`BoyiaCompileInfo`).
+    compile_info: BoyiaCompileInfo,
     /// Whether VM code was loaded from exe/cache bundle (C++ `m_isLoadExeFile`); `BY_Require` no-ops when true.
     is_load_exe_file: bool,
-    /// C++ `BoyiaCompileInfo::m_currentScriptPath` during `compileFile` (save/restore around nested loads).
-    require_current_path: String,
-    /// Optional main script path so runtime `BY_Require` resolves relatives like C++ `getCurrentScript()` after entry load.
-    entry_script_path: String,
-    /// C++ `m_programSet`: absolute/normalized paths already merged via `compile_script_file`.
-    compiled_script_paths: HashSet<String>,
     /// Persistent BoyiaValue list; keeps references so objects are not collected.
     persistent_objects: GlobalList,
 }
@@ -54,10 +48,8 @@ impl BoyiaRuntime {
             gc: ptr::null_mut(),
             native_fun_table: Vec::with_capacity(K_NATIVE_FUNCTION_CAPACITY),
             id_creator: IdCreator::new(),
+            compile_info: BoyiaCompileInfo::new(),
             is_load_exe_file: false,
-            require_current_path: String::new(),
-            entry_script_path: String::new(),
-            compiled_script_paths: HashSet::new(),
             persistent_objects: GlobalList::new(),
         }
     }
@@ -166,51 +158,20 @@ impl BoyiaRuntime {
         });
     }
 
-    /// Compile script source into the VM (`CompileCode`).
+    /// Compile script source into the VM (`BoyiaCompileInfo::compile` / `CompileCode`).
     pub fn compile(&mut self, script: &str) {
-        let script_c = CString::new(script).unwrap_or_default();
-        unsafe {
-            compile_code(script_c.as_ptr() as *mut _, self.vm);
-        }
+        self.compile_info.compile_string(script, self.vm);
     }
 
-    /// Set the entry script path used to resolve relative `BY_Require` at runtime (e.g. CLI `main.boyia` absolute path).
+    /// Set the entry script path used to resolve relative `require` at runtime (e.g. CLI `main.boyia`).
     pub fn set_entry_script_path(&mut self, path: &str) {
-        let p = Path::new(path);
-        self.entry_script_path = std::fs::canonicalize(p)
-            .map(|p| p.to_string_lossy().into_owned())
-            .unwrap_or_else(|_| path.to_string());
+        self.compile_info.set_entry_script_path(path);
     }
 
-    /// C++ `BoyiaCompileInfo::compileFile`: read UTF-8 file, skip if already loaded, merge into VM.
-    fn compile_script_file_inner(&mut self, path: &str) {
-        let dedup_key = std::fs::canonicalize(Path::new(path))
-            .map(|p| p.to_string_lossy().into_owned())
-            .unwrap_or_else(|_| path.to_string());
-        if self.compiled_script_paths.contains(&dedup_key) {
-            return;
-        }
-
-        let saved = std::mem::take(&mut self.require_current_path);
-        self.require_current_path = dedup_key.clone();
-
-        let source = match std::fs::read_to_string(path) {
-            Ok(s) => s,
-            Err(e) => {
-                eprintln!("compile_script_file: read {}: {}", path, e);
-                self.require_current_path = saved;
-                return;
-            }
-        };
-
-        if !source.is_empty() {
-            let script_c = CString::new(source.as_str()).unwrap_or_default();
-            unsafe {
-                compile_code(script_c.as_ptr() as *mut _, self.vm);
-            }
-            self.compiled_script_paths.insert(dedup_key);
-        }
-        self.require_current_path = saved;
+    /// C++ `BoyiaRuntime::compileFile` → `m_compileInfo->compileFile(path)`.
+    pub fn compile_file(&mut self, path: &str) {
+        self.compile_info
+            .compile_file(path, self.vm, &mut self.id_creator);
     }
 
     /// VM pointer for use with boyia_vm APIs.
@@ -373,17 +334,12 @@ impl Runtime for BoyiaRuntime {
     }
 
     fn require_path_base(&self) -> &str {
-        if !self.require_current_path.is_empty() {
-            return &self.require_current_path;
-        }
-        if !self.entry_script_path.is_empty() {
-            return &self.entry_script_path;
-        }
-        ""
+        self.compile_info.require_path_base()
     }
 
     fn compile_script_file(&mut self, resolved_path: &str) {
-        self.compile_script_file_inner(resolved_path);
+        self.compile_info
+            .compile_file(resolved_path, self.vm, &mut self.id_creator);
     }
 }
 
