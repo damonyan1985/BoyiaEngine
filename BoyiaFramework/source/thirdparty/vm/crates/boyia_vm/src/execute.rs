@@ -777,9 +777,25 @@ unsafe fn handle_once_jmp_true(inst: *mut Instruction, vm: *mut BoyiaVM) -> OpHa
     OpHandleResult::kOpResultSuccess
 }
 
-unsafe fn handle_if_end(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
-    let offset = (*inst).mOPLeft.int_value() as isize;
-    (*(*vm).mEState).mStackFrame.mPC = inst.offset(offset) as *mut Instruction;
+/// HandleIfEnd(Instruction* inst, BoyiaVM* vm) per BoyiaCore.cpp: skip trailing elif/else chain via mOPRight offsets.
+/// Uses `mStackFrame.mPC` (current instruction = this IfEnd), not `inst` fields.
+unsafe fn handle_if_end(_inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleResult {
+    if vm.is_null() || (*vm).mEState.is_null() {
+        return OpHandleResult::kOpResultEnd;
+    }
+    let e_state = (*vm).mEState;
+    let mut pc = (*e_state).mStackFrame.mPC;
+    let mut tmp_inst = next_instruction(pc, vm);
+    while !tmp_inst.is_null()
+        && ((*tmp_inst).mOPCode == CmdType::kCmdElif || (*tmp_inst).mOPCode == CmdType::kCmdElse)
+    {
+        let off = (*tmp_inst).mOPRight.int_value() as isize;
+        pc = tmp_inst.offset(off);
+        tmp_inst = next_instruction(pc, vm);
+    }
+    if !pc.is_null() {
+        (*e_state).mStackFrame.mPC = pc;
+    }
     OpHandleResult::kOpResultSuccess
 }
 

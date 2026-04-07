@@ -1275,7 +1275,7 @@ pub unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> 
                 return false;
             }
 
-            if (get_string_hash(src) != get_string_hash(dest)) {
+            if get_string_hash(src) != get_string_hash(dest) {
                 return false;
             }
             let len = (*a).mLen.max(0) as usize;
