@@ -257,6 +257,7 @@ unsafe fn dispatch_instruction(inst: *mut Instruction, vm: *mut BoyiaVM) -> OpHa
     let opcode = (*inst).mOPCode;
     eprintln!("[dispatch_instruction] mOPCode={:?}", opcode);
     match opcode {
+        CmdType::kCmdNone => OpHandleResult::kOpResultEnd,
         CmdType::kCmdDeclGlobal => handle_decl_global(inst, vm),
         CmdType::kCmdDeclLocal => handle_decl_local(inst, vm),
         CmdType::kCmdPopLocals => handle_pop_locals(inst, vm),

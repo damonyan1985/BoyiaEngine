@@ -279,11 +279,13 @@ pub(crate) enum OpType {
     OP_CAPTURE,
 }
 
-/// CmdType (BoyiaCore.cpp)
+/// CmdType: `kCmdNone` is Rust-only (allocator placeholder); C++ `BoyiaCore.cpp` opcodes start at former 0 = `kCmdJmpTrue` here as 1.
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub(crate) enum CmdType {
-    kCmdJmpTrue = 0,
+    /// 未写入的真实 opcode（`allocate_instruction` 初始值）；分发返回 [`OpHandleResult::kOpResultEnd`]。
+    kCmdNone = 0,
+    kCmdJmpTrue,
     kCmdIfEnd,
     kCmdElif,
     kCmdElse,

@@ -59,7 +59,6 @@ class PrinterExt extends Printer {
             } else {
                 BY_Log("File.write: " + err);
             }
-            
         });
 
         File.read("boyia_cli_demo.txt", fun(content) {

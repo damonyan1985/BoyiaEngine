@@ -132,7 +132,7 @@ unsafe fn allocate_instruction(vm: *mut BoyiaVM) -> Option<usize> {
     }
     vmcode.mSize += 1;
     let inst = vmcode.mCode.add(size);
-    (*inst).mOPCode = CmdType::kCmdJmpTrue; // 0, placeholder until overwritten by put_instruction
+    (*inst).mOPCode = CmdType::kCmdNone; // placeholder until overwritten by put_instruction
     (*inst).mOPLeft.mType = OpType::OP_NONE;
     (*inst).mOPLeft.set_int_value(0);
     (*inst).mOPRight.mType = OpType::OP_NONE;
