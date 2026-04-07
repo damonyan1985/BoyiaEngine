@@ -134,9 +134,9 @@ unsafe fn allocate_instruction(vm: *mut BoyiaVM) -> Option<usize> {
     let inst = vmcode.mCode.add(size);
     (*inst).mOPCode = CmdType::kCmdJmpTrue; // 0, placeholder until overwritten by put_instruction
     (*inst).mOPLeft.mType = OpType::OP_NONE;
-    (*inst).mOPLeft.mValue = 0;
+    (*inst).mOPLeft.set_int_value(0);
     (*inst).mOPRight.mType = OpType::OP_NONE;
-    (*inst).mOPRight.mValue = 0;
+    (*inst).mOPRight.set_int_value(0);
     (*inst).mNext = kInvalidInstruction;
     (*inst).mCache = ptr::null_mut();
     Some(size)
@@ -186,9 +186,9 @@ unsafe fn put_instruction(
 
     // Init member (match C++ newIns->mOPLeft = *left; newIns->mOPRight = *right when not none)
     (*new_ins).mOPLeft.mType = OpType::OP_NONE;
-    (*new_ins).mOPLeft.mValue = 0;
+    (*new_ins).mOPLeft.set_int_value(0);
     (*new_ins).mOPRight.mType = OpType::OP_NONE;
-    (*new_ins).mOPRight.mValue = 0;
+    (*new_ins).mOPRight.set_int_value(0);
 
     if left.mType != OpType::OP_NONE {
         (*new_ins).mOPLeft = left;
@@ -224,10 +224,10 @@ unsafe fn patch_offset(vm: *mut BoyiaVM, index: usize, is_right: bool, offset: L
     }
     if is_right {
         (*inst).mOPRight.mType = OpType::OP_CONST_NUMBER;
-        (*inst).mOPRight.mValue = offset;
+        (*inst).mOPRight.set_int_value(offset);
     } else {
         (*inst).mOPLeft.mType = OpType::OP_CONST_NUMBER;
-        (*inst).mOPLeft.mValue = offset;
+        (*inst).mOPLeft.set_int_value(offset);
     }
 }
 
@@ -271,6 +271,12 @@ unsafe fn token_name_slice(cs: *mut CompileState) -> &'static [u8] {
 unsafe fn parse_number_from_token(cs: *mut CompileState) -> LIntPtr {
     let s = std::str::from_utf8(token_name_slice(cs)).unwrap_or("0");
     s.parse::<LInt>().unwrap_or(0) as LIntPtr
+}
+
+/// Parse real from current token (REAL). Matches C++ Str2Real(&mToken.mTokenName).
+unsafe fn parse_real_from_token(cs: *mut CompileState) -> LReal64 {
+    let s = std::str::from_utf8(token_name_slice(cs)).unwrap_or("0");
+    s.parse::<LReal64>().unwrap_or(0.0)
 }
 
 /// Resolve identifier from current token name via [Runtime::gen_identifier].
@@ -511,19 +517,29 @@ unsafe fn get_delimiter(cs: *mut CompileState) -> bool {
     true
 }
 
-/// GetNumberValue: match C++ LIsDigit only (no leading minus). Set mTokenName inside.
+/// GetNumberValue: match C++ GetNumberValue (digits and optional `.` + fractional digits).
 unsafe fn get_number_value(cs: *mut CompileState) -> bool {
     if !cur_byte(cs).is_ascii_digit() {
         return false;
     }
     (*cs).mToken.mTokenName.mPtr = (*cs).mProg;
     let mut len = 0usize;
-    while cur_byte(cs).is_ascii_digit() {
+    let mut dot_num: LInt = 0;
+    while cur_byte(cs).is_ascii_digit()
+        || (cur_byte(cs) == b'.' && {
+            dot_num += 1;
+            true
+        })
+    {
         len += 1;
         add_column(cs, 1);
     }
     (*cs).mToken.mTokenName.mLen = len as LInt;
-    (*cs).mToken.mTokenType = TokenType::NUMBER;
+    (*cs).mToken.mTokenType = if dot_num == 0 {
+        TokenType::NUMBER
+    } else {
+        TokenType::REAL
+    };
     (*cs).mToken.mTokenValue = TokenValue::NONE;
     true
 }
@@ -690,7 +706,15 @@ unsafe fn call_statement(cs: *mut CompileState, obj_type: OpType, obj_value: LIn
     if obj_type == OpType::OP_VAR {
         let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::none(), CmdType::kCmdPop);
     }
-    let _ = put_instruction(cs, OpCommand { mType: obj_type, mValue: obj_value }, OpCommand::none(), CmdType::kCmdPushObj);
+    let _ = put_instruction(
+        cs,
+        OpCommand {
+            mType: obj_type,
+            mValue: OpCommandValue { mInt: obj_value },
+        },
+        OpCommand::none(),
+        CmdType::kCmdPushObj,
+    );
     let push_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPushScene).unwrap_or(0);
     let _ = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdPushParams);
     let fun_idx = put_instruction(cs, OpCommand::none(), OpCommand::none(), CmdType::kCmdCallFunction).unwrap_or(0);
@@ -766,6 +790,15 @@ unsafe fn atom(cs: *mut CompileState) {
         }
         TokenType::NUMBER => {
             let _ = put_instruction(cs, OpCommand::reg0(), OpCommand::const_number(parse_number_from_token(cs)), CmdType::kCmdAssign);
+            next_token(cs);
+        }
+        TokenType::REAL => {
+            let _ = put_instruction(
+                cs,
+                OpCommand::reg0(),
+                OpCommand::const_real(parse_real_from_token(cs)),
+                CmdType::kCmdAssign,
+            );
             next_token(cs);
         }
         TokenType::STRING_VALUE => {

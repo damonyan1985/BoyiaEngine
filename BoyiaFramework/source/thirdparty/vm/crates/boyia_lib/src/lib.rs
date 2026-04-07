@@ -37,6 +37,9 @@ pub unsafe fn log_print(vm: *mut LVoid) -> OpHandleResult {
         ValueType::BY_INT => {
             println!("Boyia [info]: {}", (*val).mValue.mIntVal);
         }
+        ValueType::BY_REAL => {
+            println!("Boyia [info]: {}", (*val).mValue.mRealVal);
+        }
         ValueType::BY_CLASS => {
             if get_boyia_class_id(val) == string_class_key(vm) {
                 let buf = get_string_buffer(val);

@@ -40,6 +40,8 @@ pub(crate) unsafe fn value_copy_no_name(dest: *mut BoyiaValue, src: *const Boyia
     let t = (*src).mValueType;
     if t == ValueType::BY_INT || t == ValueType::BY_CHAR || t == ValueType::BY_NAVCLASS {
         (*dest).mValue.mIntVal = (*src).mValue.mIntVal;
+    } else if t == ValueType::BY_REAL {
+        (*dest).mValue.mRealVal = (*src).mValue.mRealVal;
     } else if t == ValueType::BY_FUNC {
         (*dest).mValue.mObj.mPtr = (*src).mValue.mObj.mPtr;
     } else if t == ValueType::BY_PROP_FUNC
@@ -975,14 +977,15 @@ pub unsafe fn cache_vm_code(vm: *mut LVoid) {
             dealloc((*inst).mCache as *mut u8, layout);
             (*inst).mCache = ptr::null_mut();
         }
-        if (*inst).mOPCode == CmdType::kCmdCreateFunction && (*inst).mOPRight.mValue as u8 == ValueType::BY_ANONYM_FUNC as u8
+        if (*inst).mOPCode == CmdType::kCmdCreateFunction
+            && (*inst).mOPRight.int_value() as u8 == ValueType::BY_ANONYM_FUNC as u8
         {
             (*inst).mOPLeft.mType = OpType::OP_NONE;
-            (*inst).mOPLeft.mValue = 0;
+            (*inst).mOPLeft.set_int_value(0);
         }
         if (*inst).mOPCode == CmdType::kCmdOnceJmpTrue {
             (*inst).mOPLeft.mType = OpType::OP_CONST_NUMBER;
-            (*inst).mOPLeft.mValue = LTrue as LIntPtr;
+            (*inst).mOPLeft.set_int_value(LTrue as LIntPtr);
         }
     }
 }
@@ -1210,10 +1213,36 @@ pub unsafe fn get_string_hash(ref_: *const BoyiaValue) -> LIntPtr {
     (*obj).mParams.add(0).read().mValue.mIntVal
 }
 
-/// Compare two BoyiaValue for equality (match compareValue in BoyiaLib.cpp).
+#[inline]
+pub(crate) unsafe fn is_boyia_number(v: *const BoyiaValue) -> bool {
+    if v.is_null() {
+        return false;
+    }
+    matches!(
+        (*v).mValueType,
+        ValueType::BY_INT | ValueType::BY_CHAR | ValueType::BY_REAL
+    )
+}
+
+#[inline]
+pub(crate) unsafe fn get_boyia_number(v: *const BoyiaValue) -> LReal64 {
+    match (*v).mValueType {
+        ValueType::BY_INT | ValueType::BY_CHAR => (*v).mValue.mIntVal as LReal64,
+        ValueType::BY_REAL => (*v).mValue.mRealVal,
+        _ => 0.0,
+    }
+}
+
+/// Compare two BoyiaValue for equality (match CompareValue in BoyiaValue.cpp).
 pub unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> bool {
     if src.is_null() || dest.is_null() {
         return false;
+    }
+    if is_boyia_number(src)
+        && is_boyia_number(dest)
+        && get_boyia_number(src) == get_boyia_number(dest)
+    {
+        return true;
     }
     if (*src).mValueType != (*dest).mValueType {
         return false;
@@ -1222,6 +1251,7 @@ pub unsafe fn compare_value(src: *const BoyiaValue, dest: *const BoyiaValue) -> 
         ValueType::BY_CHAR | ValueType::BY_INT | ValueType::BY_NAVCLASS => {
             (*src).mValue.mIntVal == (*dest).mValue.mIntVal
         }
+        ValueType::BY_REAL => (*src).mValue.mRealVal == (*dest).mValue.mRealVal,
         ValueType::BY_FUNC => {
             (*src).mValue.mObj.mPtr == (*dest).mValue.mObj.mPtr
         }
@@ -1278,7 +1308,7 @@ const K_STRING_BUFFER_SHIFT: LInt = 18;
 /// Max length for int-to-string buffer (decimal digits for LInt). Match MAX_INT_LEN in BoyiaValue.cpp.
 const MAX_INT_STR_LEN: LInt = 24;
 
-/// Fetch string from a value: BY_INT -> decimal string (allocated); BY_CLASS (string) -> GetStringBuffer. Match FetchString in BoyiaValue.cpp.
+/// Fetch string from a value: BY_INT -> decimal string (allocated); BY_REAL -> %g-style; BY_CLASS (string) -> GetStringBuffer. Match FetchString in BoyiaValue.cpp.
 pub(crate) unsafe fn fetch_string(str_out: *mut BoyiaStr, value: *const BoyiaValue, vm: *mut BoyiaVM) {
     if str_out.is_null() || value.is_null() {
         return;
@@ -1292,6 +1322,22 @@ pub(crate) unsafe fn fetch_string(str_out: *mut BoyiaStr, value: *const BoyiaVal
             return;
         }
         let s = format!("{}", (*value).mValue.mIntVal);
+        let bytes = s.as_bytes();
+        let len = bytes.len().min(MAX_INT_STR_LEN as usize);
+        for (i, &b) in bytes.iter().take(len).enumerate() {
+            *buf.add(i) = b as LInt8;
+        }
+        (*str_out).mPtr = buf;
+        (*str_out).mLen = len as LInt;
+    } else if (*value).mValueType == ValueType::BY_REAL {
+        let creator = (*vm).mCreator;
+        let buf = runtime_new_data_zeroed(creator, MAX_INT_STR_LEN) as *mut LInt8;
+        if buf.is_null() {
+            (*str_out).mPtr = ptr::null_mut();
+            (*str_out).mLen = 0;
+            return;
+        }
+        let s = format!("{}", (*value).mValue.mRealVal);
         let bytes = s.as_bytes();
         let len = bytes.len().min(MAX_INT_STR_LEN as usize);
         for (i, &b) in bytes.iter().take(len).enumerate() {

@@ -14,6 +14,8 @@ pub type LUintPtr = usize;
 pub type LIntPtr = isize;
 pub type LVoid = std::ffi::c_void;
 pub type LByte = u8;
+/// C++ `LReal64` / `double` in [BoyiaValue::mValue] (`mRealVal`).
+pub type LReal64 = f64;
 
 /// C++ `kBoyiaNull`: null stored in integer-backed fields (e.g. `mSuper`, `mIntVal` as handle). Prefer via `boyia_vm::K_BOYIA_NULL`.
 pub const K_BOYIA_NULL: LIntPtr = 0;

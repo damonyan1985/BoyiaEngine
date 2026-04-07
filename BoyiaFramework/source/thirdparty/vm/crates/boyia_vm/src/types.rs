@@ -7,7 +7,8 @@
 
 // Platform types: shared with `boyia_memory` via `boyia_types` (no circular deps). Prefer `boyia_vm::…` in app code.
 pub use boyia_types::{
-    K_BOYIA_NULL, LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LTrue, LUint8, LUintPtr, LVoid,
+    K_BOYIA_NULL, LBool, LByte, LFalse, LInt, LInt8, LIntPtr, LReal64, LTrue, LUint8, LUintPtr,
+    LVoid,
 };
 
 // ---------------------------------------------------------------------------
@@ -90,6 +91,7 @@ pub enum ValueType {
     BY_ARG = 0,
     BY_CHAR,
     BY_INT,
+    BY_REAL,
     BY_STRING,
     BY_FUNC,
     BY_PROP_FUNC,
@@ -143,21 +145,23 @@ pub(crate) enum TokenType {
     DELIMITER = 1,
     IDENTIFIER,
     NUMBER,
+    REAL,
     KEYWORD,
     TEMP,
     VARIABLE,
     STRING_VALUE,
 }
 
-/// Token value: 0 = NONE (or KEYWORD BY_ARG in C), 1..25 = keywords, 26..52 = delimiter/logic/math/bracket. Same u8 layout as C.
+/// Token value: 0 = NONE (or KEYWORD BY_ARG in C), 1..=26 = keywords, 27..53 = logic/math/delimiter/bracket. Same u8 layout as C.
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) enum TokenValue {
     /// 0: no value (IDENTIFIER/NUMBER) or KEYWORD BY_ARG in C
     NONE = 0,
-    // KeyWord 1..=25 (same order as KeyWord, skip BY_ARG=0)
+    // KeyWord 1..=26 (same order as KeyWord, skip BY_ARG=0)
     BY_CHAR = 1,
     BY_INT,
+    BY_REAL,
     BY_STRING,
     BY_FUNC,
     BY_PROP_FUNC,
@@ -181,37 +185,37 @@ pub(crate) enum TokenValue {
     BY_BREAK,
     BY_RETURN,
     BY_END,
-    // TokenLogicValue (26..=34)
-    AND = 26,
-    OR,
-    NOT,
-    LT,
-    LE,
-    GT,
-    GE,
-    EQ,
-    NE,
-    // TokenMathValue (35..=41)
-    ADD = 35,
-    SUB,
-    MUL,
-    DIV,
-    MOD,
-    POW,
-    ASSIGN,
-    // TokenDelimiValue (42..=46)
-    SEMI = 42,
-    COMMA,
-    QUOTE,
-    DOT,
-    COLON,
-    // TokenBracketValue (47..=52)
-    LPTR = 47,
-    RPTR,
-    ARRAY_BEGIN,
-    ARRAY_END,
-    BLOCK_START,
-    BLOCK_END,
+    // TokenLogicValue (BY_END + 1 ..= NE)
+    AND = 27,
+    OR = 28,
+    NOT = 29,
+    LT = 30,
+    LE = 31,
+    GT = 32,
+    GE = 33,
+    EQ = 34,
+    NE = 35,
+    // TokenMathValue (NE + 1 ..= ASSIGN)
+    ADD = 36,
+    SUB = 37,
+    MUL = 38,
+    DIV = 39,
+    MOD = 40,
+    POW = 41,
+    ASSIGN = 42,
+    // TokenDelimiValue (ASSIGN + 1 ..= COLON)
+    SEMI = 43,
+    COMMA = 44,
+    QUOTE = 45,
+    DOT = 46,
+    COLON = 47,
+    // TokenBracketValue (COLON + 1 ..= BLOCK_END)
+    LPTR = 48,
+    RPTR = 49,
+    ARRAY_BEGIN = 50,
+    ARRAY_END = 51,
+    BLOCK_START = 52,
+    BLOCK_END = 53,
 }
 
 impl From<ValueType> for TokenValue {
@@ -263,6 +267,7 @@ impl PartialEq<ValueType> for u8 {
 pub(crate) enum OpType {
     OP_NONE = 0,
     OP_CONST_NUMBER,
+    OP_CONST_REAL,
     OP_CONST_STRING,
     OP_REG0,
     OP_REG1,
@@ -477,6 +482,7 @@ pub struct BoyiaClass {
 #[derive(Clone, Copy)]
 pub union RealValue {
     pub mIntVal: LIntPtr,
+    pub mRealVal: LReal64,
     pub mObj: BoyiaClass,
     pub mStrVal: BoyiaStr,
 }
@@ -525,20 +531,43 @@ pub(crate) struct InlineCache {
     pub mSize: LInt,
 }
 
+/// C++ `OpCommand::mValue` (union of `mInt` / `mReal`).
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub(crate) union OpCommandValue {
+    pub mInt: LIntPtr,
+    pub mReal: LReal64,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub(crate) struct OpCommand {
     pub mType: OpType,
-    pub mValue: LIntPtr,
+    pub mValue: OpCommandValue,
 }
 
 impl OpCommand {
+    #[inline]
+    pub fn int_value(&self) -> LIntPtr {
+        unsafe { self.mValue.mInt }
+    }
+
+    #[inline]
+    pub fn real_value(&self) -> LReal64 {
+        unsafe { self.mValue.mReal }
+    }
+
+    #[inline]
+    pub fn set_int_value(&mut self, v: LIntPtr) {
+        self.mValue = OpCommandValue { mInt: v };
+    }
+
     /// No operand (OP_NONE, 0). Used when the instruction has no left/right operand.
     #[inline]
     pub const fn none() -> Self {
         Self {
             mType: OpType::OP_NONE,
-            mValue: 0,
+            mValue: OpCommandValue { mInt: 0 },
         }
     }
 
@@ -547,7 +576,16 @@ impl OpCommand {
     pub const fn const_number(value: LIntPtr) -> Self {
         Self {
             mType: OpType::OP_CONST_NUMBER,
-            mValue: value,
+            mValue: OpCommandValue { mInt: value },
+        }
+    }
+
+    /// Constant real operand (OP_CONST_REAL, value). Match BoyiaCore.cpp Atom(REAL).
+    #[inline]
+    pub const fn const_real(value: LReal64) -> Self {
+        Self {
+            mType: OpType::OP_CONST_REAL,
+            mValue: OpCommandValue { mReal: value },
         }
     }
 
@@ -556,7 +594,7 @@ impl OpCommand {
     pub const fn reg0() -> Self {
         Self {
             mType: OpType::OP_REG0,
-            mValue: 0,
+            mValue: OpCommandValue { mInt: 0 },
         }
     }
 
@@ -565,7 +603,7 @@ impl OpCommand {
     pub const fn reg1() -> Self {
         Self {
             mType: OpType::OP_REG1,
-            mValue: 0,
+            mValue: OpCommandValue { mInt: 0 },
         }
     }
 
@@ -574,7 +612,7 @@ impl OpCommand {
     pub const fn op_var(key: LIntPtr) -> Self {
         Self {
             mType: OpType::OP_VAR,
-            mValue: key,
+            mValue: OpCommandValue { mInt: key },
         }
     }
 
@@ -583,7 +621,7 @@ impl OpCommand {
     pub const fn op_local(frame_offset: LIntPtr) -> Self {
         Self {
             mType: OpType::OP_LOCAL,
-            mValue: frame_offset,
+            mValue: OpCommandValue { mInt: frame_offset },
         }
     }
 
@@ -592,7 +630,7 @@ impl OpCommand {
     pub const fn op_capture(capture_idx: LIntPtr) -> Self {
         Self {
             mType: OpType::OP_CAPTURE,
-            mValue: capture_idx,
+            mValue: OpCommandValue { mInt: capture_idx },
         }
     }
 }

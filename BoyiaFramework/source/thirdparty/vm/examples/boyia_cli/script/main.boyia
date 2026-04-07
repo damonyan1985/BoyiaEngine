@@ -75,6 +75,8 @@ class PrinterExt extends Printer {
             BY_Log("writeFile: " + result);
         }
 
+        BY_Log("write finish");
+
         File.read("boyia_cli_demo.txt", fun(content) {
             BY_Log("File.read: " + content);
         });
@@ -100,6 +102,8 @@ class PrinterExt extends Printer {
         var result = (await this.loadPromise(url));
         var test = "hello : " + result;
         BY_Log("loadAsync result: " + test);
+
+        
         return result;
     }
 
