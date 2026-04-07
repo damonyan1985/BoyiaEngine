@@ -130,6 +130,36 @@ class PrinterExt extends Printer {
 
         Util.log("testLocal result: " + test);
     }
+
+    prop async zipFile() {
+        var result = (await this.zipAsync("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "123456"));
+        if (result == "ok") {
+            Util.log("zipAsync ok");
+        } else {
+            Util.log("zipAsync: " + result);
+        }
+
+        result = (await this.unzipAsync("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test1", "123456"));
+        if (result == "ok") {
+            Util.log("unzipAsync ok");
+        } else {
+            Util.log("unzipAsync: " + result);
+        }
+    }
+
+    prop async zipAsync(src, dest, password) {
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run zipAsync");
+            Zip.compress(src, dest, password, resolve);
+        });
+    }
+
+    prop async unzipAsync(src, dest, password) {
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run unzipAsync");
+            Zip.extract(src, dest, password, resolve);
+        });
+    }
 }
 
 var pe = new(PrinterExt);
@@ -143,6 +173,7 @@ pe.loadAsync("https://httpbin.org/get");
 //pe.testLocal();
 pe.writeFile("hello from File.write");
 pe.writeFile("hello from File.write");
+pe.zipFile();
 
 printlog(p, arr1.get(0));
 

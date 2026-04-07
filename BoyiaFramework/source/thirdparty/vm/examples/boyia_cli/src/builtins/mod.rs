@@ -5,3 +5,4 @@ mod r#async;
 
 pub mod file;
 pub mod https;
+pub mod zip;

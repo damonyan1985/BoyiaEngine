@@ -6,6 +6,7 @@
 
 use crate::builtins::file::builtin_file_class;
 use crate::builtins::https::builtin_https_class;
+use crate::builtins::zip::builtin_zip_class;
 use crate::run_loop::{RunLoopError, RunLoopHandle};
 use crate::task_thread::TaskThread;
 use crate::thread_pool::ThreadPool;
@@ -55,6 +56,7 @@ impl BoyiaRunner {
                 let runner_ptr = runner_ptr_usize as *mut BoyiaRunner;
                 builtin_https_class(vm, &mut gen_id, runner_ptr);
                 builtin_file_class(vm, &mut gen_id, runner_ptr);
+                builtin_zip_class(vm, &mut gen_id, runner_ptr);
                 let _ = init_tx.send(());
             });
         let _ = init_rx.recv();
