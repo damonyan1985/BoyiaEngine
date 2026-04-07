@@ -19,7 +19,7 @@ fn test_runtime_init_only() {
 
 #[test]
 fn test_compile_run_empty_script() {
-    let rt = BoyiaRuntime::create();
+    let mut rt = BoyiaRuntime::create();
     rt.compile("");
     rt.run_exe_file();
     rt.consume_micro_task();
@@ -27,7 +27,7 @@ fn test_compile_run_empty_script() {
 
 #[test]
 fn test_compile_run_var_assign() {
-    let rt = BoyiaRuntime::create();
+    let mut rt = BoyiaRuntime::create();
     rt.compile("var x = 1;");
     rt.run_exe_file();
     rt.consume_micro_task();

@@ -94,10 +94,19 @@ impl BoyiaRunner {
             .post_task(move |runtime| task(runtime.as_mut()))
     }
 
-    pub fn compile(&self, script: &str) -> Result<(), RunLoopError> {
+    /// Compile source. If `entry_script` is set, relative `BY_Require` at runtime resolves against that file's directory.
+    pub fn compile(
+        &self,
+        script: &str,
+        entry_script: Option<&std::path::Path>,
+    ) -> Result<(), RunLoopError> {
         let script = script.to_string();
+        let entry = entry_script.map(|p| p.to_path_buf());
         let (done_tx, done_rx) = mpsc::channel();
         self.post_runtime_task(move |runtime| {
+            if let Some(ref p) = entry {
+                runtime.set_entry_script_path(&p.to_string_lossy());
+            }
             runtime.compile(&script);
             let _ = done_tx.send(());
         })?;

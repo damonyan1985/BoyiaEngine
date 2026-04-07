@@ -63,7 +63,7 @@ fn main() {
 
     println!("[4] Compiling script...");
     runner
-        .compile(&script)
+        .compile(&script, Some(&script_path))
         .expect("failed to compile script on task thread");
     println!("[6] Running script...");
 

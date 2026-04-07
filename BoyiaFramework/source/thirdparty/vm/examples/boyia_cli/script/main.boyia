@@ -1,6 +1,8 @@
+require("./util/util.boyia");
+
 class Printer {
     fun say(msg) {
-        BY_Log(msg);
+        Util.log(msg);
     }
 };
 class MyAdd {
@@ -29,17 +31,6 @@ var body = {
 };
 printlog(p, body.get("body"));
 
-class Util {
-    fun newMicrotask(worker) {
-        BY_Log("call newMicrotask");
-        var task = new(MicroTask);
-        BY_Log("call MicroTask create");
-        task.init(worker);
-        BY_Log("call MicroTask init");
-        return task;
-    }
-}
-
 class PrinterExt extends Printer {
     prop fun multiply(a, b) {
         return a*b;
@@ -48,56 +39,57 @@ class PrinterExt extends Printer {
     prop fun load() {
         Https.load("https://httpbin.org/get", fun(body) {
             var result = body;
-            BY_Log("Https.load result: " + body);
+            Util.log("Https.load result: " + body);
         });
     }
 
     prop fun demoFile() {
         File.write("boyia_cli_demo.txt", "hello from File.write", fun(err) {
             if (err == "ok") {
-                BY_Log("File.write ok");
+                Util.log("File.write ok");
             } else {
-                BY_Log("File.write: " + err);
+                Util.log("File.write: " + err);
             }
         });
 
         File.read("boyia_cli_demo.txt", fun(content) {
-            BY_Log("File.read: " + content);
+            Util.log("File.read: " + content);
         });
     }
 
     prop async writeFile(content) {
         var result = (await this.writeFilePromise(content));
         if (result == "ok") {
-            BY_Log("writeFile ok");
+            Util.log("writeFile ok");
         } else {
-            BY_Log("writeFile: " + result);
+            Util.log("writeFile: " + result);
         }
 
-        BY_Log("write finish");
+        Util.log("write finish");
 
         var a = 1.234;
         var b = 3;
         var c = a + b;
         if (1 == 1.0) {
-            BY_Log("1 == 1.0");
+            Util.log("1 == 1.0");
         }
 
         if (b > a && 0 == 0.0) {
-            BY_Log("a+b=" + c);
-            BY_Log(c);
+            Util.log("a+b=" + c);
+            Util.log("" + a);
+            Util.log(c);
         }
 
         File.read("boyia_cli_demo.txt", fun(content) {
-            BY_Log("File.read: " + content);
+            Util.log("File.read: " + content);
         });
     }
 
     prop async writeFilePromise(content) {
-        BY_Log("run writeFilePromise");
-        BY_Log(content);
+        Util.log("run writeFilePromise");
+        Util.log(content);
         Util.newMicrotask(fun(resolve) {
-            BY_Log("run writeFilePromise1");
+            Util.log("run writeFilePromise1");
             File.write("boyia_cli_demo.txt", content, resolve);
         });
     }
@@ -107,21 +99,21 @@ class PrinterExt extends Printer {
             if (i == 6) {
                 break;
             }
-            BY_Log("loadAsync loop: " + i);
+            Util.log("loadAsync loop: " + i);
         }
     
         var result = (await this.loadPromise(url));
         var test = "hello : " + result;
-        BY_Log("loadAsync result: " + test);
+        Util.log("loadAsync result: " + test);
 
         
         return result;
     }
 
     prop async loadPromise(url) {
-        BY_Log("run loadPromise");
+        Util.log("run loadPromise");
         Util.newMicrotask(fun(resolve) {
-            BY_Log("run newMicrotask");
+            Util.log("run newMicrotask");
             Https.load(url, resolve);
         });
     }
@@ -133,17 +125,17 @@ class PrinterExt extends Printer {
             if (i == 6) {
                 break;
             }
-            BY_Log("testLocal loop: " + i + test);
+            Util.log("testLocal loop: " + i + test);
         }
 
-        BY_Log("testLocal result: " + test);
+        Util.log("testLocal result: " + test);
     }
 }
 
 var pe = new(PrinterExt);
 printlog(p, pe.multiply(30, 41));
 printlog(pe, pe.multiply(30, 42));
-BY_Log(123);
+Util.log(123);
 //pe.load();
 
 pe.loadAsync("https://httpbin.org/get");
@@ -157,4 +149,3 @@ printlog(p, arr1.get(0));
 arr1.add("811");
 printlog(p, arr1.get(1));
 printlog(p, arr1.get(2));
-

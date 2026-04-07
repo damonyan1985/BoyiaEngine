@@ -78,6 +78,20 @@ pub trait Runtime {
 
     /// Remove the node at `ptr` from the runtime's persistent object list. [BoyiaRuntime] calls [crate::GlobalList::remove]; other runtimes may no-op.
     fn remove_persistent(&mut self, ptr: *mut crate::Global);
+
+    /// C++ `BoyiaRuntime::isLoadExeFile`: when true, `BY_Require` is a no-op (bytecode bundle mode).
+    fn is_load_exe_file(&self) -> bool {
+        false
+    }
+
+    /// Base path for resolving relative `BY_Require` paths (C++ `getCurrentScript()`). Empty uses process CWD in the native.
+    fn require_path_base(&self) -> &str {
+        ""
+    }
+
+    /// C++ `BoyiaCompileInfo::compileFile`: load `resolved_path` from disk, merge into VM if not already loaded.
+    /// Default implementation does nothing (embedders without filesystem).
+    fn compile_script_file(&mut self, _resolved_path: &str);
 }
 
 // ---------------------------------------------------------------------------

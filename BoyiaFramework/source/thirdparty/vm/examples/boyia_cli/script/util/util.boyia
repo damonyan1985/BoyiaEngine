@@ -1,0 +1,14 @@
+class Util {
+    fun log(content) {
+        BY_Log("< " + content + " >");
+    }
+
+    fun newMicrotask(worker) {
+        BY_Log("call newMicrotask");
+        var task = new(MicroTask);
+        BY_Log("call MicroTask create");
+        task.init(worker);
+        BY_Log("call MicroTask init");
+        return task;
+    }
+}
