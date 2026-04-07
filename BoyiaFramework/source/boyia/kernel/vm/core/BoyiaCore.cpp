@@ -117,7 +117,8 @@ enum OpType {
 
 // 指令类型
 enum CmdType {
-    kCmdJmpTrue = 0,
+    kCmdNone = 0,
+    kCmdJmpTrue,
     kCmdIfEnd,
     kCmdElif,
     kCmdElse,
@@ -565,6 +566,7 @@ static VMCode* CreateVMCode() {
 static OPHandler* InitHandlers() {
     OPHandler* handlers = FAST_NEW_ARRAY(OPHandler, kCmdEnd);
     LMemset(handlers, 0, sizeof(OPHandler) * kCmdEnd);
+    handlers[kCmdNone] = kBoyiaNull;
     handlers[kCmdJmpTrue] = HandleJumpToIfTrue;
     handlers[kCmdIfEnd] = HandleIfEnd;
     handlers[kCmdElse] = kBoyiaNull;
