@@ -1134,18 +1134,7 @@ static BoyiaValue* GetVal(LUintPtr key, BoyiaVM* vm) {
     if (key == kBoyiaSuper) {
         return (BoyiaValue*)vm->mEState->mStackFrame.mClass.mValue.mObj.mSuper;
     }
-
-    /* second, see if it's a local variable */
-    //if (vm->mEState->mFrameIndex > 0) {
-    //    LInt start = vm->mExecStack[vm->mEState->mFrameIndex - 1].mLValSize;
-    //    LInt idx = vm->mEState->mStackFrame.mLValSize - 1;
-    //    // idx>localLen而不是idx>=localLen，原因则是，第一个元素实际上是函数变量本身
-    //    for (; idx > start; --idx) {
-    //        if (vm->mLocals[idx].mNameKey == key)
-    //            return &vm->mLocals[idx];
-    //    }
-    //}
-
+    
     /* otherwise, try global vars */
     BoyiaValue* val = FindGlobal(key, vm);
     if (val) {
@@ -1303,12 +1292,6 @@ static BoyiaValue* GetOpValue(Instruction* inst, LInt8 type, BoyiaVM* vm) {
     case OP_CAPTURE:
         val = GetCapturePtr(vm, op->mValue.mInt);
         break;
-    //case OP_VAR:
-    //    val = FindVal((LUintPtr)op->mValue, vm);
-    //    break;
-    //case OP_LOCAL:
-    //    val = GetLocalPtrByFrameOffset(vm, op->mValue);
-    //    break;
     }
 
     return val;
@@ -2553,13 +2536,6 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
         if (!val) {
             return kOpResultEnd;
         }
-
-        // if (val->mValueType == BY_VAR) {
-        //     ValueCopy(left, val);
-        // } else {
-        //     ValueCopyNoName(left, val);
-        //     left->mNameKey = (LUintPtr)val;
-        // }
         ValueCopyWithKey(left, val);
     } break;
     case OP_LOCAL: {
@@ -2567,12 +2543,6 @@ static LInt HandleAssignment(Instruction* inst, BoyiaVM* vm) {
         if (!val) {
             return kOpResultEnd;
         }
-        // if (val->mValueType == BY_VAR) {
-        //     ValueCopy(left, val);
-        // } else {
-        //     ValueCopyNoName(left, val);
-        //     left->mNameKey = (LUintPtr)val;
-        // }
         ValueCopyWithKey(left, val);
     } break;
     case OP_CAPTURE: {
