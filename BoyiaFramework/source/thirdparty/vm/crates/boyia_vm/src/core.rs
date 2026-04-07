@@ -1308,7 +1308,7 @@ const K_STRING_BUFFER_SHIFT: LInt = 18;
 /// Max length for int-to-string buffer (decimal digits for LInt). Match MAX_INT_LEN in BoyiaValue.cpp.
 const MAX_INT_STR_LEN: LInt = 24;
 
-/// Fetch string from a value: BY_INT -> decimal string (allocated); BY_REAL -> %g-style; BY_CLASS (string) -> GetStringBuffer. Match FetchString in BoyiaValue.cpp.
+/// Fetch string from a value: BY_INT / BY_REAL -> pool buffer via [runtime_new_data_zeroed] (caller must [Runtime::delete_data] after use); string object -> borrows [GetStringBuffer]. Match FetchString in BoyiaValue.cpp.
 pub(crate) unsafe fn fetch_string(str_out: *mut BoyiaStr, value: *const BoyiaValue, vm: *mut BoyiaVM) {
     if str_out.is_null() || value.is_null() {
         return;
@@ -1357,22 +1357,51 @@ pub(crate) unsafe fn fetch_string(str_out: *mut BoyiaStr, value: *const BoyiaVal
     }
 }
 
+/// Release temp buffer from [`fetch_string`] when `source` was `BY_INT` or `BY_REAL` (pool alloc). String/object views must not be freed here.
+unsafe fn release_fetch_string_temp(s: BoyiaStr, source: *const BoyiaValue, vm: *mut BoyiaVM) {
+    if source.is_null() || vm.is_null() {
+        return;
+    }
+    let vt = (*source).mValueType;
+    if vt != ValueType::BY_INT && vt != ValueType::BY_REAL {
+        return;
+    }
+    if s.mPtr.is_null() {
+        return;
+    }
+    let creator = (*vm).mCreator;
+    if creator.is_null() {
+        return;
+    }
+    (*creator).delete_data(s.mPtr as *mut LVoid);
+}
+
 /// String concatenation: left + right, result stored in right (R0). Match StringAdd in BoyiaValue.cpp.
 pub(crate) unsafe fn string_add(left: *const BoyiaValue, right: *mut BoyiaValue, vm: *mut BoyiaVM) {
     if left.is_null() || right.is_null() || vm.is_null() {
         return;
     }
-    let mut left_str = BoyiaStr { mPtr: ptr::null_mut(), mLen: 0 };
-    let mut right_str = BoyiaStr { mPtr: ptr::null_mut(), mLen: 0 };
+    let mut left_str = BoyiaStr {
+        mPtr: ptr::null_mut(),
+        mLen: 0,
+    };
+    let mut right_str = BoyiaStr {
+        mPtr: ptr::null_mut(),
+        mLen: 0,
+    };
     fetch_string(&mut left_str, left, vm);
     fetch_string(&mut right_str, right, vm);
     let len = left_str.mLen + right_str.mLen;
     if len <= 0 {
+        release_fetch_string_temp(left_str, left, vm);
+        release_fetch_string_temp(right_str, right, vm);
         return;
     }
     let creator = (*vm).mCreator;
     let concat = runtime_new_data_zeroed(creator, len as LInt) as *mut LInt8;
     if concat.is_null() {
+        release_fetch_string_temp(left_str, left, vm);
+        release_fetch_string_temp(right_str, right, vm);
         return;
     }
     ptr::copy_nonoverlapping(left_str.mPtr, concat, left_str.mLen as usize);
@@ -1381,8 +1410,14 @@ pub(crate) unsafe fn string_add(left: *const BoyiaValue, right: *mut BoyiaValue,
         concat.add(left_str.mLen as usize),
         right_str.mLen as usize,
     );
+    release_fetch_string_temp(left_str, left, vm);
+    release_fetch_string_temp(right_str, right, vm);
+
     let obj_body = create_string_object(concat, len, vm as *mut LVoid);
     if obj_body.is_null() {
+        if !creator.is_null() {
+            (*creator).delete_data(concat as *mut LVoid);
+        }
         return;
     }
     (*right).mValueType = ValueType::BY_CLASS;
