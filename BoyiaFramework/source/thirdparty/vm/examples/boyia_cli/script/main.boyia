@@ -77,6 +77,18 @@ class PrinterExt extends Printer {
 
         BY_Log("write finish");
 
+        var a = 1.234;
+        var b = 3;
+        var c = a + b;
+        if (1 == 1.0) {
+            BY_Log("1 == 1.0");
+        }
+
+        if (b > a && 0 == 0.0) {
+            BY_Log("a+b=" + c);
+            BY_Log(c);
+        }
+
         File.read("boyia_cli_demo.txt", fun(content) {
             BY_Log("File.read: " + content);
         });
