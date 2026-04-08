@@ -2,7 +2,8 @@
 name = "boyia_builtins"
 version = "0.1.0"
 edition = "2021"
-description = "Boyia VM builtin classes and methods (String, Map, MicroTask, Array). Port of BoyiaValue.cpp builtins."
+description = "Boyia VM builtin classes (String, Map, MicroTask, Array, Json). Port of BoyiaValue.cpp builtins."
 
 [dependencies]
 boyia_vm = { path = "../boyia_vm" }
+serde_json = "1.0.149"

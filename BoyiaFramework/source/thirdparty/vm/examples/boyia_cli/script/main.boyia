@@ -160,6 +160,26 @@ class PrinterExt extends Printer {
             Zip.extract(src, dest, password, resolve);
         });
     }
+
+    prop async readFilePromise() {
+        Util.log("run readFilePromise");
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run readFilePromise1");
+            File.read("vm_test.json", resolve);
+        });
+    }
+
+    prop async jsonRead() {
+        var result = (await this.readFilePromise());
+        Util.log("jsonRead json is " + result);
+        var obj = Json.parse(result);
+
+        Util.log("my name is " + obj.nickname.get(0));
+        Util.log("my height is " + obj.height);
+
+        var str = Json.toString(body);
+        Util.log("Json String is " + str);
+    }
 }
 
 var pe = new(PrinterExt);
@@ -174,6 +194,7 @@ pe.loadAsync("https://httpbin.org/get");
 pe.writeFile("hello from File.write");
 pe.writeFile("hello from File.write");
 pe.zipFile();
+pe.jsonRead();
 
 printlog(p, arr1.get(0));
 

@@ -44,6 +44,11 @@ pub trait Runtime {
     /// Get or assign id for a string from [BoyiaStr] (e.g. Map key, builtins).
     fn gen_ident_by_str(&mut self, s: *const BoyiaStr) -> LUintPtr;
 
+    /// Reverse lookup for identifier keys (e.g. Json `toString` / Map keys). Default: unknown.
+    fn name_for_identifier(&self, _id: LUintPtr) -> Option<String> {
+        None
+    }
+
     /// Allocate a block from the runtime memory pool. Implemented by [BoyiaRuntime]; other runtimes may return null.
     fn new_data(&self, size: LInt) -> *mut LVoid;
 

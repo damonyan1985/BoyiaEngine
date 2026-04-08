@@ -10,21 +10,32 @@ use boyia_vm::{BoyiaStr, LUintPtr};
 const BUILTIN_NAMES: [&str; 6] = ["this", "super", "String", "Array", "Map", "MicroTask"];
 
 /// String-to-id generator. Reserved ids 1..=6 for BuiltinId.
-#[derive(Default)]
 pub struct IdCreator {
     next_id: u64,
     map: std::collections::HashMap<String, LUintPtr>,
+    /// `mNameKey` → first registered string (C++ `GetIdentName` / Json `toString`).
+    reverse: std::collections::HashMap<LUintPtr, String>,
+}
+
+impl Default for IdCreator {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl IdCreator {
     pub fn new() -> Self {
         let mut map = std::collections::HashMap::new();
+        let mut reverse = std::collections::HashMap::new();
         for (i, name) in BUILTIN_NAMES.iter().enumerate() {
-            map.insert((*name).to_owned(), (i + 1) as LUintPtr);
+            let id = (i + 1) as LUintPtr;
+            map.insert((*name).to_owned(), id);
+            reverse.insert(id, (*name).to_owned());
         }
         Self {
             next_id: BUILTIN_NAMES.len() as u64,
             map,
+            reverse,
         }
     }
 
@@ -36,7 +47,12 @@ impl IdCreator {
         self.next_id += 1;
         let id = self.next_id as LUintPtr;
         self.map.insert(key.to_owned(), id);
+        self.reverse.insert(id, key.to_owned());
         id
+    }
+
+    pub fn name_for_ident(&self, id: LUintPtr) -> Option<String> {
+        self.reverse.get(&id).cloned()
     }
 
     pub fn get_id(&self, key: &str) -> Option<LUintPtr> {

@@ -70,6 +70,7 @@ pub use core::{
     get_function_count,
     vector_params_grow_if_full,
     gen_identifier_from_str,
+    name_for_identifier,
     create_global_class,
     alloc_builtin_function,
     get_string_buffer,

@@ -1,0 +1,7 @@
+{
+    "name": "myname",
+    "id": 10001,
+    "info": "my info",
+    "height": 1.76,
+    "nickname": ["bob", "john", "tomas"]
+}

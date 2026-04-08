@@ -1,10 +1,11 @@
-//! Builtin classes and methods (String, Map, MicroTask, Array).
+//! Builtin classes and methods (String, Map, MicroTask, Array, Json).
 //! Port of BoyiaValue.cpp builtins: GenBuiltinClassFunction, BuiltinStringClass, BuiltinMapClass, BuiltinMicroTaskClass, etc.
 
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
 mod array;
+mod json;
 mod map;
 mod microtask;
 mod string;
@@ -82,3 +83,8 @@ pub use microtask::{builtin_micro_task_class, create_micro_task_object};
 // Array builtin (array.rs)
 // ---------------------------------------------------------------------------
 pub use array::{builtin_array_class, create_array_object};
+
+// ---------------------------------------------------------------------------
+// Json builtin (json.rs)
+// ---------------------------------------------------------------------------
+pub use json::builtin_json_class;

@@ -1127,6 +1127,15 @@ pub unsafe fn gen_identifier_from_str(vm: *mut LVoid, s: *const BoyiaStr) -> LUi
     (*rt).gen_ident_by_str(s)
 }
 
+/// Reverse identifier key → string (C++ `GetIdentName`). Used by Json `toString` / Map serialization.
+pub unsafe fn name_for_identifier(vm: *mut LVoid, id: LUintPtr) -> Option<String> {
+    let rt = get_runtime_from_vm(vm);
+    if rt.is_null() {
+        return None;
+    }
+    (*rt).name_for_identifier(id)
+}
+
 /// Create global class value.
 pub unsafe fn create_global_class(key: LUintPtr, vm: *mut LVoid) -> *mut LVoid {
     eprintln!("[create_global_class] key={}", key);
