@@ -342,18 +342,6 @@ LInt appendView(LVoid* vm)
     return kOpResultSuccess;
 }
 
-BoyiaValue* FindProp(BoyiaFunction* fun, LUint key)
-{
-    LInt size = fun->mParamSize;
-    while (size--) {
-        if (fun->mParams[size].mNameKey == key) {
-            return &fun->mParams[size];
-        }
-    }
-
-    return kBoyiaNull;
-}
-
 LInt getRootDocument(LVoid* vm)
 {
     //boyia::BoyiaRuntime* runtime = static_cast<boyia::BoyiaRuntime*>(GetVMCreator(vm));
