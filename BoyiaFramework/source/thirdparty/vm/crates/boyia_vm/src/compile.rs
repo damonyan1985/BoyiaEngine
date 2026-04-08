@@ -1009,7 +1009,10 @@ unsafe fn collect_parent_scope_captures_for_anonym(cs: *mut CompileState) {
 
     println!("call collect_parent_scope_captures_for_anonym");
     let parent_idx = scope_len - 2;
-    let parent_params = (*cs).mFunctionScopes[parent_idx].mParams.clone();
+    // rust编译器升级之后，不能直接使用原始指针获取mFunctionScopes了，而必须加&来借用，
+    // 这是因为，新的编译器加入了dangerous_implicit_autorefs的缘故，也可以给函数标注宏
+    // 来关闭这个lint，例如#[allow(dangerous_implicit_autorefs)]
+    let parent_params = (&(*cs).mFunctionScopes)[parent_idx].mParams.clone();
     for key in parent_params {
         if let Some(current) = (*cs).mFunctionScopes.last_mut() {
             if !current.mCaptures.iter().any(|&k| k == key) {
@@ -1017,9 +1020,9 @@ unsafe fn collect_parent_scope_captures_for_anonym(cs: *mut CompileState) {
             }
         }
     }
-    let parent_scopes_len = (*cs).mFunctionScopes[parent_idx].mLocalScopes.len();
+    let parent_scopes_len = (&(*cs).mFunctionScopes)[parent_idx].mLocalScopes.len();
     for si in 0..parent_scopes_len {
-        let locals = (*cs).mFunctionScopes[parent_idx].mLocalScopes[si]
+        let locals = (&(&(*cs).mFunctionScopes)[parent_idx].mLocalScopes)[si]
             .mLocals
             .clone();
         for key in locals {
