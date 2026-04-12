@@ -18,16 +18,25 @@
           "include": "#strings"
         },
         {
-          "include": "#paren-expression"
+          "include": "#new-constructor-call"
+        },
+        {
+          "include": "#parameters"
         },
         {
           "include": "#constants"
         },
         {
+          "include": "#class-declaration-name"
+        },
+        {
           "include": "#function-def-name"
         },
         {
-          "include": "#parameters"
+          "include": "#comments"
+        },
+        {
+          "include": "#constants-and-special-vars"
         },
         {
           "include": "#code-expression-base"
@@ -36,22 +45,28 @@
           "include": "#code-expression"
         },
         {
-          "include": "#comments"
+          "include": "#operators"
+        }
+      ]
+    },
+    "class-declaration-name": {
+      "patterns": [
+        {
+          "name": "entity.name.type.class.boyia",
+          "match": "(?x) (?<= \\b class \\s+ ) \\b ([[:alpha:]_]\\w*) \\b"
         },
-		{
-		  "include": "#constants-and-special-vars"
-		},
-		{
-		  "include": "#operators"
-		}
+        {
+          "name": "entity.other.inherited-class.boyia",
+          "match": "(?x) (?<= \\b extends \\s+ ) \\b ([[:alpha:]_]\\w*) \\b"
+        }
       ]
     },
     "keyword": {
-      "match": "class|fun|prop|var|extends|this|super",
+      "match": "\\b(?:class|fun|prop|var|extends|this|super|async|await|for|break|null|new|require)\\b",
       "name": "keyword.letter.boyia"
     },
     "keyword-control": {
-      "match": "return|if|elif|else|do|while",
+      "match": "\\b(?:return|if|elif|else|do|while)\\b",
       "name": "keyword.control.boyia"
     },
     "constants": {
@@ -66,13 +81,68 @@
       "patterns": [
         {
           "name": "entity.name.function.boyia",
-          "match": "(?x)\n \\b ([[:alpha:]_]\\w*) \\b\n"
+          "match": "(?x) (?<= \\b fun \\s+ ) \\b ([[:alpha:]_]\\w*) \\b"
+        },
+        {
+          "name": "entity.name.function.boyia",
+          "match": "(?x) (?<= \\b prop \\s+ async \\s+ fun \\s+ ) \\b ([[:alpha:]_]\\w*) \\b"
+        },
+        {
+          "name": "entity.name.function.boyia",
+          "match": "(?x) (?<= \\b prop \\s+ fun \\s+ ) \\b ([[:alpha:]_]\\w*) \\b"
+        }
+      ]
+    },
+    "code-expression-base": {
+      "patterns": [
+        {
+          "name": "variable.other.readwrite.boyia",
+          "match": "\\b[[:alpha:]_][[:alnum:]_]*\\b"
+        }
+      ]
+    },
+    "code-expression": {
+      "patterns": []
+    },
+    "new-constructor-call": {
+      "begin": "(?x) (?<= \\b new \\s* ) ( \\() ",
+      "end": "(\\))",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.arguments.begin.bracket.round.boyia"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.arguments.end.bracket.round.boyia"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "name": "entity.name.type.class.boyia",
+          "match": "\\b[[:alpha:]_][[:alnum:]_]*\\b"
+        },
+        {
+          "name": "punctuation.separator.argument.boyia",
+          "match": ","
+        },
+        {
+          "include": "#operators"
         }
       ]
     },
     "parameters": {
       "name": "meta.function.parameters.boyia",
-      "begin": "(\\()",
+      "begin": "(?x) (?<! \\b new \\s* ) ( \\() ",
       "end": "(\\))",
       "beginCaptures": {
         "1": {
@@ -93,12 +163,19 @@
           "match": "(?x)\n ([[:alpha:]_]\\w*)\n \\s* (?: (,) | (?=[)#\\n=]))\n",
           "captures": {
             "1": {
-              "name": "variable.parameter.function.language.boyia"
+              "name": "variable.parameter.boyia"
             },
             "2": {
               "name": "punctuation.separator.parameters.boyia"
             }
           }
+        },
+        {
+          "include": "#expression"
+        },
+        {
+          "name": "punctuation.separator.parameters.boyia",
+          "match": ","
         }
       ]
     },
@@ -111,7 +188,7 @@
 				"include": "#strings"
 			},
 			{
-				"name": "variable.parameter.boyia",
+				"name": "variable.other.readwrite.boyia",
 				"match": "[a-zA-Z0-9_]+"
 			},
 			{
@@ -277,7 +354,7 @@
 				"match": "\\$([a-zA-Z0-9_]+)",
 				"captures": {
 					"1": {
-						"name": "variable.parameter.boyia"
+						"name": "variable.other.readwrite.boyia"
 					}
 				}
 			},
@@ -425,29 +502,6 @@
 					]
 				}
 			]
-		},
-    "paren-expression": {
-      "begin": "\\(",
-      "end": "\\)",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.paren.open"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.paren.close"
-        }
-      },
-      "name": "expression.group",
-      "patterns": [
-        {
-          "include": "#keyword"
-        },
-        {
-          "include": "#keyword-control"
-        }
-      ]
-    }
-  }
+		}
+	}
 }

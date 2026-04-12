@@ -46,10 +46,53 @@
 				"command": "extension.helloWorld",
 				"title": "Hello World"
 			}
-		]
+		],
+		"configurationDefaults": {
+			"[boyia]": {
+				"editor.tokenColorCustomizations": {
+					"textMateRules": [
+						{
+							"scope": [
+								"variable.other.readwrite.boyia"
+							],
+							"settings": {
+								"foreground": "#9CDCFE"
+							}
+						},
+						{
+							"scope": [
+								"variable.parameter.boyia"
+							],
+							"settings": {
+								"foreground": "#9CDCFE"
+							}
+						},
+						{
+							"scope": [
+								"entity.name.function.boyia"
+							],
+							"settings": {
+								"foreground": "#DCDCAA"
+							}
+						},
+						{
+							"scope": [
+								"entity.name.type.class.boyia",
+								"entity.other.inherited-class.boyia"
+							],
+							"settings": {
+								"foreground": "#4EC9B0"
+							}
+						}
+					]
+				}
+			}
+		}
 	},
 	"scripts": {
 		"test": "node ./test/runTest.js",
+		"sync-theme-defaults": "node ./scripts/sync-package-json-theme.js",
+		"prebuild": "npm run sync-theme-defaults",
 		"build": "webpack --mode production"
 	},
 	"devDependencies": {
