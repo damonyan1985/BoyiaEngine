@@ -5,18 +5,21 @@
  * Run `npm run sync-theme-defaults` (or `npm run build`, which runs it via prebuild)
  * to copy these into package.json → contributes.configurationDefaults.
  *
- * VS Code does not read token colors from extension JS at runtime; they must live in
- * the extension manifest. This module exists so values are hardcoded in code, not
- * hand-edited in package.json.
+ * All scopes use the `*.boyia` suffix — no dependency on TypeScript / JS TextMate scopes.
  */
 
 /** @type {Readonly<Record<string, string>>} */
 const COLORS = Object.freeze({
   variable: '#9CDCFE',
-  /** Function parameters — same as variable by default; change COLORS.parameter to diverge */
   parameter: '#9CDCFE',
   function: '#DCDCAA',
   classType: '#4EC9B0',
+  /** `{}` — class / block */
+  braceCurly: '#FFD700',
+  /** `[]` */
+  braceSquare: '#C586C0',
+  /** `()` — parameters & new(...) */
+  braceRound: '#CE9178',
 });
 
 /**
@@ -25,6 +28,8 @@ const COLORS = Object.freeze({
 function buildConfigurationDefaults() {
   return {
     '[boyia]': {
+      'editor.bracketPairColorization.enabled': true,
+      'editor.guides.bracketPairs': 'active',
       'editor.tokenColorCustomizations': {
         textMateRules: [
           {
@@ -42,6 +47,23 @@ function buildConfigurationDefaults() {
           {
             scope: ['entity.name.type.class.boyia', 'entity.other.inherited-class.boyia'],
             settings: { foreground: COLORS.classType },
+          },
+          {
+            scope: ['punctuation.definition.block.boyia'],
+            settings: { foreground: COLORS.braceCurly },
+          },
+          {
+            scope: ['meta.brace.square.boyia'],
+            settings: { foreground: COLORS.braceSquare },
+          },
+          {
+            scope: [
+              'punctuation.definition.parameters.begin.boyia',
+              'punctuation.definition.parameters.end.boyia',
+              'punctuation.definition.arguments.begin.boyia',
+              'punctuation.definition.arguments.end.boyia',
+            ],
+            settings: { foreground: COLORS.braceRound },
           },
         ],
       },

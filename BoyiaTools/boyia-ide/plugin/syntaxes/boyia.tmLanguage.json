@@ -39,6 +39,9 @@
           "include": "#constants-and-special-vars"
         },
         {
+          "include": "#expression-brackets"
+        },
+        {
           "include": "#code-expression-base"
         },
         {
@@ -104,17 +107,37 @@
     "code-expression": {
       "patterns": []
     },
+    "expression-brackets": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.block.boyia",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.definition.block.boyia",
+          "match": "\\}"
+        },
+        {
+          "name": "meta.brace.square.boyia",
+          "match": "\\["
+        },
+        {
+          "name": "meta.brace.square.boyia",
+          "match": "\\]"
+        }
+      ]
+    },
     "new-constructor-call": {
       "begin": "(?x) (?<= \\b new \\s* ) ( \\() ",
       "end": "(\\))",
       "beginCaptures": {
         "1": {
-          "name": "punctuation.definition.arguments.begin.bracket.round.boyia"
+          "name": "punctuation.definition.arguments.begin.boyia"
         }
       },
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.arguments.end.bracket.round.boyia"
+          "name": "punctuation.definition.arguments.end.boyia"
         }
       },
       "patterns": [
@@ -192,8 +215,18 @@
 				"match": "[a-zA-Z0-9_]+"
 			},
 			{
-				"begin": "\\{",
-				"end": "\\}",
+				"begin": "(\\{)",
+				"end": "(\\})",
+				"beginCaptures": {
+					"1": {
+						"name": "punctuation.definition.block.boyia"
+					}
+				},
+				"endCaptures": {
+					"1": {
+						"name": "punctuation.definition.block.boyia"
+					}
+				},
 				"patterns": [
 					{
 						"include": "#expressions"

@@ -49,6 +49,8 @@
 		],
 		"configurationDefaults": {
 			"[boyia]": {
+				"editor.bracketPairColorization.enabled": true,
+				"editor.guides.bracketPairs": "active",
 				"editor.tokenColorCustomizations": {
 					"textMateRules": [
 						{
@@ -82,6 +84,33 @@
 							],
 							"settings": {
 								"foreground": "#4EC9B0"
+							}
+						},
+						{
+							"scope": [
+								"punctuation.definition.block.boyia"
+							],
+							"settings": {
+								"foreground": "#FFD700"
+							}
+						},
+						{
+							"scope": [
+								"meta.brace.square.boyia"
+							],
+							"settings": {
+								"foreground": "#C586C0"
+							}
+						},
+						{
+							"scope": [
+								"punctuation.definition.parameters.begin.boyia",
+								"punctuation.definition.parameters.end.boyia",
+								"punctuation.definition.arguments.begin.boyia",
+								"punctuation.definition.arguments.end.boyia"
+							],
+							"settings": {
+								"foreground": "#CE9178"
 							}
 						}
 					]
