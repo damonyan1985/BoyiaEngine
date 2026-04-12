@@ -28,6 +28,11 @@ const COLORS = Object.freeze({
 function buildConfigurationDefaults() {
   return {
     '[boyia]': {
+      'editor.quickSuggestions': {
+        other: true,
+        comments: false,
+        strings: false,
+      },
       'editor.bracketPairColorization.enabled': true,
       'editor.guides.bracketPairs': 'active',
       'editor.tokenColorCustomizations': {

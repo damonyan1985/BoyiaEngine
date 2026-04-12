@@ -20,18 +20,26 @@ class BaseRegister {
   getAssist(apis) {
     return apis.map(api => {
       if (this.isKeyword()) {
-        return new vscode.CompletionItem(api, vscode.CompletionItemKind.Keyword);
+        const it = new vscode.CompletionItem(api, vscode.CompletionItemKind.Keyword);
+        it.detail = '关键字';
+        return it;
       }
 
       if (this.isConstant()) {
-        return new vscode.CompletionItem(api, vscode.CompletionItemKind.Constant);
+        const it = new vscode.CompletionItem(api, vscode.CompletionItemKind.Constant);
+        it.detail = '常量';
+        return it;
       }
 
       if (this.isApi()) {
-        return new vscode.CompletionItem(api, vscode.CompletionItemKind.Method);
+        const it = new vscode.CompletionItem(api, vscode.CompletionItemKind.Method);
+        it.detail = 'API';
+        return it;
       }
 
-      return new vscode.CompletionItem(api, vscode.CompletionItemKind.Field);
+      const it = new vscode.CompletionItem(api, vscode.CompletionItemKind.Field);
+      it.detail = '字段';
+      return it;
     });
   }
 }

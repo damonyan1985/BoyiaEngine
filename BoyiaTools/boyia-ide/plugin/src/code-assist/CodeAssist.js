@@ -20,6 +20,18 @@ const BUILTIN_GLOBAL_CLASSES = [
 ];
 
 class CodeAssist {
+  /**
+   * @param {vscode.CompletionItem} item
+   * @returns {string}
+   */
+  static completionItemLabelString(item) {
+    if (!item || item.label == null) {
+      return '';
+    }
+    const lab = item.label;
+    return typeof lab === 'string' ? lab : /** @type {{ label?: string }} */ (lab).label || '';
+  }
+
   static async initialize() {
     try {
       await CodeAssist.linkBoyiaFile();
@@ -42,7 +54,7 @@ class CodeAssist {
   static dedupeCompletionItems(items) {
     const map = new Map();
     for (const it of items) {
-      const lab = typeof it.label === 'string' ? it.label : (it.label && it.label.label) || '';
+      const lab = CodeAssist.completionItemLabelString(it);
       if (lab && !map.has(lab)) {
         map.set(lab, it);
       }
@@ -86,8 +98,10 @@ class CodeAssist {
    * @param {string[]} names
    * @param {string} partial
    * @param {vscode.CompletionItemKind} kind
+   * @param {Record<string, string>} [detailByName]
+   * @param {string} [categoryDetail] default `detail` when no per-name entry
    */
-  static filterCompletionNames(names, partial, kind, detailByName) {
+  static filterCompletionNames(names, partial, kind, detailByName, categoryDetail) {
     const p = partial.toLowerCase();
     return names
       .filter((n) => !p || n.toLowerCase().startsWith(p))
@@ -96,6 +110,8 @@ class CodeAssist {
         item.insertText = n;
         if (detailByName && detailByName[n]) {
           item.detail = detailByName[n];
+        } else if (categoryDetail) {
+          item.detail = categoryDetail;
         }
         return item;
       });
@@ -161,7 +177,42 @@ class CodeAssist {
    * @param {string} partial
    */
   static keywordItems(words, partial) {
-    return CodeAssist.filterCompletionNames(words, partial, vscode.CompletionItemKind.Keyword);
+    return CodeAssist.filterCompletionNames(words, partial, vscode.CompletionItemKind.Keyword, undefined, '关键字');
+  }
+
+  /**
+   * Document-local symbols (var / params / fun / class / prop names) before cursor.
+   * @param {vscode.TextDocument} document
+   * @param {vscode.Position} position
+   * @param {string} word prefix being typed
+   * @returns {vscode.CompletionItem[]}
+   */
+  static documentSymbolCompletionItems(document, position, word) {
+    if (!word) {
+      return [];
+    }
+    const text = document.getText();
+    const offset = document.offsetAt(position);
+    const raw = CodeIndex.collectSymbolNames(text, offset);
+    const p = word.toLowerCase();
+    const builtinLc = new Set(BUILTIN_GLOBAL_CLASSES.map((c) => c.toLowerCase()));
+    const kwLc = new Set(KEYWORDS.concat(GLOBALS).map((k) => k.toLowerCase()));
+    const names = raw.filter(function (n) {
+      if (!n.toLowerCase().startsWith(p)) {
+        return false;
+      }
+      const nl = n.toLowerCase();
+      if (builtinLc.has(nl) || kwLc.has(nl)) {
+        return false;
+      }
+      return true;
+    });
+    return names.map(function (n) {
+      const item = new vscode.CompletionItem(n, vscode.CompletionItemKind.Variable);
+      item.insertText = n;
+      item.detail = '变量';
+      return item;
+    });
   }
 
   /**
@@ -204,9 +255,10 @@ class CodeAssist {
 
       if (instClass && classes.has(instClass)) {
         const mems = CodeIndex.membersForClass(instClass, classes);
+        /** @type {Record<string, string>} */
         const detail = {};
         for (const n of mems) {
-          detail[n] = `class ${instClass}`;
+          detail[n] = `成员 · ${instClass}`;
         }
         return CodeAssist.filterCompletionNames(
           mems,
@@ -254,18 +306,20 @@ class CodeAssist {
       items = items.concat(CodeAssist.keywordItems(SHORTCUTS[lastChar], ''));
     }
 
-    const merged = new Set(items.map((i) => i.label));
+    const merged = new Set(items.map((i) => CodeAssist.completionItemLabelString(i)));
     const kw = KEYWORDS.concat(GLOBALS).filter(function (k) {
       return k.toLowerCase().startsWith(word.toLowerCase()) && !merged.has(k);
     });
     items = items.concat(CodeAssist.keywordItems(kw, ''));
+
+    items = items.concat(CodeAssist.documentSymbolCompletionItems(document, position, word));
 
     const out = CodeAssist.dedupeCompletionItems(items);
     return out.length ? out : undefined;
   }
 
   static resolveCompletionItem(item, _token) {
-    const label = typeof item.label === 'string' ? item.label : item.label.label;
+    const label = CodeAssist.completionItemLabelString(item);
     if (KEYWORD_DOC[label]) {
       item.documentation = new vscode.MarkdownString(KEYWORD_DOC[label]);
     }

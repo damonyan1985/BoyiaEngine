@@ -248,10 +248,98 @@ function parseDocument(text) {
   return parseClasses(text);
 }
 
+/** Reserved words — excluded from symbol completion. */
+const RESERVED_SYMBOLS = new Set([
+  'async',
+  'await',
+  'break',
+  'class',
+  'do',
+  'elif',
+  'else',
+  'extends',
+  'false',
+  'for',
+  'fun',
+  'if',
+  'null',
+  'prop',
+  'return',
+  'super',
+  'this',
+  'true',
+  'var',
+  'while',
+  'new',
+  'require',
+]);
+
+/**
+ * Collect identifier-like names from text before `offset` (locals / params / fun names / class names).
+ * @param {string} text
+ * @param {number} offset
+ * @returns {string[]}
+ */
+function collectSymbolNames(text, offset) {
+  const names = new Set();
+  const head = text.slice(0, offset);
+  let m;
+
+  const reVar = /\bvar\s+(\w+)/g;
+  while ((m = reVar.exec(head)) !== null) {
+    names.add(m[1]);
+  }
+
+  const reFun = /\bfun\s+(\w+)\s*\(\s*([^)]*)\)/g;
+  while ((m = reFun.exec(head)) !== null) {
+    names.add(m[1]);
+    const params = m[2];
+    if (params) {
+      params.split(',').forEach(function (p) {
+        const id = p.trim().match(/^(\w+)/);
+        if (id) {
+          names.add(id[1]);
+        }
+      });
+    }
+  }
+
+  const rePropField = /\bprop\s+(?!async\b)(?!fun\b)(\w+)\s*[=;]/g;
+  while ((m = rePropField.exec(head)) !== null) {
+    names.add(m[1]);
+  }
+
+  const rePropFun = /\bprop\s+async\s+fun\s+(\w+)\s*\(/g;
+  while ((m = rePropFun.exec(head)) !== null) {
+    names.add(m[1]);
+  }
+  const rePropFun2 = /\bprop\s+fun\s+(\w+)\s*\(/g;
+  while ((m = rePropFun2.exec(head)) !== null) {
+    names.add(m[1]);
+  }
+
+  const reClass = /\bclass\s+(\w+)/g;
+  while ((m = reClass.exec(head)) !== null) {
+    names.add(m[1]);
+  }
+
+  const out = [];
+  names.forEach(function (n) {
+    if (n && n.length && !RESERVED_SYMBOLS.has(n)) {
+      out.push(n);
+    }
+  });
+  out.sort(function (a, b) {
+    return a.localeCompare(b);
+  });
+  return out;
+}
+
 module.exports = {
   parseDocument,
   membersForClass,
   varToClassBeforeOffset,
   innermostClassAtOffset,
   indexOfMatchingBrace,
+  collectSymbolNames,
 };
