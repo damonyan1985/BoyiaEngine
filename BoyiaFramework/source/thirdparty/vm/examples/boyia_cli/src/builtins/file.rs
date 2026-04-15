@@ -1,4 +1,4 @@
-//! File builtin for `boyia_cli`: async read/write on `ThreadPool`, callback on the runtime task thread.
+//! File builtin for `boyia_cli`: async read/write/createDirs on `ThreadPool`, callback on the runtime task thread.
 //! Mirrors the Https builtin (runner from last local after `LocalPush(mClass)`).
 
 #![allow(dead_code)]
@@ -38,6 +38,7 @@ where
 
         gen_builtin_class_function(gen_id("read"), file_read_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("write"), file_write_impl as NativePtr, class_body, vm);
+        gen_builtin_class_function(gen_id("createDirs"), file_create_dirs_impl as NativePtr, class_body, vm);
     }
 }
 
@@ -69,6 +70,23 @@ fn schedule_write(
         move || match fs::write(&path, content.as_bytes()) {
             Ok(()) => String::from("ok"),
             Err(err) => format!("File.write error: {err}"),
+        },
+        callback,
+        |_| (),
+        || (),
+    )
+}
+
+fn schedule_create_dirs(
+    runner_ptr: *mut BoyiaRunner,
+    path: String,
+    callback: CallbackInfo,
+) -> bool {
+    schedule_task(
+        runner_ptr,
+        move || match fs::create_dir_all(&path) {
+            Ok(()) => String::from("ok"),
+            Err(err) => format!("File.createDirs error: {err}"),
         },
         callback,
         |_| (),
@@ -126,6 +144,31 @@ unsafe fn file_write_impl(vm: *mut LVoid) -> OpHandleResult {
     };
 
     let scheduled = schedule_write(runner_ptr, path, content, callback);
+    set_int_result(if scheduled { 1 } else { 0 }, vm);
+    OpHandleResult::kOpResultSuccess
+}
+
+/// `File.createDirs(path, callback)` — creates the path and all parents; callback gets `"ok"` or an error string.
+unsafe fn file_create_dirs_impl(vm: *mut LVoid) -> OpHandleResult {
+    let size = get_local_size(vm);
+    if size < 3 {
+        return OpHandleResult::kOpResultEnd;
+    }
+
+    let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
+    let runner_ptr = runner_from_class(class_val);
+
+    let path_val = get_local_value(1, vm) as *const BoyiaValue;
+    let callback_val = get_local_value(2, vm) as *const BoyiaValue;
+
+    let Some(path) = value_to_string(path_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+    let Some(callback) = make_callback_info(vm, callback_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+
+    let scheduled = schedule_create_dirs(runner_ptr, path, callback);
     set_int_result(if scheduled { 1 } else { 0 }, vm);
     OpHandleResult::kOpResultSuccess
 }

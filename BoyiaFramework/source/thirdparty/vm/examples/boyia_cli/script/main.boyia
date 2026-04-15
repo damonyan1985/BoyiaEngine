@@ -161,6 +161,22 @@ class PrinterExt extends Printer {
         });
     }
 
+    prop async createDirsDemo() {
+        var result = (await this.createDirsAsync("script/assets/nested_create_dirs_demo/sub"));
+        if (result == "ok") {
+            Util.log("createDirsAsync ok");
+        } else {
+            Util.log("createDirsAsync: " + result);
+        }
+    }
+
+    prop async createDirsAsync(path) {
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run createDirsAsync");
+            File.createDirs(path, resolve);
+        });
+    }
+
     prop async readFilePromise() {
         Util.log("run readFilePromise");
         Util.newMicrotask(fun(resolve) {
@@ -194,6 +210,7 @@ pe.loadAsync("https://httpbin.org/get");
 pe.writeFile("hello from File.write");
 pe.writeFile("hello from File.write");
 pe.zipFile();
+pe.createDirsDemo();
 pe.jsonRead();
 
 printlog(p, arr1.get(0));
