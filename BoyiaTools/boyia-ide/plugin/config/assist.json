@@ -18,7 +18,7 @@
     "String.": ["equal", "length"],
     "Array.": ["add", "clear", "get", "remove", "removeAt", "size"],
     "Map.": ["clear", "get", "map", "put", "remove"],
-    "File.": ["read", "write", "readFile", "writeFile"],
+    "File.": ["read", "write", "createDirs", "readFile", "writeFile"],
     "Https.": ["load", "request"],
     "Json.": ["parse", "toString"],
     "MicroTask.": ["init", "resolve"],
@@ -51,17 +51,18 @@
     "Map.remove": "按键删除。",
     "Map.clear": "清空 Map。",
     "Map.map": "遍历映射。",
-    "File.read": "异步读文件（回调为内容或错误信息）。",
-    "File.write": "异步写文件（回调为空串成功或错误信息）。",
+    "File.read": "异步读文件；回调 Map：status ok/fail，成功时有 data（正文），失败时有 message。",
+    "File.write": "异步写文件；回调 Map：成功仅 status=ok，失败有 message。",
+    "File.createDirs": "异步创建多级目录；回调 Map 同上（成功无 data）。",
     "File.readFile": "同步式读文件（脚本 SDK 名）。",
     "File.writeFile": "同步式写文件（脚本 SDK 名）。",
-    "Https.load": "HTTPS GET，回调接收 body 字符串。",
-    "Https.request": "通用 HTTPS 请求（CLI）。",
+    "Https.load": "HTTPS GET；回调 Map：成功可有 data（body，空则无 data），失败有 message。",
+    "Https.request": "通用 HTTPS 请求（CLI）；回调 Map 同上。",
     "Json.parse": "JSON 字符串 → Boyia 值。",
     "Json.toString": "Boyia 值 → JSON 字符串。",
     "MicroTask.init": "绑定要执行的 worker。",
     "MicroTask.resolve": "结束微任务并传结果。",
-    "Zip.compress": "将路径压缩为 zip（异步回调）。",
-    "Zip.extract": "解压 zip 到目录（异步回调）。"
+    "Zip.compress": "将路径压缩为 zip；异步回调 Map：成功 status=ok，失败 message。",
+    "Zip.extract": "解压 zip 到目录；异步回调 Map 同上。"
   }
 }

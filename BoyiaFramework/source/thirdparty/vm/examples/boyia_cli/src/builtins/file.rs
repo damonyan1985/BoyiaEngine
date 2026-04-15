@@ -5,7 +5,7 @@
 
 use super::r#async::{
     install_runner_param_slot, make_callback_info, runner_from_class, schedule_task, value_to_string,
-    CallbackInfo,
+    AsyncBuiltinResult, CallbackInfo,
 };
 use crate::runner::BoyiaRunner;
 use boyia_builtins::gen_builtin_class_function;
@@ -50,8 +50,12 @@ fn schedule_read(
     schedule_task(
         runner_ptr,
         move || match fs::read_to_string(&path) {
-            Ok(text) => text,
-            Err(err) => format!("File.read error: {err}"),
+            Ok(text) => AsyncBuiltinResult::Ok {
+                data: Some(text),
+            },
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("File.read error: {err}"),
+            },
         },
         callback,
         |_| (),
@@ -68,8 +72,10 @@ fn schedule_write(
     schedule_task(
         runner_ptr,
         move || match fs::write(&path, content.as_bytes()) {
-            Ok(()) => String::from("ok"),
-            Err(err) => format!("File.write error: {err}"),
+            Ok(()) => AsyncBuiltinResult::Ok { data: None },
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("File.write error: {err}"),
+            },
         },
         callback,
         |_| (),
@@ -85,8 +91,10 @@ fn schedule_create_dirs(
     schedule_task(
         runner_ptr,
         move || match fs::create_dir_all(&path) {
-            Ok(()) => String::from("ok"),
-            Err(err) => format!("File.createDirs error: {err}"),
+            Ok(()) => AsyncBuiltinResult::Ok { data: None },
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("File.createDirs error: {err}"),
+            },
         },
         callback,
         |_| (),
@@ -94,7 +102,7 @@ fn schedule_create_dirs(
     )
 }
 
-/// `File.read(path, callback)` — UTF-8 text or error string.
+/// `File.read(path, callback)` — callback Map: ok + `data` (file text), or fail + `message`.
 unsafe fn file_read_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     if size < 3 {
@@ -119,7 +127,7 @@ unsafe fn file_read_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-/// `File.write(path, content, callback)` — callback gets "" on success, else error message.
+/// `File.write(path, content, callback)` — callback gets a Map (`status`, optional `data` / `message`).
 unsafe fn file_write_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     if size < 4 {
@@ -148,7 +156,7 @@ unsafe fn file_write_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
-/// `File.createDirs(path, callback)` — creates the path and all parents; callback gets `"ok"` or an error string.
+/// `File.createDirs(path, callback)` — callback Map: ok (no `data`), or fail + `message`.
 unsafe fn file_create_dirs_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     if size < 3 {

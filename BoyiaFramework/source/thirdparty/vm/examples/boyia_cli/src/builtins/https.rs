@@ -5,7 +5,7 @@
 
 use super::r#async::{
     install_runner_param_slot, make_callback_info, runner_from_class, schedule_task, value_to_string,
-    CallbackInfo,
+    AsyncBuiltinResult, CallbackInfo,
 };
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
@@ -60,11 +60,21 @@ fn schedule_request(
     schedule_task(
         runner_ptr,
         move || match execute_https_request(&url, params.as_deref()) {
-            Ok(text) => text,
-            Err(err) => format!("Https error: {err}"),
+            Ok(text) => {
+                if text.is_empty() {
+                    AsyncBuiltinResult::Ok { data: None }
+                } else {
+                    AsyncBuiltinResult::Ok {
+                        data: Some(text),
+                    }
+                }
+            }
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("Https error: {err}"),
+            },
         },
         callback,
-        |body| println!("https result: {}", body),
+        |r| println!("https result: {}", r.log_preview()),
         || (),
     )
 }

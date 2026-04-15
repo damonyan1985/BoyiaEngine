@@ -1,3 +1,5 @@
+var null = 0;
+
 class Util {
     fun log(content) {
         BY_Log("< " + content + " >");

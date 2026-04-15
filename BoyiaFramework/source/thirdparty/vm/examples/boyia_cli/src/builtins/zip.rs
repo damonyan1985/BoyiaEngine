@@ -1,11 +1,11 @@
-//! Zip builtin: compress / extract on [crate::thread_pool::ThreadPool], callback on runtime thread.
+//! Zip builtin: compress / extract on [crate::thread_pool::ThreadPool]; callback receives result Map (see `async` module).
 //! Password: AES-256 when non-empty (WinZip-compatible); extract uses `by_index_decrypt` / `by_index`.
 
 #![allow(dead_code)]
 
 use super::r#async::{
     install_runner_param_slot, make_callback_info, runner_from_class, schedule_task, value_to_string,
-    CallbackInfo,
+    AsyncBuiltinResult, CallbackInfo,
 };
 use crate::runner::BoyiaRunner;
 use boyia_builtins::gen_builtin_class_function;
@@ -58,15 +58,23 @@ fn file_options<'a>(password: &'a str) -> FileOptions<'a, ()> {
     }
 }
 
-fn run_compress(src: PathBuf, dest_zip: PathBuf, password: String) -> String {
+fn run_compress(src: PathBuf, dest_zip: PathBuf, password: String) -> AsyncBuiltinResult {
     let meta = match fs::metadata(&src) {
         Ok(m) => m,
-        Err(e) => return format!("Zip.compress error: metadata {e}"),
+        Err(e) => {
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.compress error: metadata {e}"),
+            };
+        }
     };
 
     let dest_file = match File::create(&dest_zip) {
         Ok(f) => f,
-        Err(e) => return format!("Zip.compress error: create zip {e}"),
+        Err(e) => {
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.compress error: create zip {e}"),
+            };
+        }
     };
 
     let mut writer = ZipWriter::new(dest_file);
@@ -80,7 +88,9 @@ fn run_compress(src: PathBuf, dest_zip: PathBuf, password: String) -> String {
             .to_string();
         if let Err(e) = writer.start_file(&name, opts) {
             let _ = writer.finish();
-            return format!("Zip.compress error: start_file {e}");
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.compress error: start_file {e}"),
+            };
         }
         match File::open(&src) {
             Ok(mut f) => match copy(&mut f, &mut writer) {
@@ -97,12 +107,14 @@ fn run_compress(src: PathBuf, dest_zip: PathBuf, password: String) -> String {
 
     if let Err(msg) = r {
         let _ = writer.finish();
-        return msg;
+        return AsyncBuiltinResult::Fail { message: msg };
     }
 
     match writer.finish() {
-        Ok(_) => String::from("ok"),
-        Err(e) => format!("Zip.compress error: finish {e}"),
+        Ok(_) => AsyncBuiltinResult::Ok { data: None },
+        Err(e) => AsyncBuiltinResult::Fail {
+            message: format!("Zip.compress error: finish {e}"),
+        },
     }
 }
 
@@ -143,25 +155,39 @@ fn open_entry<'a>(
     }
 }
 
-fn run_extract(src_zip: PathBuf, dest_dir: PathBuf, password: String) -> String {
+fn run_extract(src_zip: PathBuf, dest_dir: PathBuf, password: String) -> AsyncBuiltinResult {
     let file = match File::open(&src_zip) {
         Ok(f) => f,
-        Err(e) => return format!("Zip.extract error: open {e}"),
+        Err(e) => {
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.extract error: open {e}"),
+            };
+        }
     };
 
     let mut archive = match ZipArchive::new(file) {
         Ok(a) => a,
-        Err(e) => return format!("Zip.extract error: {e}"),
+        Err(e) => {
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.extract error: {e}"),
+            };
+        }
     };
 
     if let Err(e) = fs::create_dir_all(&dest_dir) {
-        return format!("Zip.extract error: mkdir {e}");
+        return AsyncBuiltinResult::Fail {
+            message: format!("Zip.extract error: mkdir {e}"),
+        };
     }
 
     for i in 0..archive.len() {
         let mut entry = match open_entry(&mut archive, i, &password) {
             Ok(e) => e,
-            Err(e) => return format!("Zip.extract error: entry {i} {e}"),
+            Err(e) => {
+                return AsyncBuiltinResult::Fail {
+                    message: format!("Zip.extract error: entry {i} {e}"),
+                };
+            }
         };
 
         let enclosed = match entry.enclosed_name() {
@@ -172,28 +198,38 @@ fn run_extract(src_zip: PathBuf, dest_dir: PathBuf, password: String) -> String 
         let out_path = dest_dir.join(&enclosed);
         if entry.is_dir() {
             if let Err(e) = fs::create_dir_all(&out_path) {
-                return format!("Zip.extract error: mkdir {e}");
+                return AsyncBuiltinResult::Fail {
+                    message: format!("Zip.extract error: mkdir {e}"),
+                };
             }
             continue;
         }
 
         if let Some(parent) = out_path.parent() {
             if let Err(e) = fs::create_dir_all(parent) {
-                return format!("Zip.extract error: mkdir {e}");
+                return AsyncBuiltinResult::Fail {
+                    message: format!("Zip.extract error: mkdir {e}"),
+                };
             }
         }
 
         let mut out_file = match File::create(&out_path) {
             Ok(f) => f,
-            Err(e) => return format!("Zip.extract error: create file {e}"),
+            Err(e) => {
+                return AsyncBuiltinResult::Fail {
+                    message: format!("Zip.extract error: create file {e}"),
+                };
+            }
         };
 
         if let Err(e) = copy(&mut entry, &mut out_file) {
-            return format!("Zip.extract error: write {e}");
+            return AsyncBuiltinResult::Fail {
+                message: format!("Zip.extract error: write {e}"),
+            };
         }
     }
 
-    String::from("ok")
+    AsyncBuiltinResult::Ok { data: None }
 }
 
 fn schedule_compress(

@@ -37,32 +37,43 @@ class PrinterExt extends Printer {
     }
 
     prop fun load() {
-        Https.load("https://httpbin.org/get", fun(body) {
-            var result = body;
-            Util.log("Https.load result: " + body);
+        Https.load("https://httpbin.org/get", fun(res) {
+            if (res.get("status") == "ok") {
+                var body = res.get("data");
+                if (body == null) {
+                    body = "";
+                }
+                Util.log("Https.load result: " + body);
+            } else {
+                Util.log("Https.load: " + res.get("message"));
+            }
         });
     }
 
     prop fun demoFile() {
-        File.write("boyia_cli_demo.txt", "hello from File.write", fun(err) {
-            if (err == "ok") {
+        File.write("boyia_cli_demo.txt", "hello from File.write", fun(res) {
+            if (res.get("status") == "ok") {
                 Util.log("File.write ok");
             } else {
-                Util.log("File.write: " + err);
+                Util.log("File.write: " + res.get("message"));
             }
         });
 
-        File.read("boyia_cli_demo.txt", fun(content) {
-            Util.log("File.read: " + content);
+        File.read("boyia_cli_demo.txt", fun(res) {
+            if (res.get("status") == "ok") {
+                Util.log("File.read: " + res.get("data"));
+            } else {
+                Util.log("File.read: " + res.get("message"));
+            }
         });
     }
 
     prop async writeFile(content) {
         var result = (await this.writeFilePromise(content));
-        if (result == "ok") {
+        if (result.get("status") == "ok") {
             Util.log("writeFile ok");
         } else {
-            Util.log("writeFile: " + result);
+            Util.log("writeFile: " + result.get("message"));
         }
 
         Util.log("write finish");
@@ -80,8 +91,12 @@ class PrinterExt extends Printer {
             Util.log(c);
         }
 
-        File.read("boyia_cli_demo.txt", fun(content) {
-            Util.log("File.read: " + content);
+        File.read("boyia_cli_demo.txt", fun(res) {
+            if (res.get("status") == "ok") {
+                Util.log("File.read: " + res.get("data"));
+            } else {
+                Util.log("File.read: " + res.get("message"));
+            }
         });
     }
 
@@ -103,11 +118,28 @@ class PrinterExt extends Printer {
         }
     
         var result = (await this.loadPromise(url));
-        var test = "hello : " + result;
+        Util.log("loadAsync status: " + result.status);
+        if (result.status == "fail") {
+            Util.log("loadAsync fail: " + result.message);
+            return;
+        }
+        var payload = result.get("data");
+        if (payload == null) {
+            Util.log("loadAsync ok no data");
+            return;
+        }
+
+        var msg = result.get("message");
+        if (msg != null) {
+            Util.log("loadAsync fail: " + msg);
+            return;
+        }
+
+        Util.log("loadAsync payload : " + payload);
+        var test = "hello : " + payload;
         Util.log("loadAsync result: " + test);
 
-        
-        return result;
+        return payload;
     }
 
     prop async loadPromise(url) {
@@ -133,17 +165,17 @@ class PrinterExt extends Printer {
 
     prop async zipFile() {
         var result = (await this.zipAsync("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "123456"));
-        if (result == "ok") {
+        if (result.get("status") == "ok") {
             Util.log("zipAsync ok");
         } else {
-            Util.log("zipAsync: " + result);
+            Util.log("zipAsync: " + result.get("message"));
         }
 
         result = (await this.unzipAsync("E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test.zip", "E:\work\project\BoyiaEngine\BoyiaTools\boyia-ide\boyia\script\test1", "123456"));
-        if (result == "ok") {
+        if (result.get("status") == "ok") {
             Util.log("unzipAsync ok");
         } else {
-            Util.log("unzipAsync: " + result);
+            Util.log("unzipAsync: " + result.get("message"));
         }
     }
 
@@ -163,10 +195,10 @@ class PrinterExt extends Printer {
 
     prop async createDirsDemo() {
         var result = (await this.createDirsAsync("script/assets/nested_create_dirs_demo/sub"));
-        if (result == "ok") {
+        if (result.get("status") == "ok") {
             Util.log("createDirsAsync ok");
         } else {
-            Util.log("createDirsAsync: " + result);
+            Util.log("createDirsAsync: " + result.get("message"));
         }
     }
 
@@ -187,8 +219,13 @@ class PrinterExt extends Printer {
 
     prop async jsonRead() {
         var result = (await this.readFilePromise());
-        Util.log("jsonRead json is " + result);
-        var obj = Json.parse(result);
+        if (result.get("status") != "ok") {
+            Util.log("readFilePromise: " + result.get("message"));
+            return;
+        }
+        var text = result.get("data");
+        Util.log("jsonRead json is " + text);
+        var obj = Json.parse(text);
 
         Util.log("my name is " + obj.nickname.get(0));
         Util.log("my height is " + obj.height);
