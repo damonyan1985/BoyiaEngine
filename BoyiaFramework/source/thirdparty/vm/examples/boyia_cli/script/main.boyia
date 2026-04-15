@@ -209,6 +209,37 @@ class PrinterExt extends Printer {
         });
     }
 
+    prop async fileCreateDelete() {
+        var path = "script/assets/file_delete_test/demofile";
+        var result = (await this.createFileAsync(path));
+        if (result.get("status") == "ok") {
+            Util.log("createFileAsync ok");
+        } else {
+            Util.log("createFileAsync: " + result.get("message"));
+        }
+
+        result = (await this.deleteFileAsync(path));
+        if (result.get("status") == "ok") {
+            Util.log("deleteFileAsync ok");
+        } else {
+            Util.log("deleteFileAsync: " + result.get("message"));
+        }
+    }
+
+    prop async createFileAsync(path) {
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run createFileAsync");
+            File.create(path, resolve);
+        });
+    }
+
+    prop async deleteFileAsync(path) {
+        Util.newMicrotask(fun(resolve) {
+            Util.log("run deleteFileAsync");
+            File.delete(path, resolve);
+        });
+    }
+
     prop async readFilePromise() {
         Util.log("run readFilePromise");
         Util.newMicrotask(fun(resolve) {
@@ -245,9 +276,9 @@ pe.loadAsync("https://httpbin.org/get");
 //pe.demoFile();
 //pe.testLocal();
 pe.writeFile("hello from File.write");
-pe.writeFile("hello from File.write");
 pe.zipFile();
 pe.createDirsDemo();
+pe.fileCreateDelete();
 pe.jsonRead();
 
 printlog(p, arr1.get(0));

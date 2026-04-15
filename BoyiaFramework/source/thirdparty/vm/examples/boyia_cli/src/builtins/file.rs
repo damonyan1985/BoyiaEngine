@@ -1,4 +1,4 @@
-//! File builtin for `boyia_cli`: async read/write/createDirs on `ThreadPool`, callback on the runtime task thread.
+//! File builtin for `boyia_cli`: async read/write/createDirs/create/delete on `ThreadPool`, callback on the runtime task thread.
 //! Mirrors the Https builtin (runner from last local after `LocalPush(mClass)`).
 
 #![allow(dead_code)]
@@ -13,7 +13,7 @@ use boyia_vm::{
     create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
     K_BOYIA_NULL, NativePtr, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
-use std::fs;
+use std::fs::{self, File};
 
 pub fn builtin_file_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut crate::runner::BoyiaRunner)
 where
@@ -39,6 +39,8 @@ where
         gen_builtin_class_function(gen_id("read"), file_read_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("write"), file_write_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("createDirs"), file_create_dirs_impl as NativePtr, class_body, vm);
+        gen_builtin_class_function(gen_id("create"), file_create_impl as NativePtr, class_body, vm);
+        gen_builtin_class_function(gen_id("delete"), file_delete_impl as NativePtr, class_body, vm);
     }
 }
 
@@ -94,6 +96,44 @@ fn schedule_create_dirs(
             Ok(()) => AsyncBuiltinResult::Ok { data: None },
             Err(err) => AsyncBuiltinResult::Fail {
                 message: format!("File.createDirs error: {err}"),
+            },
+        },
+        callback,
+        |_| (),
+        || (),
+    )
+}
+
+fn schedule_create_file(
+    runner_ptr: *mut BoyiaRunner,
+    path: String,
+    callback: CallbackInfo,
+) -> bool {
+    schedule_task(
+        runner_ptr,
+        move || match File::create(&path) {
+            Ok(_f) => AsyncBuiltinResult::Ok { data: None },
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("File.create error: {err}"),
+            },
+        },
+        callback,
+        |_| (),
+        || (),
+    )
+}
+
+fn schedule_delete(
+    runner_ptr: *mut BoyiaRunner,
+    path: String,
+    callback: CallbackInfo,
+) -> bool {
+    schedule_task(
+        runner_ptr,
+        move || match fs::remove_file(&path) {
+            Ok(()) => AsyncBuiltinResult::Ok { data: None },
+            Err(err) => AsyncBuiltinResult::Fail {
+                message: format!("File.delete error: {err}"),
             },
         },
         callback,
@@ -177,6 +217,56 @@ unsafe fn file_create_dirs_impl(vm: *mut LVoid) -> OpHandleResult {
     };
 
     let scheduled = schedule_create_dirs(runner_ptr, path, callback);
+    set_int_result(if scheduled { 1 } else { 0 }, vm);
+    OpHandleResult::kOpResultSuccess
+}
+
+/// `File.create(path, callback)` — creates or truncates an empty file (`std::fs::File::create`); parent directory must exist.
+unsafe fn file_create_impl(vm: *mut LVoid) -> OpHandleResult {
+    let size = get_local_size(vm);
+    if size < 3 {
+        return OpHandleResult::kOpResultEnd;
+    }
+
+    let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
+    let runner_ptr = runner_from_class(class_val);
+
+    let path_val = get_local_value(1, vm) as *const BoyiaValue;
+    let callback_val = get_local_value(2, vm) as *const BoyiaValue;
+
+    let Some(path) = value_to_string(path_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+    let Some(callback) = make_callback_info(vm, callback_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+
+    let scheduled = schedule_create_file(runner_ptr, path, callback);
+    set_int_result(if scheduled { 1 } else { 0 }, vm);
+    OpHandleResult::kOpResultSuccess
+}
+
+/// `File.delete(path, callback)` — removes a **file** only (`std::fs::remove_file`); callback Map like `write` / `createDirs`.
+unsafe fn file_delete_impl(vm: *mut LVoid) -> OpHandleResult {
+    let size = get_local_size(vm);
+    if size < 3 {
+        return OpHandleResult::kOpResultEnd;
+    }
+
+    let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
+    let runner_ptr = runner_from_class(class_val);
+
+    let path_val = get_local_value(1, vm) as *const BoyiaValue;
+    let callback_val = get_local_value(2, vm) as *const BoyiaValue;
+
+    let Some(path) = value_to_string(path_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+    let Some(callback) = make_callback_info(vm, callback_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+
+    let scheduled = schedule_delete(runner_ptr, path, callback);
     set_int_result(if scheduled { 1 } else { 0 }, vm);
     OpHandleResult::kOpResultSuccess
 }
