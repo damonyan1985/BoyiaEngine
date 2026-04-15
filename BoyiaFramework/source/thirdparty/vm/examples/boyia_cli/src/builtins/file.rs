@@ -1,4 +1,4 @@
-//! File builtin for `boyia_cli`: async read/write/createDirs/create/delete on `ThreadPool`, callback on the runtime task thread.
+//! File builtin for `boyia_cli`: async read/write/createDirs/create/delete/exists on `ThreadPool`, callback on the runtime task thread.
 //! Mirrors the Https builtin (runner from last local after `LocalPush(mClass)`).
 
 #![allow(dead_code)]
@@ -14,6 +14,7 @@ use boyia_vm::{
     K_BOYIA_NULL, NativePtr, LIntPtr, LUintPtr, LVoid, OpHandleResult,
 };
 use std::fs::{self, File};
+use std::io::ErrorKind;
 
 pub fn builtin_file_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut crate::runner::BoyiaRunner)
 where
@@ -41,7 +42,45 @@ where
         gen_builtin_class_function(gen_id("createDirs"), file_create_dirs_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("create"), file_create_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(gen_id("delete"), file_delete_impl as NativePtr, class_body, vm);
+        gen_builtin_class_function(gen_id("exists"), file_exists_impl as NativePtr, class_body, vm);
     }
+}
+
+fn path_exists_result(path: &str) -> AsyncBuiltinResult {
+    match fs::metadata(path) {
+        Ok(meta) => {
+            let tag = if meta.is_dir() {
+                "dir"
+            } else if meta.is_file() {
+                "file"
+            } else {
+                "other"
+            };
+            AsyncBuiltinResult::Ok {
+                data: Some(tag.to_string()),
+            }
+        }
+        Err(e) if e.kind() == ErrorKind::NotFound => AsyncBuiltinResult::Fail {
+            message: format!("File.exists: not found ({e})"),
+        },
+        Err(err) => AsyncBuiltinResult::Fail {
+            message: format!("File.exists error: {err}"),
+        },
+    }
+}
+
+fn schedule_exists(
+    runner_ptr: *mut BoyiaRunner,
+    path: String,
+    callback: CallbackInfo,
+) -> bool {
+    schedule_task(
+        runner_ptr,
+        move || path_exists_result(&path),
+        callback,
+        |_| (),
+        || (),
+    )
 }
 
 fn schedule_read(
@@ -267,6 +306,31 @@ unsafe fn file_delete_impl(vm: *mut LVoid) -> OpHandleResult {
     };
 
     let scheduled = schedule_delete(runner_ptr, path, callback);
+    set_int_result(if scheduled { 1 } else { 0 }, vm);
+    OpHandleResult::kOpResultSuccess
+}
+
+/// `File.exists(path, callback)` — callback Map: ok + `data` is `"file"`, `"dir"`, or `"other"`; fail + `message` if path not found or on I/O error.
+unsafe fn file_exists_impl(vm: *mut LVoid) -> OpHandleResult {
+    let size = get_local_size(vm);
+    if size < 3 {
+        return OpHandleResult::kOpResultEnd;
+    }
+
+    let class_val = get_local_value(size - 1, vm) as *const BoyiaValue;
+    let runner_ptr = runner_from_class(class_val);
+
+    let path_val = get_local_value(1, vm) as *const BoyiaValue;
+    let callback_val = get_local_value(2, vm) as *const BoyiaValue;
+
+    let Some(path) = value_to_string(path_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+    let Some(callback) = make_callback_info(vm, callback_val) else {
+        return OpHandleResult::kOpResultEnd;
+    };
+
+    let scheduled = schedule_exists(runner_ptr, path, callback);
     set_int_result(if scheduled { 1 } else { 0 }, vm);
     OpHandleResult::kOpResultSuccess
 }
