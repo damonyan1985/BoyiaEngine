@@ -137,16 +137,14 @@ impl BoyiaRuntime {
     }
 
     fn init_native_function(&mut self) {
-        let k_new = self.id_creator.gen_ident_by_str("new");
-        let k_log = self.id_creator.gen_ident_by_str("BY_Log");
-        let k_require = self.id_creator.gen_ident_by_str("require");
-        self.append_native(k_new, boyia_lib::create_object as NativePtr);
-        self.append_native(k_log, boyia_lib::log_print as NativePtr);
-        self.append_native(k_require, boyia_lib::require_file as NativePtr);
+        self.append_native("new", boyia_lib::create_object as NativePtr);
+        self.append_native("BY_Log", boyia_lib::log_print as NativePtr);
+        self.append_native("require", boyia_lib::require_file as NativePtr);
         self.append_native_sentinel();
     }
 
-    fn append_native(&mut self, id: LUintPtr, ptr: NativePtr) {
+    fn append_native(&mut self, name: &str, ptr: NativePtr) {
+        let id = self.id_creator.gen_ident_by_str(name);
         if self.native_fun_table.len() < self.native_fun_table.capacity() {
             self.native_fun_table.push(NativeFunction {
                 mNameKey: id,
