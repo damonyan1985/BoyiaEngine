@@ -14,7 +14,12 @@ pub struct TaskThread<T> {
 impl TaskThread<()> {
     /// Start a new task thread and run loop (OS thread name `boyia-task-thread`).
     pub fn start() -> Self {
-        Self::start_with_init("boyia-task-thread", |_| ())
+        Self::start_with_name("boyia-task-thread")
+    }
+
+    /// Start with a custom OS thread name (see [`thread::Builder::name`]).
+    pub fn start_with_name(thread_name: impl Into<String>) -> Self {
+        Self::start_with_init(thread_name, |_| ())
     }
 }
 

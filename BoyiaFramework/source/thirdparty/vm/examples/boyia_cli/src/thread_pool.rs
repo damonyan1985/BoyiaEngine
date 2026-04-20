@@ -4,25 +4,35 @@
 
 use crate::run_loop::RunLoopError;
 use crate::task_thread::TaskThread;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex;
 
 /// Thread pool that lazily creates `TaskThread<()>` workers up to a configured maximum.
 pub struct ThreadPool {
     max_thread_count: usize,
+    /// Prefix for [`TaskThread::start_with_name`]; each worker gets `{prefix}-{unique_id}`.
+    thread_name_prefix: String,
+    next_worker_id: AtomicUsize,
     workers: Mutex<Vec<TaskThread<()>>>,
     stopped: AtomicBool,
 }
 
 impl ThreadPool {
-    /// Create a pool with a maximum worker count. Workers are created on demand.
+    /// Create a pool with a maximum worker count and default thread name prefix `boyia-pool-worker`.
     pub fn new(max_thread_count: usize) -> Self {
+        Self::with_thread_name_prefix(max_thread_count, "boyia-pool-worker")
+    }
+
+    /// Create a pool; new workers are named `{prefix}-{n}` with `n` from an internal counter.
+    pub fn with_thread_name_prefix(max_thread_count: usize, thread_name_prefix: impl Into<String>) -> Self {
         assert!(
             max_thread_count > 0,
             "max_thread_count must be greater than zero"
         );
         Self {
             max_thread_count,
+            thread_name_prefix: thread_name_prefix.into(),
+            next_worker_id: AtomicUsize::new(0),
             workers: Mutex::new(Vec::with_capacity(max_thread_count)),
             stopped: AtomicBool::new(false),
         }
@@ -64,7 +74,9 @@ impl ThreadPool {
         {
             index
         } else if workers.len() < self.max_thread_count {
-            workers.push(TaskThread::start());
+            let id = self.next_worker_id.fetch_add(1, Ordering::Relaxed);
+            let name = format!("{}-{}", self.thread_name_prefix, id);
+            workers.push(TaskThread::start_with_name(name));
             workers.len() - 1
         } else {
             // 在“所有线程都忙、并且已经达到最大线程数，不能再新建线程”时，
