@@ -4,11 +4,13 @@
 #![allow(non_snake_case)]
 
 use crate::gen_builtin_class_function;
+use std::ptr;
+
 use boyia_vm::{
-    copy_object, create_global_class, gen_identifier_from_str, get_local_size, get_local_value,
-    get_string_buffer, native_call_impl, set_native_result, value_copy, BoyiaClass, BoyiaFunction,
-    BoyiaValue, K_BOYIA_NULL, NativePtr, RealValue, ValueType, LInt, LUintPtr, LVoid,
-    OpHandleResult,
+    copy_object, create_global_class, gen_identifier_from_str, get_boyia_class_id, get_local_size,
+    get_local_value, get_string_buffer, native_call_impl, set_native_result, value_copy, BuiltinId,
+    BoyiaClass, BoyiaFunction, BoyiaStr, BoyiaValue, K_BOYIA_NULL, NativePtr, RealValue, ValueType,
+    LInt, LUintPtr, LVoid, OpHandleResult,
 };
 
 unsafe fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
@@ -29,6 +31,39 @@ unsafe fn map_put_impl(vm: *mut LVoid) -> OpHandleResult {
     OpHandleResult::kOpResultSuccess
 }
 
+/// Copy UTF-8 from `buf` into an owned `String` (null / `mLen <= 0` → empty; invalid UTF-8 lossy).
+/// Rejects **`mLen > 0` with null `mPtr`** (corrupt [`BoyiaStr`]) so [`std::slice::from_raw_parts`] is not called on null.
+unsafe fn boyia_str_ptr_to_string(buf: *const BoyiaStr) -> String {
+    if buf.is_null() {
+        return String::new();
+    }
+    let len = (*buf).mLen.max(0) as usize;
+    if len == 0 {
+        return String::new();
+    }
+    let p = (*buf).mPtr as *const u8;
+    if p.is_null() {
+        return String::new();
+    }
+    let slice = std::slice::from_raw_parts(p, len);
+    String::from_utf8_lossy(slice).into_owned()
+}
+
+/// If `v` is a Boyia string ([`ValueType::BY_STRING`] or [`ValueType::BY_CLASS`] with [`BuiltinId::kBoyiaString`]),
+/// copy UTF-8 via [`boyia_str_ptr_to_string`]. Otherwise returns empty without treating the value as a string body.
+unsafe fn boyia_str_to_string(v: *const BoyiaValue) -> String {
+    if v.is_null() {
+        return String::new();
+    }
+    let string_class = BuiltinId::kBoyiaString.as_key();
+    let buf = match (*v).mValueType {
+        ValueType::BY_STRING => ptr::addr_of!((*v).mValue.mStrVal),
+        ValueType::BY_CLASS if get_boyia_class_id(v) == string_class => get_string_buffer(v),
+        _ => return String::new(),
+    };
+    boyia_str_ptr_to_string(buf)
+}
+
 unsafe fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
     let size = get_local_size(vm);
     let obj = get_local_value(size - 1, vm) as *const BoyiaValue;
@@ -42,12 +77,20 @@ unsafe fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
             mValueType: ValueType::BY_INT,
             mValue: RealValue { mIntVal: K_BOYIA_NULL },
         };
-        set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
+        set_native_result(&mut val, vm);
         return OpHandleResult::kOpResultSuccess;
     }
     for i in 0..(*fun).mParamSize {
         if (*fun).mParams.add(i as usize).read().mNameKey == key_id {
-            set_native_result((*fun).mParams.add(i as usize) as *mut LVoid, vm);
+            // println!("map_get_impl find key: {}", boyia_str_to_string(key_val));
+            // let value_val = (*fun).mParams.add(i as usize);
+            // let re = get_string_buffer(value_val);
+            
+            // println!("map_get_impl find value: {:?}", (*re).mLen);
+            // if (*re).mLen > 0 {
+            //     println!("map_get_impl find value: {}", boyia_str_ptr_to_string(re));
+            // }
+            set_native_result((*fun).mParams.add(i as usize), vm);
             return OpHandleResult::kOpResultSuccess;
         }
     }
@@ -56,7 +99,7 @@ unsafe fn map_get_impl(vm: *mut LVoid) -> OpHandleResult {
         mValueType: ValueType::BY_INT,
         mValue: RealValue { mIntVal: K_BOYIA_NULL },
     };
-    set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut val, vm);
     OpHandleResult::kOpResultSuccess
 }
 

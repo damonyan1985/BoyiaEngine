@@ -29,7 +29,7 @@ unsafe fn array_get_impl(vm: *mut LVoid) -> OpHandleResult {
         return OpHandleResult::kOpResultEnd;
     }
     let result = (*fun).mParams.add(idx as usize);
-    set_native_result(result as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(result, vm);
     OpHandleResult::kOpResultSuccess
 }
 

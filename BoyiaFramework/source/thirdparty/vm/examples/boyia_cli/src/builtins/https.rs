@@ -4,13 +4,13 @@
 #![allow(dead_code)]
 
 use super::r#async::{
-    install_runner_param_slot, make_callback_info, runner_from_class, schedule_task, value_to_string,
+    make_callback_info, register_runner_builtin_class, runner_from_class, schedule_task, value_to_string,
     AsyncBuiltinResult, CallbackInfo,
 };
 use boyia_builtins::gen_builtin_class_function;
 use boyia_vm::{
-    create_global_class, get_local_size, get_local_value, set_int_result, BoyiaFunction, BoyiaValue,
-    K_BOYIA_NULL, NativePtr, LUintPtr, LVoid, OpHandleResult,
+    get_local_size, get_local_value, set_int_result, BoyiaValue, NativePtr, LUintPtr, LVoid,
+    OpHandleResult,
 };
 use reqwest::blocking::Client;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
@@ -24,23 +24,7 @@ pub fn builtin_https_class<F>(vm: *mut LVoid, gen_id: &mut F, runner_ptr: *mut c
 where
     F: FnMut(&str) -> LUintPtr,
 {
-    if vm.is_null() {
-        return;
-    }
-
-    let https_key = gen_id("Https");
-    let class_ref = unsafe { create_global_class(https_key, vm) } as *mut BoyiaValue;
-    if class_ref.is_null() {
-        return;
-    }
-
-    unsafe {
-        (*class_ref).mValue.mObj.mSuper = K_BOYIA_NULL;
-        let class_body = (*class_ref).mValue.mObj.mPtr as *mut BoyiaFunction;
-        if !install_runner_param_slot(class_body, gen_id, runner_ptr) {
-            return;
-        }
-
+    register_runner_builtin_class(vm, gen_id, runner_ptr, "Https", |class_body, vm, gen_id| unsafe {
         gen_builtin_class_function(gen_id("load"), https_load_impl as NativePtr, class_body, vm);
         gen_builtin_class_function(
             gen_id("request"),
@@ -48,7 +32,7 @@ where
             class_body,
             vm,
         );
-    }
+    });
 }
 
 fn schedule_request(

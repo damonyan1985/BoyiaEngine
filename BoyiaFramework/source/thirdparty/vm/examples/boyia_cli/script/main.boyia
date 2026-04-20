@@ -124,13 +124,17 @@ class PrinterExt extends Printer {
             return;
         }
         var payload = result.get("data");
+        Util.log("loadAsync data: " + payload);
+        //var re = (payload == null);
+        //Util.log("loadAsync data: " + re);
         if (payload == null) {
             Util.log("loadAsync ok no data");
             return;
         }
+        Util.log("loadAsync data: " + payload);
 
         var msg = result.get("message");
-        if (msg != null) {
+        if (msg != 0) {
             Util.log("loadAsync fail: " + msg);
             return;
         }
@@ -247,6 +251,7 @@ class PrinterExt extends Printer {
         var demofile = base + "/demofile";
         var ghost = base + "/hello";
 
+        Util.log("fileExistsDemo test base");
         var result = (await this.existsAsync(base));
         if (result.get("status") == "ok") {
             Util.log("exists " + base + " -> " + result.get("data"));
@@ -254,6 +259,7 @@ class PrinterExt extends Printer {
             Util.log("exists: " + result.get("message"));
         }
 
+        Util.log("fileExistsDemo test demofile");
         result = (await this.existsAsync(demofile));
         if (result.get("status") == "ok") {
             Util.log("exists " + demofile + " -> " + result.get("data"));
@@ -261,6 +267,7 @@ class PrinterExt extends Printer {
             Util.log("exists: " + result.get("message"));
         }
 
+        Util.log("fileExistsDemo test ghost");
         result = (await this.existsAsync(ghost));
         if (result.get("status") == "ok") {
             Util.log("exists " + ghost + " -> " + result.get("data"));

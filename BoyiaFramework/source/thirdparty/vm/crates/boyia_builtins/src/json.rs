@@ -299,7 +299,7 @@ unsafe fn json_parse_impl(vm: *mut LVoid) -> OpHandleResult {
         Ok(o) => o,
         Err(_) => return OpHandleResult::kOpResultEnd,
     };
-    set_native_result(&mut out as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut out, vm);
     OpHandleResult::kOpResultSuccess
 }
 
@@ -326,7 +326,7 @@ unsafe fn json_to_string_impl(vm: *mut LVoid) -> OpHandleResult {
         mValue: RealValue { mIntVal: 0 },
     };
     create_native_string(&mut val, ptr, len, vm);
-    set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut val, vm);
     OpHandleResult::kOpResultSuccess
 }
 

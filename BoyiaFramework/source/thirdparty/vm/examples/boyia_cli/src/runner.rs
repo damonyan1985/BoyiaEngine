@@ -27,7 +27,7 @@ impl BoyiaRunner {
     pub fn create() -> Box<Self> {
         let (ready_tx, ready_rx) = mpsc::channel();
 
-        let task_thread = TaskThread::start_with_init(move |_| {
+        let task_thread = TaskThread::start_with_init("boyia-runner", move |_| {
             let runtime = BoyiaRuntime::create();
             let ready = !runtime.vm().is_null();
             let _ = ready_tx.send(ready);

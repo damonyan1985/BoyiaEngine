@@ -84,14 +84,13 @@ pub(crate) unsafe fn value_copy_with_key(dest: *mut BoyiaValue, src: *const Boyi
 // ---------------------------------------------------------------------------
 
 /// Set native result to reg0.
-pub unsafe fn set_native_result(result: *mut LVoid, vm: *mut LVoid) {
+pub unsafe fn set_native_result(result: *mut BoyiaValue, vm: *mut LVoid) {
     if result.is_null() || vm.is_null() {
         return;
     }
     let vm_ptr = vm as *mut BoyiaVM;
-    let result_value = result as *mut BoyiaValue;
     if !(*vm_ptr).mCpu.is_null() {
-        value_copy(&mut (*(*vm_ptr).mCpu).mReg0, result_value);
+        value_copy(&mut (*(*vm_ptr).mCpu).mReg0, result);
     }
 }
 
@@ -303,7 +302,7 @@ pub unsafe fn set_int_result(result: LInt, vm: *mut LVoid) -> LInt {
         mValueType: ValueType::BY_INT,
         mValue: RealValue { mIntVal: result as LIntPtr },
     };
-    set_native_result(&mut val as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut val, vm);
     OpHandleResult::kOpResultSuccess as i32
 }
 
@@ -1186,16 +1185,24 @@ pub unsafe fn alloc_builtin_function(vm: *mut LVoid, native_ptr: NativePtr) -> *
     fun
 }
 
-/// String buffer from a BY_CLASS string value (object's mParams[1].mStrVal). Match GetStringBuffer.
+/// String buffer: [`ValueType::BY_STRING`] (inline [`BoyiaStr`]), or [`ValueType::BY_CLASS`] with
+/// [`BuiltinId::kBoyiaString`] (object `mParams[1].mStrVal`). Otherwise null — do not treat arbitrary
+/// `BY_CLASS` as [`BoyiaFunction`] string bodies. Match `GetStringBuffer` for real string values only.
 pub unsafe fn get_string_buffer(ref_: *const BoyiaValue) -> *const BoyiaStr {
     if ref_.is_null() {
         return ptr::null();
     }
-    let obj = (*ref_).mValue.mObj.mPtr as *const BoyiaFunction;
-    if obj.is_null() {
-        return ptr::null();
+    match (*ref_).mValueType {
+        ValueType::BY_STRING => ptr::addr_of!((*ref_).mValue.mStrVal),
+        ValueType::BY_CLASS if get_boyia_class_id(ref_) == BuiltinId::kBoyiaString.as_key() => {
+            let obj = (*ref_).mValue.mObj.mPtr as *mut BoyiaFunction;
+            if obj.is_null() {
+                return ptr::null();
+            }
+            get_string_buffer_from_body(obj)
+        }
+        _ => ptr::null(),
     }
-    get_string_buffer_from_body(obj as *mut BoyiaFunction)
 }
 
 /// String buffer from function body (body->mParams[1].mValue.mStrVal). Match GetStringBufferFromBody in BoyiaValue.cpp.
@@ -1489,6 +1496,7 @@ pub unsafe fn create_native_string(value: *mut BoyiaValue, buffer: *mut LInt8, l
     }
     let obj_body = create_string_object(buffer, len, vm);
     if obj_body.is_null() {
+        println!("create_native_string obj_body is null");
         return;
     }
     (*value).mValueType = ValueType::BY_CLASS;
@@ -1662,54 +1670,40 @@ pub(crate) unsafe fn destroy_exec_state(state: *mut ExecState, vm: *mut BoyiaVM)
 /// copy Reg0 to mTopTask->mResult and AddMicroTask(mTopTask), then DestroyExecState(aes) when mLast->mWait;
 /// switch back; unlink task and FreeMicroTask.
 pub unsafe fn consume_micro_task(vm_ptr: *mut LVoid) {
-    println!("call consume_micro_task1");
     if vm_ptr.is_null() {
         return;
     }
     let vm = vm_ptr as *mut BoyiaVM;
     let queue_ptr = (*vm).mTaskQueue;
-    println!("call consume_micro_task2");
     if queue_ptr.is_null() {
         return;
     }
-    println!("call consume_micro_task3");
     let queue = &mut *queue_ptr;
     let mut task = (*queue).mUsedTasks.mHead;
     while !task.is_null() {
-        println!("call consume_micro_task4");
         let aes = (*task).mAsyncEs;
         if !aes.is_null() && !(*aes).mStackFrame.mPC.is_null() {
-            println!("call consume_micro_task5");
             let current_state = (*vm).mEState;
             switch_exec_state(aes, vm);
             (*aes).mWait = LFalse;
             (*aes).mStackFrame.mPC = crate::execute::next_instruction((*aes).mStackFrame.mPC, vm);
             if !(*vm).mCpu.is_null() {
-                println!("call consume_micro_task6");
                 value_copy(&mut (*(*vm).mCpu).mReg0, &(*task).mResult);
             }
 
             crate::execute::exec_instruction(vm);
-            println!("call consume_micro_task7");
             if (*aes).mStackFrame.mContext.is_null() {
-                println!("call consume_micro_task11");
                 if !(*aes).mTopTask.is_null() {
-                    println!("call consume_micro_task12");
                     if !(*vm).mCpu.is_null() {
                         value_copy(&mut (*(*aes).mTopTask).mResult, &(*(*vm).mCpu).mReg0);
                     }
 
-                    println!("call consume_micro_task8");
                     add_micro_task((*aes).mTopTask, vm);
                 }
-                println!("call consume_micro_task13");
                 if !(*aes).mLast.is_null() && (*(*aes).mLast).mWait != LFalse {
                     destroy_exec_state(aes, vm);
                 }
-
-                println!("call consume_micro_task9");
             }
-            println!("call consume_micro_task10");
             switch_exec_state(current_state, vm);
         }
         let tmp = task;

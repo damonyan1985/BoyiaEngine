@@ -3,14 +3,14 @@
 use crate::runner::BoyiaRunner;
 use boyia_runtime::BoyiaRuntime;
 use boyia_vm::{
-    copy_object, create_native_string, create_string_object, gen_identifier_from_str, get_function_count,
-    native_call_impl, value_copy, vector_params_grow_if_full, BoyiaClass, BoyiaFunction, BoyiaStr,
-    BoyiaValue, BuiltinId, Global, K_BOYIA_NULL, RealValue, Runtime, ValueType, LInt, LInt8, LIntPtr,
+    copy_object, create_global_class, create_native_string, create_string_object, gen_identifier_from_str,
+    get_function_count, native_call_impl, value_copy, vector_params_grow_if_full, set_native_result, BoyiaClass, BoyiaFunction,
+    BoyiaStr, BoyiaValue, BuiltinId, Global, K_BOYIA_NULL, RealValue, Runtime, ValueType, LInt, LInt8, LIntPtr,
     LUintPtr, LVoid,
 };
 use std::str;
 
-/// Slot in [BoyiaFunction::mParams] where `File` / `Https` store `BoyiaRunner*` as `BY_INT`.
+/// Slot in [BoyiaFunction::mParams] where `File` / `Https` / `Zip` store `BoyiaRunner*` as `BY_INT`.
 pub const BUILTIN_CLASS_RUNNER_PROP_INDEX: usize = 0;
 
 /// Result posted to script callbacks: a Map with `status` (`"ok"` | `"fail"`),
@@ -62,6 +62,35 @@ pub unsafe fn runner_from_class(class_val: *const BoyiaValue) -> *mut BoyiaRunne
         .read()
         .mValue
         .mIntVal as *mut BoyiaRunner
+}
+
+/// Create global class `class_name`, set `mSuper`, [install_runner_param_slot], then `register(class_body, vm, gen_id)` for native methods.
+pub fn register_runner_builtin_class<F, R>(
+    vm: *mut LVoid,
+    gen_id: &mut F,
+    runner_ptr: *mut BoyiaRunner,
+    class_name: &str,
+    mut register: R,
+) where
+    F: FnMut(&str) -> LUintPtr,
+    R: FnMut(*mut BoyiaFunction, *mut LVoid, &mut F),
+{
+    if vm.is_null() {
+        return;
+    }
+    let class_key = gen_id(class_name);
+    let class_ref = unsafe { create_global_class(class_key, vm) } as *mut BoyiaValue;
+    if class_ref.is_null() {
+        return;
+    }
+    unsafe {
+        (*class_ref).mValue.mObj.mSuper = K_BOYIA_NULL;
+        let class_body = (*class_ref).mValue.mObj.mPtr as *mut BoyiaFunction;
+        if !install_runner_param_slot(class_body, gen_id, runner_ptr) {
+            return;
+        }
+        register(class_body, vm, gen_id);
+    }
 }
 
 /// Persistent callback + object handle for posting a result Map back onto the runtime thread.
@@ -165,8 +194,11 @@ unsafe fn native_string_value(vm: *mut LVoid, s: &str) -> Option<BoyiaValue> {
     if s.is_empty() {
         let body = create_string_object(std::ptr::null_mut(), 0, vm);
         if body.is_null() {
+            println!("native_string_value body null");
             return None;
         }
+
+        println!("native_string_value str is null");
         return Some(BoyiaValue {
             mNameKey: BuiltinId::kBoyiaString.as_key(),
             mValueType: ValueType::BY_CLASS,
@@ -179,8 +211,12 @@ unsafe fn native_string_value(vm: *mut LVoid, s: &str) -> Option<BoyiaValue> {
         });
     }
     let boxed = s.as_bytes().to_vec().into_boxed_slice();
+
+    
     let len = boxed.len() as LInt;
     let ptr = Box::into_raw(boxed) as *mut u8 as *mut LInt8;
+
+    //println!("native_string_value str is : {}, len: {}, ptr: {:?}", s, len, ptr);
     let mut value = BoyiaValue {
         mNameKey: 0,
         mValueType: ValueType::BY_INT,
@@ -188,6 +224,7 @@ unsafe fn native_string_value(vm: *mut LVoid, s: &str) -> Option<BoyiaValue> {
     };
     create_native_string(&mut value, ptr, len, vm);
     if value.mValue.mObj.mPtr == K_BOYIA_NULL {
+        println!("native_string_value str is null");
         return None;
     }
     Some(value)
@@ -232,6 +269,8 @@ pub unsafe fn build_async_result_map(vm: *mut LVoid, r: &AsyncBuiltinResult) -> 
         },
     };
 
+    set_native_result(&mut map_val, vm);
+
     let status_s = match r {
         AsyncBuiltinResult::Ok { .. } => "ok",
         AsyncBuiltinResult::Fail { .. } => "fail",
@@ -245,6 +284,7 @@ pub unsafe fn build_async_result_map(vm: *mut LVoid, r: &AsyncBuiltinResult) -> 
 
     match r {
         AsyncBuiltinResult::Ok { data: Some(d) } => {
+            println!("build_async_result_map data: {}", &d);
             let dv = native_string_value(vm, d)?;
             if !map_put_str_key(vm, &mut map_val, "data", &dv) {
                 return None;

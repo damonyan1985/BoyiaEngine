@@ -46,7 +46,7 @@ unsafe fn string_length_impl(vm: *mut LVoid) -> OpHandleResult {
         mValueType: ValueType::BY_INT,
         mValue: RealValue { mIntVal: len as LIntPtr },
     };
-    set_native_result(&mut value as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut value, vm);
     OpHandleResult::kOpResultSuccess
 }
 
@@ -66,7 +66,7 @@ unsafe fn string_equal_impl(vm: *mut LVoid) -> OpHandleResult {
             mIntVal: if eq { 1 } else { 0 },
         },
     };
-    set_native_result(&mut value as *mut BoyiaValue as *mut LVoid, vm);
+    set_native_result(&mut value, vm);
     OpHandleResult::kOpResultSuccess
 }
 

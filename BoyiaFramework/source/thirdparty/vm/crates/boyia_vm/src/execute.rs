@@ -255,7 +255,7 @@ unsafe fn dispatch_instruction(inst: *mut Instruction, vm: *mut BoyiaVM) -> OpHa
         return OpHandleResult::kOpResultEnd;
     }
     let opcode = (*inst).mOPCode;
-    eprintln!("[dispatch_instruction] mOPCode={:?}", opcode);
+    //eprintln!("[dispatch_instruction] mOPCode={:?}", opcode);
     match opcode {
         CmdType::kCmdNone => OpHandleResult::kOpResultEnd,
         CmdType::kCmdDeclGlobal => handle_decl_global(inst, vm),
@@ -1376,7 +1376,7 @@ unsafe fn handle_set_map_value(inst: *const Instruction, vm: *mut BoyiaVM) -> Op
     let function = (*obj).mValue.mObj.mPtr as *mut BoyiaFunction;
     let param = (*function).mParams.add((*function).mParamSize as usize - 1);
     value_copy_no_name(param, value);
-    set_native_result(obj as *const BoyiaValue as *mut LVoid, vm as *mut LVoid);
+    set_native_result(obj as *const BoyiaValue as *mut BoyiaValue, vm as *mut LVoid);
     OpHandleResult::kOpResultSuccess
 }
 
@@ -1416,7 +1416,7 @@ unsafe fn handle_add_array_item(inst: *const Instruction, vm: *mut BoyiaVM) -> O
     let idx = (*function).mParamSize as usize;
     value_copy((*function).mParams.add(idx), value);
     (*function).mParamSize += 1;
-    set_native_result(obj as *const BoyiaValue as *mut LVoid, vm as *mut LVoid);
+    set_native_result(obj as *const BoyiaValue as *mut BoyiaValue, vm as *mut LVoid);
     OpHandleResult::kOpResultSuccess
 }
 
@@ -1485,7 +1485,7 @@ unsafe fn handle_await(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHandleRe
                         },
                     },
                 };
-                set_native_result(&mut result as *mut BoyiaValue as *mut LVoid, vm as *mut LVoid);
+                set_native_result(&mut result, vm as *mut LVoid);
             }
         }
     }
@@ -1519,7 +1519,7 @@ unsafe fn handle_set_anonym(inst: *const Instruction, vm: *mut BoyiaVM) -> OpHan
             },
         },
     };
-    set_native_result(&mut result as *mut BoyiaValue as *mut LVoid, vm as *mut LVoid);
+    set_native_result(&mut result, vm as *mut LVoid);
     OpHandleResult::kOpResultSuccess
 }
 

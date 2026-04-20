@@ -12,24 +12,25 @@ pub struct TaskThread<T> {
 }
 
 impl TaskThread<()> {
-    /// Start a new task thread and run loop.
+    /// Start a new task thread and run loop (OS thread name `boyia-task-thread`).
     pub fn start() -> Self {
-        Self::start_with_init(|_| ())
+        Self::start_with_init("boyia-task-thread", |_| ())
     }
 }
 
 impl<T: 'static> TaskThread<T> {
     /// Start a new task thread and create its context before `run_loop.run()`.
+    /// `thread_name` is passed to [`thread::Builder::name`] for debuggers / profilers.
     /// The callback runs on the task thread and receives a cloneable handle that can be
     /// used to post follow-up work after the context is initialized.
-    pub fn start_with_init<F>(before_run: F) -> Self
+    pub fn start_with_init<F>(thread_name: impl Into<String>, before_run: F) -> Self
     where
         F: FnOnce(RunLoopHandle<T>) -> T + Send + 'static,
     {
         let (run_loop, handle) = RunLoop::new();
         let init_handle = handle.clone();
         let join_handle = thread::Builder::new()
-            .name("boyia-task-thread".to_string())
+            .name(thread_name.into())
             .spawn(move || {
                 let context = before_run(init_handle);
                 run_loop.run(context);
